@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { CaefCustomResource, CaefCustomResourceProps } from '@aws-caef/custom-constructs';
 import { CaefSecurityGroup, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
 import { CaefRole } from '@aws-caef/iam-constructs';
 import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
@@ -13,8 +14,9 @@ import {
 } from "@aws-caef/lambda-constructs";
 import { CustomResource, Duration } from "aws-cdk-lib";
 import { Protocol, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { Effect, IRole, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Code, LayerVersion, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { CfnVPCConnection, CfnVPCConnectionProps } from 'aws-cdk-lib/aws-quicksight';
 import { Provider } from "aws-cdk-lib/custom-resources";
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
@@ -58,31 +60,103 @@ export interface AccountProps {
    */
   readonly contactNumber?: string;
   /**
-     * The VPC to which the security group will be associated.
-     */
+   * The VPC to which the QS Account will be associated.
+   */
   readonly vpcId: string;
   /**
-   * Map of names to security group access definitions. Will be added as egrees/ingress rules to the QuickSight security group
+   * The Subnet IDs to which the QS Account will be connected.
+   */
+  readonly subnetIds: string[];
+  /**
+   * Map of names to security group access definitions. Will be added as egrees/ingress rules to the QuickSight security group, permitting access
+   * between the QS account and internal resources on your VPC.
    */
   readonly securityGroupAccess?: CaefSecurityGroupRuleProps;
+  /**
+   * List of IP CIDRs which will be provided access to the account via the QuickSight interface. IP access restrictions are disabled by default.
+   */
+  readonly ipRestrictions?: IpRestrictionProps[]
   /**
    * List of Glue resources to which the QuickSight service role will be granted access.
    */
   readonly glueResourceAccess?: string[];
 }
 
+export interface IpRestrictionProps {
+  readonly cidr: string
+  readonly description?: string
+}
+
 export interface QuickSightAccountL3ConstructProps extends CaefL3ConstructProps {
   readonly qsAccount: AccountProps
 }
 
-//This stack creates the security group for a QuickSight VPC connections
 export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAccountL3ConstructProps> {
+
+  private boto3Layer: LayerVersion
   constructor( scope: Construct, id: string, props: QuickSightAccountL3ConstructProps ) {
     super( scope, id, props );
-    this.buildQuickSightSecurityGroup();
-    this.buildQuickSightServiceRole();
-    const accountProvider: Provider = this.createAccountProvider();
-    this.createAccount( accountProvider );
+    this.boto3Layer = new CaefBoto3LayerVersion( this, 'boto3-layer', { naming: this.props.naming } )
+
+    const serviceRole = this.buildQuickSightServiceRole();
+    const managedPolicy = this.createServiceManagedPolicy( serviceRole )
+    const accountCr = this.createAccount();
+
+    if ( this.props.qsAccount.ipRestrictions ) {
+      const ipRestrictionsCr = this.createIpRestrictions( this.props.qsAccount.ipRestrictions )
+      ipRestrictionsCr.node.addDependency( accountCr )
+    }
+
+    const vpcConnection = this.createVpcConnection( serviceRole )
+    vpcConnection.node.addDependency( accountCr )
+    vpcConnection.node.addDependency( managedPolicy )
+
+  }
+
+  private createVpcConnection ( serviceRole: IRole ): CfnVPCConnection {
+
+    const sg = this.buildQuickSightSecurityGroup();
+
+    const vpcConnectionProps: CfnVPCConnectionProps = {
+      awsAccountId: this.account,
+      name: this.props.naming.resourceName( "vpc-connection", 128 ),
+      securityGroupIds: [ sg.securityGroupId ],
+      roleArn: serviceRole.roleArn,
+      subnetIds: this.props.qsAccount.subnetIds,
+      vpcConnectionId: this.props.naming.resourceName( "vpc-", 128 )
+    }
+    return new CfnVPCConnection( this, 'vpc-connection', vpcConnectionProps )
+  }
+
+  private createIpRestrictions ( ipRestrictions: IpRestrictionProps[] ): CaefCustomResource {
+    const crStatement: PolicyStatement = new PolicyStatement( {
+      effect: Effect.ALLOW,
+      actions: [
+        "quicksight:UpdateIpRestriction",
+        "quicksight:DescribeIpRestriction"
+      ],
+      resources: [ "*" ]
+    } )
+
+    const ipRestrictionsMap = Object.fromEntries( ipRestrictions.map( restriction => {
+      return [ restriction.cidr, restriction.description || `Restriction for ${ restriction.cidr }` ]
+    } ) )
+
+    const crProps: CaefCustomResourceProps = {
+      resourceType: 'ip-restrictions',
+      code: Code.fromAsset( `${ __dirname }/../src/python/ip_restrictions` ),
+      runtime: Runtime.PYTHON_3_10,
+      handler: 'ip_restrictions.lambda_handler',
+      handlerRolePolicyStatements: [ crStatement ],
+      handlerPolicySuppressions: [ { id: 'AwsSolutions-IAM5', reason: 'quicksight:UpdateIpRestriction and quicksight:DescribeIpRestriction do not accept a resource' } ],
+      handlerProps: {
+        accountId: this.account,
+        ipRestrictionsMap: ipRestrictionsMap
+      },
+      naming: this.props.naming,
+      handlerLayers: [ this.boto3Layer ],
+    }
+    return new CaefCustomResource( this, 'update-ip-restrictions-cr', crProps )
   }
 
   // Creates Custom Resource to Manage Quicksight Account - Handles OnCreate, OnUpdate, OnDelete Stack Events
@@ -217,7 +291,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAcco
           ACCOUNT_ID: this.account,
         },
         role: accountCrRole,
-        layers: [ new CaefBoto3LayerVersion( this, 'boto3-layer', { naming: this.props.naming } ) ]
+        layers: [ this.boto3Layer ]
       }
     );
 
@@ -339,13 +413,14 @@ export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAcco
   }
 
   //Parses the Config and preps for QS Account API arguments
-  private createAccount ( accountProvider: Provider ): void {
+  private createAccount (): CustomResource {
+    const accountProvider: Provider = this.createAccountProvider();
     const accountCreateProps: AccountWithNameProps = {
       ...this.props.qsAccount, ...{
         accountName: this.props.naming.resourceName()
       }
     }
-    this.createAccountCr( accountProvider, accountCreateProps )
+    return this.createAccountCr( accountProvider, accountCreateProps )
   }
 
   private buildQuickSightSecurityGroup (): SecurityGroup {
@@ -387,14 +462,14 @@ export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAcco
       roleName: `service-role`,
       naming: this.props.naming
     } )
-    this.createManagedPolicies( role )
+
     return role;
   }
 
-  private createManagedPolicies ( role: IRole ) {
+  private createServiceManagedPolicy ( role: IRole ): IManagedPolicy {
 
-    const quickSightServiceGlueManagedPolicy = new ManagedPolicy( this, "quicksight-glue-policy", {
-      managedPolicyName: this.props.naming.resourceName( "quicksight-glue-policy" ),
+    const quickSightServiceManagedPolicy = new ManagedPolicy( this, "quicksight-service-policy", {
+      managedPolicyName: this.props.naming.resourceName( "quicksight-service-access" ),
       roles: [ role ]
     } )
 
@@ -406,7 +481,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAcco
       ],
       resources: [ '*' ]
     } )
-    quickSightServiceGlueManagedPolicy.addStatements( getGlueDBsStatement )
+    quickSightServiceManagedPolicy.addStatements( getGlueDBsStatement )
 
     const glueResourceArns = ( this.props.qsAccount.glueResourceAccess || [] ).map( resource => {
       if ( resource.includes( "*" ) ) {
@@ -432,23 +507,8 @@ export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAcco
       ],
       resources: glueResourceArns
     } )
-    quickSightServiceGlueManagedPolicy.addStatements( accessGlueStatement )
+    quickSightServiceManagedPolicy.addStatements( accessGlueStatement )
 
-    NagSuppressions.addResourceSuppressions(
-      quickSightServiceGlueManagedPolicy,
-      [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason: 'Resource wildcards may originate from app config. Warnings logged.'
-        }
-      ],
-      true
-    );
-
-    const quickSightServiceAthenaLFManagedPolicy = new ManagedPolicy( this, "quicksight-athena-lf-policy", {
-      managedPolicyName: this.props.naming.resourceName( "quicksight-athena-lf-policy" ),
-      roles: [ role ]
-    } )
 
     const accessLakeFormationStatement = new PolicyStatement( {
       sid: 'LakeFormationAccess',
@@ -460,7 +520,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAcco
         '*'
       ]
     } )
-    quickSightServiceAthenaLFManagedPolicy.addStatements( accessLakeFormationStatement )
+    quickSightServiceManagedPolicy.addStatements( accessLakeFormationStatement )
 
     const accessListAthenaWorkgroupStatement = new PolicyStatement( {
       sid: 'AthenaListWorkgroupAccess',
@@ -472,7 +532,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAcco
       ],
       resources: [ '*' ]
     } )
-    quickSightServiceAthenaLFManagedPolicy.addStatements( accessListAthenaWorkgroupStatement )
+    quickSightServiceManagedPolicy.addStatements( accessListAthenaWorkgroupStatement )
 
     const accessAthenaListTableMetaStatement = new PolicyStatement( {
       sid: 'AthenaListTableMeta',
@@ -483,20 +543,9 @@ export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAcco
       resources: [ `arn:${ this.partition }:athena:${ this.region }:${ this.account }:datacatalog/AwsDataCatalog` ]
     } )
 
-    quickSightServiceAthenaLFManagedPolicy.addStatements( accessAthenaListTableMetaStatement )
+    quickSightServiceManagedPolicy.addStatements( accessAthenaListTableMetaStatement )
 
-    NagSuppressions.addResourceSuppressions(
-      quickSightServiceAthenaLFManagedPolicy,
-      [
-        { id: 'AwsSolutions-IAM5', reason: 'lakeformation:GetDataAccess,athena:ListWorkGroups do not take resources.' }
-      ],
-      true
-    );
 
-    const quickSightServiceRedshiftManagedPolicy = new ManagedPolicy( this, "quicksight-redshift-policy", {
-      managedPolicyName: this.props.naming.resourceName( "quicksight-redshift-policy" ),
-      roles: [ role ]
-    } )
     const accessRedShiftDescribeStatement = new PolicyStatement( {
       sid: 'RedShiftDescribe',
       effect: Effect.ALLOW,
@@ -506,13 +555,37 @@ export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAcco
       resources: [ "*" ]
 
     } )
-    quickSightServiceRedshiftManagedPolicy.addStatements( accessRedShiftDescribeStatement )
+    quickSightServiceManagedPolicy.addStatements( accessRedShiftDescribeStatement )
+
+    // Required for creating VPC Connections
+    const vpcReadStatement = new PolicyStatement( {
+      sid: 'VpcReadAccess',
+      effect: Effect.ALLOW,
+      actions: [
+        "ec2:DescribeSubnets",
+        "ec2:DescribeSecurityGroups"
+      ],
+      resources: [ "*" ]
+    } )
+    quickSightServiceManagedPolicy.addStatements( vpcReadStatement )
+
+    const vpcCreateStatement = new PolicyStatement( {
+      sid: 'VpcCreateAccess',
+      effect: Effect.ALLOW,
+      actions: [
+        "ec2:CreateNetworkInterface"
+      ],
+      resources: [ "*" ]
+    } )
+    quickSightServiceManagedPolicy.addStatements( vpcCreateStatement )
+
     NagSuppressions.addResourceSuppressions(
-      quickSightServiceRedshiftManagedPolicy,
+      quickSightServiceManagedPolicy,
       [
-        { id: 'AwsSolutions-IAM5', reason: 'redshift:DescribeClusters does not take resources.' }
+        { id: 'AwsSolutions-IAM5', reason: 'Ec2:DescribeSubnets, ec2:DescribeSecurityGroups, ec2:CreateNetworkInterface, redshift:DescribeClusters,lakeformation:GetDataAccess,athena:ListWorkGroups does not take resources. Resource wildcards may originate from app config. Warnings logged.' }
       ],
       true
     );
+    return quickSightServiceManagedPolicy
   }
 }

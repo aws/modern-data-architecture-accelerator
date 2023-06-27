@@ -76,9 +76,6 @@
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
   "stability": "experimental",
   "jsii": {
-    "excludeTypescript": [
-      "test/*.ts"
-    ],
     "outdir": "jsii-dist",
     "versionFormat": "full",
     "targets": {

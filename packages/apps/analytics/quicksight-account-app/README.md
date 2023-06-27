@@ -31,8 +31,20 @@ account:
   authenticationMethod: "IAM_AND_QUICKSIGHT" #Can take 'IAM_AND_QUICKSIGHT'|'IAM_ONLY'|'ACTIVE_DIRECTORY'
   notificationEmail: "example@example.com"
 
-  # The VPC on which the QS VPC Connection Security Group will be created
+  # The VPC to which the account will be associated
   vpcId: vpc-abcd1234
+
+  # The subnets to which the account will be associated.
+  # Note that QuickSight requires at least 2 subnets be provided.
+  subnetIds:
+    - test-subnet-id1
+    - test-subnet-id2
+
+  # (Optional) - A list of external CIDR ranges which will be provided access to the account via the QuickSight interface.
+  # If not specified, access will not be restricted by IP.
+  ipRestrictions:
+    - cidr: a.b.c.d/n
+      description: Restrict to my IP
 
   # The peers to which the Security Group will be granted access.
   # This controls which resources (data sources) on your VPC the QuickSight service will

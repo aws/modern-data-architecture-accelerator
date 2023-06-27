@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.38.0
+
+### Analytics Changes
+
+* Added IP Address Restrictions to QuickSight Account module
+* Added VPC Connection provisioning to QuickSight Account module
+
 ## 0.37.0
 
 ### General Changes

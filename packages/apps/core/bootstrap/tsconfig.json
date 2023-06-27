@@ -35,7 +35,6 @@
   ],
   "exclude": [
     "node_modules",
-    "cdk.out",
-    "test/*.ts"
+    "cdk.out"
   ]
 }

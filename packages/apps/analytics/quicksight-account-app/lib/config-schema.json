@@ -32,6 +32,13 @@
                     },
                     "type": "array"
                 },
+                "ipRestrictions": {
+                    "description": "List of IP CIDRs which will be provided access to the account via the QuickSight interface. IP access restrictions are disabled by default.",
+                    "items": {
+                        "$ref": "#/definitions/IpRestrictionProps"
+                    },
+                    "type": "array"
+                },
                 "lastName": {
                     "description": "The last name of the author of the Amazon QuickSight account to use for future communications.",
                     "type": "string"
@@ -42,10 +49,17 @@
                 },
                 "securityGroupAccess": {
                     "$ref": "#/definitions/CaefSecurityGroupRuleProps",
-                    "description": "Map of names to security group access definitions. Will be added as egrees/ingress rules to the QuickSight security group"
+                    "description": "Map of names to security group access definitions. Will be added as egrees/ingress rules to the QuickSight security group, permitting access\nbetween the QS account and internal resources on your VPC."
+                },
+                "subnetIds": {
+                    "description": "The Subnet IDs to which the QS Account will be connected.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "vpcId": {
-                    "description": "The VPC to which the security group will be associated.",
+                    "description": "The VPC to which the QS Account will be associated.",
                     "type": "string"
                 }
             },
@@ -53,6 +67,7 @@
                 "authenticationMethod",
                 "edition",
                 "notificationEmail",
+                "subnetIds",
                 "vpcId"
             ],
             "type": "object"
@@ -401,6 +416,21 @@
                 "STANDARD"
             ],
             "type": "string"
+        },
+        "IpRestrictionProps": {
+            "additionalProperties": false,
+            "properties": {
+                "cidr": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cidr"
+            ],
+            "type": "object"
         },
         "NagSuppressionProps": {
             "additionalProperties": false,
