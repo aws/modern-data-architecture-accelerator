@@ -494,7 +494,6 @@
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "List of existing named layer version Arns to be directly added to the function",
                     "type": "object"
                 },
                 "maxEventAgeSeconds": {

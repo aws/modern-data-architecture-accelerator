@@ -75,12 +75,15 @@ export interface StepFunctionL3ConstructProps extends CaefL3ConstructProps {
 }
 
 
-export class StepFunctionL3Construct extends CaefL3Construct<StepFunctionL3ConstructProps> {
+export class StepFunctionL3Construct extends CaefL3Construct {
+    protected readonly props: StepFunctionL3ConstructProps
+
 
     private readonly projectKmsKey: IKey;
 
     constructor( scope: Construct, id: string, props: StepFunctionL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         this.projectKmsKey = Key.fromKeyArn( this, this.props.projectName, this.props.projectKMSArn )
 

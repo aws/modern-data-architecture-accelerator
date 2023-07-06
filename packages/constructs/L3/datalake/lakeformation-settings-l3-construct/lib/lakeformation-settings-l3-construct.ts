@@ -25,12 +25,15 @@ export interface LakeFormationSettingsL3ConstructProps extends CaefL3ConstructPr
     readonly lakeFormationAdminRoleRefs: CaefRoleRef[];
 }
 
-export class LakeFormationSettingsL3Construct extends CaefL3Construct<LakeFormationSettingsL3ConstructProps> {
+export class LakeFormationSettingsL3Construct extends CaefL3Construct {
+    protected readonly props: LakeFormationSettingsL3ConstructProps
+
 
     private settingsProvider: Provider;
 
     constructor( scope: Construct, id: string, props: LakeFormationSettingsL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         this.settingsProvider = this.getLakeFormationSettingsCrProvider()
 

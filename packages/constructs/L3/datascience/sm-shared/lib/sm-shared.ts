@@ -16,6 +16,7 @@ export interface LifecycleScriptProps {
 }
 
 export interface NamedAssetProps {
+    /** @jsii ignore */
     readonly [ name: string ]: AssetProps
 }
 

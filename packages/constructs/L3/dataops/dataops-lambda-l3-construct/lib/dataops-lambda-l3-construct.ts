@@ -99,6 +99,7 @@ export interface FunctionProps {
     /**
      * List of existing named layer version Arns to be directly added to the function
      */
+    /** @jsii ignore */
     readonly layerArns?: { [ name: string ]: string }
     /**
      * The function execution time (in seconds) after which Lambda terminates
@@ -174,12 +175,15 @@ export interface LambdaFunctionL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-export class LambdaFunctionL3Construct extends CaefL3Construct<LambdaFunctionL3ConstructProps> {
+export class LambdaFunctionL3Construct extends CaefL3Construct {
+    protected readonly props: LambdaFunctionL3ConstructProps
+
 
     private readonly projectKmsKey: IKey;
 
     constructor( scope: Construct, id: string, props: LambdaFunctionL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         this.projectKmsKey = CaefKmsKey.fromKeyArn( this.scope, "project-kms", this.props.kmsArn )
 
@@ -210,6 +214,7 @@ export class LambdaFunctionL3Construct extends CaefL3Construct<LambdaFunctionL3C
         } )
     }
 
+    /** @jsii ignore */
     private createFunctionFromProps ( functionProps: FunctionProps, generatedLayersByName: { [ name: string ]: LayerVersion } ): Function {
 
         const role = CaefLambdaRole.fromRoleArn( this.scope, `lambda-role-${ functionProps.functionName }`, functionProps.roleArn )

@@ -17,10 +17,13 @@ export interface ServiceCatalogL3ConstructProps extends CaefL3ConstructProps {
     readonly portfolios: PortfolioPropsWithAccess[]
 }
 
-export class ServiceCatalogL3Construct extends CaefL3Construct<ServiceCatalogL3ConstructProps> {
+export class ServiceCatalogL3Construct extends CaefL3Construct {
+    protected readonly props: ServiceCatalogL3ConstructProps
+
 
     constructor( scope: Construct, id: string, props: ServiceCatalogL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
         props.portfolios.forEach( portfolioProps => {
             const portfolio = new Portfolio( this, `${ portfolioProps.displayName }-portfolio`, portfolioProps )
             const accessResolved = this.props.roleHelper.resolveRoleRefsWithOrdinals( portfolioProps.access || [], portfolioProps.displayName )

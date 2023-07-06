@@ -212,12 +212,14 @@ export interface DataWarehouseL3ConstructProps extends CaefL3ConstructProps {
 }
 
 //This stack creates all of the resources required for a Data Warehouse
-export class DataWarehouseL3Construct extends CaefL3Construct<DataWarehouseL3ConstructProps> {
+export class DataWarehouseL3Construct extends CaefL3Construct {
+  protected readonly props: DataWarehouseL3ConstructProps
   public static readonly defaultClusterPort = 54390
   private dataAdminRoleIds: string[]
   private bucketUserRoleIds: string[]
   constructor( scope: Construct, id: string, props: DataWarehouseL3ConstructProps ) {
-    super( scope, id, props );
+    super( scope, id, props )
+    this.props = props
 
     this.dataAdminRoleIds = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.dataAdminRoleRefs, "DataAdmin" ).map( x => x.id() )
     this.bucketUserRoleIds = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.warehouseBucketUserRoleRefs || [], "BucketUsers" ).map( x => x.id() )

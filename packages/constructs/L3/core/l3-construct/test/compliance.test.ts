@@ -16,7 +16,7 @@ interface TestL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-class TestL3Construct extends CaefL3Construct<TestL3ConstructProps> {
+class TestL3Construct extends CaefL3Construct {
     constructor( scope: Construct, id: string, props: TestL3ConstructProps ) {
         super( scope, id, props )
         this.getCrossAccountStack( '1231241242' )

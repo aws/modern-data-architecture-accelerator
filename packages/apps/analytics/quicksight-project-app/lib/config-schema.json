@@ -225,7 +225,6 @@
             "additionalProperties": false,
             "properties": {
                 "alternateDataSourceParameters": {
-                    "description": "A set of alternate data source parameters that you want to share for these credentials.",
                     "items": [
                         {
                             "additionalProperties": {},

@@ -95,10 +95,13 @@ export interface GlueCrawlerL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-export class GlueCrawlerL3Construct extends CaefL3Construct<GlueCrawlerL3ConstructProps> {
+export class GlueCrawlerL3Construct extends CaefL3Construct {
+    protected readonly props: GlueCrawlerL3ConstructProps
+
 
     constructor( scope: Construct, id: string, props: GlueCrawlerL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
 
         // Build our crawlers!

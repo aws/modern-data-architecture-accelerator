@@ -87,10 +87,13 @@ export interface SftpUsersL3ConstructProps extends CaefL3ConstructProps {
     readonly serverId: string;
 }
 
-export class SftpUsersL3Construct extends CaefL3Construct<SftpUsersL3ConstructProps> {
+export class SftpUsersL3Construct extends CaefL3Construct {
+    protected readonly props: SftpUsersL3ConstructProps
+
 
     constructor( scope: Construct, id: string, props: SftpUsersL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         for ( let userConfig of this.props.users ) {
             let roleResolve: string

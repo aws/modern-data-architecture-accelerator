@@ -58,12 +58,15 @@ export interface QuickSightNamespaceL3ConstructProps extends CaefL3ConstructProp
 }
 
 //This stack creates QuickSight namespaces
-export class QuickSightNamespaceL3Construct extends CaefL3Construct<QuickSightNamespaceL3ConstructProps> {
+export class QuickSightNamespaceL3Construct extends CaefL3Construct {
+    protected readonly props: QuickSightNamespaceL3ConstructProps
+
 
     private readonly namespaceName: string;
 
     constructor( scope: Construct, id: string, props: QuickSightNamespaceL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
         this.namespaceName = props.naming.resourceName()
         const readerManagedPolicy = this.createReaderManagedPolicy()
         const glueManagedPolicy = this.props.glueResourceAccess && this.props.glueResourceAccess.length > 0 ? this.createGlueManagedPolicy() : undefined

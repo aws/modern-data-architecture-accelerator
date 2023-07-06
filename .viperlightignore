@@ -15,6 +15,6 @@ packages/apps/dataops/dataops-lambda-app/test/src/lambda/test-layer.zip # Empty 
 packages/constructs/L3/dataops/dataops-lambda-l3-construct/test/src/lambda/test-layer.zip # Empty test file
 packages/constructs/L2/lambda-constructs/src/python/boto3_layer/1.26.54.zip # Boto 3 layer package
 THIRD-PARTY-NOTICE.md # Content is verbatim third-party Licenses
-packages/constructs/L3/datascience/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1002 # SageMaker Central Account ID
-packages/constructs/L3/datascience/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1019 # SageMaker Central Account ID
+packages/constructs/L3/datascience/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1005 # SageMaker Central Account ID
+packages/constructs/L3/datascience/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1022 # SageMaker Central Account ID
 packages/constructs/L3/datascience/datascience-team-l3-construct/test/team.compliance.test.ts:501 # SageMaker Central Account ID

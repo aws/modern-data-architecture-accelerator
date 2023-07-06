@@ -2,12 +2,12 @@
     "name": "@aws-caef/caef",
     "private": true,
     "devDependencies": {
-        "jsii": "^1.84.0",
+        "jsii": "^5.1.3",
         "jsii-config": "^1.84.0",
         "jsii-pacmak": "^1.84.0",
         "nx": "^15.9.2",
         "lerna": "^6.6.1",
-        "@types/jest": "^27.5.1"
+        "@types/jest": "^29.5.0"
     },
     "overrides": {
         "@types/babel__traverse": "7.18.2",

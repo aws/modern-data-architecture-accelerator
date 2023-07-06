@@ -89,7 +89,9 @@ export class GlueWorkflowTarget implements IRuleTarget {
     }
 }
 
-export class GlueWorkflowL3Construct extends CaefL3Construct<GlueWorkflowL3ConstructProps> {
+export class GlueWorkflowL3Construct extends CaefL3Construct {
+    protected readonly props: GlueWorkflowL3ConstructProps
+
 
     private readonly projectKmsKey: ICaefKmsKey;
     private readonly projectName: string;
@@ -98,7 +100,8 @@ export class GlueWorkflowL3Construct extends CaefL3Construct<GlueWorkflowL3Const
     private eventBridgeRole?: IRole
 
     constructor( scope: Construct, id: string, props: GlueWorkflowL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         this.projectKmsKey = CaefKmsKey.fromKeyArn( this.scope, "project-kms", this.props.kmsArn )
         this.projectName = this.props.projectName

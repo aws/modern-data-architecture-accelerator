@@ -47,6 +47,7 @@ export interface CaefRoleProps extends CaefConstructProps {
      * @default - No policy is inlined in the Role resource.
      */
     readonly inlinePolicies?: {
+        /** @jsii ignore */
         [ name: string ]: PolicyDocument;
     };
     /**

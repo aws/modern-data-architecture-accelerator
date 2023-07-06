@@ -92,7 +92,11 @@ export interface DataSourceCredentialPairProps {
   /**
    * A set of alternate data source parameters that you want to share for these credentials.
    */
-  readonly alternateDataSourceParameters?: [ { [ key: string ]: any } ];
+  /** @jsii ignore */
+  readonly alternateDataSourceParameters?: [ {
+    /** @jsii ignore */
+    [ key: string ]: any
+  } ];
 };
 export interface DataSourceCredentialsProps {
   /**
@@ -195,7 +199,9 @@ export interface QuickSightProjectL3ConstructProps
    */
   readonly sharedFolders?: { [ key: string ]: SharedFoldersProps };
 };
-export class QuickSightProjectL3Construct extends CaefL3Construct<QuickSightProjectL3ConstructProps> {
+export class QuickSightProjectL3Construct extends CaefL3Construct {
+  protected readonly props: QuickSightProjectL3ConstructProps
+
   public static sharedFoldersActions: { [ key: string ]: string[] } =
     {
       "READER_FOLDER": [ "quicksight:DescribeFolder" ],
@@ -231,7 +237,8 @@ export class QuickSightProjectL3Construct extends CaefL3Construct<QuickSightProj
     id: string,
     props: QuickSightProjectL3ConstructProps
   ) {
-    super( scope, id, props );
+    super( scope, id, props )
+    this.props = props
     //Create QS Data Sources
     if ( this.props.dataSources ) {
       const DataSourceWithIdAndTypeProps: DataSourceWithIdAndTypeProps[] = this.props.dataSources;

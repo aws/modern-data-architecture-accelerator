@@ -19,6 +19,7 @@ export interface EventBusProps {
 }
 
 export interface NamedEventBusProps {
+    /** @jsii ignore */
     readonly [ name: string ]: EventBusProps
 }
 
@@ -26,10 +27,13 @@ export interface EventBridgeL3ConstructProps extends CaefL3ConstructProps {
     readonly eventBuses?: NamedEventBusProps
 }
 
-export class EventBridgeL3Construct extends CaefL3Construct<EventBridgeL3ConstructProps> {
+export class EventBridgeL3Construct extends CaefL3Construct {
+    protected readonly props: EventBridgeL3ConstructProps
+
 
     constructor( scope: Construct, id: string, props: EventBridgeL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         Object.entries( this.props.eventBuses || {} ).forEach( entry => {
             const eventBusName = entry[ 0 ]

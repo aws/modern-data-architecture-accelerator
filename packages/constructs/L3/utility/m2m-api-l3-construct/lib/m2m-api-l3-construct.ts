@@ -92,6 +92,7 @@ export interface M2MApiProps {
 }
 
 export interface NamedAppClientProps {
+    /** @jsii ignore */
     readonly [ name: string ]: AppClientProps
 }
 
@@ -120,13 +121,16 @@ export interface M2MApiL3ConstructProps extends CaefL3ConstructProps {
     readonly m2mApiProps: M2MApiProps;
 }
 
-export class M2MApiL3Construct extends CaefL3Construct<M2MApiL3ConstructProps> {
+export class M2MApiL3Construct extends CaefL3Construct {
+    protected readonly props: M2MApiL3ConstructProps
+
     private readonly adminRoles: CaefResolvableRole[]
 
     private static readonly identifier: string = "m2m-api"
 
     constructor( scope: Construct, id: string, props: M2MApiL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         this.adminRoles = props.roleHelper.resolveRoleRefsWithOrdinals( props.m2mApiProps.adminRoles, "admin" )
 

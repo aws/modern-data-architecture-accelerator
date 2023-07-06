@@ -30,10 +30,12 @@ export interface NamedDatabaseGrantProps {
     /**
      * The unique name of the grant
      */
+    /** @jsii ignore */
     readonly [ name: string ]: DatabaseGrantProps
 }
 
 export interface NamedPrincipalArnProps {
+    /** @jsii ignore */
     [ name: string ]: string
 }
 
@@ -99,6 +101,7 @@ export interface DatabaseLakeFormationProps {
 }
 
 export interface NamedDatabaseProps {
+    /** @jsii ignore */
     readonly [ name: string ]: DatabaseProps
 }
 
@@ -152,6 +155,7 @@ export interface ClassifierConfigProps {
 }
 
 export interface NamedClassifierProps {
+    /** @jsii ignore */
     readonly [ name: string ]: ClassifierProps
 }
 
@@ -189,6 +193,7 @@ export interface ConnectionPhysical {
 }
 
 export interface NamedConnectionProps {
+    /** @jsii ignore */
     readonly [ name: string ]: ConnectionProps
 }
 
@@ -260,6 +265,7 @@ export interface DataOpsProjectL3ConstructProps extends CaefL3ConstructProps {
 }
 
 export interface NamedSecurityGroupConfigProps {
+    /** @jsii ignore */
     [ name: string ]: SecurityGroupConfigProps
 }
 
@@ -278,7 +284,9 @@ export interface FailureNotificationsProps {
     readonly email?: string[]
 }
 
-export class DataOpsProjectL3Construct extends CaefL3Construct<DataOpsProjectL3ConstructProps> {
+export class DataOpsProjectL3Construct extends CaefL3Construct {
+    protected readonly props: DataOpsProjectL3ConstructProps
+
 
     private projectExecutionRoles: CaefResolvableRole[]
     private dataAdminRoles: CaefResolvableRole[]
@@ -287,7 +295,8 @@ export class DataOpsProjectL3Construct extends CaefL3Construct<DataOpsProjectL3C
     private s3OutputKmsKey: IKey
 
     constructor( scope: Construct, id: string, props: DataOpsProjectL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
         this.s3OutputKmsKey = CaefKmsKey.fromKeyArn( this.scope, "s3OutputKmsKey", props.s3OutputKmsKeyArn )
         this.projectExecutionRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.projectExecutionRoleRefs, "ProjectExRoles" )
         this.dataAdminRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.dataAdminRoleRefs, "DataAdmin" )
@@ -364,6 +373,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct<DataOpsProjectL3C
 
         return securityGroup
     }
+    /** @jsii ignore */
     private createProjectConnectors ( connections: NamedConnectionProps, projectSecurityGroups: { [ name: string ]: SecurityGroup } ) {
         Object.entries( connections ).forEach( entry => {
             const connectionName = entry[ 0 ]

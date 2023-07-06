@@ -151,13 +151,16 @@ export interface DataLakeL3ConstructProps extends CaefL3ConstructProps {
     readonly buckets: BucketDefinition[];
 }
 
-export class S3DatalakeBucketL3Construct extends CaefL3Construct<DataLakeL3ConstructProps> {
+export class S3DatalakeBucketL3Construct extends CaefL3Construct {
+    protected readonly props: DataLakeL3ConstructProps
+
 
     private dataLakeFolderProvider?: Provider
     public readonly buckets: { [ key: string ]: IBucket }
     public readonly kmsKey: IKey
     constructor( scope: Construct, id: string, props: DataLakeL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         //Create a Glue Database to contain bucket utility tables such as inventory
         const glueUtilDatabase = new Database( this.scope, "util-database", {

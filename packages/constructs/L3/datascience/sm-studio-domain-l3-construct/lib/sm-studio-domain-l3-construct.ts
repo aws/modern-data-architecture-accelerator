@@ -164,7 +164,10 @@ export interface StudioLifecycleConfigProps {
   readonly kernel?: LifecycleScriptProps
 }
 
-export interface NamedUserProfileProps { [ name: string ]: UserProfileProps }
+export interface NamedUserProfileProps {
+  /** @jsii ignore */
+  [ name: string ]: UserProfileProps
+}
 
 export interface UserProfileProps {
   /**
@@ -199,13 +202,16 @@ export interface SagemakerStudioDomainL3ConstructProps extends CaefL3ConstructPr
 }
 
 //This stack creates and manages a SageMaker Studio Domain
-export class SagemakerStudioDomainL3Construct extends CaefL3Construct<SagemakerStudioDomainL3ConstructProps> {
+export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
+  protected readonly props: SagemakerStudioDomainL3ConstructProps
+
   public readonly kmsKey: IKey;
   public readonly securityGroup: ISecurityGroup;
   public readonly domain: CaefStudioDomain;
 
   constructor( scope: Construct, id: string, props: SagemakerStudioDomainL3ConstructProps ) {
-    super( scope, id, props );
+    super( scope, id, props )
+    this.props = props
 
     const resolvableDefaultExecutionRole = props.domain.defaultExecutionRole ?
       this.props.roleHelper.resolveRoleRefWithRefId( props.domain.defaultExecutionRole, "ex-role" ) :

@@ -19,6 +19,7 @@ import { CaefConfigRefValueTransformer } from '@aws-caef/config';
 
 
 export interface NamedSecurityGroupProps {
+  /** @jsii ignore */
   readonly [ name: string ]: SecurityGroupProps
 }
 
@@ -44,10 +45,12 @@ export interface KeyPairProps {
   readonly kmsKeyArn?: string
 }
 export interface NamedKeyPairProps {
+  /** @jsii ignore */
   readonly [ name: string ]: KeyPairProps
 }
 
 export interface NamedInitProps {
+  /** @jsii ignore */
   readonly [ name: string ]: InitProps
 }
 
@@ -64,6 +67,7 @@ export interface InitProps {
 }
 
 export interface NamedConfigSetsProps {
+  /** @jsii ignore */
   readonly [ name: string ]: ConfigSetsProps
 }
 
@@ -72,6 +76,7 @@ export interface ConfigSetsProps {
 }
 
 export interface NamedConfigProps {
+  /** @jsii ignore */
   readonly [ name: string ]: ConfigProps
 }
 
@@ -119,6 +124,7 @@ export interface NamedPackageProps {
     * Refers to package to be installed
     * key could be any string, and is just a reference, not used for package itself.
     */
+  /** @jsii ignore */
   readonly [ name: string ]: PackageProps
 }
 
@@ -154,6 +160,7 @@ export interface PackageProps {
 }
 
 export interface NamedGroupProps {
+  /** @jsii ignore */
   readonly [ name: string ]: GroupProps
 }
 
@@ -168,6 +175,7 @@ export interface GroupProps {
 }
 
 export interface NamedUserProps {
+  /** @jsii ignore */
   readonly [ name: string ]: UserProps
 }
 
@@ -192,7 +200,8 @@ export interface NamedSourceProps {
   /**
    * Key is the directory where sources file needs to be stored.
    */
-  readonly [ dirname: string ]: SourceProps
+  /** @jsii ignore */
+  readonly [ name: string ]: SourceProps
 }
 
 export interface SourceProps {
@@ -206,7 +215,8 @@ export interface NamedFileProps {
   /**
    * Key is the directory where sources file needs to be stored.
    */
-  readonly [ dirname: string ]: FileProps
+  /** @jsii ignore */
+  readonly [ name: string ]: FileProps
 }
 
 export interface FileProps {
@@ -225,6 +235,7 @@ export interface NamedCommandProps {
    * Identifier key for this command.
    * Commands are executed in lexicographical order of their key names.
    */
+  /** @jsii ignore */
   readonly [ name: string ]: CommandProps
 }
 
@@ -282,6 +293,7 @@ export interface CommandProps {
 }
 
 export interface NamedEnvProps {
+  /** @jsii ignore */
   readonly [ name: string ]: string
 }
 
@@ -292,6 +304,7 @@ export interface NamedServiceProps {
    * For Windows can be retrieved using Get-Service powershell command
    * https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-service?view=powershell-7.3
    */
+  /** @jsii ignore */
   readonly [ name: string ]: ServiceProps
 }
 
@@ -387,6 +400,7 @@ export interface InitOptionsProps {
 }
 
 export interface NamedInstanceProps {
+  /** @jsii ignore */
   readonly [ name: string ]: InstanceProps
 }
 
@@ -510,7 +524,9 @@ export interface Ec2L3ConstructProps extends CaefL3ConstructProps {
 }
 
 //This stack creates and manages an EC2 instance
-export class Ec2L3Construct extends CaefL3Construct<Ec2L3ConstructProps> {
+export class Ec2L3Construct extends CaefL3Construct {
+  protected readonly props: Ec2L3ConstructProps
+
   private static osTypeMap: { [ key: string ]: OperatingSystemType } = {
     'linux': OperatingSystemType.LINUX,
     'windows': OperatingSystemType.WINDOWS,
@@ -527,7 +543,8 @@ export class Ec2L3Construct extends CaefL3Construct<Ec2L3ConstructProps> {
   public readonly instances: { [ key: string ]: Instance } = {}
   public readonly cfnInit: { [ key: string ]: CloudFormationInit } = {}
   constructor( scope: Construct, id: string, props: Ec2L3ConstructProps ) {
-    super( scope, id, props );
+    super( scope, id, props )
+    this.props = props
 
     this.adminRoles = props.roleHelper.resolveRoleRefsWithOrdinals( props.adminRoles, "admin" )
 
@@ -556,6 +573,7 @@ export class Ec2L3Construct extends CaefL3Construct<Ec2L3ConstructProps> {
 
 
   private createConfigSet ( namedConfigSetsProps: NamedConfigSetsProps ) {
+    /** @jsii ignore */
     const configSetMap: { [ name: string ]: string[] } = {}
     Object.entries( namedConfigSetsProps ).forEach( entry => {
 
@@ -568,6 +586,7 @@ export class Ec2L3Construct extends CaefL3Construct<Ec2L3ConstructProps> {
 
 
   private createConfig ( namedConfigProps: NamedConfigProps ) {
+    /** @jsii ignore */
     const configMap: { [ name: string ]: InitConfig } = {}
     Object.entries( namedConfigProps ).forEach( entry => {
 
@@ -755,6 +774,7 @@ export class Ec2L3Construct extends CaefL3Construct<Ec2L3ConstructProps> {
   }
 
   private createInit ( namedInitProps: NamedInitProps ) {
+    /** @jsii ignore */
     const initMap: { [ name: string ]: CloudFormationInit } = {}
     Object.entries( namedInitProps ).forEach( entry => {
 

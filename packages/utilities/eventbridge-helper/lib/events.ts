@@ -15,6 +15,7 @@ export interface NamedS3EventBridgeRuleProps {
     /**
      * Named S3 event rules
      */
+    /** @jsii ignore */
     readonly [ name: string ]: S3EventBridgeRuleProps
 }
 
@@ -38,6 +39,7 @@ export interface NamedEventBridgeRuleProps {
     /**
      * Named event rules
      */
+    /** @jsii ignore */
     readonly [ name: string ]: EventBridgeRuleProps
 }
 

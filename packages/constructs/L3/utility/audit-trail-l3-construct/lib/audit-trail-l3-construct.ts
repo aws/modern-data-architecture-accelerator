@@ -30,10 +30,13 @@ export interface AuditTrailL3ConstructProps extends CaefL3ConstructProps {
     readonly trail: AuditTrailProps
 }
 
-export class AuditTrailL3Construct extends CaefL3Construct<AuditTrailL3ConstructProps> {
+export class AuditTrailL3Construct extends CaefL3Construct {
+    protected readonly props: AuditTrailL3ConstructProps
+
 
     constructor( scope: Construct, id: string, props: AuditTrailL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
         this.createAuditResources()
     }
 

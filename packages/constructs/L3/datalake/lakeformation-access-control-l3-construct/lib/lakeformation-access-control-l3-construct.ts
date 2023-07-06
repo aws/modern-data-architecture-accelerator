@@ -19,6 +19,7 @@ import { Construct } from 'constructs';
 export type PermissionsConfig = "read" | "write" | "super"
 
 export interface NamedResourceLinkProps {
+  /** @jsii ignore */
   [ name: string ]: ResourceLinkProps
 }
 
@@ -46,6 +47,7 @@ export interface NamedPrincipalProps {
   /**
   * Name for the principal.
   */
+  /** @jsii ignore */
   readonly [ name: string ]: PrincipalProps
 }
 
@@ -77,6 +79,7 @@ export interface NamedGrantProps {
   /**
    * The unique name of the grant
    */
+  /** @jsii ignore */
   readonly [ name: string ]: GrantProps
 }
 
@@ -114,7 +117,9 @@ export interface LakeFormationAccessControlL3ConstructProps extends CaefL3Constr
   readonly resourceLinks?: NamedResourceLinkProps
 }
 
-export class LakeFormationAccessControlL3Construct extends CaefL3Construct<LakeFormationAccessControlL3ConstructProps> {
+export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
+  protected readonly props: LakeFormationAccessControlL3ConstructProps
+
 
   public static readonly DATABASE_READ_PERMISSIONS: string[] = [ "DESCRIBE" ]
   public static readonly DATABASE_READ_WRITE_PERMISSIONS: string[] = [ "DESCRIBE", "CREATE_TABLE", "ALTER" ]
@@ -145,7 +150,8 @@ export class LakeFormationAccessControlL3Construct extends CaefL3Construct<LakeF
   private static accountGrants: { [ account: string ]: CfnPrincipalPermissions } = {}
 
   constructor( scope: Construct, id: string, props: LakeFormationAccessControlL3ConstructProps ) {
-    super( scope, id, props );
+    super( scope, id, props )
+    this.props = props
 
     this.createResourceLinks( this.props.resourceLinks || {} )
 

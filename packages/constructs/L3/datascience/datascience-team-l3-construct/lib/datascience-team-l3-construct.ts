@@ -53,10 +53,13 @@ export interface DataScienceTeamL3ConstructProps extends CaefL3ConstructProps {
 
 //This stack creates all of the resources required for a Data Science Team
 //to use SageMaker Studio on top of a Data Lake
-export class DataScienceTeamL3Construct extends CaefL3Construct<DataScienceTeamL3ConstructProps> {
+export class DataScienceTeamL3Construct extends CaefL3Construct {
+  protected readonly props: DataScienceTeamL3ConstructProps
+
 
   constructor( scope: Construct, id: string, props: DataScienceTeamL3ConstructProps ) {
-    super( scope, id, props );
+    super( scope, id, props )
+    this.props = props
 
     const teamExecutionRoleResolved = props.roleHelper.resolveRoleRefWithRefId( this.props.team.teamExecutionRole, "team-execution-role" )
     const teamExecutionRole = Role.fromRoleArn( this, 'team-execution-role', teamExecutionRoleResolved.arn() )

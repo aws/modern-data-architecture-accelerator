@@ -57,14 +57,17 @@ export interface GlueCatalogL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-export class GlueCatalogL3Construct extends CaefL3Construct<GlueCatalogL3ConstructProps> {
+export class GlueCatalogL3Construct extends CaefL3Construct {
+    protected readonly props: GlueCatalogL3ConstructProps
+
 
     private catalogResourcePolicyProvider?: Provider;
     private consumerAccounts?: { [ key: string ]: string; }
     private producerAccounts?: { [ key: string ]: string; }
 
     constructor( scope: Construct, id: string, props: GlueCatalogL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
         this.consumerAccounts = Object.fromEntries( Object.entries( this.props.consumerAccounts || [] ).filter( x => x[ 1 ] != this.account ) )
         this.producerAccounts = Object.fromEntries( Object.entries( this.props.producerAccounts || [] ).filter( x => x[ 1 ] != this.account ) )
         const allReadPrincipalArns: string[] = []

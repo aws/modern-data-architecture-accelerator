@@ -266,6 +266,7 @@ export interface GeneratedLocations {
     /**
      * key: location name
      */
+    /** @jsii ignore */
     [ key: string ]: CfnLocationNFS | CfnLocationSMB | CfnLocationS3 | CfnLocationObjectStorage
 }
 
@@ -376,10 +377,13 @@ interface VpcEndpointAndSecurityGroup {
     readonly securityGroup: ISecurityGroup
 }
 
-export class DataSyncL3Construct extends CaefL3Construct<DataSyncL3ConstructProps> {
+export class DataSyncL3Construct extends CaefL3Construct {
+    protected readonly props: DataSyncL3ConstructProps
+
 
     constructor( scope: Construct, id: string, props: DataSyncL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         let vpcEndpointAndSg: VpcEndpointAndSecurityGroup | undefined
         if ( props.vpc ) {

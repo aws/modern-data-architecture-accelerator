@@ -132,10 +132,13 @@ export interface GlueJobL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-export class GlueJobL3Construct extends CaefL3Construct<GlueJobL3ConstructProps> {
+export class GlueJobL3Construct extends CaefL3Construct {
+    protected readonly props: GlueJobL3ConstructProps
+
 
     constructor( scope: Construct, id: string, props: GlueJobL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         const deploymentRole = CaefRole.fromRoleArn( this.scope, `deployment-role`, this.props.deploymentRoleArn )
         const projectBucket = CaefBucket.fromBucketName( this.scope, `project-bucket`, this.props.projectBucketName )

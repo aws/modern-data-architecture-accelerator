@@ -58,7 +58,9 @@ export interface CaefAthenaWorkgroupConfigurationProps {
 
 //This stack creates all of the resources required for a Data Science workgroup
 //to use SageMaker Studio on top of a Data Lake
-export class AthenaWorkgroupL3Construct extends CaefL3Construct<AthenaWorkgroupL3ConstructProps> {
+export class AthenaWorkgroupL3Construct extends CaefL3Construct {
+    protected readonly props: AthenaWorkgroupL3ConstructProps
+
 
     private dataAdminRoleIds: string[]
     private athenaUserRoleIds: string[]
@@ -66,7 +68,8 @@ export class AthenaWorkgroupL3Construct extends CaefL3Construct<AthenaWorkgroupL
     private resultsBucketOnlyRoleIds: string[]
 
     constructor( scope: Construct, id: string, props: AthenaWorkgroupL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         this.dataAdminRoleIds = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.dataAdminRoles, "DataAdmin" ).map( x => x.id() )
         const athenaUserResolveds = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.athenaUserRoles, "AthenaUser" )

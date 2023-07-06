@@ -149,13 +149,16 @@ export interface DatabrewProjectConfig {
 
 
 //This stack creates and manages a SageMaker Studio Domain
-export class DataBrewL3Construct extends CaefL3Construct<DataBrewL3ConstructProps> {
+export class DataBrewL3Construct extends CaefL3Construct {
+  protected readonly props: DataBrewL3ConstructProps
+
 
   private datasets = new Map();
   private recipes = new Map();
 
   constructor( scope: Construct, id: string, props: DataBrewL3ConstructProps ) {
-    super( scope, id, props );
+    super( scope, id, props )
+    this.props = props
 
     // create datasets
     const datasets = this.props.datasets

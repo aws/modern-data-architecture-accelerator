@@ -102,14 +102,14 @@ export class RestrictObjectPrefixToRoles {
         if ( props.readRoleIds != undefined && props.readRoleIds.length > 0 ) {
             // Construct our User:Id roles for read
             let statement = this._readStatementScaffold( props )
-            statement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.readRoleIds.map( x => `${ x }:*` ) ) ].sort() } )
+            statement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.readRoleIds.map( x => `${ x }:*` ) ) ].sort( ( a, b ) => a.localeCompare( b ) ) } )
             statement.addAnyPrincipal()
             this._readStatements.push( statement )
         }
         // FEDERATED / READWRITE
         if ( props.readWriteRoleIds != undefined && props.readWriteRoleIds.length > 0 ) {
             let statement = this._readWriteStatementScaffold( props )
-            statement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.readWriteRoleIds.map( x => `${ x }:*` ) ) ].sort() } )
+            statement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.readWriteRoleIds.map( x => `${ x }:*` ) ) ].sort( ( a, b ) => a.localeCompare( b ) ) } )
             statement.addAnyPrincipal()
             this._readWriteStatements.push( statement )
         }
@@ -117,7 +117,7 @@ export class RestrictObjectPrefixToRoles {
         // FEDERATED / READWRITESUPER
         if ( props.readWriteSuperRoleIds != undefined && props.readWriteSuperRoleIds.length > 0 ) {
             let statement = this._readWriteSuperStatementScaffold( props )
-            statement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.readWriteSuperRoleIds.map( x => `${ x }:*` ) ) ].sort() } )
+            statement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.readWriteSuperRoleIds.map( x => `${ x }:*` ) ) ].sort( ( a, b ) => a.localeCompare( b ) ) } )
             statement.addAnyPrincipal()
             this._readWriteSuperStatements.push( statement )
         }
@@ -125,7 +125,6 @@ export class RestrictObjectPrefixToRoles {
         // NONFEDERATED / READ
         if ( props.readPrincipals != undefined && props.readPrincipals.length > 0 ) {
             let statement = this._readStatementScaffold( props )
-            props.readPrincipals.sort()
             props.readPrincipals.forEach( principal => {
                 statement.addPrincipals( principal )
             } )
@@ -134,7 +133,6 @@ export class RestrictObjectPrefixToRoles {
         // NONFEDERATED / READWRITE
         if ( props.readWritePrincipals != undefined && props.readWritePrincipals.length > 0 ) {
             let statement = this._readWriteStatementScaffold( props )
-            props.readWritePrincipals.sort()
             props.readWritePrincipals.forEach( principal => {
                 statement.addPrincipals( principal )
             } )
@@ -143,7 +141,6 @@ export class RestrictObjectPrefixToRoles {
         // NONFEDERATED / READWRITESUPER
         if ( props.readWriteSuperPrincipals != undefined && props.readWriteSuperPrincipals.length > 0 ) {
             let statement = this._readWriteSuperStatementScaffold( props )
-            props.readWriteSuperPrincipals.sort()
             props.readWriteSuperPrincipals.forEach( principal => {
                 statement.addPrincipals( principal )
             } )
@@ -232,7 +229,7 @@ export class RestrictBucketToRoles {
             actions: RestrictObjectPrefixToRoles.BUCKET_ALLOW_ACTIONS,
         } )
         this.allowStatement.addAnyPrincipal()
-        this.allowStatement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.roleExcludeIds.map( x => `${ x }:*` ) ) ].sort() } )
+        this.allowStatement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.roleExcludeIds.map( x => `${ x }:*` ) ) ].sort( ( a, b ) => a.localeCompare( b ) ) } )
 
         // Constuct our deny statement.
         // prefixIncludes denotes we want to include a prefix in our deny meaning Resource
@@ -268,10 +265,10 @@ export class RestrictBucketToRoles {
         this.denyStatement.addAnyPrincipal()
 
         // Build our conditionals.
-        props.roleExcludeIds.sort()
+        props.roleExcludeIds.sort( ( a, b ) => a.localeCompare( b ) )
         this.denyConditionalNotEquals[ "aws:userId" ] = props.roleExcludeIds.map( x => `${ x }:*` )
         if ( props.principalExcludes && props.principalExcludes.length > 0 ) {
-            this.denyConditionalNotEquals[ "aws:PrincipalArn" ] = [ ...new Set( props.principalExcludes ) ].sort()
+            this.denyConditionalNotEquals[ "aws:PrincipalArn" ] = [ ...new Set( props.principalExcludes ) ].sort( ( a, b ) => a.localeCompare( b ) )
         }
 
         // Construct our conditional for our deny

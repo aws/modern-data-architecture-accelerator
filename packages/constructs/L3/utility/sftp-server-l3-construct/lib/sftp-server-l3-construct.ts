@@ -38,11 +38,14 @@ export interface SftpServerL3ConstructProps extends CaefL3ConstructProps {
     readonly server: ServerProps;
 }
 
-export class SftpServerL3Construct extends CaefL3Construct<SftpServerL3ConstructProps> {
+export class SftpServerL3Construct extends CaefL3Construct {
+    protected readonly props: SftpServerL3ConstructProps
+
     protected readonly server: CfnServer
 
     constructor( scope: Construct, id: string, props: SftpServerL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         let elasticIp = undefined;
 

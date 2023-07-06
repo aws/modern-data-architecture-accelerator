@@ -109,11 +109,14 @@ export interface RolesL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-export class RolesL3Construct extends CaefL3Construct<RolesL3ConstructProps> {
+export class RolesL3Construct extends CaefL3Construct {
+    protected readonly props: RolesL3ConstructProps
+
     public readonly generatedRoles: { [ key: string ]: IRole }
 
     constructor( scope: Construct, id: string, props: RolesL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
         const federationProviders = this.createFederations()
         const generatedPolicies = this.createManagedPolicies()
         this.generatedRoles = this.createRoles( federationProviders, generatedPolicies ) || {}

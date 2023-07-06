@@ -30,6 +30,7 @@ export interface NotebookAssetDeploymentConfig {
 }
 
 export interface NamedAssetProps {
+  /** @jsii ignore */
   readonly [ name: string ]: AssetProps
 }
 
@@ -54,11 +55,13 @@ export interface NamedLifecycleConfigProps {
   /**
  * Lifecycle config scripts
  */
-  readonly [ named: string ]: NotebookLifeCycleConfigProps
+  /** @jsii ignore */
+  readonly [ name: string ]: NotebookLifeCycleConfigProps
 }
 
 export interface NotebookWithIdProps {
-  readonly [ id: string ]: NotebookProps
+  /** @jsii ignore */
+  readonly [ name: string ]: NotebookProps
 }
 
 export interface NotebookProps {
@@ -82,11 +85,13 @@ export interface NotebookProps {
 
 
 //This stack creates and manages a SageMaker Studio Domain
-export class SagemakerNotebookL3Construct extends CaefL3Construct<SagemakerNotebookL3ConstructProps> {
+export class SagemakerNotebookL3Construct extends CaefL3Construct {
+  protected readonly props: SagemakerNotebookL3ConstructProps
+
 
   constructor( stack: Stack, id: string, props: SagemakerNotebookL3ConstructProps ) {
     super( stack, id, props );
-
+    this.props = props
     const lifecycleConfigsMap = props.lifecycleConfigs ? this.createLifecycleConfigs( props.lifecycleConfigs ) : {}
     if ( this.props.notebooks ) this.createNotebooks( this.props.notebooks, lifecycleConfigsMap )
 
@@ -156,6 +161,7 @@ export class SagemakerNotebookL3Construct extends CaefL3Construct<SagemakerNoteb
     new CaefNoteBook( this, notebookId, createNotebookProps )
   }
 
+  /** @jsii ignore */
   private resolveLifecycleConfigName ( lifecycleConfigName: string, lifecycleConfigsMap: { [ name: string ]: CfnNotebookInstanceLifecycleConfig } ): string {
     if ( lifecycleConfigName.startsWith( "external:" ) ) {
       return lifecycleConfigName.replace( /^external:/, "" )

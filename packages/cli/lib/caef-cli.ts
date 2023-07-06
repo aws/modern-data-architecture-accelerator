@@ -119,7 +119,7 @@ export class CaefDeploy {
         console.log( `-----------------------------------------------------------` )
         console.log( `${ this.action.charAt( 0 ).toUpperCase() + this.action.slice( 1 ) }ing Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }` )
         console.log( `-----------------------------------------------------------` )
-        const orderedStages = this.action == "destroy" ? Object.keys( envDeployStages ).sort().reverse() : Object.keys( envDeployStages ).sort()
+        const orderedStages = this.action == "destroy" ? Object.keys( envDeployStages ).sort( ( a, b ) => ( +a - +b ) ).reverse() : Object.keys( envDeployStages ).sort( ( a, b ) => ( +a - +b ) )
         orderedStages.forEach( stage => {
             console.log( `Running CAEF stage ${ stage } for ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }` )
             const stageApps = envDeployStages[ stage ]

@@ -91,11 +91,14 @@ export interface QuickSightAccountL3ConstructProps extends CaefL3ConstructProps 
   readonly qsAccount: AccountProps
 }
 
-export class QuickSightAccountL3Construct extends CaefL3Construct<QuickSightAccountL3ConstructProps> {
+export class QuickSightAccountL3Construct extends CaefL3Construct {
+  protected readonly props: QuickSightAccountL3ConstructProps
+
 
   private boto3Layer: LayerVersion
   constructor( scope: Construct, id: string, props: QuickSightAccountL3ConstructProps ) {
-    super( scope, id, props );
+    super( scope, id, props )
+    this.props = props
     this.boto3Layer = new CaefBoto3LayerVersion( this, 'boto3-layer', { naming: this.props.naming } )
 
     const serviceRole = this.buildQuickSightServiceRole();

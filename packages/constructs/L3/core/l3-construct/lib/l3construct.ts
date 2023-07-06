@@ -10,7 +10,7 @@ import { Construct } from "constructs";
 
 
 /**
- * Interface for CAEF-specific L3 construct props.
+ * Interface for CAEF-specific L3 construct baseprops.
  */
 export interface CaefL3ConstructProps extends CaefConstructProps {
     readonly roleHelper: CaefRoleHelper
@@ -20,21 +20,22 @@ export interface CaefL3ConstructProps extends CaefConstructProps {
 /**
  * Base class for CAEF CDK L3 Constructs
  */
-export abstract class CaefL3Construct<t extends CaefL3ConstructProps> extends Construct {
-    protected readonly props: t;
-    protected readonly scope: Construct
+export abstract class CaefL3Construct extends Construct {
 
-    constructor( scope: Construct, id: string, props: t ) {
+    protected readonly scope: Construct
+    protected readonly baseprops: CaefL3ConstructProps
+
+    constructor( scope: Construct, id: string, baseprops: CaefL3ConstructProps ) {
         super( scope, id )
         this.scope = scope
-        this.props = props
+        this.baseprops = baseprops
     }
 
     protected getCrossAccountStack ( account: string ): Stack {
-        if ( !this.props.crossAccountStacks || !this.props.crossAccountStacks[ account ] ) {
+        if ( !this.baseprops.crossAccountStacks || !this.baseprops.crossAccountStacks[ account ] ) {
             throw new Error( `Cross account stack not available. Ensure module is configured with 'additional_accounts' containing '${ account }'` )
         }
-        return this.props.crossAccountStacks[ account ]
+        return this.baseprops.crossAccountStacks[ account ]
     }
 
     protected get partition (): string {

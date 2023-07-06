@@ -51,13 +51,16 @@ export interface AuditL3ConstructProps extends CaefL3ConstructProps {
     readonly inventoryPrefix: string
 }
 
-export class AuditL3Construct extends CaefL3Construct<AuditL3ConstructProps> {
+export class AuditL3Construct extends CaefL3Construct {
+    protected readonly props: AuditL3ConstructProps
+
 
     private readonly auditSourceAccounts: string[];
     private readonly auditSourceRegions: string[];
     private readonly readRoleIds: string[]
     constructor( scope: Construct, id: string, props: AuditL3ConstructProps ) {
-        super( scope, id, props );
+        super( scope, id, props )
+        this.props = props
 
         this.auditSourceAccounts = [ this.account, ...this.props.sourceAccounts ]
         this.auditSourceRegions = [ this.region, ...this.props.sourceRegions ]
