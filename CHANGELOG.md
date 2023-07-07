@@ -2,6 +2,11 @@
 
 ## 0.38.0
 
+### General Changes
+
+* Updated codebase for compatibility with JSII 5.x
+* Pruned dependencies causing NPM vulnerability warnings
+
 ### Analytics Changes
 
 * Added IP Address Restrictions to QuickSight Account module
