@@ -1,0 +1,50 @@
+{
+  "name": "@aws-caef/opensearch",
+  "description": "CAEF opensearch module",
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com/solutions"
+  },
+  "bin": {
+    "opensearch-cdk": "bin/opensearch.js"
+  },
+  "version": "0.37.0",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json OpensearchConfigContents --include 'lib/*.ts' --include '../../../../node_modules/@types/**/*.ts' --include 'lib/config-schema.json' > lib/config-schema.json",
+    "watch": "tsc -w",
+    "test": "jest --passWithNoTests --coverage",
+    "cdk": "cdk"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "devDependencies": {
+    "@aws-caef/testing": "^0.37.0",
+    "@types/jest": "^27.4.1",
+    "@types/node": "17.0.23",
+    "@types/prettier": "2.6.0",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.7.0",
+    "typescript": "~4.6.3",
+    "typescript-json-schema": "^0.53.0"
+  },
+  "overrides": {
+    "aws-cdk-lib": "2.85.0",
+    "@types/babel__traverse": "7.18.2"
+  },
+  "dependencies": {
+    "@aws-caef/app": "^0.37.0",
+    "@aws-caef/config": "^0.37.0",
+    "@aws-caef/iam-role-helper": "^0.37.0",
+    "@aws-caef/l3-construct": "^0.37.0",
+    "@aws-caef/opensearch-l3-construct": "^0.37.0",
+    "ajv": "^8.8.2",
+    "aws-cdk-lib": "2.85.0",
+    "cdk-nag": "2.27.35",
+    "constructs": "10.0.96",
+    "source-map-support": "^0.5.21",
+    "yaml": "^1.10.2"
+  },
+  "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31"
+}

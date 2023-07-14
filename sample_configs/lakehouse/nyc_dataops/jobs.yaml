@@ -1,0 +1,188 @@
+# (required) Name of the Data Ops Project this Job will run within.
+# Resources provided by the Project, such as security configuration, encryption keys,
+# temporary S3 buckets, and execution roles will automatically be wired into the Job config.
+# Other resources provided by the project can be optionally referenced
+# by the Job config using a "project:" prefix on the config value.
+projectName: project
+
+templates:
+  # An example job template. Can be referenced from other jobs. Will not itself be deployed.
+  NYCJobTemplate:
+    # (required) Command definition for the glue job
+    command:
+      # (required) Either of "glueetl" | "pythonshell"
+      name: "glueetl"
+      # (optional) Python version.  Either "2" or "3"
+      pythonVersion: "3"
+    # (required) Description of the Glue Job
+    #description: Example of a Glue Job using an inline script
+    # (optional) List of connections for the glue job to use.  Reference back to the connection name in the 'connections:' section of the project.yaml
+    #connections:
+    #  - project:connections/connectionVpc
+    # (optional) key: value pairs for the glue job to use.  see: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html
+    defaultArguments:
+      --job-bookmark-option: job-bookmark-enable
+    # (optional) maximum concurrent runs.  See: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html#aws-glue-api-jobs-job-ExecutionProperty
+    executionProperty:
+      maxConcurrentRuns: 1
+    # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
+    glueVersion: "3.0"
+    # (optional) Maximum capacity.  See: MaxCapcity Section: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html
+    # Use maxCapacity or WorkerType.  Not both.
+    #maxCapacity: 1
+    # (optional) Maximum retries.  see: MaxRetries section:
+    maxRetries: 0
+    # (optional) Number of minutes to wait before sending a job run delay notification.
+    notificationProperty:
+      notifyDelayAfter: 1
+    # (optional) Number of workers to provision
+    #numberOfWorkers: 1
+    # (optional) Number of minutes to wait before considering the job timed out
+    timeout: 60
+    # (optional) Worker type to use.  Any of: "Standard" | "G.1X" | "G.2X"
+    # Use maxCapacity or WorkerType.  Not both.
+    #workerType: Standard
+    executionRoleArn: ssm:/{{org}}/shared/generated-role/glue-etl/arn
+
+jobs:
+  fact_tripdata_csv_parquet:
+    template: "NYCJobTemplate" # Reference a job template.
+    defaultArguments:
+      --raw_dbname: project:databaseName/taxi-raw
+      --raw_tablename: raw_trip_data
+      --standardized_dbname: project:databaseName/taxi-standardized
+      --standardized_tablename: std_trip_data
+      --standardized_bucket: ssm:/{{org}}/shared/datalake/bucket/standardized/name
+      --standardized_folder: data/nyc_taxi/fact/trip_data
+      --partition_column: tpep_pickup_datetime
+    command:
+      scriptLocation: ./jobs_src/fact/fact_tripdata_csv_to_parquet.py
+    allocatedCapacity: 20
+    description: Glue job to convert trip data csv file to parquet
+
+  fact_tripdata_curate:
+    template: "NYCJobTemplate" # Reference a job template.
+    defaultArguments:
+      --standardized_dbname: project:databaseName/taxi-standardized
+      --standardized_tablename: std_trip_data
+      --curated_folder: data/nyc_taxi/fact/trip_data
+      --curated_bucket: ssm:/{{org}}/shared/datalake/bucket/curated/name
+      --curated_dbname: project:databaseName/taxi-curated
+      --curated_tablename: fact_trip_data
+    command:
+      scriptLocation: ./jobs_src/fact/fact_tripdata_curate.py
+    allocatedCapacity: 20
+    description: Glue job to curate the trip data
+
+  fact_tripdata_load_redshift:
+    template: "NYCJobTemplate" # Reference a job template.
+    defaultArguments:
+      --curated_dbname: project:databaseName/taxi-curated
+      --curated_table: fact_trip_data
+      --redshift_database: default_db
+      --redshift_table: fact_trip_data
+      --redshift_iam_role: ssm:/{{org}}/shared/generated-role/glue-etl/arn
+      --redshift_schema: PUBLIC
+      --redshift_secret_name: ssm:/{{org}}/shared/datawarehouse/secret/glueetl
+      --redshift_tmp_dir: "s3://{{resolve:ssm:/{{org}}/{{domain}}/project/bucket/name}}/temp/jobs/fact_tripdata_load_redshift"
+    command:
+      scriptLocation: ./jobs_src/load_to_redshift.py
+    allocatedCapacity: 20
+    connections:
+      - project:connections/connectionVpc
+    description: Glue job to load trip data into redshift
+
+  dim_vendor_csv_parquet:
+    template: "NYCJobTemplate" # Reference a job template.
+    defaultArguments:
+      --raw_dbname: project:databaseName/taxi-raw
+      --raw_tablename: raw_vendor
+      --standardized_bucket: ssm:/{{org}}/shared/datalake/bucket/standardized/name
+      --standardized_folder: data/nyc_taxi/dim/vendor
+      --standardized_dbname: project:databaseName/taxi-standardized
+      --standardized_tablename: std_vendor
+
+    command:
+      scriptLocation: ./jobs_src/dim/dim_vendor_csv_parquet.py
+    allocatedCapacity: 20
+    description: Glue job to convert vendor data from csv to parquet
+
+  dim_vendor_curate:
+    template: "NYCJobTemplate" # Reference a job template.
+    defaultArguments:
+      --standardized_dbname: project:databaseName/taxi-standardized
+      --standardized_tablename: std_vendor
+      --curated_bucket: ssm:/{{org}}/shared/datalake/bucket/curated/name
+      --curated_folder: data/nyc_taxi/dim/vendor
+      --curated_dbname: project:databaseName/taxi-curated
+      --curated_tablename: dim_vendor
+
+    command:
+      scriptLocation: ./jobs_src/dim/dim_vendor_curate_data.py
+    allocatedCapacity: 20
+    description: Glue job to curate the vendor data
+
+  dim_vendor_load_redshift:
+    template: "NYCJobTemplate" # Reference a job template.
+    defaultArguments:
+      --curated_dbname: project:databaseName/taxi-curated
+      --curated_table: dim_vendor
+      --redshift_database: default_db
+      --redshift_table: dim_vendor
+      --redshift_iam_role: ssm:/{{org}}/shared/generated-role/glue-etl/arn
+      --redshift_schema: PUBLIC
+      --redshift_secret_name: ssm:/{{org}}/shared/datawarehouse/secret/glueetl
+      --redshift_tmp_dir: "s3://{{resolve:ssm:/{{org}}/{{domain}}/project/bucket/name}}/temp/jobs/dim_vendor_load_redshift"
+    command:
+      scriptLocation: ./jobs_src/load_to_redshift.py
+    allocatedCapacity: 20
+    connections:
+      - project:connections/connectionVpc
+    description: Glue job to load vendor data into redshift
+
+  dim_payment_csv_parquet:
+    template: "NYCJobTemplate" # Reference a job template.
+    defaultArguments:
+      --raw_dbname: project:databaseName/taxi-raw
+      --raw_tablename: raw_payment
+      --standardized_bucket: ssm:/{{org}}/shared/datalake/bucket/standardized/name
+      --standardized_folder: data/nyc_taxi/dim/payment
+      --standardized_dbname: project:databaseName/taxi-standardized
+      --standardized_tablename: std_payment
+
+    command:
+      scriptLocation: ./jobs_src/dim/dim_payment_csv_parquet.py
+    allocatedCapacity: 20
+    description: Glue job to convert payment data from csv to parquet
+
+  dim_payment_curate:
+    template: "NYCJobTemplate" # Reference a job template.
+    defaultArguments:
+      --standardized_dbname: project:databaseName/taxi-standardized
+      --standardized_tablename: std_payment
+      --curated_bucket: ssm:/{{org}}/shared/datalake/bucket/curated/name
+      --curated_folder: data/nyc_taxi/dim/payment
+      --curated_dbname: project:databaseName/taxi-curated
+      --curated_tablename: dim_payment
+    command:
+      scriptLocation: ./jobs_src/dim/dim_payment_curated_data.py
+    allocatedCapacity: 20
+    description: Glue job to curate the payment data
+
+  dim_payment_load_redshift:
+    template: "NYCJobTemplate" # Reference a job template.
+    defaultArguments:
+      --curated_dbname: project:databaseName/taxi-curated
+      --curated_table: dim_payment
+      --redshift_database: default_db
+      --redshift_table: dim_payment
+      --redshift_iam_role: ssm:/{{org}}/shared/generated-role/glue-etl/arn
+      --redshift_schema: PUBLIC
+      --redshift_secret_name: ssm:/{{org}}/shared/datawarehouse/secret/glueetl
+      --redshift_tmp_dir: "s3://{{resolve:ssm:/{{org}}/{{domain}}/project/bucket/name}}/temp/jobs/dim_payment_load_redshift"
+    command:
+      scriptLocation: ./jobs_src/load_to_redshift.py
+    allocatedCapacity: 20
+    connections:
+      - project:connections/connectionVpc
+    description: Glue job to load payment data into redshift

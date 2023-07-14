@@ -1,0 +1,7 @@
+consumerAccounts:
+  hub: "1234567890"
+  spoke: "0987654321"
+
+producerAccounts:
+  hub: "1234567890"
+  spoke: "0987654321"

@@ -1,0 +1,872 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "CaefCidrPeer": {
+            "additionalProperties": false,
+            "properties": {
+                "cidr": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "$ref": "#/definitions/NagSuppressionProps"
+                    },
+                    "type": "array"
+                },
+                "toPort": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "cidr",
+                "protocol"
+            ],
+            "type": "object"
+        },
+        "CaefNagSuppressionByPath": {
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "reason"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "path",
+                "suppressions"
+            ],
+            "type": "object"
+        },
+        "CaefNagSuppressions": {
+            "additionalProperties": false,
+            "properties": {
+                "by_path": {
+                    "items": {
+                        "$ref": "#/definitions/CaefNagSuppressionByPath"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "by_path"
+            ],
+            "type": "object"
+        },
+        "CaefPrefixListPeer": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "prefixList": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "$ref": "#/definitions/NagSuppressionProps"
+                    },
+                    "type": "array"
+                },
+                "toPort": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "prefixList",
+                "protocol"
+            ],
+            "type": "object"
+        },
+        "CaefResolvableRole": {
+            "additionalProperties": false,
+            "description": "A role for which Role ID, Arn, or Name can be resolved using a custom resource. If one of these\nproperties is requested of the object and is not already populated, then a custom Cfn resource\nwill be created to facilitate the lookup.",
+            "properties": {
+                "getCr": {},
+                "roleCr": {},
+                "roleHelper": {},
+                "roleRef": {},
+                "scope": {}
+            },
+            "required": [
+                "getCr",
+                "roleHelper",
+                "roleRef",
+                "scope"
+            ],
+            "type": "object"
+        },
+        "CaefRoleRef": {
+            "additionalProperties": false,
+            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "properties": {
+                "arn": {
+                    "description": "Reference role by arn",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Reference role by id",
+                    "type": "string"
+                },
+                "immutable": {
+                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Reference role by name",
+                    "type": "string"
+                },
+                "refId": {
+                    "description": "A string which uniquely identifies the CaefRoleRef within a scope.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CaefSecurityGroupPeer": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "sgId": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "$ref": "#/definitions/NagSuppressionProps"
+                    },
+                    "type": "array"
+                },
+                "toPort": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "protocol",
+                "sgId"
+            ],
+            "type": "object"
+        },
+        "CaefSecurityGroupRuleProps": {
+            "additionalProperties": false,
+            "properties": {
+                "ipv4": {
+                    "items": {
+                        "$ref": "#/definitions/CaefCidrPeer"
+                    },
+                    "type": "array"
+                },
+                "prefixList": {
+                    "items": {
+                        "$ref": "#/definitions/CaefPrefixListPeer"
+                    },
+                    "type": "array"
+                },
+                "sg": {
+                    "items": {
+                        "$ref": "#/definitions/CaefSecurityGroupPeer"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CaefServiceCatalogConstraintRuleConfig"
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "rules"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintRuleAssertionConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assert": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assert",
+                "description"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintRuleCondititionConfig": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintRuleConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assertions": {
+                    "items": {
+                        "$ref": "#/definitions/CaefServiceCatalogConstraintRuleAssertionConfig"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/definitions/CaefServiceCatalogConstraintRuleCondititionConfig"
+                }
+            },
+            "required": [
+                "assertions",
+                "condition"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogParameterConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "constraints": {
+                    "$ref": "#/definitions/CaefServiceCatalogConstraintConfig"
+                },
+                "props": {
+                    "$ref": "#/definitions/CfnParameterProps"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogProductConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "launch_role_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CaefServiceCatalogParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "portfolio_arn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "owner",
+                "portfolio_arn"
+            ],
+            "type": "object"
+        },
+        "CfnClassifier.GrokClassifierProperty": {
+            "additionalProperties": false,
+            "description": "A classifier that uses `grok` patterns.",
+            "properties": {
+                "classification": {
+                    "description": "An identifier of the data format that the classifier matches, such as Twitter, JSON, Omniture logs, and so on.",
+                    "type": "string"
+                },
+                "customPatterns": {
+                    "description": "Optional custom grok patterns defined by this classifier. For more information, see custom patterns in [Writing Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html) .",
+                    "type": "string"
+                },
+                "grokPattern": {
+                    "description": "The grok pattern applied to a data store by this classifier. For more information, see built-in patterns in [Writing Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html) .",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the classifier.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "classification",
+                "grokPattern"
+            ],
+            "type": "object"
+        },
+        "CfnClassifier.JsonClassifierProperty": {
+            "additionalProperties": false,
+            "description": "A classifier for `JSON` content.",
+            "properties": {
+                "jsonPath": {
+                    "description": "A `JsonPath` string defining the JSON data for the classifier to classify. AWS Glue supports a subset of `JsonPath` , as described in [Writing JsonPath Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html#custom-classifier-json) .",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the classifier.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "jsonPath"
+            ],
+            "type": "object"
+        },
+        "CfnClassifier.XMLClassifierProperty": {
+            "additionalProperties": false,
+            "description": "A classifier for `XML` content.",
+            "properties": {
+                "classification": {
+                    "description": "An identifier of the data format that the classifier matches.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the classifier.",
+                    "type": "string"
+                },
+                "rowTag": {
+                    "description": "The XML tag designating the element that contains each record in an XML document being parsed. This can't identify a self-closing element (closed by `/>` ). An empty row element that contains only attributes can be parsed as long as it ends with a closing tag (for example, `<row item_a=\"A\" item_b=\"B\"></row>` is okay, but `<row item_a=\"A\" item_b=\"B\" />` is not).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "classification",
+                "rowTag"
+            ],
+            "type": "object"
+        },
+        "CfnParameterProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedPattern": {
+                    "default": "- No constraints on patterns allowed for parameter.",
+                    "description": "A regular expression that represents the patterns to allow for String types.",
+                    "type": "string"
+                },
+                "allowedValues": {
+                    "default": "- No constraints on values allowed for parameter.",
+                    "description": "An array containing the list of values allowed for the parameter.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "constraintDescription": {
+                    "default": "- No description with customized error message when user specifies invalid values.",
+                    "description": "A string that explains a constraint when the constraint is violated.\nFor example, without a constraint description, a parameter that has an allowed\npattern of [A-Za-z0-9]+ displays the following error message when the user specifies\nan invalid value:",
+                    "type": "string"
+                },
+                "default": {
+                    "default": "- No default value for parameter.",
+                    "description": "A value of the appropriate type for the template to use if no value is specified\nwhen a stack is created. If you define constraints for the parameter, you must specify\na value that adheres to those constraints."
+                },
+                "description": {
+                    "default": "- No description for the parameter.",
+                    "description": "A string of up to 4000 characters that describes the parameter.",
+                    "type": "string"
+                },
+                "maxLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the largest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "maxValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the largest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "minLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the smallest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "minValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the smallest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "noEcho": {
+                    "default": "- Parameter values are not masked.",
+                    "description": "Whether to mask the parameter value when anyone makes a call that describes the stack.\nIf you set the value to ``true``, the parameter value is masked with asterisks (``*****``).",
+                    "type": "boolean"
+                },
+                "type": {
+                    "default": "String",
+                    "description": "The data type for the parameter (DataType).",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ClassifierConfigProps": {
+            "additionalProperties": false,
+            "properties": {
+                "csvClassifier": {
+                    "$ref": "#/definitions/ClassifierCsvProps",
+                    "description": "CSV Classifier Props.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-csvclassifier.html"
+                },
+                "grokClassifier": {
+                    "$ref": "#/definitions/CfnClassifier.GrokClassifierProperty",
+                    "description": "Grok Classifier Props.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-grokclassifier.html"
+                },
+                "jsonClassifier": {
+                    "$ref": "#/definitions/CfnClassifier.JsonClassifierProperty",
+                    "description": "JSON Classifier Props.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-jsonclassifier.html"
+                },
+                "xmlClassifier": {
+                    "$ref": "#/definitions/CfnClassifier.XMLClassifierProperty",
+                    "description": "XML Classifier Props.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-xmlclassifier.html"
+                }
+            },
+            "type": "object"
+        },
+        "ClassifierCsvProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowSingleColumn": {
+                    "type": "boolean"
+                },
+                "containsHeader": {
+                    "type": "string"
+                },
+                "delimiter": {
+                    "type": "string"
+                },
+                "disableValueTrimming": {
+                    "type": "boolean"
+                },
+                "header": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "quoteSymbol": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ClassifierProps": {
+            "additionalProperties": false,
+            "properties": {
+                "classifierType": {
+                    "$ref": "#/definitions/ClassifierType",
+                    "description": "Custom Classifier type"
+                },
+                "configuration": {
+                    "$ref": "#/definitions/ClassifierConfigProps",
+                    "description": "Custom Classifier configuration to use for the type.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-classifier.html"
+                }
+            },
+            "required": [
+                "classifierType",
+                "configuration"
+            ],
+            "type": "object"
+        },
+        "ClassifierType": {
+            "enum": [
+                "csv",
+                "grok",
+                "json",
+                "xml"
+            ],
+            "type": "string"
+        },
+        "ConnectionPhysical": {
+            "additionalProperties": false,
+            "properties": {
+                "availabilityZone": {
+                    "description": "Availability zone to use (eg test-regiona)",
+                    "type": "string"
+                },
+                "projectSecurityGroupNames": {
+                    "description": "List of names of security groups generated within the project config",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "securityGroupIdList": {
+                    "description": "List of security groups to use when connecting to the VPC.  Assure they are in the VPC matching the SecurityGroupIds",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "subnetId": {
+                    "description": "Subnet ID within the Availability Zone chosen above.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ConnectionProps": {
+            "additionalProperties": false,
+            "properties": {
+                "connectionProperties": {
+                    "description": "Connection properties key value pairs.  See: https://docs.aws.amazon.com/glue/latest/webapi/API_Connection.html"
+                },
+                "connectionType": {
+                    "$ref": "#/definitions/ConnectionType",
+                    "description": "Connection type to create (\"JDBC\" | \"KAFKA\" | \"MONGODB\" | \"NETWORK\")"
+                },
+                "description": {
+                    "description": "Connection Description",
+                    "type": "string"
+                },
+                "matchCriteria": {
+                    "description": "A list of criteria that can be used in selecting this connection.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "physicalConnectionRequirements": {
+                    "$ref": "#/definitions/ConnectionPhysical",
+                    "description": "VPC Definition for this to connect to.  see: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-connection-physicalconnectionrequirements.html"
+                }
+            },
+            "required": [
+                "connectionType"
+            ],
+            "type": "object"
+        },
+        "ConnectionType": {
+            "enum": [
+                "JDBC",
+                "KAFKA",
+                "MONGODB",
+                "NETWORK"
+            ],
+            "type": "string"
+        },
+        "DatabaseGrantProps": {
+            "additionalProperties": false,
+            "properties": {
+                "databasePermissions": {
+                    "description": "Permissions to Grant on database.  Must be 'read', 'write', or 'super'. Defaults to 'read'.",
+                    "enum": [
+                        "read",
+                        "super",
+                        "write"
+                    ],
+                    "type": "string"
+                },
+                "principalArns": {
+                    "$ref": "#/definitions/NamedPrincipalArnProps",
+                    "description": "Mapping of principal names to arns. Can be used as short hand for principals"
+                },
+                "principals": {
+                    "$ref": "#/definitions/NamedPrincipalProps",
+                    "description": "Array of strings representing principals to grant permissions to.  These must exist in the 'principals:' section."
+                },
+                "tablePermissions": {
+                    "description": "Permissions to Grant on tables.  Must be 'read', 'write', or 'super'. Defaults to 'read'.",
+                    "enum": [
+                        "read",
+                        "super",
+                        "write"
+                    ],
+                    "type": "string"
+                },
+                "tables": {
+                    "description": "List of tables for which to create grants. Tables must exist before grants can be created.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "DatabaseLakeFormationProps": {
+            "additionalProperties": false,
+            "properties": {
+                "createCrossAccountResourceLinkAccounts": {
+                    "description": "List of account numbers for which cross account Resource Links will be created.\nAdditional stacks will be created for each account.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "createCrossAccountResourceLinkName": {
+                    "description": "Name of the resource link to be created\nIf not specified, defaults to the database name",
+                    "type": "string"
+                },
+                "createReadGrantsForDataEngineerRoles": {
+                    "description": "If true (default: false), will automatically add read LF grants for data engineer roles\n to database",
+                    "type": "boolean"
+                },
+                "createReadWriteGrantsForProjectExecutionRoles": {
+                    "description": "If true (default: false), will automatically add read/write LF grants for project execution role\n to databases and their s3 locations.",
+                    "type": "boolean"
+                },
+                "createSuperGrantsForDataAdminRoles": {
+                    "description": "If true (default: false), will automatically add read/write/super LF grants for data admin roles\n to database",
+                    "type": "boolean"
+                },
+                "grants": {
+                    "$ref": "#/definitions/NamedDatabaseGrantProps",
+                    "description": "LF Grants to be added to the database"
+                }
+            },
+            "type": "object"
+        },
+        "DatabaseProps": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "description": "General description of the database",
+                    "type": "string"
+                },
+                "lakeFormation": {
+                    "$ref": "#/definitions/DatabaseLakeFormationProps"
+                },
+                "locationBucketName": {
+                    "description": "S3 Bucket under which all data for this database will be stored",
+                    "type": "string"
+                },
+                "locationPrefix": {
+                    "description": "S3 prefix under which all data for this database will be stored",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description"
+            ],
+            "type": "object"
+        },
+        "FailureNotificationsProps": {
+            "additionalProperties": false,
+            "properties": {
+                "email": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "NagSuppressionProps": {
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "reason"
+            ],
+            "type": "object"
+        },
+        "NamedClassifierProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/ClassifierProps"
+            },
+            "type": "object"
+        },
+        "NamedConnectionProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/ConnectionProps"
+            },
+            "type": "object"
+        },
+        "NamedDatabaseGrantProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/DatabaseGrantProps"
+            },
+            "type": "object"
+        },
+        "NamedDatabaseProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/DatabaseProps"
+            },
+            "type": "object"
+        },
+        "NamedPrincipalArnProps": {
+            "additionalProperties": {
+                "type": "string"
+            },
+            "type": "object"
+        },
+        "NamedPrincipalProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/PrincipalProps"
+            },
+            "type": "object"
+        },
+        "NamedSecurityGroupConfigProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/SecurityGroupConfigProps"
+            },
+            "type": "object"
+        },
+        "PrincipalProps": {
+            "additionalProperties": false,
+            "properties": {
+                "account": {
+                    "description": "Optionally, the principal account can be specified for cases where the account cannot be \ndetermined from the role arn",
+                    "type": "string"
+                },
+                "federatedGroup": {
+                    "description": "Federated group name for the grant.",
+                    "type": "string"
+                },
+                "federatedUser": {
+                    "description": "Federated user name for the grant.",
+                    "type": "string"
+                },
+                "federationProviderArn": {
+                    "description": "Arn of the IAM Federation provider that Active Directory uses to federate into the environment.",
+                    "type": "string"
+                },
+                "role": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/CaefRoleRef"
+                        },
+                        {
+                            "$ref": "#/definitions/CaefResolvableRole"
+                        }
+                    ],
+                    "description": "Arn of an IAM principal for the grant."
+                }
+            },
+            "type": "object"
+        },
+        "SecurityGroupConfigProps": {
+            "additionalProperties": false,
+            "properties": {
+                "securityGroupEgressRules": {
+                    "$ref": "#/definitions/CaefSecurityGroupRuleProps",
+                    "description": "List of egress rules to be added to the function SG"
+                },
+                "vpcId": {
+                    "description": "The ID of the VPC on which the Lambda will be deployed",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "vpcId"
+            ],
+            "type": "object"
+        }
+    },
+    "properties": {
+        "classifiers": {
+            "$ref": "#/definitions/NamedClassifierProps",
+            "description": "Custom Classifiers to create for your crawlers (optional)"
+        },
+        "connections": {
+            "$ref": "#/definitions/NamedConnectionProps",
+            "description": "Connections to use for your Crwalers."
+        },
+        "dataAdminRoles": {
+            "items": {
+                "$ref": "#/definitions/CaefRoleRef"
+            },
+            "type": "array"
+        },
+        "dataEngineerRoles": {
+            "items": {
+                "$ref": "#/definitions/CaefRoleRef"
+            },
+            "type": "array"
+        },
+        "databases": {
+            "$ref": "#/definitions/NamedDatabaseProps",
+            "description": "Glue Database definitions to create (required)"
+        },
+        "failureNotifications": {
+            "$ref": "#/definitions/FailureNotificationsProps",
+            "description": "Failure notifactions for glue jobs ."
+        },
+        "glueCatalogKmsKeyArn": {
+            "type": "string"
+        },
+        "nag_suppressions": {
+            "$ref": "#/definitions/CaefNagSuppressions",
+            "description": "Nag suppressions"
+        },
+        "projectExecutionRoles": {
+            "description": "Pre-defined roles to use",
+            "items": {
+                "$ref": "#/definitions/CaefRoleRef"
+            },
+            "type": "array"
+        },
+        "s3OutputKmsKeyArn": {
+            "type": "string"
+        },
+        "securityGroupConfigs": {
+            "$ref": "#/definitions/NamedSecurityGroupConfigProps",
+            "description": "If specified, project security groups will be created which can be shared\nby project resources"
+        },
+        "service_catalog_product_config": {
+            "$ref": "#/definitions/CaefServiceCatalogProductConfig",
+            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+        }
+    },
+    "required": [
+        "dataAdminRoles",
+        "s3OutputKmsKeyArn"
+    ],
+    "type": "object"
+}
+

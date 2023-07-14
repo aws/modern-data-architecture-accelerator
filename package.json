@@ -1,0 +1,23 @@
+{
+    "name": "@aws-caef/caef",
+    "private": true,
+    "devDependencies": {
+        "jsii": "^1.84.0",
+        "jsii-config": "^1.84.0",
+        "jsii-pacmak": "^1.84.0",
+        "nx": "^15.9.2",
+        "lerna": "^6.6.1",
+        "@types/jest": "^27.5.1"
+    },
+    "overrides": {
+        "@types/babel__traverse": "7.18.2",
+        "semver": "^7.5.2"
+    },
+    "workspaces": [
+        "packages/cli",
+        "packages/constructs/L2/*",
+        "packages/constructs/L3/*/*",
+        "packages/utilities/*",
+        "packages/apps/*/*"
+    ]
+}

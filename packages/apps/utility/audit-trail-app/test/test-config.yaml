@@ -1,0 +1,7 @@
+trail:
+  # The name of the bucket to which audit events will be written
+  cloudTrailAuditBucketName: ssm:/sample-org/shared/audit/bucket/name
+  # The Arn of the KMS CMK which will be used to encrypt audit logs
+  cloudTrailAuditKmsKeyArn: ssm:/sample-org/shared/audit/kms/cmk/arn
+  # Optionally include control plane events in trail
+  includeManagementEvents: true

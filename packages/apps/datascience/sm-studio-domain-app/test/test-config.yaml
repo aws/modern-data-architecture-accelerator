@@ -1,0 +1,96 @@
+domain:
+  # The domain Authentication mode (one of "IAM" or "SSO")
+  authMode: IAM
+  # The VPC on which all Studio Apps will be launched
+  vpcId: vpc-id
+  # The subnets on which all Studio Apps will be launched
+  subnetIds:
+    - subnet-id
+  securityGroupIngress:
+    ipv4:
+      - cidr: 10.0.0.0/24
+        port: 443
+        protocol: tcp
+    sg:
+      - sgId: ssm:/ml/sm/sg/id
+        port: 443
+        protocol: tcp
+  securityGroupEgress:
+    # Allow egress to prefixLists for gateway VPC endpoints
+    prefixList:
+      - prefixList: pl-4ea54027
+        description: prefix list for com.amazonaws.{{region}}.dynamodb
+        protocol: tcp
+        port: 443
+      - prefixList: pl-7da54014
+        description: prefix list for com.amazonaws.{{region}}.s3
+        protocol: tcp
+        port: 443
+    ipv4:
+      - cidr: 0.0.0.0/0
+        port: 443
+        protocol: tcp
+    sg:
+      - sgId: ssm:/ml/sm/sg/id
+        port: 443
+        protocol: tcp
+
+  # List of Studio user profiles which will be created.
+  userProfiles:
+    # The key/name of the user profile should be specified as follows:
+    # If the Domain is in SSO auth mode, this should map to an SSO User ID.
+    # If in IAM mode, this should map to Session Name portion of the aws:userid variable.
+    example-user-id:
+      # Required if the domain is in IAM AuthMode. This is the role
+      # from which the user will launch the user profile in Studio.
+      # The role's id will be combined with the userid
+      # to grant the user access to launch the user profile.
+      userRole:
+        id: test-user-role-id
+    # The below example would be sufficient if the domain is in SSO auth mode.
+    # example-sso-user-id: {}
+
+  # Roles which will be granted admin access to Studio resources, such
+  # as sharing S3 bucket, KMS key, etc
+  dataAdminRoles:
+    - arn: test
+
+  # The prefix location on the Domain bucket where shared
+  # notebooks will be stored
+  notebookSharingPrefix: testing
+
+  # Default user profile settings for the domain.
+  defaultUserSettings:
+    kernelGatewayAppSettings:
+      customImages:
+        - appImageConfigName: "appImageConfigName"
+          imageName: "imageName"
+
+  lifecycleConfigs:
+    # Lifecycle config for the main Jupyter App. This will be run
+    # each time the main Jupyter app container is launched.
+    jupyter:
+      # Assets which will be staged in S3, then copied to SageMaker container
+      # before the lifecycle commands run.
+      # The assets will be available in the container under
+      # $ASSETS_DIR/<asset_name>/
+      assets:
+        testing:
+          sourcePath: ./testing_asset_dir
+      cmds:
+        - echo "testing jupyter"
+        - sh $ASSETS_DIR/testing/test.sh
+
+    # Kernel gateway app lifecycle config. This will run each time
+    # a kernel gateway container is launched.
+    kernel:
+      # Assets which will be staged in S3, then copied to SageMaker container
+      # before the lifecycle commands run.
+      # The assets will be available in the container under
+      # $ASSETS_DIR/<asset_name>/
+      assets:
+        testing:
+          sourcePath: ./testing_asset_dir
+      cmds:
+        - echo "testing kernel"
+        - sh $ASSETS_DIR/testing/test.sh

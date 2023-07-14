@@ -1,0 +1,809 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "AssetProps": {
+            "additionalProperties": false,
+            "properties": {
+                "exclude": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "sourcePath": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "sourcePath"
+            ],
+            "type": "object"
+        },
+        "AuthMode": {
+            "enum": [
+                "IAM",
+                "SSO"
+            ],
+            "type": "string"
+        },
+        "CaefCidrPeer": {
+            "additionalProperties": false,
+            "properties": {
+                "cidr": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "$ref": "#/definitions/NagSuppressionProps"
+                    },
+                    "type": "array"
+                },
+                "toPort": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "cidr",
+                "protocol"
+            ],
+            "type": "object"
+        },
+        "CaefNagSuppressionByPath": {
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "reason"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "path",
+                "suppressions"
+            ],
+            "type": "object"
+        },
+        "CaefNagSuppressions": {
+            "additionalProperties": false,
+            "properties": {
+                "by_path": {
+                    "items": {
+                        "$ref": "#/definitions/CaefNagSuppressionByPath"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "by_path"
+            ],
+            "type": "object"
+        },
+        "CaefPrefixListPeer": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "prefixList": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "$ref": "#/definitions/NagSuppressionProps"
+                    },
+                    "type": "array"
+                },
+                "toPort": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "prefixList",
+                "protocol"
+            ],
+            "type": "object"
+        },
+        "CaefRoleRef": {
+            "additionalProperties": false,
+            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "properties": {
+                "arn": {
+                    "description": "Reference role by arn",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Reference role by id",
+                    "type": "string"
+                },
+                "immutable": {
+                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Reference role by name",
+                    "type": "string"
+                },
+                "refId": {
+                    "description": "A string which uniquely identifies the CaefRoleRef within a scope.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CaefSecurityGroupPeer": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "sgId": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "$ref": "#/definitions/NagSuppressionProps"
+                    },
+                    "type": "array"
+                },
+                "toPort": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "protocol",
+                "sgId"
+            ],
+            "type": "object"
+        },
+        "CaefSecurityGroupRuleProps": {
+            "additionalProperties": false,
+            "properties": {
+                "ipv4": {
+                    "items": {
+                        "$ref": "#/definitions/CaefCidrPeer"
+                    },
+                    "type": "array"
+                },
+                "prefixList": {
+                    "items": {
+                        "$ref": "#/definitions/CaefPrefixListPeer"
+                    },
+                    "type": "array"
+                },
+                "sg": {
+                    "items": {
+                        "$ref": "#/definitions/CaefSecurityGroupPeer"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CaefServiceCatalogConstraintRuleConfig"
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "rules"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintRuleAssertionConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assert": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assert",
+                "description"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintRuleCondititionConfig": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintRuleConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assertions": {
+                    "items": {
+                        "$ref": "#/definitions/CaefServiceCatalogConstraintRuleAssertionConfig"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/definitions/CaefServiceCatalogConstraintRuleCondititionConfig"
+                }
+            },
+            "required": [
+                "assertions",
+                "condition"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogParameterConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "constraints": {
+                    "$ref": "#/definitions/CaefServiceCatalogConstraintConfig"
+                },
+                "props": {
+                    "$ref": "#/definitions/CfnParameterProps"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogProductConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "launch_role_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CaefServiceCatalogParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "portfolio_arn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "owner",
+                "portfolio_arn"
+            ],
+            "type": "object"
+        },
+        "CfnDomain.CustomImageProperty": {
+            "additionalProperties": false,
+            "description": "A custom SageMaker image. For more information, see [Bring your own SageMaker image](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-byoi.html) .",
+            "properties": {
+                "appImageConfigName": {
+                    "description": "The name of the AppImageConfig.",
+                    "type": "string"
+                },
+                "imageName": {
+                    "description": "The name of the CustomImage. Must be unique to your account.",
+                    "type": "string"
+                },
+                "imageVersionNumber": {
+                    "description": "The version number of the CustomImage.",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "appImageConfigName",
+                "imageName"
+            ],
+            "type": "object"
+        },
+        "CfnDomain.JupyterServerAppSettingsProperty": {
+            "additionalProperties": false,
+            "description": "The JupyterServer app settings.",
+            "properties": {
+                "defaultResourceSpec": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "$ref": "#/definitions/CfnDomain.ResourceSpecProperty"
+                        }
+                    ],
+                    "description": "The default instance type and the Amazon Resource Name (ARN) of the default SageMaker image used by the JupyterServer app."
+                }
+            },
+            "type": "object"
+        },
+        "CfnDomain.KernelGatewayAppSettingsProperty": {
+            "additionalProperties": false,
+            "description": "The KernelGateway app settings.",
+            "properties": {
+                "customImages": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "items": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/definitions/IResolvable"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/CfnDomain.CustomImageProperty"
+                                    }
+                                ]
+                            },
+                            "type": "array"
+                        }
+                    ],
+                    "description": "A list of custom SageMaker images that are configured to run as a KernelGateway app."
+                },
+                "defaultResourceSpec": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "$ref": "#/definitions/CfnDomain.ResourceSpecProperty"
+                        }
+                    ],
+                    "description": "The default instance type and the Amazon Resource Name (ARN) of the default SageMaker image used by the KernelGateway app.\n\n> The Amazon SageMaker Studio UI does not use the default instance type value set here. The default instance type set here is used when Apps are created using the AWS Command Line Interface or AWS CloudFormation and the instance type parameter value is not passed."
+                }
+            },
+            "type": "object"
+        },
+        "CfnDomain.RSessionAppSettingsProperty": {
+            "additionalProperties": false,
+            "description": "A collection of settings that apply to an `RSessionGateway` app.",
+            "properties": {
+                "customImages": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "items": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/definitions/IResolvable"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/CfnDomain.CustomImageProperty"
+                                    }
+                                ]
+                            },
+                            "type": "array"
+                        }
+                    ],
+                    "description": "A list of custom SageMaker images that are configured to run as a RSession app."
+                },
+                "defaultResourceSpec": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "$ref": "#/definitions/CfnDomain.ResourceSpecProperty"
+                        }
+                    ],
+                    "description": "Specifies the ARNs of a SageMaker image and SageMaker image version, and the instance type that the version runs on."
+                }
+            },
+            "type": "object"
+        },
+        "CfnDomain.RStudioServerProAppSettingsProperty": {
+            "additionalProperties": false,
+            "description": "A collection of settings that configure user interaction with the `RStudioServerPro` app.",
+            "properties": {
+                "accessStatus": {
+                    "description": "Indicates whether the current user has access to the `RStudioServerPro` app.",
+                    "type": "string"
+                },
+                "userGroup": {
+                    "description": "The level of permissions that the user has within the `RStudioServerPro` app. This value defaults to `User`. The `Admin` value allows the user access to the RStudio Administrative Dashboard.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnDomain.ResourceSpecProperty": {
+            "additionalProperties": false,
+            "description": "Specifies the ARN's of a SageMaker image and SageMaker image version, and the instance type that the version runs on.",
+            "properties": {
+                "instanceType": {
+                    "description": "The instance type that the image version runs on.\n\n> *JupyterServer apps* only support the `system` value.\n>\n> For *KernelGateway apps* , the `system` value is translated to `ml.t3.medium` . KernelGateway apps also support all other values for available instance types.",
+                    "type": "string"
+                },
+                "lifecycleConfigArn": {
+                    "description": "The Amazon Resource Name (ARN) of the Lifecycle Configuration attached to the Resource.",
+                    "type": "string"
+                },
+                "sageMakerImageArn": {
+                    "description": "The ARN of the SageMaker image that the image version belongs to.",
+                    "type": "string"
+                },
+                "sageMakerImageVersionArn": {
+                    "description": "The ARN of the image version created on the instance.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnDomain.SharingSettingsProperty": {
+            "additionalProperties": false,
+            "description": "Specifies options when sharing an Amazon SageMaker Studio notebook. These settings are specified as part of `DefaultUserSettings` when the [CreateDomain](https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateDomain.html) API is called, and as part of `UserSettings` when the [CreateUserProfile](https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateUserProfile.html) API is called.",
+            "properties": {
+                "notebookOutputOption": {
+                    "description": "Whether to include the notebook cell output when sharing the notebook. The default is `Disabled` .",
+                    "type": "string"
+                },
+                "s3KmsKeyId": {
+                    "description": "When `NotebookOutputOption` is `Allowed` , the AWS Key Management Service (KMS) encryption key ID used to encrypt the notebook cell output in the Amazon S3 bucket.",
+                    "type": "string"
+                },
+                "s3OutputPath": {
+                    "description": "When `NotebookOutputOption` is `Allowed` , the Amazon S3 bucket used to store the shared notebook snapshots.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnParameterProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedPattern": {
+                    "default": "- No constraints on patterns allowed for parameter.",
+                    "description": "A regular expression that represents the patterns to allow for String types.",
+                    "type": "string"
+                },
+                "allowedValues": {
+                    "default": "- No constraints on values allowed for parameter.",
+                    "description": "An array containing the list of values allowed for the parameter.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "constraintDescription": {
+                    "default": "- No description with customized error message when user specifies invalid values.",
+                    "description": "A string that explains a constraint when the constraint is violated.\nFor example, without a constraint description, a parameter that has an allowed\npattern of [A-Za-z0-9]+ displays the following error message when the user specifies\nan invalid value:",
+                    "type": "string"
+                },
+                "default": {
+                    "default": "- No default value for parameter.",
+                    "description": "A value of the appropriate type for the template to use if no value is specified\nwhen a stack is created. If you define constraints for the parameter, you must specify\na value that adheres to those constraints."
+                },
+                "description": {
+                    "default": "- No description for the parameter.",
+                    "description": "A string of up to 4000 characters that describes the parameter.",
+                    "type": "string"
+                },
+                "maxLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the largest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "maxValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the largest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "minLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the smallest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "minValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the smallest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "noEcho": {
+                    "default": "- Parameter values are not masked.",
+                    "description": "Whether to mask the parameter value when anyone makes a call that describes the stack.\nIf you set the value to ``true``, the parameter value is masked with asterisks (``*****``).",
+                    "type": "boolean"
+                },
+                "type": {
+                    "default": "String",
+                    "description": "The data type for the parameter (DataType).",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "DomainBucketProps": {
+            "additionalProperties": false,
+            "properties": {
+                "assetDeploymentRole": {
+                    "$ref": "#/definitions/CaefRoleRef",
+                    "description": "If defined, this role will be used to deploy lifecycle assets.\nShould be assumable by lambda, and have write access\nto the domain bucket under the assetPrefix.\nMust be specified if an existing domainBucketName is also specified. \nOtherwise, a new role will be created with access to the generated\ndomain bucket."
+                },
+                "domainBucketName": {
+                    "description": "If specified, will be used as the bucket for the domain,\nwhere notebooks will be shared, and lifecycle assets will be uploaded.\nOtherwise a new bucket will be created.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assetDeploymentRole",
+                "domainBucketName"
+            ],
+            "type": "object"
+        },
+        "DomainProps": {
+            "additionalProperties": false,
+            "properties": {
+                "assetDeploymentMemoryLimitMB": {
+                    "description": "Memory to be allocated to the Lifecycle asset deployment Lambda.\nMay need to be increased for very large asset deployments.",
+                    "type": "number"
+                },
+                "assetPrefix": {
+                    "description": "S3 Prefix where lifecycle assets will be stored.\nIf not specified, default to \"lifecycle-assets/\"",
+                    "type": "string"
+                },
+                "authMode": {
+                    "$ref": "#/definitions/AuthMode",
+                    "description": "The AuthMode for the domain. Must be either 'SSO' or 'IAM'"
+                },
+                "dataAdminRoles": {
+                    "description": "Ids of roles which will be provided administrator access to Studio resources",
+                    "items": {
+                        "$ref": "#/definitions/CaefRoleRef"
+                    },
+                    "type": "array"
+                },
+                "defaultExecutionRole": {
+                    "$ref": "#/definitions/CaefRoleRef",
+                    "description": "If defined, will be set as the default execution role for the domain. \nIf undefined, a default execution role will be created with minimal permissions required\nto launch Studio Apps."
+                },
+                "defaultUserSettings": {
+                    "$ref": "#/definitions/DomainUserSettings",
+                    "description": "Default user settings for user apps."
+                },
+                "domainBucket": {
+                    "$ref": "#/definitions/DomainBucketProps",
+                    "description": "If specified, this will be used as the domain bucket.\nIf not specified, a new bucket will be created."
+                },
+                "kmsKeyArn": {
+                    "description": "If defined, will be set as the studio KMS Key (for EFS)",
+                    "type": "string"
+                },
+                "lifecycleConfigs": {
+                    "$ref": "#/definitions/StudioLifecycleConfigProps",
+                    "description": "Lifecycle configs to be created and bound to domain applications"
+                },
+                "notebookSharingPrefix": {
+                    "description": "S3 Prefix where shared notebooks will be stored.\nIf not specified, defaults to \"sharing/\"",
+                    "type": "string"
+                },
+                "securityGroupEgress": {
+                    "$ref": "#/definitions/CaefSecurityGroupRuleProps",
+                    "description": "Security group Egress rules."
+                },
+                "securityGroupId": {
+                    "description": "Id of an existing security group. If specified, will be used instead of creating\na security group",
+                    "type": "string"
+                },
+                "securityGroupIngress": {
+                    "$ref": "#/definitions/CaefSecurityGroupRuleProps",
+                    "description": "Security group ingress rules."
+                },
+                "subnetIds": {
+                    "description": "The IDs of the subnets to which all Studio user apps will be bound",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "userProfiles": {
+                    "$ref": "#/definitions/NamedUserProfileProps",
+                    "description": "List of Studio user profiles which will be created. The key/name\nof the user profile should be specified as follows:\nIf the Domain is in SSO mode, this should map to an SSO User ID.\nIf in IAM mode, this should map to Session Name portion of the aws:userid variable."
+                },
+                "vpcId": {
+                    "description": "The ID of the VPC to which all Studio user apps will be bound",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "authMode",
+                "subnetIds",
+                "vpcId"
+            ],
+            "type": "object"
+        },
+        "DomainUserSettings": {
+            "additionalProperties": false,
+            "properties": {
+                "jupyterServerAppSettings": {
+                    "$ref": "#/definitions/CfnDomain.JupyterServerAppSettingsProperty",
+                    "description": "The Jupyter server's app settings."
+                },
+                "kernelGatewayAppSettings": {
+                    "$ref": "#/definitions/CfnDomain.KernelGatewayAppSettingsProperty",
+                    "description": "The kernel gateway app settings."
+                },
+                "rSessionAppSettings": {
+                    "$ref": "#/definitions/CfnDomain.RSessionAppSettingsProperty",
+                    "description": "A collection of settings that configure the `RSessionGateway` app."
+                },
+                "rStudioServerProAppSettings": {
+                    "$ref": "#/definitions/CfnDomain.RStudioServerProAppSettingsProperty",
+                    "description": "A collection of settings that configure user interaction with the `RStudioServerPro` app."
+                },
+                "securityGroups": {
+                    "description": "The security groups for the Amazon Virtual Private Cloud (VPC) that Studio uses for communication.\n\nOptional when the `CreateDomain.AppNetworkAccessType` parameter is set to `PublicInternetOnly` .\n\nRequired when the `CreateDomain.AppNetworkAccessType` parameter is set to `VpcOnly` , unless specified as part of the `DefaultUserSettings` for the domain.\n\nAmazon SageMaker adds a security group to allow NFS traffic from SageMaker Studio. Therefore, the number of security groups that you can specify is one less than the maximum number shown.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "sharingSettings": {
+                    "$ref": "#/definitions/CfnDomain.SharingSettingsProperty",
+                    "description": "Specifies options for sharing SageMaker Studio notebooks."
+                }
+            },
+            "type": "object"
+        },
+        "IResolvable": {
+            "additionalProperties": false,
+            "description": "Interface for values that can be resolvable later\n\nTokens are special objects that participate in synthesis.",
+            "properties": {
+                "creationStack": {
+                    "description": "The creation stack of this resolvable which will be appended to errors\nthrown during resolution.\n\nThis may return an array with a single informational element indicating how\nto get this property populated, if it was skipped for performance reasons.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "typeHint": {
+                    "description": "The type that this token will likely resolve to.",
+                    "enum": [
+                        "number",
+                        "string",
+                        "string-list"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "creationStack"
+            ],
+            "type": "object"
+        },
+        "LifecycleScriptProps": {
+            "additionalProperties": false,
+            "properties": {
+                "assets": {
+                    "$ref": "#/definitions/NamedAssetProps"
+                },
+                "cmds": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "cmds"
+            ],
+            "type": "object"
+        },
+        "NagSuppressionProps": {
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "reason"
+            ],
+            "type": "object"
+        },
+        "NamedAssetProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/AssetProps"
+            },
+            "type": "object"
+        },
+        "NamedUserProfileProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/UserProfileProps"
+            },
+            "type": "object"
+        },
+        "StudioLifecycleConfigProps": {
+            "additionalProperties": false,
+            "properties": {
+                "jupyter": {
+                    "$ref": "#/definitions/LifecycleScriptProps",
+                    "description": "Lifecycle config scripts"
+                },
+                "kernel": {
+                    "$ref": "#/definitions/LifecycleScriptProps",
+                    "description": "Lifecycle config scripts"
+                }
+            },
+            "type": "object"
+        },
+        "UserProfileProps": {
+            "additionalProperties": false,
+            "properties": {
+                "userRole": {
+                    "$ref": "#/definitions/CaefRoleRef",
+                    "description": "Required if the domain is in IAM AuthMode. This is the role\nfrom which the user will launch the user profile in Studio.\nThe role's id will be combined with the userid\nto grant the user access to launch the user profile."
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "domain": {
+            "$ref": "#/definitions/DomainProps"
+        },
+        "nag_suppressions": {
+            "$ref": "#/definitions/CaefNagSuppressions",
+            "description": "Nag suppressions"
+        },
+        "service_catalog_product_config": {
+            "$ref": "#/definitions/CaefServiceCatalogProductConfig",
+            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+        }
+    },
+    "required": [
+        "domain"
+    ],
+    "type": "object"
+}
+

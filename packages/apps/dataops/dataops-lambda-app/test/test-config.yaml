@@ -1,0 +1,155 @@
+# (Required) Name of the Data Ops Project
+# Name the the project the resources of which will be used by these functions.
+# Other resources within the project can be referenced in the functions config using
+# the "project:" prefix on the config value.
+projectName: dataops-project-test
+
+# List of Lambda layers to create
+layers:
+  - layerName: test-layer
+    src: ./src/lambda/test-layer.zip
+    description: "test layer"
+
+# List of functions definitions
+functions:
+  # Required function parameters
+  - functionName: testfun # Function name. Must be unique within the config.
+
+    # (Optional) Fuction Description
+    description: Function descriptions
+
+    # Function source code directory
+    srcDir: ./src/lambda/test
+
+    # Code path to the Lambda handler function.
+    handler: test.lambda_handler
+
+    # The runtime for the function source code.
+    runtime: python3.8
+
+    # The role with which the Lambda function will be executed
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+
+    # Number of times Lambda (0-2) will retry before the invocation event
+    # is sent to DLQ.
+    retryAttempts: 2
+    # The max age of an invocation event before it is send to DLQ, either due to
+    # failure, or insufficient Lambda capacity.
+    maxEventAgeSeconds: 3600
+
+    # (Optional) Number of seconds after which the function will timeout.
+    # Default is 3 seconds
+    timeoutSeconds: 10
+
+    # (Optional) Set of environment variables and values to be passed to function
+    environment:
+      env-var-name: value
+
+    # (Optional) Number of reserved concurrent instances to be configured on the function.
+    # Ensures function always has this amount of concurrency available, but
+    # is subtracted from the overall account-wide concurrency limts.
+    # Default is to not reserve concurrency, and use the account-wide pool.
+    reservedConcurrentExecutions: 100
+
+    # (Optional) Size of function execution memory in MB
+    # Default is 128MB
+    memorySizeMB: 512
+
+    # (Optional) Size of function ephemeral storage in MB
+    # Default is 1024MB
+    ephemeralStorageSizeMB: 1024
+
+    # Integration with Event Bridge for the purpose
+    # of triggering this function with Event Bridge rules
+    eventBridge:
+      # Number of times Event Bridge will attempt to trigger this function
+      # before sending event to DLQ. Note that Event Bridge Lambda invocation
+      # is async, so Lambda Function execution errors will generally be handled
+      # on the Lambda side itself.
+      retryAttempts: 10
+      # The max age of an event before Event Bridges sends it to DLQ.
+      maxEventAgeSeconds: 3600
+      # List of s3 buckets and prefixes which will be monitored via EventBridge in order to trigger this function
+      # Note that the S3 Bucket must have Event Bridge Notifications enabled.
+      s3EventBridgeRules:
+        testing-event-bridge-s3:
+          # The bucket producing event notifications
+          buckets: [sample-org-dev-instance1-datalake-raw]
+          # Optional - The S3 prefix to match events on
+          prefixes: [data/test-lambda/]
+          # Optional - Can specify a custom event bus for S3 rules, but note that S3 EventBridge notifications
+          # are initially sent only to the default bus in the account, and would need to be
+          # forwarded to the custom bus before this rule would match.
+          eventBusArn: "arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name"
+      # List of generic Event Bridge rules which will trigger this function
+      eventBridgeRules:
+        testing-event-bridge:
+          description: "testing"
+          eventBusArn: "arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name"
+          eventPattern:
+            source:
+              - "glue.amazonaws.com"
+            detail:
+              some_event_key: some_event_value
+
+  # Example of a function which is VPC bound using a custom security group for this function
+  - functionName: testfunvpc
+    srcDir: ./src/lambda/test
+    handler: test.lambda_handler
+    runtime: python3.9
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    # If vpcConfig is specified, Lambda will be VPC bound
+    vpcConfig:
+      # Required - The VPC on which the lambda will be bound
+      vpcId: "some-vpc-id"
+      # Required - the list of subnet ids on which ENIs will be created for the Lambda
+      subnetIds:
+        - "some-subnet-id"
+
+      # Optional - If specified, custom security group egress rules will be generated, and
+      # outgoing traffic from the function will be limited to these rules.
+      # If not specified, all outgoing traffic from the function will be permitted.
+      securityGroupEgressRules:
+        # Allow egress to a CIDR range
+        ipv4:
+          - cidr: 10.0.0.0/8
+            port: 443
+            protocol: tcp
+        # Allow egress to another Security Group
+        sg:
+          - sgId: sg-12312412412
+            port: 443
+            protocol: tcp
+        # Allow egress to a prefixlist
+        prefixList:
+          - prefixList: some-prefixlist-id
+            port: 443
+            protocol: tcp
+
+  # Example of a function which is VPC bound using an existing security group
+  - functionName: testfunvpcexistingsg
+    srcDir: ./src/lambda/test
+    handler: test.lambda_handler
+    runtime: python3.9
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    # If vpcConfig is specified, Lambda will be VPC bound
+    vpcConfig:
+      # Required - The VPC on which the lambda will be bound
+      vpcId: "some-vpc-id"
+      # Required - the list of subnet ids on which ENIs will be created for the Lambda
+      subnetIds:
+        - "some-subnet-id"
+      # Optional - If specified, this security group will be bound to the Lambda function vpc interfaces
+      # In this example, we are using a security group generated by the DataOps Project module
+      securityGroupId: project:securityGroupId/test-security-group
+
+  # Example of a function which uses Lambda layers
+  - functionName: testlayerfunction
+    srcDir: ./src/lambda/test
+    handler: test.lambda_handler
+    runtime: python3.9
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    layerArns:
+      some-existing-layer: some-existing-layer-arn
+    generatedLayerNames:
+      - "test-layer"

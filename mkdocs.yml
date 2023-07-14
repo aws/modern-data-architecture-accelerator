@@ -1,0 +1,34 @@
+site_name: CAEF
+docs_dir: target/docs
+site_dir: target/docs_site
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: orange
+    accent: amber
+  features:
+    - search.suggest
+    - search.highlight
+plugins:
+  - search
+  - offline
+  - awesome-pages:
+      collapse_single_pages: true
+
+extra:
+  version:
+    provider: mike
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      check_paths: True
+  - pymdownx.inlinehilite
+  - mdx_truly_sane_lists
+
+extra_css:
+  - docs/stylesheets/extra.css

@@ -1,0 +1,23 @@
+
+projectName: dataops-project-test
+crawlers:
+  test-crawler:
+    executionRoleArn: some-arn
+    # (required) Reference back to the database name in the 'databases:' section of the crawler.yaml
+    databaseName: project:databaseName/example-database
+    # (required) Description of the crawler
+    description: Example for a Crawler
+    # (required) At least one target definition.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-targets.html
+    targets:
+      # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
+      s3Targets:
+        - path: s3://some-s3-bucket/path/to/crawler/target
+    classifiers:
+      - project:classifiers/classifierCsv
+    # Extra crawler configuration options
+    recrawlBehavior: CRAWL_NEW_FOLDERS_ONLY
+    extraConfiguration:
+      Version: 1
+      CrawlerOutput:
+        Partitions:
+          AddOrUpdateBehavior: InheritFromTable

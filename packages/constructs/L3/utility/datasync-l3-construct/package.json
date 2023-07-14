@@ -1,0 +1,91 @@
+{
+  "name": "@aws-caef/datasync-l3-construct",
+  "version": "0.37.0",
+  "description": "CAEF DataSync L3 Construct",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com/solutions"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://aws.amazon.com/solutions"
+  },
+  "scripts": {
+    "build": "jsii --project-references",
+    "watch": "jsii -w  --project-references",
+    "package": "jsii-pacmak --npmignore=false",
+    "test": "jest --passWithNoTests --coverage",
+    "test-coverage": "jest --passWithNoTests --coverage"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "devDependencies": {
+    "@aws-caef/cloudwatch-constructs": "0.37.0",
+    "@aws-caef/construct": "0.37.0",
+    "@aws-caef/datasync-constructs": "0.37.0",
+    "@aws-caef/ec2-constructs": "0.37.0",
+    "@aws-caef/kms-constructs": "0.37.0",
+    "@aws-caef/l3-construct": "0.37.0",
+    "@aws-caef/testing": "^0.37.0",
+    "@types/jest": "^27.4.1",
+    "@types/node": "17.0.23",
+    "@types/prettier": "2.6.0",
+    "aws-cdk-lib": "2.85.0",
+    "constructs": "10.0.96",
+    "jest": "^27.5.1",
+    "source-map-support": "^0.5.21",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.7.0",
+    "typescript": "~4.6.3",
+    "typescript-json-schema": "^0.53.0"
+  },
+  "peerDependencies": {
+    "@aws-caef/cloudwatch-constructs": "^0.37.0",
+    "@aws-caef/construct": "^0.37.0",
+    "@aws-caef/datasync-constructs": "^0.37.0",
+    "@aws-caef/ec2-constructs": "^0.37.0",
+    "@aws-caef/kms-constructs": "^0.37.0",
+    "@aws-caef/l3-construct": "^0.37.0",
+    "aws-cdk-lib": "2.85.0",
+    "constructs": "10.0.96"
+  },
+  "overrides": {
+    "aws-cdk-lib": "2.85.0",
+    "@types/babel__traverse": "7.18.2"
+  },
+  "dependencies": {
+    "@aws-caef/cloudwatch-constructs": "^0.37.0",
+    "@aws-caef/construct": "^0.37.0",
+    "@aws-caef/datasync-constructs": "^0.37.0",
+    "@aws-caef/ec2-constructs": "^0.37.0",
+    "@aws-caef/kms-constructs": "^0.37.0",
+    "@aws-caef/l3-construct": "^0.37.0",
+    "@aws-caef/naming": "^0.37.0",
+    "aws-cdk-lib": "2.85.0",
+    "cdk-nag": "2.27.35",
+    "constructs": "10.0.96"
+  },
+  "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
+  "stability": "experimental",
+  "jsii": {
+    "excludeTypescript": [
+      "test/*.ts"
+    ],
+    "outdir": "jsii-dist",
+    "versionFormat": "full",
+    "targets": {
+      "java_disabled": {
+        "package": "software.amazon.awscaef.l3-construct.datasync",
+        "maven": {
+          "groupId": "software.amazon.awscaef.l3-construct",
+          "artifactId": "datasync"
+        }
+      },
+      "python": {
+        "distName": "aws-caef.datasync-l3-construct",
+        "module": "aws_caef.datasync_l3_construct"
+      }
+    }
+  }
+}

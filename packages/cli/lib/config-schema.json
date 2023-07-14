@@ -1,0 +1,343 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "CaefCustomAspect": {
+            "additionalProperties": false,
+            "properties": {
+                "aspect_class": {
+                    "type": "string"
+                },
+                "aspect_module": {
+                    "type": "string"
+                },
+                "aspect_props": {
+                    "additionalProperties": {},
+                    "type": "object"
+                }
+            },
+            "required": [
+                "aspect_class",
+                "aspect_module"
+            ],
+            "type": "object"
+        },
+        "CaefCustomNaming": {
+            "additionalProperties": false,
+            "properties": {
+                "naming_class": {
+                    "type": "string"
+                },
+                "naming_module": {
+                    "type": "string"
+                },
+                "naming_props": {
+                    "additionalProperties": {},
+                    "type": "object"
+                }
+            },
+            "required": [
+                "naming_class",
+                "naming_module"
+            ],
+            "type": "object"
+        },
+        "CaefDomainConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "app_config_data": {
+                    "additionalProperties": {},
+                    "description": "Config data which will be passed directly to apps",
+                    "type": "object"
+                },
+                "app_configs": {
+                    "description": "A list of paths to CAEF app configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "caef_version": {
+                    "description": "Override the CAEF version",
+                    "type": "string"
+                },
+                "context": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Additional CDK Context key/value pairs",
+                    "type": "object"
+                },
+                "custom_aspects": {
+                    "description": "Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.",
+                    "items": {
+                        "$ref": "#/definitions/CaefCustomAspect"
+                    },
+                    "type": "array"
+                },
+                "custom_naming": {
+                    "$ref": "#/definitions/CaefCustomNaming",
+                    "description": "Permission policy boundary arns. Will be applied to all Roles using a CDK aspect."
+                },
+                "environments": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CaefEnvironmentConfig"
+                    },
+                    "description": "Arn or SSM Import (prefix with ssm:) of the environment provider",
+                    "type": "object"
+                },
+                "tag_config_data": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Tagging data which will be passed directly to apps",
+                    "type": "object"
+                },
+                "tag_configs": {
+                    "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "environments"
+            ],
+            "type": "object"
+        },
+        "CaefEnvironmentConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "account": {
+                    "description": "Target account for deployment",
+                    "type": "string"
+                },
+                "app_config_data": {
+                    "additionalProperties": {},
+                    "description": "Config data which will be passed directly to apps",
+                    "type": "object"
+                },
+                "app_configs": {
+                    "description": "A list of paths to CAEF app configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "caef_version": {
+                    "description": "Override the CAEF version",
+                    "type": "string"
+                },
+                "context": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Additional CDK Context key/value pairs",
+                    "type": "object"
+                },
+                "custom_aspects": {
+                    "description": "Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.",
+                    "items": {
+                        "$ref": "#/definitions/CaefCustomAspect"
+                    },
+                    "type": "array"
+                },
+                "custom_naming": {
+                    "$ref": "#/definitions/CaefCustomNaming",
+                    "description": "Permission policy boundary arns. Will be applied to all Roles using a CDK aspect."
+                },
+                "modules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CaefModuleConfig"
+                    },
+                    "description": "Arn or SSM Import (prefix with ssm:) of the environment provider",
+                    "type": "object"
+                },
+                "tag_config_data": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Tagging data which will be passed directly to apps",
+                    "type": "object"
+                },
+                "tag_configs": {
+                    "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "use_bootstrap": {
+                    "description": "If true (default), will use the CAEF bootstrap env",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "modules"
+            ],
+            "type": "object"
+        },
+        "CaefModuleConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "additional_accounts": {
+                    "description": "A list of additional accounts into which the module may deploy resources.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "additional_context": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Additional CDK Context key/value pairs",
+                    "type": "object"
+                },
+                "app_config_data": {
+                    "additionalProperties": {},
+                    "description": "Config data which will be passed directly to apps",
+                    "type": "object"
+                },
+                "app_configs": {
+                    "description": "A list of paths to CAEF app configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "caef_version": {
+                    "description": "Override the CAEF version",
+                    "type": "string"
+                },
+                "cdk_app": {
+                    "description": "The CAEF CDK Module/App to be deployed",
+                    "type": "string"
+                },
+                "context": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Additional CDK Context key/value pairs",
+                    "type": "object"
+                },
+                "custom_aspects": {
+                    "description": "Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.",
+                    "items": {
+                        "$ref": "#/definitions/CaefCustomAspect"
+                    },
+                    "type": "array"
+                },
+                "custom_naming": {
+                    "$ref": "#/definitions/CaefCustomNaming",
+                    "description": "Permission policy boundary arns. Will be applied to all Roles using a CDK aspect."
+                },
+                "tag_config_data": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Tagging data which will be passed directly to apps",
+                    "type": "object"
+                },
+                "tag_configs": {
+                    "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "use_bootstrap": {
+                    "description": "If true (default), will use the CAEF bootstrap env",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "cdk_app"
+            ],
+            "type": "object"
+        }
+    },
+    "properties": {
+        "app_config_data": {
+            "additionalProperties": {},
+            "description": "Config data which will be passed directly to apps",
+            "type": "object"
+        },
+        "app_configs": {
+            "description": "A list of paths to CAEF app configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "caef_version": {
+            "description": "Override the CAEF version",
+            "type": "string"
+        },
+        "context": {
+            "additionalProperties": {},
+            "description": "Additional CDK Context key/value pairs",
+            "type": "object"
+        },
+        "custom_aspects": {
+            "description": "Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.",
+            "items": {
+                "$ref": "#/definitions/CaefCustomAspect"
+            },
+            "type": "array"
+        },
+        "domains": {
+            "additionalProperties": {
+                "$ref": "#/definitions/CaefDomainConfig"
+            },
+            "description": "Objects representing environments to create",
+            "type": "object"
+        },
+        "log_suppressions": {
+            "description": "A string representing the target region",
+            "type": "boolean"
+        },
+        "naming_class": {
+            "description": "The CAEF Naming Class to be utilized from the Naming Module",
+            "type": "string"
+        },
+        "naming_module": {
+            "description": "The CAEF Naming Module to be utilized",
+            "type": "string"
+        },
+        "naming_props": {
+            "additionalProperties": {},
+            "description": "Props to be passed to the custom naming class",
+            "type": "object"
+        },
+        "organization": {
+            "description": "A string representing the target region",
+            "type": "string"
+        },
+        "region": {
+            "description": "A string representing the target region",
+            "type": "string"
+        },
+        "tag_config_data": {
+            "additionalProperties": {
+                "type": "string"
+            },
+            "description": "Tagging data which will be passed directly to apps",
+            "type": "object"
+        },
+        "tag_configs": {
+            "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        }
+    },
+    "required": [
+        "domains",
+        "organization"
+    ],
+    "type": "object"
+}
+

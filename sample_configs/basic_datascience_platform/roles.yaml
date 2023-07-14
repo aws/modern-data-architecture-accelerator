@@ -1,0 +1,128 @@
+generatePolicies:
+  DataScienceAdminPolicy:
+    policyDocument:
+      Statement:
+        # Provides basic SageMaker Studio admin permissions.
+        # Suitable for managing user profiles (except for creation, which should be CAEF-managed).
+        - Sid: StudioAdminAccess
+          Effect: Allow
+          Action:
+            - sagemaker:ListUserProfiles
+            - sagemaker:DescribeUserProfile
+            - sagemaker:UpdateUserProfile
+            - sagemaker:DeleteUserProfile
+            - sagemaker:ListApps
+            - sagemaker:DeleteApp
+            - sagemaker:DescribeDomain
+            - sagemaker:ListDomains
+            - sagemaker:GetSagemakerServicecatalogPortfolioStatus
+            - license-manager:ListReceivedLicenses
+            - servicecatalog:ListAcceptedPortfolioShares
+            - servicecatalog:DisassociatePrincipalFromPortfolio
+            - iam:ListRoles
+            - sagemaker:ListTags
+            - sagemaker:AddTags
+            - sagemaker:DeleteTags
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+  DataScienceUserPolicy:
+    policyDocument:
+      Statement:
+        # Provides basic S3 access for interactions via console.
+        # Does not provide access to buckets/data
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets
+            - s3:GetAccountPublicAccessBlock
+            - s3:GetBucketPublicAccessBlock
+            - s3:GetBucketPolicyStatus
+            - s3:GetBucketAcl
+            - s3:ListAccessPoints
+            - s3:GetBucketLocation
+          Resource: "*"
+
+        # Allows basic listing of KMS keys
+        - Sid: BasicKMSAccess
+          Effect: Allow
+          Action:
+            - kms:ListAliases
+          Resource: "*"
+
+        # Provides readonly access to Glue Catalog resources.
+        # Does not provide access to underlying data.
+        - Sid: BasicGlueAccess
+          Effect: Allow
+          Action:
+            - glue:GetTable
+            - glue:GetTables
+            - glue:GetDatabase
+            - glue:GetDataBases
+            - glue:GetPartitions
+            - glue:SearchTables
+          Resource:
+            - "arn:aws:glue:{{region}}:{{account}}:catalog"
+            - "arn:aws:glue:{{region}}:{{account}}:database/*"
+            - "arn:aws:glue:{{region}}:{{account}}:table/*"
+
+        # Provides basic Athena access to facilitate
+        # interactions via console.
+        - Sid: BasicAthenaAccess
+          Effect: Allow
+          Action:
+            - athena:ListWorkGroups
+            - athena:ListDataCatalogs
+            - athena:ListDatabases
+            - athena:ListTableMetadata
+            - athena:GetDataCatalog
+            - athena:GetDatabase
+            - athena:GetTableMetadata
+          Resource: "*"
+
+        # Provides users access to launch their own Studio
+        # user profile. Each user profile has a 'userid' tag
+        # associated which specifies which user owns the profile.
+        - Sid: SageMakerLaunchProfileAccess
+          Effect: Allow
+          Action:
+            - sagemaker:CreatePresignedDomainUrl
+          Resource: "*"
+          Condition:
+            StringEquals:
+              "sagemaker:ResourceTag/userid": "${aws:userid}"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+generateRoles:
+  # A data admin role which will be granted admin
+  # access to deployed resources.
+  data-admin:
+    trustedPrincipal: this_account
+    generatedPolicies:
+      - DataScienceUserPolicy
+      - DataScienceAdminPolicy
+
+  # A data scientist role which will be granted user access
+  # to deployed resources.
+  data-scientist:
+    trustedPrincipal: this_account
+    generatedPolicies:
+      - DataScienceUserPolicy
+
+  # A role which will be used to launch SageMaker resources
+  # on behalf of data science team members.
+  team-execution:
+    trustedPrincipal: service:sagemaker.amazonaws.com
+    additionalTrustedPrincipals:
+      - trustedPrincipal: service:ec2.amazonaws.com
+      - trustedPrincipal: service:elasticmapreduce.amazonaws.com
+      - trustedPrincipal: service:sagemaker.amazonaws.com
+        additionalTrustedActions: ["sts:SetSourceIdentity"]
+    generatedPolicies:
+      - DataScienceUserPolicy

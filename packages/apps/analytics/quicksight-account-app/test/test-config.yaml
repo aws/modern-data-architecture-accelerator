@@ -1,0 +1,22 @@
+account:
+  edition: "ENTERPRISE" #Can take 'STANDARD'|'ENTERPRISE'|'ENTERPRISE_AND_Q'
+  authenticationMethod: "IAM_AND_QUICKSIGHT" #Can take 'IAM_AND_QUICKSIGHT'|'IAM_ONLY'|'ACTIVE_DIRECTORY'
+  notificationEmail: "example@example.com"
+
+  vpcId: vpc-abcd1234
+
+  securityGroupAccess:
+    sg:
+      - sgId: sg-1234abcd
+        port: 5439
+        protocol: tcp
+    ipv4:
+      - cidr: 1.1.1.1/32
+        port: 1000
+        toPort: 2000
+        protocol: tcp
+
+  # Glue resources (databases and tables) to which the QuickSight service account will be provided basic read access
+  # This access is used to setup/validate QuickSight data sources
+  glueResourceAccess:
+    - database/some-database-name*

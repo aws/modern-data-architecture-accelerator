@@ -1,0 +1,7 @@
+{
+  "app": "npx ts-node --prefer-ts-exts bin/service-catalog.ts",
+  "context": {
+    "aws-cdk:enableDiffNoFail": true,
+    "@aws-cdk/core:enablePartitionLiterals": true
+  }
+}

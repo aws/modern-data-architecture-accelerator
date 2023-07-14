@@ -1,0 +1,46 @@
+# A list of Logical Config Roles which can be referenced in Access Policies. Each Logical Config Role can have one or more IAM role Arns bound to it.
+roles:
+  DataAdminRole:
+    - id: generated-role-id:data-admin
+  GlueETLRole:
+    - id: generated-role-id:glue-etl
+
+# Definitions of access policies which grant access to S3 paths for specified Logical Config Roles.
+# These Access Policies can then be applied to Data Lake buckets (they will be injected into the corresponding bucket policies.)
+accessPolicies:
+  RootPolicy: # A friendly name for the access policy
+    rule:
+      # The S3 prefix path to which policy will be applied in the bucket policies.
+      prefix: /
+      # A list of Logical Config Roles which will be provided ReadWriteSuper access.
+      # ReadWriteSuper access allows reading, writing, and permanent data deletion.
+      ReadWriteSuperRoles:
+        - DataAdminRole
+
+  # This policy grants access for the Glue Crawler role to read/discover data from the data lake
+  # S3 buckets.
+  DataReadPolicy:
+    rule:
+      prefix: data/
+      ReadRoles:
+        - GlueETLRole
+
+# The set of S3 buckets which will be created, and the access policies which will be applied.
+buckets:
+  # A 'raw' bucket/zone
+  raw:
+    # The list of access policies which will be applied to the bucket
+    accessPolicies:
+      - RootPolicy
+      - DataReadPolicy
+
+  # A 'transformed' bucket/zone
+  transformed:
+    # We will use Lake Formation to govern access to the data/ prefix of the
+    # transformed bucket.
+    lakeFormationLocations:
+      all-data:
+        prefix: data
+    accessPolicies:
+      - RootPolicy
+      - DataReadPolicy

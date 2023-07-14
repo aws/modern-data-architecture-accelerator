@@ -1,0 +1,95 @@
+# Used to configure SAML federations
+federations:
+  example-federation: # Should be descriptive and unique
+    # This is the arn of the IAM Identity Provider
+    providerArn: arn:{{partition}}:iam::{{account}}:saml-provider/ExampleIdentityProvider
+  new-federation: # Should be descriptive and unique
+    # Path to a Saml Metadata Doc, which will be used to create
+    # a SAML Identity Provider in IAM. Relative paths should be prefixed with a "./"
+    samlDoc: ./saml-doc.xml
+
+generatePolicies:
+  TestPolicy:
+    policyDocument:
+      Statement:
+        - SID: testing
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:s3:::*"
+          Action:
+            - s3:List*
+            - s3:GetBucket*
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "Wildcard testing ok!"
+  TestPolicyVerbatim:
+    verbatimPolicyName: true
+    policyDocument:
+      Statement:
+        - SID: testing
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:s3:::*"
+          Action:
+            - s3:List*
+            - s3:GetBucket*
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "Wildcard testing ok!"
+
+# The list of roles which will be generated
+generateRoles:
+  test-role:
+    # By trusting 'this_account', AssumeRoleTrust will be established with IAM root of this account
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - service-role/AWSLambdaBasicExecutionRole
+    generatedPolicies:
+      - TestPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for use"
+  glue-role:
+    trustedPrincipal: service:glue.amazonaws.com
+    awsManagedPolicies:
+      - service-role/AWSGlueServiceRole
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueServiceRole approved for use"
+  data-scientist:
+    trustedPrincipal: federation:example-federation
+    generatedPolicies:
+      - TestPolicy
+  data-engineer:
+    trustedPrincipal: federation:new-federation
+    generatedPolicies:
+      - TestPolicy
+  lakeformation:
+    trustedPrincipal: service:lakeformation.amazonaws.com
+  # An example role which will be assumable by another role, such as
+  # the role being used by an application.
+  application_data_role1:
+    trustedPrincipal: arn:{{partition}}:iam::{{account}}:role/test-application-role
+    generatedPolicies:
+      - TestPolicy
+
+  # An example role which will be assumable by another role, such as
+  # the role being used by an application.
+  application_data_role2:
+    trustedPrincipal: this_account
+    assumeRoleTrustConditions:
+      StringEquals:
+        aws:PrincipalArn: arn:{{partition}}:iam::{{account}}:role/test-application-role
+    generatedPolicies:
+      - TestPolicy
+
+  # An example role which will be assumable by multple services
+  multiple_service_role:
+    trustedPrincipal: service:sagemaker.amazonaws.com
+    additionalTrustedPrincipals:
+      - trustedPrincipal: service:sagemaker.amazonaws.com
+        additionalTrustedActions: ["sts:SetSourceIdentity"]
+      - trustedPrincipal: service:elasticmapreduce.amazonaws.com
+        additionalTrustedActions: ["sts:SetSourceIdentity"]
+    generatedPolicies:
+      - TestPolicy

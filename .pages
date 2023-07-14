@@ -1,0 +1,16 @@
+nav:
+        - Home: "README.md"
+        - Getting Started:
+                  - Architecture and Design: "ARCHITECTURES.md"
+                  - Configuration: CONFIGURATION.md
+                  - (Optional) Customization: CUSTOMIZATION.md
+                  - Predeployment Preparation: PREDEPLOYMENT.md
+                  - DEPLOYMENT.md
+        - Sample Architectures and Configurations: sample_configs
+        - packages
+        - Development:
+                  - CONTRIBUTING.md
+                  - CODE_OF_CONDUCT.md
+                  - DEVELOPMENT.md
+        - CHANGELOG.md
+        - THIRD-PARTY-NOTICE.md

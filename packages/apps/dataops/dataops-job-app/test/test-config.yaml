@@ -1,0 +1,56 @@
+projectName: dataops-project-test
+
+templates:
+  # An example job template. Can be referenced from other jobs. Will not itself be deployed.
+  ExampleTemplate:
+    executionRoleArn: some-arn
+    # (required) Command definition for the glue job
+    command:
+      # (required) Either of "glueetl" | "pythonshell"
+      name: "glueetl"
+      # (optional) Python version.  Either "2" or "3"
+      pythonVersion: "3"
+      # (required) Path to a .py file relative to the configuration. 
+      scriptLocation: ./src/glue/job.py
+    # (required) Description of the Glue Job
+    description: Example of a Glue Job using an inline script
+    # (optional) List of connections for the glue job to use.  Reference back to the connection name in the 'connections:' section of the project.yaml
+    connections:
+      - project:connections/connectionVpc
+    # (optional) key: value pairs for the glue job to use.  see: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html
+    defaultArguments:
+      --job-bookmark-option: job-bookmark-enable
+    # (optional) maximum concurrent runs.  See: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html#aws-glue-api-jobs-job-ExecutionProperty
+    executionProperty:
+      maxConcurrentRuns: 1
+    # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
+    glueVersion: "2.0"
+    # (optional) Maximum capacity.  See: MaxCapcity Section: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html
+    # Use maxCapacity or WorkerType.  Not both.
+    #maxCapacity: 1
+    # (optional) Maximum retries.  see: MaxRetries section:
+    maxRetries: 3
+    # (optional) Number of minutes to wait before sending a job run delay notification.
+    notificationProperty:
+      notifyDelayAfter: 1
+    # (optional) Number of workers to provision
+    #numberOfWorkers: 1
+    # (optional) Number of minutes to wait before considering the job timed out
+    timeout: 60
+    # (optional) Worker type to use.  Any of: "Standard" | "G.1X" | "G.2X"
+    # Use maxCapacity or WorkerType.  Not both.
+    #workerType: Standard
+
+jobs:
+  # Job definitions below
+  JobOne: # Job Name
+    template: "ExampleTemplate" # Reference a job template.
+    defaultArguments:
+      --Input: s3://some-bucket/some-location1
+    allocatedCapacity: 2
+
+  JobTwo:
+    template: "ExampleTemplate" # Reference a job template.
+    defaultArguments:
+      --Input: s3://some-bucket/some-location2
+    allocatedCapacity: 20

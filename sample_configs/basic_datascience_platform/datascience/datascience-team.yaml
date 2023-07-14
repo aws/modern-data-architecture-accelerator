@@ -1,0 +1,51 @@
+team:
+  # List of roles which will be provided admin access to the team resources
+  dataAdminRoles:
+    - id: generated-role-id:data-admin
+
+  # List of roles which will be provided usage access to the team resources
+  # Can be either directly referenced Role Arns, Role Arns via SSM Params,
+  # or generated roles created using the CAEF roles module.
+  teamUserRoles:
+    - id: generated-role-id:data-scientist
+
+  # The role which will be used to execute Team SageMaker resources (Studio Domain Apps, SageMaker Jobs/Pipelines, etc)
+  teamExecutionRole:
+    id: generated-role-id:team-execution
+
+  # The team Studio Domain config
+  studioDomainConfig:
+    authMode: IAM
+    vpcId: "{{context:vpc_id}}"
+    subnetIds:
+      - "{{context:subnet_id}}"
+    notebookSharingPrefix: sagemaker/notebooks/
+    defaultUserSettings:
+      KernelGatewayAppSettings:
+        DefaultResourceSpec:
+          InstanceType: ml.c5.large
+
+    # List of Studio user profiles which will be created.
+    userProfiles:
+      # The key/name of the user profile should be specified as follows:
+      # If the Domain is in SSO auth mode, this should map to an SSO User ID.
+      # If in IAM mode, this should map to Session Name portion of the aws:userid variable.
+      "<data scientist user id>":
+        # Required if the domain is in IAM AuthMode. This is the role
+        # from which the user will launch the user profile in Studio.
+        # The role's id will be combined with the userid
+        # to grant the user access to launch the user profile.
+        userRole:
+          id: generated-role-id:data-scientist
+
+    # Lifecycle config to be added to all jupyter apps in the domain
+    jupyterLifecycleConfig:
+      script:
+        cmds:
+          - echo "testing jupyter new"
+
+    # Lifecycle config to be added to all kernal apps in the domain
+    kernelLifecycleConfig:
+      script:
+        cmds:
+          - echo "testing kernel new"

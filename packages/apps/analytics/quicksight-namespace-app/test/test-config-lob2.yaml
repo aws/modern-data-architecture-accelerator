@@ -1,0 +1,19 @@
+federations:
+  authhub: # Should be descriptive and unique
+    # This URL will be the redirect target after SAML tokens are obtained
+    url: https://ca-central-1.quicksight.aws.amazon.com/sn/auth/signin?enable-sso=1
+    # This is the arn of the IAM Identity Provider
+    providerArn: arn:{{partition}}:iam::{{account}}:saml-provider/example-provider
+    roles:
+      sampleReaders:
+        qsGroups: ["READERS"] #User will be part of these QS Groups
+        qsUserType: "READER" #Each User will only be a READER | AUTHOR in QS
+      sampleAuthors:
+        qsGroups: ["AUTHORS", "READERS", "PUBLISHERS"]
+        qsUserType: "AUTHOR"
+      samplePublishers:
+        qsGroups: ["PUBLISHERS", "READERS"]
+        qsUserType: "AUTHOR"
+
+glueResourceAccess:
+  - database/sample_org*
