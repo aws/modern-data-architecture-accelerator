@@ -14,7 +14,7 @@ git fetch prerelease_publish
 git push prerelease_publish
 git push prerelease_publish --tags
 
-#Push published version to prerelease repo. This will be used to track the latest version for next publish
+#Push published version to release repo. This will be used to track the latest version for next publish
 git remote add release_publish "https://gitlab-ci-token:$CI_GROUP_TOKEN@$CI_SERVER_HOST/${CAEF_RELEASE_PROJECT_PATH}.git/"
 git fetch release_publish
 git push release_publish
