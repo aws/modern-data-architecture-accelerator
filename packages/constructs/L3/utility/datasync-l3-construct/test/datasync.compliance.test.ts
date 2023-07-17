@@ -19,13 +19,13 @@ describe( 'CAEF Compliance Stack Tests', () => {
 
   const testAgent01Props: AgentWithNameProps = {
     agentName: "agent01",
-    activationKey: "ABCD-1234-EFGH-5678-IJKL",
+    activationKey: "ABCD-1234-EFGH-5678-IJKL", //gitleaks:allow
     subnetId: "subnet-1234abcd",
     agentIpAddress: "1.1.1.1"
   }
   const testAgent02Props: AgentWithNameProps = {
     agentName: "agent02",
-    activationKey: "XXXX-1234-XXXX-5678-XXXX",
+    activationKey: "XXXX-1234-XXXX-5678-XXXX", //gitleaks:allow
     subnetId: "subnet-23454abcd",
     vpcEndpointId: "vpce-0abcd1234e567890f",
     securityGroupId: "sg-012345abcd6789efg",
@@ -252,7 +252,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
 
   test( 'Agent2 Testing', () => {
     template.hasResourceProperties( "AWS::DataSync::Agent", {
-      "ActivationKey": "XXXX-1234-XXXX-5678-XXXX",
+      "ActivationKey": "XXXX-1234-XXXX-5678-XXXX", //gitleaks:allow
       "AgentName": "test-org-test-env-test-domain-test-module-agent02",
     } )
   } )

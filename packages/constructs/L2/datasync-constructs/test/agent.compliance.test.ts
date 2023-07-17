@@ -13,7 +13,7 @@ describe( 'Agent Compliance Tests', () => {
 
     const test1ContstructProps: CaefDataSyncAgentProps = {
         naming: testApp.naming,
-        activationKey: "ABCD-1234-EFGH-5678-IJKL",
+        activationKey: "ABCD-1234-EFGH-5678-IJKL", //gitleaks:allow
         securityGroupArns: [ "arn:test-partition:ec2:test-region:test-account:security-group/sg-012345abcd6789efg" ],
         subnetArns: [ "arn:test-partition:ec2:test-region:test-account:subnet/subnet-1234abcd" ],
         vpcEndpointId: "vpce-0abcd1234e567890f"
@@ -22,7 +22,7 @@ describe( 'Agent Compliance Tests', () => {
 
     const test2ContstructProps: CaefDataSyncAgentProps = {
         naming: testApp.naming,
-        activationKey: "AAAA-1234-EFGH-5678-IJKL",
+        activationKey: "AAAA-1234-EFGH-5678-IJKL", //gitleaks:allow
         securityGroupArns: [ "arn:test-partition:ec2:test-region:test-account:security-group/sg-012345abcd6789efg" ],
         subnetArns: [ "arn:test-partition:ec2:test-region:test-account:subnet/subnet-1234abcd" ],
         vpcEndpointId: "vpce-0abcd1234e567890f"
@@ -35,12 +35,12 @@ describe( 'Agent Compliance Tests', () => {
 
     test( 'ActivationKey', () => {
         template.hasResourceProperties( "AWS::DataSync::Agent", {
-            "ActivationKey": "ABCD-1234-EFGH-5678-IJKL"
+            "ActivationKey": "ABCD-1234-EFGH-5678-IJKL" //gitleaks:allow
         } )
     } )
     test( 'ActivationKey', () => {
         template.hasResourceProperties( "AWS::DataSync::Agent", {
-            "ActivationKey": "AAAA-1234-EFGH-5678-IJKL"
+            "ActivationKey": "AAAA-1234-EFGH-5678-IJKL" //gitleaks:allow
         } )
     } )
 

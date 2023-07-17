@@ -252,7 +252,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
       template.hasResourceProperties( "AWS::Lambda::LayerVersion", {
         "Content": {
           "S3Bucket": "cdk-hnb659fds-assets-test-account-test-region",
-          "S3Key": "1bba73604a80e93991d5c841d67bac5fcfd5131456ba8dd186dab4edba0c5129.zip"
+          "S3Key": "1bba73604a80e93991d5c841d67bac5fcfd5131456ba8dd186dab4edba0c5129.zip" //gitleaks:allow
         },
         "Description": "layer testing",
         "LayerName": "test-org-test-env-test-domain-test-module-test-layer"
