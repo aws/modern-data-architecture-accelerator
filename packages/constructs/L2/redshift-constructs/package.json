@@ -1,6 +1,6 @@
 {
   "name": "@aws-caef/redshift-constructs",
-  "version": "0.37.0",
+  "version": "0.38.0",
   "description": "CAEF Redshift Constructs",
   "license": "Apache-2.0",
   "author": {
@@ -21,11 +21,11 @@
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "devDependencies": {
-    "@aws-caef/construct": "0.37.0",
-    "@aws-caef/iam-constructs": "0.37.0",
-    "@aws-caef/kms-constructs": "0.37.0",
-    "@aws-caef/naming": "0.37.0",
-    "@aws-caef/testing": "^0.37.0",
+    "@aws-caef/construct": "0.38.0",
+    "@aws-caef/iam-constructs": "0.38.0",
+    "@aws-caef/kms-constructs": "0.38.0",
+    "@aws-caef/naming": "0.38.0",
+    "@aws-caef/testing": "^0.38.0",
     "@aws-cdk/aws-redshift-alpha": "2.54.0-alpha.0",
     "@types/jest": "^27.4.1",
     "@types/node": "17.0.23",
@@ -44,20 +44,20 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/construct": "^0.37.0",
-    "@aws-caef/iam-constructs": "^0.37.0",
-    "@aws-caef/kms-constructs": "^0.37.0",
-    "@aws-caef/naming": "^0.37.0",
+    "@aws-caef/construct": "^0.38.0",
+    "@aws-caef/iam-constructs": "^0.38.0",
+    "@aws-caef/kms-constructs": "^0.38.0",
+    "@aws-caef/naming": "^0.38.0",
     "@aws-cdk/aws-redshift-alpha": "2.54.0-alpha.0",
     "aws-cdk-lib": "2.85.0",
     "cdk-nag": "2.27.35",
     "constructs": "10.0.96"
   },
   "peerDependencies": {
-    "@aws-caef/construct": "^0.37.0",
-    "@aws-caef/iam-constructs": "^0.37.0",
-    "@aws-caef/kms-constructs": "^0.37.0",
-    "@aws-caef/naming": "^0.37.0",
+    "@aws-caef/construct": "^0.38.0",
+    "@aws-caef/iam-constructs": "^0.38.0",
+    "@aws-caef/kms-constructs": "^0.38.0",
+    "@aws-caef/naming": "^0.38.0",
     "@aws-cdk/aws-redshift-alpha": "2.54.0-alpha.0",
     "aws-cdk-lib": "2.85.0",
     "cdk-nag": "2.27.35",

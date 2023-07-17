@@ -37,10 +37,10 @@
   ],
   "references": [
     {
-      "path": "../../../L2/custom-constructs"
+      "path": "../../../L2/construct"
     },
     {
-      "path": "../../../L2/construct"
+      "path": "../../../L2/custom-constructs"
     },
     {
       "path": "../../../../utilities/iam-role-helper"
