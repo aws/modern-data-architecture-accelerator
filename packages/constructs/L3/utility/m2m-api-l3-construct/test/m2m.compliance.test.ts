@@ -272,7 +272,7 @@ describe( 'Mandatory Prop Tests', () => {
               "Principal": {
                 "AWS": "*"
               },
-              "Resource": "execute-api:/prod/GET/upload"
+              "Resource": "execute-api:/prod/GET/upload*"
             },
             {
               "Action": "execute-api:Invoke",
@@ -287,7 +287,7 @@ describe( 'Mandatory Prop Tests', () => {
               "Principal": {
                 "AWS": "*"
               },
-              "Resource": "execute-api:/prod/GET/upload"
+              "Resource": "execute-api:/prod/GET/upload*"
             }
           ],
           "Version": "2012-10-17"
@@ -353,7 +353,7 @@ describe( 'Mandatory Prop Tests', () => {
       template.hasResourceProperties( "AWS::ApiGateway::Method", {
         "HttpMethod": "GET",
         "ResourceId": {
-          "Ref": "teststackrestapiuploadD6821896"
+          "Ref": "teststackrestapiuploadproxyEAD65B5A"
         },
         "RestApiId": {
           "Ref": "teststackrestapi97625338"
@@ -528,7 +528,7 @@ describe( 'Mandatory Prop Tests', () => {
         },
         "Environment": {
           "Variables": {
-            "EXPIRY_TIME_SECONDS": "300",
+            "EXPIRY_TIME_SECONDS": "600",
             "TARGET_BUCKET": "test-bkt-name",
             "TARGET_PREFIX": "testing",
             "METADATA_TARGET_PREFIX": "testing",
@@ -829,7 +829,7 @@ describe( 'Optional Prop Tests', () => {
       "Role": "arn:test-partition:iam:test-region:test-account:role/test-role-id",
       "Environment": {
         "Variables": {
-          "EXPIRY_TIME_SECONDS": "300",
+          "EXPIRY_TIME_SECONDS": "600",
           "TARGET_BUCKET": "test-bkt-name",
           "TARGET_PREFIX": "testing",
           "METADATA_TARGET_PREFIX": "metadata-testing",

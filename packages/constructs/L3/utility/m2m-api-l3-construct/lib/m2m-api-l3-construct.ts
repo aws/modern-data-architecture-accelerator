@@ -332,7 +332,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
             naming: this.props.naming,
             code: Code.fromAsset( `${ __dirname }/../src/lambda/s3_url` ),
             environment: {
-                "EXPIRY_TIME_SECONDS": "300",
+                "EXPIRY_TIME_SECONDS": "600",
                 "TARGET_BUCKET": this.props.m2mApiProps.targetBucketName,
                 "TARGET_PREFIX": this.props.m2mApiProps.targetPrefix,
                 "METADATA_TARGET_PREFIX": this.props.m2mApiProps.metadataTargetPrefix || this.props.m2mApiProps.targetPrefix,
@@ -360,13 +360,13 @@ export class M2MApiL3Construct extends CaefL3Construct {
                     effect: Effect.ALLOW,
                     actions: [ 'execute-api:Invoke' ],
                     principals: [ new AnyPrincipal() ],
-                    resources: [ `execute-api:/${ stageName }/GET/upload` ],
+                    resources: [ `execute-api:/${ stageName }/GET/upload*` ],
                 } ),
                 new PolicyStatement( {
                     effect: Effect.DENY,
                     principals: [ new AnyPrincipal() ],
                     actions: [ 'execute-api:Invoke' ],
-                    resources: [ `execute-api:/${ stageName }/GET/upload` ],
+                    resources: [ `execute-api:/${ stageName }/GET/upload*` ],
                     conditions: {
                         'NotIpAddress': {
                             "aws:SourceIp": this.props.m2mApiProps.allowedCidrs
@@ -548,11 +548,13 @@ export class M2MApiL3Construct extends CaefL3Construct {
 
         const uploadResource = restApi.root.addResource( "upload" );
 
+        const proxyResource = uploadResource.addResource( "{proxy+}" );
+
         const methodRequestParamers = Object.fromEntries( Object.entries( this.props.m2mApiProps.requestParameters || {} ).map( entry => {
             return [ `method.request.querystring.${ entry[ 0 ] }`, entry[ 1 ] ]
         } ) )
 
-        uploadResource.addMethod( 'GET', integration, {
+        proxyResource.addMethod( 'GET', integration, {
             authorizationType: AuthorizationType.COGNITO,
             authorizer: cognitoAuthorizer,
             authorizationScopes: [ `${ M2MApiL3Construct.identifier }/${ apiScope.scopeName }` ],
@@ -573,10 +575,5 @@ export class M2MApiL3Construct extends CaefL3Construct {
             },
             naming: this.props.naming
         } );
-
-
-
     }
-
-
 }

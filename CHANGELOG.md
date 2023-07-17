@@ -18,6 +18,10 @@
   * NOTE: Deployment will replace the original LF settings custom resource, which will fail to delete with the following non-fatal error: "Received response status [FAILED] from custom resource. Message returned: Error: put_data_lake_settings() only accepts keyword arguments."
   * After first deployment, the old custom resource will be removed and the error no longer encountered.
 
+### Utility Changes
+
+* Updated m2m-api module to support multi-part uploads.
+
 ## 0.37.0
 
 ### General Changes
