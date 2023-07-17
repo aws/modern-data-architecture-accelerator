@@ -12,6 +12,10 @@
 * Added IP Address Restrictions to QuickSight Account module
 * Added VPC Connection provisioning to QuickSight Account module
 
+### Data Science Changes
+
+* Added FilterLogEvents to Data Science Team Read Policy
+
 ### Datalake Changes
 
 * Resolved issue with LakeFormation Settings module which prevented LF Settings from deleting cleanly

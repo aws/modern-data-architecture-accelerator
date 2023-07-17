@@ -516,7 +516,8 @@ describe( 'CAEF Compliance Stack Tests', () => {
                                 "Action": [
                                     "logs:GetLogEvents",
                                     "logs:DescribeLogGroups",
-                                    "logs:DescribeLogStreams"
+                                    "logs:DescribeLogStreams",
+                                    "logs:FilterLogEvents"
                                 ],
                                 "Effect": "Allow",
                                 "Resource": "arn:test-partition:logs:test-region:test-account:log-group:*sagemaker*"

@@ -380,7 +380,8 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
       actions: [
         "logs:GetLogEvents",
         "logs:DescribeLogGroups",
-        "logs:DescribeLogStreams"
+        "logs:DescribeLogStreams",
+        "logs:FilterLogEvents"
       ]
     } )
     sagemakerReadonlyManagedPolicy.addStatements( cloudwatchStatement )
