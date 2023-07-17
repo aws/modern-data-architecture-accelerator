@@ -27,7 +27,7 @@ pattern_text = "SF:lib/"
 print(__file__)
 
 _src_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-subprocess.run(["cd ", _src_path], shell=True)
+subprocess.run(["cd ", _src_path], shell=True)  # nosec
 
 # Search for lcov file and create a list
 lcov_path = list(Path(_src_path).rglob("lcov.info"))

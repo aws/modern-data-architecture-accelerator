@@ -31,23 +31,23 @@ def lambda_handler(event, context):
 def handle_create(event, context):
     resource_config = event['ResourceProperties']
     lifecycleConfigName = resource_config.get('lifecycleConfigName', None)
-    if(lifecycleConfigName is None):
+    if (lifecycleConfigName is None):
         raise Exception("Unable to parse lifecycleConfigName from event.")
 
     lifecycleConfigContent = resource_config.get(
         'lifecycleConfigContent', None)
-    if(lifecycleConfigContent is None):
+    if (lifecycleConfigContent is None):
         raise Exception(
             "Unable to parse lifecycleConfigContent from event.")
 
     lifecycleConfigContentHash = hashlib.sha1(
-        lifecycleConfigContent.encode("UTF-8")).hexdigest()[:10]
+        lifecycleConfigContent.encode("UTF-8"), usedforsecurity=False).hexdigest()[:10]
 
     lifecycleConfigNameWithHash = f"{lifecycleConfigName}-{lifecycleConfigContentHash}"
 
     lifecycleConfigAppType = resource_config.get(
         'lifecycleConfigAppType', None)
-    if(lifecycleConfigAppType is None):
+    if (lifecycleConfigAppType is None):
         raise Exception(
             "Unable to parse lifecycleConfigAppType from event.")
 
@@ -72,7 +72,7 @@ def handle_create(event, context):
 def handle_delete(event, context):
 
     lifecycleConfigName = event.get('PhysicalResourceId', None)
-    if(lifecycleConfigName is None):
+    if (lifecycleConfigName is None):
         raise Exception("Unable to parse lifecycleConfigName from event.")
     logger.info(f"Deleting Lifecycle Config {lifecycleConfigName}")
     try:
