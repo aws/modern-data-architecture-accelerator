@@ -2,7 +2,7 @@
 # SPDX - License - Identifier: Apache - 2.0
 
 import os
-import subprocess
+import subprocess  # nosec
 from pathlib import Path
 import re
 
