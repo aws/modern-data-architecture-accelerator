@@ -60,6 +60,7 @@ locations:
       # The secret must contain value in the format of {user:<username>,password:<pwd>}
       # If not specified, CAEF will create an empty secret, into which credentials can be populated after
       # deployment
+      # checkov:skip=CKV_SECRET_6: Base64 High Entropy String
       secretName: some-secret-name
       # Optional - Active Directory domain name
       domain: some-ad-domain-name
