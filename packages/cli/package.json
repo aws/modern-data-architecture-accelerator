@@ -1,6 +1,6 @@
 {
   "name": "@aws-caef/cli",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "description": "Compliant Analytics Environment Framework (CAEF) CLI",
   "license": "Apache-2.0",
   "author": {
@@ -36,7 +36,7 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/config": "^0.38.0",
+    "@aws-caef/config": "^0.39.0",
     "ajv": "^8.11.0",
     "command-line-args": "^5.2.1",
     "yaml": "^1.10.2"
