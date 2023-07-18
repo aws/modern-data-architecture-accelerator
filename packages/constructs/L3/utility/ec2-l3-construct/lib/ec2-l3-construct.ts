@@ -8,7 +8,7 @@ import { CaefRole } from '@aws-caef/iam-constructs';
 import { CaefResolvableRole, CaefRoleRef } from '@aws-caef/iam-role-helper';
 import { CaefKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-caef/kms-constructs';
 import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
-import { ApplyCloudFormationInitOptions, CloudFormationInit, InitConfig, InitPackage, InitServiceRestartHandle, InitCommandWaitDuration, NamedPackageOptions, ConfigSetProps, IMachineImage, Instance, CfnInstance, InstanceType, ISecurityGroup, MachineImageConfig, OperatingSystemType, SecurityGroup, Subnet, UserData, Vpc, InitElement, LocationPackageOptions, InitCommand, InitCommandOptions, InitFile, InitServiceOptions, InitService, InitFileAssetOptions } from "aws-cdk-lib/aws-ec2";
+import { ApplyCloudFormationInitOptions, CloudFormationInit, InitConfig, InitPackage, InitServiceRestartHandle, InitCommandWaitDuration, NamedPackageOptions, ConfigSetProps, IMachineImage, Instance, CfnInstance, InstanceType, ISecurityGroup, MachineImageConfig, OperatingSystemType, SecurityGroup, Subnet, UserData, Vpc, InitElement, LocationPackageOptions, InitCommand, InitCommandOptions, InitFile, InitServiceOptions, InitService, InitFileOptions } from "aws-cdk-lib/aws-ec2";
 import { ArnPrincipal, Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { IKey, Key } from "aws-cdk-lib/aws-kms";
 import { Construct } from "constructs";
@@ -734,15 +734,30 @@ export class Ec2L3Construct extends CaefL3Construct {
       //   : undefined,
       // }
 
-      const initFileAssetOptions: InitFileAssetOptions =
+      // const initFileAssetOptions: InitFileAssetOptions =
+      // {
+      //   serviceRestartHandles: fileProps.restartRequired
+      //     ?
+      //     [ this.initServiceRestartHandle ]
+      //     : undefined,
+      // }
+      const initFileOptions: InitFileOptions =
       {
+      // not supported for windows , to be added later
+      //   group: fileProps,
+      //   mode: fileProps,
+      //   owner: fileProps,
         serviceRestartHandles: fileProps.restartRequired
           ?
           [ this.initServiceRestartHandle ]
           : undefined,
       }
 
-      fileList.push( InitFile.fromAsset( fileName, fileProps.filePath, initFileAssetOptions ) )
+      // fileList.push( InitFile.fromAsset( fileName, fileProps.filePath, initFileAssetOptions ) )
+      // fromAsset creates a construct to store file in s3 with id `${targetFileName}Asset`. 
+      // Thus if more than one instance using the same target file name in stack, it will cause name collision.
+      //Open Issue: https://github.com/aws/aws-cdk/issues/16891
+      fileList.push( InitFile. fromFileInline( fileName, fileProps.filePath, initFileOptions ) )
     } )
     return fileList;
   }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.39.0
+
+### Utility Changes
+
+* Modified EC2 Cfn-Init to use inline fdile content in Cfn templates as a workaround to Asset resource naming collisions.
+
 ## 0.38.0
 
 ### General Changes

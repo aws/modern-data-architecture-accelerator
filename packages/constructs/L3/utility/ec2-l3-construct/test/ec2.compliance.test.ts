@@ -118,7 +118,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         instanceRole: testRoleRef,
         availabilityZone: "test-region",
         osType: "windows",
-        // initName: 'init1',
+        initName: 'init1',
         userDataScriptPath: "./test/userdata.sh",
         existingKeyPairName: "existing-rsa-key"
     }
@@ -386,9 +386,9 @@ describe( 'CAEF Compliance Stack Tests', () => {
                         },
                         "files": {
                             "testfile.txt": {
-                              "source": {
-                                "Fn::Sub": "https://s3.test-region.${AWS::URLSuffix}/cdk-hnb659fds-assets-test-account-test-region/48bdc3ffa2efd61be3c7282ed133f9c32eb4e155f022d36854ff9e5e425fc46c.txt"
-                              }
+                            //   "source": {
+                            //     "Fn::Sub": "https://s3.test-region.${AWS::URLSuffix}/cdk-hnb659fds-assets-test-account-test-region/48bdc3ffa2efd61be3c7282ed133f9c32eb4e155f022d36854ff9e5e425fc46c.txt"
+                            //   }
                             }
                           },
                         "commands": {
