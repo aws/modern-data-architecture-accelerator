@@ -14,8 +14,15 @@ git fetch prerelease_publish
 git push prerelease_publish
 git push prerelease_publish --tags
 
-#Push published version to CAEF Release repo. This will become the public version
-git remote add release_publish "https://gitlab-ci-token:$CI_GROUP_TOKEN@$CI_SERVER_HOST/${CAEF_RELEASE_PROJECT_PATH}.git/"
+export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
+$(aws sts assume-role \
+--role-arn $CAEF_DELIVERY_CODE_COMMIT_ROLE_ARN \
+--role-session-name CaefDeliveryCodeCommit \
+--query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
+--output text))
+
+#Push published version to CAEF Release repo. This will become the public version.
+git remote add release_publish $CAEF_DELIVERY_CODE_COMMIT_REPO
 git fetch release_publish
 git push release_publish
 git push release_publish --tags
