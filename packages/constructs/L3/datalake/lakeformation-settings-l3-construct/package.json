@@ -1,6 +1,6 @@
 {
   "name": "@aws-caef/lakeformation-settings-l3-construct",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "description": "CAEF DataLake L3 Construct",
   "license": "Apache-2.0",
   "author": {
@@ -21,11 +21,11 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-caef/construct": "0.38.0",
-    "@aws-caef/custom-constructs": "0.38.0",
-    "@aws-caef/iam-role-helper": "0.38.0",
-    "@aws-caef/l3-construct": "0.38.0",
-    "@aws-caef/testing": "^0.38.0",
+    "@aws-caef/construct": "0.39.0",
+    "@aws-caef/custom-constructs": "0.39.0",
+    "@aws-caef/iam-role-helper": "0.39.0",
+    "@aws-caef/l3-construct": "0.39.0",
+    "@aws-caef/testing": "^0.39.0",
     "@types/jest": "^27.4.1",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -39,10 +39,10 @@
     "typescript-json-schema": "^0.53.0"
   },
   "peerDependencies": {
-    "@aws-caef/construct": "^0.38.0",
-    "@aws-caef/custom-constructs": "^0.38.0",
-    "@aws-caef/iam-role-helper": "^0.38.0",
-    "@aws-caef/l3-construct": "^0.38.0",
+    "@aws-caef/construct": "^0.39.0",
+    "@aws-caef/custom-constructs": "^0.39.0",
+    "@aws-caef/iam-role-helper": "^0.39.0",
+    "@aws-caef/l3-construct": "^0.39.0",
     "aws-cdk-lib": "2.85.0",
     "constructs": "10.0.96"
   },
@@ -51,13 +51,13 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/construct": "^0.38.0",
-    "@aws-caef/custom-constructs": "^0.38.0",
-    "@aws-caef/iam-role-helper": "^0.38.0",
-    "@aws-caef/kms-constructs": "^0.38.0",
-    "@aws-caef/l3-construct": "^0.38.0",
-    "@aws-caef/lambda-constructs": "^0.38.0",
-    "@aws-caef/naming": "^0.38.0",
+    "@aws-caef/construct": "^0.39.0",
+    "@aws-caef/custom-constructs": "^0.39.0",
+    "@aws-caef/iam-role-helper": "^0.39.0",
+    "@aws-caef/kms-constructs": "^0.39.0",
+    "@aws-caef/l3-construct": "^0.39.0",
+    "@aws-caef/lambda-constructs": "^0.39.0",
+    "@aws-caef/naming": "^0.39.0",
     "aws-cdk-lib": "2.85.0",
     "cdk-nag": "2.27.35",
     "constructs": "10.0.96"
