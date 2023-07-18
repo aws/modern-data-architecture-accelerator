@@ -8,12 +8,6 @@ PUBLISHED_VERSION=`cat lerna.json | jq -r .version`
 git commit -a -m "Version $PUBLISHED_VERSION"
 git tag -a $PUBLISHED_VERSION -m "Version $PUBLISHED_VERSION"
 
-#Push published version to CAEF Dev repo. This will be used to track the latest version for next publish
-git remote add prerelease_publish "https://gitlab-ci-token:$CI_GROUP_TOKEN@$CI_SERVER_HOST/${CI_PROJECT_PATH}.git/"
-git fetch prerelease_publish
-git push prerelease_publish
-git push prerelease_publish --tags
-
 export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
 $(aws sts assume-role \
 --role-arn $CAEF_DELIVERY_CODE_COMMIT_ROLE_ARN \

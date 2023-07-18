@@ -851,6 +851,48 @@ release_generate_html_docs:
     - ./scripts/generate_docs.sh docs_prerelease
     - ./scripts/generate_docs.sh docs_release
 
+prerelease_push_git:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: prerelease_git
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: post_release
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - target
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - release_version_package
+  needs:
+    - release_version_package
+    - release_publish_s3
+    - release_publish_pip
+    - release_publish_npm
+    - release_publish_npm_prerelease
+  allow_failure: false
+  script:
+    - ./scripts/push_git_prerelease.sh
+
 release_push_git:
   tags:
     - arch:amd64
@@ -891,4 +933,4 @@ release_push_git:
     - release_publish_npm_prerelease
   allow_failure: false
   script:
-    - ./scripts/push_git.sh
+    - ./scripts/push_git_release.sh
