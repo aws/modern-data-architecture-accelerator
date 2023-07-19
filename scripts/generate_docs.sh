@@ -9,11 +9,13 @@ export CURRENT_MINOR=`cut -d'.' -f2 <<<"$CURRENT_VERSION"`
 #Publish docs without the patch version
 export PUBLISHED_VERSION="${CURRENT_MAJOR}.${CURRENT_MINOR}"
 
-
 # Ensure target/docs exists but is empty
 rm -rf target/docs*;mkdir -p target/docs/
 
-# First copy all markdown and doc png images to target/docs dir (mkdocs needs everything in one spot)
+# Generate TypeDocs
+npx typedoc --out target/docs/typedocs/
+
+# Copy all markdown and doc png images to target/docs dir (mkdocs needs everything in one spot)
 rsync -zarvm --exclude="*node_modules*" --exclude="*coverage*" --include="*/" --include="*.md" --include="*.png" --include="*.css" --include=".pages" --include="*.yaml" --exclude="*" . target/docs/
 
 # Setup a remote which will be used to push docs to the separate CAEF Docs repo (using mike/mkdocs)
