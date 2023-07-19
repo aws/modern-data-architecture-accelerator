@@ -1,0 +1,11 @@
+{
+    "entryPoints": [
+        "packages/constructs/L2/*",
+        "packages/constructs/L3/*/*",
+        "packages/utilities/*",
+    ],
+    "name": "CAEF TS Docs",
+    "entryPointStrategy": "packages"
+    // Potentially useful for debugging
+    // "logLevel": "Verbose"
+}
