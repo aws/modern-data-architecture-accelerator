@@ -497,6 +497,7 @@ prerelease_generate_html_docs:
     - prerelease_analyze
   dependencies:
     - prerelease_version
+    - prerelease_analyze
   allow_failure: false
   script:
     - ./scripts/generate_docs.sh docs_prerelease
