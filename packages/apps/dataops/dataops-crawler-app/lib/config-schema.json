@@ -156,7 +156,7 @@
             "description": "Specifies an AWS Glue Data Catalog target.",
             "properties": {
                 "connectionName": {
-                    "description": "`CfnCrawler.CatalogTargetProperty.ConnectionName`",
+                    "description": "The name of the connection for an Amazon S3-backed Data Catalog table to be a target of the crawl when using a `Catalog` connection type paired with a `NETWORK` Connection type.",
                     "type": "string"
                 },
                 "databaseName": {
@@ -164,11 +164,11 @@
                     "type": "string"
                 },
                 "dlqEventQueueArn": {
-                    "description": "`CfnCrawler.CatalogTargetProperty.DlqEventQueueArn`",
+                    "description": "A valid Amazon dead-letter SQS ARN.\n\nFor example, `arn:aws:sqs:region:account:deadLetterQueue` .",
                     "type": "string"
                 },
                 "eventQueueArn": {
-                    "description": "`CfnCrawler.CatalogTargetProperty.EventQueueArn`",
+                    "description": "A valid Amazon SQS ARN.\n\nFor example, `arn:aws:sqs:region:account:sqs` .",
                     "type": "string"
                 },
                 "tables": {
@@ -201,7 +201,7 @@
                     "type": "string"
                 },
                 "exclusions": {
-                    "description": "A list of glob patterns used to exclude from the crawl. For more information, see [Catalog Tables with a Crawler](https://docs.aws.amazon.com/glue/latest/dg/add-crawler.html) .",
+                    "description": "A list of glob patterns used to exclude from the crawl.\n\nFor more information, see [Catalog Tables with a Crawler](https://docs.aws.amazon.com/glue/latest/dg/add-crawler.html) .",
                     "items": {
                         "type": "string"
                     },
@@ -223,15 +223,15 @@
                     "type": "string"
                 },
                 "dlqEventQueueArn": {
-                    "description": "A valid Amazon dead-letter SQS ARN. For example, `arn:aws:sqs:region:account:deadLetterQueue` .",
+                    "description": "A valid Amazon dead-letter SQS ARN.\n\nFor example, `arn:aws:sqs:region:account:deadLetterQueue` .",
                     "type": "string"
                 },
                 "eventQueueArn": {
-                    "description": "A valid Amazon SQS ARN. For example, `arn:aws:sqs:region:account:sqs` .",
+                    "description": "A valid Amazon SQS ARN.\n\nFor example, `arn:aws:sqs:region:account:sqs` .",
                     "type": "string"
                 },
                 "exclusions": {
-                    "description": "A list of glob patterns used to exclude from the crawl. For more information, see [Catalog Tables with a Crawler](https://docs.aws.amazon.com/glue/latest/dg/add-crawler.html) .",
+                    "description": "A list of glob patterns used to exclude from the crawl.\n\nFor more information, see [Catalog Tables with a Crawler](https://docs.aws.amazon.com/glue/latest/dg/add-crawler.html) .",
                     "items": {
                         "type": "string"
                     },
@@ -242,7 +242,7 @@
                     "type": "string"
                 },
                 "sampleSize": {
-                    "description": "Sets the number of files in each leaf folder to be crawled when crawling sample files in a dataset. If not set, all the files are crawled. A valid value is an integer between 1 and 249.",
+                    "description": "Sets the number of files in each leaf folder to be crawled when crawling sample files in a dataset.\n\nIf not set, all the files are crawled. A valid value is an integer between 1 and 249.",
                     "type": "number"
                 }
             },
@@ -253,7 +253,7 @@
             "description": "A scheduling object using a `cron` statement to schedule an event.",
             "properties": {
                 "scheduleExpression": {
-                    "description": "A `cron` expression used to specify the schedule. For more information, see [Time-Based Schedules for Jobs and Crawlers](https://docs.aws.amazon.com/glue/latest/dg/monitor-data-warehouse-schedule.html) . For example, to run something every day at 12:15 UTC, specify `cron(15 12 * * ? *)` .",
+                    "description": "A `cron` expression used to specify the schedule.\n\nFor more information, see [Time-Based Schedules for Jobs and Crawlers](https://docs.aws.amazon.com/glue/latest/dg/monitor-data-warehouse-schedule.html) . For example, to run something every day at 12:15 UTC, specify `cron(15 12 * * ? *)` .",
                     "type": "string"
                 }
             },
@@ -261,7 +261,7 @@
         },
         "CfnCrawler.SchemaChangePolicyProperty": {
             "additionalProperties": false,
-            "description": "The policy that specifies update and delete behaviors for the crawler. The policy tells the crawler what to do in the event that it detects a change in a table that already exists in the customer's database at the time of the crawl. The `SchemaChangePolicy` does not affect whether or how new tables and partitions are added. New tables and partitions are always created regardless of the `SchemaChangePolicy` on a crawler.\n\nThe SchemaChangePolicy consists of two components, `UpdateBehavior` and `DeleteBehavior` .",
+            "description": "The policy that specifies update and delete behaviors for the crawler.\n\nThe policy tells the crawler what to do in the event that it detects a change in a table that already exists in the customer's database at the time of the crawl. The `SchemaChangePolicy` does not affect whether or how new tables and partitions are added. New tables and partitions are always created regardless of the `SchemaChangePolicy` on a crawler.\n\nThe SchemaChangePolicy consists of two components, `UpdateBehavior` and `DeleteBehavior` .",
             "properties": {
                 "deleteBehavior": {
                     "description": "The deletion behavior when the crawler finds a deleted object.\n\nA value of `LOG` specifies that if a table or partition is found to no longer exist, do not delete it, only log that it was found to no longer exist.\n\nA value of `DELETE_FROM_DATABASE` specifies that if a table or partition is found to have been removed, delete it from the database.\n\nA value of `DEPRECATE_IN_DATABASE` specifies that if a table has been found to no longer exist, to add a property to the table that says \"DEPRECATED\" and includes a timestamp with the time of deprecation.",

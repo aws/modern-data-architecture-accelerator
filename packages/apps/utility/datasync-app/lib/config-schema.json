@@ -249,11 +249,11 @@
             "description": "Specifies which files, folders, and objects to include or exclude when transferring files from source to destination.",
             "properties": {
                 "filterType": {
-                    "description": "The type of filter rule to apply. AWS DataSync only supports the SIMPLE_PATTERN rule type.",
+                    "description": "The type of filter rule to apply.\n\nAWS DataSync only supports the SIMPLE_PATTERN rule type.",
                     "type": "string"
                 },
                 "value": {
-                    "description": "A single filter string that consists of the patterns to include or exclude. The patterns are delimited by \"|\" (that is, a pipe), for example: `/folder1|/folder2`",
+                    "description": "A single filter string that consists of the patterns to include or exclude.\n\nThe patterns are delimited by \"|\" (that is, a pipe), for example: `/folder1|/folder2`",
                     "type": "string"
                 }
             },
@@ -264,11 +264,11 @@
             "description": "Represents the options that are available to control the behavior of a [StartTaskExecution](https://docs.aws.amazon.com/datasync/latest/userguide/API_StartTaskExecution.html) operation. This behavior includes preserving metadata, such as user ID (UID), group ID (GID), and file permissions; overwriting files in the destination; data integrity verification; and so on.\n\nA task has a set of default options associated with it. If you don't specify an option in [StartTaskExecution](https://docs.aws.amazon.com/datasync/latest/userguide/API_StartTaskExecution.html) , the default value is used. You can override the default options on each task execution by specifying an overriding `Options` value to [StartTaskExecution](https://docs.aws.amazon.com/datasync/latest/userguide/API_StartTaskExecution.html) .",
             "properties": {
                 "atime": {
-                    "description": "A file metadata value that shows the last time that a file was accessed (that is, when the file was read or written to). If you set `Atime` to `BEST_EFFORT` , AWS DataSync attempts to preserve the original `Atime` attribute on all source files (that is, the version before the PREPARING phase). However, `Atime` 's behavior is not fully standard across platforms, so AWS DataSync can only do this on a best-effort basis.\n\nDefault value: `BEST_EFFORT`\n\n`BEST_EFFORT` : Attempt to preserve the per-file `Atime` value (recommended).\n\n`NONE` : Ignore `Atime` .\n\n> If `Atime` is set to `BEST_EFFORT` , `Mtime` must be set to `PRESERVE` .\n>\n> If `Atime` is set to `NONE` , `Mtime` must also be `NONE` .",
+                    "description": "A file metadata value that shows the last time that a file was accessed (that is, when the file was read or written to).\n\nIf you set `Atime` to `BEST_EFFORT` , AWS DataSync attempts to preserve the original `Atime` attribute on all source files (that is, the version before the PREPARING phase). However, `Atime` 's behavior is not fully standard across platforms, so AWS DataSync can only do this on a best-effort basis.\n\nDefault value: `BEST_EFFORT`\n\n`BEST_EFFORT` : Attempt to preserve the per-file `Atime` value (recommended).\n\n`NONE` : Ignore `Atime` .\n\n> If `Atime` is set to `BEST_EFFORT` , `Mtime` must be set to `PRESERVE` .\n>\n> If `Atime` is set to `NONE` , `Mtime` must also be `NONE` .",
                     "type": "string"
                 },
                 "bytesPerSecond": {
-                    "description": "A value that limits the bandwidth used by AWS DataSync . For example, if you want AWS DataSync to use a maximum of 1 MB, set this value to `1048576` (=1024*1024).",
+                    "description": "A value that limits the bandwidth used by AWS DataSync .\n\nFor example, if you want AWS DataSync to use a maximum of 1 MB, set this value to `1048576` (=1024*1024).",
                     "type": "number"
                 },
                 "gid": {
@@ -276,31 +276,31 @@
                     "type": "string"
                 },
                 "logLevel": {
-                    "description": "Specifies the type of logs that DataSync publishes to a Amazon CloudWatch Logs log group. To specify the log group, see [CloudWatchLogGroupArn](https://docs.aws.amazon.com/datasync/latest/userguide/API_CreateTask.html#DataSync-CreateTask-request-CloudWatchLogGroupArn) .\n\nIf you set `LogLevel` to `OFF` , no logs are published. `BASIC` publishes logs on errors for individual files transferred. `TRANSFER` publishes logs for every file or object that is transferred and integrity checked.",
+                    "description": "Specifies the type of logs that DataSync publishes to a Amazon CloudWatch Logs log group.\n\nTo specify the log group, see [CloudWatchLogGroupArn](https://docs.aws.amazon.com/datasync/latest/userguide/API_CreateTask.html#DataSync-CreateTask-request-CloudWatchLogGroupArn) .\n\nIf you set `LogLevel` to `OFF` , no logs are published. `BASIC` publishes logs on errors for individual files transferred. `TRANSFER` publishes logs for every file or object that is transferred and integrity checked.",
                     "type": "string"
                 },
                 "mtime": {
-                    "description": "A value that indicates the last time that a file was modified (that is, a file was written to) before the PREPARING phase. This option is required for cases when you need to run the same task more than one time.\n\nDefault value: `PRESERVE`\n\n`PRESERVE` : Preserve original `Mtime` (recommended)\n\n`NONE` : Ignore `Mtime` .\n\n> If `Mtime` is set to `PRESERVE` , `Atime` must be set to `BEST_EFFORT` .\n>\n> If `Mtime` is set to `NONE` , `Atime` must also be set to `NONE` .",
+                    "description": "A value that indicates the last time that a file was modified (that is, a file was written to) before the PREPARING phase.\n\nThis option is required for cases when you need to run the same task more than one time.\n\nDefault value: `PRESERVE`\n\n`PRESERVE` : Preserve original `Mtime` (recommended)\n\n`NONE` : Ignore `Mtime` .\n\n> If `Mtime` is set to `PRESERVE` , `Atime` must be set to `BEST_EFFORT` .\n>\n> If `Mtime` is set to `NONE` , `Atime` must also be set to `NONE` .",
                     "type": "string"
                 },
                 "objectTags": {
-                    "description": "Specifies whether object tags are preserved when transferring between object storage systems. If you want your DataSync task to ignore object tags, specify the `NONE` value.\n\nDefault Value: `PRESERVE`",
+                    "description": "Specifies whether object tags are preserved when transferring between object storage systems.\n\nIf you want your DataSync task to ignore object tags, specify the `NONE` value.\n\nDefault Value: `PRESERVE`",
                     "type": "string"
                 },
                 "overwriteMode": {
-                    "description": "Specifies whether data at the destination location should be overwritten or preserved. If set to `NEVER` , a destination file for example will not be replaced by a source file (even if the destination file differs from the source file). If you modify files in the destination and you sync the files, you can use this value to protect against overwriting those changes.\n\nSome storage classes have specific behaviors that can affect your Amazon S3 storage cost. For detailed information, see [Considerations when working with Amazon S3 storage classes in DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/create-s3-location.html#using-storage-classes) .",
+                    "description": "Specifies whether data at the destination location should be overwritten or preserved.\n\nIf set to `NEVER` , a destination file for example will not be replaced by a source file (even if the destination file differs from the source file). If you modify files in the destination and you sync the files, you can use this value to protect against overwriting those changes.\n\nSome storage classes have specific behaviors that can affect your Amazon S3 storage cost. For detailed information, see [Considerations when working with Amazon S3 storage classes in DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/create-s3-location.html#using-storage-classes) .",
                     "type": "string"
                 },
                 "posixPermissions": {
-                    "description": "A value that determines which users or groups can access a file for a specific purpose, such as reading, writing, or execution of the file. This option should be set only for Network File System (NFS), Amazon EFS, and Amazon S3 locations. For more information about what metadata is copied by DataSync, see [Metadata Copied by DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/special-files.html#metadata-copied) .\n\nDefault value: `PRESERVE`\n\n`PRESERVE` : Preserve POSIX-style permissions (recommended).\n\n`NONE` : Ignore permissions.\n\n> AWS DataSync can preserve extant permissions of a source location.",
+                    "description": "A value that determines which users or groups can access a file for a specific purpose, such as reading, writing, or execution of the file.\n\nThis option should be set only for Network File System (NFS), Amazon EFS, and Amazon S3 locations. For more information about what metadata is copied by DataSync, see [Metadata Copied by DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/special-files.html#metadata-copied) .\n\nDefault value: `PRESERVE`\n\n`PRESERVE` : Preserve POSIX-style permissions (recommended).\n\n`NONE` : Ignore permissions.\n\n> AWS DataSync can preserve extant permissions of a source location.",
                     "type": "string"
                 },
                 "preserveDeletedFiles": {
-                    "description": "A value that specifies whether files in the destination that don't exist in the source file system are preserved. This option can affect your storage costs. If your task deletes objects, you might incur minimum storage duration charges for certain storage classes. For detailed information, see [Considerations when working with Amazon S3 storage classes in DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/create-s3-location.html#using-storage-classes) in the *AWS DataSync User Guide* .\n\nDefault value: `PRESERVE`\n\n`PRESERVE` : Ignore destination files that aren't present in the source (recommended).\n\n`REMOVE` : Delete destination files that aren't present in the source.",
+                    "description": "A value that specifies whether files in the destination that don't exist in the source file system are preserved.\n\nThis option can affect your storage costs. If your task deletes objects, you might incur minimum storage duration charges for certain storage classes. For detailed information, see [Considerations when working with Amazon S3 storage classes in DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/create-s3-location.html#using-storage-classes) in the *AWS DataSync User Guide* .\n\nDefault value: `PRESERVE`\n\n`PRESERVE` : Ignore destination files that aren't present in the source (recommended).\n\n`REMOVE` : Delete destination files that aren't present in the source.",
                     "type": "string"
                 },
                 "preserveDevices": {
-                    "description": "A value that determines whether AWS DataSync should preserve the metadata of block and character devices in the source file system, and re-create the files with that device name and metadata on the destination. DataSync does not copy the contents of such devices, only the name and metadata.\n\n> AWS DataSync can't sync the actual contents of such devices, because they are nonterminal and don't return an end-of-file (EOF) marker.\n\nDefault value: `NONE`\n\n`NONE` : Ignore special devices (recommended).\n\n`PRESERVE` : Preserve character and block device metadata. This option isn't currently supported for Amazon EFS.",
+                    "description": "A value that determines whether AWS DataSync should preserve the metadata of block and character devices in the source file system, and re-create the files with that device name and metadata on the destination.\n\nDataSync does not copy the contents of such devices, only the name and metadata.\n\n> AWS DataSync can't sync the actual contents of such devices, because they are nonterminal and don't return an end-of-file (EOF) marker.\n\nDefault value: `NONE`\n\n`NONE` : Ignore special devices (recommended).\n\n`PRESERVE` : Preserve character and block device metadata. This option isn't currently supported for Amazon EFS.",
                     "type": "string"
                 },
                 "securityDescriptorCopyFlags": {
@@ -320,7 +320,7 @@
                     "type": "string"
                 },
                 "verifyMode": {
-                    "description": "A value that determines whether a data integrity verification is performed at the end of a task execution after all data and metadata have been transferred. For more information, see [Configure task settings](https://docs.aws.amazon.com/datasync/latest/userguide/create-task.html) .\n\nDefault value: `POINT_IN_TIME_CONSISTENT`\n\n`ONLY_FILES_TRANSFERRED` (recommended): Perform verification only on files that were transferred.\n\n`POINT_IN_TIME_CONSISTENT` : Scan the entire source and entire destination at the end of the transfer to verify that the source and destination are fully synchronized. This option isn't supported when transferring to S3 Glacier or S3 Glacier Deep Archive storage classes.\n\n`NONE` : No additional verification is done at the end of the transfer, but all data transmissions are integrity-checked with checksum verification during the transfer.",
+                    "description": "A value that determines whether a data integrity verification is performed at the end of a task execution after all data and metadata have been transferred.\n\nFor more information, see [Configure task settings](https://docs.aws.amazon.com/datasync/latest/userguide/create-task.html) .\n\nDefault value: `POINT_IN_TIME_CONSISTENT`\n\n`ONLY_FILES_TRANSFERRED` (recommended): Perform verification only on files that were transferred.\n\n`POINT_IN_TIME_CONSISTENT` : Scan the entire source and entire destination at the end of the transfer to verify that the source and destination are fully synchronized. This option isn't supported when transferring to S3 Glacier or S3 Glacier Deep Archive storage classes.\n\n`NONE` : No additional verification is done at the end of the transfer, but all data transmissions are integrity-checked with checksum verification during the transfer.",
                     "type": "string"
                 }
             },
@@ -328,7 +328,7 @@
         },
         "CfnTask.TaskScheduleProperty": {
             "additionalProperties": false,
-            "description": "Specifies the schedule you want your task to use for repeated executions. For more information, see [Schedule Expressions for Rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html) .",
+            "description": "Specifies the schedule you want your task to use for repeated executions.\n\nFor more information, see [Schedule Expressions for Rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html) .",
             "properties": {
                 "scheduleExpression": {
                     "description": "A cron expression that specifies when AWS DataSync initiates a scheduled transfer from a source to a destination location.",

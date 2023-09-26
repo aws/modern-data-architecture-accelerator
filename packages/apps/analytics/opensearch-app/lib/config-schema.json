@@ -202,6 +202,11 @@
                     "description": "The number of instances to use for the master node.",
                     "type": "number"
                 },
+                "multiAzWithStandbyEnabled": {
+                    "default": "- no multi-az with standby",
+                    "description": "Indicates whether Multi-AZ with Standby deployment option is enabled.\nFor more information, see [Multi-AZ with Standby]\n(https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-multiaz.html#managedomains-za-standby)",
+                    "type": "boolean"
+                },
                 "warmInstanceType": {
                     "default": "- ultrawarm1.medium.search",
                     "description": "The instance type for your UltraWarm node, such as `ultrawarm1.medium.search`.\nFor valid values, see [UltraWarm Storage Limits]\n(https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#limits-ultrawarm)\nin the Amazon OpenSearch Service Developer Guide.",
@@ -314,7 +319,12 @@
                 },
                 "iops": {
                     "default": "- iops are not set.",
-                    "description": "The number of I/O operations per second (IOPS) that the volume\nsupports. This property applies only to the Provisioned IOPS (SSD) EBS\nvolume type.",
+                    "description": "The number of I/O operations per second (IOPS) that the volume\nsupports. This property applies only to the gp3 and Provisioned IOPS (SSD) EBS\nvolume type.",
+                    "type": "number"
+                },
+                "throughput": {
+                    "default": "- throughput is not set.",
+                    "description": "The throughput (in MiB/s) of the EBS volumes attached to data nodes.\nThis property applies only to the gp3 volume type.",
                     "type": "number"
                 },
                 "volumeSize": {

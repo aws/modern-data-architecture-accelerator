@@ -550,7 +550,6 @@ export class Ec2L3Construct extends CaefL3Construct {
 
     this.createKeyPairs( props.keyPairs || {} )
     this.createSecurityGroups( props.securityGroups || {} )
-    // this.createInit(props.cfnInit || {})
     this.cfnInit = this.createInit( props.cfnInit || {} )
     this.createInstances( props.instances || {} )
 
@@ -613,8 +612,7 @@ export class Ec2L3Construct extends CaefL3Construct {
   private createPackages ( namedPackageProps: NamedPackageProps ) {
     const packageList: InitElement[] = []
     Object.entries( namedPackageProps ).forEach( entry => {
-      // // 
-      //       const packageType = entry[ 0 ]
+
       const packageProps = entry[ 1 ]
 
       const namedPackageOptions: NamedPackageOptions = packageProps.restartRequired
@@ -632,7 +630,6 @@ export class Ec2L3Construct extends CaefL3Construct {
           serviceRestartHandles: [ this.initServiceRestartHandle ],
           key: packageProps.key
         }
-        // : undefined
         : {
           key: packageProps.key
         }
@@ -713,40 +710,12 @@ export class Ec2L3Construct extends CaefL3Construct {
       const fileName = entry[ 0 ]
       const fileProps = entry[ 1 ]
 
-      // TO BE IMPLEMENTED
-      // const initFileAssetOptions: InitFileAssetOptions =
-      // {
-      //   assetHash: fileProps,
-      //   assetHashType: fileProps,
-      //   base64Encoded: fileProps,
-      //   bundling: fileProps,
-      //   deployTime:fileProps,
-      //   exclude: fileProps,
-      //   followSymlinks: fileProps,
-      //   ignoreMode: fileProps,
-      //   group: fileProps,
-      //   mode: fileProps,
-      //   owner: fileProps,
-      //   readers: fileProps,
-      //   serviceRestartHandles:commandProps.restartRequired
-      //   ?
-      //   [handle]
-      //   : undefined,
-      // }
-
-      // const initFileAssetOptions: InitFileAssetOptions =
-      // {
-      //   serviceRestartHandles: fileProps.restartRequired
-      //     ?
-      //     [ this.initServiceRestartHandle ]
-      //     : undefined,
-      // }
       const initFileOptions: InitFileOptions =
       {
-      // not supported for windows , to be added later
-      //   group: fileProps,
-      //   mode: fileProps,
-      //   owner: fileProps,
+        // not supported for windows , to be added later
+        //   group: fileProps,
+        //   mode: fileProps,
+        //   owner: fileProps,
         serviceRestartHandles: fileProps.restartRequired
           ?
           [ this.initServiceRestartHandle ]
@@ -757,7 +726,7 @@ export class Ec2L3Construct extends CaefL3Construct {
       // fromAsset creates a construct to store file in s3 with id `${targetFileName}Asset`. 
       // Thus if more than one instance using the same target file name in stack, it will cause name collision.
       //Open Issue: https://github.com/aws/aws-cdk/issues/16891
-      fileList.push( InitFile. fromFileInline( fileName, fileProps.filePath, initFileOptions ) )
+      fileList.push( InitFile.fromFileInline( fileName, fileProps.filePath, initFileOptions ) )
     } )
     return fileList;
   }
