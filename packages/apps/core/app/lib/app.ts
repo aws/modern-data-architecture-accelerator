@@ -268,7 +268,7 @@ export abstract class CaefCdkApp extends App {
             createOutputs: false
         } )
         const provisioningMacroFunctionProps: CaefLambdaFunctionProps = {
-            runtime: Runtime.PYTHON_3_10,
+            runtime: Runtime.PYTHON_3_11,
             code: Code.fromAsset( `${ __dirname }/../src/python/provisioning_macro` ),
             handler: "provisioning_macro.lambda_handler",
             functionName: "provisioningMacro",

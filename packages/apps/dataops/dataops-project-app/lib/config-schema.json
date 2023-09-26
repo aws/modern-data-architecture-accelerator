@@ -322,11 +322,11 @@
                     "type": "string"
                 },
                 "customPatterns": {
-                    "description": "Optional custom grok patterns defined by this classifier. For more information, see custom patterns in [Writing Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html) .",
+                    "description": "Optional custom grok patterns defined by this classifier.\n\nFor more information, see custom patterns in [Writing Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html) .",
                     "type": "string"
                 },
                 "grokPattern": {
-                    "description": "The grok pattern applied to a data store by this classifier. For more information, see built-in patterns in [Writing Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html) .",
+                    "description": "The grok pattern applied to a data store by this classifier.\n\nFor more information, see built-in patterns in [Writing Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html) .",
                     "type": "string"
                 },
                 "name": {
@@ -345,7 +345,7 @@
             "description": "A classifier for `JSON` content.",
             "properties": {
                 "jsonPath": {
-                    "description": "A `JsonPath` string defining the JSON data for the classifier to classify. AWS Glue supports a subset of `JsonPath` , as described in [Writing JsonPath Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html#custom-classifier-json) .",
+                    "description": "A `JsonPath` string defining the JSON data for the classifier to classify.\n\nAWS Glue supports a subset of `JsonPath` , as described in [Writing JsonPath Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html#custom-classifier-json) .",
                     "type": "string"
                 },
                 "name": {
@@ -371,7 +371,7 @@
                     "type": "string"
                 },
                 "rowTag": {
-                    "description": "The XML tag designating the element that contains each record in an XML document being parsed. This can't identify a self-closing element (closed by `/>` ). An empty row element that contains only attributes can be parsed as long as it ends with a closing tag (for example, `<row item_a=\"A\" item_b=\"B\"></row>` is okay, but `<row item_a=\"A\" item_b=\"B\" />` is not).",
+                    "description": "The XML tag designating the element that contains each record in an XML document being parsed.\n\nThis can't identify a self-closing element (closed by `/>` ). An empty row element that contains only attributes can be parsed as long as it ends with a closing tag (for example, `<row item_a=\"A\" item_b=\"B\"></row>` is okay, but `<row item_a=\"A\" item_b=\"B\" />` is not).",
                     "type": "string"
                 }
             },

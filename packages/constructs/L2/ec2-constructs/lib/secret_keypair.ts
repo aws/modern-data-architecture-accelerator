@@ -47,7 +47,7 @@ export class CaefEC2SecretKeyPair extends Construct {
         const crProps: CaefCustomResourceProps = {
             resourceType: "SecretKeyPair",
             code: Code.fromAsset( `${ __dirname }/../src/lambda/keypair` ),
-            runtime: Runtime.PYTHON_3_10,
+            runtime: Runtime.PYTHON_3_11,
             handler: "keypair.lambda_handler",
             handlerRolePolicyStatements: [ statement ],
             handlerProps: handlerProps,

@@ -148,7 +148,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
     const crProps: CaefCustomResourceProps = {
       resourceType: 'ip-restrictions',
       code: Code.fromAsset( `${ __dirname }/../src/python/ip_restrictions` ),
-      runtime: Runtime.PYTHON_3_10,
+      runtime: Runtime.PYTHON_3_11,
       handler: 'ip_restrictions.lambda_handler',
       handlerRolePolicyStatements: [ crStatement ],
       handlerPolicySuppressions: [ { id: 'AwsSolutions-IAM5', reason: 'quicksight:UpdateIpRestriction and quicksight:DescribeIpRestriction do not accept a resource' } ],
@@ -288,7 +288,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
         naming: this.props.naming,
         code: Code.fromAsset( srcDir ),
         handler: "quicksight_account.lambda_handler",
-        runtime: Runtime.PYTHON_3_10,
+        runtime: Runtime.PYTHON_3_11,
         timeout: Duration.seconds( 300 ),
         environment: {
           ACCOUNT_ID: this.account,

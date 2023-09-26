@@ -325,7 +325,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
 
         // creates lambda function to generate presigned URL
         const s3UrlGenLambda = new CaefLambdaFunction( this, 's3-url-gen-lambda', {
-            runtime: Runtime.PYTHON_3_10,
+            runtime: Runtime.PYTHON_3_11,
             handler: 's3_url.handler',
             functionName: "signed-s3-url-gen",
             role: integrationLambdaRole,

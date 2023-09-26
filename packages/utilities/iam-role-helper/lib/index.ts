@@ -301,7 +301,7 @@ export class CaefRoleHelper {
             functionName: "role-res-cr",
             code: Code.fromAsset( `${ __dirname }/../src/python/resolve_role/` ),
             handler: "resolve_role.lambda_handler",
-            runtime: Runtime.PYTHON_3_10,
+            runtime: Runtime.PYTHON_3_11,
             timeout: Duration.seconds( 120 ),
             role: crLambdaRole,
             naming: this.naming,

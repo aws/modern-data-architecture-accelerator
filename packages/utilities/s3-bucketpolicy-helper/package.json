@@ -26,14 +26,14 @@
     "typescript-json-schema": "^0.53.0"
   },
   "overrides": {
-    "aws-cdk-lib": "2.85.0",
+    "aws-cdk-lib": "2.97.1",
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
     "@aws-caef/iam-role-helper": "^0.39.0",
     "@aws-caef/naming": "^0.39.0",
-    "aws-cdk-lib": "2.85.0",
-    "cdk-nag": "2.27.35",
+    "aws-cdk-lib": "2.97.1",
+    "cdk-nag": "2.27.142",
     "constructs": "10.0.96"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31"

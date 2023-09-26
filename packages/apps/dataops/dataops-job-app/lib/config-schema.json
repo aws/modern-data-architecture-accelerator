@@ -156,7 +156,7 @@
             "description": "An execution property of a job.",
             "properties": {
                 "maxConcurrentRuns": {
-                    "description": "The maximum number of concurrent runs allowed for the job. The default is 1. An error is returned when this threshold is reached. The maximum value you can specify is controlled by a service limit.",
+                    "description": "The maximum number of concurrent runs allowed for the job.\n\nThe default is 1. An error is returned when this threshold is reached. The maximum value you can specify is controlled by a service limit.",
                     "type": "number"
                 }
             },

@@ -195,7 +195,7 @@
                             "type": "boolean"
                         }
                     ],
-                    "description": "A variable that specifies whether the first row in the file is parsed as the header. If this value is false, column names are auto-generated."
+                    "description": "A variable that specifies whether the first row in the file is parsed as the header.\n\nIf this value is false, column names are auto-generated."
                 }
             },
             "type": "object"
@@ -213,7 +213,7 @@
                     "type": "string"
                 },
                 "tableName": {
-                    "description": "The name of a database table in the Data Catalog. This table corresponds to a DataBrew dataset.",
+                    "description": "The name of a database table in the Data Catalog.\n\nThis table corresponds to a DataBrew dataset.",
                     "type": "string"
                 },
                 "tempDirectory": {
@@ -243,7 +243,7 @@
                     "type": "string"
                 },
                 "queryString": {
-                    "description": "Custom SQL to run against the provided AWS Glue connection. This SQL will be used as the input for DataBrew projects and jobs.",
+                    "description": "Custom SQL to run against the provided AWS Glue connection.\n\nThis SQL will be used as the input for DataBrew projects and jobs.",
                     "type": "string"
                 },
                 "tempDirectory": {
@@ -287,7 +287,7 @@
                             "$ref": "#/definitions/CfnDataset.DatetimeOptionsProperty"
                         }
                     ],
-                    "description": "Additional parameter options such as a format and a timezone. Required for datetime parameters."
+                    "description": "Additional parameter options such as a format and a timezone.\n\nRequired for datetime parameters."
                 },
                 "filter": {
                     "anyOf": [
@@ -320,7 +320,7 @@
             "description": "Represents additional options for correct interpretation of datetime parameters used in the Amazon S3 path of a dataset.",
             "properties": {
                 "format": {
-                    "description": "Required option, that defines the datetime format used for a date parameter in the Amazon S3 path. Should use only supported datetime specifiers and separation characters, all litera a-z or A-Z character should be escaped with single quotes. E.g. \"MM.dd.yyyy-'at'-HH:mm\".",
+                    "description": "Required option, that defines the datetime format used for a date parameter in the Amazon S3 path.\n\nShould use only supported datetime specifiers and separation characters, all litera a-z or A-Z character should be escaped with single quotes. E.g. \"MM.dd.yyyy-'at'-HH:mm\".",
                     "type": "string"
                 },
                 "localeCode": {
@@ -328,7 +328,7 @@
                     "type": "string"
                 },
                 "timezoneOffset": {
-                    "description": "Optional value for a timezone offset of the datetime parameter value in the Amazon S3 path. Shouldn't be used if Format for this parameter includes timezone fields. If no offset specified, UTC is assumed.",
+                    "description": "Optional value for a timezone offset of the datetime parameter value in the Amazon S3 path.\n\nShouldn't be used if Format for this parameter includes timezone fields. If no offset specified, UTC is assumed.",
                     "type": "string"
                 }
             },
@@ -350,7 +350,7 @@
                             "type": "boolean"
                         }
                     ],
-                    "description": "A variable that specifies whether the first row in the file is parsed as the header. If this value is false, column names are auto-generated."
+                    "description": "A variable that specifies whether the first row in the file is parsed as the header.\n\nIf this value is false, column names are auto-generated."
                 },
                 "sheetIndexes": {
                     "anyOf": [
@@ -385,11 +385,11 @@
                     "type": "number"
                 },
                 "order": {
-                    "description": "A criteria to use for Amazon S3 files sorting before their selection. By default uses DESCENDING order, i.e. most recent files are selected first. Anotherpossible value is ASCENDING.",
+                    "description": "A criteria to use for Amazon S3 files sorting before their selection.\n\nBy default uses DESCENDING order, i.e. most recent files are selected first. Anotherpossible value is ASCENDING.",
                     "type": "string"
                 },
                 "orderedBy": {
-                    "description": "A criteria to use for Amazon S3 files sorting before their selection. By default uses LAST_MODIFIED_DATE as a sorting criteria. Currently it's the only allowed value.",
+                    "description": "A criteria to use for Amazon S3 files sorting before their selection.\n\nBy default uses LAST_MODIFIED_DATE as a sorting criteria. Currently it's the only allowed value.",
                     "type": "string"
                 }
             },
@@ -403,7 +403,7 @@
             "description": "Represents a structure for defining parameter conditions.",
             "properties": {
                 "expression": {
-                    "description": "The expression which includes condition names followed by substitution variables, possibly grouped and combined with other conditions. For example, \"(starts_with :prefix1 or starts_with :prefix2) and (ends_with :suffix1 or ends_with :suffix2)\". Substitution variables should start with ':' symbol.",
+                    "description": "The expression which includes condition names followed by substitution variables, possibly grouped and combined with other conditions.\n\nFor example, \"(starts_with :prefix1 or starts_with :prefix2) and (ends_with :suffix1 or ends_with :suffix2)\". Substitution variables should start with ':' symbol.",
                     "type": "string"
                 },
                 "valuesMap": {
@@ -436,7 +436,7 @@
         },
         "CfnDataset.FilterValueProperty": {
             "additionalProperties": false,
-            "description": "Represents a single entry in the `ValuesMap` of a `FilterExpression` . A `FilterValue` associates the name of a substitution variable in an expression to its value.",
+            "description": "Represents a single entry in the `ValuesMap` of a `FilterExpression` .\n\nA `FilterValue` associates the name of a substitution variable in an expression to its value.",
             "properties": {
                 "value": {
                     "description": "The value to be associated with the substitution variable.",
@@ -567,7 +567,7 @@
             "description": "Contains additional resource information needed for specific datasets.",
             "properties": {
                 "sourceArn": {
-                    "description": "The Amazon Resource Name (ARN) associated with the dataset. Currently, DataBrew only supports ARNs from Amazon AppFlow.",
+                    "description": "The Amazon Resource Name (ARN) associated with the dataset.\n\nCurrently, DataBrew only supports ARNs from Amazon AppFlow.",
                     "type": "string"
                 }
             },
@@ -625,7 +625,7 @@
         },
         "CfnDataset.PathParameterProperty": {
             "additionalProperties": false,
-            "description": "Represents a single entry in the path parameters of a dataset. Each `PathParameter` consists of a name and a parameter definition.",
+            "description": "Represents a single entry in the path parameters of a dataset.\n\nEach `PathParameter` consists of a name and a parameter definition.",
             "properties": {
                 "datasetParameter": {
                     "anyOf": [
@@ -669,7 +669,7 @@
         },
         "CfnJob.AllowedStatisticsProperty": {
             "additionalProperties": false,
-            "description": "Configuration of statistics that are allowed to be run on columns that contain detected entities. When undefined, no statistics will be computed on columns that contain detected entities.",
+            "description": "Configuration of statistics that are allowed to be run on columns that contain detected entities.\n\nWhen undefined, no statistics will be computed on columns that contain detected entities.",
             "properties": {
                 "statistics": {
                     "description": "One or more column statistics to allow for columns that contain detected entities.",
@@ -686,7 +686,7 @@
         },
         "CfnJob.ColumnSelectorProperty": {
             "additionalProperties": false,
-            "description": "Selector of a column from a dataset for profile job configuration. One selector includes either a column name or a regular expression.",
+            "description": "Selector of a column from a dataset for profile job configuration.\n\nOne selector includes either a column name or a regular expression.",
             "properties": {
                 "name": {
                     "description": "The name of a column from a dataset.",
@@ -701,7 +701,7 @@
         },
         "CfnJob.ColumnStatisticsConfigurationProperty": {
             "additionalProperties": false,
-            "description": "Configuration for column evaluations for a profile job. ColumnStatisticsConfiguration can be used to select evaluations and override parameters of evaluations for particular columns.",
+            "description": "Configuration for column evaluations for a profile job.\n\nColumnStatisticsConfiguration can be used to select evaluations and override parameters of evaluations for particular columns.",
             "properties": {
                 "selectors": {
                     "anyOf": [
@@ -722,7 +722,7 @@
                             "type": "array"
                         }
                     ],
-                    "description": "List of column selectors. Selectors can be used to select columns from the dataset. When selectors are undefined, configuration will be applied to all supported columns."
+                    "description": "List of column selectors.\n\nSelectors can be used to select columns from the dataset. When selectors are undefined, configuration will be applied to all supported columns."
                 },
                 "statistics": {
                     "anyOf": [
@@ -733,7 +733,7 @@
                             "$ref": "#/definitions/CfnJob.StatisticsConfigurationProperty"
                         }
                     ],
-                    "description": "Configuration for evaluations. Statistics can be used to select evaluations and override parameters of evaluations."
+                    "description": "Configuration for evaluations.\n\nStatistics can be used to select evaluations and override parameters of evaluations."
                 }
             },
             "required": [
@@ -784,7 +784,7 @@
                             "type": "boolean"
                         }
                     ],
-                    "description": "A value that, if true, means that any data in the location specified for output is overwritten with new output. Not supported with DatabaseOptions."
+                    "description": "A value that, if true, means that any data in the location specified for output is overwritten with new output.\n\nNot supported with DatabaseOptions."
                 },
                 "s3Options": {
                     "anyOf": [
@@ -824,7 +824,7 @@
                     "description": "Represents options that specify how and where DataBrew writes the database output generated by recipe jobs."
                 },
                 "databaseOutputMode": {
-                    "description": "The output mode to write into the database. Currently supported option: NEW_TABLE.",
+                    "description": "The output mode to write into the database.\n\nCurrently supported option: NEW_TABLE.",
                     "type": "string"
                 },
                 "glueConnectionName": {
@@ -865,7 +865,7 @@
         },
         "CfnJob.EntityDetectorConfigurationProperty": {
             "additionalProperties": false,
-            "description": "Configuration of entity detection for a profile job. When undefined, entity detection is disabled.",
+            "description": "Configuration of entity detection for a profile job.\n\nWhen undefined, entity detection is disabled.",
             "properties": {
                 "allowedStatistics": {
                     "anyOf": [
@@ -876,10 +876,10 @@
                             "$ref": "#/definitions/CfnJob.AllowedStatisticsProperty"
                         }
                     ],
-                    "description": "Configuration of statistics that are allowed to be run on columns that contain detected entities. When undefined, no statistics will be computed on columns that contain detected entities."
+                    "description": "Configuration of statistics that are allowed to be run on columns that contain detected entities.\n\nWhen undefined, no statistics will be computed on columns that contain detected entities."
                 },
                 "entityTypes": {
-                    "description": "Entity types to detect. Can be any of the following:\n\n- USA_SSN\n- EMAIL\n- USA_ITIN\n- USA_PASSPORT_NUMBER\n- PHONE_NUMBER\n- USA_DRIVING_LICENSE\n- BANK_ACCOUNT\n- CREDIT_CARD\n- IP_ADDRESS\n- MAC_ADDRESS\n- USA_DEA_NUMBER\n- USA_HCPCS_CODE\n- USA_NATIONAL_PROVIDER_IDENTIFIER\n- USA_NATIONAL_DRUG_CODE\n- USA_HEALTH_INSURANCE_CLAIM_NUMBER\n- USA_MEDICARE_BENEFICIARY_IDENTIFIER\n- USA_CPT_CODE\n- PERSON_NAME\n- DATE\n\nThe Entity type group USA_ALL is also supported, and includes all of the above entity types except PERSON_NAME and DATE.",
+                    "description": "Entity types to detect. Can be any of the following:.\n\n- USA_SSN\n- EMAIL\n- USA_ITIN\n- USA_PASSPORT_NUMBER\n- PHONE_NUMBER\n- USA_DRIVING_LICENSE\n- BANK_ACCOUNT\n- CREDIT_CARD\n- IP_ADDRESS\n- MAC_ADDRESS\n- USA_DEA_NUMBER\n- USA_HCPCS_CODE\n- USA_NATIONAL_PROVIDER_IDENTIFIER\n- USA_NATIONAL_DRUG_CODE\n- USA_HEALTH_INSURANCE_CLAIM_NUMBER\n- USA_MEDICARE_BENEFICIARY_IDENTIFIER\n- USA_CPT_CODE\n- PERSON_NAME\n- DATE\n\nThe Entity type group USA_ALL is also supported, and includes all of the above entity types except PERSON_NAME and DATE.",
                     "items": {
                         "type": "string"
                     },
@@ -893,14 +893,14 @@
         },
         "CfnJob.JobSampleProperty": {
             "additionalProperties": false,
-            "description": "A sample configuration for profile jobs only, which determines the number of rows on which the profile job is run. If a `JobSample` value isn't provided, the default is used. The default value is CUSTOM_ROWS for the mode parameter and 20,000 for the size parameter.",
+            "description": "A sample configuration for profile jobs only, which determines the number of rows on which the profile job is run.\n\nIf a `JobSample` value isn't provided, the default is used. The default value is CUSTOM_ROWS for the mode parameter and 20,000 for the size parameter.",
             "properties": {
                 "mode": {
-                    "description": "A value that determines whether the profile job is run on the entire dataset or a specified number of rows. This value must be one of the following:\n\n- FULL_DATASET - The profile job is run on the entire dataset.\n- CUSTOM_ROWS - The profile job is run on the number of rows specified in the `Size` parameter.",
+                    "description": "A value that determines whether the profile job is run on the entire dataset or a specified number of rows.\n\nThis value must be one of the following:\n\n- FULL_DATASET - The profile job is run on the entire dataset.\n- CUSTOM_ROWS - The profile job is run on the number of rows specified in the `Size` parameter.",
                     "type": "string"
                 },
                 "size": {
-                    "description": "The `Size` parameter is only required when the mode is CUSTOM_ROWS. The profile job is run on the specified number of rows. The maximum value for size is Long.MAX_VALUE.\n\nLong.MAX_VALUE = 9223372036854775807",
+                    "description": "The `Size` parameter is only required when the mode is CUSTOM_ROWS.\n\nThe profile job is run on the specified number of rows. The maximum value for size is Long.MAX_VALUE.\n\nLong.MAX_VALUE = 9223372036854775807",
                     "type": "number"
                 }
             },
@@ -933,7 +933,6 @@
                     "type": "string"
                 },
                 "bucketOwner": {
-                    "description": "`CfnJob.OutputLocationProperty.BucketOwner`",
                     "type": "string"
                 },
                 "key": {
@@ -1010,7 +1009,7 @@
         },
         "CfnJob.ProfileConfigurationProperty": {
             "additionalProperties": false,
-            "description": "Configuration for profile jobs. Configuration can be used to select columns, do evaluations, and override default parameters of evaluations. When configuration is undefined, the profile job will apply default settings to all supported columns.",
+            "description": "Configuration for profile jobs.\n\nConfiguration can be used to select columns, do evaluations, and override default parameters of evaluations. When configuration is undefined, the profile job will apply default settings to all supported columns.",
             "properties": {
                 "columnStatisticsConfigurations": {
                     "anyOf": [
@@ -1031,7 +1030,7 @@
                             "type": "array"
                         }
                     ],
-                    "description": "List of configurations for column evaluations. ColumnStatisticsConfigurations are used to select evaluations and override parameters of evaluations for particular columns. When ColumnStatisticsConfigurations is undefined, the profile job will profile all supported columns and run all supported evaluations."
+                    "description": "List of configurations for column evaluations.\n\nColumnStatisticsConfigurations are used to select evaluations and override parameters of evaluations for particular columns. When ColumnStatisticsConfigurations is undefined, the profile job will profile all supported columns and run all supported evaluations."
                 },
                 "datasetStatisticsConfiguration": {
                     "anyOf": [
@@ -1042,7 +1041,7 @@
                             "$ref": "#/definitions/CfnJob.StatisticsConfigurationProperty"
                         }
                     ],
-                    "description": "Configuration for inter-column evaluations. Configuration can be used to select evaluations and override parameters of evaluations. When configuration is undefined, the profile job will run all supported inter-column evaluations."
+                    "description": "Configuration for inter-column evaluations.\n\nConfiguration can be used to select evaluations and override parameters of evaluations. When configuration is undefined, the profile job will run all supported inter-column evaluations."
                 },
                 "entityDetectorConfiguration": {
                     "anyOf": [
@@ -1053,7 +1052,7 @@
                             "$ref": "#/definitions/CfnJob.EntityDetectorConfigurationProperty"
                         }
                     ],
-                    "description": "Configuration of entity detection for a profile job. When undefined, entity detection is disabled."
+                    "description": "Configuration of entity detection for a profile job.\n\nWhen undefined, entity detection is disabled."
                 },
                 "profileColumns": {
                     "anyOf": [
@@ -1074,7 +1073,7 @@
                             "type": "array"
                         }
                     ],
-                    "description": "List of column selectors. ProfileColumns can be used to select columns from the dataset. When ProfileColumns is undefined, the profile job will profile all supported columns."
+                    "description": "List of column selectors.\n\nProfileColumns can be used to select columns from the dataset. When ProfileColumns is undefined, the profile job will profile all supported columns."
                 }
             },
             "type": "object"
@@ -1150,16 +1149,13 @@
                             "$ref": "#/definitions/IResolvable"
                         },
                         {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
+                            "$ref": "#/definitions/Record<string,string>"
                         }
                     ],
                     "description": "A map that includes overrides of an evaluation’s parameters."
                 },
                 "statistic": {
-                    "description": "The name of an evaluation",
+                    "description": "The name of an evaluation.",
                     "type": "string"
                 }
             },
@@ -1171,10 +1167,10 @@
         },
         "CfnJob.StatisticsConfigurationProperty": {
             "additionalProperties": false,
-            "description": "Configuration of evaluations for a profile job. This configuration can be used to select evaluations and override the parameters of selected evaluations.",
+            "description": "Configuration of evaluations for a profile job.\n\nThis configuration can be used to select evaluations and override the parameters of selected evaluations.",
             "properties": {
                 "includedStatistics": {
-                    "description": "List of included evaluations. When the list is undefined, all supported evaluations will be included.",
+                    "description": "List of included evaluations.\n\nWhen the list is undefined, all supported evaluations will be included.",
                     "items": {
                         "type": "string"
                     },
@@ -1206,14 +1202,14 @@
         },
         "CfnJob.ValidationConfigurationProperty": {
             "additionalProperties": false,
-            "description": "Configuration for data quality validation. Used to select the Rulesets and Validation Mode to be used in the profile job. When ValidationConfiguration is null, the profile job will run without data quality validation.",
+            "description": "Configuration for data quality validation.\n\nUsed to select the Rulesets and Validation Mode to be used in the profile job. When ValidationConfiguration is null, the profile job will run without data quality validation.",
             "properties": {
                 "rulesetArn": {
-                    "description": "The Amazon Resource Name (ARN) for the ruleset to be validated in the profile job. The TargetArn of the selected ruleset should be the same as the Amazon Resource Name (ARN) of the dataset that is associated with the profile job.",
+                    "description": "The Amazon Resource Name (ARN) for the ruleset to be validated in the profile job.\n\nThe TargetArn of the selected ruleset should be the same as the Amazon Resource Name (ARN) of the dataset that is associated with the profile job.",
                     "type": "string"
                 },
                 "validationMode": {
-                    "description": "Mode of data quality validation. Default mode is “CHECK_ALL” which verifies all rules defined in the selected ruleset.",
+                    "description": "Mode of data quality validation.\n\nDefault mode is “CHECK_ALL” which verifies all rules defined in the selected ruleset.",
                     "type": "string"
                 }
             },
@@ -1556,6 +1552,10 @@
             "required": [
                 "steps"
             ],
+            "type": "object"
+        },
+        "Record<string,string>": {
+            "additionalProperties": false,
             "type": "object"
         }
     },

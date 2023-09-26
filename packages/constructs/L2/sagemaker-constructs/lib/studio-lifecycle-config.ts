@@ -50,7 +50,7 @@ export class CaefStudioLifecycleConfig extends Construct {
         const crProps: CaefCustomResourceProps = {
             resourceType: "StudioLifecycleConfig",
             code: Code.fromAsset( `${ __dirname }/../src/lambda/lifecycle` ),
-            runtime: Runtime.PYTHON_3_10,
+            runtime: Runtime.PYTHON_3_11,
             handler: "lifecycle.lambda_handler",
             handlerRolePolicyStatements: [ statement ],
             handlerPolicySuppressions: [ {

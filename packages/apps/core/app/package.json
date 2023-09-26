@@ -26,7 +26,7 @@
     "typescript-json-schema": "^0.53.0"
   },
   "overrides": {
-    "aws-cdk-lib": "2.85.0",
+    "aws-cdk-lib": "2.97.1",
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
@@ -36,8 +36,8 @@
     "@aws-caef/lambda-constructs": "^0.39.0",
     "@aws-caef/naming": "^0.39.0",
     "ajv": "^8.8.2",
-    "aws-cdk-lib": "2.85.0",
-    "cdk-nag": "2.27.35",
+    "aws-cdk-lib": "2.97.1",
+    "cdk-nag": "2.27.142",
     "command-line-args": "^5.2.1",
     "constructs": "10.0.96",
     "lodash": "^4.17.21",

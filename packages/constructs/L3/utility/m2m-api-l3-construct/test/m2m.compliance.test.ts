@@ -538,7 +538,7 @@ describe( 'Mandatory Prop Tests', () => {
         "FunctionName": "test-org-test-env-test-domain-test-module-signed-s3-url-gen",
         "Handler": "s3_url.handler",
         "ReservedConcurrentExecutions": 10,
-        "Runtime": "python3.10"
+        "Runtime": "python3.11"
       } )
     } );
   } )
@@ -839,7 +839,7 @@ describe( 'Optional Prop Tests', () => {
       "FunctionName": "test-org-test-env-test-domain-test-module-signed-s3-url-gen",
       "Handler": "s3_url.handler",
       "ReservedConcurrentExecutions": 10,
-      "Runtime": "python3.10"
+      "Runtime": "python3.11"
     } )
   } );
 } )

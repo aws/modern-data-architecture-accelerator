@@ -58,7 +58,7 @@ export class LakeFormationSettingsL3Construct extends CaefL3Construct {
             resourceType: 'lakeformation-settings',
             code: Code.fromAsset( `${ __dirname }/../src/python/lakeformation_settings` ),
             handler: "lakeformation_settings.lambda_handler",
-            runtime: Runtime.PYTHON_3_10,
+            runtime: Runtime.PYTHON_3_11,
             handlerTimeout: Duration.seconds( 120 ),
             handlerRolePolicyStatements: [ manageSettingsPolicyStatement ],
             handlerPolicySuppressions: [

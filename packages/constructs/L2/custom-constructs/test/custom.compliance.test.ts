@@ -24,7 +24,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         resourceType: "testing",
         handlerRolePolicyStatements: [ policyStatement ],
         code: Code.fromAsset( "./test/src/lambda/test" ),
-        runtime: Runtime.PYTHON_3_10,
+        runtime: Runtime.PYTHON_3_11,
         handler: "test.lambda_handler",
         handlerProps: {
             testProp: "testValue"
@@ -55,7 +55,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
             },
             "FunctionName": "test-org-test-env-test-domain-test-module-testing-handler",
             "Handler": "test.lambda_handler",
-            "Runtime": "python3.10"
+            "Runtime": "python3.11"
         } )
     } )
 

@@ -322,14 +322,14 @@
         },
         "CfnDomain.CustomImageProperty": {
             "additionalProperties": false,
-            "description": "A custom SageMaker image. For more information, see [Bring your own SageMaker image](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-byoi.html) .",
+            "description": "A custom SageMaker image.\n\nFor more information, see [Bring your own SageMaker image](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-byoi.html) .",
             "properties": {
                 "appImageConfigName": {
                     "description": "The name of the AppImageConfig.",
                     "type": "string"
                 },
                 "imageName": {
-                    "description": "The name of the CustomImage. Must be unique to your account.",
+                    "description": "The name of the CustomImage.\n\nMust be unique to your account.",
                     "type": "string"
                 },
                 "imageVersionNumber": {
@@ -448,7 +448,7 @@
                     "type": "string"
                 },
                 "userGroup": {
-                    "description": "The level of permissions that the user has within the `RStudioServerPro` app. This value defaults to `User`. The `Admin` value allows the user access to the RStudio Administrative Dashboard.",
+                    "description": "The level of permissions that the user has within the `RStudioServerPro` app.\n\nThis value defaults to `User`. The `Admin` value allows the user access to the RStudio Administrative Dashboard.",
                     "type": "string"
                 }
             },
@@ -479,10 +479,10 @@
         },
         "CfnDomain.SharingSettingsProperty": {
             "additionalProperties": false,
-            "description": "Specifies options when sharing an Amazon SageMaker Studio notebook. These settings are specified as part of `DefaultUserSettings` when the [CreateDomain](https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateDomain.html) API is called, and as part of `UserSettings` when the [CreateUserProfile](https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateUserProfile.html) API is called.",
+            "description": "Specifies options when sharing an Amazon SageMaker Studio notebook.\n\nThese settings are specified as part of `DefaultUserSettings` when the [CreateDomain](https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateDomain.html) API is called, and as part of `UserSettings` when the [CreateUserProfile](https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateUserProfile.html) API is called.",
             "properties": {
                 "notebookOutputOption": {
-                    "description": "Whether to include the notebook cell output when sharing the notebook. The default is `Disabled` .",
+                    "description": "Whether to include the notebook cell output when sharing the notebook.\n\nThe default is `Disabled` .",
                     "type": "string"
                 },
                 "s3KmsKeyId": {
