@@ -10,6 +10,7 @@
 ### Data Ops Changes
 
 * Added experimental DataOps Nifi cluster module running on EKS Fargate
+* Resolved issue with hardcoded Glue job timeouts in Glue Workflows
 
 ### Utility Changes
 
