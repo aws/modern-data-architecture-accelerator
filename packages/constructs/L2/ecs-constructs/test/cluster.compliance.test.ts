@@ -20,7 +20,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         privateSubnetIds: [ 'subnet1', 'subnet2' ],
     } );
 
-    const testKmsKey = CaefKmsKey.fromKeyArn( testApp.testStack, 'key for root volume', "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKmsKey = CaefKmsKey.fromKeyArn( testApp.testStack, 'test-key', "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
     const logGroup = LogGroup.fromLogGroupName( testApp.testStack, "test-loggroup", "test-loggroup" )
 

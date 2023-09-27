@@ -111,6 +111,7 @@ CAEF is implemented as a set of compliant CDK Constructs and configuration-drive
 * [**Data Ops Step Functions**](packages/apps/dataops/dataops-stepfunction-app/README.md) - Generates Step Functions for orchestrating Data Ops pipelines
 * [**Data Ops Lambda**](packages/apps/dataops/dataops-lambda-app/README.md) - Deploys Lambda functions for reacting to data events and performing smaller scale data processing
 * [**(Preview) Data Ops DataBrew**](packages/apps/dataops/dataops-databrew-app/README.md) - Generates Glue DataBrew resources (Jobs, Recipicees) for performing data profiling and cleansing
+* [**(Preview) Data Ops Nifi**](packages/apps/dataops/dataops-nifi-app/README.md) - Generates Apache Nifi clusters for building event-driven data flows
 
 ### Data Analytics Modules (CDK Apps and L3 Constructs)
 
@@ -146,6 +147,8 @@ These constructs are specifically designed to be compliant with the AWSSolutions
 
 * [**Athena Workgroup Constructs**](packages/constructs/L2/athena-constructs/README.md)
 * [**EC2 Constructs**](packages/constructs/L2/ec2-constructs/README.md)
+* [**(Preview) ECS Constructs**](packages/constructs/L2/ecs-constructs/README.md)
+* [**(Preview) EKS Constructs**](packages/constructs/L2/eks-constructs/README.md)
 * [**Glue Crawlers, Jobs, and Security Configuration Constructs**](packages/constructs/L2/glue-constructs/README.md)
 * [**Glue DataBrew Job and Recipe Constructs**](packages/constructs/L2/databrew-constructs/README.md)
 * [**IAM Role Construct**](packages/constructs/L2/iam-constructs/README.md)

@@ -11,12 +11,12 @@ import { Stack } from "aws-cdk-lib";
 
 
 export interface CaefDataOpsConfigContents extends CaefBaseConfigContents {
-    securityConfigurationName: string
-    projectName: string
-    projectBucket: string
-    projectTopicArn: string
-    deploymentRole: string
-    kmsArn: string
+    readonly securityConfigurationName: string
+    readonly projectName: string
+    readonly projectBucket: string
+    readonly projectTopicArn: string
+    readonly deploymentRole: string
+    readonly kmsArn: string
 }
 
 export class CaefDataOpsConfigParser<T extends CaefDataOpsConfigContents> extends CaefAppConfigParser<T> {
