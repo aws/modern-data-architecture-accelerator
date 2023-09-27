@@ -124,35 +124,37 @@ export class CaefSecurityGroup extends SecurityGroup {
         return allProps
     }
 
+
     constructor( scope: Construct, id: string, props: CaefSecurityGroupProps ) {
         super( scope, id, CaefSecurityGroup.setProps( props ) )
 
         // Add Ingress rules
         props.ingressRules?.ipv4?.forEach( rule => {
             const peer = Peer.ipv4( rule.cidr )
-            this.addSuppressableIngressRule( peer, this.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableIngressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         props.ingressRules?.sg?.forEach( rule => {
             const peer = Peer.securityGroupId( rule.sgId )
-            this.addSuppressableIngressRule( peer, this.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableIngressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         props.ingressRules?.prefixList?.forEach( rule => {
             const peer = Peer.prefixList( rule.prefixList )
-            this.addSuppressableIngressRule( peer, this.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableIngressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         // Add Egress rules
         props.egressRules?.ipv4?.forEach( rule => {
             const peer = Peer.ipv4( rule.cidr )
-            this.addSuppressableEgressRule( peer, this.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableEgressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         props.egressRules?.sg?.forEach( rule => {
             const peer = Peer.securityGroupId( rule.sgId )
-            this.addSuppressableEgressRule( peer, this.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableEgressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         props.egressRules?.prefixList?.forEach( rule => {
             const peer = Peer.prefixList( rule.prefixList )
-            this.addSuppressableEgressRule( peer, this.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableEgressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
+
         // Allow all tcp connections from the same security group
         if ( props.addSelfReferenceRule != undefined && props.addSelfReferenceRule ) {
             const suppressions = [ {
@@ -222,7 +224,7 @@ export class CaefSecurityGroup extends SecurityGroup {
         }
     }
 
-    private resolvePeerToPort ( peer: CaefPeer ): Port {
+    public static resolvePeerToPort ( peer: CaefPeer ): Port {
         const protocol: Protocol = ( <any>Protocol )[ peer.protocol.toUpperCase() ]
         if ( typeof protocol === undefined || protocol == undefined ) {
             throw new Error( `Unknown protocol defined: ${ peer.protocol }` )
@@ -252,7 +254,21 @@ export class CaefSecurityGroup extends SecurityGroup {
         }
         return new Port( portProps )
     }
-    private renderPort ( port: number ) {
+    public static renderPort ( port: number ) {
         return Token.isUnresolved( port ) ? '{IndirectPort}' : port.toString();
+    }
+
+    public static mergeRules ( rules1: CaefSecurityGroupRuleProps, rules2: CaefSecurityGroupRuleProps ): CaefSecurityGroupRuleProps {
+        return {
+            sg: [
+                ...rules1.sg || [], ...rules2.sg || []
+            ],
+            ipv4: [
+                ...rules1.ipv4 || [], ...rules2.ipv4 || []
+            ],
+            prefixList: [
+                ...rules1.prefixList || [], ...rules2.prefixList || []
+            ]
+        }
     }
 }

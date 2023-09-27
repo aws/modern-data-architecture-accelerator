@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<tenants>
+    <groups />
+    <users>
+        <user identifier="a2dafb09-4860-3a0b-bbe0-a13d6b2cc691" identity="test-user" />
+        <user identifier="d72be0f8-db11-3f0f-ba53-d959e529c5bc" identity="CN=nifi-1" />
+        <user identifier="7fbdf8e6-2082-3a21-b863-c93c08b194e7" identity="CN=nifi-0" />
+        <user identity="CN=nifi-0.nifi-test1.sample-org-dev-instance1-nifi.internal"
+            identifier="2631c727-dd1f-30cf-a0a2-31beb997480c" />
+        <user identity="CN=nifi-1.nifi-test1.sample-org-dev-instance1-nifi.internal"
+            identifier="dfbda37c-cde4-33b7-8aad-37e7d4ac1edb" />
+        <user identity="CN=nifi-3.nifi-test1.sample-org-dev-instance1-nifi.internal"
+            identifier="04d65977-9c2c-3bb1-8b17-2a6c00f5c6e7" />
+        <user identity="CN=nifi-0.nifi-test2.sample-org-dev-instance1-nifi.internal"
+            identifier="e24343d6-9bb7-372b-9e7d-6c6f346a8077" />
+        <user identity="CN=nifi-1.nifi-test2.sample-org-dev-instance1-nifi.internal"
+            identifier="7fecb832-53d1-3a90-af3f-c277f97eade2" />
+    </users>
+</tenants>

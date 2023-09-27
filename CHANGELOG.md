@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.40.0
+
+### General Changes
+
+* Updated CDK to latest version (2.97.1)
+* Update CDK Nag to latest version (2.27.142)
+
+### Data Ops Changes
+
+* Added experimental DataOps Nifi cluster module running on EKS Fargate
+
+### Utility Changes
+
+* Added experimental reusable compliant constructs for EKS Fargate clusters
+* Added experimental reusable compliant constructs for ECS Tasks and Services
+
 ## 0.39.0
 
 ### Utility Changes

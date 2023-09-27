@@ -18,3 +18,6 @@ THIRD-PARTY-NOTICE.md # Content is verbatim third-party Licenses
 packages/constructs/L3/datascience/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1006 # SageMaker Central Account ID
 packages/constructs/L3/datascience/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1023 # SageMaker Central Account ID
 packages/constructs/L3/datascience/datascience-team-l3-construct/test/team.compliance.test.ts:501 # SageMaker Central Account ID
+packages/constructs/L2/eks-constructs/lib/cluster.ts:364 # Construct ID
+packages/constructs/L2/eks-constructs/lib/cluster.ts:380 # Construct ID
+packages/constructs/L3/dataops/dataops-nifi-l3-construct/base_conf/nifi/nifi.properties:370 #False positive
