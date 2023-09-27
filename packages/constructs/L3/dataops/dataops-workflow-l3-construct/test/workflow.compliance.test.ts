@@ -65,7 +65,11 @@ describe( 'CAEF Compliance Stack Tests', () => {
                   "State": "ACTIVATED",
                   "Actions": [
                     {
-                      "JobName": "project:job/name/JobOne"
+                      "JobName": "project:job/name/JobOne",
+                      "NotificationProperty": {
+                        "NotifyDelayAfter": 200
+                      },
+                      "Timeout": 120
                     }
                   ],
                   "Predicate": {
@@ -101,9 +105,8 @@ describe( 'CAEF Compliance Stack Tests', () => {
   testApp.checkCdkNagCompliance( testApp.testStack )
   const template = Template.fromStack( testApp.testStack )
 
-
-  //console.log( JSON.stringify( template, undefined, 2 ) )
-
+  // console.log( JSON.stringify( template, undefined, 2 ) )
+  
   test( 'Validate resource counts', () => {
     template.resourceCountIs( "AWS::Glue::Workflow", 1 );
     template.resourceCountIs( "AWS::Glue::Trigger", 2 );
@@ -121,11 +124,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
       "Actions": [
         {
           "CrawlerName": "project:crawler/name/test-crawler",
-          "NotificationProperty": {
-            "NotifyDelayAfter": 123
-          },
           "SecurityConfiguration": "testing-config",
-          "Timeout": 123
         }
       ],
       "Type": "SCHEDULED",
@@ -141,10 +140,10 @@ describe( 'CAEF Compliance Stack Tests', () => {
         {
           "JobName": "project:job/name/JobOne",
           "NotificationProperty": {
-            "NotifyDelayAfter": 123
+            "NotifyDelayAfter": 200
           },
           "SecurityConfiguration": "testing-config",
-          "Timeout": 123
+          "Timeout": 120
         }
       ],
       "Type": "CONDITIONAL",

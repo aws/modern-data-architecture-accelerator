@@ -239,10 +239,10 @@ export class GlueWorkflowL3Construct extends CaefL3Construct {
             crawlerName: actionProps.CrawlerName,
             jobName: actionProps.JobName,
             notificationProperty: {
-                notifyDelayAfter: 123,
+               notifyDelayAfter : actionProps.NotificationProperty?.NotifyDelayAfter ? actionProps.NotificationProperty.NotifyDelayAfter : actionProps.Timeout,
             },
             securityConfiguration: securityConfigurationName,
-            timeout: 123
+            timeout: actionProps.Timeout
         }
     }
 
