@@ -6,6 +6,10 @@
 
 * Updated CDK to latest version (2.97.1)
 * Update CDK Nag to latest version (2.27.142)
+* Added "@aws-caef/enableUniqueBucketNames" CDK context feature flag, which, when set to true, results in a unique prefix being automatically added to all S3 bucket names.
+  * Unique prefix is based on stack id, so is stable across stack updates
+  * Helps ensure global bucket name uniqueness, and protects against predictable bucket names
+  * Can be set in global, domain, env, and per module context
 
 ### Data Ops Changes
 

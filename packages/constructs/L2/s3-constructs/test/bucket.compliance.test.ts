@@ -151,7 +151,9 @@ describe( 'CAEF Construct Mandatory Prop Compliance Tests', () => {
 } )
 
 describe( 'CAEF Construct Optional Prop Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+    const testApp = new CaefTestApp( {
+        "@aws-caef/enableUniqueBucketNames": "true"
+    } )
 
     const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
@@ -182,10 +184,40 @@ describe( 'CAEF Construct Optional Prop Compliance Tests', () => {
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )
-
+    // console.log( JSON.stringify( template, undefined, 2 ) )
     test( 'BucketName', () => {
         template.hasResourceProperties( "AWS::S3::Bucket", {
-            "BucketName": testApp.naming.resourceName( "test-bucket" )
+            "BucketName": {
+                "Fn::Join": [
+                    "",
+                    [
+                        {
+                            "Fn::Select": [
+                                0,
+                                {
+                                    "Fn::Split": [
+                                        "-",
+                                        {
+                                            "Fn::Select": [
+                                                2,
+                                                {
+                                                    "Fn::Split": [
+                                                        "/",
+                                                        {
+                                                            "Ref": "AWS::StackId"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "-test-org-test-env-test-domain-test-module-test-bucket"
+                    ]
+                ]
+            }
         } )
     } )
 
