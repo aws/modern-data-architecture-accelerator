@@ -35,12 +35,13 @@ def cmd_handler(event, context):
         os.chmod(kubeconfig, 0o600)
 
     cmd = props['Cmd']
+    expected_output = props.get('ExpectedOutput', None)
     namespace = props['Namespace']
     timeout_seconds = props['TimeoutSeconds']
 
     if request_type == 'Create' or request_type == 'Update':
         output = wait_for_output(
-            ['-n', namespace] + cmd, int(timeout_seconds))
+            ['-n', namespace] + cmd, expected_output, int(timeout_seconds))
         return {'Data': {'Value': str(output)}}
     elif request_type == 'Delete':
         pass
@@ -48,7 +49,7 @@ def cmd_handler(event, context):
         raise Exception("invalid request type %s" % request_type)
 
 
-def wait_for_output(args, timeout_seconds):
+def wait_for_output(args, expected_output, timeout_seconds):
 
     end_time = time.time() + timeout_seconds
     error = None
@@ -56,10 +57,16 @@ def wait_for_output(args, timeout_seconds):
     while time.time() < end_time:
         try:
             # the output is surrounded with '', so we unquote
-            output = kubectl(args)
+            output = kubectl(args).decode('utf-8')[1:-1]
             logger.info(f"KubeCtl Output: {output}")
             if output:
-                return output
+                if not expected_output:
+                    return output
+                elif expected_output and output == expected_output:
+                    return output
+                else:
+                    error = f"Output {output} does not match expected output {expected_output}"
+                    logger.info(error)
         except Exception as e:
             error = str(e)
             logger.warn(f"Output Exception: {error}")
@@ -88,5 +95,4 @@ def kubectl(args):
                 logger.warn(f"KubeCtl Exception: {output}")
                 raise Exception(output)
         else:
-            logger.info(output)
             return output

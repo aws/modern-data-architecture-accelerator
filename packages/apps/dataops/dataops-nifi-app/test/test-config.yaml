@@ -21,9 +21,8 @@ nifi:
   # (Optional) - Specify the Arn of a ACM Private CA to be used as a root of the trust chain
   # for all signed Nifi certs. The cert-manager service accounts within the EKS cluster will be
   # granted access to mint certs via this ACM PCA.
-  # If not specified, the root of the trust chain will be a
-  # self-signed cert within the Nifi EKS cluster.
-  privateCaArn: arn:aws:acm-pca:test-region:test-account:certificate-authority/test-acm-pca-id
+  # If not specified, an ACM private CA will be created.
+  existingPrivateCaArn: arn:aws:acm-pca:test-region:test-account:certificate-authority/test-acm-pca-id
 
   # (Optional) An internal CA will be created within the Nifi EKS cluster (either self-signed or signed by a ACM Private CA).
   # All Nifi and Zookeeper node certs will be minted within the cluster via the internal CA.
@@ -82,6 +81,35 @@ nifi:
       # If not using SAML, an admin user with this name will be created locally on the cluster,
       # with a password stored in AWS Secrets Manager.
       initialAdminIdentity: "some-admin-identity"
+      # (Optional) Additional admin identities which will be added to autoAddNifiAuthorizations.adminPolicyPatterns
+      additionalAdminIdentities:
+        - "some-other-admin-identity"
+      # (Optional) User identities which will be added to autoAddNifiAuthorizations.userPolicyPatterns
+      userIdentities:
+        - "some-user-identity"
+      # (Optional) Nifi node identities which will be added to autoAddNifiAuthorizations.externalNodePolicyPatterns
+      # Note that nodes from clusters created by this config do not need to be specified here.
+      externalNodeIdentities:
+        - "some-external-node-identity"
+      autoAddNifiAuthorizations:
+        # (Optional) Nifi nodes (from clusters created by this config) will automatically be added
+        # to Registry authorization policies with names matching these patterns
+        clusterNodePolicyPatterns:
+          - /proxy
+          - /data/.*
+        # (Optional) External Nifi nodes (from 'peerClusters' or 'externalNodeIdentities') will automatically be added
+        # to Registry authorization policies with names matching these patterns
+        externalNodePolicyPatterns:
+          - /site-to-site
+          - /data-transfer/.*
+        # (Optional) Admins (including initialAdminIdentity and additionalAdminIdentities) will automatically be added
+        # to Registry authorization policies with names matching these patterns
+        adminPolicyPatterns:
+          - /.*
+        # (Optional) Users (from userIdentities) will automatically be added
+        # to Registry authorization policies with names matching these patterns
+        userPolicyPatterns:
+          - /.*
       # (Optional) - A list of other Nifi clusters within this config which will automatically be provided
       # security group connectivity as well as remote access to this cluster.
       peerClusters:
@@ -90,12 +118,6 @@ nifi:
       saml:
         # The IDP Metadata URL where the SAML metadata can be fetched from the IDP
         idpMetadataUrl: "https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123"
-      # A list of external authorized nodes which will be granted access (by TLS certificate common name)
-      # to this cluster. This should be used for integration with other clusters external to this config. If the other
-      # cluster is part of this config, use 'peerClusters' instead.
-      # Note that the remote cluster will also need security group access via 'nifiSecurityGroupIngressSGs' or 'nifiSecurityGroupIngressIPv4s'
-      externalAuthorizedNodes:
-        - CN=test-node
 
       # Allows mounting of the Nifi EFS from outside of the EKS cluster
       # This list will be combined with the global 'additionalEfsIngressSecurityGroupIds' list to determine the
@@ -144,3 +166,41 @@ nifi:
       clusterPort: 14444
       peerClusters:
         - test1
+
+  # (Optional) Configuration specific to Nifi Registry
+  # If not specified, no Registry service is deployed.
+  registry:
+    # The identity of the initial Registry Admin
+    # Admin should be specified using their TLS cert common name
+    initialAdminIdentity: "CN=some-admin-identity"
+    # (Optional) Additional admin identities which will be added to autoAddNifiAuthorizations.adminPolicyPatterns
+    additionalAdminIdentities:
+      - "CN=some-other-admin-identity"
+    # (Optional) User identities which will be added to autoAddNifiAuthorizations.userPolicyPatterns
+    userIdentities:
+      - "some-user-identity"
+    # (Optional) Nifi node identities which will be added to autoAddNifiAuthorizations.externalNodePolicyPatterns.
+    # Nodes should be specified using their TLS cert common name
+    # * Note that nodes from clusters created by this config do not need to be specified here.
+    # * Note that these nodes will also need security group access via global 'nifiSecurityGroupIngressSGs' or 'nifiSecurityGroupIngressIPv4s'
+    externalNodeIdentities:
+      - "CN=some-external-node-identity"
+    autoAddNifiAuthorizations:
+      # (Optional) Nifi nodes (from clusters created by this config) will automatically be added
+      # to Registry authorization policies with names matching these patterns
+      clusterNodePolicyPatterns:
+        - /proxy
+        - /data/.*
+      # (Optional) External Nifi nodes (not created by this config) will automatically be added
+      # to Registry authorization policies with names matching these patterns
+      externalNodePolicyPatterns:
+        - /site-to-site
+        - /data-transfer/.*
+      # (Optional) Admins (including initialAdminIdentity and additionalAdminIdentities) will automatically be added
+      # to Registry authorization policies with names matching these patterns
+      adminPolicyPatterns:
+        - /.*
+      # (Optional) Users (from userIdentities) will automatically be added
+      # to Registry authorization policies with names matching these patterns
+      userPolicyPatterns:
+        - /.*

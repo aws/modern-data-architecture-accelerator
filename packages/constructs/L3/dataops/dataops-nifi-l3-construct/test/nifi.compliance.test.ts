@@ -10,7 +10,46 @@ import { NifiL3Construct, NifiL3ConstructProps } from "../lib";
 import { NifiClusterOptions } from "../lib/nifi-cluster-options";
 
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'Nifi Mandatory Compliance Stack Tests', () => {
+
+  const testApp = new CaefTestApp()
+  const stack = testApp.testStack
+
+  const clusterOptions: NifiClusterOptions = {
+    initialAdminIdentity: "testing",
+  }
+
+  const constructProps: NifiL3ConstructProps = {
+    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    naming: testApp.naming,
+    kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
+    nifi: {
+      vpcId: "test-vpc-id",
+      subnetIds: {
+        "test-subnet-1": "test-subnet-id"
+      },
+      adminRoles: [ {
+        id: "testing"
+      } ],
+      clusters: {
+        "test-cluster1": clusterOptions,
+      },
+    }
+  }
+
+  new NifiL3Construct( stack, "teststack", constructProps );
+  testApp.checkCdkNagCompliance( testApp.testStack )
+  const template = Template.fromStack( testApp.testStack )
+
+  console.log( JSON.stringify( template, undefined, 2 ) )
+
+  // test( 'Validate resource counts', () => {
+  //   template.resourceCountIs( "AWS::Glue::Job", 1 );
+  // } );
+
+} )
+
+describe( 'Nifi Optional Compliance Stack Tests', () => {
 
   const testApp = new CaefTestApp()
   const stack = testApp.testStack
@@ -19,6 +58,30 @@ describe( 'CAEF Compliance Stack Tests', () => {
     nodeCount: 1,
     nodeSize: "SMALL",
     initialAdminIdentity: "testing",
+
+    additionalAdminIdentities: [
+      "testin2"
+    ],
+    externalNodeIdentities: [
+      "test-external-node"
+    ],
+    userIdentities: [
+      "test-user"
+    ],
+    autoAddNifiAuthorizations: {
+      adminPolicyPatterns: [
+        ".*"
+      ],
+      userPolicyPatterns: [
+        ".*"
+      ],
+      externalNodePolicyPatterns: [
+        ".*"
+      ],
+      clusterNodePolicyPatterns: [
+        ".*"
+      ]
+    },
     nifiSecurityGroupIngressIPv4s: [
       "10.10.10.0/24"
     ],
@@ -49,17 +112,22 @@ describe( 'CAEF Compliance Stack Tests', () => {
       adminRoles: [ {
         id: "testing"
       } ],
+      existingPrivateCaArn: "private-ca-arn",
       clusters: {
         "test-cluster1": clusterOptions,
         "test-cluster2": {
           ...clusterOptions,
+          nodeCount: undefined,
+          clusterPort: undefined,
+          remotePort: undefined,
+          httpsPort: undefined,
+          additionalEfsIngressSecurityGroupIds: undefined,
           peerClusters: [ "test-cluster1" ],
           saml: {
             idpMetadataUrl: "testing-url"
           }
         }
       },
-      privateCaArn: "private-ca-arn",
       caCertDuration: "12h0m0s",
       caCertRenewBefore: "1h0m0s",
       nodeCertDuration: "12h0m0s",
@@ -96,7 +164,146 @@ describe( 'CAEF Compliance Stack Tests', () => {
       },
       additionalEfsIngressSecurityGroupIds: [
         "sg-12312421421"
-      ]
+      ],
+    }
+  }
+
+  new NifiL3Construct( stack, "teststack", constructProps );
+  testApp.checkCdkNagCompliance( testApp.testStack )
+  const template = Template.fromStack( testApp.testStack )
+
+
+  console.log( JSON.stringify( template, undefined, 2 ) )
+
+  // test( 'Validate resource counts', () => {
+  //   template.resourceCountIs( "AWS::Glue::Job", 1 );
+  // } );
+
+} )
+
+describe( 'Registry Mandatory Compliance Stack Tests', () => {
+
+  const testApp = new CaefTestApp()
+  const stack = testApp.testStack
+
+
+
+  const constructProps: NifiL3ConstructProps = {
+    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    naming: testApp.naming,
+    kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
+    nifi: {
+      registry: {
+        initialAdminIdentity: "tesing-admin",
+      },
+      vpcId: "test-vpc-id",
+      subnetIds: {
+        "test-subnet-1": "test-subnet-id"
+      },
+      adminRoles: [ {
+        id: "testing"
+      } ],
+
+    }
+  }
+
+  new NifiL3Construct( stack, "teststack", constructProps );
+  testApp.checkCdkNagCompliance( testApp.testStack )
+  const template = Template.fromStack( testApp.testStack )
+
+
+  console.log( JSON.stringify( template, undefined, 2 ) )
+
+  // test( 'Validate resource counts', () => {
+  //   template.resourceCountIs( "AWS::Glue::Job", 1 );
+  // } );
+
+} )
+
+describe( 'Registry Optional Compliance Stack Tests', () => {
+
+  const testApp = new CaefTestApp()
+  const stack = testApp.testStack
+
+
+  const constructProps: NifiL3ConstructProps = {
+    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    naming: testApp.naming,
+    kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
+    nifi: {
+      registry: {
+        initialAdminIdentity: "tesing-admin",
+        additionalAdminIdentities: [
+          "testin2"
+        ],
+        externalNodeIdentities: [
+          "test-external-node"
+        ],
+        userIdentities: [
+          "test-user"
+        ],
+        autoAddNifiAuthorizations: {
+          adminPolicyPatterns: [
+            ".*"
+          ],
+          userPolicyPatterns: [
+            ".*"
+          ],
+          externalNodePolicyPatterns: [
+            ".*"
+          ],
+          clusterNodePolicyPatterns: [
+            ".*"
+          ]
+        },
+      },
+      vpcId: "test-vpc-id",
+      subnetIds: {
+        "test-subnet-1": "test-subnet-id"
+      },
+      adminRoles: [ {
+        id: "testing"
+      } ],
+
+
+      existingPrivateCaArn: "private-ca-arn",
+      caCertDuration: "12h0m0s",
+      caCertRenewBefore: "1h0m0s",
+      nodeCertDuration: "12h0m0s",
+      nodeCertRenewBefore: "1h0m0s",
+      nifiSecurityGroupEgressRules: {
+        sg: [ {
+          sgId: "sg-123124214",
+          protocol: "tcp",
+          port: 50
+        } ],
+        ipv4: [ {
+          cidr: "10.10.10.10/32",
+          protocol: "tcp",
+          port: 50
+        } ],
+      },
+      nifiSecurityGroupIngressIPv4s: [
+        "10.10.10.0/24"
+      ],
+      nifiSecurityGroupIngressSGs: [
+        "sg-123124214"
+      ],
+      eksSecurityGroupIngressRules: {
+        sg: [ {
+          sgId: "sg-123124214",
+          protocol: "tcp",
+          port: 50
+        } ],
+        ipv4: [ {
+          cidr: "10.10.10.10/23",
+          protocol: "tcp",
+          port: 50
+        } ],
+      },
+      additionalEfsIngressSecurityGroupIds: [
+        "sg-12312421421"
+      ],
     }
   }
 

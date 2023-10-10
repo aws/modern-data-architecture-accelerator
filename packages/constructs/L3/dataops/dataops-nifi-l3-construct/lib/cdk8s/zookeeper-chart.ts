@@ -24,6 +24,8 @@ export interface ZookeeperChartProps extends cdk8s.ChartProps {
     readonly efsStorageClassName: string
     readonly zookeeperCertDuration: string
     readonly zookeeperCertRenewBefore: string
+    readonly certKeyAlg: string
+    readonly certKeySize: number
 }
 
 export class ZookeeperChart extends cdk8s.Chart {
@@ -36,7 +38,8 @@ export class ZookeeperChart extends cdk8s.Chart {
 
         const zkService = this.createZkService()
         const zkSecretName = this.createExternalSecrets( props )
-        const zkSts = this.createZkStatefulSet( zkService, zkSecretName )
+        const persistentVolumes = this.createPersistentVolumes()
+        const zkSts = this.createZkStatefulSet( zkService, zkSecretName, persistentVolumes )
         this.createSslResources( zkService, zkSts, zkSecretName )
         this.zkConnectString = [ ...Array( 3 ).keys() ].map( i => {
             return `${ zkSts.name }-${ i }.${ this.namespace }.${ this.props.hostedZoneName }:2181`
@@ -109,9 +112,9 @@ export class ZookeeperChart extends cdk8s.Chart {
                     ],
                     secretName: `${ zkSts.name }-${ i }-ssl`,
                     privateKey: {
-                        algorithm: "RSA",
+                        algorithm: this.props.certKeyAlg,
                         encoding: "PKCS1",
-                        size: 4096
+                        size: this.props.certKeySize
                     },
                     usages: [
                         "server auth",
@@ -167,7 +170,41 @@ export class ZookeeperChart extends cdk8s.Chart {
         return new k8s.KubeService( this, 'zookeeper-svc', zookeeperServiceProps )
     }
 
-    private createZkStatefulSet ( zookeeperService: k8s.KubeService, zkSecretName: string ): k8s.KubeStatefulSet {
+    private createPersistentVolumes (): k8s.KubePersistentVolume[] {
+        var volId = 0
+        const pvs = this.props.efsPersistentVolumes.map( efsPvProps => {
+            const pv = new k8s.KubePersistentVolume( this, `zookeeper-persistent-volume-${ volId }`, {
+                metadata: {
+                    name: `zookeeper-vol-${ efsPvProps.efsFsId }-${ efsPvProps.efsApId }`,
+                    labels: {
+                        app: "zookeeper"
+                    }
+                },
+                spec: {
+                    volumeMode: "Filesystem",
+                    capacity: {
+                        storage: k8s.Quantity.fromString( '60Gi' )
+                    },
+                    accessModes: [ "ReadWriteOnce" ],
+                    persistentVolumeReclaimPolicy: "Retain",
+                    storageClassName: this.props.efsStorageClassName,
+                    csi: {
+                        driver: "efs.csi.aws.com",
+                        volumeHandle: `${ efsPvProps.efsFsId }::${ efsPvProps.efsApId }`
+                    },
+                    claimRef: {
+                        name: `zookeeper-data-zookeeper-${ volId }`,
+                        namespace: this.namespace
+                    }
+                }
+            } )
+            volId = volId + 1
+            return pv
+        } )
+        return pvs
+    }
+
+    private createZkStatefulSet ( zookeeperService: k8s.KubeService, zkSecretName: string, persistentVolumes: k8s.KubePersistentVolume[] ): k8s.KubeStatefulSet {
 
         const nodeIds = [ ...Array( 3 ).keys() ]
 
@@ -207,36 +244,7 @@ export class ZookeeperChart extends cdk8s.Chart {
 
         const zkConfigMap = this.createZkConfigMap( zookeeperService.name, sslBasePath, zkDataDir, nodeList )
 
-        var volId = 0
-        const pvs = this.props.efsPersistentVolumes.map( efsPvProps => {
-            const pv = new k8s.KubePersistentVolume( this, `nifi-persistent-volume-${ volId }`, {
-                metadata: {
-                    name: `zookeeper-vol-${ efsPvProps.efsFsId }-${ efsPvProps.efsApId }`,
-                    labels: {
-                        app: "zookeeper"
-                    }
-                },
-                spec: {
-                    volumeMode: "Filesystem",
-                    capacity: {
-                        storage: k8s.Quantity.fromString( '60Gi' )
-                    },
-                    accessModes: [ "ReadWriteOnce" ],
-                    persistentVolumeReclaimPolicy: "Retain",
-                    storageClassName: this.props.efsStorageClassName,
-                    csi: {
-                        driver: "efs.csi.aws.com",
-                        volumeHandle: `${ efsPvProps.efsFsId }::${ efsPvProps.efsApId }`
-                    },
-                    claimRef: {
-                        name: `zookeeper-data-zookeeper-${ volId }`,
-                        namespace: this.namespace
-                    }
-                }
-            } )
-            volId = volId + 1
-            return pv
-        } )
+
 
         const zookeeperStsProps: k8s.KubeStatefulSetProps = {
             metadata: {
@@ -253,7 +261,7 @@ export class ZookeeperChart extends cdk8s.Chart {
                 updateStrategy: {
                     type: "RollingUpdate"
                 },
-                podManagementPolicy: "OrderedReady",
+                podManagementPolicy: "Parallel",
                 persistentVolumeClaimRetentionPolicy: {
                     whenDeleted: "Retain",
                     whenScaled: "Delete"
@@ -399,7 +407,7 @@ export class ZookeeperChart extends cdk8s.Chart {
         }
 
         const sts = new k8s.KubeStatefulSet( this, 'zookeeper-sts', zookeeperStsProps )
-        pvs.forEach( pv => { sts.addDependency( pv ) } )
+        persistentVolumes.forEach( pv => { sts.addDependency( pv ) } )
         return sts
     }
 

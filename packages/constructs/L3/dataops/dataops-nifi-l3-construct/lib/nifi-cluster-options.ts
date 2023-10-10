@@ -7,6 +7,25 @@ import { CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
 
 export type NodeSize = "SMALL" | "MEDIUM" | "LARGE" | "XLARGE" | "2XLARGE"
 
+export interface AutomaticNifiAuthorizations {
+    /**
+     * Nifi Nodes (from clusters created by this construct) will be automatically added to policies matching these patterns 
+     */
+    readonly clusterNodePolicyPatterns?: string[]
+    /**
+     * External Nifi Nodes (not created by this construct) will be automatically added to policies matching these patterns 
+     */
+    readonly externalNodePolicyPatterns?: string[]
+    /**
+     * Users (from userIdentities) will be automatically added to policies matching these patterns 
+     */
+    readonly userPolicyPatterns?: string[]
+    /**
+     * Admins (initialAdminIdentity and additionalAdminIdentities) will be automatically added to policies matching these patterns 
+     */
+    readonly adminPolicyPatterns?: string[]
+}
+
 export interface NifiSamlProps {
     /**
      * URL from which the IDP SAML Metadata is available.
@@ -84,7 +103,7 @@ export interface NifiClusterOptions {
      * External nodes which will be granted remote access (by TLS certificate common name).
      * Note that these nodes will also need to be granted security group access via 'nifiSecurityGroupIngressSGs' or 'nifiSecurityGroupIngressIPv4s'
      */
-    readonly externalAuthorizedNodes?: string[]
+    readonly externalNodeIdentities?: string[]
     /**
      * AWS managed policies which will be granted to the Nifi cluster role for access to AWS services.
      */
@@ -93,6 +112,21 @@ export interface NifiClusterOptions {
      * Customer managed policies which will be granted to the Nifi cluster role for access to AWS services.
      */
     readonly clusterRoleManagedPolicies?: string[]
+    /**
+     * Authorized registry user identities to be pre-created. These users will not have any permissions by default, unless
+     * policy patterns are specified in autoAddNifiAuthorizations.userPolicyPatterns
+     */
+    readonly userIdentities?: string[]
+    /**
+     * Authorized registry admin identities to be pre-created. These admins will not have any permissions by default, unless
+     * policy patterns are specified in autoAddNifiAuthorizations.adminPolicyPatterns
+     */
+    readonly additionalAdminIdentities?: string[]
+    /**
+     * Policy patterns for automatically adding authorizations for nifi nodes (from clusters in this construct), external nifi nodes (provisioned outside of this construct),
+     * admins (both initialAdminIdentity and additionalAdminIdentities), as well as userIdentities
+     */
+    readonly autoAddNifiAuthorizations?: AutomaticNifiAuthorizations
 }
 
 export interface AwsManagedPolicySpec {

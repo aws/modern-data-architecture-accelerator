@@ -4,12 +4,19 @@ import os
 import shutil
 from subprocess import check_output, CalledProcessError
 
-nifi_ssl_dir = os.environ['NIFI_SSL_DIR']
+nifi_ssl_dir = os.environ['NIFI_SSL_BASE_DIR']
+nifi_app = os.environ.get('NIFI_APP', None)
 hostname = os.environ['HOSTNAME']
 nifi_data_dir = os.environ['NIFI_DATA_DIR']
-keystore_secret_path = f"{nifi_ssl_dir}/{hostname}/keystore.jks"
+
+if nifi_app == "nifi-registry":
+    keystore_secret_path = f"{nifi_ssl_dir}/keystore.jks"
+    truststore_secret_path = f"{nifi_ssl_dir}/truststore.jks"
+else:
+    keystore_secret_path = f"{nifi_ssl_dir}/{hostname}/keystore.jks"
+    truststore_secret_path = f"{nifi_ssl_dir}/{hostname}/truststore.jks"
+
 keystore_target_path = f"{nifi_data_dir}/ssl/keystore/keystore.jks"
-truststore_secret_path = f"{nifi_ssl_dir}/{hostname}/truststore.jks"
 truststore_target_path = f"{nifi_data_dir}/ssl/truststore/truststore.jks"
 
 current_keystore_mtime = os.stat(

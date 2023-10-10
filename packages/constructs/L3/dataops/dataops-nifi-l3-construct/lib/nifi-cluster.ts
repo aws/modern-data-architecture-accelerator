@@ -34,6 +34,8 @@ export interface NifiClusterProps extends NifiClusterOptions {
     readonly nifiCAIssuerName: string
     readonly nifiCertDuration: string
     readonly nifiCertRenewBefore: string
+    readonly certKeyAlg: string
+    readonly certKeySize: number
 }
 
 
@@ -41,9 +43,11 @@ export class NifiCluster extends Construct {
     private readonly props: NifiClusterProps
     public readonly nifiManifest: KubernetesManifest;
     public readonly securityGroup: ISecurityGroup
+    public readonly initialAdminIdentity: string
     public readonly httpsPort: number
     public readonly remotePort: number
     public readonly clusterPort: number
+    public readonly nodeList: string[]
 
     private static nodeSizeMap: { [ key in NodeSize ]: NodeResources } = {
         "SMALL": {
@@ -76,18 +80,19 @@ export class NifiCluster extends Construct {
         this.httpsPort = this.props.httpsPort ?? 8443
         this.remotePort = this.props.remotePort ?? 10000
         this.clusterPort = this.props.clusterPort ?? 14443
+        this.initialAdminIdentity = this.props.initialAdminIdentity
         const nodeCount = props.nodeCount ?? 1
 
         this.securityGroup = this.createNifiSecurityGroup( props.vpc )
 
         const additionalEfsIngressSecurityGroups = props.additionalEfsIngressSecurityGroupIds?.map( id => {
-            return SecurityGroup.fromSecurityGroupId( this, `efs-ingress-sg-${ id }`, id )
+            return SecurityGroup.fromSecurityGroupId( this, `nifi-cluster-efs-ingress-sg-${ id }`, id )
         } )
 
-        const efsSecurityGroup = NifiCluster.createEfsSecurityGroup( this, props.naming, props.vpc, [ this.securityGroup, ...additionalEfsIngressSecurityGroups || [] ] )
+        const efsSecurityGroup = NifiCluster.createEfsSecurityGroup( 'nifi-cluster', this, props.naming, props.vpc, [ this.securityGroup, ...additionalEfsIngressSecurityGroups || [] ] )
 
         const nifiEfsPvs = NifiCluster.createEfsPvs( this, props.naming, 'nifi', nodeCount, props.vpc, props.subnets, props.kmsKey, efsSecurityGroup )
-        const efsManagedPolicy = NifiCluster.createEfsAccessPolicy( this, props.naming, props.kmsKey, nifiEfsPvs )
+        const efsManagedPolicy = NifiCluster.createEfsAccessPolicy( 'nifi-cluster', this, props.naming, props.kmsKey, nifiEfsPvs )
 
         const fargateProfile = props.eksCluster.addFargateProfile( props.clusterName, {
             fargateProfileName: props.clusterName,
@@ -143,17 +148,22 @@ export class NifiCluster extends Construct {
             remotePort: this.remotePort,
             clusterPort: this.clusterPort,
             caIssuerName: this.props.nifiCAIssuerName,
-            externalAuthorizedNodes: this.props.externalAuthorizedNodes,
+            externalNodeIdentities: this.props.externalNodeIdentities,
             nifiServiceRoleArn: clusterServiceRole.roleArn,
             nifiServiceRoleName: clusterServiceRole.roleName,
             nifiCertDuration: this.props.nifiCertDuration,
-            nifiCertRenewBefore: this.props.nifiCertRenewBefore
+            nifiCertRenewBefore: this.props.nifiCertRenewBefore,
+            certKeyAlg: this.props.certKeyAlg ?? "ECDSA",
+            certKeySize: this.props.certKeySize ?? "384",
+            userIdentities: this.props.userIdentities,
+            additionalAdminIdentities: this.props.additionalAdminIdentities,
+            autoAddNifiAuthorizations: this.props.autoAddNifiAuthorizations
         } )
-
-        const nifiNamespaceChart = props.eksCluster.addNamespace( new cdk8s.App(), `nifi-namespace-${ props.clusterName }`, nifiNamespaceName, this.securityGroup )
+        this.nodeList = nifiK8sChart.nodeList.map( nodeName => `${ nodeName }.${ nifiK8sChart.domain }` )
+        const nifiNamespaceManifest = props.eksCluster.addNamespace( new cdk8s.App(), `nifi-namespace-${ props.clusterName }`, nifiNamespaceName, this.securityGroup )
+        nifiNamespaceManifest.node.addDependency( fargateProfile )
         this.nifiManifest = props.eksCluster.addCdk8sChart( `nifi-${ props.clusterName }`, nifiK8sChart )
-        this.nifiManifest.node.addDependency( nifiNamespaceChart )
-
+        this.nifiManifest.node.addDependency( nifiNamespaceManifest )
 
         const restartNifiCmdProps: KubernetesCmdProps = {
             cluster: props.eksCluster,
@@ -220,7 +230,7 @@ export class NifiCluster extends Construct {
 
     }
 
-    public static createEfsSecurityGroup ( scope: Construct, naming: ICaefResourceNaming, vpc: IVpc, securityGroups?: ISecurityGroup[] ) {
+    public static createEfsSecurityGroup ( name: string, scope: Construct, naming: ICaefResourceNaming, vpc: IVpc, securityGroups?: ISecurityGroup[] ) {
         const efsSgIngressRules: CaefSecurityGroupRuleProps = {
             sg: securityGroups?.map( sg => {
                 return {
@@ -232,17 +242,17 @@ export class NifiCluster extends Construct {
         }
 
         const sgProps: CaefSecurityGroupProps = {
-            securityGroupName: 'efs',
+            securityGroupName: `${ name }-efs`,
             vpc: vpc,
             addSelfReferenceRule: true,
             naming: naming,
             allowAllOutbound: true,
             ingressRules: efsSgIngressRules
         }
-        return new CaefSecurityGroup( scope, 'efs-sg', sgProps )
+        return new CaefSecurityGroup( scope, `${ name }-efs-sg`, sgProps )
 
     }
-    public static createEfsAccessPolicy ( scope: Construct, naming: ICaefResourceNaming, kmsKey: IKey, efsPvs: [ FileSystem, AccessPoint ][] ): ManagedPolicy {
+    public static createEfsAccessPolicy ( name: string, scope: Construct, naming: ICaefResourceNaming, kmsKey: IKey, efsPvs: [ FileSystem, AccessPoint ][] ): ManagedPolicy {
         const describeAzStatement = new PolicyStatement( {
             sid: "AllowDescribeAz",
             effect: Effect.ALLOW,
@@ -288,8 +298,8 @@ export class NifiCluster extends Construct {
             efsKmsKeyStatement
         ]
 
-        const efsManagedPolicy = new ManagedPolicy( scope, `efs-access-policy`, {
-            managedPolicyName: naming.resourceName( `efs-access`, 64 ),
+        const efsManagedPolicy = new ManagedPolicy( scope, `${ name }-efs-access`, {
+            managedPolicyName: naming.resourceName( `${ name }-efs-access`, 64 ),
             statements: efsStatements
         } )
 
