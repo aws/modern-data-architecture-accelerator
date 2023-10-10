@@ -13,12 +13,11 @@ export interface CaIssuerChartProps extends cdk8s.ChartProps {
     readonly externalSecretsRoleArn: string
     readonly awsRegion: string
     readonly keystorePasswordSecretName: string
-    readonly privateCa?: {
-        arn: string,
-        region: string
-    }
+    readonly rootClusterIssuerName: string
     readonly caCertDuration: string
     readonly caCertRenewBefore: string
+    readonly certKeyAlg: string
+    readonly certKeySize: number
 }
 
 export class CaIssuerChart extends cdk8s.Chart {
@@ -26,33 +25,10 @@ export class CaIssuerChart extends cdk8s.Chart {
     constructor( scope: Construct, id: string, props: CaIssuerChartProps ) {
         super( scope, id, props )
 
-        const rootClusterIssuer = props.privateCa ?
-            new cdk8s.ApiObject( this, 'private-ca-cluster-issuer', {
-                apiVersion: "awspca.cert-manager.io/v1beta1",
-                kind: "AWSPCAClusterIssuer",
-                metadata: {
-                    name: 'private-ca-cluster-issuer'
-                },
-                spec: {
-                    arn: props.privateCa.arn,
-                    region: props.privateCa.region
-                }
-            } ) :
-            new cdk8s.ApiObject( this, 'self-signed-ca-cluster-issuer', {
-                apiVersion: "cert-manager.io/v1",
-                kind: "ClusterIssuer",
-                metadata: {
-                    name: 'self-signed-ca-cluster-issuer'
-                },
-                spec: {
-                    selfSigned: {}
-                }
-            } )
-
         const secretStoreChart = new ExternalSecretStore( this, 'secret-store', props )
 
         const keystorePasswordSecretTargetName = 'ca-keystore-secret'
-        new cdk8s.ApiObject( this, 'ca-external-secret', {
+        const keystorePasswordExternalSecret = new cdk8s.ApiObject( this, 'ca-external-secret', {
             apiVersion: "external-secrets.io/v1beta1",
             kind: "ExternalSecret",
             metadata: {
@@ -78,8 +54,11 @@ export class CaIssuerChart extends cdk8s.Chart {
                 ]
             }
         } )
+
+        keystorePasswordExternalSecret.addDependency( secretStoreChart )
+
         const caSecretName = 'ca-cert-secret'
-        new cdk8s.ApiObject( this, 'ca-cert', {
+        const caCert = new cdk8s.ApiObject( this, 'ca-cert', {
             apiVersion: "cert-manager.io/v1",
             kind: "Certificate",
             metadata: {
@@ -90,14 +69,14 @@ export class CaIssuerChart extends cdk8s.Chart {
                 commonName: 'ca',
                 secretName: caSecretName,
                 privateKey: {
-                    algorithm: "RSA",
+                    algorithm: props.certKeyAlg,
                     encoding: "PKCS1",
-                    size: 4096
+                    size: props.certKeySize
                 },
                 issuerRef: {
-                    group: props.privateCa ? "awspca.cert-manager.io" : undefined,
-                    name: rootClusterIssuer.name,
-                    kind: rootClusterIssuer.kind
+                    group: "awspca.cert-manager.io",
+                    name: props.rootClusterIssuerName,
+                    kind: "AWSPCAClusterIssuer"
                 },
                 duration: props.caCertDuration,
                 renewBefore: props.caCertRenewBefore,
@@ -113,6 +92,8 @@ export class CaIssuerChart extends cdk8s.Chart {
             }
         } )
 
+        caCert.addDependency( keystorePasswordExternalSecret )
+
         const caIssuer = new cdk8s.ApiObject( this, 'ca', {
             apiVersion: "cert-manager.io/v1",
             kind: "ClusterIssuer",
@@ -125,6 +106,8 @@ export class CaIssuerChart extends cdk8s.Chart {
                 }
             }
         } )
+
+        caIssuer.addDependency( caCert )
 
         this.caIssuerName = caIssuer.name
 

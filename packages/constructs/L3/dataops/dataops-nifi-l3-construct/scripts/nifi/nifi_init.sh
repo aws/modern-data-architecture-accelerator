@@ -2,7 +2,12 @@
 
 # tail -f /dev/null
 
-python ${NIFI_INIT_DIR}/scripts/nifi_init_identities_access.py
+pip install boto3
+
+python ${NIFI_INIT_DIR}/scripts/nifi_users_authorizations.py
+
+
+
 
 
 

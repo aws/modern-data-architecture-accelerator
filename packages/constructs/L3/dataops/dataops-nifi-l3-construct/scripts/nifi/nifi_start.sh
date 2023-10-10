@@ -15,6 +15,8 @@ if [ -n "${SINGLE_USER_CREDENTIALS_USERNAME}" ] && [ -n "${SINGLE_USER_CREDENTIA
     ${NIFI_HOME}/bin/nifi.sh set-single-user-credentials "${SINGLE_USER_CREDENTIALS_USERNAME}" "${SINGLE_USER_CREDENTIALS_PASSWORD}"
 fi
 
+${NIFI_TOOLKIT_HOME}/bin/cli.sh session set nifi.props "${NIFI_HOME}/conf/nifi-cli.config"
+
 # Continuously provide logs so that 'docker logs' can produce them
 "${NIFI_HOME}/bin/nifi.sh" run &
 nifi_pid="$!"

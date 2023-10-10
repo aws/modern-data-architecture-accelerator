@@ -27,4 +27,5 @@ while True:
     if current_session_token != latest_session_token:
         print("Detected session token change. Writing to credentials file.")
         write_creds(session_creds)
+        current_session_token = latest_session_token
     time.sleep(60)

@@ -20,9 +20,16 @@ The Data Ops Nifi CDK App is used to deploy the resources required to orchestrat
 * **Nifi Clusters** - Multiple Nifi clusters are deployed onto EKS as separate StatefulSets (using CDK8S charts), running in separate Namespaces. Each Nifi cluster has its own ServiceAccount connected to a separate IAM Role, which can be used by the cluster to access AWS services. All Nifi communications are TLS-encrypted using certs minted by the internal CA. Additionally, each Nifi cluster may be configured to federate user access from a SAML identity provider (including AWS IAM Identity Center/SSO).
 
   * **Nifi EFS** - Each cluster node/pod is provided with PersistentVolumes running on a cluster-specific EFS FileSystem, with separate Access Points per cluster node. The Filesystem is encrypted using the DataOps project KMS key.
-  * **Nifi Node Certs** -- Each cluster node is provision with a TLS certificate (signed by the internal CA) used for all interactions with other Nifi nodes and Zookeeper. The certificates and keys are mounted as JKS key stores into the Nifi pods from a Kubernetes Secret. The passwords for the JKS stores is stored in AWS Secrets Manager, and published to the Nifi container as a secret environment variable.
+  * **Nifi Node Certs** -- Each cluster node is provisioned with a TLS certificate (signed by the internal CA) used for all interactions with other Nifi nodes and Zookeeper. The certificates and keys are mounted as JKS key stores into the Nifi pods from a Kubernetes Secret. The passwords for the JKS stores is stored in AWS Secrets Manager, and published to the Nifi container as a secret environment variable.
   * **Nifi Security Group** - A security group is provisioned for each Nifi cluster providing ingress/egress control to/from the cluster.
   * **Nifi Service Account Role** - An IAM role is provisioned for each cluster, bound to the Nifi StatefulSet as a ServiceAccount. This role may be granted access to AWS resources using either AWS or Customer Managed Policies.
+
+* **Nifi Registry** - Nifi Registry is deployed as a Kubernetes Deployment
+
+  * **Nifi Registry EFS** - Nifi Registry is provided with a PersistentVolume running on an EFS FileSystem. The Filesystem is encrypted using the DataOps project KMS key.
+  * **Nifi Registry Certs** - Nifi Registry  is provisioned with a TLS certificate (signed by the internal CA) used for all interactions with other Nifi nodes and Zookeeper. The certificate and key is mounted as JKS key stores into the Registry pod from a Kubernetes Secret. The passwords for the JKS stores is stored in AWS Secrets Manager, and published to the Nifi container as a secret environment variable.
+  * **Nifi Registry Security Group** - A security group is provisioned for Registry providing ingress/egress control to/from the services.
+  * **Nifi Registry Service Account Role** - An IAM role is provisioned for Registry, bound to the Nifi StatefulSet as a ServiceAccount. This role may be granted access to AWS resources using either AWS or Customer Managed Policies.
 
 ***
 
@@ -54,9 +61,8 @@ nifi:
   # (Optional) - Specify the Arn of a ACM Private CA to be used as a root of the trust chain
   # for all signed Nifi certs. The cert-manager service accounts within the EKS cluster will be
   # granted access to mint certs via this ACM PCA.
-  # If not specified, the root of the trust chain will be a
-  # self-signed cert within the Nifi EKS cluster.
-  privateCaArn: arn:aws:acm-pca:test-region:test-account:certificate-authority/test-acm-pca-id
+  # If not specified, an ACM private CA will be created.
+  existingPrivateCaArn: arn:aws:acm-pca:test-region:test-account:certificate-authority/test-acm-pca-id
 
   # (Optional) An internal CA will be created within the Nifi EKS cluster (either self-signed or signed by a ACM Private CA).
   # All Nifi and Zookeeper node certs will be minted within the cluster via the internal CA.
@@ -105,18 +111,45 @@ nifi:
   clusters:
     # Test cluster name. Each cluster in the config should have a unique name.
     test1:
-      # (Optional) The initial number of nodes in the cluster.
-      # Defaults to 1
+      # The initial number of nodes in the cluster.
       nodeCount: 2
       # The size of the Nifi nodes.
       # One of "SMALL" (1CPU2GB) | "MEDIUM" (2CPU,4GB) | "LARGE" (4CPU,8GB) | "XLARGE" (8CPU,16GB) | "2XLARGE" (16CPU,32GB)
-      # Defaults to SMALL
-      nodeSize: MEDIUM
+      nodeSize: SMALL
       # The identity which will be granted admin access to the nifi cluster.
       # If using SAML integration, this should be the SAML identity of the federated admin user.
       # If not using SAML, an admin user with this name will be created locally on the cluster,
       # with a password stored in AWS Secrets Manager.
       initialAdminIdentity: "some-admin-identity"
+      # (Optional) Additional admin identities which will be added to autoAddNifiAuthorizations.adminPolicyPatterns
+      additionalAdminIdentities:
+        - "some-other-admin-identity"
+      # (Optional) User identities which will be added to autoAddNifiAuthorizations.userPolicyPatterns
+      userIdentities:
+        - "some-user-identity"
+      # (Optional) Nifi node identities which will be added to autoAddNifiAuthorizations.externalNodePolicyPatterns
+      # Note that nodes from clusters created by this config do not need to be specified here.
+      externalNodeIdentities:
+        - "some-external-node-identity"
+      autoAddNifiAuthorizations:
+        # (Optional) Nifi nodes (from clusters created by this config) will automatically be added
+        # to Registry authorization policies with names matching these patterns
+        clusterNodePolicyPatterns:
+          - /proxy
+          - /data/.*
+        # (Optional) External Nifi nodes (from 'peerClusters' or 'externalNodeIdentities') will automatically be added
+        # to Registry authorization policies with names matching these patterns
+        externalNodePolicyPatterns:
+          - /site-to-site
+          - /data-transfer/.*
+        # (Optional) Admins (including initialAdminIdentity and additionalAdminIdentities) will automatically be added
+        # to Registry authorization policies with names matching these patterns
+        adminPolicyPatterns:
+          - /.*
+        # (Optional) Users (from userIdentities) will automatically be added
+        # to Registry authorization policies with names matching these patterns
+        userPolicyPatterns:
+          - /.*
       # (Optional) - A list of other Nifi clusters within this config which will automatically be provided
       # security group connectivity as well as remote access to this cluster.
       peerClusters:
@@ -125,12 +158,6 @@ nifi:
       saml:
         # The IDP Metadata URL where the SAML metadata can be fetched from the IDP
         idpMetadataUrl: "https://portal.sso.ca-central-1.amazonaws.com/saml/metadata/abc-123"
-      # A list of external authorized nodes which will be granted access (by TLS certificate common name)
-      # to this cluster. This should be used for integration with other clusters external to this config. If the other
-      # cluster is part of this config, use 'peerClusters' instead.
-      # Note that the remote cluster will also need security group access via 'nifiSecurityGroupIngressSGs' or 'nifiSecurityGroupIngressIPv4s'
-      externalAuthorizedNodes:
-        - CN=test-node
 
       # Allows mounting of the Nifi EFS from outside of the EKS cluster
       # This list will be combined with the global 'additionalEfsIngressSecurityGroupIds' list to determine the
@@ -165,6 +192,8 @@ nifi:
         - "customer-managed-policy-1"
 
     test2:
+      nodeCount: 2
+      nodeSize: SMALL
       initialAdminIdentity: "initial_admin_identity"
       # (Optional) - The port on which Nifi HTTPS interface will listen.
       # If not specified, defaults to 8443
@@ -177,6 +206,56 @@ nifi:
       clusterPort: 14444
       peerClusters:
         - test1
+
+  # (Optional) Configuration specific to Nifi Registry
+  # If not specified, no Registry service is deployed.
+  registry:
+    # The identity of the initial Registry Admin
+    # Admin should be specified using their TLS cert common name
+    initialAdminIdentity: "CN=some-admin-identity"
+    # (Optional) Additional admin identities which will be added to autoAddNifiAuthorizations.adminPolicyPatterns
+    additionalAdminIdentities:
+      - "CN=some-other-admin-identity"
+    # (Optional) User identities which will be added to autoAddNifiAuthorizations.userPolicyPatterns
+    userIdentities:
+      - "some-user-identity"
+    # (Optional) Nifi node identities which will be added to autoAddNifiAuthorizations.externalNodePolicyPatterns.
+    # Nodes should be specified using their TLS cert common name
+    # * Note that nodes from clusters created by this config do not need to be specified here.
+    # * Note that these nodes will also need security group access via 'nifiSecurityGroupIngressSGs' or 'nifiSecurityGroupIngressIPv4s'
+    externalNodeIdentities:
+      - "CN=some-external-node-identity"
+    autoAddNifiAuthorizations:
+      # (Optional) Nifi nodes (from clusters created by this config) will automatically be added
+      # to Registry authorization policies with names matching these patterns
+      clusterNodePolicyPatterns:
+        - /proxy
+        - /data/.*
+      # (Optional) External Nifi nodes (not created by this config) will automatically be added
+      # to Registry authorization policies with names matching these patterns
+      externalNodePolicyPatterns:
+        - /site-to-site
+        - /data-transfer/.*
+      # (Optional) Admins (including initialAdminIdentity and additionalAdminIdentities) will automatically be added
+      # to Registry authorization policies with names matching these patterns
+      adminPolicyPatterns:
+        - /.*
+      # (Optional) Users (from userIdentities) will automatically be added
+      # to Registry authorization policies with names matching these patterns
+      userPolicyPatterns:
+        - /.*
+      # Allows mounting of the Registry EFS from outside of the EKS cluster.
+      additionalEfsIngressSecurityGroupIds:
+        - sg-glefsclientid
+      # Applied to the Registry pods, allowing remote connectivity to Registry HTTPS
+      # for specified Security Groups.
+      nifiSecurityGroupIngressSGs:
+        - sg-glnificlientid
+      # Applied to the Registry pods, allowing remote connectivity to Registry HTTPS
+      # for specified IPv4 CIDRs.
+      nifiSecurityGroupIngressIPv4s:
+        - 10.10.10.10/24
+
 ```
 
 ### SSO Integration

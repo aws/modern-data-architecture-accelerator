@@ -41,6 +41,8 @@ export interface KubernetesCmdProps {
    */
   readonly executionKey?: string
 
+
+  readonly expectedOutput?: string
 }
 
 /**
@@ -67,6 +69,7 @@ export class KubernetesCmd extends Construct {
         ClusterName: props.cluster.clusterName,
         RoleArn: provider.roleArn,
         Cmd: props.cmd,
+        ExpectedOutput: props.expectedOutput,
         Namespace: props.namespace ?? 'default',
         TimeoutSeconds: ( props?.timeout ?? Duration.minutes( 5 ) ).toSeconds(),
         ExecutionKey: props.executionKey
