@@ -5,7 +5,7 @@
 
 import * as caef_construct from '@aws-caef/construct';
 import { ICaefKmsKey } from '@aws-caef/kms-constructs';
-import { RemovalPolicy } from 'aws-cdk-lib';
+import { Fn, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { BlockPublicAccess, Bucket, BucketEncryption, BucketProps, IBucket, IntelligentTieringConfiguration, Inventory, LifecycleRule } from 'aws-cdk-lib/aws-s3';
 import { NagSuppressions } from 'cdk-nag';
@@ -78,6 +78,13 @@ export interface CaefBucketProps extends caef_construct.CaefConstructProps {
      */
     readonly intelligentTieringConfigurations?: IntelligentTieringConfiguration[];
 
+    /**
+     * If set true, the stack id will be used to set a unique bucket name prefix in order
+     * to ensure global uniqueness and protect against bucket name sniping.
+     * Can also be enabled via the "@aws-caef/enableUniqueBucketNames" context key.
+     */
+    readonly uniqueBucketName?: boolean
+
 }
 
 /**
@@ -97,10 +104,23 @@ export interface ICaefBucket extends IBucket {
  */
 export class CaefBucket extends Bucket implements ICaefBucket {
 
-    private static setProps ( props: CaefBucketProps ): BucketProps {
+    public static readonly UNIQUE_NAME_CONTEXT_KEY = "@aws-caef/enableUniqueBucketNames"
+
+    private static setProps ( props: CaefBucketProps, scope: Construct ): BucketProps {
+
+        const uniqueBucketNamePrefixContext = scope.node.tryGetContext( CaefBucket.UNIQUE_NAME_CONTEXT_KEY )
+
+        const uniqueBucketNamePrefix = props.uniqueBucketName?.valueOf() ||
+            ( uniqueBucketNamePrefixContext ? Boolean( uniqueBucketNamePrefixContext ) : false )
+
+        const prefix = Fn.select( 0, Fn.split( "-", Fn.select( 2, Fn.split( "/", Stack.of( scope ).stackId ) ) ) )
+
+        const bucketName = uniqueBucketNamePrefix ?
+            props.bucketName ? prefix + '-' + props.naming.resourceName( props.bucketName, 63 ) : prefix
+            : props.naming.resourceName( props.bucketName, 63 )
 
         const overrideProps = {
-            bucketName: props.naming.resourceName( props.bucketName ),
+            bucketName: bucketName,
             encryption: BucketEncryption.KMS,
             encryptionKey: props.encryptionKey,
             blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
@@ -113,7 +133,7 @@ export class CaefBucket extends Bucket implements ICaefBucket {
         return { ...props, ...overrideProps }
     }
     constructor( scope: Construct, id: string, props: CaefBucketProps ) {
-        super( scope, id, CaefBucket.setProps( props ) );
+        super( scope, id, CaefBucket.setProps( props, scope ) );
 
         this.policy?.applyRemovalPolicy( RemovalPolicy.RETAIN )
 

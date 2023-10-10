@@ -12,7 +12,7 @@ import { CaefRedshiftCluster, CaefRedshiftClusterParameterGroup } from '@aws-cae
 import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-caef/s3-bucketpolicy-helper';
 import { CaefBucket } from '@aws-caef/s3-constructs';
 import { Cluster, ClusterSubnetGroup, ClusterType, NodeType, RotationMultiUserOptions, User, UserProps } from '@aws-cdk/aws-redshift-alpha';
-import { Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { Duration, Fn, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Port, Protocol, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { ArnPrincipal, Effect, FederatedPrincipal, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { CfnEventSubscription, CfnEventSubscriptionProps, CfnScheduledAction } from 'aws-cdk-lib/aws-redshift';
@@ -667,7 +667,16 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
   }
 
   private createLoggingBucket (): IBucket {
-    const bucketName = `${ this.props.naming.resourceName( "logging" ) }`
+    //Replicate behaviour of CaefBucket but allow for non-KMS encryption (required by Redshift)
+    const uniqueBucketNamePrefixContext = this.node.tryGetContext( CaefBucket.UNIQUE_NAME_CONTEXT_KEY )
+
+    const uniqueBucketNamePrefix = uniqueBucketNamePrefixContext ? Boolean( uniqueBucketNamePrefixContext ) : false
+
+    const prefix = Fn.select( 0, Fn.split( "-", Fn.select( 2, Fn.split( "/", Stack.of( this ).stackId ) ) ) )
+
+    const bucketName = uniqueBucketNamePrefix ?
+      prefix + '-' + this.props.naming.resourceName( "logging", 63 )
+      : this.props.naming.resourceName( "logging", 63 )
 
     const loggingBucket = new Bucket( this.scope, bucketName, {
       bucketName: bucketName,
