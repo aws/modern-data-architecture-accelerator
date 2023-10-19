@@ -1,4 +1,4 @@
-# Module Overview
+# Data Lake
 
 This Data Lake CDK application is used to configure deploy the resources required to define a secure S3-based Data Lake on AWS.
 

@@ -1,4 +1,4 @@
-# Module Overview
+# EventBridge
 
 This EventBridge CDK application is used to configure deploy EventBridge resources
 ***

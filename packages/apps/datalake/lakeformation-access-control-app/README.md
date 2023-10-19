@@ -1,4 +1,4 @@
-# Module Overview
+# LakeFormation Access Control
 
 The Lake Formation Access Control CDK application is used to deploy Lakeformation fine-grained access controls in the form of grant statements for users or groups to Lakeformation-control data assets.
 

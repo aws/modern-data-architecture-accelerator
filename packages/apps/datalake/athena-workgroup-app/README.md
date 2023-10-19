@@ -1,4 +1,4 @@
-# Module Overview
+# Athena Workgroup
 
 The Athena Workgroup CDK application is used to deploy the resources required to support usage of Athena via a Workgroup and Identity Federation, including an Athena results S3 Bucket and KMS CMK, and a federation role which can be used to federate identities from external identity providers.
 

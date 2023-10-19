@@ -1,4 +1,4 @@
-# Module Overview
+# Data Science Team
 
 The Data Science Team CDK App is used to deploy stacks and resources which support Data Science team activities within an AWS account.
 

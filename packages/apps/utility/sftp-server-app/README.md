@@ -1,4 +1,4 @@
-# Module Overview
+# SFTP Server
 
 The SFTP Server CDK application is used to deploy the resources for an SFTP Transfer Family domain inside an account/VPC.
 

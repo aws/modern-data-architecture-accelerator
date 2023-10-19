@@ -1,4 +1,4 @@
-# Module Overview
+# SFTP Users
 
 The SFTP Users CDK application is used to deploy the resources required to provision SFTP user credentials for a deployed SFTP Transfer Family Server.
 

@@ -1,4 +1,4 @@
-# Module Overview
+# Data Warehouse
 
 The Data Warehouse CDK application is used to configure and deploy resources required for a secure Redshift-based Data Warehouse on AWS.
 

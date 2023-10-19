@@ -1,4 +1,4 @@
-# Module Overview
+# Lambda Functions
 
 The Data Ops Lambda CDK application is used to deploy the resources required to orchestrate data operations on the data lake using Lambda functions. The Lambda functions can currently be triggered by S3 EventBridge notifications (Required to be enabled on the source buckets) and EventBridge Rules.
 

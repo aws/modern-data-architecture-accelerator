@@ -1,4 +1,4 @@
-# Module Overview
+# Quicksight Account
 
 The QuickSight Account CDK application is used to configure and deploy resources required for use of QuickSight within an AWS account. Note that manual post-deployment procedures are quired to finalize the QS account configuration for use. For procedures on how to manually configure a QuickSight account to leverage the resources deployed by this CDK, see the [Manual Procedures](MANUAL_PROCEDURES.md)
 

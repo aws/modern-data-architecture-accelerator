@@ -1,4 +1,4 @@
-# Module Overview
+# QuickSight Namespace
 
 The QuickSight Namespace CDK application is used to configure and deploy following resources:
 

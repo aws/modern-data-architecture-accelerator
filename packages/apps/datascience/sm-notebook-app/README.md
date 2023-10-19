@@ -1,4 +1,4 @@
-# Module Overview
+# SageMaker Notebooks
 
 The SageMaker Notebook CDK application is used to configure and deploy secure SageMaker Notebook instances and associated resources.
 

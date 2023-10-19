@@ -1,4 +1,4 @@
-# Module Overview
+# SageMaker Studio
 
 The SageMaker Studio Domain CDK application is used to configure and deploy a secure SageMaker Studio domain and associated resources. Note that only a single Studio domain can be deployed per AWS account.
 
