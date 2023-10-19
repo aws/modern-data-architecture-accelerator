@@ -1,4 +1,4 @@
-# Module Overview
+# Databrew
 
 The DataBrew CDK application is used to configure and deploy secure databrew jobs and associated resources.
 

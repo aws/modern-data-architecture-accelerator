@@ -1,4 +1,4 @@
-# Module Overview
+# Project
 
 The Data Ops Project CDK application is used to deploy the resources required to support and perform data operations on top of a Data Lake, primarily using Glue Crawlers and Glue Jobs.
 
@@ -69,7 +69,7 @@ projectExecutionRoles:
   - arn: ssm:/sample-org/instance1/generated-role/glue-role/arn
   - id: generated-role-id:databrew
 
-# DataOps failure notifications.
+# failure notifications.
 # For jobs, this includes state changes of "FAILED", "TIMEOUT", and "STOPPED".
 # For crawlers, this includes state changes of "Failed".
 failureNotifications:

@@ -1,4 +1,4 @@
-# Module Overview
+# Workflows
 
 The Data Ops Workflow CDK application is used to deploy the resources required to orchestrate data operations on the data lake (primarily Glue Workflows).
 

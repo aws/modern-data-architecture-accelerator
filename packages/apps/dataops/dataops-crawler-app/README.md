@@ -1,4 +1,4 @@
-# Module Overview
+# Crawlers
 
 The Data Ops Crawler CDK application is used to deploy the resources required to support and perform data operations on top of a Data Lake, primarily using Glue Crawlers and Glue Jobs.
 

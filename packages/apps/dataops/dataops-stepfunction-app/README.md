@@ -1,4 +1,4 @@
-# Module Overview
+# StepFunctions
 
 The Data Ops StepFunction CDK application is used to deploy the resources required to orchestrate data operations on the data lake (primarily Glue Crawlers, Glue Jobs, Step Functions and Lambdas).
 

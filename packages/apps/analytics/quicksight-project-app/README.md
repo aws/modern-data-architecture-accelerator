@@ -1,4 +1,4 @@
-# Module Overview
+# Quicksight Project
 
 The QuickSight Project CDK application is used to configure and deploy:
 

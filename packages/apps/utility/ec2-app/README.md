@@ -1,4 +1,4 @@
-# Module Overview
+# EC2
 
 The EC2 CDK application is used to configure and deploy secure EC2 instances and associated resources.
 

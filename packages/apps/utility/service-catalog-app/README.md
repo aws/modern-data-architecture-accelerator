@@ -1,4 +1,4 @@
-# Module Overview
+# Service Catalog
 
 The ServiceCatalog CDK application is used to deploy Service Catalog resources which can be used within a broader data environment.
 

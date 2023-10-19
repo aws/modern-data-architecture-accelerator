@@ -1,4 +1,4 @@
-# Module Overview
+# CloudTrail Audit
 
 This Audit CDK application is used to configure deploy the resources required to define a secure S3-based bucket on AWS for use as a Cloudtrail or S3 Inventory target.
 

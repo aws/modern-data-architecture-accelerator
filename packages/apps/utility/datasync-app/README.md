@@ -1,4 +1,4 @@
-# Module Overview
+# DataSync
 
 AWS DataSync is an online data transfer service that simplifies, automates, and accelerates moving data between on-premises storage systems and AWS Storage services, as well as between AWS Storage services.
 

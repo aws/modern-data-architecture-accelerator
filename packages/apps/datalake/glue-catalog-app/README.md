@@ -1,4 +1,4 @@
-# Module Overview
+# Glue Catalog Settings
 
 The Glue Catalog CDK application is used to configure an account's Glue Catalog for encryption at rest and cross account access for Data Mesh deployments. It should be deployed only once per AWS account.
 

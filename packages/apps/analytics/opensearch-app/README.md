@@ -1,4 +1,4 @@
-# Module Overview
+# OpenSearch
 
 The Opensearch CDK application is used to deploy resources required for a secure Opensearch domain on AWS.
 
