@@ -7,7 +7,7 @@ import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
 import { CaefTestApp } from "@aws-caef/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { NifiL3Construct, NifiL3ConstructProps } from "../lib";
-import { NifiClusterOptions } from "../lib/nifi-cluster-options";
+import { NifiClusterOptions } from "../lib/nifi-options";
 
 
 describe( 'Nifi Mandatory Compliance Stack Tests', () => {
@@ -16,7 +16,10 @@ describe( 'Nifi Mandatory Compliance Stack Tests', () => {
   const stack = testApp.testStack
 
   const clusterOptions: NifiClusterOptions = {
-    initialAdminIdentity: "testing",
+    saml: {
+      idpMetadataUrl: "testing-url"
+    },
+    adminIdentities: ["testing"],
   }
 
   const constructProps: NifiL3ConstructProps = {
@@ -55,37 +58,35 @@ describe( 'Nifi Optional Compliance Stack Tests', () => {
   const stack = testApp.testStack
 
   const clusterOptions: NifiClusterOptions = {
+    saml: {
+      idpMetadataUrl: "testing-url"
+    },
     nodeCount: 1,
     nodeSize: "SMALL",
-    initialAdminIdentity: "testing",
-
-    additionalAdminIdentities: [
+    adminIdentities: [
+      "testing",
       "testin2"
     ],
     externalNodeIdentities: [
       "test-external-node"
     ],
-    userIdentities: [
+    identities: [
       "test-user"
     ],
-    autoAddNifiAuthorizations: {
-      adminPolicyPatterns: [
-        ".*"
-      ],
-      userPolicyPatterns: [
-        ".*"
-      ],
-      externalNodePolicyPatterns: [
-        ".*"
-      ],
-      clusterNodePolicyPatterns: [
-        ".*"
-      ]
-    },
-    nifiSecurityGroupIngressIPv4s: [
+    groups: {"test-group":["test-user"]},
+    policies: [{
+      resource: "/test",
+      action: "READ"
+    }],
+    authorizations: [{
+      policyResourcePattern: ".*",
+      actions: ["READ"],
+      identities: ["test-user","test-non-user"],
+      groups: ["test-group","test-non-group"]  }],
+    securityGroupIngressIPv4s: [
       "10.10.10.0/24"
     ],
-    nifiSecurityGroupIngressSGs: [
+    securityGroupIngressSGs: [
       "sg-1231242141"
     ],
     additionalEfsIngressSecurityGroupIds: [
@@ -123,16 +124,14 @@ describe( 'Nifi Optional Compliance Stack Tests', () => {
           httpsPort: undefined,
           additionalEfsIngressSecurityGroupIds: undefined,
           peerClusters: [ "test-cluster1" ],
-          saml: {
-            idpMetadataUrl: "testing-url"
-          }
+
         }
       },
       caCertDuration: "12h0m0s",
       caCertRenewBefore: "1h0m0s",
       nodeCertDuration: "12h0m0s",
       nodeCertRenewBefore: "1h0m0s",
-      nifiSecurityGroupEgressRules: {
+      securityGroupEgressRules: {
         sg: [ {
           sgId: "sg-123124214",
           protocol: "tcp",
@@ -144,10 +143,10 @@ describe( 'Nifi Optional Compliance Stack Tests', () => {
           port: 50
         } ],
       },
-      nifiSecurityGroupIngressIPv4s: [
+      securityGroupIngressIPv4s: [
         "10.10.10.0/24"
       ],
-      nifiSecurityGroupIngressSGs: [
+      securityGroupIngressSGs: [
         "sg-123124214"
       ],
       eksSecurityGroupIngressRules: {
@@ -194,7 +193,7 @@ describe( 'Registry Mandatory Compliance Stack Tests', () => {
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
     nifi: {
       registry: {
-        initialAdminIdentity: "tesing-admin",
+        adminIdentities: ["tesing-admin"],
       },
       vpcId: "test-vpc-id",
       subnetIds: {
@@ -232,30 +231,27 @@ describe( 'Registry Optional Compliance Stack Tests', () => {
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
     nifi: {
       registry: {
-        initialAdminIdentity: "tesing-admin",
-        additionalAdminIdentities: [
+        adminIdentities: [
+          "tesing-admin",
           "testin2"
         ],
         externalNodeIdentities: [
           "test-external-node"
         ],
-        userIdentities: [
+        identities: [
           "test-user"
         ],
-        autoAddNifiAuthorizations: {
-          adminPolicyPatterns: [
-            ".*"
-          ],
-          userPolicyPatterns: [
-            ".*"
-          ],
-          externalNodePolicyPatterns: [
-            ".*"
-          ],
-          clusterNodePolicyPatterns: [
-            ".*"
-          ]
+        groups: {
+          "test-group": [ "test-user" ]
         },
+        authorizations: [
+          {
+            policyResourcePattern: ".*",
+            actions: [ "READ", "WRITE" ],
+            groups: [ "test-group" ],
+            identities: [ "test-user" ]
+          }
+        ],
       },
       vpcId: "test-vpc-id",
       subnetIds: {
@@ -271,7 +267,7 @@ describe( 'Registry Optional Compliance Stack Tests', () => {
       caCertRenewBefore: "1h0m0s",
       nodeCertDuration: "12h0m0s",
       nodeCertRenewBefore: "1h0m0s",
-      nifiSecurityGroupEgressRules: {
+      securityGroupEgressRules: {
         sg: [ {
           sgId: "sg-123124214",
           protocol: "tcp",
@@ -283,10 +279,10 @@ describe( 'Registry Optional Compliance Stack Tests', () => {
           port: 50
         } ],
       },
-      nifiSecurityGroupIngressIPv4s: [
+      securityGroupIngressIPv4s: [
         "10.10.10.0/24"
       ],
-      nifiSecurityGroupIngressSGs: [
+      securityGroupIngressSGs: [
         "sg-123124214"
       ],
       eksSecurityGroupIngressRules: {

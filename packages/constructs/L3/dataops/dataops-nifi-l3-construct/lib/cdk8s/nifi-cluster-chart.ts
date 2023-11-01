@@ -8,7 +8,8 @@ import { Construct } from 'constructs';
 import * as fs from 'fs';
 import * as k8s from './imports/k8s';
 import { ExternalSecretStore } from './external-secret-store';
-import { AutomaticNifiAuthorizations } from '../nifi-cluster-options';
+import { NifiAuthorization, NifiIdentityAuthorizationOptions, NifiPolicy } from '../nifi-options';
+
 
 const { XMLParser, XMLBuilder } = require( "fast-xml-parser" );
 
@@ -27,7 +28,7 @@ export interface NifiClusterChartSamlProps {
     readonly entityId: string
 }
 
-export interface NifiClusterChartProps extends cdk8s.ChartProps {
+export interface NifiClusterChartProps extends cdk8s.ChartProps, NifiIdentityAuthorizationOptions {
     readonly nodeCount: number
     readonly nodeMemory: string
     readonly nodeCpu: string
@@ -37,9 +38,6 @@ export interface NifiClusterChartProps extends cdk8s.ChartProps {
     readonly nifiSensitivePropSecretName: string
     readonly keystorePasswordSecretName: string
     readonly externalSecretsRoleArn: string
-    readonly initialAdminIdentity: string
-    readonly userIdentities?: string[]
-    readonly additionalAdminIdentities?: string[]
     readonly efsPersistentVolumes: EfsPersistentVolume[]
     readonly efsStorageClassName: string
     readonly saml?: NifiClusterChartSamlProps
@@ -50,14 +48,14 @@ export interface NifiClusterChartProps extends cdk8s.ChartProps {
     readonly httpsPort: number
     readonly remotePort: number
     readonly clusterPort: number
-    readonly externalNodeIdentities?: string[]
     readonly nifiServiceRoleArn: string
     readonly nifiServiceRoleName: string
     readonly nifiCertDuration: string
     readonly nifiCertRenewBefore: string
     readonly certKeyAlg: string
     readonly certKeySize: number
-    readonly autoAddNifiAuthorizations?: AutomaticNifiAuthorizations
+    readonly nifiManagerImageUri: string
+
 }
 
 export class NifiClusterChart extends cdk8s.Chart {
@@ -148,7 +146,42 @@ export class NifiClusterChart extends cdk8s.Chart {
     private createSslResources ( nifiService: k8s.KubeService, nifiSts: k8s.KubeStatefulSet,
         nifiSecretName: string ) {
 
-
+        const clusterManagerCert = new cdk8s.ApiObject( this, `manager-cert`, {
+            apiVersion: "cert-manager.io/v1",
+            kind: "Certificate",
+            metadata: {
+                name: `manager-cert`
+            },
+            spec: {
+                isCA: false,
+                commonName: `cluster-manager.${ this.namespace }`,
+                secretName: `manager-ssl`,
+                privateKey: {
+                    algorithm: this.props.certKeyAlg,
+                    encoding: "PKCS1",
+                    size: this.props.certKeySize
+                },
+                usages: [
+                    "server auth",
+                    "client auth",
+                ],
+                issuerRef: {
+                    name: this.props.caIssuerName,
+                    kind: "ClusterIssuer"
+                },
+                keystores: {
+                    jks: {
+                        create: true,
+                        passwordSecretRef: {
+                            name: nifiSecretName,
+                            key: "keystore-password"
+                        }
+                    }
+                },
+                duration: this.props.nifiCertDuration,
+                renewBefore: this.props.nifiCertRenewBefore,
+            }
+        })
 
         const nodeCerts = [ ...Array( this.props.nodeCount ).keys() ].map( i => {
             return new cdk8s.ApiObject( this, `${ nifiSts.name }-${ i }-cert`, {
@@ -193,7 +226,7 @@ export class NifiClusterChart extends cdk8s.Chart {
                 }
             } )
         } )
-        return nodeCerts
+        return [clusterManagerCert,nodeCerts]
     }
 
     private createNifiService (): k8s.KubeService {
@@ -228,8 +261,6 @@ export class NifiClusterChart extends cdk8s.Chart {
     private createNifiStatefulSet (
         nifiService: k8s.KubeService,
         nifiSecretName: string ): k8s.KubeStatefulSet {
-
-
 
         const nifiInitScriptsConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../scripts/nifi` ).map( fileName => {
             return [ fileName, fs.readFileSync( `${ __dirname }/../../scripts/nifi/${ fileName }`, 'utf-8' ) ]
@@ -306,23 +337,6 @@ export class NifiClusterChart extends cdk8s.Chart {
                 }
             }
         } )
-
-        const singleUserCredsEnv = this.props.saml ? [] : [
-            {
-                name: "SINGLE_USER_CREDENTIALS_USERNAME",
-                value: this.props.initialAdminIdentity
-            },
-            {
-                name: "SINGLE_USER_CREDENTIALS_PASSWORD",
-                valueFrom: {
-                    secretKeyRef: {
-                        name: nifiSecretName,
-                        key: "admin-creds",
-                        optional: false
-                    }
-                }
-            },
-        ]
 
         const nifiStsProps: k8s.KubeStatefulSetProps = {
             metadata: {
@@ -407,105 +421,22 @@ export class NifiClusterChart extends cdk8s.Chart {
                                 name: "pip-local",
                                 emptyDir: {}
                             },
+                            {
+                                name: `manager-ssl`,
+                                secret: {
+                                    secretName: `manager-ssl`
+                                }
+                            },
                             ...sslSecretVolumes.map( x => x[ 0 ] )
                         ],
                         shareProcessNamespace: true,
-                        initContainers: [
-                            {
-                                name: 'nifi-init',
-                                image: 'python:bookworm',
-                                command: [ "bash",
-                                    "-c",
-                                    `${ nifiInitBaseDir }/scripts/nifi_init.sh`
-                                ],
-                                resources: {
-                                    requests: {
-                                        memory: k8s.Quantity.fromString( "0.5Gi" ),
-                                        cpu: k8s.Quantity.fromString( "250m" ),
-                                    },
-                                    limits: {
-                                        memory: k8s.Quantity.fromString( "0.5Gi" ),
-                                        cpu: k8s.Quantity.fromString( "250m" ),
-                                    }
-                                },
-                                env: [
-                                    {
-                                        name: "NIFI_INIT_DIR",
-                                        value: nifiInitBaseDir
-                                    },
-                                    {
-                                        name: "PYTHONUNBUFFERED",
-                                        value: "1"
-                                    },
-                                    {
-                                        name: "NIFI_DATA_DIR",
-                                        value: nifiDataDir
-                                    },
-                                    {
-                                        name: "NIFI_SSL_BASE_DIR",
-                                        value: sslBasePath
-                                    },
-                                    {
-                                        name: "NIFI_NODES",
-                                        value: this.nodeList.map( x => `CN=${ x }.${ this.namespace }.${ this.props.hostedZoneName }` ).join( "," )
-                                    },
-                                    {
-                                        name: "NIFI_NODE_POLICIES",
-                                        value: this.props.autoAddNifiAuthorizations?.clusterNodePolicyPatterns?.join( "," )
-                                    },
-                                    {
-                                        name: "EXTERNAL_NODES",
-                                        value: this.props.externalNodeIdentities?.join( "," )
-                                    },
-                                    {
-                                        name: "EXTERNAL_NODE_POLICIES",
-                                        value: this.props.autoAddNifiAuthorizations?.externalNodePolicyPatterns?.join( "," )
-                                    },
-                                    {
-                                        name: "USER_IDENTITIES",
-                                        value: this.props.userIdentities?.join( "," )
-                                    },
-                                    {
-                                        name: "USER_POLICIES",
-                                        value: this.props.autoAddNifiAuthorizations?.userPolicyPatterns?.join( "," )
-                                    },
-                                    {
-                                        name: "ADMIN_IDENTITIES",
-                                        value: [ this.props.initialAdminIdentity, ...this.props.additionalAdminIdentities ?? [] ].join( "," )
-                                    },
-                                    {
-                                        name: "ADMIN_POLICIES",
-                                        value: this.props.autoAddNifiAuthorizations?.adminPolicyPatterns?.join( "," )
-                                    },
-                                ],
-                                volumeMounts: [
-                                    {
-                                        name: "aws-creds",
-                                        mountPath: `/.aws`,
-                                    },
-                                    {
-                                        name: "pip-local",
-                                        mountPath: `/.local`,
-                                    },
-                                    {
-                                        name: "nifi-init-scripts",
-                                        mountPath: `${ nifiInitBaseDir }/scripts`,
-                                    },
-                                    {
-                                        name: "nifi-data",
-                                        mountPath: `${ nifiDataDir }`,
-                                    },
-                                    ...sslSecretVolumes.map( x => x[ 1 ] )
-                                ]
-                            }
-                        ],
+
                         containers: [
                             {
-                                name: 'nifi-update',
-                                image: 'python:bookworm',
-                                command: [ "bash",
-                                    "-c",
-                                    `${ nifiInitBaseDir }/scripts/nifi_update.sh`
+                                name: 'nifi-manager',
+                                image: this.props.nifiManagerImageUri,
+                                command: [ "sh",
+                                    `/opt/nifi/scripts/nifi_manager.sh`
                                 ],
                                 resources: {
                                     requests: {
@@ -523,26 +454,73 @@ export class NifiClusterChart extends cdk8s.Chart {
                                         value: "nifi"
                                     },
                                     {
-                                        name: "NIFI_INIT_DIR",
-                                        value: nifiInitBaseDir
+                                        name: "IDENTITIES_AUTHORIZATIONS_CONF",
+                                        value: `${ nifiInitBaseDir}/conf/nifi_identities_authorizations.json`
                                     },
                                     {
-                                        name: "PYTHONUNBUFFERED",
-                                        value: "1"
+                                        name: "NIFI_INIT_DIR",
+                                        value: nifiInitBaseDir
                                     },
                                     {
                                         name: "NIFI_DATA_DIR",
                                         value: nifiDataDir
                                     },
                                     {
-                                        name: "NIFI_SSL_BASE_DIR",
+                                        name: "NIFI_SENSITIVE_PROPS_KEY",
+                                        valueFrom: {
+                                            secretKeyRef: {
+                                                name: nifiSecretName,
+                                                key: "sensitive-props-key",
+                                                optional: false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        name: "NIFI_SSL_BASE_PATH",
                                         value: sslBasePath
-                                    }
+                                    },
+                                    {
+                                        name: "NIFI_ZOOKEEPER_CONNECT_STRING",
+                                        value: this.props.zkConnectString
+                                    },
+                                    {
+                                        name: "NIFI_KEYSTORE_PASSWORD",
+                                        valueFrom: {
+                                            secretKeyRef: {
+                                                name: nifiSecretName,
+                                                key: "keystore-password",
+                                                optional: false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        name: "NIFI_TRUSTSTORE_PASSWORD",
+                                        valueFrom: {
+                                            secretKeyRef: {
+                                                name: nifiSecretName,
+                                                key: "keystore-password",
+                                                optional: false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        name: "PYTHONUNBUFFERED",
+                                        value: "1"
+                                    },
+                                    {
+                                        name: "NIFI_NODES",
+                                        value: this.nodeList.map( x => `CN=${ x }.${ this.namespace }.${ this.props.hostedZoneName }` ).join( "," )
+                                    },
+
                                 ],
                                 volumeMounts: [
                                     {
+                                        name: "nifi-config",
+                                        mountPath: `${ nifiInitBaseDir }/conf`,
+                                    },
+                                    {
                                         name: "aws-creds",
-                                        mountPath: `/.aws`,
+                                        mountPath: `/home/nifi/.aws`,
                                     },
                                     {
                                         name: "pip-local",
@@ -555,6 +533,11 @@ export class NifiClusterChart extends cdk8s.Chart {
                                     {
                                         name: "nifi-data",
                                         mountPath: `${ nifiDataDir }`,
+                                    },
+                                    {
+                                        mountPath: `${ sslBasePath }/manager`,
+                                        name: "manager-ssl",
+                                        readOnly: true
                                     },
                                     ...sslSecretVolumes.map( x => x[ 1 ] )
                                 ]
@@ -578,7 +561,6 @@ export class NifiClusterChart extends cdk8s.Chart {
                                     }
                                 },
                                 env: [
-                                    ...singleUserCredsEnv,
                                     {
                                         name: "NIFI_INIT_DIR",
                                         value: nifiInitBaseDir
@@ -661,16 +643,15 @@ export class NifiClusterChart extends cdk8s.Chart {
     }
 
     private createNifiConfigMap (
-
         sslBasePath: string,
         nifiDataDir: string,
-
-
     ): k8s.KubeConfigMap {
 
         const nifiBaseConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../base_conf/nifi` ).map( fileName => {
             return [ fileName, fs.readFileSync( `${ __dirname }/../../base_conf/nifi/${ fileName }`, 'utf-8' ) ]
         } ) )
+
+        const clusterNodeIdentities = this.nodeList.map( x => `CN=${ x }.${ this.namespace }.${ this.props.hostedZoneName }` )
 
         const nifiConfigMap = new k8s.KubeConfigMap( this, 'nifi-configmap', {
             metadata: {
@@ -682,10 +663,86 @@ export class NifiClusterChart extends cdk8s.Chart {
                 "authorizers.xml": this.updateAuthorizers( nifiBaseConfigMapData[ "authorizers.xml" ],
                     nifiDataDir
                 ),
-                "nifi-cli.config": this.createNifiToolkitConfig( sslBasePath )
+                "nifi-cli.config": NifiClusterChart.createNifiToolkitConfig( sslBasePath, `INIT_HOSTNAME.${ this.namespace }.${ this.props.hostedZoneName }`, this.props.httpsPort ),
+                "nifi_identities_authorizations.json": NifiClusterChart.createIdentityAuthorizations( clusterNodeIdentities, this.props )
             }
         } )
         return nifiConfigMap
+    }
+    public static createIdentityAuthorizations ( clusterNodeIdentities: string[], props: NifiIdentityAuthorizationOptions ): string {
+
+        const additionalGroups: { [ name: string ]: string[] } = {}
+
+        additionalGroups[ 'cluster_nodes' ] = clusterNodeIdentities
+
+        const clusterNodeAuthorizations: NifiAuthorization[] = [
+            {
+                policyResourcePattern: '/data/.*',
+                actions: [
+                    'READ', 'WRITE'
+                ],
+                groups: [ 'cluster_nodes' ]
+            }
+        ]
+
+        additionalGroups[ "admins" ] = props.adminIdentities 
+
+        const adminPolicies: NifiPolicy[] = [
+            {
+                resource: "/process-groups/ROOT_ID",
+                action: "READ"
+            },
+            {
+                resource: "/process-groups/ROOT_ID",
+                action: "WRITE"
+            }
+        ]
+
+        const adminAuthorizations: NifiAuthorization[] = [
+            {
+                policyResourcePattern: '/.*',
+                actions: [
+                    'READ', 'WRITE'
+                ],
+                groups: [ "admins" ]
+            }
+        ]
+
+        if ( props.externalNodeIdentities ) {
+            additionalGroups[ "external_nodes" ] = props.externalNodeIdentities
+        }
+
+        const externalNodeAuthorizations: NifiAuthorization[] = props.externalNodeIdentities ? [
+            {
+                policyResourcePattern: '/site-to-site',
+                actions: [
+                    'READ'
+                ],
+                groups: [ "external_nodes" ]
+            },
+            {
+                policyResourcePattern: '/data-transfer/.*',
+                actions: [
+                    'READ', 'WRITE'
+                ],
+                groups: [ "external_nodes" ]
+            }
+        ] : []
+
+        const remotePolicies: NifiPolicy[] = [
+            {
+                resource: '/site-to-site',
+                action: 'READ'
+            }
+        ]
+
+        const identityAuthorizations = {
+            identities: [ ...props.identities || [], ...clusterNodeIdentities, ...props.adminIdentities, ...props.externalNodeIdentities || [] ],
+            groups: { ...props.groups || {}, ...additionalGroups },
+            policies: [ ...props.policies || [], ...remotePolicies, ...adminPolicies ],
+            authorizations: [ ...props.authorizations || [], ...clusterNodeAuthorizations, ...adminAuthorizations, ...externalNodeAuthorizations, ]
+        }
+        return JSON.stringify( identityAuthorizations, undefined, 2 )
     }
 
     private updateAuthorizers (
@@ -708,7 +765,7 @@ export class NifiClusterChart extends cdk8s.Chart {
             if ( prop[ '@_name' ] == "Users File" ) {
                 prop[ '#text' ] = `${ nifiDataDir }/users.xml`
             } else if ( prop[ '@_name' ] == "Initial User Identity 1" ) {
-                prop[ '#text' ] = this.props.initialAdminIdentity
+                prop[ '#text' ] = `CN=cluster-manager.${ this.namespace }`
             }
         } )
         const accessPolicyProviderProps: XmlProp[] = authorizersXmlObj[ 'authorizers' ][ 'accessPolicyProvider' ][ 'property' ]
@@ -716,7 +773,7 @@ export class NifiClusterChart extends cdk8s.Chart {
             if ( prop[ '@_name' ] == "Authorizations File" ) {
                 prop[ '#text' ] = `${ nifiDataDir }/authorizations.xml`
             } else if ( prop[ '@_name' ] == "Initial Admin Identity" ) {
-                prop[ '#text' ] = this.props.initialAdminIdentity
+                prop[ '#text' ] = `CN=cluster-manager.${ this.namespace }`
             }
         } )
         this.nodeList.forEach( node => {
@@ -816,19 +873,21 @@ export class NifiClusterChart extends cdk8s.Chart {
 
     }
 
-    private createNifiToolkitConfig ( sslBasePath: string,
+    public static createNifiToolkitConfig ( sslBasePath: string,
+        hostname: string,
+        httpsPort: number
+
     ): string {
 
         const toolkitConfigMap: { [ key: string ]: string } = {
-            baseUrl: `https://INIT_HOSTNAME.${ this.namespace }.${ this.props.hostedZoneName }:${ this.props.httpsPort?.toString() }`,
-            keystore: `${ sslBasePath }/INIT_HOSTNAME/keystore.jks`,
+            baseUrl: `https://${ hostname  }:${ httpsPort.toString() }`,
+            keystore: `${ sslBasePath }/manager/keystore.jks`,
             keystoreType: "JKS",
             keystorePasswd: "INIT_KEYSTORE_PASSWORD",
             keyPasswd: "INIT_KEYSTORE_PASSWORD",
-            truststore: `${ sslBasePath }/INIT_HOSTNAME/truststore.jks`,
+            truststore: `${ sslBasePath }/manager/truststore.jks`,
             truststoreType: "JKS",
-            truststorePasswd: "INIT_KEYSTORE_PASSWORD",
-            proxiedEntity: this.props.initialAdminIdentity
+            truststorePasswd: "INIT_KEYSTORE_PASSWORD"
         }
 
         const toolkitConfig = Object.entries( toolkitConfigMap ).map( entry => {

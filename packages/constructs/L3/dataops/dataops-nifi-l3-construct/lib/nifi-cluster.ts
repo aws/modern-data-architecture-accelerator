@@ -8,6 +8,7 @@ import { CaefEKSCluster, KubernetesCmd, KubernetesCmdProps } from '@aws-caef/eks
 import { ICaefResourceNaming } from '@aws-caef/naming';
 import { CfnJson } from 'aws-cdk-lib';
 import { ISecurityGroup, ISubnet, IVpc, Protocol, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
 import { AccessPoint, FileSystem, PerformanceMode } from 'aws-cdk-lib/aws-efs';
 import { KubernetesManifest } from 'aws-cdk-lib/aws-eks';
 import { Effect, IRole, ManagedPolicy, OpenIdConnectPrincipal, PolicyStatement, PrincipalWithConditions, Role } from 'aws-cdk-lib/aws-iam';
@@ -18,10 +19,11 @@ import { NagSuppressions } from 'cdk-nag';
 import * as cdk8s from 'cdk8s';
 import { Construct } from "constructs";
 import { NifiClusterChart, NodeResources } from './cdk8s/nifi-cluster-chart';
-import { NifiClusterOptions, NodeSize } from './nifi-cluster-options';
+import { NifiClusterOptions, NodeSize } from './nifi-options';
+import { NifiIdentityAuthorizationOptions, NifiNetworkOptions } from './nifi-options';
 
 
-export interface NifiClusterProps extends NifiClusterOptions {
+export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthorizationOptions, NifiNetworkOptions {
     readonly eksCluster: CaefEKSCluster
     readonly clusterName: string
     readonly kmsKey: IKey
@@ -36,6 +38,7 @@ export interface NifiClusterProps extends NifiClusterOptions {
     readonly nifiCertRenewBefore: string
     readonly certKeyAlg: string
     readonly certKeySize: number
+    readonly nifiManagerImage: DockerImageAsset
 }
 
 
@@ -43,7 +46,6 @@ export class NifiCluster extends Construct {
     private readonly props: NifiClusterProps
     public readonly nifiManifest: KubernetesManifest;
     public readonly securityGroup: ISecurityGroup
-    public readonly initialAdminIdentity: string
     public readonly httpsPort: number
     public readonly remotePort: number
     public readonly clusterPort: number
@@ -80,7 +82,6 @@ export class NifiCluster extends Construct {
         this.httpsPort = this.props.httpsPort ?? 8443
         this.remotePort = this.props.remotePort ?? 10000
         this.clusterPort = this.props.clusterPort ?? 14443
-        this.initialAdminIdentity = this.props.initialAdminIdentity
         const nodeCount = props.nodeCount ?? 1
 
         this.securityGroup = this.createNifiSecurityGroup( props.vpc )
@@ -126,6 +127,14 @@ export class NifiCluster extends Construct {
 
         const nodeSize = NifiCluster.nodeSizeMap[ this.props.nodeSize || "SMALL" ]
 
+        this.props.nifiManagerImage.repository.grantPull( fargateProfile.podExecutionRole )
+        NagSuppressions.addResourceSuppressions( fargateProfile.podExecutionRole, [
+            { id: "AwsSolutions-IAM5", reason: "ecr:GetAuthorizationToken does not accept a resource." },
+            { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Permissions are appropriate as inline policy." },
+            { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Permissions are appropriate as inline policy." },
+        ], true );
+
+
         const nifiK8sChart = new NifiClusterChart( new cdk8s.App(), 'nifi-chart', {
             namespace: nifiNamespaceName,
             externalSecretsRoleArn: externalSecretsRole.roleArn,
@@ -137,7 +146,6 @@ export class NifiCluster extends Construct {
             adminCredsSecretName: nifiAdminCredentialsSecret.secretName,
             nifiSensitivePropSecretName: nifiSensitivePropSecret.secretName,
             keystorePasswordSecretName: keystorePasswordSecret.secretName,
-            initialAdminIdentity: props.initialAdminIdentity,
             efsPersistentVolumes: nifiEfsPvs.map( x => { return { efsFsId: x[ 0 ].fileSystemId, efsApId: x[ 1 ].accessPointId } } ),
             efsStorageClassName: props.eksCluster.efsStorageClassName,
             saml: props.saml ? { ...props.saml, entityId: `org:apache:nifi:saml:sp-${ props.clusterName }` } : undefined,
@@ -148,16 +156,18 @@ export class NifiCluster extends Construct {
             remotePort: this.remotePort,
             clusterPort: this.clusterPort,
             caIssuerName: this.props.nifiCAIssuerName,
-            externalNodeIdentities: this.props.externalNodeIdentities,
             nifiServiceRoleArn: clusterServiceRole.roleArn,
             nifiServiceRoleName: clusterServiceRole.roleName,
             nifiCertDuration: this.props.nifiCertDuration,
             nifiCertRenewBefore: this.props.nifiCertRenewBefore,
             certKeyAlg: this.props.certKeyAlg ?? "ECDSA",
             certKeySize: this.props.certKeySize ?? "384",
-            userIdentities: this.props.userIdentities,
-            additionalAdminIdentities: this.props.additionalAdminIdentities,
-            autoAddNifiAuthorizations: this.props.autoAddNifiAuthorizations
+            nifiManagerImageUri: props.nifiManagerImage.imageUri,
+            adminIdentities: props.adminIdentities,
+            externalNodeIdentities: props.externalNodeIdentities,
+            identities: props.identities,
+            groups: props.groups,
+            authorizations: props.authorizations
         } )
         this.nodeList = nifiK8sChart.nodeList.map( nodeName => `${ nodeName }.${ nifiK8sChart.domain }` )
         const nifiNamespaceManifest = props.eksCluster.addNamespace( new cdk8s.App(), `nifi-namespace-${ props.clusterName }`, nifiNamespaceName, this.securityGroup )
@@ -178,7 +188,7 @@ export class NifiCluster extends Construct {
     private createNifiSecurityGroup ( vpc: IVpc ) {
 
         const ingressRules: CaefSecurityGroupRuleProps = {
-            sg: this.props.nifiSecurityGroupIngressSGs?.map( sgId => {
+            sg: this.props.securityGroupIngressSGs?.map( sgId => {
                 return [ {
                     sgId: sgId,
                     protocol: Protocol.TCP,
@@ -195,7 +205,7 @@ export class NifiCluster extends Construct {
                     port: this.remotePort
                 } ]
             } ).flat(),
-            ipv4: this.props.nifiSecurityGroupIngressIPv4s?.map( ipv4 => {
+            ipv4: this.props.securityGroupIngressIPv4s?.map( ipv4 => {
                 return [ {
                     cidr: ipv4,
                     protocol: Protocol.TCP,
@@ -214,9 +224,9 @@ export class NifiCluster extends Construct {
             } ).flat()
         }
 
-        const customEgress: boolean = ( this.props.nifiSecurityGroupEgressRules?.ipv4 && this.props.nifiSecurityGroupEgressRules?.ipv4.length > 0 ) ||
-            ( this.props.nifiSecurityGroupEgressRules?.prefixList && this.props.nifiSecurityGroupEgressRules?.prefixList.length > 0 ) ||
-            ( this.props.nifiSecurityGroupEgressRules?.sg && this.props.nifiSecurityGroupEgressRules?.sg.length > 0 ) || false
+        const customEgress: boolean = ( this.props.securityGroupEgressRules?.ipv4 && this.props.securityGroupEgressRules?.ipv4.length > 0 ) ||
+            ( this.props.securityGroupEgressRules?.prefixList && this.props.securityGroupEgressRules?.prefixList.length > 0 ) ||
+            ( this.props.securityGroupEgressRules?.sg && this.props.securityGroupEgressRules?.sg.length > 0 ) || false
         const sgProps: CaefSecurityGroupProps = {
             securityGroupName: 'nifi',
             vpc: vpc,
@@ -224,7 +234,7 @@ export class NifiCluster extends Construct {
             naming: this.props.naming,
             allowAllOutbound: !customEgress,
             ingressRules: ingressRules,
-            egressRules: this.props.nifiSecurityGroupEgressRules
+            egressRules: this.props.securityGroupEgressRules
         }
         return new CaefSecurityGroup( this, 'nifi-sg', sgProps )
 

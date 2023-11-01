@@ -3,18 +3,19 @@ import time
 import os
 import shutil
 from subprocess import check_output, CalledProcessError
+import logging
 
-nifi_ssl_dir = os.environ['NIFI_SSL_BASE_DIR']
-nifi_app = os.environ.get('NIFI_APP', None)
-hostname = os.environ['HOSTNAME']
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("Certificates")
+logger.setLevel(logging.INFO)
+
+nifi_ssl_dir = os.environ['NIFI_SSL_BASE_PATH']
+cert_name = os.environ.get('NIFI_CERT_NAME', os.environ.get('HOSTNAME'))
 nifi_data_dir = os.environ['NIFI_DATA_DIR']
 
-if nifi_app == "nifi-registry":
-    keystore_secret_path = f"{nifi_ssl_dir}/keystore.jks"
-    truststore_secret_path = f"{nifi_ssl_dir}/truststore.jks"
-else:
-    keystore_secret_path = f"{nifi_ssl_dir}/{hostname}/keystore.jks"
-    truststore_secret_path = f"{nifi_ssl_dir}/{hostname}/truststore.jks"
+
+keystore_secret_path = f"{nifi_ssl_dir}/{cert_name}/keystore.jks"
+truststore_secret_path = f"{nifi_ssl_dir}/{cert_name}/truststore.jks"
 
 keystore_target_path = f"{nifi_data_dir}/ssl/keystore/keystore.jks"
 truststore_target_path = f"{nifi_data_dir}/ssl/truststore/truststore.jks"
@@ -43,34 +44,34 @@ def get_nifi_app_pid():
 
 def signal_restart_nifi():
     nifi_app_pid = get_nifi_app_pid()
-    print("Sending sig 15 to gracefully restart Nifi App")
+    logger.info("Sending sig 15 to gracefully restart Nifi App")
     if (nifi_app_pid is None):
-        print("Error: Unable to find Nifi App pid.")
+        logger.error("Error: Unable to find Nifi App pid.")
         return
     os.kill(nifi_app_pid, 15)
     waited = 0
     while get_nifi_app_pid() is not None and get_nifi_app_pid() == nifi_app_pid:
-        print("Waiting for Nifi to gracefully restart.")
+        logger.info("Waiting for Nifi to gracefully restart.")
         waited = waited + 1
         if (waited > 60):
-            print(
+            logger.warning(
                 "Nifi app hasn't gracefully restarted after 60 seconds. Sending sig 9 to force restart.")
             os.kill(nifi_app_pid, 9)
             return
         time.sleep(1)
-    print("Nifi gracefully restarted.")
+    logger.info("Nifi gracefully restarted.")
 
 
 while True:
     restart_nifi = False
 
-    print(
+    logger.info(
         f"Checking {keystore_secret_path} and {truststore_secret_path} for certificate changes.")
 
     latest_keystore_mtime = os.stat(
         keystore_secret_path, follow_symlinks=True).st_mtime
     if (latest_keystore_mtime != current_keystore_mtime):
-        print(
+        logger.info(
             f"Found changes to {keystore_secret_path}. Copying to {keystore_target_path}")
         shutil.copy(keystore_secret_path,
                     keystore_target_path, follow_symlinks=True)
@@ -80,7 +81,7 @@ while True:
     latest_truststore_mtime = os.stat(
         truststore_secret_path, follow_symlinks=True).st_mtime
     if (latest_keystore_mtime != current_keystore_mtime):
-        print(
+        logger.info(
             f"Found changes to {truststore_secret_path}. Copying to {truststore_target_path}")
         shutil.copy(truststore_secret_path,
                     truststore_target_path, follow_symlinks=True)
@@ -88,7 +89,7 @@ while True:
     current_truststore_mtime = latest_truststore_mtime
 
     if (restart_nifi):
-        print("Found certificate changes. Signalling nifi to restart.")
+        logger.info("Found certificate changes. Signalling nifi to restart.")
         signal_restart_nifi()
 
     time.sleep(60)
