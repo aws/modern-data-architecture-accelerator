@@ -17,13 +17,15 @@ import * as cdk8s from 'cdk8s';
 import { Construct } from 'constructs';
 
 import { CfnCertificate, CfnCertificateAuthority, CfnCertificateAuthorityActivation, CfnCertificateAuthorityProps } from 'aws-cdk-lib/aws-acmpca';
+import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
 import { CaIssuerChart } from './cdk8s/ca-chart';
 import { ExternalDnsChart, ExternalDnsChartProps } from './cdk8s/external-dns-chart';
 import * as k8s from './cdk8s/imports/k8s';
 import { NifiRegistryChart, NifiRegistryChartProps } from './cdk8s/nifi-registry-chart';
 import { ZookeeperChart } from './cdk8s/zookeeper-chart';
 import { NifiCluster, NifiClusterProps } from './nifi-cluster';
-import { AutomaticNifiAuthorizations, AwsManagedPolicySpec, NifiClusterOptions, NifiSamlProps } from './nifi-cluster-options';
+import { AwsManagedPolicySpec, NifiClusterOptions, NifiIdentityAuthorizationOptions, } from './nifi-options';
+import { NifiNetworkOptions } from './nifi-options';
 
 export interface NifiClusterOptionsWithPeers extends NifiClusterOptions {
     /**
@@ -64,19 +66,19 @@ export interface NifiProps {
      * Egress rules to be added to all Nifi cluster security groups.
      * These may also be specified for each cluster.
      */
-    readonly nifiSecurityGroupEgressRules?: CaefSecurityGroupRuleProps
+    readonly securityGroupEgressRules?: CaefSecurityGroupRuleProps
 
     /**
      * Security groups which will be provided ingress access to all Nifi cluster security groups.
      * These may also be specified for each cluster.
      */
-    readonly nifiSecurityGroupIngressSGs?: string[]
+    readonly securityGroupIngressSGs?: string[]
 
     /**
      * IPv4 CIDRs which will be provided ingress access to all Nifi cluster security groups.
      * These may also be specified for each cluster.
      */
-    readonly nifiSecurityGroupIngressIPv4s?: string[]
+    readonly securityGroupIngressIPv4s?: string[]
 
     /**
      * Security groups which will be provided ingress access to all Nifi cluster EFS security groups.
@@ -124,7 +126,7 @@ export interface NifiProps {
 
 
 
-export interface NifiRegistryProps {
+export interface NifiRegistryProps extends NifiIdentityAuthorizationOptions, NifiNetworkOptions {
 
     /**
      * The tag of the Nifi docker image to use. If not specified,
@@ -133,38 +135,8 @@ export interface NifiRegistryProps {
      */
     readonly registryImageTag?: string
 
-    /**
-     * Initial Nifi admin identity. If using SAML, this should match the admin SAML identity.
-     * If not using SAML, a local user with this name will be created and a password stored in AWS Secrets Manager
-     */
-    readonly initialAdminIdentity: string
-    /**
-     * If specified, the Nifi cluster will be configured to use a SAML identity provider
-     */
-    readonly saml?: NifiSamlProps
 
-    /**
-     * The port on which the cluster HTTPS interfaces will listen
-     */
-    readonly httpsPort?: number
 
-    /**
-     * Security groups which will be provided ingress access to the Nifi cluster security group.
-     * These may also be specified globally.
-     */
-    readonly securityGroupIngressSGs?: string[]
-
-    /**
-     * IPv4 CIDRs which will be provided ingress access to the Nifi cluster security group.
-     * These may also be specified globally.
-     */
-    readonly securityGroupIngressIPv4s?: string[]
-
-    /**
-     * Security groups which will be provided ingress access to the Nifi cluster EFS security group.
-     * These may also be specified globally.
-     */
-    readonly additionalEfsIngressSecurityGroupIds?: string[]
 
     /**
      * AWS managed policies which will be granted to the Nifi cluster role for access to AWS services.
@@ -174,26 +146,7 @@ export interface NifiRegistryProps {
      * Customer managed policies which will be granted to the Nifi cluster role for access to AWS services.
      */
     readonly registryRoleManagedPolicies?: string[]
-    /**
-     * Authorized registry user identities to be pre-created. These users will not have any permissions by default, unless
-     * policy patterns are specified in autoAddNifiAuthorizations.userPolicyPatterns
-     */
-    readonly userIdentities?: string[]
-    /**
-     * Authorized registry admin identities to be pre-created. These admins will not have any permissions by default, unless
-     * policy patterns are specified in autoAddNifiAuthorizations.adminPolicyPatterns
-     */
-    readonly additionalAdminIdentities?: string[]
-    /**
-     * External nodes which will be granted remote access (by TLS certificate common name).
-     * Note that these nodes will also need to be granted security group access via 'nifiSecurityGroupIngressSGs' or 'nifiSecurityGroupIngressIPv4s'
-     */
-    readonly externalNodeIdentities?: string[]
-    /**
-     * Policy patterns for automatically adding authorizations for nifi nodes (from clusters in this construct), external nifi nodes (provisioned outside of this construct),
-     * admins (both initialAdminIdentity and additionalAdminIdentities), as well as userIdentities
-     */
-    readonly autoAddNifiAuthorizations?: AutomaticNifiAuthorizations
+
 }
 
 export interface NifiL3ConstructProps extends CaefL3ConstructProps {
@@ -248,6 +201,7 @@ export class NifiL3Construct extends CaefL3Construct {
 
         const [ zkK8sChart, zkSecurityGroup ] = this.addZookeeper( vpc, subnets, this.projectKmsKey, eksCluster, hostedZone, caIssuerCdk8sChart )
 
+        const nifiManagerImage = this.createNifiManagerImage()
 
         const nifiClusters = this.addNifiClusters( eksCluster,
             vpc,
@@ -261,7 +215,7 @@ export class NifiL3Construct extends CaefL3Construct {
                 externalSecretsHelm,
                 certManagerHelm,
                 caIssuerManifest
-            ] )
+            ], nifiManagerImage )
         if ( this.props.nifi.registry ) {
             this.addRegistry( this.props.nifi.registry, vpc,
                 subnets,
@@ -270,8 +224,8 @@ export class NifiL3Construct extends CaefL3Construct {
                 hostedZone,
                 caIssuerCdk8sChart,
                 nifiClusters.flatMap( x => x.nodeList ),
-                [ ...new Set( nifiClusters.flatMap( x => x.initialAdminIdentity ) ) ],
-                nifiClusters.flatMap( x => x.securityGroup ) )
+                nifiClusters.flatMap( x => x.securityGroup ),
+                nifiManagerImage.imageUri )
         }
     }
 
@@ -282,12 +236,13 @@ export class NifiL3Construct extends CaefL3Construct {
         zkK8sChart: ZookeeperChart,
         caIssuerCdk8sChart: CaIssuerChart,
         zkSecurityGroup: ISecurityGroup,
-        dependencies: Construct[] ): NifiCluster[] {
+        dependencies: Construct[],
+        nifiManagerImage: DockerImageAsset ): NifiCluster[] {
 
         const nifiClusters = Object.fromEntries( Object.entries( this.props.nifi.clusters || {} ).map( nifiClusterEntry => {
             const nifiClusterName = nifiClusterEntry[ 0 ]
             const nifiClusterOptions = nifiClusterEntry[ 1 ]
-            const nifiCluster = this.addNifiCluster( nifiClusterName, nifiClusterOptions, vpc, subnets, eksCluster, hostedZone, zkK8sChart, caIssuerCdk8sChart )
+            const nifiCluster = this.addNifiCluster( nifiClusterName, nifiClusterOptions, vpc, subnets, eksCluster, hostedZone, zkK8sChart, caIssuerCdk8sChart, nifiManagerImage )
             dependencies.forEach( dependency => nifiCluster.nifiManifest.node.addDependency( dependency ) )
             return [ nifiClusterName, { cluster: nifiCluster, options: nifiClusterOptions } ]
         } ) )
@@ -317,13 +272,13 @@ export class NifiL3Construct extends CaefL3Construct {
         hostedZone: HostedZone,
         caIssuerCdk8sChart: CaIssuerChart,
         nifiNodeList: string[],
-        nifiAdminUserIdentities: string[],
-        nifiSecurityGroups: ISecurityGroup[] ) {
+        securityGroups: ISecurityGroup[],
+        nifiManagerImageUri: string ) {
 
         const registryNamespaceName = "nifi-registry"
         const allIngressSgIds = [
-            ...nifiSecurityGroups.map( x => x.securityGroupId ),
-            ...this.props.nifi.nifiSecurityGroupIngressSGs || []
+            ...securityGroups.map( x => x.securityGroupId ),
+            ...this.props.nifi.securityGroupIngressSGs || []
         ]
 
         const registryHttpsPort = registryProps.httpsPort ?? 8443
@@ -337,7 +292,7 @@ export class NifiL3Construct extends CaefL3Construct {
                         port: registryHttpsPort
                     }, ]
             } ).flat(),
-            ipv4: this.props.nifi.nifiSecurityGroupIngressIPv4s?.map( ipv4 => {
+            ipv4: this.props.nifi.securityGroupIngressIPv4s?.map( ipv4 => {
                 return [
                     {
                         cidr: ipv4,
@@ -413,7 +368,6 @@ export class NifiL3Construct extends CaefL3Construct {
             adminCredsSecretName: registryAdminCredentialsSecret.secretName,
             keystorePasswordSecretName: registryKeystorePasswordSecret.secretName,
             externalSecretsRoleArn: externalSecretsServiceRole.roleArn,
-            initialAdminIdentity: registryProps.initialAdminIdentity,
             efsPersistentVolume: { efsFsId: registryEfsPvs[ 0 ].fileSystemId, efsApId: registryEfsPvs[ 1 ].accessPointId },
             efsStorageClassName: eksCluster.efsStorageClassName,
             caIssuerName: caIssuerCdk8sChart.caIssuerName,
@@ -423,13 +377,11 @@ export class NifiL3Construct extends CaefL3Construct {
             nifiRegistryServiceRoleName: clusterServiceRole.roleName,
             nifiRegistryCertDuration: this.props.nifi.nodeCertDuration ?? "24h0m0s",
             nifiRegistryCertRenewBefore: this.props.nifi.nodeCertRenewBefore ?? "1h0m0s",
-            saml: registryProps.saml ? { ...registryProps.saml, entityId: `org:apache:nifi:saml:sp-registry` } : undefined,
             certKeyAlg: this.props.nifi.certKeyAlg ?? "ECDSA",
             certKeySize: this.props.nifi.certKeySize ?? 384,
             nifiNodeList: nifiNodeList,
-            userIdentities: [ ...registryProps.userIdentities || [], ...nifiAdminUserIdentities ],
-            additionalAdminIdentities: registryProps.additionalAdminIdentities,
-            externalNodeIdentities: registryProps.externalNodeIdentities
+            nifiManagerImageUri: nifiManagerImageUri,
+            adminIdentities: registryProps.adminIdentities
         }
         const registryChart = new NifiRegistryChart( new cdk8s.App(), 'registry-chart', registryChartProps )
         const registryManifest = eksCluster.addCdk8sChart( 'registry', registryChart )
@@ -470,6 +422,15 @@ export class NifiL3Construct extends CaefL3Construct {
         return [ caManifest, caIssuerCdk8sChart ]
     }
 
+    private createNifiManagerImage (): DockerImageAsset {
+        const imageAsset = new DockerImageAsset( this, 'nifi-update-image', {
+            directory: `${ __dirname }/../docker/nifi-manager`
+        } )
+
+        return imageAsset
+    }
+
+
     private addNifiCluster ( nifiClusterName: string,
         nifiClusterOptions: NifiClusterOptionsWithPeers,
         vpc: IVpc,
@@ -477,9 +438,10 @@ export class NifiL3Construct extends CaefL3Construct {
         eksCluster: CaefEKSCluster,
         hostedZone: HostedZone,
         zkK8sChart: ZookeeperChart,
-        caIssuerCdk8sChart: CaIssuerChart ): NifiCluster {
+        caIssuerCdk8sChart: CaIssuerChart,
+        nifiManagerImage: DockerImageAsset ): NifiCluster {
 
-        const peerNodes: string[] | undefined = nifiClusterOptions.peerClusters?.map( peerClusterName => {
+        const peerNodeIdentities: string[] | undefined = nifiClusterOptions.peerClusters?.map( peerClusterName => {
             const peerClusterOptions = ( this.props.nifi.clusters || {} )[ peerClusterName ]
             if ( !peerClusterOptions ) {
                 throw new Error( `Unknown peer cluster ${ peerClusterName } referenced by cluster ${ nifiClusterName }` )
@@ -489,8 +451,6 @@ export class NifiL3Construct extends CaefL3Construct {
                 return `CN=nifi-${ peerNodeId }.nifi-${ peerClusterName }.${ hostedZone.zoneName }`
             } )
         } ).flat()
-
-        const externalNodeIdentities = [ ...nifiClusterOptions.externalNodeIdentities ?? [], ...peerNodes ?? [] ]
 
         const clusterProps: NifiClusterProps = {
             ...nifiClusterOptions,
@@ -503,16 +463,17 @@ export class NifiL3Construct extends CaefL3Construct {
             region: this.region,
             zkConnectString: zkK8sChart.zkConnectString,
             nifiHostedZone: hostedZone,
-            nifiSecurityGroupEgressRules: CaefSecurityGroup.mergeRules( this.props.nifi.nifiSecurityGroupEgressRules || {}, nifiClusterOptions.nifiSecurityGroupEgressRules || {} ),
-            nifiSecurityGroupIngressSGs: [ ...this.props.nifi.nifiSecurityGroupIngressSGs || [], ...nifiClusterOptions.nifiSecurityGroupIngressSGs || [] ],
-            nifiSecurityGroupIngressIPv4s: [ ...this.props.nifi.nifiSecurityGroupIngressIPv4s || [], ...nifiClusterOptions.nifiSecurityGroupIngressIPv4s || [] ],
+            securityGroupEgressRules: CaefSecurityGroup.mergeRules( this.props.nifi.securityGroupEgressRules || {}, nifiClusterOptions.securityGroupEgressRules || {} ),
+            securityGroupIngressSGs: [ ...this.props.nifi.securityGroupIngressSGs || [], ...nifiClusterOptions.securityGroupIngressSGs || [] ],
+            securityGroupIngressIPv4s: [ ...this.props.nifi.securityGroupIngressIPv4s || [], ...nifiClusterOptions.securityGroupIngressIPv4s || [] ],
             additionalEfsIngressSecurityGroupIds: [ ...this.props.nifi.additionalEfsIngressSecurityGroupIds || [], ...nifiClusterOptions.additionalEfsIngressSecurityGroupIds || [] ],
             nifiCAIssuerName: caIssuerCdk8sChart.caIssuerName,
-            externalNodeIdentities: externalNodeIdentities,
             nifiCertDuration: this.props.nifi.nodeCertDuration ?? "24h0m0s",
             nifiCertRenewBefore: this.props.nifi.nodeCertRenewBefore ?? "1h0m0s",
             certKeyAlg: this.props.nifi.certKeyAlg ?? "ECDSA",
-            certKeySize: this.props.nifi.certKeySize ?? 384
+            certKeySize: this.props.nifi.certKeySize ?? 384,
+            nifiManagerImage: nifiManagerImage,
+            externalNodeIdentities: [ ...nifiClusterOptions.externalNodeIdentities || [], ...peerNodeIdentities || [] ]
         }
         return new NifiCluster( this, `nifi-cluster-${ nifiClusterName }`, clusterProps )
     }

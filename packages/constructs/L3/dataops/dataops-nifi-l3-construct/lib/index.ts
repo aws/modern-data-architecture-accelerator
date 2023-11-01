@@ -4,4 +4,4 @@
  */
 
 export * from './dataops-nifi-l3-construct'
-export * from './nifi-cluster-options'
+export * from './nifi-options'

@@ -6,10 +6,10 @@
 import * as cdk8s from 'cdk8s';
 import { Construct } from 'constructs';
 import * as fs from 'fs';
-import * as k8s from './imports/k8s';
+import { NifiIdentityAuthorizationOptions } from '../nifi-options';
 import { ExternalSecretStore } from './external-secret-store';
-import { AutomaticNifiAuthorizations } from '../nifi-cluster-options';
-
+import * as k8s from './imports/k8s';
+import { NifiClusterChart } from './nifi-cluster-chart';
 const { XMLParser, XMLBuilder } = require( "fast-xml-parser" );
 
 export interface NodeResources {
@@ -27,21 +27,20 @@ export interface NifiRegistryChartSamlProps {
     readonly entityId: string
 }
 
-export interface NifiRegistryChartProps extends cdk8s.ChartProps {
+export interface NifiRegistryChartProps extends cdk8s.ChartProps, NifiIdentityAuthorizationOptions {
 
     readonly nifiRegistryImageTag?: string
     readonly awsRegion: string
     readonly adminCredsSecretName: string
     readonly keystorePasswordSecretName: string
     readonly externalSecretsRoleArn: string
-    readonly initialAdminIdentity: string
+
     readonly efsPersistentVolume: EfsPersistentVolume
     readonly efsStorageClassName: string
-    readonly saml?: NifiRegistryChartSamlProps
     readonly caIssuerName: string
     readonly hostedZoneName: string
     readonly httpsPort: number
-    readonly externalNodeIdentities?: string[]
+
     readonly nifiRegistryServiceRoleArn: string
     readonly nifiRegistryServiceRoleName: string
     readonly nifiRegistryCertDuration: string
@@ -49,9 +48,7 @@ export interface NifiRegistryChartProps extends cdk8s.ChartProps {
     readonly nifiNodeList?: string[]
     readonly certKeyAlg: string
     readonly certKeySize: number
-    readonly userIdentities?: string[]
-    readonly additionalAdminIdentities?: string[]
-    readonly autoAddNifiAuthorizations?: AutomaticNifiAuthorizations
+    readonly nifiManagerImageUri: string
 }
 
 export class NifiRegistryChart extends cdk8s.Chart {
@@ -59,11 +56,13 @@ export class NifiRegistryChart extends cdk8s.Chart {
     private readonly props: NifiRegistryChartProps
     private static DEFAULT_NIFI_IMAGE_TAG: string = '1.23.2'
 
+    private readonly hostname: string
+
     constructor( scope: Construct, id: string, props: NifiRegistryChartProps ) {
         super( scope, id, props );
 
         this.props = props
-
+        this.hostname = `nifi-registry.${ this.props.hostedZoneName }`
         const nifiRegistryService = this.createNifiRegistryService()
         const nifiRegistrySecretName = this.createExternalSecrets( props )
         this.createNifiRegistryDeployment( nifiRegistryService, nifiRegistrySecretName )
@@ -126,8 +125,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
     private createSslResources (
         nifiRegistrySecretName: string ) {
 
-
-        return new cdk8s.ApiObject( this, `nifi-registry-cert`, {
+        const registryCert = new cdk8s.ApiObject( this, `nifi-registry-cert`, {
             apiVersion: "cert-manager.io/v1",
             kind: "Certificate",
             metadata: {
@@ -168,7 +166,42 @@ export class NifiRegistryChart extends cdk8s.Chart {
             }
         } )
 
-
+        const registryManagerCert = new cdk8s.ApiObject( this, `nifi-registry-manager-cert`, {
+            apiVersion: "cert-manager.io/v1",
+            kind: "Certificate",
+            metadata: {
+                name: `nifi-registry-manager-cert`
+            },
+            spec: {
+                isCA: false,
+                commonName: `nifi-registry-manager`,
+                secretName: `nifi-registry-manager-ssl`,
+                privateKey: {
+                    algorithm: this.props.certKeyAlg,
+                    encoding: "PKCS1",
+                    size: this.props.certKeySize
+                },
+                usages: [
+                    "client auth",
+                ],
+                issuerRef: {
+                    name: this.props.caIssuerName,
+                    kind: "ClusterIssuer"
+                },
+                keystores: {
+                    jks: {
+                        create: true,
+                        passwordSecretRef: {
+                            name: nifiRegistrySecretName,
+                            key: "keystore-password"
+                        }
+                    }
+                },
+                duration: this.props.nifiRegistryCertDuration,
+                renewBefore: this.props.nifiRegistryCertRenewBefore,
+            }
+        } )
+        return [ registryManagerCert, registryCert ]
     }
 
     private createNifiRegistryService (): k8s.KubeService {
@@ -261,6 +294,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
         const nifiRegistryInitBaseDir = "/opt/nifi-registry/init"
 
         const nifiRegistryConfigMap = this.createRegistryConfigMap(
+            sslBasePath,
             nifiRegistryDataDir
         )
 
@@ -272,23 +306,6 @@ export class NifiRegistryChart extends cdk8s.Chart {
                 }
             }
         } )
-
-        const singleUserCredsEnv = this.props.saml ? [] : [
-            {
-                name: "SINGLE_USER_CREDENTIALS_USERNAME",
-                value: this.props.initialAdminIdentity
-            },
-            {
-                name: "SINGLE_USER_CREDENTIALS_PASSWORD",
-                valueFrom: {
-                    secretKeyRef: {
-                        name: nifiRegistrySecretName,
-                        key: "admin-creds",
-                        optional: false
-                    }
-                }
-            },
-        ]
 
         const nifiRegistryDeploymentProps: k8s.KubeDeploymentProps = {
             metadata: {
@@ -347,9 +364,15 @@ export class NifiRegistryChart extends cdk8s.Chart {
                                 emptyDir: {}
                             },
                             {
-                                name: `ssl`,
+                                name: `nifi-registry-ssl`,
                                 secret: {
                                     secretName: `nifi-registry-ssl`
+                                }
+                            },
+                            {
+                                name: `nifi-registry-manager-ssl`,
+                                secret: {
+                                    secretName: `nifi-registry-manager-ssl`
                                 }
                             },
                             {
@@ -360,104 +383,13 @@ export class NifiRegistryChart extends cdk8s.Chart {
                             }
                         ],
                         shareProcessNamespace: true,
-                        initContainers: [ {
-                            name: 'nifi-registry-init',
-                            image: 'python:bookworm',
-                            command: [ "bash",
-                                "-c",
-                                `${ nifiRegistryInitBaseDir }/scripts/nifi_init.sh`
-                            ],
-                            resources: {
-                                requests: {
-                                    memory: k8s.Quantity.fromString( "0.5Gi" ),
-                                    cpu: k8s.Quantity.fromString( "250m" ),
-                                },
-                                limits: {
-                                    memory: k8s.Quantity.fromString( "0.5Gi" ),
-                                    cpu: k8s.Quantity.fromString( "250m" ),
-                                }
-                            },
-                            env: [
-                                {
-                                    name: "NIFI_INIT_DIR",
-                                    value: nifiRegistryInitBaseDir
-                                },
-                                {
-                                    name: "PYTHONUNBUFFERED",
-                                    value: "1"
-                                },
-                                {
-                                    name: "NIFI_DATA_DIR",
-                                    value: nifiRegistryDataDir
-                                },
-                                {
-                                    name: "NIFI_SSL_BASE_DIR",
-                                    value: sslBasePath
-                                },
-                                {
-                                    name: "NIFI_NODES",
-                                    value: this.props.nifiNodeList?.map( x => `CN=${ x }` ).join( "," )
-                                },
-                                {
-                                    name: "NIFI_NODE_POLICIES",
-                                    value: this.props.autoAddNifiAuthorizations?.clusterNodePolicyPatterns?.join( "," )
-                                },
-                                {
-                                    name: "EXTERNAL_NODES",
-                                    value: this.props.externalNodeIdentities?.join( "," )
-                                },
-                                {
-                                    name: "EXTERNAL_NODE_POLICIES",
-                                    value: this.props.autoAddNifiAuthorizations?.externalNodePolicyPatterns?.join( "," )
-                                },
-                                {
-                                    name: "USER_IDENTITIES",
-                                    value: this.props.userIdentities?.join( "," )
-                                },
-                                {
-                                    name: "USER_POLICIES",
-                                    value: this.props.autoAddNifiAuthorizations?.userPolicyPatterns?.join( "," )
-                                },
-                                {
-                                    name: "ADMIN_IDENTITIES",
-                                    value: [ this.props.initialAdminIdentity, ...this.props.additionalAdminIdentities ?? [] ].join( "," )
-                                },
-                                {
-                                    name: "ADMIN_POLICIES",
-                                    value: this.props.autoAddNifiAuthorizations?.adminPolicyPatterns?.join( "," )
-                                },
-                            ],
-                            volumeMounts: [
-                                {
-                                    name: "aws-creds",
-                                    mountPath: `/.aws`,
-                                },
-                                {
-                                    name: "pip-local",
-                                    mountPath: `/.local`,
-                                },
-                                {
-                                    name: "nifi-registry-init-scripts",
-                                    mountPath: `${ nifiRegistryInitBaseDir }/scripts`,
-                                },
-                                {
-                                    name: "nifi-registry-data",
-                                    mountPath: `${ nifiRegistryDataDir }`,
-                                },
-                                {
-                                    mountPath: `${ sslBasePath }`,
-                                    name: 'ssl',
-                                    readOnly: true
-                                }
-                            ]
-                        } ],
+
                         containers: [
                             {
-                                name: 'nifi-registry-update',
-                                image: 'python:bookworm',
-                                command: [ "bash",
-                                    "-c",
-                                    `${ nifiRegistryInitBaseDir }/scripts/nifi_update.sh`
+                                name: 'nifi-registry-manager',
+                                image: this.props.nifiManagerImageUri,
+                                command: [ "sh",
+                                    `/opt/nifi/scripts/nifi_registry_manager.sh`
                                 ],
                                 resources: {
                                     requests: {
@@ -472,7 +404,11 @@ export class NifiRegistryChart extends cdk8s.Chart {
                                 env: [
                                     {
                                         name: "NIFI_APP",
-                                        value: "nifi-registry"
+                                        value: "registry"
+                                    },
+                                    {
+                                        name: "IDENTITIES_AUTHORIZATIONS_CONF",
+                                        value: `${ nifiRegistryInitBaseDir }/conf/registry_identities_authorizations.json`
                                     },
                                     {
                                         name: "NIFI_INIT_DIR",
@@ -487,18 +423,46 @@ export class NifiRegistryChart extends cdk8s.Chart {
                                         value: nifiRegistryDataDir
                                     },
                                     {
-                                        name: "NIFI_SSL_BASE_DIR",
-                                        value: sslBasePath
+                                        name: "NIFI_SSL_BASE_PATH",
+                                        value:`${sslBasePath}/registry`
+                                    },
+                                    {
+                                        name: "NIFI_CERT_NAME",
+                                        value: "nifi-registry"
+                                    },
+                                    {
+                                        name: "NIFI_NODES",
+                                        value: this.props.nifiNodeList?.map( x => `CN=${ x }` ).join( "," )
+                                    },
+                                    {
+                                        name: "NIFI_KEYSTORE_PASSWORD",
+                                        valueFrom: {
+                                            secretKeyRef: {
+                                                name: nifiRegistrySecretName,
+                                                key: "keystore-password",
+                                                optional: false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        name: "NIFI_TRUSTSTORE_PASSWORD",
+                                        valueFrom: {
+                                            secretKeyRef: {
+                                                name: nifiRegistrySecretName,
+                                                key: "keystore-password",
+                                                optional: false
+                                            }
+                                        }
                                     }
                                 ],
                                 volumeMounts: [
                                     {
-                                        name: "aws-creds",
-                                        mountPath: `/.aws`,
+                                        name: "nifi-registry-config",
+                                        mountPath: `${ nifiRegistryInitBaseDir }/conf`,
                                     },
                                     {
-                                        name: "pip-local",
-                                        mountPath: `/.local`,
+                                        name: "aws-creds",
+                                        mountPath: `/home/nifi/.aws`,
                                     },
                                     {
                                         name: "nifi-registry-init-scripts",
@@ -509,8 +473,13 @@ export class NifiRegistryChart extends cdk8s.Chart {
                                         mountPath: `${ nifiRegistryDataDir }`,
                                     },
                                     {
-                                        mountPath: `${ sslBasePath }`,
-                                        name: 'ssl',
+                                        mountPath: `${ sslBasePath }/manager`,
+                                        name: `nifi-registry-manager-ssl`,
+                                        readOnly: true
+                                    },
+                                    {
+                                        mountPath: `${ sslBasePath }/registry`,
+                                        name: 'nifi-registry-ssl',
                                         readOnly: true
                                     }
                                 ]
@@ -534,7 +503,6 @@ export class NifiRegistryChart extends cdk8s.Chart {
                                     }
                                 },
                                 env: [
-                                    ...singleUserCredsEnv,
                                     {
                                         name: "NIFI_INIT_DIR",
                                         value: nifiRegistryInitBaseDir
@@ -587,11 +555,11 @@ export class NifiRegistryChart extends cdk8s.Chart {
                                     },
                                     {
                                         name: "aws-creds",
-                                        mountPath: `/home/nifi-registry/.aws`,
+                                        mountPath: `/home/nifi/.aws`,
                                     },
                                     {
                                         mountPath: `${ sslBasePath }`,
-                                        name: 'ssl',
+                                        name: 'nifi-registry-ssl',
                                         readOnly: true
                                     }
                                 ]
@@ -608,13 +576,14 @@ export class NifiRegistryChart extends cdk8s.Chart {
     }
 
     private createRegistryConfigMap (
+        sslBasePath: string,
         nifiRegistryDataDir: string
     ): k8s.KubeConfigMap {
 
         const nifiRegistryBaseConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../base_conf/nifi-registry` ).map( fileName => {
             return [ fileName, fs.readFileSync( `${ __dirname }/../../base_conf/nifi-registry/${ fileName }`, 'utf-8' ) ]
         } ) )
-
+        const clusterNodeIdentities = this.props.nifiNodeList?.map( x => `CN=${ x }.${ this.namespace }.${ this.props.hostedZoneName }` )
         const nifiRegistryConfigMap = new k8s.KubeConfigMap( this, 'nifi-registry-configmap', {
             metadata: {
                 name: 'nifi-registry-config'
@@ -624,11 +593,15 @@ export class NifiRegistryChart extends cdk8s.Chart {
                 "nifi-registry.properties": this.updateNifiProperties( nifiRegistryBaseConfigMapData[ "nifi-registry.properties" ], nifiRegistryDataDir ),
                 "authorizers.xml": this.updateAuthorizers( nifiRegistryBaseConfigMapData[ "authorizers.xml" ],
                     nifiRegistryDataDir
-                )
+                ),
+                "registry_identities_authorizations.json": NifiClusterChart.createIdentityAuthorizations( clusterNodeIdentities || [], this.props ),
+                "nifi-reg-cli.config": NifiClusterChart.createNifiToolkitConfig( sslBasePath, this.hostname, this.props.httpsPort),
             }
         } )
         return nifiRegistryConfigMap
     }
+
+
 
     private updateAuthorizers (
         authorizersData: string,
@@ -650,7 +623,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
             if ( prop[ '@_name' ] == "Users File" ) {
                 prop[ '#text' ] = `${ nifiRegistryDataDir }/users.xml`
             } else if ( prop[ '@_name' ] == "Initial User Identity 1" ) {
-                prop[ '#text' ] = this.props.initialAdminIdentity
+                prop[ '#text' ] = `CN=nifi-registry-manager`
             }
         } )
         const accessPolicyProviderProps: XmlProp[] = authorizersXmlObj[ 'authorizers' ][ 'accessPolicyProvider' ][ 'property' ]
@@ -658,7 +631,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
             if ( prop[ '@_name' ] == "Authorizations File" ) {
                 prop[ '#text' ] = `${ nifiRegistryDataDir }/authorizations.xml`
             } else if ( prop[ '@_name' ] == "Initial Admin Identity" ) {
-                prop[ '#text' ] = this.props.initialAdminIdentity
+                prop[ '#text' ] = `CN=nifi-registry-manager`
             }
         } )
 
@@ -715,13 +688,8 @@ export class NifiRegistryChart extends cdk8s.Chart {
         nifiRegistryPropertiesMap[ 'nifi.registry.security.autoreload.interval' ] = "10 secs"
         nifiRegistryPropertiesMap[ 'nifi.registry.security.needClientAuth' ] = "true"
 
-        if ( this.props.saml ) {
-            nifiRegistryPropertiesMap[ 'nifi.registry.security.user.saml.idp.metadata.url' ] = this.props.saml?.idpMetadataUrl
-            nifiRegistryPropertiesMap[ 'nifi.registry.security.user.saml.sp.entity.id' ] = this.props.saml?.entityId
-            nifiRegistryPropertiesMap[ 'nifi.registry.security.user.login.identity.provider' ] = ""
-        } else {
-            nifiRegistryPropertiesMap[ 'nifi.registry.security.user.login.identity.provider' ] = "single-user-provider"
-        }
+        nifiRegistryPropertiesMap[ 'nifi.registry.security.user.login.identity.provider' ] = "single-user-provider"
+
 
         const nifiRegistryProperties = Object.entries( nifiRegistryPropertiesMap ).map( entry => {
             return `${ entry[ 0 ] }=${ entry[ 1 ] }`

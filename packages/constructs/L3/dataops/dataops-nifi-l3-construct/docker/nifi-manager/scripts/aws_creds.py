@@ -1,6 +1,11 @@
 import boto3
 import time
 from pathlib import Path
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("AWS Creds")
+logger.setLevel(logging.INFO)
 
 session = boto3.Session()
 
@@ -13,7 +18,7 @@ def write_creds(session_creds):
     # Writing to file
     with open(f"{Path.home()}/.aws/credentials", "w") as credentials_file:
         credentials_file.write('\n'.join(creds_profile))
-    print(f"Updated credentials file.")
+    logger.info(f"Updated credentials file.")
 
 
 session_creds = session.get_credentials()
@@ -21,11 +26,12 @@ write_creds(session_creds)
 current_session_token = session_creds.token
 
 while True:
-    print("Checking for updated web identity federation credentials.")
+    logger.info("Checking for updated web identity federation credentials.")
     session_creds = session.get_credentials()
     latest_session_token = session_creds.token
     if current_session_token != latest_session_token:
-        print("Detected session token change. Writing to credentials file.")
+        logger.info(
+            "Detected session token change. Writing to credentials file.")
         write_creds(session_creds)
         current_session_token = latest_session_token
     time.sleep(60)

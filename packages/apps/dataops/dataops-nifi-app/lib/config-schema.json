@@ -2,40 +2,6 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
-        "AutomaticNifiAuthorizations": {
-            "additionalProperties": false,
-            "properties": {
-                "adminPolicyPatterns": {
-                    "description": "Admins (initialAdminIdentity and additionalAdminIdentities) will be automatically added to policies matching these patterns",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "clusterNodePolicyPatterns": {
-                    "description": "Nifi Nodes (from clusters created by this construct) will be automatically added to policies matching these patterns",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "externalNodePolicyPatterns": {
-                    "description": "External Nifi Nodes (not created by this construct) will be automatically added to policies matching these patterns",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "userPolicyPatterns": {
-                    "description": "Users (from userIdentities) will be automatically added to policies matching these patterns",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                }
-            },
-            "type": "object"
-        },
         "AwsManagedPolicySpec": {
             "additionalProperties": false,
             "properties": {
@@ -432,16 +398,40 @@
             },
             "type": "object"
         },
-        "NifiClusterOptionsWithPeers": {
+        "NifiAuthorization": {
             "additionalProperties": false,
             "properties": {
-                "additionalAdminIdentities": {
-                    "description": "Authorized registry admin identities to be pre-created. These admins will not have any permissions by default, unless\npolicy patterns are specified in autoAddNifiAuthorizations.adminPolicyPatterns",
+                "actions": {
+                    "items": {
+                        "$ref": "#/definitions/PolicyAction"
+                    },
+                    "type": "array"
+                },
+                "groups": {
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
+                "identities": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "policyResourcePattern": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "actions",
+                "policyResourcePattern"
+            ],
+            "type": "object"
+        },
+        "NifiClusterOptionsWithPeers": {
+            "additionalProperties": false,
+            "properties": {
                 "additionalEfsIngressSecurityGroupIds": {
                     "description": "Security groups which will be provided ingress access to the Nifi cluster EFS security group.\nThese may also be specified globally.",
                     "items": {
@@ -449,9 +439,17 @@
                     },
                     "type": "array"
                 },
-                "autoAddNifiAuthorizations": {
-                    "$ref": "#/definitions/AutomaticNifiAuthorizations",
-                    "description": "Policy patterns for automatically adding authorizations for nifi nodes (from clusters in this construct), external nifi nodes (provisioned outside of this construct),\nadmins (both initialAdminIdentity and additionalAdminIdentities), as well as userIdentities"
+                "adminIdentities": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "authorizations": {
+                    "items": {
+                        "$ref": "#/definitions/NifiAuthorization"
+                    },
+                    "type": "array"
                 },
                 "clusterPort": {
                     "description": "The port on which the internal cluster communications will occur",
@@ -472,41 +470,33 @@
                     "type": "array"
                 },
                 "externalNodeIdentities": {
-                    "description": "External nodes which will be granted remote access (by TLS certificate common name).\nNote that these nodes will also need to be granted security group access via 'nifiSecurityGroupIngressSGs' or 'nifiSecurityGroupIngressIPv4s'",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "groups": {
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "type": "object"
                 },
                 "httpsPort": {
                     "description": "The port on which the cluster HTTPS interfaces will listen",
                     "type": "number"
                 },
-                "initialAdminIdentity": {
-                    "description": "Initial Nifi admin identity. If using SAML, this should match the admin SAML identity.\nIf not using SAML, a local user with this name will be created and a password stored in AWS Secrets Manager",
-                    "type": "string"
+                "identities": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "nifiImageTag": {
                     "description": "The tag of the Nifi docker image to use. If not specified,\ndefaults to the latest tested version (currently 1.23.2). Specify 'latest' to pull\nthe latest version (might be untested).",
                     "type": "string"
-                },
-                "nifiSecurityGroupEgressRules": {
-                    "$ref": "#/definitions/CaefSecurityGroupRuleProps",
-                    "description": "Egress rules to be added to all Nifi cluster security groups.\nThese may also be specified globally."
-                },
-                "nifiSecurityGroupIngressIPv4s": {
-                    "description": "IPv4 CIDRs which will be provided ingress access to the Nifi cluster security group.\nThese may also be specified globally.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "nifiSecurityGroupIngressSGs": {
-                    "description": "Security groups which will be provided ingress access to the Nifi cluster security group.\nThese may also be specified globally.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
                 },
                 "nodeCount": {
                     "description": "Initial number of nodes in the cluster.\nDefaults to 1.",
@@ -530,16 +520,33 @@
                     },
                     "type": "array"
                 },
+                "policies": {
+                    "items": {
+                        "$ref": "#/definitions/NifiPolicy"
+                    },
+                    "type": "array"
+                },
                 "remotePort": {
                     "description": "The port on which the cluster remote RAW interfaces will listen",
                     "type": "number"
                 },
                 "saml": {
                     "$ref": "#/definitions/NifiSamlProps",
-                    "description": "If specified, the Nifi cluster will be configured to use a SAML identity provider"
+                    "description": "The configuration required to configure the Nifi cluster to use a SAML identity provider"
                 },
-                "userIdentities": {
-                    "description": "Authorized registry user identities to be pre-created. These users will not have any permissions by default, unless\npolicy patterns are specified in autoAddNifiAuthorizations.userPolicyPatterns",
+                "securityGroupEgressRules": {
+                    "$ref": "#/definitions/CaefSecurityGroupRuleProps",
+                    "description": "Egress rules to be added to all Nifi cluster security groups.\nThese may also be specified globally."
+                },
+                "securityGroupIngressIPv4s": {
+                    "description": "IPv4 CIDRs which will be provided ingress access to the Nifi cluster security group.\nThese may also be specified globally.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "securityGroupIngressSGs": {
+                    "description": "Security groups which will be provided ingress access to the Nifi cluster security group.\nThese may also be specified globally.",
                     "items": {
                         "type": "string"
                     },
@@ -547,7 +554,24 @@
                 }
             },
             "required": [
-                "initialAdminIdentity"
+                "adminIdentities",
+                "saml"
+            ],
+            "type": "object"
+        },
+        "NifiPolicy": {
+            "additionalProperties": false,
+            "properties": {
+                "action": {
+                    "$ref": "#/definitions/PolicyAction"
+                },
+                "resource": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "action",
+                "resource"
             ],
             "type": "object"
         },
@@ -594,24 +618,6 @@
                     "description": "(Optional) If specified, this ACM Private CA will be used to sign the internal CA running\nwithin EKS. If not specified, an ACM Private CA will be created.",
                     "type": "string"
                 },
-                "nifiSecurityGroupEgressRules": {
-                    "$ref": "#/definitions/CaefSecurityGroupRuleProps",
-                    "description": "Egress rules to be added to all Nifi cluster security groups.\nThese may also be specified for each cluster."
-                },
-                "nifiSecurityGroupIngressIPv4s": {
-                    "description": "IPv4 CIDRs which will be provided ingress access to all Nifi cluster security groups.\nThese may also be specified for each cluster.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "nifiSecurityGroupIngressSGs": {
-                    "description": "Security groups which will be provided ingress access to all Nifi cluster security groups.\nThese may also be specified for each cluster.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
                 "nodeCertDuration": {
                     "description": "The certificate validity period for the Zookeeper and Nifi Node certs. If using an ACM Private CA with short-term certificates,\nthis should be set to less than 6 days. Defaults to 5 days.",
                     "type": "string"
@@ -622,6 +628,24 @@
                 },
                 "registry": {
                     "$ref": "#/definitions/NifiRegistryProps"
+                },
+                "securityGroupEgressRules": {
+                    "$ref": "#/definitions/CaefSecurityGroupRuleProps",
+                    "description": "Egress rules to be added to all Nifi cluster security groups.\nThese may also be specified for each cluster."
+                },
+                "securityGroupIngressIPv4s": {
+                    "description": "IPv4 CIDRs which will be provided ingress access to all Nifi cluster security groups.\nThese may also be specified for each cluster.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "securityGroupIngressSGs": {
+                    "description": "Security groups which will be provided ingress access to all Nifi cluster security groups.\nThese may also be specified for each cluster.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "subnetIds": {
                     "additionalProperties": {
@@ -645,13 +669,6 @@
         "NifiRegistryProps": {
             "additionalProperties": false,
             "properties": {
-                "additionalAdminIdentities": {
-                    "description": "Authorized registry admin identities to be pre-created. These admins will not have any permissions by default, unless\npolicy patterns are specified in autoAddNifiAuthorizations.adminPolicyPatterns",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
                 "additionalEfsIngressSecurityGroupIds": {
                     "description": "Security groups which will be provided ingress access to the Nifi cluster EFS security group.\nThese may also be specified globally.",
                     "items": {
@@ -659,24 +676,48 @@
                     },
                     "type": "array"
                 },
-                "autoAddNifiAuthorizations": {
-                    "$ref": "#/definitions/AutomaticNifiAuthorizations",
-                    "description": "Policy patterns for automatically adding authorizations for nifi nodes (from clusters in this construct), external nifi nodes (provisioned outside of this construct),\nadmins (both initialAdminIdentity and additionalAdminIdentities), as well as userIdentities"
-                },
-                "externalNodeIdentities": {
-                    "description": "External nodes which will be granted remote access (by TLS certificate common name).\nNote that these nodes will also need to be granted security group access via 'nifiSecurityGroupIngressSGs' or 'nifiSecurityGroupIngressIPv4s'",
+                "adminIdentities": {
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
+                "authorizations": {
+                    "items": {
+                        "$ref": "#/definitions/NifiAuthorization"
+                    },
+                    "type": "array"
+                },
+                "externalNodeIdentities": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "groups": {
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "type": "object"
+                },
                 "httpsPort": {
                     "description": "The port on which the cluster HTTPS interfaces will listen",
                     "type": "number"
                 },
-                "initialAdminIdentity": {
-                    "description": "Initial Nifi admin identity. If using SAML, this should match the admin SAML identity.\nIf not using SAML, a local user with this name will be created and a password stored in AWS Secrets Manager",
-                    "type": "string"
+                "identities": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "policies": {
+                    "items": {
+                        "$ref": "#/definitions/NifiPolicy"
+                    },
+                    "type": "array"
                 },
                 "registryImageTag": {
                     "description": "The tag of the Nifi docker image to use. If not specified,\ndefaults to the latest tested version (currently 1.23.2). Specify 'latest' to pull\nthe latest version (might be untested).",
@@ -696,10 +737,6 @@
                     },
                     "type": "array"
                 },
-                "saml": {
-                    "$ref": "#/definitions/NifiSamlProps",
-                    "description": "If specified, the Nifi cluster will be configured to use a SAML identity provider"
-                },
                 "securityGroupIngressIPv4s": {
                     "description": "IPv4 CIDRs which will be provided ingress access to the Nifi cluster security group.\nThese may also be specified globally.",
                     "items": {
@@ -713,17 +750,10 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "userIdentities": {
-                    "description": "Authorized registry user identities to be pre-created. These users will not have any permissions by default, unless\npolicy patterns are specified in autoAddNifiAuthorizations.userPolicyPatterns",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
                 }
             },
             "required": [
-                "initialAdminIdentity"
+                "adminIdentities"
             ],
             "type": "object"
         },
@@ -739,6 +769,13 @@
                 "idpMetadataUrl"
             ],
             "type": "object"
+        },
+        "PolicyAction": {
+            "enum": [
+                "READ",
+                "WRITE"
+            ],
+            "type": "string"
         }
     },
     "properties": {
