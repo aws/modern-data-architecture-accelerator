@@ -19,8 +19,9 @@ import { NagSuppressions } from 'cdk-nag';
 import * as cdk8s from 'cdk8s';
 import { Construct } from "constructs";
 import { NifiClusterChart, NodeResources } from './cdk8s/nifi-cluster-chart';
-import { NifiClusterOptions, NodeSize } from './nifi-options';
+import { NamedNifiRegistryClientProps, NifiClusterOptions,  NodeSize } from './nifi-options';
 import { NifiIdentityAuthorizationOptions, NifiNetworkOptions } from './nifi-options';
+
 
 
 export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthorizationOptions, NifiNetworkOptions {
@@ -39,6 +40,7 @@ export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthor
     readonly certKeyAlg: string
     readonly certKeySize: number
     readonly nifiManagerImage: DockerImageAsset
+    readonly registryClients?: NamedNifiRegistryClientProps
 }
 
 
@@ -50,6 +52,7 @@ export class NifiCluster extends Construct {
     public readonly remotePort: number
     public readonly clusterPort: number
     public readonly nodeList: string[]
+    public readonly adminIdentities: string[]
 
     private static nodeSizeMap: { [ key in NodeSize ]: NodeResources } = {
         "SMALL": {
@@ -83,7 +86,7 @@ export class NifiCluster extends Construct {
         this.remotePort = this.props.remotePort ?? 10000
         this.clusterPort = this.props.clusterPort ?? 14443
         const nodeCount = props.nodeCount ?? 1
-
+        this.adminIdentities = props.adminIdentities
         this.securityGroup = this.createNifiSecurityGroup( props.vpc )
 
         const additionalEfsIngressSecurityGroups = props.additionalEfsIngressSecurityGroupIds?.map( id => {
@@ -167,7 +170,8 @@ export class NifiCluster extends Construct {
             externalNodeIdentities: props.externalNodeIdentities,
             identities: props.identities,
             groups: props.groups,
-            authorizations: props.authorizations
+            authorizations: props.authorizations,
+            registryClients: props.registryClients
         } )
         this.nodeList = nifiK8sChart.nodeList.map( nodeName => `${ nodeName }.${ nifiK8sChart.domain }` )
         const nifiNamespaceManifest = props.eksCluster.addNamespace( new cdk8s.App(), `nifi-namespace-${ props.clusterName }`, nifiNamespaceName, this.securityGroup )

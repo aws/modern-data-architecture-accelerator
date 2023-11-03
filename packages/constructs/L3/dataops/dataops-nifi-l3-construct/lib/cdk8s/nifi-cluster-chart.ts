@@ -6,9 +6,10 @@
 import * as cdk8s from 'cdk8s';
 import { Construct } from 'constructs';
 import * as fs from 'fs';
-import * as k8s from './imports/k8s';
+import { NamedNifiRegistryClientProps, NifiAuthorization, NifiIdentityAuthorizationOptions, NifiPolicy } from '../nifi-options';
 import { ExternalSecretStore } from './external-secret-store';
-import { NifiAuthorization, NifiIdentityAuthorizationOptions, NifiPolicy } from '../nifi-options';
+import * as k8s from './imports/k8s';
+
 
 
 const { XMLParser, XMLBuilder } = require( "fast-xml-parser" );
@@ -55,6 +56,7 @@ export interface NifiClusterChartProps extends cdk8s.ChartProps, NifiIdentityAut
     readonly certKeyAlg: string
     readonly certKeySize: number
     readonly nifiManagerImageUri: string
+    readonly registryClients?: NamedNifiRegistryClientProps
 
 }
 
@@ -454,8 +456,8 @@ export class NifiClusterChart extends cdk8s.Chart {
                                         value: "nifi"
                                     },
                                     {
-                                        name: "IDENTITIES_AUTHORIZATIONS_CONF",
-                                        value: `${ nifiInitBaseDir}/conf/nifi_identities_authorizations.json`
+                                        name: "MANAGER_CONFIG",
+                                        value: `${ nifiInitBaseDir}/conf/nifi_manager.json`
                                     },
                                     {
                                         name: "NIFI_INIT_DIR",
@@ -651,8 +653,6 @@ export class NifiClusterChart extends cdk8s.Chart {
             return [ fileName, fs.readFileSync( `${ __dirname }/../../base_conf/nifi/${ fileName }`, 'utf-8' ) ]
         } ) )
 
-        const clusterNodeIdentities = this.nodeList.map( x => `CN=${ x }.${ this.namespace }.${ this.props.hostedZoneName }` )
-
         const nifiConfigMap = new k8s.KubeConfigMap( this, 'nifi-configmap', {
             metadata: {
                 name: 'nifi-config'
@@ -664,12 +664,21 @@ export class NifiClusterChart extends cdk8s.Chart {
                     nifiDataDir
                 ),
                 "nifi-cli.config": NifiClusterChart.createNifiToolkitConfig( sslBasePath, `INIT_HOSTNAME.${ this.namespace }.${ this.props.hostedZoneName }`, this.props.httpsPort ),
-                "nifi_identities_authorizations.json": NifiClusterChart.createIdentityAuthorizations( clusterNodeIdentities, this.props )
+                "nifi_manager.json": JSON.stringify( this.createManagerConfig(), undefined, 2 ) 
             }
         } )
         return nifiConfigMap
     }
-    public static createIdentityAuthorizations ( clusterNodeIdentities: string[], props: NifiIdentityAuthorizationOptions ): string {
+
+    private createManagerConfig() {
+        const clusterNodeIdentities = this.nodeList.map( x => `CN=${ x }.${ this.namespace }.${ this.props.hostedZoneName }` )
+        return  {
+            'registry_clients': this.props.registryClients,
+            ...this.createIdentityAuthorizationsConfig( clusterNodeIdentities)
+        }
+    }
+
+    private createIdentityAuthorizationsConfig ( clusterNodeIdentities: string[] ) {
 
         const additionalGroups: { [ name: string ]: string[] } = {}
 
@@ -685,7 +694,7 @@ export class NifiClusterChart extends cdk8s.Chart {
             }
         ]
 
-        additionalGroups[ "admins" ] = props.adminIdentities 
+        additionalGroups[ "admins" ] = this.props.adminIdentities 
 
         const adminPolicies: NifiPolicy[] = [
             {
@@ -708,11 +717,11 @@ export class NifiClusterChart extends cdk8s.Chart {
             }
         ]
 
-        if ( props.externalNodeIdentities ) {
-            additionalGroups[ "external_nodes" ] = props.externalNodeIdentities
+        if ( this.props.externalNodeIdentities ) {
+            additionalGroups[ "external_nodes" ] = this.props.externalNodeIdentities
         }
 
-        const externalNodeAuthorizations: NifiAuthorization[] = props.externalNodeIdentities ? [
+        const externalNodeAuthorizations: NifiAuthorization[] = this.props.externalNodeIdentities ? [
             {
                 policyResourcePattern: '/site-to-site',
                 actions: [
@@ -736,13 +745,13 @@ export class NifiClusterChart extends cdk8s.Chart {
             }
         ]
 
-        const identityAuthorizations = {
-            identities: [ ...props.identities || [], ...clusterNodeIdentities, ...props.adminIdentities, ...props.externalNodeIdentities || [] ],
-            groups: { ...props.groups || {}, ...additionalGroups },
-            policies: [ ...props.policies || [], ...remotePolicies, ...adminPolicies ],
-            authorizations: [ ...props.authorizations || [], ...clusterNodeAuthorizations, ...adminAuthorizations, ...externalNodeAuthorizations, ]
+        return {
+            identities: [ ...this.props.identities || [], ...clusterNodeIdentities, ...this.props.adminIdentities, ...this.props.externalNodeIdentities || [] ],
+            groups: { ...this.props.groups || {}, ...additionalGroups },
+            policies: [ ...this.props.policies || [], ...remotePolicies, ...adminPolicies ],
+            authorizations: [ ...this.props.authorizations || [], ...clusterNodeAuthorizations, ...adminAuthorizations, ...externalNodeAuthorizations, ]
         }
-        return JSON.stringify( identityAuthorizations, undefined, 2 )
+       
     }
 
     private updateAuthorizers (

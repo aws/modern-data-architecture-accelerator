@@ -24,7 +24,7 @@ The Data Ops Nifi CDK App is used to deploy the resources required to orchestrat
   * **Nifi Security Group** - A security group is provisioned for each Nifi cluster providing ingress/egress control to/from the cluster.
   * **Nifi Service Account Role** - An IAM role is provisioned for each cluster, bound to the Nifi StatefulSet as a ServiceAccount. This role may be granted access to AWS resources using either AWS or Customer Managed Policies.
 
-* **Nifi Registry** - Nifi Registry is deployed as a Kubernetes Deployment
+* **Nifi Registry** - Nifi Registry is optionally deployed as a Kubernetes Deployment. Each Nifi cluster deployed by this module will be automatically integrated with this Nifi Registry.
 
   * **Nifi Registry EFS** - Nifi Registry is provided with a PersistentVolume running on an EFS FileSystem. The Filesystem is encrypted using the DataOps project KMS key.
   * **Nifi Registry Certs** - Nifi Registry  is provisioned with a TLS certificate (signed by the internal CA) used for all interactions with other Nifi nodes and Zookeeper. The certificate and key is mounted as JKS key stores into the Registry pod from a Kubernetes Secret. The passwords for the JKS stores is stored in AWS Secrets Manager, and published to the Nifi container as a secret environment variable.
@@ -126,6 +126,11 @@ nifi:
       # security group connectivity as well as remote access to this cluster.
       peerClusters:
         - test2
+      # (Optional) - Registry client configurations which will be added to the cluster.
+      # Note that this cluster will automatically be integrated with the Registry deployed by this module.
+      registryClients:
+        example-extra-client:
+          url: https://some-external-registry-url:8443
       # (Optional) External Nifi node identities which will automatically be added to policies required for remote data transfer to and from this cluster.
       # They will also be added to an 'external-nodes' group which can be referenced by 'authorizations'.
       # Note that nodes from clusters created by this config do not need to be specified here. They can instead be specified via "peerClusters".
@@ -260,7 +265,7 @@ nifi:
   registry:
     # The identities which will be granted admin access to the Registry instance.
     # These should be the common names of administrator TLS certificates minted by the CA trusted by this Registry instance.
-    # Note that registry does not currently support SAML federation.
+    # Note that Registry does not currently support SAML federation.
     # If deleted in Registry UI, admin identities will be constantly recreated by a background process until removed from this config.
     adminIdentities:
       - "CN=some-admin-identity"
@@ -292,6 +297,23 @@ nifi:
         # then the identity must pre-exist within the cluster.
         - test-identity-1
         - test-identity-2
+
+    # (Optional) - Registry Buckets and authorizations which will be added to the Registry automatically.
+    # Note that a bucket and appropriate authorizations will automatically be added for each Nifi cluster in the config.
+    buckets:
+      # Bucket name
+      example-extra-bucket:
+        READ: # One of READ, WRITE, DELETE
+          # These groups and identities will be granted READ access to the bucket
+          groups:
+            - test_group
+          identities:
+            - test-identity-1
+        WRITE: # One of READ, WRITE, DELETE
+          # These identities will be granted WRITE access to the bucket
+          identities:
+            - test-identity-2
+    
     # (Optional) A set of policies which will be automatically created if they don't exist, and if matched
     # by an authorization in the 'authorizations' section. Empty policies will not be created.
     # If deleted in Registry UI, policies will be constantly recreated by a background process until removed from this config.
@@ -331,9 +353,9 @@ nifi:
           - "test-identity-1"
 ```
 
-### SAML Integration
+### Nifi Cluster SAML Integration
 
-Each Nifi cluster will be configured to integrate with a SAML IDP to provide user access. The following information should be configured on the SAML IDP side:
+Each Nifi cluster will be configured to integrate with a SAML IDP to provide user access. The following information should be configured on the SAML IDP side (per cluster):
 
 * **Application start URL**: https://nifi-0.< private_hosted_zone_name >:8443/nifi
 * **Relay state URL**: https://nifi-0.< private_hosted_zone_name >:8443/nifi

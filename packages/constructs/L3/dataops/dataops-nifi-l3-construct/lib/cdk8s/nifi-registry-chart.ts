@@ -6,7 +6,8 @@
 import * as cdk8s from 'cdk8s';
 import { Construct } from 'constructs';
 import * as fs from 'fs';
-import { NifiIdentityAuthorizationOptions } from '../nifi-options';
+import { NifiRegistryBucketProps } from '../dataops-nifi-l3-construct';
+import { NifiAuthorization, NifiIdentityAuthorizationOptions } from '../nifi-options';
 import { ExternalSecretStore } from './external-secret-store';
 import * as k8s from './imports/k8s';
 import { NifiClusterChart } from './nifi-cluster-chart';
@@ -27,6 +28,11 @@ export interface NifiRegistryChartSamlProps {
     readonly entityId: string
 }
 
+export interface NifiRegistryClusterProps {
+    readonly adminIdentities: string[]
+    readonly nodeList: string[]
+}
+
 export interface NifiRegistryChartProps extends cdk8s.ChartProps, NifiIdentityAuthorizationOptions {
 
     readonly nifiRegistryImageTag?: string
@@ -38,6 +44,7 @@ export interface NifiRegistryChartProps extends cdk8s.ChartProps, NifiIdentityAu
     readonly efsPersistentVolume: EfsPersistentVolume
     readonly efsStorageClassName: string
     readonly caIssuerName: string
+    readonly hostname: string
     readonly hostedZoneName: string
     readonly httpsPort: number
 
@@ -45,10 +52,11 @@ export interface NifiRegistryChartProps extends cdk8s.ChartProps, NifiIdentityAu
     readonly nifiRegistryServiceRoleName: string
     readonly nifiRegistryCertDuration: string
     readonly nifiRegistryCertRenewBefore: string
-    readonly nifiNodeList?: string[]
+    readonly nifiClusters: { [ clusterName: string ]: NifiRegistryClusterProps }
     readonly certKeyAlg: string
     readonly certKeySize: number
     readonly nifiManagerImageUri: string
+    readonly buckets?: { [ bucketName: string ]: NifiRegistryBucketProps }
 }
 
 export class NifiRegistryChart extends cdk8s.Chart {
@@ -56,13 +64,14 @@ export class NifiRegistryChart extends cdk8s.Chart {
     private readonly props: NifiRegistryChartProps
     private static DEFAULT_NIFI_IMAGE_TAG: string = '1.23.2'
 
-    private readonly hostname: string
-
+  
+    private readonly nifiNodes:string[]
     constructor( scope: Construct, id: string, props: NifiRegistryChartProps ) {
         super( scope, id, props );
 
         this.props = props
-        this.hostname = `nifi-registry.${ this.props.hostedZoneName }`
+        
+        this.nifiNodes = Object.entries( this.props.nifiClusters || {} ).flatMap( clusterEntry => clusterEntry[ 1 ].nodeList)
         const nifiRegistryService = this.createNifiRegistryService()
         const nifiRegistrySecretName = this.createExternalSecrets( props )
         this.createNifiRegistryDeployment( nifiRegistryService, nifiRegistrySecretName )
@@ -133,10 +142,10 @@ export class NifiRegistryChart extends cdk8s.Chart {
             },
             spec: {
                 isCA: false,
-                commonName: `nifi-registry.${ this.props.hostedZoneName }`,
+                commonName: this.props.hostname,
                 dnsNames: [
                     'localhost',
-                    `nifi-registry.${ this.props.hostedZoneName }`
+                   this.props.hostname
                 ],
                 secretName: `nifi-registry-ssl`,
                 privateKey: {
@@ -212,7 +221,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
                     app: "nifi-registry"
                 },
                 annotations: {
-                    "external-dns.alpha.kubernetes.io/hostname": `nifi-registry.${ this.props.hostedZoneName }`,
+                    "external-dns.alpha.kubernetes.io/hostname": this.props.hostname,
                     "external-dns.alpha.kubernetes.io/ttl": "60"
                 }
             },
@@ -407,8 +416,8 @@ export class NifiRegistryChart extends cdk8s.Chart {
                                         value: "registry"
                                     },
                                     {
-                                        name: "IDENTITIES_AUTHORIZATIONS_CONF",
-                                        value: `${ nifiRegistryInitBaseDir }/conf/registry_identities_authorizations.json`
+                                        name: "MANAGER_CONFIG",
+                                        value: `${ nifiRegistryInitBaseDir }/conf/registry_manager.json`
                                     },
                                     {
                                         name: "NIFI_INIT_DIR",
@@ -432,7 +441,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
                                     },
                                     {
                                         name: "NIFI_NODES",
-                                        value: this.props.nifiNodeList?.map( x => `CN=${ x }` ).join( "," )
+                                        value: this.nifiNodes.map( x => `CN=${ x }` ).join( "," )
                                     },
                                     {
                                         name: "NIFI_KEYSTORE_PASSWORD",
@@ -478,7 +487,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
                                         readOnly: true
                                     },
                                     {
-                                        mountPath: `${ sslBasePath }/registry`,
+                                        mountPath: `${ sslBasePath }/registry/nifi-registry`,
                                         name: 'nifi-registry-ssl',
                                         readOnly: true
                                     }
@@ -583,7 +592,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
         const nifiRegistryBaseConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../base_conf/nifi-registry` ).map( fileName => {
             return [ fileName, fs.readFileSync( `${ __dirname }/../../base_conf/nifi-registry/${ fileName }`, 'utf-8' ) ]
         } ) )
-        const clusterNodeIdentities = this.props.nifiNodeList?.map( x => `CN=${ x }.${ this.namespace }.${ this.props.hostedZoneName }` )
+        
         const nifiRegistryConfigMap = new k8s.KubeConfigMap( this, 'nifi-registry-configmap', {
             metadata: {
                 name: 'nifi-registry-config'
@@ -594,14 +603,77 @@ export class NifiRegistryChart extends cdk8s.Chart {
                 "authorizers.xml": this.updateAuthorizers( nifiRegistryBaseConfigMapData[ "authorizers.xml" ],
                     nifiRegistryDataDir
                 ),
-                "registry_identities_authorizations.json": NifiClusterChart.createIdentityAuthorizations( clusterNodeIdentities || [], this.props ),
-                "nifi-reg-cli.config": NifiClusterChart.createNifiToolkitConfig( sslBasePath, this.hostname, this.props.httpsPort),
+                "registry_manager.json": JSON.stringify(this.createRegistryManagerConfig(),undefined,2),
+                "nifi-reg-cli.config": NifiClusterChart.createNifiToolkitConfig( sslBasePath, this.props.hostname, this.props.httpsPort),
             }
         } )
         return nifiRegistryConfigMap
     }
 
+    private createRegistryManagerConfig() {
 
+        const additionalGroups: { [ name: string ]: string[] } = {}
+        const additionalIdentities: string[] = []
+        const additionalAuthorizations: NifiAuthorization[] = []
+        
+        additionalGroups[ "admins" ] = this.props.adminIdentities
+        additionalIdentities.push( ...this.props.adminIdentities )
+        additionalAuthorizations.push(
+            {
+                policyResourcePattern: '/.*',
+                actions: [
+                    'READ', 'WRITE', 'DELETE'
+                ],
+                groups: [ "admins" ]
+            }
+        )
+        
+        const allNifiNodeIdentities = this.nifiNodes.map( x => `CN=${ x }` )
+        additionalIdentities.push( ...allNifiNodeIdentities )
+        additionalGroups[ 'all_nifi_nodes' ] = allNifiNodeIdentities
+        additionalAuthorizations.push(
+            {
+                policyResourcePattern: '/proxy',
+                actions: [
+                    'READ', 'WRITE', 'DELETE'
+                ],
+                groups: [ "all_nifi_nodes" ]
+            }
+        )
+
+        if ( this.props.externalNodeIdentities ) {
+            additionalGroups[ "external_nodes" ] = this.props.externalNodeIdentities
+            additionalIdentities.push( ...this.props.externalNodeIdentities )
+        }
+
+        const nifiClusterBuckets: {[key:string]:NifiRegistryBucketProps} = Object.fromEntries(Object.entries(this.props.nifiClusters).map(clusterEntry => {
+            const clusterName = clusterEntry[0]
+            const cluster = clusterEntry[1]
+            const clusterNodes = cluster.nodeList.map( x => `CN=${ x }` )
+            additionalGroups[ `${ clusterName }_admins` ] = cluster.adminIdentities
+            additionalGroups[ `${ clusterName }_nodes` ] = clusterNodes
+            const bucketProps: NifiRegistryBucketProps = {
+                WRITE: {
+                    groups: [`${ clusterName }_admins`]
+                },
+                READ: {
+                    groups: [ `${ clusterName }_admins`, `${ clusterName }_nodes` ]
+                }
+            }
+            additionalIdentities.push( ...cluster.adminIdentities, )
+
+            return [clusterName,bucketProps]
+        }))
+
+        return {
+            buckets: { ...this.props.buckets || {}, ...nifiClusterBuckets },
+            identities: [ ...this.props.identities || [], ...additionalIdentities ],
+            groups: { ...this.props.groups || {}, ...additionalGroups },
+            policies: [ ...this.props.policies || []],
+            authorizations: [ ...this.props.authorizations || [],...additionalAuthorizations,  ]
+        }
+
+    }
 
     private updateAuthorizers (
         authorizersData: string,
@@ -635,17 +707,17 @@ export class NifiRegistryChart extends cdk8s.Chart {
             }
         } )
 
-        this.props.nifiNodeList?.forEach( node => {
-
-            userGroupProviderProps.push( {
-                "@_name": `Initial User Identity ${ node }`,
-                "#text": `CN=${ node }`
-            } )
-            accessPolicyProviderProps.push( {
-                "@_name": `Nifi Identity ${ node }`,
-                "#text": `CN=${ node }`
-            } )
-        } )
+        this.nifiNodes.forEach(node =>   {
+                userGroupProviderProps.push( {
+                    "@_name": `Initial User Identity ${ node }`,
+                    "#text": `CN=${ node }`
+                } )
+                accessPolicyProviderProps.push( {
+                    "@_name": `Nifi Identity ${ node }`,
+                    "#text": `CN=${ node }`
+                } )
+            })
+  
 
         const authorizersXml: string = new XMLBuilder( {
             ignoreAttributes: false,
@@ -673,7 +745,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
 
 
         nifiRegistryPropertiesMap[ 'nifi.registry.web.https.port' ] = this.props.httpsPort.toString()
-        nifiRegistryPropertiesMap[ 'nifi.registry.web.https.host' ] = `nifi-registry.${ this.props.hostedZoneName }`
+        nifiRegistryPropertiesMap[ 'nifi.registry.web.https.host' ] =  this.props.hostname
         nifiRegistryPropertiesMap[ 'nifi.registry.web.http.port' ] = ""
         nifiRegistryPropertiesMap[ 'nifi.registry.web.http.host' ] = ""
         nifiRegistryPropertiesMap[ 'nifi.registry.security.keystore' ] = `${ nifiRegistryDataDir }/ssl/keystore/keystore.jks`

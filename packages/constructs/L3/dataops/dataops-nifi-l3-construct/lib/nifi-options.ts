@@ -14,6 +14,20 @@ export interface NifiSamlProps {
     readonly idpMetadataUrl: string
 }
 
+/**
+ * @jsii ignore
+ */
+export interface NamedNifiRegistryClientProps { 
+    /**
+     * @jsii ignore
+     */
+    [ clientName: string ]: NifiRegistryClientProps 
+}
+
+export interface NifiRegistryClientProps {
+    readonly url: string
+}
+
 export interface NifiClusterOptions extends NifiIdentityAuthorizationOptions, NifiNetworkOptions {
     /**
      * Initial number of nodes in the cluster.
@@ -63,13 +77,16 @@ export interface NifiClusterOptions extends NifiIdentityAuthorizationOptions, Ni
      * Customer managed policies which will be granted to the Nifi cluster role for access to AWS services.
      */
     readonly clusterRoleManagedPolicies?: string[]
+    /**
+     * @jsii ignore
+     */
+    readonly registryClients?: NamedNifiRegistryClientProps
 
 }
 export interface NifiIdentityAuthorizationOptions {
 
     readonly adminIdentities: string[]
     readonly externalNodeIdentities?: string[]
-
     readonly identities?: string[]
     readonly groups?: { [ key: string ]: string[] }
     readonly policies?: NifiPolicy[]
@@ -114,7 +131,7 @@ export interface NifiAuthorization {
     readonly groups?: string[]
 }
 
-export type PolicyAction = 'READ' | 'WRITE'
+export type PolicyAction = 'READ' | 'WRITE' | 'DELETE'
 
 export interface AwsManagedPolicySpec {
     /**
