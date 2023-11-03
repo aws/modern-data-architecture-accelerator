@@ -74,7 +74,13 @@ describe( 'CAEF Compliance Stack Tests', () => {
     const ruleRole = Role.fromRoleName( stack, "test-role", "test-role" )
 
     const eventBridgeProps: EventBridgeProps = {
-        eventBridgeRules: { "test-rule": ruleProps },
+        eventBridgeRules: { 
+            "test-rule": ruleProps ,
+            "test--sched-rule": {
+                scheduleExpression: "cron(0 20 * * ? *)",
+                ...ruleProps
+            } 
+        },
         s3EventBridgeRules: {
             "test-s3-rule": {
                 buckets: [ "test-bucket" ],

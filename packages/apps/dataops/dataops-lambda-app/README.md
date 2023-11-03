@@ -124,7 +124,12 @@ functions:
               - "glue.amazonaws.com"
             detail:
               some_event_key: some_event_value
-
+        testing-event-bridge-schedule:
+          description: "testing"
+          # (Optional) - Rules can be scheduled using a crontab expression
+          scheduleExpression: "cron(0 20 * * ? *)"
+          eventBusArn: "arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name"
+          
   # Example of a function which is VPC bound using a custom security group for this function
   - functionName: testfunvpc
     srcDir: ./src/lambda/test

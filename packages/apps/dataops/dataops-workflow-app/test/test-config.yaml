@@ -35,6 +35,11 @@ workflowDefinitions:
               - "glue.amazonaws.com"
             detail:
               some_event_key: some_event_value
+        testing-event-bridge-schedule:
+          description: "testing"
+          # (Optional) - Rules can be scheduled using a crontab expression
+          scheduleExpression: "cron(0 20 * * ? *)"
+  
     # The rawWorkflowDef can be specified directly, or can be Json/Yaml representation of the output of the
     # 'aws glue get-workflow --name <name> --include-graph' command. This allows workflows to be created in the Glue
     # interface, exported, and pasted directly into this config. The parts of the command output which are not required

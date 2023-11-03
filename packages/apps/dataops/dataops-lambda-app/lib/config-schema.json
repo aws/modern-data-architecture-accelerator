@@ -369,6 +369,10 @@
                 "eventPattern": {
                     "$ref": "#/definitions/EventPattern",
                     "description": "The Event Pattern to be passed to the rule"
+                },
+                "scheduleExpression": {
+                    "description": "If specified, the rule will be schedule according to this expression.\nExpression should follow the EventBridge specification: https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-cron-expressions.html",
+                    "type": "string"
                 }
             },
             "type": "object"
