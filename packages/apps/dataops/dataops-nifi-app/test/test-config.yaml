@@ -86,6 +86,11 @@ nifi:
       # security group connectivity as well as remote access to this cluster.
       peerClusters:
         - test2
+      # (Optional) - Registry client configurations which will be added to the cluster.
+      # Note that this cluster will automatically be integrated with the Registry deployed by this module.
+      registryClients:
+        example-extra-client:
+          url: https://some-external-registry-url:8443
       # (Optional) External Nifi node identities which will automatically be added to policies required for remote data transfer to and from this cluster.
       # They will also be added to an 'external-nodes' group which can be referenced by 'authorizations'.
       # Note that nodes from clusters created by this config do not need to be specified here. They can instead be specified via "peerClusters".
@@ -220,7 +225,7 @@ nifi:
   registry:
     # The identities which will be granted admin access to the Registry instance.
     # These should be the common names of administrator TLS certificates minted by the CA trusted by this Registry instance.
-    # Note that registry does not currently support SAML federation.
+    # Note that Registry does not currently support SAML federation.
     # If deleted in Registry UI, admin identities will be constantly recreated by a background process until removed from this config.
     adminIdentities:
       - "CN=some-admin-identity"
@@ -252,6 +257,23 @@ nifi:
         # then the identity must pre-exist within the cluster.
         - test-identity-1
         - test-identity-2
+
+    # (Optional) - Registry Buckets and authorizations which will be added to the Registry automatically.
+    # Note that a bucket and appropriate authorizations will automatically be added for each Nifi cluster in the config.
+    buckets:
+      # Bucket name
+      example-extra-bucket:
+        READ: # One of READ, WRITE, DELETE
+          # These groups and identities will be granted READ access to the bucket
+          groups:
+            - test_group
+          identities:
+            - test-identity-1
+        WRITE: # One of READ, WRITE, DELETE
+          # These identities will be granted WRITE access to the bucket
+          identities:
+            - test-identity-2
+    
     # (Optional) A set of policies which will be automatically created if they don't exist, and if matched
     # by an authorization in the 'authorizations' section. Empty policies will not be created.
     # If deleted in Registry UI, policies will be constantly recreated by a background process until removed from this config.

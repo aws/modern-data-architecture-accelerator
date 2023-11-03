@@ -398,6 +398,12 @@
             },
             "type": "object"
         },
+        "NamedNifiRegistryClientProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/NifiRegistryClientProps"
+            },
+            "type": "object"
+        },
         "NifiAuthorization": {
             "additionalProperties": false,
             "properties": {
@@ -525,6 +531,9 @@
                         "$ref": "#/definitions/NifiPolicy"
                     },
                     "type": "array"
+                },
+                "registryClients": {
+                    "$ref": "#/definitions/NamedNifiRegistryClientProps"
                 },
                 "remotePort": {
                     "description": "The port on which the cluster remote RAW interfaces will listen",
@@ -666,6 +675,78 @@
             ],
             "type": "object"
         },
+        "NifiRegistryBucketProps": {
+            "additionalProperties": false,
+            "properties": {
+                "DELETE": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "groups": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "identities": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "READ": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "groups": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "identities": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "WRITE": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "groups": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "identities": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "NifiRegistryClientProps": {
+            "additionalProperties": false,
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "type": "object"
+        },
         "NifiRegistryProps": {
             "additionalProperties": false,
             "properties": {
@@ -687,6 +768,12 @@
                         "$ref": "#/definitions/NifiAuthorization"
                     },
                     "type": "array"
+                },
+                "buckets": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/NifiRegistryBucketProps"
+                    },
+                    "type": "object"
                 },
                 "externalNodeIdentities": {
                     "items": {
@@ -772,6 +859,7 @@
         },
         "PolicyAction": {
             "enum": [
+                "DELETE",
                 "READ",
                 "WRITE"
             ],

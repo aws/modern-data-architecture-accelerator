@@ -18,7 +18,7 @@ mkdir -p ${NIFI_DATA_DIR}/ssl/truststore
 
 python3 ${NIFI_SCRIPTS_HOME}/aws_creds.py &
 python3 ${NIFI_SCRIPTS_HOME}/certs.py & 
-python3 ${NIFI_SCRIPTS_HOME}/identities_authorizations/nifi.py & 
+python3 ${NIFI_SCRIPTS_HOME}/nifi_manager.py & 
 tail -f /dev/null
 
 
