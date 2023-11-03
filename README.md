@@ -2,16 +2,30 @@
 
 ## CAEF Overview
 
-The Compliant Analytics Environment Framework (CAEF) is designed to accelerate the implementation of a secure, compliant and fully capable Modern Data Architecture on AWS, allowing organizations of all sizes and sophsitication to quickly focus on driving business outcomes from their data while maintaining high assurance of security compliance.
+The Compliant Analytics Environment Framework (CAEF) is designed to accelerate the implementation of a secure, compliant and fully capable Modern Data Architecture on AWS, allowing organizations of all sizes and sophsitication to quickly focus on driving business outcomes from their data while maintaining high assurance of security compliance. Specifically, organizations are enabled to rapidly solve data-driven problems using both traditional analytics, as well as using contemporary capabilities such as generative AI.
 
-CAEF capabilities include configuration-driven specification and deployment of all major elements of a modern analytics environment, such as Ingest, Persistence, DataOps, Consumption, Visual Analytics, Data Science, and AI/ML. Additionally, the CAEF codebase has been designed for compliance with AWS Solutions, NIST 800-53 R5, HIPAA CDK Nag Rulesets, as well as ITSG-33 security control requirements. This combination of integral compliance and capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
+CAEF provides rapid, secure deployment of all major elements of a Modern Data Architcture, such as Ingest, Persistence, Governance, DataOps, Consumption, Visual Analytics, Data Science, and AI/ML.
+Additionally, CAEF has been designed for compliance with AWS Solutions, NIST 800-53 Rev5 (US), HIPAA CDK Nag Rulesets, as well as ITSG-33 (Canada) security control requirements. This combination of integral compliance and broad, configuration-driven capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
 
 ## Target Usage
 
-* Any organization with elevated compliance/regulatory requirements.
-* Large organizations looking to design and deploy complex data analytics environments such as Lake House or Data Mesh.
+* Any organization looking to rapidly deploy a secure Modern Data Architecture in support of data-driven business/mission requirements, such as Analytics, Business Intelligence, AI/ML, and Generative AI
+* Large organizations looking to design and deploy complex Modern Data Architectures such as Lake House or Data Mesh.
 * Small to Medium organizations looking for code-free, configuration-driven deployment of a Data Analytics platform.
-* Builders who are building custom, code-driven data analytics architectures through use of reusable compliant constructs across multiple languages.
+* Builder organizations who are building custom, code-driven data analytics architectures through use of reusable compliant constructs across multiple languages.
+* Any organization with elevated compliance/regulatory requirements.
+
+***
+
+## Logical Design
+
+CAEF is designed as a set of logical architectural layers, each constituted by a set of functional 'modules'. Each module configures and deploys a set of resources which constitute the data analytics environment. Modules may have logical dependencies on eachother, and may also leverage non-CAEF resources deployed within the environment, such as those deployed via Landing Zone Accelerator.
+
+While CAEF can be used to implement a comprehensive, end to end data analytics platform, it ***does not*** result in a closed system. CAEF may be freely integrated with non-CAEF deployed platform elements and analytics capabilites. Any individual layer or module of CAEF can be replaced by a non-CAEF component, and the remaining layers/modules will continue to function (assuming basic functional parity with the replaced CAEF module/layer).
+
+CAEF is conceptually, architecturally, and technically similar in nature to the Landing Zone Accelerator (LZA), providing similar functionality for analytics platform configuration and deployment as LZA does for general cloud platform configuration and deployment. The logical layers of CAEF are specifically designed to be deployed on top of a general purpose, secure cloud platform such as that deployed by LZA.
+
+![Caef Logical Architecture](docs/CAEF-Logical.png)
 
 ***
 
@@ -63,18 +77,6 @@ CAEF and its constituent modules each adhere to the following design principles:
   * Python 3.x
   * Java
   * .Net
-
-***
-
-## Logical Design
-
-CAEF is designed as a set of logical architectural layers, each constituted by a set of functional 'modules'. Each module configures and deploys a set of resources which constitute the data analytics environment. Modules may have logical dependencies on eachother, and may also leverage non-CAEF resources deployed within the environment, such as those deployed via Landing Zone Accelerator.
-
-While CAEF can be used to implement a comprehensive, end to end data analytics platform, it ***does not*** result in a closed system. CAEF may be freely integrated with non-CAEF deployed platform elements and analytics capabilites. Any individual layer or module of CAEF can be replaced by a non-CAEF component, and the remaining layers/modules will continue to function (assuming basic functional parity with the replaced CAEF module/layer).
-
-CAEF is conceptually, architecturally, and technically similar in nature to the Landing Zone Accelerator (LZA), providing similar functionality for analytics platform configuration and deployment as LZA does for general cloud platform configuration and deployment. The logical layers of CAEF are specifically designed to be deployed on top of a general purpose, secure cloud platform such as that deployed by LZA.
-
-![Caef Logical Architecture](docs/CAEF-Logical.png)
 
 ***
 
