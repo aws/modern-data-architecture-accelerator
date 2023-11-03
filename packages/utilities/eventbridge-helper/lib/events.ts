@@ -5,7 +5,7 @@
 
 import { ICaefResourceNaming } from "@aws-caef/naming";
 import { CaefSqsDeadLetterQueue } from "@aws-caef/sqs-constructs";
-import { EventBus, EventPattern, IRuleTarget, Rule } from "aws-cdk-lib/aws-events";
+import { EventBus, EventPattern, IRuleTarget, Rule, Schedule } from "aws-cdk-lib/aws-events";
 import { Effect, IRole, ManagedPolicy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { IKey } from "aws-cdk-lib/aws-kms";
 import { IQueue } from "aws-cdk-lib/aws-sqs";
@@ -57,7 +57,11 @@ export interface EventBridgeRuleProps {
      * If not specified, default event bus will be used.
      */
     readonly eventBusArn?: string
-
+    /**
+     * If specified, the rule will be schedule according to this expression.
+     * Expression should follow the EventBridge specification: https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-cron-expressions.html
+     */
+    readonly scheduleExpression?: string
 }
 
 export interface EventBridgeProps extends EventBridgeRetryProps {
@@ -171,7 +175,8 @@ export class EventBridgeHelper {
             description: ruleProps.description,
             ruleName: naming.resourceName( ruleName, 64 ),
             eventPattern: ruleProps.eventPattern,
-            eventBus: ruleProps.eventBusArn ? EventBus.fromEventBusArn( scope, `event-rule-${ ruleName }-bus`, ruleProps.eventBusArn ) : undefined
+            eventBus: ruleProps.eventBusArn ? EventBus.fromEventBusArn( scope, `event-rule-${ ruleName }-bus`, ruleProps.eventBusArn ) : undefined,
+            schedule: ruleProps.scheduleExpression ? Schedule.expression( ruleProps.scheduleExpression  ) : undefined
         } );
         return eventRule
     }

@@ -76,6 +76,12 @@ stepfunctionDefinitions:
               - "glue.amazonaws.com"
             detail:
               some_event_key: some_event_value
+        testing-event-bridge-schedule:
+          description: "testing"
+          # (Optional) - Rules can be scheduled using a crontab expression
+          scheduleExpression: "cron(0 20 * * ? *)"
+          eventBusArn: "arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name"
+          
     # The rawStepFunctionDef is Amazon States Langauage (ASL) JSON exported or copied from AWS Console.
     # Environment specific attributes can be specified as SSM Parameters in format {{resolve:ssm:/path/to/ssm/parameter}}
     rawStepFunctionDef:

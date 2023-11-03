@@ -15,6 +15,7 @@
 
 * Added experimental DataOps Nifi cluster module running on EKS Fargate
 * Resolved issue with hardcoded Glue job timeouts in Glue Workflows
+* Added support for EventBridge Rule cron scheduling expressions to DataOps Lambda, Glue Workflow, and StepFunction modules
 
 ### Utility Changes
 
