@@ -67,8 +67,11 @@ workflowDefinitions:
           description: "testing"
           # (Optional) - Rules can be scheduled using a crontab expression
           scheduleExpression: "cron(0 20 * * ? *)"
-          eventBusArn: "arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name"
-          
+          # (Optional) - If specified, this input will be passed as the event payload to the function.
+          # If not specified, the matched event payload will be passed as input.
+          input:
+            some-test-input-obj:
+              some-test-input-key: test-value
     # The rawWorkflowDef can be specified directly, or can be Json/Yaml representation of the output of the
     # 'aws glue get-workflow --name <name> --include-graph' command. This allows workflows to be created in the Glue
     # interface, exported, and pasted directly into this config. The parts of the command output which are not required

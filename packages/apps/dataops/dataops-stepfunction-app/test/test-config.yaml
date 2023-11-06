@@ -53,7 +53,11 @@ stepfunctionDefinitions:
           description: "testing"
           # (Optional) - Rules can be scheduled using a crontab expression
           scheduleExpression: "cron(0 20 * * ? *)"
-          
+          # (Optional) - If specified, this input will be passed as the event payload to the function.
+          # If not specified, the matched event payload will be passed as input.
+          input:
+            some-test-input-obj:
+              some-test-input-key: test-value
     # The rawStepFunctionDef is Amazon States Langauage (ASL) JSON exported or copied from AWS Console.
     # Environment specific attributes can be specified as SSM Parameters in format {{resolve:ssm:/path/to/ssm/parameter}}
     rawStepFunctionDef:

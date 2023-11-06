@@ -128,8 +128,12 @@ functions:
           description: "testing"
           # (Optional) - Rules can be scheduled using a crontab expression
           scheduleExpression: "cron(0 20 * * ? *)"
-          eventBusArn: "arn:{{partition}}:events:{{region}}:{{account}}:event-bus/some-custom-name"
-          
+          # (Optional) - If specified, this input will be passed as the event payload to the function.
+          # If not specified, the matched event payload will be passed as input.
+          input:
+            some-test-input-obj:
+              some-test-input-key: test-value
+              
   # Example of a function which is VPC bound using a custom security group for this function
   - functionName: testfunvpc
     srcDir: ./src/lambda/test
