@@ -62,6 +62,11 @@ export interface EventBridgeRuleProps {
      * Expression should follow the EventBridge specification: https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-cron-expressions.html
      */
     readonly scheduleExpression?: string
+    /**
+     * If specified, this input will be provided as event payload to the target. Otherwise
+     * the target input will be the matched event content.
+     */
+    readonly input?: any
 }
 
 export interface EventBridgeProps extends EventBridgeRetryProps {
@@ -139,12 +144,7 @@ export class EventBridgeHelper {
         }
     }
 
-    public static createEventBridgeRulesForTarget (
-        scope: Construct,
-        naming: ICaefResourceNaming,
-        targetName: string,
-        target: IRuleTarget,
-        eventBridgeProps: EventBridgeProps ) {
+    public static createNamedEventBridgeRuleProps ( eventBridgeProps: EventBridgeProps, targetName: string ):NamedEventBridgeRuleProps {
 
         const s3EventBridgeRuleProps: NamedEventBridgeRuleProps = Object.fromEntries( Object.entries( eventBridgeProps.s3EventBridgeRules || {} ).map( entry => {
             const eventRuleName = entry[ 0 ]
@@ -156,14 +156,19 @@ export class EventBridgeHelper {
             ...eventBridgeProps.eventBridgeRules,
             ...s3EventBridgeRuleProps
         }
+        return namedEventBridgeRuleProps
+    }
 
-        return Object.entries( namedEventBridgeRuleProps ).map( entry => {
-            const eventRuleName = entry[ 0 ]
-            const eventRuleProps = entry[ 1 ]
+    public static createEventBridgeRuleForTarget (
+        scope: Construct,
+        naming: ICaefResourceNaming,
+        target: IRuleTarget,
+        eventRuleName: string,
+        eventRuleProps: EventBridgeRuleProps ) {
+
             const eventRule = EventBridgeHelper.createEventRule( scope, naming, eventRuleName, eventRuleProps )
             eventRule.addTarget( target );
             return eventRule
-        } )
     }
 
 

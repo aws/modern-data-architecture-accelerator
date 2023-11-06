@@ -8,6 +8,7 @@ import { DataOpsProjectUtils } from '@aws-caef/dataops-project-l3-construct';
 import { EventBridgeHelper, EventBridgeProps } from '@aws-caef/eventbridge-helper';
 import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
 import { aws_events_targets, Duration } from 'aws-cdk-lib';
+import { RuleTargetInput } from 'aws-cdk-lib/aws-events';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -171,13 +172,19 @@ export class StepFunctionL3Construct extends CaefL3Construct {
 
         const dlq = EventBridgeHelper.createDlq( this.scope, this.props.naming, `${ functionName }-events`, this.projectKmsKey )
 
-        const target = new aws_events_targets.SfnStateMachine( stepFunction, {
-            deadLetterQueue: dlq,
-            retryAttempts: eventBridgeProps.retryAttempts,
-            maxEventAge: eventBridgeProps.maxEventAgeSeconds ? Duration.seconds( eventBridgeProps.maxEventAgeSeconds ) : undefined
-        } )
+        const eventBridgeRuleProps = EventBridgeHelper.createNamedEventBridgeRuleProps( eventBridgeProps, functionName )
 
-        EventBridgeHelper.createEventBridgeRulesForTarget( this.scope, this.props.naming, functionName, target, eventBridgeProps )
+        Object.entries( eventBridgeRuleProps ).forEach( propsEntry => {
+            const ruleName = propsEntry[ 0 ]
+            const ruleProps = propsEntry[ 1 ]
+            const target = new aws_events_targets.SfnStateMachine( stepFunction, {
+                deadLetterQueue: dlq,
+                retryAttempts: eventBridgeProps.retryAttempts,
+                maxEventAge: eventBridgeProps.maxEventAgeSeconds ? Duration.seconds( eventBridgeProps.maxEventAgeSeconds ) : undefined,
+                input: RuleTargetInput.fromObject( ruleProps.input ) 
+            } )
+            EventBridgeHelper.createEventBridgeRuleForTarget( this.scope, this.props.naming, target, ruleName, ruleProps )
+        } )
 
         NagSuppressions.addResourceSuppressions(
             stepFunction,

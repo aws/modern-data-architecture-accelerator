@@ -204,17 +204,25 @@ export class GlueWorkflowL3Construct extends CaefL3Construct {
         this.getEventBridgePolicy().addStatements( triggerFunctionStatement )
 
         const dlq = EventBridgeHelper.createDlq( this.scope, this.props.naming, `${ workflowName }-events`, this.projectKmsKey, this.getEventBridgeRole() )
+        
+        const eventBridgeRuleProps = EventBridgeHelper.createNamedEventBridgeRuleProps( eventBridgeProps, workflowName )
 
-        const targetProps: GlueWorkflowTargetProps = {
-            workflowArn: workflowArn,
-            role: this.getEventBridgeRole(),
-            deadLetterQueue: dlq,
-            retryAttempts: eventBridgeProps.retryAttempts,
-            maxEventAge: eventBridgeProps.maxEventAgeSeconds ? Duration.seconds( eventBridgeProps.maxEventAgeSeconds ) : undefined
-        }
+        Object.entries( eventBridgeRuleProps ).forEach( propsEntry => {
+            const ruleName = propsEntry[ 0 ]
+            const ruleProps = propsEntry[ 1 ]
+            const targetProps: GlueWorkflowTargetProps = {
+                workflowArn: workflowArn,
+                role: this.getEventBridgeRole(),
+                deadLetterQueue: dlq,
+                retryAttempts: eventBridgeProps.retryAttempts,
+                maxEventAge: eventBridgeProps.maxEventAgeSeconds ? Duration.seconds( eventBridgeProps.maxEventAgeSeconds ) : undefined,
+                input: RuleTargetInput.fromObject( ruleProps.input ) 
+            }
 
-        const target = new GlueWorkflowTarget( targetProps )
-        EventBridgeHelper.createEventBridgeRulesForTarget( this.scope, this.props.naming, workflowName, target, eventBridgeProps )
+            const target = new GlueWorkflowTarget( targetProps )
+            EventBridgeHelper.createEventBridgeRuleForTarget( this.scope, this.props.naming, target, ruleName, ruleProps )
+        } )
+
     }
 
     protected createPredicateFromProps ( predicateProps: { [ key: string ]: any; } ): CfnTrigger.PredicateProperty {

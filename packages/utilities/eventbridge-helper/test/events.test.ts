@@ -97,7 +97,13 @@ describe( 'CAEF Compliance Stack Tests', () => {
         }
     }
 
-    EventBridgeHelper.createEventBridgeRulesForTarget( stack, testApp.naming, "test-target", new TestTarget( ruleRole ), eventBridgeProps )
+    const eventBridgeRuleProps = EventBridgeHelper.createNamedEventBridgeRuleProps( eventBridgeProps, "test-target" )
+    Object.entries( eventBridgeRuleProps ).forEach( propsEntry => {
+        const ruleName = propsEntry[ 0 ]
+        const ruleProps = propsEntry[ 1 ]
+
+        EventBridgeHelper.createEventBridgeRuleForTarget( stack, testApp.naming, new TestTarget( ruleRole ), ruleName, ruleProps )
+    } )
 
     EventBridgeHelper.createEventRule( stack, testApp.naming, "test-rule-2", ruleProps )
 

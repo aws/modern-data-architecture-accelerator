@@ -11,6 +11,7 @@ import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
 import { CaefLambdaFunction, CaefLambdaFunctionProps, CaefLambdaRole } from '@aws-caef/lambda-constructs';
 import { Duration, Size, aws_events_targets } from 'aws-cdk-lib';
 import { SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { RuleTargetInput } from 'aws-cdk-lib/aws-events';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Code, Function, IFunction, LayerVersion, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NagSuppressions } from 'cdk-nag';
@@ -321,13 +322,20 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
 
         const dlq = EventBridgeHelper.createDlq( this.scope, this.props.naming, `${ functionName }-events`, this.projectKmsKey )
 
-        const target = new aws_events_targets.LambdaFunction( lambdaFunction, {
-            deadLetterQueue: dlq,
-            maxEventAge: eventBridgeProps.maxEventAgeSeconds ? Duration.seconds( eventBridgeProps.maxEventAgeSeconds ) : undefined,
-            retryAttempts: eventBridgeProps.retryAttempts
-        } )
-
-        EventBridgeHelper.createEventBridgeRulesForTarget( this.scope, this.props.naming, functionName, target, eventBridgeProps )
+        const eventBridgeRuleProps = EventBridgeHelper.createNamedEventBridgeRuleProps( eventBridgeProps ,functionName)
+        
+        Object.entries( eventBridgeRuleProps ).forEach( propsEntry => {
+            const ruleName = propsEntry[ 0 ]
+            const ruleProps = propsEntry[1]
+            const target = new aws_events_targets.LambdaFunction( lambdaFunction, {
+                deadLetterQueue: dlq,
+                maxEventAge: eventBridgeProps.maxEventAgeSeconds ? Duration.seconds( eventBridgeProps.maxEventAgeSeconds ) : undefined,
+                retryAttempts: eventBridgeProps.retryAttempts,
+                event: RuleTargetInput.fromObject( ruleProps.input ) 
+            } )
+            EventBridgeHelper.createEventBridgeRuleForTarget( this.scope, this.props.naming, target, ruleName, ruleProps )
+        })
+        
     }
 
 }

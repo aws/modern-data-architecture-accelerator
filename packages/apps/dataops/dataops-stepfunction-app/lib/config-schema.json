@@ -253,6 +253,9 @@
                     "$ref": "#/definitions/EventPattern",
                     "description": "The Event Pattern to be passed to the rule"
                 },
+                "input": {
+                    "description": "If specified, this input will be provided as event payload to the target. Otherwise\nthe target input will be the matched event content."
+                },
                 "scheduleExpression": {
                     "description": "If specified, the rule will be schedule according to this expression.\nExpression should follow the EventBridge specification: https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-cron-expressions.html",
                     "type": "string"
