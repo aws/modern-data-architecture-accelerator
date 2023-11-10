@@ -32,9 +32,18 @@ Also, ensure your AWS region is specified either in your environment or in your 
 region=ca-central-1
 ```
 
-### CAEF Installation
+### Deployment from Locally Cloned Source Code (-l or 'local_mode')
 
-Ensure that your private NPM repo is accessible and contains the appropriate CAEF NPM artifacts. If using a localhost based NPM repo (such as Verdaccio), ensure it is running on localhost and updated with the latest CAEF packages from S3. (See [PREDEPLOYMENT](PREDEPLOYMENT.md))
+1. Clone CAEF repo.
+2. Run `npm install` at root of repo.
+3. Run `<repo_path>/bin/caef -l -c <path_to_caef_yaml> <action>`
+   * CAEF will locate modules within the local source code repo instead of NPM installing them
+   * **Note that specifying specific CAEF versions in local_mode is not supported**
+   * See **CAEF Deployment using CLI** for more CLI options.
+
+### Deployment from Published NPM Packages
+
+Ensure that your private NPM repo is accessible and contains the appropriate CAEF NPM artifacts. If using a localhost based NPM repo (such as Verdaccio), ensure it is running on localhost and updated with the latest CAEF packages from S3 (See [PREDEPLOYMENT](PREDEPLOYMENT.md)). When executed without the `-l` flag, CAEF will attempt to NPM install each CAEF module from NPM repo.
 
 Install CDK and CAEF, which can be installed from your private NPM repository using:
 
@@ -44,7 +53,7 @@ Global Installation:
 npm install -g aws-cdk@2.x @aws-caef/cli
 ```
 
-Optionally, both CDK and CAEF CLI can be instead installed locally:
+Optionally, both CDK and CAEF CLI can be instead npm installed in a local directory:
 
 ```bash
 npm install aws-cdk@2.x @aws-caef/cli
@@ -56,13 +65,19 @@ If CAEF CLI is installed locally, all CAEF commands will need to be executed usi
 
 ## CAEF Deployment using CLI
 
-If CAEF CLI is installed globally, CAEF can be executed from a shell as follows:
+If running CAEF from locally cloned CAEF source code repo:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l <cdk action>
+```
+
+If CAEF CLI is npm installed globally, CAEF can be executed from a shell as follows:
 
 ```bash
 caef <cdk action>
 ```
 
-If CAEF CLI is installed locally, the command should be prefixed with 'npx':
+If CAEF CLI is npm installed in the local directory, the command should be prefixed with 'npx':
 
 ```bash
 npx caef <cdk action>

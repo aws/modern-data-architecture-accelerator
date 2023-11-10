@@ -87,6 +87,12 @@ const optionDefinitions = [
         description: "Each module will output it's effective config to console."
     },
     {
+        name: 'local_mode',
+        alias: 'l',
+        type: Boolean,
+        description: "CAEF code will be executed from local source code instead of from installed NPM packages"
+    },
+    {
         name: 'help',
         alias: 'h',
         type: Boolean,

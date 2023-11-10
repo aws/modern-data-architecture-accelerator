@@ -25,8 +25,9 @@ export class CaefDeploy {
     private npmDebug: boolean;
     private updateCache: { [ prefix: string ]: boolean } = {};
     private readonly outputEffectiveConfig: boolean;
-
+    private localMode?:boolean
     private static readonly DEFAULT_DEPLOY_STAGE = "1"
+    private localPackages : {[packageName:string]:string}
 
     constructor( options: { [ key: string ]: string }, configContents?: { [ key: string ]: any } ) {
         this.action = options[ 'action' ]
@@ -42,12 +43,19 @@ export class CaefDeploy {
         this.workingDir = options[ "working_dir" ] ? `${ options[ "working_dir" ] }` : "./.caef_working"
         this.npmDebug = options[ 'npm_debug' ] ? true : false
         this.outputEffectiveConfig = options[ 'output_effective_config' ] ? true : false
+        this.localMode = options[ 'local_mode' ] ? true : false
 
-
-        if ( options[ 'clear' ] && this.action != 'dryrun' ) {
+        if ( !this.localMode && options[ 'clear' ] && this.action != 'dryrun' ) {
             console.log( `Removing all previously installed packages from ${ this.workingDir }/packages` )
             this.execCmd( `rm -rf ${ this.workingDir }/packages` );
         }
+
+        this.localPackages = this.localMode ? this.loadLocalPackages() : {}
+        if(this.localMode) {
+            console.log("Running CAEF in local mode.")
+        }
+
+        
 
         const configFileName = options[ 'config' ]
         if ( configContents ) {
@@ -55,6 +63,14 @@ export class CaefDeploy {
         } else {
             this.config = new CaefCliConfig( { filename: configFileName } )
         }
+    }
+
+    private loadLocalPackages () {
+        const workspaceQueryJson = require( 'child_process' ).execSync( `npm query .workspace --prefix ${ __dirname }/../../../` ).toString()
+        const workspace: any[] = JSON.parse( workspaceQueryJson )
+        return Object.fromEntries( workspace.map( pkgInfo => {
+            return [ `${pkgInfo[ 'name' ]}@latest`, path.resolve(`${__dirname}/../../../${pkgInfo[ 'location' ]}`) ]
+        } ) )
     }
 
     public deploy () {
@@ -177,13 +193,25 @@ export class CaefDeploy {
         return deployStages
     }
 
+    private resolvePackagePrefix ( npmPackage: string ) : string {
+        if( this.localMode ) {
+            if(this.localPackages.hasOwnProperty(npmPackage)) {
+                return this.localPackages[ npmPackage ]
+            } else {
+                throw new Error(`Unable to find local package location for ${npmPackage}`)
+            }
+        } else  {
+            return path.resolve( `${ this.workingDir }/packages/${ CaefDeploy.hashCodeHex( npmPackage, this.npmTag ).replace( /^-/, "" ) }` )
+        }
+    }
+
     private installPackageToPrefix ( npmPackage: string ): string {
 
-        const prefix = path.resolve( `${ this.workingDir }/packages/${ CaefDeploy.hashCodeHex( npmPackage, this.npmTag ).replace( /^-/, "" ) }` )
+        const prefix = this.resolvePackagePrefix( npmPackage )
         const npmPackageNoVersion = npmPackage.replace( /(?<!^)@.*/, "" )
 
-        if ( this.action == "dryrun" ) {
-            console.log( `Skipping package installation. In dry run mode.` )
+        if ( this.action == "dryrun" || this.localMode ) {
+            console.log( `Skipping package installation. In local/dry run mode.` )
             return prefix
         }
         if ( !fs.existsSync( prefix ) ) {
@@ -255,8 +283,8 @@ export class CaefDeploy {
 
         const cdkEnv: string[] = this.createCdkCommandEnv( moduleEffectiveConfig )
         const cdkCmd: string[] = []
-        cdkCmd.push( `npx cdk ${ action } --require-approval never` )
-        cdkCmd.push( `-a 'npx ${ this.npmDebug ? "-d" : "" } ${ modulePath }/'` )
+        cdkCmd.push( `npx --loglevel=verbose ${ this.npmDebug ? "-d" : "" } cdk ${ action } --require-approval never` )
+        cdkCmd.push( `-a 'npx --loglevel=verbose ${ this.npmDebug ? "-d" : "" } ${ modulePath }/'` )
         cdkCmd.push( `-o '${ this.workingDir }/cdk.out'` )
         cdkCmd.push( `-c 'org=${ this.config.contents.organization }'` )
         cdkCmd.push( `-c 'env=${ moduleEffectiveConfig.envName }'` )

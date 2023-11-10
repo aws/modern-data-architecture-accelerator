@@ -4,6 +4,10 @@
 
 ### General Changes
 
+* Added local execution mode for CAEF CLI. This allows direct execution of CAEF from cloned CAEF repo.
+  * No NPM publishing or installation of CAEF packages required.
+  * All modules will be executed from the local source code.
+  * CAEF config must not specify a CAEF version. Whatever is cloned/checked out from the CAEF repo will be used.
 * Updated CDK to latest version (2.97.1)
 * Update CDK Nag to latest version (2.27.142)
 * Added "@aws-caef/enableUniqueBucketNames" CDK context feature flag, which, when set to true, results in a unique prefix being automatically added to all S3 bucket names.
@@ -14,8 +18,12 @@
 ### Data Ops Changes
 
 * Added experimental DataOps Nifi cluster module running on EKS Fargate
+  * Allows deployment of multiple secured Nifi Clusters on a single EKS cluster, along with a preconfigured and integrated Nifi Registry
+  * Allows configuration of Nifi and Registry permissions through CAEF
+  * Allows integration of Nifi Auth with SAML IDP such as IAM Identity Center
 * Resolved issue with hardcoded Glue job timeouts in Glue Workflows
 * Added support for EventBridge Rule cron scheduling expressions to DataOps Lambda, Glue Workflow, and StepFunction modules
+* Added support for static EventBridge target input to be statically defined
 
 ### Utility Changes
 
