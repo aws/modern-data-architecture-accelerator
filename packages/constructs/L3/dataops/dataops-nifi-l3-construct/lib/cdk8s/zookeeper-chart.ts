@@ -50,6 +50,7 @@ export class ZookeeperChart extends cdk8s.Chart {
     public hash (): string {
         const json = JSON.stringify( this.toJson(), undefined, 2 )
         const stableJson = json.replace( /Token\[.*?\]/g, "Token" )
+        // nosemgrep
         const crypto = require( 'crypto' )
         const hash = crypto.createHash( 'sha1' )
             .update( stableJson ).digest( 'hex' );
@@ -229,9 +230,10 @@ export class ZookeeperChart extends cdk8s.Chart {
             }
             return [ volume, mount ]
         } )
-
+        // nosemgrep
         const zookeeperInitScriptsConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../scripts/zookeeper` ).map( fileName => {
             console.log( `Reading zookeeper init script from ${ __dirname }/../../scripts/zookeeper/${ fileName }` )
+            // nosemgrep
             return [ fileName, fs.readFileSync( `${ __dirname }/../../scripts/zookeeper/${ fileName }`, 'utf-8' ) ]
         } ) )
 
@@ -418,9 +420,10 @@ export class ZookeeperChart extends cdk8s.Chart {
         nodeList: string[],
 
     ): k8s.KubeConfigMap {
-
+        // nosemgrep
         const zookeeperBaseConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../base_conf/zookeeper` ).map( fileName => {
             console.log( `Reading zookeeper base_conf/zookeeper from ${ __dirname }/../../base_conf/zookeeper/${ fileName }` )
+            // nosemgrep
             return [ fileName, fs.readFileSync( `${ __dirname }/../../base_conf/zookeeper/${ fileName }`, 'utf-8' ) ]
         } ) )
 

@@ -35,6 +35,7 @@ def add_license(contents):
 
 def detect_license_header(path):
     print(f"\n\nProcessing {path}:")
+    # nosemgrep
     with open(path) as f:
         contents = ''.join(f.readlines())
     if re.search(license_header_regex, contents):

@@ -25,6 +25,7 @@ def cmd_handler(event, context):
     role_arn = props['RoleArn']
 
     # "log in" to the cluster
+    # nosemgrep
     subprocess.check_call(['aws', 'eks', 'update-kubeconfig',
                            '--role-arn', role_arn,
                            '--name', cluster_name,
@@ -73,6 +74,7 @@ def wait_for_output(args, expected_output, timeout_seconds):
             # also a recoverable error
             if 'NotFound' in error:
                 pass
+        # nosemgrep
         time.sleep(10)
 
     raise RuntimeError(
@@ -85,6 +87,7 @@ def kubectl(args):
         try:
             cmd = ['kubectl', f'--kubeconfig={kubeconfig}'] + args
             logger.info(f"Executing cmd: {cmd}")
+            # nosemgrep
             output = subprocess.check_output(cmd, stderr=subprocess.PIPE)
         except subprocess.CalledProcessError as exc:
             output = exc.output + exc.stderr

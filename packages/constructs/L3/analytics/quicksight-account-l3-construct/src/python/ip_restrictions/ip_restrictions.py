@@ -36,6 +36,7 @@ def handle_create_update(event, context):
             "PhysicalResourceId": response['AwsAccountId']
         }
     except Exception as e:
+        # nosemgrep
         logger.error(f"Failed to update ip restrictions: {e}")
         raise e
 

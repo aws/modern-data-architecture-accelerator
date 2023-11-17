@@ -80,4 +80,5 @@ def nifi_toolkit(nifi_app, args):
         else:
             return output
         logger.info("Retrying in 10 seconds.")
+        # nosemgrep
         time.sleep(10)

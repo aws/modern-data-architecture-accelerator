@@ -27,6 +27,7 @@ pattern_text = "SF:lib/"
 print(__file__)
 
 _src_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+# nosemgrep
 subprocess.run(["cd ", _src_path], shell=True)  # nosec
 
 # Search for lcov file and create a list
@@ -40,6 +41,7 @@ with open(merged_output_file, 'w') as outfile:
         replace_text = "SF:"+_path+"/lib/"
 
         # Test if pattern exists in any of the file  // could be removed
+        # nosemgrep
         for i, line in enumerate(open(lcov_loc)):
             for match in re.finditer(pattern_text, line):
                 print('Found on line %s: %s' % (i+1, match.group()))

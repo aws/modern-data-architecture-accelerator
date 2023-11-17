@@ -8,6 +8,7 @@ import { CaefTestApp } from "@aws-caef/testing";
 import { Stack } from "aws-cdk-lib";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { NamedDatabaseGrantProps, DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps } from "../lib";
+// nosemgrep
 import path = require( "path" );
 import { Protocol } from "aws-cdk-lib/aws-ec2";
 

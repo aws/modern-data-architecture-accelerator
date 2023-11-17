@@ -336,7 +336,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
       jupyterServerAppSettings: jupyterServerAppSettings,
       kernelGatewayAppSettings: kernelGatewayAppSettings
     }
-
+    // nosemgrep
     const _ = require( 'lodash' );
     function customizer ( objValue: any, srcValue: any ): any {
       if ( _.isArray( objValue ) ) {

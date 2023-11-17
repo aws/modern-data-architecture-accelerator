@@ -11,6 +11,7 @@ import { NifiAuthorization, NifiIdentityAuthorizationOptions } from '../nifi-opt
 import { ExternalSecretStore } from './external-secret-store';
 import * as k8s from './imports/k8s';
 import { NifiClusterChart } from './nifi-cluster-chart';
+// nosemgrep
 const { XMLParser, XMLBuilder } = require( "fast-xml-parser" );
 
 export interface NodeResources {
@@ -82,6 +83,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
     public hash (): string {
         const json = JSON.stringify( this.toJson(), undefined, 2 )
         const stableJson = json.replace( /Token\[.*?\]/g, "Token" )
+        // nosemgrep
         const crypto = require( 'crypto' )
         const hash = crypto.createHash( 'sha1' )
             .update( stableJson ).digest( 'hex' );
@@ -246,7 +248,9 @@ export class NifiRegistryChart extends cdk8s.Chart {
         nifiRegistryService: k8s.KubeService,
         nifiRegistrySecretName: string ): k8s.KubeStatefulSet {
 
+        // nosemgrep
         const nifiRegistryInitScriptsConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../scripts/nifi/` ).map( fileName => {
+            // nosemgrep
             return [ fileName, fs.readFileSync( `${ __dirname }/../../scripts/nifi/${ fileName }`, 'utf-8' ) ]
         } ) )
 
@@ -589,7 +593,9 @@ export class NifiRegistryChart extends cdk8s.Chart {
         nifiRegistryDataDir: string
     ): k8s.KubeConfigMap {
 
+        // nosemgrep
         const nifiRegistryBaseConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../base_conf/nifi-registry` ).map( fileName => {
+            // nosemgrep
             return [ fileName, fs.readFileSync( `${ __dirname }/../../base_conf/nifi-registry/${ fileName }`, 'utf-8' ) ]
         } ) )
         

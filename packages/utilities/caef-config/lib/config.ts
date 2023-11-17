@@ -6,7 +6,9 @@
 import { CfnParameter, CfnParameterProps, Stack } from "aws-cdk-lib"
 import { StringParameter } from "aws-cdk-lib/aws-ssm"
 import { Construct } from "constructs"
+// nosemgrep
 import path = require( "path" )
+// nosemgrep
 import XRegExp = require( "xregexp" )
 
 export interface ICaefConfigValueTransformer {

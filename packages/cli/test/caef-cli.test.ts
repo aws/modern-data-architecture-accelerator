@@ -133,6 +133,18 @@ test( 'CdkCmdTest3', () => {
         "organization": "sample-org",
         "naming_class": "TestNaming",
         "naming_module": "test_module",
+        "custom_aspects": [
+            {
+                "aspect_module": "./some_local_module",
+                "aspect_class": "SomeAspectClass",
+                "aspect_props": {
+                    "prop1": "propvalue1",
+                    "prop2": {
+                        "prop2prop1": "propvalue2"
+                    }
+                }
+            }
+        ],
         "context": {
             "global_context_key": "global_context_value",
             "global_override_key": "global_value",

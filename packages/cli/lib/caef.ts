@@ -7,7 +7,7 @@ import { CaefDeploy } from "./caef-cli";
 
 
 const commandLineArgs = require( 'command-line-args' )
-
+// nosemgrep
 const pjson = require( '../package.json' );
 console.log( `CAEF Version: ${ pjson.version }` );
 

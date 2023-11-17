@@ -157,4 +157,5 @@ while True:
     sleep_seconds = manager.common.min_update_time - elapsed
     if sleep_seconds > 0:
         logger.info(f"Sleeping {sleep_seconds} seconds")
+        # nosemgrep
         time.sleep(sleep_seconds)

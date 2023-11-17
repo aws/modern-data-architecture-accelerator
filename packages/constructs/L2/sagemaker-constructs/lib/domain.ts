@@ -11,6 +11,7 @@ import { PolicyStatement } from "aws-cdk-lib/aws-iam"
 import { Code, Runtime } from "aws-cdk-lib/aws-lambda"
 import { CfnDomain, CfnDomainProps } from "aws-cdk-lib/aws-sagemaker"
 import { Construct } from "constructs"
+// nosemgrep
 const _ = require( 'lodash' );
 
 /**

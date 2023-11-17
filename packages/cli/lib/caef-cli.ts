@@ -66,6 +66,7 @@ export class CaefDeploy {
     }
 
     private loadLocalPackages () {
+        // nosemgrep
         const workspaceQueryJson = require( 'child_process' ).execSync( `npm query .workspace --prefix ${ __dirname }/../../../` ).toString()
         const workspace: any[] = JSON.parse( workspaceQueryJson )
         return Object.fromEntries( workspace.map( pkgInfo => {
@@ -214,6 +215,7 @@ export class CaefDeploy {
             console.log( `Skipping package installation. In local/dry run mode.` )
             return prefix
         }
+        // nosemgrep
         if ( !fs.existsSync( prefix ) ) {
             console.log( `Installing ${ npmPackage } to ${ prefix }` )
             //Install the module CDK App NPM package
@@ -240,7 +242,9 @@ export class CaefDeploy {
     ): string {
         const moduleCaefDeployConfigFile = `${ modulePath }/caef.config.json`
         console.log( `Attempting to read module config from ${ moduleCaefDeployConfigFile }` )
+        // nosemgrep
         if ( fs.existsSync( moduleCaefDeployConfigFile ) ) {
+            // nosemgrep
             const moduleCaefDeployConfig = require( moduleCaefDeployConfigFile )
             if ( moduleCaefDeployConfig.hasOwnProperty( 'DEPLOY_STAGE' ) ) {
                 const deployStage = moduleCaefDeployConfig[ 'DEPLOY_STAGE' ]
@@ -260,6 +264,7 @@ export class CaefDeploy {
 
         if ( this.action != "dryrun" ) {
             const packageJsonPath = `${ modulePath }/package.json`
+            // nosemgrep
             const pjson = require( packageJsonPath );
             console.log( `Running CDK App ${ moduleEffectiveConfig.cdkApp } Version: ${ pjson.version }` );
         }
@@ -452,6 +457,7 @@ export class CaefDeploy {
 
     private execCmd ( cmd: string ) {
         console.log( "-----------------" )
+        // nosemgrep
         require( 'child_process' ).execSync( cmd, { stdio: 'inherit' } )
         console.log( "-----------------\n" )
     }

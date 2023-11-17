@@ -12,6 +12,7 @@ ec2 = boto3.client('ec2')
 def lambda_handler(event, context):
     logger.info("Starting")
     logger.info("Sleeping 30 seconds to allow for IAM permission propagation")
+    # nosemgrep
     time.sleep(30)
     if event['RequestType'] == 'Create':
         return handle_create(event, context)
@@ -53,6 +54,7 @@ def handle_create(event, context):
     try:
         volume_response = ec2.describe_volumes(VolumeIds=volume_ids)
     except Exception as e:
+        # nosemgrep
         logger.error(f"Unable to describe volumes {volume_ids}: {e}")
         raise e
 

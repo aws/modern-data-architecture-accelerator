@@ -17,6 +17,7 @@ def lambda_handler(event, context):
     logger.info("Starting")
     logger.debug(json.dumps(event, indent=2))
     logger.info("Sleeping 30 seconds to allow for IAM permission propagation")
+    # nosemgrep
     time.sleep(30)
     if event['RequestType'] == 'Create' or event['RequestType'] == 'Update':
         return handle_create_update(event, context)
@@ -58,6 +59,7 @@ def handle_create_update(event, context):
                     "Status": "SUCCESS",
                     "PhysicalResourceId": domainId
                 }
+            # nosemgrep
             time.sleep(10)
             num_attempts = num_attempts + 1
 

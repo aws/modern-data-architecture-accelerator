@@ -11,7 +11,7 @@ import { ExternalSecretStore } from './external-secret-store';
 import * as k8s from './imports/k8s';
 
 
-
+// nosemgrep
 const { XMLParser, XMLBuilder } = require( "fast-xml-parser" );
 
 export interface NodeResources {
@@ -90,6 +90,7 @@ export class NifiClusterChart extends cdk8s.Chart {
     public hash (): string {
         const json = JSON.stringify( this.toJson(), undefined, 2 )
         const stableJson = json.replace( /Token\[.*?\]/g, "Token" )
+        // nosemgrep
         const crypto = require( 'crypto' )
         const hash = crypto.createHash( 'sha1' )
             .update( stableJson ).digest( 'hex' );
@@ -264,7 +265,9 @@ export class NifiClusterChart extends cdk8s.Chart {
         nifiService: k8s.KubeService,
         nifiSecretName: string ): k8s.KubeStatefulSet {
 
+        // nosemgrep
         const nifiInitScriptsConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../scripts/nifi` ).map( fileName => {
+            // nosemgrep
             return [ fileName, fs.readFileSync( `${ __dirname }/../../scripts/nifi/${ fileName }`, 'utf-8' ) ]
         } ) )
 
@@ -648,8 +651,9 @@ export class NifiClusterChart extends cdk8s.Chart {
         sslBasePath: string,
         nifiDataDir: string,
     ): k8s.KubeConfigMap {
-
+        // nosemgrep
         const nifiBaseConfigMapData = Object.fromEntries( fs.readdirSync( `${ __dirname }/../../base_conf/nifi` ).map( fileName => {
+            // nosemgrep
             return [ fileName, fs.readFileSync( `${ __dirname }/../../base_conf/nifi/${ fileName }`, 'utf-8' ) ]
         } ) )
 

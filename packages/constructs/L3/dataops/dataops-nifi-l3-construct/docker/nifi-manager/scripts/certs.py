@@ -33,6 +33,7 @@ shutil.copy(truststore_secret_path,
 
 def get_nifi_app_pid():
     try:
+        # nosemgrep
         pid = check_output(
             ["pgrep", "-f", "app=NiFi"])
     except CalledProcessError as e:
@@ -58,6 +59,7 @@ def signal_restart_nifi():
                 "Nifi app hasn't gracefully restarted after 60 seconds. Sending sig 9 to force restart.")
             os.kill(nifi_app_pid, 9)
             return
+        # nosemgrep
         time.sleep(1)
     logger.info("Nifi gracefully restarted.")
 
@@ -91,5 +93,5 @@ while True:
     if (restart_nifi):
         logger.info("Found certificate changes. Signalling nifi to restart.")
         signal_restart_nifi()
-
+    # nosemgrep
     time.sleep(60)

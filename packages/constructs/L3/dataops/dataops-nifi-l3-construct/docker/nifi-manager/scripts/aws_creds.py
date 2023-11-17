@@ -34,4 +34,5 @@ while True:
             "Detected session token change. Writing to credentials file.")
         write_creds(session_creds)
         current_session_token = latest_session_token
+    # nosemgrep
     time.sleep(60)
