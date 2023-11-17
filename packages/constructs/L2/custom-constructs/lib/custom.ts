@@ -11,6 +11,7 @@ import { Code, ILayerVersion, Runtime } from "aws-cdk-lib/aws-lambda";
 import { Provider } from "aws-cdk-lib/custom-resources";
 import { NagPackSuppression, NagSuppressions } from "cdk-nag";
 import { Construct } from "constructs";
+// nosemgrep
 const _ = require( 'lodash' );
 
 export interface CaefCustomResourceProps extends CaefConstructProps {

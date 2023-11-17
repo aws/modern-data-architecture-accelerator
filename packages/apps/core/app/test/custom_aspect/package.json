@@ -1,0 +1,29 @@
+{
+  "name": "@aws-caef-testing/test-custom-aspect",
+  "version": "0.0.2",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest --passWithNoTests --coverage",
+    "test-coverage": "jest --passWithNoTests --coverage"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.10",
+    "@types/node": "10.17.27",
+    "jest": "^26.4.2",
+    "source-map-support": "^0.5.21",
+    "ts-jest": "^26.2.0",
+    "ts-node": "^9.1.1",
+    "typescript": "~4.2.4",
+    "typescript-json-schema": "^0.50.0"
+  },
+  "overrides": {
+    "@types/babel__traverse": "7.18.2"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.95.1"
+  },
+  "gitHead": "bb9c8d94a850be6573e8a5a7b9ba705c366bf107"
+}

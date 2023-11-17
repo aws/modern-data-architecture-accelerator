@@ -29,7 +29,7 @@ const extraContext = {
     app_config_data: "{}",
     app_configs: "./test/test_config1.yaml,./test/test_config2.yaml",
     tag_configs: "./test/tag_config.yaml",
-    custom_aspects: "[]"
+    custom_aspects: '[{"aspect_module":"./test/custom_aspect","aspect_class":"SampleCustomAspect","aspect_props":{"prop1":"propvalue1","prop2":{"prop2prop1":"propvalue2"}}}]'
 }
 describe( 'Test App Stack', () => {
 

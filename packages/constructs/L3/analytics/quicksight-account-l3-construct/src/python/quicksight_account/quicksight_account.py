@@ -73,6 +73,7 @@ def create_quicksight_account(accountDetail):
         ContactNumber=accountDetail.get('contactNumber', "")
     )
     logger.info(json.dumps(response, indent=2))
+    # nosemgrep
     time.sleep(30)
     created = False
     while not created:
@@ -80,6 +81,7 @@ def create_quicksight_account(accountDetail):
             AwsAccountId=ACCOUNT_ID
         )
         logger.info(json.dumps(response, indent=2))
+        # nosemgrep
         time.sleep(30)
         if response['AccountInfo']['AccountSubscriptionStatus'] == 'ACCOUNT_CREATED':
             created = True

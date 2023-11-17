@@ -43,16 +43,16 @@
       "path": "../dataops-project-l3-construct"
     },
     {
-      "path": "../../../L2/eks-constructs"
-    },
-    {
       "path": "../../../L2/ec2-constructs"
     },
     {
-      "path": "../../../L2/glue-constructs"
+      "path": "../../utility/ec2-l3-construct"
     },
     {
-      "path": "../../utility/ec2-l3-construct"
+      "path": "../../../L2/eks-constructs"
+    },
+    {
+      "path": "../../../L2/glue-constructs"
     },
     {
       "path": "../../../L2/iam-constructs"

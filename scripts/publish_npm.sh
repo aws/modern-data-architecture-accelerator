@@ -5,7 +5,7 @@ CAEF_CODEARTIFACT_PUBLISH_DOMAIN=$2
 CAEF_CODEARTIFACT_PUBLISH_ACCOUNT=$3
 NPM_PUBLISH_TAG=$4
 
-export PUBLISHED_VERSION=`cat lerna.json | jq -r .version`
+export PUBLISHED_VERSION=`jq -r .version < lerna.json `
 
 #Login to CodeArtifact release repos where we will publish release NPM packages
 aws codeartifact login --tool npm --repository $CAEF_CODEARTIFACT_PUBLISH_NPM_REPO --domain $CAEF_CODEARTIFACT_PUBLISH_DOMAIN --domain-owner $CAEF_CODEARTIFACT_PUBLISH_ACCOUNT --namespace '@aws-caef' --region us-east-1

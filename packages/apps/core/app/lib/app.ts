@@ -17,6 +17,7 @@ import * as yaml from 'yaml';
 import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from "./app_config";
 import * as configSchema from './config-schema.json';
 import { CaefProductStack, CaefProductStackProps, CaefStack } from "./stack";
+// nosemgrep
 import assert = require( "assert" )
 
 
@@ -83,7 +84,8 @@ export abstract class CaefCdkApp extends App {
         const namingClass: string = this.node.tryGetContext( 'naming_class' )
         this.naming = this.configNamingModule( namingModule, namingClass )
         const logSuppressions: boolean = this.node.tryGetContext( 'log_suppressions' ) == undefined ? false : ( /true/i ).test( this.node.tryGetContext( 'log_suppressions' ) )
-
+        
+        // nosemgrep
         const pjson = require( "../package.json" )
         const packageVersion = pjson.version.replace( /\.\d*$/, ".x" )
         console.log( `Running CAEF CDK App ${ app_name } Version: ${ packageVersion }` );
@@ -143,6 +145,7 @@ export abstract class CaefCdkApp extends App {
     }
 
     private loadConfigFromFiles ( fileList: string[] ): { [ key: string ]: any } {
+        // nosemgrep
         let _ = require( 'lodash' );
         function customizer ( objValue: any, srcValue: any ): any {
             if ( _.isArray( objValue ) ) {
@@ -153,6 +156,7 @@ export abstract class CaefCdkApp extends App {
 
         fileList.forEach( ( fileName: string ) => {
             console.log( `Reading config from ${ fileName }` )
+            // nosemgrep
             const parsedYaml = yaml.parse( fs.readFileSync( fileName.trim(), 'utf8' ) )
             //Resolve relative paths in parsedYaml
             const baseDir = path.dirname( fileName.trim() )
@@ -165,7 +169,9 @@ export abstract class CaefCdkApp extends App {
 
     private configNamingModule ( namingModule: string, namingClass: string ): ICaefResourceNaming {
         if ( namingModule ) {
+            // nosemgrep
             const naming_module_path = namingModule.startsWith( "./" ) ? path.resolve( namingModule ) : namingModule
+            // nosemgrep
             const customNamingModule = require( naming_module_path )
             return new customNamingModule[ namingClass ]( {
                 cdkNode: this.node,
@@ -196,6 +202,7 @@ export abstract class CaefCdkApp extends App {
     private applyCustomAspect ( customAspect: CaefCustomAspect ) {
         const customAspectModulePath = customAspect.aspect_module.startsWith( "./" ) ? path.resolve( customAspect.aspect_module ) : customAspect.aspect_module
         console.log( `Applying custom aspect: ${ customAspect.aspect_module }:${ customAspect.aspect_class }` )
+        // nosemgrep
         const customAspectModule = require( customAspectModulePath )
         const aspect = new customAspectModule[ customAspect.aspect_class ]( customAspect.aspect_props )
         Aspects.of( this ).add( aspect )

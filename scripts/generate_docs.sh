@@ -2,7 +2,7 @@
 set -e
 DOCS_BRANCH=$1
 
-export CURRENT_VERSION=`cat lerna.json | jq -r .version`
+export CURRENT_VERSION=`jq -r .version < lerna.json`
 export CURRENT_MAJOR=`cut -d'.' -f1 <<<"$CURRENT_VERSION"`
 export CURRENT_MINOR=`cut -d'.' -f2 <<<"$CURRENT_VERSION"`
 

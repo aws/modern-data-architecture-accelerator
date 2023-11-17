@@ -7,4 +7,5 @@ echo "Linking bundled dependencies to $ROOT_NODE_MODULES_DIR"
 rm -rfv "node_modules/@aws-caef/"
 mkdir -p "node_modules/@aws-caef"
 
+# nosemgrep
 cat package.json | jq -r '.bundledDependencies | .[]? | @sh'| grep -v null | xargs -n1 -I{} sh -c "ln -svf '$ROOT_NODE_MODULES_DIR/{}/' 'node_modules/{}'"

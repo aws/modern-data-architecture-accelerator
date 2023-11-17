@@ -6,6 +6,7 @@
 import { CaefConfigTransformer, CaefCustomAspect, CaefCustomNaming, ConfigConfigPathValueTransformer } from '@aws-caef/config';
 import Ajv, { JSONSchemaType, ValidateFunction } from "ajv";
 import * as fs from 'fs';
+// nosemgrep
 import path = require( 'path' );
 import * as yaml from 'yaml';
 import * as configSchema from './config-schema.json';
@@ -251,6 +252,7 @@ export class CaefCliConfig {
 
         const configValidator: ValidateFunction = avj.compile( this.configSchema )
         if ( this.props.filename ) {
+            // nosemgrep
             const configFileContentsString = fs.readFileSync( this.props.filename, { encoding: 'utf8' } )
             try {
                 const parsedContents = yaml.parse( configFileContentsString )

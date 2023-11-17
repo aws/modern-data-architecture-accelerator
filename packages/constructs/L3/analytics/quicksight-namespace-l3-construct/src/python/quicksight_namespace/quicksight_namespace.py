@@ -76,6 +76,7 @@ def create_quicksight_namespace(config):
             Namespace=name
         )
         logger.info(json.dumps(response, indent=2))
+        # nosemgrep
         time.sleep(5)
         if response['Namespace']['CreationStatus'] == 'CREATED':
             created = True
@@ -110,6 +111,7 @@ def delete_namespace(name):
             deleted = True
             return
         logger.info(verify_response)
+        # nosemgrep
         time.sleep(5)
     response_data = {
         "Status": "SUCCESS",

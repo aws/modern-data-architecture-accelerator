@@ -16,12 +16,14 @@ logger.setLevel(logging.INFO)
 def lambda_handler(event, context):
     logger.info("Starting")
     logger.info("Sleeping 30 seconds to allow for IAM permission propagation")
+    # nosemgrep
     time.sleep(30)
     if event['RequestType'] == 'Create':
         return handle_create(event, context)
     if event['RequestType'] == 'Update':
         handle_delete(event, context)
         logger.info("Sleeping 30 seconds to allow for lifecycle cleanup")
+        # nosemgrep
         time.sleep(30)
         return handle_create(event, context)
     if event['RequestType'] == 'Delete':

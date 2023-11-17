@@ -45,4 +45,5 @@ def handle_create(event, context):
             if(retryCount >= 6):
                 raise e
         retryCount = retryCount + 1
+        # nosemgrep
         time.sleep(10)

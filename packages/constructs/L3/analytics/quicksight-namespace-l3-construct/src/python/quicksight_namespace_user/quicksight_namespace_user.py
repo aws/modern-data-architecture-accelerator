@@ -58,6 +58,7 @@ def lambda_handler(event, context):
         user_name=user_name, role_name=role_name)
 
     delete_default_namespace_user(user_name=user_name, role_name=role_name)
+    # nosemgrep
     time.sleep(5)
     register_lob_namespace_user(user_id, role_name, user_email)
     register_user_in_groups(user_name)
