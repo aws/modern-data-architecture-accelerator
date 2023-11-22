@@ -35,9 +35,9 @@ region=ca-central-1
 ### Deployment from Locally Cloned Source Code (-l or 'local_mode')
 
 1. Clone CAEF repo.
-2. Run `npm install` at root of repo.
-3. Run `<repo_path>/bin/caef -l -c <path_to_caef_yaml> <action>`
-   * CAEF will locate modules within the local source code repo instead of NPM installing them
+2. Run `<repo_path>/bin/caef -l -c <path_to_caef_yaml> <action>`
+   * CAEF will run npm install at the root of the cloned repo to install CDK and all necessary third-party dependencies.
+   * CAEF will locate its own modules within the local source code repo instead of NPM installing them
    * **Note that specifying specific CAEF versions in local_mode is not supported**
    * See **CAEF Deployment using CLI** for more CLI options.
 

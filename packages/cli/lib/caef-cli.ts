@@ -12,35 +12,36 @@ import { CaefCliConfig, CaefDomainConfig, CaefEnvironmentConfig, CaefModuleConfi
 export interface DeployStageMap { [ key: string ]: { moduleConfig: ModuleEffectiveConfig, modulePath: string }[] }
 
 export class CaefDeploy {
-    private config: CaefCliConfig
-    private action: string
-
-    private domainFilter?: string[]
-    private envFilter?: string[]
-    private moduleFilter?: string[]
-    private npmTag: string
-    private roleArn?: string
-    private workingDir: string
-    private caefVersion?: string
-    private npmDebug: boolean;
-    private updateCache: { [ prefix: string ]: boolean } = {};
+    private readonly config: CaefCliConfig
+    private readonly action: string
+    private readonly cwd:string 
+    private readonly domainFilter?: string[]
+    private readonly envFilter?: string[]
+    private readonly moduleFilter?: string[]
+    private readonly npmTag: string
+    private readonly roleArn?: string
+    private readonly workingDir: string
+    private readonly caefVersion?: string
+    private readonly npmDebug: boolean;
+    private readonly updateCache: { [ prefix: string ]: boolean } = {};
     private readonly outputEffectiveConfig: boolean;
-    private localMode?:boolean
+    private readonly localMode?:boolean
     private static readonly DEFAULT_DEPLOY_STAGE = "1"
-    private localPackages : {[packageName:string]:string}
+    private readonly localPackages : {[packageName:string]:string}
 
     constructor( options: { [ key: string ]: string }, configContents?: { [ key: string ]: any } ) {
         this.action = options[ 'action' ]
         if ( !this.action ) {
             throw new Error( "CAEF action must be specified on command line: caef <action>" )
         }
+        this.cwd = process.cwd()
         this.caefVersion = options[ 'caef_version' ]
         this.domainFilter = options[ 'domain' ]?.split( "," ).map( x => x.trim() )
         this.envFilter = options[ 'env' ]?.split( "," ).map( x => x.trim() )
         this.moduleFilter = options[ 'module' ]?.split( "," ).map( x => x.trim() )
         this.roleArn = options[ 'role_arn' ]
         this.npmTag = options[ 'tag' ] ? options[ 'tag' ] : "latest"
-        this.workingDir = options[ "working_dir" ] ? `${ options[ "working_dir" ] }` : "./.caef_working"
+        this.workingDir = options[ "working_dir" ] ? path.resolve(options[ "working_dir" ]) : path.resolve("./.caef_working")
         this.npmDebug = options[ 'npm_debug' ] ? true : false
         this.outputEffectiveConfig = options[ 'output_effective_config' ] ? true : false
         this.localMode = options[ 'local_mode' ] ? true : false
@@ -54,8 +55,6 @@ export class CaefDeploy {
         if(this.localMode) {
             console.log("Running CAEF in local mode.")
         }
-
-        
 
         const configFileName = options[ 'config' ]
         if ( configContents ) {
@@ -211,8 +210,15 @@ export class CaefDeploy {
         const prefix = this.resolvePackagePrefix( npmPackage )
         const npmPackageNoVersion = npmPackage.replace( /(?<!^)@.*/, "" )
 
-        if ( this.action == "dryrun" || this.localMode ) {
-            console.log( `Skipping package installation. In local/dry run mode.` )
+        if ( this.action == "dryrun") {
+            console.log( `Skipping package installation. In dry run mode.` )
+            return prefix
+        }
+        if ( this.localMode ) {
+            console.log( `In local mode. Running package build for ${ npmPackageNoVersion}.` )
+            const buildCmd = `npx lerna run build --scope ${ npmPackageNoVersion}`
+            console.log( `Running Lerna Build: \n${ buildCmd }` )
+            this.execCmd( `cd ${ __dirname }/../../;${ buildCmd };cd ${ this.cwd}` );
             return prefix
         }
         // nosemgrep
@@ -269,14 +275,13 @@ export class CaefDeploy {
             console.log( `Running CDK App ${ moduleEffectiveConfig.cdkApp } Version: ${ pjson.version }` );
         }
 
-        const cdkCmd = this.createCdkCommand( moduleEffectiveConfig, modulePath )
+        const cdkCmd = this.createCdkCommand( moduleEffectiveConfig,modulePath )
         console.log( `Running CDK cmd:\n${ cdkCmd }` )
 
         if ( this.action != "dryrun" ) {
-            this.execCmd( cdkCmd );
+            this.execCmd( `cd ${ modulePath};${cdkCmd};cd ${this.cwd}` );
         }
     }
-
 
 
     private createCdkCommand (
@@ -288,8 +293,10 @@ export class CaefDeploy {
 
         const cdkEnv: string[] = this.createCdkCommandEnv( moduleEffectiveConfig )
         const cdkCmd: string[] = []
-        cdkCmd.push( `npx --loglevel=verbose ${ this.npmDebug ? "-d" : "" } cdk ${ action } --require-approval never` )
-        cdkCmd.push( `-a 'npx --loglevel=verbose ${ this.npmDebug ? "-d" : "" } ${ modulePath }/'` )
+        cdkCmd.push( `npx ${ this.npmDebug ? "-d" : "" } cdk ${ action } --require-approval never` )
+        if(!this.localMode){
+            cdkCmd.push( `-a 'npx --loglevel=verbose ${ this.npmDebug ? "-d" : "" } ${ modulePath }/'` )
+        }
         cdkCmd.push( `-o '${ this.workingDir }/cdk.out'` )
         cdkCmd.push( `-c 'org=${ this.config.contents.organization }'` )
         cdkCmd.push( `-c 'env=${ moduleEffectiveConfig.envName }'` )
@@ -305,8 +312,8 @@ export class CaefDeploy {
 
         this.addOptionalCdkContextStringParam( cdkCmd, "output_effective_config", this.outputEffectiveConfig?.toString() )
         this.addOptionalCdkContextStringParam( cdkCmd, "use_bootstrap", moduleEffectiveConfig.useBootstrap?.toString() )
-        this.addOptionalCdkContextStringParam( cdkCmd, "app_configs", moduleEffectiveConfig.appConfigFiles?.join( ',' ) )
-        this.addOptionalCdkContextStringParam( cdkCmd, "tag_configs", moduleEffectiveConfig.tagConfigFiles?.join( ',' ) )
+        this.addOptionalCdkContextStringParam( cdkCmd, "app_configs", moduleEffectiveConfig.appConfigFiles?.map( x => path.resolve( x ) ).join( ',' ) )
+        this.addOptionalCdkContextStringParam( cdkCmd, "tag_configs", moduleEffectiveConfig.tagConfigFiles?.map( x => path.resolve( x ) ).join( ',' ) )
         this.addOptionalCdkContextStringParam( cdkCmd, "additional_accounts", moduleEffectiveConfig.additionalAccounts?.join( ',' ) )
         this.addOptionalCdkContextStringParam( cdkCmd, "log_suppressions", this.config.contents.log_suppressions?.toString() )
         this.addOptionalCdkContextObjParam( cdkCmd, "custom_aspects", moduleEffectiveConfig.customAspects )
