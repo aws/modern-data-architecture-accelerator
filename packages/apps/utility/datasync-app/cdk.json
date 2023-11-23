@@ -1,0 +1,7 @@
+{
+  "app": "npx ts-node --prefer-ts-exts bin/datasync.ts",
+  "context": {
+    "aws-cdk:enableDiffNoFail": true,
+    "@aws-cdk/core:enablePartitionLiterals": true
+  }
+}
