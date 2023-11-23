@@ -6,7 +6,7 @@
 
 * Added local execution mode for CAEF CLI. This allows direct execution of CAEF from cloned CAEF repo.
   * No NPM publishing or installation of CAEF packages required.
-  * All modules will be executed from the local source code.
+  * All modules will be built and executed from the local source code.
   * CAEF config must not specify a CAEF version. Whatever is cloned/checked out from the CAEF repo will be used.
 * Updated CDK to latest version (2.97.1)
 * Update CDK Nag to latest version (2.27.142)
@@ -17,7 +17,10 @@
 
 ### Data Ops Changes
 
-* Added experimental DataOps Nifi cluster module running on EKS Fargate
+* Added preview DataOps Database Migration Service (DMS) module
+  * Supports Replication Instance-based replication tasks
+  * Supports endpoint credentials either via Secrets Manager or via AWS Role
+* Added preview DataOps Nifi cluster module running on EKS Fargate
   * Allows deployment of multiple secured Nifi Clusters on a single EKS cluster, along with a preconfigured and integrated Nifi Registry
   * Allows configuration of Nifi and Registry permissions through CAEF
   * Allows integration of Nifi Auth with SAML IDP such as IAM Identity Center
@@ -27,8 +30,8 @@
 
 ### Utility Changes
 
-* Added experimental reusable compliant constructs for EKS Fargate clusters
-* Added experimental reusable compliant constructs for ECS Tasks and Services
+* Added preview reusable compliant constructs for EKS Fargate clusters
+* Added preview reusable compliant constructs for ECS Tasks and Services
 
 ## 0.39.0
 
