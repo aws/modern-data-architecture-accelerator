@@ -25,7 +25,8 @@ describe( 'CAEF Compliance Stack Tests', () => {
     endpointType: "source",
     engineName: "mysql",
     mySqlSettings: {
-      secretsManagerSecretId: "test-secret"
+      secretsManagerSecretArn: "arn:test-partition:secretsmanager:test-region:test-account:secret:test-secret",
+      secretsManagerSecretKMSArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id"
     }
   }
 
@@ -33,8 +34,8 @@ describe( 'CAEF Compliance Stack Tests', () => {
     endpointType: "source",
     engineName: "oracle",
     oracleSettings: {
-      secretsManagerSecretId: "test-secret",
-      secretsManagerOracleAsmSecretId: "test-secret"
+      secretsManagerSecretArn: "arn:test-partition:secretsmanager:test-region:test-account:secret:test-secret",
+      secretsManagerOracleAsmSecretArn: "arn:test-partition:secretsmanager:test-region:test-account:secret:test-secret",
     }
   }
 
@@ -83,7 +84,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
   
   test( 'Secret Access Policy', () => {
     template.hasResourceProperties( "AWS::IAM::ManagedPolicy", {
-      "ManagedPolicyName": "test-org-test-env-test-domain-test-module",
+      "ManagedPolicyName": "test-org-test-env-test-domain-test-module-secrets-access",
       "PolicyDocument": {
         "Statement": [
           {
@@ -93,6 +94,14 @@ describe( 'CAEF Compliance Stack Tests', () => {
             ],
             "Effect": "Allow",
             "Resource": "arn:test-partition:secretsmanager:test-region:test-account:secret:test-secret"
+          },
+          {
+            "Action": [
+              "kms:Decrypt",
+              "kms:DescribeKey"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:test-partition:kms:test-region:test-acct:key/test-key-id"
           }
         ],
         "Version": "2012-10-17"

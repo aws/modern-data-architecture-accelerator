@@ -28,7 +28,7 @@ dms:
   # Access to secrets referenced in the config will be granted automatically.
   # Role must also have an assume role trust policy to the regional DMS service name: dms.<region>.amazonaws.com
   dmsRoleArn: arn:{{partition}}:iam::{{account}}:role/test-dms-role
-  
+
   # Replication instances which will be provisioned by the config
   replicationInstances:
     # Each instance has a unique name in the config
@@ -58,8 +58,11 @@ dms:
       microsoftSqlServerSettings:
         # Name of the database
         databaseName: test-database
-        # Name of the secret from which credentials will be read.
-        secretsManagerSecretId: dms-test-secret
+        # Arn of the secret from which credentials will be read.
+        # The DMS role will be granted access to retrieve the secret
+        secretsManagerSecretArn: arn:{{partition}}:secretsmanager:{{region}}:{{account}}:secret:test-secret-abc123
+        # The DMS role will be granted decrypt access to this key
+        secretsManagerSecretKMSArn: arn:{{partition}}:kms:{{region}}:{{account}}:key:test-secret-key-id
     test-target:
       endpointType: target
       engineName: s3
@@ -98,5 +101,4 @@ dms:
               schema-name: Test
               table-name: DMS%
             rule-action: exclude
-      
 ```

@@ -262,6 +262,14 @@ export interface ReplicationTaskProps  {
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dms-replicationtask.html#cfn-dms-replicationtask-taskdata
      */
     readonly taskData?: { [ key: string ]: any };
+    /**
+     * Overall settings for the task, in JSON format.
+     *
+     * For more information, see [Specifying Task Settings for AWS Database Migration Service Tasks](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Tasks.CustomizingTasks.TaskSettings.html) in the *AWS Database Migration Service User Guide* .
+     *
+     * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dms-replicationtask.html#cfn-dms-replicationtask-replicationtasksettings
+     */
+    readonly replicationTaskSettings?: { [ key: string ]: any };
 
 }
 
@@ -361,7 +369,8 @@ export class DMSL3Construct extends CaefL3Construct {
                 targetEndpointArn: targetEndpointArn,
                 replicationTaskIdentifier: this.props.naming.resourceName(taskName),
                 taskData: taskProps.taskData ? JSON.stringify( taskProps.taskData ) : undefined,
-                tableMappings: JSON.stringify( taskProps.tableMappings )
+                tableMappings: JSON.stringify( taskProps.tableMappings ),
+                replicationTaskSettings: taskProps.replicationTaskSettings ? JSON.stringify(taskProps.replicationTaskSettings) : undefined
             }
             new CfnReplicationTask( this, `replication-task-${ taskName }`, cfnTaskProps )
         })
@@ -377,6 +386,7 @@ export class DMSL3Construct extends CaefL3Construct {
 
     private createEndpoints ( dmsRole: IRole ): { [ name: string ]: CfnEndpoint } {
         const secrets: ISecret[] = []
+        const secretKeys: IKey[] = []
         const endpoints = Object.fromEntries( Object.entries( this.props.dms.endpoints || {}).map( ( [ endpointName, endpointProps ]) => {
             const engineSettingsPropName = DMSL3Construct.engineToSettingsNameMap[ endpointProps.engineName ] as keyof EndpointProps
             const engineSettingsProp = endpointProps[ engineSettingsPropName ] as any
@@ -390,16 +400,22 @@ export class DMSL3Construct extends CaefL3Construct {
             
             Object.entries( endpointProps ).forEach( ( [ _propKey, prop ]) => {
                 
-                if ( prop.hasOwnProperty( 'secretsManagerSecretId' ) && prop[ 'secretsManagerAccessRoleArn' ] == undefined ) {
+                if ( prop.hasOwnProperty( 'secretsManagerSecretArn' ) && prop[ 'secretsManagerAccessRoleArn' ] == undefined ) {
+                    const secretArn = prop[ 'secretsManagerSecretArn' ] 
                     prop[ 'secretsManagerAccessRoleArn' ] = dmsRole.roleArn
-                    const secretId =  prop[ 'secretsManagerSecretId' ] 
-                    secrets.push( Secret.fromSecretNameV2( this, `secret-import-${ endpointName }`, secretId ) )
+                    prop[ 'secretsManagerSecretId' ] = secretArn
+                    secrets.push( Secret.fromSecretCompleteArn( this, `secret-import-${ endpointName }`, secretArn ) )
+                    const secretKeyKMSArn = prop[ 'secretsManagerSecretKMSArn' ] 
+                    if ( secretKeyKMSArn ) {
+                        secretKeys.push( Key.fromKeyArn( this, `secret-key-import-${ endpointName }`, secretKeyKMSArn ) )
+                    }
                 }
 
-                if ( prop.hasOwnProperty( 'secretsManagerOracleAsmSecretId' ) && prop[ 'secretsManagerOracleAsmAccessRoleArn' ] == undefined ) {
+                if ( prop.hasOwnProperty( 'secretsManagerOracleAsmSecretArn' ) && prop[ 'secretsManagerOracleAsmAccessRoleArn' ] == undefined ) {
+                    const secretArn = prop[ 'secretsManagerOracleAsmSecretArn' ]
+                    prop[ 'secretsManagerOracleAsmSecretId' ] = secretArn
                     prop[ 'secretsManagerOracleAsmAccessRoleArn' ] = dmsRole.roleArn
-                    const secretId = prop[ 'secretsManagerOracleAsmSecretId' ]
-                    secrets.push( Secret.fromSecretNameV2( this, `asm-secret-import-${ endpointName }`, secretId ) )
+                    secrets.push( Secret.fromSecretCompleteArn( this, `asm-secret-import-${ endpointName }`, secretArn ) )
                 }
             })
 
@@ -412,22 +428,40 @@ export class DMSL3Construct extends CaefL3Construct {
             const endpoint = new CaefEndpoint( this, `endpoint-${ endpointName }`, caefEndpointProps )
             return [ endpointName, endpoint ]
         } ) )
+
+        this.createSecretsAccessPolicy(dmsRole,secrets,secretKeys)
+
+        return endpoints
+    }
+    private createSecretsAccessPolicy(dmsRole: IRole,secrets:ISecret[],secretKeys:IKey[]){
         if ( secrets.length > 0 ) {
+            const secretsStatement = new PolicyStatement( {
+                actions: [
+                    'secretsmanager:DescribeSecret',
+                    'secretsmanager:GetSecretValue'
+                ],
+                resources: secrets.map( x => x.secretArn ),
+                effect: Effect.ALLOW
+            } )
+
+            const secretKMSStatement = secretKeys.length > 0 ? [new PolicyStatement( {
+                actions: [
+                    'kms:Decrypt',
+                    'kms:DescribeKey'
+                ],
+                resources: secretKeys.map( x => x.keyArn ),
+                effect: Effect.ALLOW
+            } )] : []
+
             new CaefManagedPolicy( this, 'secrets-access-policy', {
+                managedPolicyName: 'secrets-access',
                 naming: this.props.naming,
                 roles: [ dmsRole ],
-                statements: [ new PolicyStatement( {
-                    actions: [
-                        'secretsmanager:DescribeSecret',
-                        'secretsmanager:GetSecretValue'
-                    ],
-                    resources: secrets.map( x => x.secretArn ),
-                    effect: Effect.ALLOW
-                } ) ]
+                statements: [ secretsStatement, ...secretKMSStatement ]
             } )
         }
 
-        return endpoints
+        
     }
 
 

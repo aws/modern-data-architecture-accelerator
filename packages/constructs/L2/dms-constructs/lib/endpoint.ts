@@ -25,19 +25,20 @@ export interface SybaseSettingsProperty {
      *
      * The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value of the AWS Secrets Manager secret that allows access to the SAP ASE endpoint.
      *
-     * > You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId` . Or you can specify clear-text values for `UserName` , `Password` , `ServerName` , and `Port` . You can't specify both.
-     * >
-     * > For more information on creating this `SecretsManagerSecret` , the corresponding `SecretsManagerAccessRoleArn` , and the `SecretsManagerSecretId` that is required to access it, see [Using secrets to access AWS Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the *AWS Database Migration Service User Guide* .
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-sybasesettings.html#cfn-dms-endpoint-sybasesettings-secretsmanageraccessrolearn
      */
     readonly secretsManagerAccessRoleArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the SAP SAE endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the SAP SAE endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-sybasesettings.html#cfn-dms-endpoint-sybasesettings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The Arn of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
 }
 /**
  * Provides information that defines an Oracle endpoint. Modified from the equivalent L1 Construct to prevent use of plaintext credentials and enforce use of KMS encryption.
@@ -225,10 +226,6 @@ export interface OracleSettingsProperty {
      *
      * The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value of the AWS Secrets Manager secret that allows access to the Oracle endpoint.
      *
-     * > You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId` . Or you can specify clear-text values for `UserName` , `Password` , `ServerName` , and `Port` . You can't specify both.
-     * >
-     * > For more information on creating this `SecretsManagerSecret` , the corresponding `SecretsManagerAccessRoleArn` , and the `SecretsManagerSecretId` that is required to access it, see [Using secrets to access AWS Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the *AWS Database Migration Service User Guide* .
-     *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-oraclesettings.html#cfn-dms-endpoint-oraclesettings-secretsmanageraccessrolearn
      */
     readonly secretsManagerAccessRoleArn?: string;
@@ -247,17 +244,21 @@ export interface OracleSettingsProperty {
     /**
      * Required only if your Oracle endpoint uses Advanced Storage Manager (ASM).
      *
-     * The full ARN, partial ARN, or display name of the `SecretsManagerOracleAsmSecret` that contains the Oracle ASM connection details for the Oracle endpoint.
+     * The full ARN of the `SecretsManagerOracleAsmSecret` that contains the Oracle ASM connection details for the Oracle endpoint.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-oraclesettings.html#cfn-dms-endpoint-oraclesettings-secretsmanageroracleasmsecretid
      */
-    readonly secretsManagerOracleAsmSecretId?: string;
+    readonly secretsManagerOracleAsmSecretArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the Oracle endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the Oracle endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-oraclesettings.html#cfn-dms-endpoint-oraclesettings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The ID of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
     /**
      * Use this attribute to convert `SDO_GEOMETRY` to `GEOJSON` format.
      *
@@ -381,19 +382,20 @@ export interface MySqlSettingsProperty {
      *
      * The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value of the AWS Secrets Manager secret that allows access to the MySQL endpoint.
      *
-     * > You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId` . Or you can specify clear-text values for `UserName` , `Password` , `ServerName` , and `Port` . You can't specify both.
-     * >
-     * > For more information on creating this `SecretsManagerSecret` , the corresponding `SecretsManagerAccessRoleArn` , and the `SecretsManagerSecretId` that is required to access it, see [Using secrets to access AWS Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the *AWS Database Migration Service User Guide* .
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-mysqlsettings.html#cfn-dms-endpoint-mysqlsettings-secretsmanageraccessrolearn
      */
     readonly secretsManagerAccessRoleArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the MySQL endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the MySQL endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-mysqlsettings.html#cfn-dms-endpoint-mysqlsettings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The ID of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
     /**
      * Specifies the time zone for the source MySQL database.
      *
@@ -1018,19 +1020,20 @@ export interface RedshiftSettingsProperty {
      *
      * The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value of the AWS Secrets Manager secret that allows access to the Amazon Redshift endpoint.
      *
-     * > You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId` . Or you can specify clear-text values for `UserName` , `Password` , `ServerName` , and `Port` . You can't specify both.
-     * >
-     * > For more information on creating this `SecretsManagerSecret` , the corresponding `SecretsManagerAccessRoleArn` , and the `SecretsManagerSecretId` that is required to access it, see [Using secrets to access AWS Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the *AWS Database Migration Service User Guide* .
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-redshiftsettings.html#cfn-dms-endpoint-redshiftsettings-secretsmanageraccessrolearn
      */
     readonly secretsManagerAccessRoleArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the Amazon Redshift endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the Amazon Redshift endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-redshiftsettings.html#cfn-dms-endpoint-redshiftsettings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The ID of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
     /**
      * The AWS KMS key ID.
      *
@@ -1158,19 +1161,20 @@ export interface MongoDbSettingsProperty {
      *
      * The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value of the AWS Secrets Manager secret that allows access to the MongoDB endpoint.
      *
-     * > You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId` . Or you can specify clear-text values for `UserName` , `Password` , `ServerName` , and `Port` . You can't specify both.
-     * >
-     * > For more information on creating this `SecretsManagerSecret` , the corresponding `SecretsManagerAccessRoleArn` , and the `SecretsManagerSecretId` that is required to access it, see [Using secrets to access AWS Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the *AWS Database Migration Service User Guide* .
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-mongodbsettings.html#cfn-dms-endpoint-mongodbsettings-secretsmanageraccessrolearn
      */
     readonly secretsManagerAccessRoleArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the MongoDB endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the MongoDB endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-mongodbsettings.html#cfn-dms-endpoint-mongodbsettings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The ID of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
     /**
      * The name of the server on the MongoDB source endpoint.
      *
@@ -1208,19 +1212,20 @@ export interface IbmDb2SettingsProperty {
      *
      * The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value ofthe AWS Secrets Manager secret that allows access to the Db2 LUW endpoint.
      *
-     * > You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId` . Or you can specify clear-text values for `UserName` , `Password` , `ServerName` , and `Port` . You can't specify both.
-     * >
-     * > For more information on creating this `SecretsManagerSecret` , the corresponding `SecretsManagerAccessRoleArn` , and the `SecretsManagerSecretId` that is required to access it, see [Using secrets to access AWS Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the *AWS Database Migration Service User Guide* .
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-ibmdb2settings.html#cfn-dms-endpoint-ibmdb2settings-secretsmanageraccessrolearn
      */
     readonly secretsManagerAccessRoleArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the IBMDB2 endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the IBMDB2 endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-ibmdb2settings.html#cfn-dms-endpoint-ibmdb2settings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The ID of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
     /**
      * Enables ongoing replication (CDC) as a BOOLEAN value.
      *
@@ -1368,19 +1373,20 @@ export interface DocDbSettingsProperty {
      *
      * The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value of the AWS Secrets Manager secret that allows access to the DocumentDB endpoint.
      *
-     * > You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId` . Or you can specify clear-text values for `UserName` , `Password` , `ServerName` , and `Port` . You can't specify both.
-     * >
-     * > For more information on creating this `SecretsManagerSecret` , the corresponding `SecretsManagerAccessRoleArn` , and the `SecretsManagerSecretId` that is required to access it, see [Using secrets to access AWS Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the *AWS Database Migration Service User Guide* .
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-docdbsettings.html#cfn-dms-endpoint-docdbsettings-secretsmanageraccessrolearn
      */
     readonly secretsManagerAccessRoleArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the DocumentDB endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the DocumentDB endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-docdbsettings.html#cfn-dms-endpoint-docdbsettings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The ID of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
 }
 /**
  * Provides information, including the Amazon Resource Name (ARN) of the IAM role used to define an Amazon DynamoDB target endpoint.  Modified from the equivalent L1 Construct to prevent use of plaintext credentials and enforce use of KMS encryption.
@@ -1475,19 +1481,20 @@ export interface MicrosoftSqlServerSettingsProperty {
      *
      * The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value of the AWS Secrets Manager secret that allows access to the SQL Server endpoint.
      *
-     * > You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId` . Or you can specify clear-text values for `UserName` , `Password` , `ServerName` , and `Port` . You can't specify both.
-     * >
-     * > For more information on creating this `SecretsManagerSecret` , the corresponding `SecretsManagerAccessRoleArn` , and the `SecretsManagerSecretId` that is required to access it, see [Using secrets to access AWS Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the *AWS Database Migration Service User Guide* .
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-microsoftsqlserversettings.html#cfn-dms-endpoint-microsoftsqlserversettings-secretsmanageraccessrolearn
      */
     readonly secretsManagerAccessRoleArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the MicrosoftSQLServer endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the MicrosoftSQLServer endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-microsoftsqlserversettings.html#cfn-dms-endpoint-microsoftsqlserversettings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The ID of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
     /**
      * Fully qualified domain name of the endpoint.
      *
@@ -1610,11 +1617,15 @@ export interface GcpMySQLSettingsProperty {
      */
     readonly secretsManagerAccessRoleArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the MySQL endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the MySQL endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-gcpmysqlsettings.html#cfn-dms-endpoint-gcpmysqlsettings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The ID of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
     /**
      * Endpoint TCP port.
      *
@@ -1742,19 +1753,20 @@ export interface PostgreSqlSettingsProperty {
      *
      * The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value of the AWS Secrets Manager secret that allows access to the PostgreSQL endpoint.
      *
-     * > You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId` . Or you can specify clear-text values for `UserName` , `Password` , `ServerName` , and `Port` . You can't specify both.
-     * >
-     * > For more information on creating this `SecretsManagerSecret` , the corresponding `SecretsManagerAccessRoleArn` , and the `SecretsManagerSecretId` that is required to access it, see [Using secrets to access AWS Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the *AWS Database Migration Service User Guide* .
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-postgresqlsettings.html#cfn-dms-endpoint-postgresqlsettings-secretsmanageraccessrolearn
      */
     readonly secretsManagerAccessRoleArn?: string;
     /**
-     * The full ARN, partial ARN, or display name of the `SecretsManagerSecret` that contains the PostgreSQL endpoint connection details.
+     * The full ARN of the `SecretsManagerSecret` that contains the PostgreSQL endpoint connection details.
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-dms-endpoint-postgresqlsettings.html#cfn-dms-endpoint-postgresqlsettings-secretsmanagersecretid
      */
-    readonly secretsManagerSecretId: string;
+    readonly secretsManagerSecretArn: string;
+    /**
+     * The ID of the KMS key used to encrypt the credentials secret.
+     */
+    readonly secretsManagerSecretKMSArn?: string;
     /**
      * Sets the name of a previously created logical replication slot for a change data capture (CDC) load of the PostgreSQL source instance.
      *
