@@ -491,6 +491,8 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         databaseLakeFormationProps: DatabaseLakeFormationProps,
         locationArn?: string ) {
 
+        // Provide Project Execution Roles (principal) data location permissions to create data catalog
+        // tables that point to specified data-locations
         if ( databaseLakeFormationProps.createReadWriteGrantsForProjectExecutionRoles && locationArn ) {
             this.projectExecutionRoles.forEach( role => {
                 const grantId = LakeFormationAccessControlL3Construct.generateIdentifier( databaseName, role.refId() )
@@ -524,9 +526,9 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
                 } ) ),
                 tablePermissions: LakeFormationAccessControlL3Construct.TABLE_SUPER_PERMISSIONS
             }
+            
             projectRoleGrantProps[ `data-admins-${ databaseName }` ] = adminGrantProps
         }
-
         if ( databaseLakeFormationProps.createReadGrantsForDataEngineerRoles ) {
             const engineerGrantProps: GrantProps = {
                 database: dbResourceName,
@@ -586,6 +588,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         const lakeFormationProps: LakeFormationAccessControlL3ConstructProps = {
             grants: { ...projectRoleGrantProps, ...lfGrantProps },
             resourceLinks: resourceLinkProps,
+            externalDatabaseDependency: database,
             ...this.props as CaefL3ConstructProps
         }
 

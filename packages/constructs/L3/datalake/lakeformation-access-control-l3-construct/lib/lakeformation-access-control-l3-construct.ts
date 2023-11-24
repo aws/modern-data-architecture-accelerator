@@ -115,12 +115,16 @@ export interface LakeFormationAccessControlL3ConstructProps extends CaefL3Constr
    * Resource links which will be created in the local account.
    */
   readonly resourceLinks?: NamedResourceLinkProps
+  /**
+   * External Database reference which may create in parallel (Optional)
+   * This option is useful when a stack is using multiple L2/L3 constructs to create databases and LakeFormation Grants
+   */
+  readonly externalDatabaseDependency?: CfnDatabase
 }
 
 export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
   protected readonly props: LakeFormationAccessControlL3ConstructProps
-
-
+  
   public static readonly DATABASE_READ_PERMISSIONS: string[] = [ "DESCRIBE" ]
   public static readonly DATABASE_READ_WRITE_PERMISSIONS: string[] = [ "DESCRIBE", "CREATE_TABLE", "ALTER" ]
   public static readonly DATABASE_SUPER_PERMISSIONS: string[] = [ "DESCRIBE", "CREATE_TABLE", "ALTER", "DROP" ]
@@ -152,8 +156,8 @@ export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
   constructor( scope: Construct, id: string, props: LakeFormationAccessControlL3ConstructProps ) {
     super( scope, id, props )
     this.props = props
-
-    this.createResourceLinks( this.props.resourceLinks || {} )
+    
+    this.createResourceLinks( this.props.resourceLinks || {}, this.props.externalDatabaseDependency )
 
     Object.entries( this.props.grants ).forEach( grantEntry => {
       const grantName = grantEntry[ 0 ]
@@ -162,13 +166,13 @@ export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
         const principalName = principalEntry[ 0 ]
         const principalProps = principalEntry[ 1 ]
         const principalIdentity = this.constructPrincipalIdentity( principalName, principalProps )
-        this.createDatabaseGrant( principalIdentity, principalName, grantName, grantProps )
-        this.createTableGrant( principalIdentity, principalName, grantName, grantProps )
+        this.createDatabaseGrant( principalIdentity, principalName, grantName, grantProps, principalIdentity.account == this.account ? this.props.externalDatabaseDependency : undefined )
+        this.createTableGrant( principalIdentity, principalName, grantName, grantProps, principalIdentity.account == this.account ? this.props.externalDatabaseDependency : undefined  )
       } )
     } )
   }
 
-  private createResourceLinks ( resourceLinks: NamedResourceLinkProps ) {
+  private createResourceLinks ( resourceLinks: NamedResourceLinkProps , externalDependency?:CfnDatabase ) {
 
     Object.entries( resourceLinks ).forEach( resourceLinkEntry => {
       const resourceLinkName = resourceLinkEntry[ 0 ]
@@ -218,7 +222,7 @@ export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
             permissions: [ 'DESCRIBE' ],
             permissionsWithGrantOption: []
           } )
-          LakeFormationAccessControlL3Construct.addToAccountGrants( fromAccount, crossAccountResourceLinkGrant )
+          LakeFormationAccessControlL3Construct.addToAccountGrants( fromAccount, crossAccountResourceLinkGrant, fromAccount == this.account ? externalDependency : undefined )
         }
       } )
 
@@ -228,20 +232,24 @@ export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
 
   //We use this static method to ensure that each grant depends on the previous (by account).
   //This ensures that each grant is deployed in sequence, avoiding LF API rate limits.
-  private static addToAccountGrants ( account: string, grant: CfnPrincipalPermissions ) {
+  private static addToAccountGrants ( account: string, grant: CfnPrincipalPermissions, externalDependency?:CfnDatabase ) {
     if ( this.accountGrants[ account ] ) {
       grant.addDependency( this.accountGrants[ account ] )
+    }
+    else if ( externalDependency ) {
+      grant.addDependency( externalDependency )
     }
     this.accountGrants[ account ] = grant
   }
 
   private createDatabaseGrant ( principalIdentity: PrincipalIdentity,
     principalName: string,
-    grantName: string, grantProps: GrantProps ) {
+    grantName: string, grantProps: GrantProps,
+    externalDependency?:CfnDatabase ) {
 
     const databaseGrantIdentifier = LakeFormationAccessControlL3Construct.generateIdentifier( grantName, principalName, "DATABASE" )
 
-    const databaseGrant = new CfnPrincipalPermissions( this.scope, `grant-${ databaseGrantIdentifier }`, {
+    const databaseGrant = new CfnPrincipalPermissions( this, `grant-${ databaseGrantIdentifier }`, {
       resource: {
         database: {
           catalogId: this.account,
@@ -254,20 +262,21 @@ export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
       permissions: grantProps.databasePermissions,
       permissionsWithGrantOption: []
     } )
+    LakeFormationAccessControlL3Construct.addToAccountGrants( this.account, databaseGrant, externalDependency )
 
-    LakeFormationAccessControlL3Construct.addToAccountGrants( this.account, databaseGrant )
   }
 
   private createTableGrant ( principalIdentity: PrincipalIdentity,
     principalName: string,
     grantName: string,
-    grantProps: GrantProps ) {
+    grantProps: GrantProps,
+    externalDependency?:CfnDatabase ) {
 
     const databaseName = grantProps.database
     if ( grantProps.tables && grantProps.tables.length > 0 ) {
       grantProps.tables.forEach( tableName => {
         const tableGrantIdentifier = LakeFormationAccessControlL3Construct.generateIdentifier( grantName, principalName, tableName )
-        const tableGrant = new CfnPrincipalPermissions( this.scope, `grant-${ tableGrantIdentifier }`, {
+        const tableGrant = new CfnPrincipalPermissions( this, `grant-${ tableGrantIdentifier }`, {
           resource: {
             table: {
               catalogId: this.account,
@@ -281,11 +290,11 @@ export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
           permissions: grantProps.tablePermissions || [],
           permissionsWithGrantOption: []
         } )
-        LakeFormationAccessControlL3Construct.addToAccountGrants( this.account, tableGrant )
+        LakeFormationAccessControlL3Construct.addToAccountGrants( this.account, tableGrant, externalDependency )
       } )
     } else {
       const tableGrantIdentifier = LakeFormationAccessControlL3Construct.generateIdentifier( grantName, principalName, "ALL_TABLES" )
-      const tableGrant = new CfnPrincipalPermissions( this.scope, `grant-${ tableGrantIdentifier }`, {
+      const tableGrant = new CfnPrincipalPermissions( this, `grant-${ tableGrantIdentifier }`, {
         resource: {
           table: {
             catalogId: this.account,
@@ -299,7 +308,7 @@ export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
         permissions: grantProps.tablePermissions || [],
         permissionsWithGrantOption: []
       } )
-      LakeFormationAccessControlL3Construct.addToAccountGrants( this.account, tableGrant )
+      LakeFormationAccessControlL3Construct.addToAccountGrants( this.account, tableGrant, externalDependency )
     }
   }
 
