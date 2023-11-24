@@ -27,6 +27,8 @@
 * Resolved issue with hardcoded Glue job timeouts in Glue Workflows
 * Added support for EventBridge Rule cron scheduling expressions to DataOps Lambda, Glue Workflow, and StepFunction modules
 * Added support for static EventBridge target input to be statically defined
+* Resolved race condition in DataOps Project/LakeFormation grants
+  * May require recreation of LF Grants previously created through DataOps project
 
 ### Utility Changes
 
