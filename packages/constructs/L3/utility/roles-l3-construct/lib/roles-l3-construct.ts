@@ -5,11 +5,26 @@
 
 import { CaefManagedPolicy, CaefRole } from '@aws-caef/iam-constructs';
 import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-
 import { AccountPrincipal, ArnPrincipal, Condition, Effect, IPrincipal, IRole, ISamlProvider, ManagedPolicy, PolicyDocument, PolicyStatement, PrincipalWithConditions, SamlMetadataDocument, SamlPrincipal, SamlProvider, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
+import { resolve } from 'path';
+import { parse } from 'yaml';
+import { readFileSync } from 'fs';
+
+/**
+ * Define UsageProfile types 
+ */
+export enum BasePersona {
+    DATA_ADMIN     = "data-admin",
+    DATA_ENGINEER  = "data-engineer",
+    DATA_SCIENTIST = "data-scientist"
+}
+
+export interface PersonaConfigProps {
+    readonly personas: { [ key: string]: Array<string>}
+}
 
 export interface FederationProps {
     /**
@@ -42,6 +57,10 @@ export interface GenerateManagedPolicyProps {
      * If true (default false), policy name will be set verbatim instead of using the naming class
      */
     readonly verbatimPolicyName?: boolean
+    /**
+     * Additional policy statements that may be added to policyDocument
+     */
+    readonly statements?: PolicyStatement[];
 }
 export interface SuppressionProps {
     readonly id: string
@@ -63,6 +82,11 @@ export interface TrustedPrincipalProps {
 }
 
 export interface GenerateRoleProps {
+    /**
+     * Intended base persona that the generated role should mimic
+     * All the policies associated with specified persona will get associated with the generated role
+     */
+    readonly basePersona?: BasePersona,
     /**
      * The assume role trust config.
      */
@@ -109,14 +133,30 @@ export interface RolesL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
+interface CaefPersonaAndManagedPolicies {
+    /**
+     * Map of persona names to list of managed policy names
+     */
+    readonly personaToCaefPolicyMap: { [ personaName: string ]: string[] };
+    /**
+     * Map of managed policy-name to CAEF Managed Policy
+     */
+    readonly caefPolicies: { [ policyName: string ]: CaefManagedPolicy };
+}
+
 export class RolesL3Construct extends CaefL3Construct {
     protected readonly props: RolesL3ConstructProps
+    protected readonly personaToCaefPolicyMap: { [ personaName: string ]: string[] }
+    protected readonly caefManagedPolicies: { [ policyName: string ]: CaefManagedPolicy }
 
     public readonly generatedRoles: { [ key: string ]: IRole }
 
     constructor( scope: Construct, id: string, props: RolesL3ConstructProps ) {
         super( scope, id, props )
         this.props = props
+        const caefPersonaAndManagedPolicies = this.createCaefManagedPolicies()
+        this.personaToCaefPolicyMap = caefPersonaAndManagedPolicies.personaToCaefPolicyMap
+        this.caefManagedPolicies = caefPersonaAndManagedPolicies.caefPolicies
         const federationProviders = this.createFederations()
         const generatedPolicies = this.createManagedPolicies()
         this.generatedRoles = this.createRoles( federationProviders, generatedPolicies ) || {}
@@ -169,6 +209,61 @@ export class RolesL3Construct extends CaefL3Construct {
         return generatedPolicies
     }
 
+    private createCaefManagedPolicies (): CaefPersonaAndManagedPolicies  {
+        const personaToCaefPolicyMap: { [ key: string ]: string[] } = {}
+        const personaConfig = this.loadPolicyConfig("../policy-statements/persona-map.yaml") as PersonaConfigProps
+        const caefPolicySet = new Set<string>()
+        Object.entries(personaConfig.personas).map( ([ basePersona, personaProps]) => {
+            personaProps.forEach( policyConfigFile => {
+                caefPolicySet.add(policyConfigFile)
+                if ( this.getFileName(policyConfigFile) ) {
+                    if ( !personaToCaefPolicyMap[ basePersona ] ) {
+                        personaToCaefPolicyMap[ basePersona ] = []
+                    }
+                    personaToCaefPolicyMap[ basePersona ].push( this.getFileName(policyConfigFile) )                
+                }
+            })
+        })
+
+        const caefGeneratedPolicies: { [ key: string ]: CaefManagedPolicy } = {}
+        caefPolicySet.forEach( policyConfigFile => {
+            const name = this.getFileName(policyConfigFile)
+            if ( name ) {
+                const managedPolicyProps = this.loadPolicyConfig(`../policy-statements/${policyConfigFile}.yaml`) as {statements?:PolicyStatement[]; suppressions? : SuppressionProps[] }
+                const policyStatements: PolicyStatement[] = ( managedPolicyProps.statements || [] ).map( statement => {
+                    return PolicyStatement.fromJson( statement )
+                })
+                // Create CAEF Managed Policy
+                const caefPolicy = new CaefManagedPolicy( this.scope, `caef-managed-policy-${name}`,{
+                    naming: this.props.naming,
+                    managedPolicyName: name,
+                    document: new PolicyDocument({
+                        statements: policyStatements
+                    }),
+                })
+                
+                // Add Suppression
+                if ( managedPolicyProps.suppressions ) {
+                    NagSuppressions.addResourceSuppressions(
+                        caefPolicy,
+                        managedPolicyProps.suppressions,
+                        true
+                    );
+                }
+                caefGeneratedPolicies[ name ] = caefPolicy
+            }
+        })
+
+        return {
+            personaToCaefPolicyMap: personaToCaefPolicyMap,
+            caefPolicies: caefGeneratedPolicies
+        }
+    }
+
+    private getFileName(policyConfigFile: string) {
+        return policyConfigFile.split('/').pop() || '';
+    }
+
     private createRoles ( federationProviders: { [ key: string ]: ISamlProvider }, generatedPolicies: { [ key: string ]: ManagedPolicy } ): { [ key: string ]: IRole } | undefined {
         const generatedRoles = this.props.generateRoles?.map( generateRole => {
 
@@ -195,6 +290,13 @@ export class RolesL3Construct extends CaefL3Construct {
                     } ) )
                 }
             } )
+
+            if ( generateRole.basePersona ){
+                // Attach Caef Generated Policies to the roles based on the persona defined in 'persona-map.yaml'
+                this.personaToCaefPolicyMap[ generateRole.basePersona ].forEach( policyName => {
+                    this.caefManagedPolicies[ policyName ].attachToRole( role )
+                })
+            }
 
             if ( generateRole.generatedPolicies ) {
                 generateRole.generatedPolicies.forEach( policyNamRef => {
@@ -247,5 +349,26 @@ export class RolesL3Construct extends CaefL3Construct {
         }
     }
 
+    private loadPolicyConfig(fileName: string) {
+        const configFilePath = resolve(__dirname, fileName);
+        console.log("Reading config file from path" + configFilePath);
+        try {
+    
+            //  Read the configuration file
+            const rawConfigFile = readFileSync(configFilePath, 'utf8');
+            const rawConfig:{ [x: string]: any } = parse(rawConfigFile);
+            return rawConfig
+        }
+        catch (err) {
+            console.log(err);
+            throw err;
+        }
+        
+    }
 
+    
 }
+
+
+
+

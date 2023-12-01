@@ -8,7 +8,7 @@ import { CaefTestApp } from "@aws-caef/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { Match } from "aws-cdk-lib/assertions";
 import { PolicyDocument } from "aws-cdk-lib/aws-iam";
-import { FederationProps, GenerateManagedPolicyWithNameProps, GenerateRoleWithNameProps, RolesL3Construct, RolesL3ConstructProps } from "../lib";
+import { FederationProps, GenerateManagedPolicyWithNameProps, GenerateRoleWithNameProps, RolesL3Construct, RolesL3ConstructProps,BasePersona } from "../lib";
 
 
 describe( 'CAEF Compliance Stack Tests', () => {
@@ -88,6 +88,23 @@ describe( 'CAEF Compliance Stack Tests', () => {
                     "aws:PrincipalArn": "arn:test-partition:iam::test-account:role/test-assuming-role"
                 }
             }
+        },
+        {
+            name: "test-usage-profile",
+            trustedPrincipal: "account:123456789",
+            basePersona: BasePersona.DATA_ADMIN
+        },
+        {
+            name: "test-usage-profile-2",
+            trustedPrincipal: "account:123456789",
+            basePersona: BasePersona.DATA_SCIENTIST,
+            awsManagedPolicies: [ 'test-aws-managed-policy' ],
+            suppressions: [
+                {
+                    id: "AwsSolutions-IAM4",
+                    reason: "unit testing"
+                }
+            ]
         }
     ]
 
@@ -126,23 +143,36 @@ describe( 'CAEF Compliance Stack Tests', () => {
             "Name": "test-org-test-env-test-domain-test-module-federation2"
         } )
     } )
+    test( 'Generate CAEF Managed Usage Policy', () => {
+        template.hasResourceProperties( "AWS::IAM::ManagedPolicy", Match.objectLike( {
+            "ManagedPolicyName": "test-org-test-env-test-domain-test-module-data-scientis--aa316df",
+            "Roles": [
+            {
+                "Ref": "testusageprofile26942D4A0"
+            }
+            ]
+            
+        } ) )
+    } )
     test( 'Generate Managed Policy', () => {
         template.hasResourceProperties( "AWS::IAM::ManagedPolicy", Match.objectLike( {
-            "PolicyDocument": {
-                "Statement": [
-                    {
-                        "Action": "s3:GetObject",
-                        "Effect": "Allow",
-                        "Resource": "arn:test-partition:s3:::test-bucket/*",
-                        "Sid": "test-statement"
-                    }
-                ]
-            },
             "ManagedPolicyName": "test-org-test-env-test-domain-test-module-test-policy1",
-            "Roles": [
+            "Path": "/",
+            "PolicyDocument": {
+              "Statement": [
                 {
-                    "Ref": "testrole1F884210D"
+                  "Action": "s3:GetObject",
+                  "Effect": "Allow",
+                  "Resource": "arn:test-partition:s3:::test-bucket/*",
+                  "Sid": "test-statement"
                 }
+              ],
+              "Version": "2012-10-17"
+            },
+            "Roles": [
+              {
+                "Ref": "testrole1F884210D"
+              }
             ]
         } ) )
     } )
@@ -250,6 +280,25 @@ describe( 'CAEF Compliance Stack Tests', () => {
                 "arn:test-partition:iam::aws:policy/test-aws-managed-policy",
                 "arn:test-partition:iam::test-account:policy/test-managed-policy"
             ]
+        } ) )
+    } )
+    test( 'Role Based on CAEF Usage Profile', () => {
+        template.hasResourceProperties( "AWS::IAM::ManagedPolicy", Match.objectLike( {
+            "ManagedPolicyName": "test-org-test-env-test-domain-test-module-data-admin-ba-69e17cd8",
+            "Roles": [
+                {
+                    "Ref": "testusageprofile1A5918BD"
+                }
+                ]
+                
+        } ) )
+    } )
+    test( 'Role Based on CAEF Usage Profile, Additional Policies and Suppressions ', () => {
+        template.hasResourceProperties( "AWS::IAM::Role", Match.objectLike( {
+            "ManagedPolicyArns": [
+                "arn:test-partition:iam::aws:policy/test-aws-managed-policy"
+              ],
+              "RoleName": "test-org-test-env-test-domain-test-module-test-usage-profile-2"
         } ) )
     } )
 } )

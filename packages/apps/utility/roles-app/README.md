@@ -6,13 +6,18 @@ The Roles CDK application is used to deploy IAM roles which can be used within a
 
 ![Roles](../../../constructs/L3/utility/roles-l3-construct/docs/Roles.png)
 
-**IAM Managed Policies** - An IAM Managed Policy will be created for each policy specified in the config.
+**IAM Managed Policies** - 
+  * An IAM 'Customer' Managed Policy will be created for each policy specified in the config.
+  
+    *Policies which violate CDK Nag rule sets will require explicit suppressions*
 
-* Policies which violate CDK Nag rule sets will require explicit suppressions
+  * CAEF Managed Policies will be created, which can be attached to the IAM Roles specified in the config.
+
 
 **IAM Roles** - An IAM role will be created for each role specified in the config.
 
 * Roles can have one or more assume role trust policy statements
+* Roles can specify usage persona ( data-admin, data-engineer, data-scientist, data-steward ) to attach relevant policies
 
 **IAM Identity (Federation) Providers** - IAM identity providers which can be used to establish SAML federation (via assume role trust) into generated roles
 
@@ -66,6 +71,13 @@ generatePolicies:
         reason: "Wildcard testing ok!"
 # The list of roles which will be generated
 generateRoles:
+  my-data-admin:
+    trustedPrincipal: this_account
+    # basePersona(optional) - Specify a persona which can be applied to the role.
+    # Allowed values: "data-admin"| "data-engineer" | "data-scientist"
+    basePersona: data-admin
+    generatedPolicies:
+      - TestPolicy
   test-role:
     # By trusting 'this_account', AssumeRoleTrust will be established with IAM root of this account
     trustedPrincipal: this_account

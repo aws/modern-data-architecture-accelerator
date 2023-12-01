@@ -1,0 +1,71 @@
+statements:
+
+    # Basic Sagemaker policies should be attached. 
+    # Permissions that are resource specific should be added via CAEF data science module 
+    # or via CAEF Roles/generatePolicies
+    -   Sid: SageMakerLogsAccess
+        Effect: Allow
+        Action:
+            - 'logs:Describe*'
+            - 'logs:Get*'
+        Resource:
+            - 'arn:aws:logs:ca-central-1:*:log-group:*sagemaker*'
+        
+    -   Sid: GlueNotebookNoResourceAccess
+        Effect: Allow
+        Action:
+            -  'glue:GetNotebookInstanceStatus'        # Grants permission to retrieve Glue Studio Notebooks session status
+            -  'glue:GlueNotebookAuthorize'        # Grants permission to access Glue Studio Notebooks
+            -  'glue:GlueNotebookRefreshCredentials'        # Grants permission to refresh Glue Studio Notebooks credentials
+            -  'glue:StartNotebook'        # Grants permission to start Glue Studio Notebooks
+            -  'glue:TerminateNotebook'        # Grants permission to terminate Glue Studio Notebooks
+            -  'glue:TestConnection'        # Grants permission to test connection in Glue Studio
+            -  'glue:UseGlueStudio'        # Grants permission to use Glue Studio and access its internal APIs
+        Resource:
+            '*'
+
+    -   Sid: CodeCommitReadAccess
+        Effect: Allow
+        Action:
+            -  'codecommit:BatchGet*'    #Grants permission to get return information about one or more repositories/commits/Pull requests/
+            -  'codecommit:BatchDescribeMergeConflicts'        # Grants permission to get information about multiple merge conflicts when attempting to merge two commits using either the three-way merge or the squash merge option
+            -  'codecommit:DescribeMergeConflicts'        # Grants permission to get information about specific merge conflicts when attempting to merge two commits using either the three-way or the squash merge option
+            -  'codecommit:DescribePullRequestEvents'        # Grants permission to return information about one or more pull request events
+            -  'codecommit:EvaluatePullRequestApprovalRules'        # Grants permission to evaluate whether a pull request is mergable based on its current approval state and approval rule requirements
+            -  'codecommit:GitPull'        # Grants permission to pull information from an AWS CodeCommit repository to a local repo
+            -  'codecommit:ListAssociatedApprovalRuleTemplatesForRepository'        # Grants permission to list approval rule templates that are associated with a repository
+            -  'codecommit:ListBranches'        # Grants permission to list branches for an AWS CodeCommit repository with this API; does not control Git branch actions
+            -  'codecommit:ListPullRequests'        # Grants permission to list pull requests for a specified repository
+            -  'codecommit:ListTagsForResource'        # Grants permission to list the resource attached to a CodeCommit resource ARN
+        Resource:
+            - 'arn:aws:codecommit:*:*:*'
+
+    -   Sid: GroundTruthLabellingNoResourceAccess
+        Effect: Allow
+        Action:
+            - 'groundtruthlabeling:*'
+        Resource: '*'    
+
+    -   Sid: KmsListAliases
+        Action: 'kms:ListAliases'       # Controls permission to view the aliases that are defined in the account. Aliases are optional friendly names that you can associate with AWS KMS keys
+        Resource: '*'
+        Effect: Allow
+    
+    -   Sid: BasicSsmListAccess
+        Action: 'ssm:DescribeParameters'        # Grants permission to view details about a specified SSM parameter
+        Resource: '*'
+        Effect: Allow
+    
+      
+
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: " - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service
+                  - SageMakerLogsAccess: Permissions provided to access Sagemaker logs
+                  - KmsListAliases: Permissions provided to view aliases for KMS keys 
+                  - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter
+                "
+    -   id: "NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess"
+        reason: "- GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action"
+    -   id: "HIPAA.Security-IAMPolicyNoStatementsWithFullAccess"
+        reason: "- GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action"    

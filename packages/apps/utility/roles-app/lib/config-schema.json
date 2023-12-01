@@ -272,6 +272,15 @@
                     },
                     "type": "array"
                 },
+                "basePersona": {
+                    "description": "Intended base persona that the generated role should mimic\nAll the policies associated with specified persona will get associated with the generated role",
+                    "enum": [
+                        "data-admin",
+                        "data-engineer",
+                        "data-scientist"
+                    ],
+                    "type": "string"
+                },
                 "customerManagedPolicies": {
                     "description": "List of AWS Managed policies to associate to the role.",
                     "items": {
@@ -295,6 +304,16 @@
                 },
                 "trustedPrincipal": {
                     "description": "The assume role trust config.",
+                    "type": "string"
+                },
+                "usageProfile": {
+                    "description": "Usage Profile to be used to define the role",
+                    "enum": [
+                        "data-admin",
+                        "data-engineer",
+                        "data-scientist",
+                        "data-steward"
+                    ],
                     "type": "string"
                 }
             },
