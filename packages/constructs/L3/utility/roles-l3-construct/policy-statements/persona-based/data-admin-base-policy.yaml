@@ -1,0 +1,149 @@
+statements:
+    -   Sid: BasicSsmListAccess 
+        Action: 'ssm:DescribeParameters'        # Grants permission to view details about a specified SSM parameter
+        Resource: '*'
+        Effect: Allow
+        
+    -   Sid: ListKmsAliases
+        Action: 'kms:ListAliases'       # Controls permission to view the aliases that are defined in the account. Aliases are optional friendly names that you can associate with AWS KMS keys
+        Resource: '*'
+        Effect: Allow
+
+    -   Sid: s3DataAdminDeletePermissions
+        Effect: Allow
+        Action:
+            - 's3:DeleteAccessPoint*'
+            - 's3:DeleteBucket*'
+            - 's3:DeleteJobTagging'
+            - 's3:DeleteMultiRegionAccessPoint'
+        Resource: '*'
+    
+    -   Sid: SageMakerBasicAccess
+        Effect: Allow
+        Action:
+            - 'sagemaker:*App'         # Grants permission to create/describe/delete an App for a SageMaker UserProfile or Space
+            - 'sagemaker:Describe*'
+            - 'sagemaker:*Profile'      # Grants permission to create/describe/delete/update a UserProfile
+        Resource:
+            - '*'
+
+    -   Sid: IAMViewRolePermissions
+        Effect: Allow
+        Action:
+            - 'iam:GetRole'     # Grants permission to retrieve information about the specified role, including the role's path, GUID, ARN, and the role's trust policy
+            - 'iam:ListRoles'       # Grants permission to list the IAM roles that have the specified path prefix 
+        Resource: '*'
+
+    -   Sid: RedshiftDataAdminAccess
+        Effect: Allow
+        Action:
+            - 'redshift:ModifyClusterMaintenance'       # Grants permission to modify the maintenance settings of a cluster
+            - 'redshift:ModifyEndpointAccess'           # Grants permission to modify a redshift-managed vpc endpoint
+            - 'redshift:ModifyScheduledAction'          # Grants permission to modify an existing Amazon Redshift scheduled action
+            - 'redshift:PurchaseReservedNodeOffering'   # Grants permission to purchase a reserved node
+            - 'redshift:RevokeEndpointAccess'           # Grants permission to revoke access for endpoint related activities for redshift-managed vpc endpoint
+            - 'redshift:CreateTags'         # Grants permission to add one or more tags to a specified resource
+            - 'redshift:*SnapshotAccess'           # Grants permission to authorize access/revoke access from the specified AWS account to restore a snapshot
+            - 'redshift:BatchDeleteClusterSnapshots'        # Grants permission to delete snapshots in a batch of size upto 100
+            - 'redshift:BatchModifyClusterSnapshots'        # Grants permission to modify settings for a list of snapshots
+            - 'redshift:*ClusterSnapshot'       # Grants permission to create/delete/copy/modify a manual snapshot
+            - 'redshift:*SnapshotCopyGrant'     # Grants permission to create a snapshot copy grant and encrypt copied snapshots in a destination AWS Region/Delete Copy Grant
+            - 'redshift:*SnapshotSchedule'      # Grants permission to create/modify/delete/describe a snapshot schedule
+            - 'redshift:*UsageLimit'            # Grants permission to create/modify/delete a usage limit
+        Resource:
+            - '*'
+
+    -   Sid: RedshiftDeletePermissions
+        Effect: Allow
+        Action:
+            - 'redshift:DeletePartner'      # Grants permission to delete a partner integration from a cluster
+            - 'redshift:DeleteAuthenticationProfile'        # Grants permission to delete an Amazon Redshift authentication profile
+            - 'redshift:DeleteClusterParameterGroup'        # Grants permission to delete an Amazon Redshift parameter group
+            - 'redshift:DeleteTags'         # Grants permission to delete a tag or tags from a resource
+        Resource:
+            - '*'
+    
+    -   Sid: GlueAdminAccess
+        Effect: Allow
+        Action:
+            - 'glue:BatchGet*'       # Grants permission to retrieve one or more crawlers/jobs/triggers/workflows/blueprints
+            - 'glue:*Trigger'       # Grants permission to get/create/start/stop/update a trigger
+            - 'glue:*Crawler'       # Grants permission to get/create/start/stop/update a crawler
+            - 'glue:GetWorkflow*'       # Grants permission to retrieve one/more workflow OR workflow runs
+            - 'glue:NotifyEvent'        # Grants permission to notify an event to the event-driven workflow
+            - 'glue:*WorkflowRun'       # Grants permission to start/stop/resume a workflow run
+            - 'glue:GetBlueprint*'      # Grants permission to retrieve a blueprint or blueprint run(s)
+            - 'glue:StartBlueprintRun'      # Grants permission to start running a blueprint
+        Resource:
+            - '*'
+
+    -   Sid: SecretsManagerBasicAccess
+        Effect: Allow
+        Action:
+            - 'secretsmanager:GetRandomPassword'        # Grants permission to generate a random string for use in password creation
+            - 'secretsmanager:DescribeSecret'           # Grants permission to retrieve the metadata about a secret, but not the encrypted data
+            - 'secretsmanager:ListSecrets'          # Grants permission to list the available secrets 
+            - 'secretsmanager:ListSecretVersionIds'     # Grants permission to list the available versions of a secret
+        Resource: '*'
+
+    -   Sid: LakeFormationDataAdminPermissions
+        Effect: Allow
+        Action:
+            -  'lakeformation:*Permissions'        # Grants permission to grant/revoke data lake permissions to a principal/more principals in a batch
+            -  'lakeformation:*Transaction'        # Grants permission to start/commit/describe/extend/cancel the given transaction
+            -  'lakeformation:*egisterResource'        # Grants permission to register/deregister a location
+            -  'lakeformation:UpdateResource'        # Grants permission to update a registered location
+            -  'lakeformation:StartQueryPlanning'        # Grants permission to initiate the planning of the given query
+            -  'lakeformation:*DataCellsFilter'        # Grants permission to create/update/delete a Lake Formation data cell filter
+            -  'lakeformation:*LFTag'        # Grants permission to create/delete/update a Lake Formation tag
+            -  'lakeformation:*LakeFormationOptIn'        # Enforce/remove Lake Formation permissions for the given databases, tables, and principals
+        Resource:
+            - '*'
+    
+    -   Sid: CodeCommitReadAccess
+        Effect: Allow
+        Action:
+            -  'codecommit:BatchGet*'    #Grants permission to get return information about one or more repositories/commits/Pull requests/
+            -  'codecommit:BatchDescribeMergeConflicts'        # Grants permission to get information about multiple merge conflicts when attempting to merge two commits using either the three-way merge or the squash merge option
+            -  'codecommit:DescribeMergeConflicts'        # Grants permission to get information about specific merge conflicts when attempting to merge two commits using either the three-way or the squash merge option
+            -  'codecommit:DescribePullRequestEvents'        # Grants permission to return information about one or more pull request events
+            -  'codecommit:EvaluatePullRequestApprovalRules'        # Grants permission to evaluate whether a pull request is mergable based on its current approval state and approval rule requirements
+            -  'codecommit:GitPull'        # Grants permission to pull information from an AWS CodeCommit repository to a local repo
+            -  'codecommit:ListAssociatedApprovalRuleTemplatesForRepository'        # Grants permission to list approval rule templates that are associated with a repository
+            -  'codecommit:ListBranches'        # Grants permission to list branches for an AWS CodeCommit repository with this API; does not control Git branch actions
+            -  'codecommit:ListPullRequests'        # Grants permission to list pull requests for a specified repository
+            -  'codecommit:ListTagsForResource'        # Grants permission to list the resource attached to a CodeCommit resource ARN
+        Resource:
+            - 'arn:aws:codecommit:*:*:*'
+    
+    -   Sid: DmsDataAdminAccess
+        Effect: Allow
+        Action:
+            -  'dms:*ReplicationTaskAssessmentRun'        # Grants permission to describe/start/cancel/delete a single premigration assessment run
+            -  'dms:*ReplicationTask'        # Grants permission to create/start/stop/modify/delete/move a replication task using the specified parameters
+            -  'dms:DescribeReplicationTask*'        # Grants permission to return the latest task assessment results from Amazon S3/return a paginated list of individual assessments based on filter settings
+            -  'dms:DescribeReplicationInstanceTaskLogs'        # Grants permission to return information about the task logs for the specified task
+            -  'dms:DescribeRefreshSchemasStatus'        # Grants permission to returns the status of the RefreshSchemas operation
+            -  'dms:DescribeSchemas'        # Grants permission to return information about the schema for the specified endpoint   
+            -  'dms:DescribeTableStatistics'        # Grants permission to return table statistics on the database migration task, including table name, rows inserted, rows updated, and rows deleted  
+            -  'dms:DescribeApplicableIndividualAssessments'         # Grants permission to list individual assessments that you can specify for a new premigration assessment run
+            -  'dms:StartReplicationTaskAssessment*'        # Grants permission to start the replication task assessment for unsupported data types in the source database OR # Grants permission to start a new premigration assessment run for one or more individual assessments of a migration task 
+            -  'dms:ReloadTables'        # Grants permission to reload the target database table with the source data
+            -  'dms:TestConnection'        # Grants permission to test the connection between the replication instance and the endpoint
+
+        Resource: '*'
+    
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: " - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service
+                  - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy
+                  - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles
+                  - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions
+                  - RedshiftDataAdminAccess: Redshift data admin permissions
+                  - GlueAdminAccess: Glue data admin permission
+                  - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata
+                  - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions
+                  - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions
+                  - KmsListAliases: Permissions provided to view aliases for KMS keys 
+                  - BasicSsmListAccess: Allows data admin to view details about a ssm parameter
+                "

@@ -32,6 +32,9 @@
 
 ### Utility Changes
 
+* Added preview generated managed policies to Roles module providing base permissions for Data Admins, Data Scientists, and Data Engineers
+  * Added 'basePersona' config to generated roles, accepting one of "data-admin"| "data-engineer" | "data-scientist"
+  * Generated policies appropriate for the basePersona will be automatically added to the generated role
 * Added preview reusable compliant constructs for EKS Fargate clusters
 * Added preview reusable compliant constructs for ECS Tasks and Services
 

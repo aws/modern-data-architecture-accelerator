@@ -1,0 +1,22 @@
+statements:
+  - Sid: AthenaNoResource
+    Effect: Allow
+    Action:
+      - 'athena:ListDataCatalogs'
+      - 'athena:ListEngineVersions'
+      - 'athena:ListWorkGroups'
+      - 'athena:ListCapacityReservations'
+      - 'athena:ListApplicationDPUSizes'
+      - 'athena:ListExecutors'
+    Resource: '*'
+
+  - Sid: BasicAthenaAccessForDefaultCatalog
+    Effect: Allow
+    Action:
+      - 'athena:ListDatabases'
+      - 'athena:GetDataCatalog'
+    Resource: 'arn:aws:athena:*:*:datacatalog/AwsDataCatalog'  # TODO: Restrict to region/account
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: "Policy actions do not require Resource!"    
+        

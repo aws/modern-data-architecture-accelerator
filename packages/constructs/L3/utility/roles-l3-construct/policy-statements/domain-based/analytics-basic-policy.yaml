@@ -1,0 +1,21 @@
+##++++++++++++++++++++++++++++++++++++++++++++##
+# analytics
+#   - datawarehouse
+#   - 
+#   
+##++++++++++++++++++++++++++++++++++++++++++++##
+statements: 
+    -   Sid: RedshiftNoResourceReadAccess
+        Effect: Allow
+        Action:
+            -  'redshift:Describe*'        
+            -  'redshift:GetReservedNodeExchangeConfigurationOptions'        # Grants permission to get the configuration options for the reserved-node exchange
+            -  'redshift:GetReservedNodeExchangeOfferings'        # Grants permission to get an array of DC2 ReservedNodeOfferings that matches the payment type, term, and usage price of the given DC1 reserved node
+        Resource:
+            - '*'
+
+   
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: " - RedshiftNoResourceReadAccess: Policy actions do not require Resource!
+                "  

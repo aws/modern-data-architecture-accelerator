@@ -39,6 +39,14 @@ generatePolicies:
 
 # The list of roles which will be generated
 generateRoles:
+  my-data-admin:
+    trustedPrincipal: this_account
+    # basePersona(optional) - Specify a persona which can be applied to the role.
+    # Allowed values: "data-admin"| "data-engineer" | "data-scientist"
+    basePersona: data-admin
+    generatedPolicies:
+      - TestPolicy
+    
   test-role:
     # By trusting 'this_account', AssumeRoleTrust will be established with IAM root of this account
     trustedPrincipal: this_account

@@ -130,13 +130,20 @@ export class CaefManagedPolicy extends ManagedPolicy {
     }
 
     public checkPolicyLength ( alwaysLog: boolean = false ) {
+        const policyDocLength = this.computePolicyLength()
+        if ( policyDocLength > 5500 || alwaysLog ) {
+            console.warn( `${ this.props.managedPolicyName } policy length ~${ policyDocLength } chars of maximum 6144. Note that the character length may increase after processing by CFN.` )
+        }
+        
+    }
+     
+    public computePolicyLength (): number {
         const policyDoc = this.document.toJSON()
         if ( policyDoc ) {
             const policyDocLength = JSON.stringify( policyDoc ).replace( /\s*/i, '' ).replace( /\n*/i, '' ).length
-            if ( policyDocLength > 5500 || alwaysLog ) {
-                console.warn( `${ this.props.managedPolicyName } policy length ~${ policyDocLength } chars of maximum 6144. Note that the character length may increase after processing by CFN.` )
-            }
-        }
+            return policyDocLength
+        } 
+        return 0
     }
     /**
      * Re-implemented from cdk ManagedPolicy.fromAwsManagedPolicyName

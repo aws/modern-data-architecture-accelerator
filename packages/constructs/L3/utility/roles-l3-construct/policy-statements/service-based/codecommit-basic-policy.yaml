@@ -1,0 +1,18 @@
+statements:
+    -   Sid: CodeCommitNoResourceAccess
+        Effect: Allow
+        Action:
+            -  'codecommit:CreateApprovalRuleTemplate'        # Grants permission to create an approval rule template that will automatically create approval rules in pull requests that match the conditions defined in the template; does not grant permission to create approval rules for individual pull requests
+            -  'codecommit:DeleteApprovalRuleTemplate'        # Grants permission to delete an approval rule template
+            -  'codecommit:GetApprovalRuleTemplate'        # Grants permission to return information about an approval rule template
+            -  'codecommit:ListApprovalRuleTemplates'        # Grants permission to list all approval rule templates in an AWS Region for the AWS account
+            -  'codecommit:ListRepositories'        # Grants permission to list information about AWS CodeCommit repositories in the current Region for your AWS account
+            -  'codecommit:ListRepositoriesForApprovalRuleTemplate'        # Grants permission to list repositories that are associated with an approval rule template
+            -  'codecommit:UpdateApprovalRuleTemplateContent'        # Grants permission to update the content of approval rule templates; does not grant permission to update content of approval rules created specifically for pull requests
+            -  'codecommit:UpdateApprovalRuleTemplateDescription'        # Grants permission to update the description of approval rule templates
+            -  'codecommit:UpdateApprovalRuleTemplateName'        # Grants permission to update the name of approval rule templates
+        Resource: 'arn:*:codecommit:*:*:*'
+
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: "Policy actions do not require Resource!" 

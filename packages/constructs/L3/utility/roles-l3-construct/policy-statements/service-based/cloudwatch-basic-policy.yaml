@@ -1,0 +1,39 @@
+statements: 
+  -   Sid: CloudWatchNoResourceAccess
+      Action:
+          - 'cloudwatch:List*'
+          - 'cloudwatch:Get*'
+          - 'cloudwatch:Describe*'
+      Resource: '*'
+      Effect: Allow
+
+  - Sid: CloudWatchLogsNoResource
+    Action:
+      - 'logs:DeleteSubscriptionFilter'
+      - 'logs:DescribeAccountPolicies'
+      - 'logs:DescribeDestinations'
+      - 'logs:DescribeExportTasks'
+      - 'logs:DescribeLogGroups'
+      - 'logs:DescribeQueries'
+      - 'logs:DescribeQueryDefinitions'
+      - 'logs:DescribeResourcePolicies'
+      - 'logs:DescribeSubscriptionFilters'
+      - 'logs:TestMetricFilter'
+      - 'logs:StopQuery'
+    Resource: '*'
+    Effect: Allow
+
+  # TODO: Discuss with CAEF core team if we would like such basic actions
+  # defined in our CAEF managed policies 
+  - Sid: AllowLogGroupAndStreamWriteAccess
+    Action:
+      - 'logs:CreateLogStream'
+      - 'logs:PutLogEvents'
+      - 'logs:CreateLogGroup'
+      - 'logs:DescribeLogStreams'
+    Resource: '*'
+    Effect: Allow
+
+suppressions:
+  -   id: "AwsSolutions-IAM5"
+      reason: "Most policy actions do not require Resources. Basic Policy to create log group/stream and write log events!"  

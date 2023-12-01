@@ -1,0 +1,48 @@
+statements:
+    -   Sid: GlueAccessNoResource
+        Effect: Allow
+        Action:
+            - 'glue:BatchGetCustomEntityTypes'
+            - 'glue:CheckSchemaVersionValidity'
+            - 'glue:CheckSchemaVersionValidity'
+            - 'glue:CreateScript'
+            - 'glue:CreateSecurityConfiguration'
+            - 'glue:DeleteSecurityConfiguration'
+            - 'glue:GetClassifier'
+            - 'glue:GetClassifiers'
+            - 'glue:GetCrawlerMetrics'
+            - 'glue:GetCrawlers'
+            - 'glue:GetCustomEntityType'
+            - 'glue:GetDataflowGraph'
+            - 'glue:GetDevEndpoints'
+            - 'glue:GetJobBookmark'
+            - 'glue:GetJobs'
+            - 'glue:GetNotebookInstanceStatus'
+            - 'glue:GetPlan'
+            - 'glue:GetSecurityConfiguration'
+            - 'glue:GetSecurityConfigurations'
+            - 'glue:GetTriggers'
+            - 'glue:ListBlueprints'
+            - 'glue:ListCrawlers'
+            - 'glue:ListCustomEntityTypes'
+            - 'glue:ListDevEndpoints'
+            - 'glue:ListJobs'
+            - 'glue:ListRegistries'
+            - 'glue:ListSessions'
+            - 'glue:ListTriggers'
+            - 'glue:ListWorkflows'
+            - 'glue:ResetJobBookmark'
+            - 'glue:StartCrawlerSchedule'
+            - 'glue:StopCrawlerSchedule'
+            - 'glue:UpdateCrawlerSchedule'
+            - 'glue:StartNotebook'
+            - 'glue:TerminateNotebook'
+            - 'glue:TestConnection'
+            - 'glue:UseGlueStudio'
+        Resource:
+            - '*'
+
+
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: "Policy actions do not require Resource!"  

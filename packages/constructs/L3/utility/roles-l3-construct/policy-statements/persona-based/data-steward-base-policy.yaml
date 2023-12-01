@@ -1,0 +1,16 @@
+# TODO: WIP
+statements:
+    -   Sid: BasicS3Access
+        Effect: Allow
+        Action:
+            - 's3:ListAllMyBuckets'
+            - 's3:GetAccountPublicAccessBlock'
+            - 's3:GetBucketPublicAccessBlock'
+            - 's3:GetBucketPolicyStatus'
+            - 's3:GetBucketAcl'
+            - 's3:ListAccessPoints'
+        Resource: '*'
+
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: "Minimum permission provided to Data Steward persona"

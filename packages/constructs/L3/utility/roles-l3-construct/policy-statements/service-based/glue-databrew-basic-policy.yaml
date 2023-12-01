@@ -1,0 +1,26 @@
+statements:
+  - Sid: GlueDataBrewNoResourceReadAccess
+    Effect: Allow
+    Action:
+      -  'databrew:ListDatasets'        # Grants permission to list datasets in your account
+      -  'databrew:ListJobs'        # Grants permission to list jobs in your account
+      -  'databrew:ListProjects'        # Grants permission to list projects in your account
+      -  'databrew:ListRecipes'        # Grants permission to list recipes in your account
+      -  'databrew:ListRulesets'        # Grants permission to list rulesets in your account
+      -  'databrew:ListSchedules'        # Grants permission to list schedules in your account
+    Resource:
+      - '*'
+  - Sid: GlueDataBrewNoResourceWriteAccess
+    Action:
+      -  'databrew:CreateDataset'        # Grants permission to create a dataset
+      -  'databrew:CreateProfileJob'        # Grants permission to create a profile job
+      -  'databrew:CreateProject'        # Grants permission to create a project
+      -  'databrew:CreateRecipe'        # Grants permission to create a recipe
+      -  'databrew:CreateRecipeJob'        # Grants permission to create a recipe job
+      -  'databrew:CreateRuleset'        # Grants permission to create a ruleset
+      -  'databrew:CreateSchedule'        # Grants permission to create a schedule
+    Resource:
+          - '*'
+suppressions:
+  - id: "AwsSolutions-IAM5"
+    reason: "Policy actions do not require Resource!"  

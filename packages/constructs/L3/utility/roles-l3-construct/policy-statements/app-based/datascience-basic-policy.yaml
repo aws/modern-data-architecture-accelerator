@@ -1,0 +1,136 @@
+##++++++++++++++++++++++++++++++++++++++++++++##
+# datascience
+#   - sagemaker
+#   - service catalog
+##++++++++++++++++++++++++++++++++++++++++++++##
+
+statements:
+  - Sid: SagemakerNoResourceAccessPolicy
+    Action: 
+      - 'sagemaker:GetSearchSuggestions'
+      - 'sagemaker:ListActions'
+      - 'sagemaker:ListAlgorithms'
+      - 'sagemaker:ListAppImageConfigs'
+      - 'sagemaker:ListApps'
+      - 'sagemaker:ListArtifacts'
+      - 'sagemaker:ListAssociations'
+      - 'sagemaker:ListAutoMLJobs'
+      - 'sagemaker:ListCandidatesForAutoMLJob'
+      - 'sagemaker:ListCodeRepositories'
+      - 'sagemaker:ListCompilationJobs'
+      - 'sagemaker:ListContexts'
+      - 'sagemaker:ListDataQualityJobDefinitions'
+      - 'sagemaker:ListDeviceFleets'
+      - 'sagemaker:ListDevices'
+      - 'sagemaker:ListDomains'
+      - 'sagemaker:ListEdgeDeploymentPlans'
+      - 'sagemaker:ListEdgePackagingJobs'
+      - 'sagemaker:ListEndpointConfigs'
+      - 'sagemaker:ListEndpoints'
+      - 'sagemaker:ListExperiments'
+      - 'sagemaker:ListFeatureGroups'
+      - 'sagemaker:ListFlowDefinitions'
+      - 'sagemaker:ListHubs'
+      - 'sagemaker:ListHuman*'
+      - 'sagemaker:ListHyperParameterTuningJobs'
+      - 'sagemaker:ListImages'
+      - 'sagemaker:ListInference*'
+      - 'sagemaker:ListLabelingJobs'
+      - 'sagemaker:ListLineageGroups'
+      - 'sagemaker:ListModelBiasJobDefinitions'
+      - 'sagemaker:ListModelCards'
+      - 'sagemaker:ListModelExplainabilityJobDefinitions'
+      - 'sagemaker:ListModelMetadata'
+      - 'sagemaker:ListModelPackageGroups'
+      - 'sagemaker:ListModelQualityJobDefinitions'
+      - 'sagemaker:ListModels'
+      - 'sagemaker:ListMonitoring*'
+      - 'sagemaker:ListNotebookInstanceLifecycleConfigs'
+      - 'sagemaker:ListNotebookInstances'
+      - 'sagemaker:ListPipelines'
+      - 'sagemaker:ListProcessingJobs'
+      - 'sagemaker:ListProjects'
+      - 'sagemaker:ListResourceCatalogs'
+      - 'sagemaker:ListStageDevices'
+      - 'sagemaker:ListStudioLifecycleConfigs'
+      - 'sagemaker:ListSubscribedWorkteams'
+      - 'sagemaker:ListTrainingJobs'
+      - 'sagemaker:ListTransformJobs'
+      - 'sagemaker:ListTrialComponents'
+      - 'sagemaker:ListTrials'
+      - 'sagemaker:ListUserProfiles'
+      - 'sagemaker:ListWorkforces'
+      - 'sagemaker:ListWorkteams'
+      - 'sagemaker:Search'
+    Resource: '*'
+    Effect: Allow
+
+  - Sid: ServiceCatalogNoResourceReadAccess
+    Effect: Allow
+    Action:
+      -  'servicecatalog:DescribeConstraint'        # Grants permission to describe a constraint
+      -  'servicecatalog:DescribeCopyProductStatus'        # Grants permission to get the status of the specified copy product operation
+      -  'servicecatalog:DescribeProductView'             # Grants permission to describe a product as an end-user
+      -  'servicecatalog:DescribePortfolioShareStatus'        # Grants permission to get the status of the specified portfolio share operation
+      -  'servicecatalog:DescribeRecord'        # Grants permission to describe a record and lists any outputs
+      -  'servicecatalog:DescribeServiceAction'        # Grants permission to describe a self-service action
+      -  'servicecatalog:DescribeServiceActionExecutionParameters'        # Grants permission to get the default parameters if you executed the specified Service Action on the specified Provisioned Product
+      -  'servicecatalog:DescribeTagOption'        # Grants permission to get information about the specified TagOption
+      -  'servicecatalog:GetProvisionedProductOutputs'        # Grants permission to get the provisioned product output with either provisioned product id or name
+    Resource: '*'
+  - Sid: ServiceCatalogNoResourceListAccess
+    Effect: Allow
+    Action: 
+      -  'servicecatalog:ListAcceptedPortfolioShares'        # Grants permission to list the portfolios that have been shared with you and you have accepted
+      -  'servicecatalog:ListApplications'        # Grants permission to list your applications
+      -  'servicecatalog:ListAttributeGroups'        # Grants permission to list your attribute groups
+      -  'servicecatalog:ListBudgetsForResource'        # Grants permission to list all the budgets associated to a resource
+      -  'servicecatalog:ListConstraintsForPortfolio'        # Grants permission to list constraints associated with a given portfolio
+      -  'servicecatalog:ListPortfolios'        # Grants permission to list the portfolios in your account
+      -  'servicecatalog:ListProvisioningArtifactsForServiceAction'        # Grants permission to list all provisioning artifacts for the specified self-service action
+      -  'servicecatalog:ListResourcesForTagOption'        # Grants permission to list the resources associated with the specified TagOption
+      -  'servicecatalog:ListServiceActions'        # Grants permission to list all self-service actions
+      -  'servicecatalog:ListStackInstancesForProvisionedProduct'        # Grants permission to list account, region and status of each stack instances that are associated with a CFN_STACKSET type provisioned product
+      -  'servicecatalog:ListTagOptions'        # Grants permission to list the specified TagOptions or all TagOptions
+      -  'servicecatalog:SearchProducts'        # Grants permission to list the products available to you as an end-user           
+    Resource: '*'
+      
+  - Sid: DeployNotebooksFromCatalog
+    Effect: Allow
+    Action:
+      - 'servicecatalog:ProvisionProduct'
+      - 'servicecatalog:DescribeRecord'
+      - 'servicecatalog:DescribeProvisioningParameters'
+      - 'servicecatalog:ListLaunchPaths'
+      - 'servicecatalog:ListServiceActionsForProvisioningArtifact'
+    Resource:
+      - 'arn:aws:catalog:*:*:*'
+      - 'arn:aws:servicecatalog:*:*:*'
+      
+  - Sid: DeployNotebooksFromCatalogList
+    Effect: Allow
+    Action:
+      - 'servicecatalog:DescribeProduct'
+        
+    Resource: 'arn:aws:catalog:*:*:product/*'
+      
+      
+  - Sid: ModifyUserCreatedCatalogProducts
+    Effect: Allow
+    Action:
+      - 'servicecatalog:ScanProvisionedProducts'        # Grants permission to list all the provisioned products in your account
+      - 'servicecatalog:TerminateProvisionedProduct'
+      - 'servicecatalog:UpdateProvisionedProduct'
+      - 'servicecatalog:SearchProvisionedProducts'
+      - 'servicecatalog:DescribeProvisionedProduct'        # Grants permission to describe a provisioned product
+      - 'servicecatalog:DescribeProvisionedProductPlan'        # Grants permission to describe a provisioned product plan
+      - 'servicecatalog:ListRecordHistory'        # Grants permission to list all the records in your account or all the records related to a given provisioned product
+      - 'servicecatalog:ListProvisionedProductPlans'  # Grants permission to list the provisioned product plans
+    Resource: '*'
+    Condition:
+      StringEquals:
+        'servicecatalog:userLevel': self
+      
+suppressions:
+  - id: "AwsSolutions-IAM5"
+    reason: "Policy actions do not require Resource!"   
