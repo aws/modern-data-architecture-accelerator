@@ -18,6 +18,7 @@ $(aws sts assume-role \
 #Push published version to CAEF Release repo. This will become the public version.
 git remote add release_publish $CAEF_DELIVERY_CODE_COMMIT_REPO
 git fetch release_publish
+git pull release_publish main -Xours
 git push release_publish
 git push release_publish --tags
 
