@@ -1,6 +1,6 @@
 {
   "name": "@aws-caef/quicksight-account-l3-construct",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "description": "CAEF Quicksight Account L3 Construct",
   "license": "Apache-2.0",
   "author": {
@@ -21,11 +21,11 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-caef/construct": "0.39.0",
-    "@aws-caef/ec2-constructs": "0.39.0",
-    "@aws-caef/iam-role-helper": "0.39.0",
-    "@aws-caef/l3-construct": "0.39.0",
-    "@aws-caef/testing": "0.39.0",
+    "@aws-caef/construct": "0.40.0",
+    "@aws-caef/ec2-constructs": "0.40.0",
+    "@aws-caef/iam-role-helper": "0.40.0",
+    "@aws-caef/l3-construct": "0.40.0",
+    "@aws-caef/testing": "^0.40.0",
     "@types/jest": "27.4.1",
     "@types/node": "17.0.23",
     "aws-cdk-lib": "2.97.1",
@@ -38,10 +38,10 @@
     "typescript-json-schema": "0.53.0"
   },
   "peerDependencies": {
-    "@aws-caef/construct": "0.39.0",
-    "@aws-caef/ec2-constructs": "0.39.0",
-    "@aws-caef/iam-role-helper": "0.39.0",
-    "@aws-caef/l3-construct": "0.39.0",
+    "@aws-caef/construct": "0.40.0",
+    "@aws-caef/ec2-constructs": "0.40.0",
+    "@aws-caef/iam-role-helper": "0.40.0",
+    "@aws-caef/l3-construct": "0.40.0",
     "aws-cdk-lib": "2.97.1",
     "constructs": "10.0.96"
   },
@@ -50,13 +50,13 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/construct": "0.39.0",
-    "@aws-caef/ec2-constructs": "0.39.0",
-    "@aws-caef/iam-constructs": "0.39.0",
-    "@aws-caef/iam-role-helper": "0.39.0",
-    "@aws-caef/l3-construct": "0.39.0",
-    "@aws-caef/lambda-constructs": "0.39.0",
-    "@aws-caef/naming": "0.39.0",
+    "@aws-caef/construct": "^0.40.0",
+    "@aws-caef/ec2-constructs": "^0.40.0",
+    "@aws-caef/iam-constructs": "^0.40.0",
+    "@aws-caef/iam-role-helper": "^0.40.0",
+    "@aws-caef/l3-construct": "^0.40.0",
+    "@aws-caef/lambda-constructs": "^0.40.0",
+    "@aws-caef/naming": "^0.40.0",
     "aws-cdk-lib": "2.97.1",
     "cdk-nag": "2.27.142",
     "constructs": "10.0.96"

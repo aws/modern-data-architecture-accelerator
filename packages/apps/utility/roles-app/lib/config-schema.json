@@ -305,16 +305,6 @@
                 "trustedPrincipal": {
                     "description": "The assume role trust config.",
                     "type": "string"
-                },
-                "usageProfile": {
-                    "description": "Usage Profile to be used to define the role",
-                    "enum": [
-                        "data-admin",
-                        "data-engineer",
-                        "data-scientist",
-                        "data-steward"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [
