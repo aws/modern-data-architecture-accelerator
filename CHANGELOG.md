@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.41.0
+
+### General Changes
+
+* Fixed issue with "@aws-caef/enableUniqueBucketNames" not account for prefix in max bucket name length
+
 ## 0.40.0
 
 ### General Changes
