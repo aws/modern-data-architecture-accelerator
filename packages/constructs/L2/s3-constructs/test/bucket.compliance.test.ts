@@ -214,7 +214,7 @@ describe( 'CAEF Construct Optional Prop Compliance Tests', () => {
                                 }
                             ]
                         },
-                        "-test-org-test-env-test-domain-test-module-test-bucket"
+                        "-test-org-test-env-test-domain-test--3cab3e5a"
                     ]
                 ]
             }
