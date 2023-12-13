@@ -687,6 +687,13 @@
                 "sharingSettings": {
                     "$ref": "#/definitions/CfnDomain.SharingSettingsProperty",
                     "description": "Specifies options for sharing SageMaker Studio notebooks."
+                },
+                "studioWebPortal": {
+                    "enum": [
+                        "DISABLED",
+                        "ENABLED"
+                    ],
+                    "type": "string"
                 }
             },
             "type": "object"

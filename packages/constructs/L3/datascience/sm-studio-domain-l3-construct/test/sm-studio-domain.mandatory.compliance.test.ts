@@ -31,7 +31,7 @@ describe( 'Studio Domain Mandatory Props', () => {
     new SagemakerStudioDomainL3Construct( stack, "domain", constructProps );
     const template = Template.fromStack( stack );
 
-    // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
+    console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
 
     testApp.checkCdkNagCompliance( stack )
 
@@ -41,6 +41,9 @@ describe( 'Studio Domain Mandatory Props', () => {
 
     test( 'Execution Role Policy', () => {
         template.hasResourceProperties( "AWS::IAM::ManagedPolicy", {
+            "Description": "",
+            "ManagedPolicyName": "test-org-test-env-test-domain-test-module-basic-execution",
+            "Path": "/",
             "PolicyDocument": {
                 "Statement": [
                     {
@@ -66,24 +69,45 @@ describe( 'Studio Domain Mandatory Props', () => {
                         "Action": [
                             "sagemaker:CreateApp",
                             "sagemaker:DeleteApp",
-                            "sagemaker:DescribeApp"
+                            "sagemaker:DescribeApp",
+                            "sagemaker:CreateSpace",
+                            "sagemaker:UpdateSpace",
+                            "sagemaker:DeleteSpace",
+                            "sagemaker:DescribeSpace"
                         ],
                         "Effect": "Allow",
-                        "Resource": {
-                            "Fn::Join": [
-                                "",
-                                [
-                                    "arn:test-partition:sagemaker:test-region:test-account:app/",
-                                    {
-                                        "Fn::GetAtt": [
-                                            "domainCA282C9B",
-                                            "DomainId"
-                                        ]
-                                    },
-                                    "/*"
+                        "Resource": [
+                            {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:test-partition:sagemaker:test-region:test-account:app/",
+                                        {
+                                            "Fn::GetAtt": [
+                                                "domainCA282C9B",
+                                                "DomainId"
+                                            ]
+                                        },
+                                        "/*"
+                                    ]
                                 ]
-                            ]
-                        }
+                            },
+                            {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:test-partition:sagemaker:test-region:test-account:space/",
+                                        {
+                                            "Fn::GetAtt": [
+                                                "domainCA282C9B",
+                                                "DomainId"
+                                            ]
+                                        },
+                                        "/*"
+                                    ]
+                                ]
+                            }
+                        ]
                     },
                     {
                         "Action": "sagemaker:DescribeDomain",
@@ -133,9 +157,6 @@ describe( 'Studio Domain Mandatory Props', () => {
                 ],
                 "Version": "2012-10-17"
             },
-            "Description": "",
-            "ManagedPolicyName": "test-org-test-env-test-domain-test-module-basic-execution",
-            "Path": "/",
             "Roles": [
                 {
                     "Ref": "domaindefaultexecutionrole3CFE4307"

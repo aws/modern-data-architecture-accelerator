@@ -13,7 +13,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
 
     const testContstructProps: CaefBoto3LayerVersionProps = {
         naming: testApp.naming,
-        boto3Version: "1.26.54"
+        boto3Version: "1.33.13"
     }
 
     new CaefBoto3LayerVersion( testApp.testStack, "test-construct", testContstructProps )
@@ -23,7 +23,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
     // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
     test( 'LayerName', () => {
         template.hasResourceProperties( "AWS::Lambda::LayerVersion", {
-            "LayerName": testApp.naming.resourceName( `boto3-1_26_54` )
+            "LayerName": testApp.naming.resourceName( `boto3-1_33_13` )
         } )
     } )
 

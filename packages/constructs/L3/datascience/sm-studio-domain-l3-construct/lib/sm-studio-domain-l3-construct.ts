@@ -70,6 +70,8 @@ export interface DomainUserSettings {
    * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sagemaker-domain-usersettings.html#cfn-sagemaker-domain-usersettings-sharingsettings
    */
   readonly sharingSettings?: CfnDomain.SharingSettingsProperty;
+
+  readonly studioWebPortal?: 'ENABLED' | 'DISABLED'
 }
 
 export interface DomainProps {
@@ -150,6 +152,8 @@ export interface DomainProps {
    * May need to be increased for very large asset deployments.
    */
   readonly assetDeploymentMemoryLimitMB?: number
+
+
 
 }
 
@@ -400,14 +404,21 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
     } )
     basicExecutionPolicy.addStatements( kmsUsageStatement )
 
-    //Allow ExecutionRole creation of SageMaker Studio apps
+    //Allow ExecutionRole creation of SageMaker Studio apps and spaces
     const studioAppStatement = new PolicyStatement( {
       effect: Effect.ALLOW,
-      resources: [ `arn:${ this.partition }:sagemaker:${ this.region }:${ this.account }:app/${ domainId }/*` ],
+      resources: [ 
+        `arn:${ this.partition }:sagemaker:${ this.region }:${ this.account }:app/${ domainId }/*`,
+        `arn:${ this.partition }:sagemaker:${ this.region }:${ this.account }:space/${ domainId }/*`
+       ],
       actions: [
         "sagemaker:CreateApp",
         "sagemaker:DeleteApp",
-        "sagemaker:DescribeApp"
+        "sagemaker:DescribeApp",
+        "sagemaker:CreateSpace",
+        "sagemaker:UpdateSpace",
+        "sagemaker:DeleteSpace",
+        "sagemaker:DescribeSpace",
       ]
     } )
     basicExecutionPolicy.addStatements( studioAppStatement )

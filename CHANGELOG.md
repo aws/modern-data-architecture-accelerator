@@ -5,6 +5,13 @@
 ### General Changes
 
 * Fixed issue with "@aws-caef/enableUniqueBucketNames" not account for prefix in max bucket name length
+* Added boto version 1.33.13 to boto lambda layers, and set as default
+
+### Data Science Changes
+
+* Added permissions to allow use of new SageMaker Studio Spaces feature in SM Studio and Data Science Team modules
+  * Added support for 'studioWebPortal' configuration on SM Studio, which forces use of SM Spaces instead of SM Studio Classic
+  * Newly created SM Studio Domains will automatically use Spaces
 
 ## 0.40.0
 
