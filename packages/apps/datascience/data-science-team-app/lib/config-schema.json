@@ -159,6 +159,10 @@
                 "refId": {
                     "description": "A string which uniquely identifies the CaefRoleRef within a scope.",
                     "type": "string"
+                },
+                "sso": {
+                    "description": "If true, role name will be resolved to an SSO auto-generated role",
+                    "type": "boolean"
                 }
             },
             "type": "object"

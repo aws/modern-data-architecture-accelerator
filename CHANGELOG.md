@@ -4,6 +4,10 @@
 
 ### General Changes
 
+* Added functionality to allow referencing of roles by IAM Identity Center/SSO permission set name.
+  * Adding 'sso: true' to a role ref will treat the role name as the name of an IAM Identity Center permission set name
+  * The role will be resolved by searching for the 'AWSReservedSSO_' role created for that permission set within the account by IAM Identity Center
+  * SSO roles will be automatically treated as immutable
 * Fixed issue with "@aws-caef/enableUniqueBucketNames" not account for prefix in max bucket name length
 * Added boto version 1.33.13 to boto lambda layers, and set as default
 

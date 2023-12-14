@@ -56,7 +56,9 @@ athenaUserRoles:
   # for immutable roles such as SSO roles (which can only be modified via SSO permission set deployment). 
   - arn: arn:{{partition}}:iam::{{account}}:role/aws-reserved/sso.amazonaws.com/{{region}}/AWSReservedSSO_d2e-datascientist-spoke_7123ab1231
     immutable: true
-
+  - name: data_scientist
+    sso: true
+    
 workgroupConfiguration:
   bytesScannedCutoffPerQuery: 10000000000
   

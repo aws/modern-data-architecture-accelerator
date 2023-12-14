@@ -11,6 +11,9 @@ athenaUserRoles:
   - id: generated-role-id:data-scientist
   - arn: arn:{{partition}}:iam::{{account}}:role/aws-reserved/sso.amazonaws.com/{{region}}/AWSReservedSSO_data_scientist12321421
     immutable: true
+  - name: data_scientist
+    sso: true
+
 
 workgroupConfiguration:
   bytesScannedCutoffPerQuery: 10000000000

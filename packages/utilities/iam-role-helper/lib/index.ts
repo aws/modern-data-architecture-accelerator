@@ -35,6 +35,10 @@ export interface CaefRoleRef {
      * Indicates whether the role should be considered immutable (defaults false)
     */
     readonly immutable?: boolean
+    /**
+     * If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.
+    */
+    readonly sso?: boolean
 }
 /**
  * A CaefRoleRef which can be resolved within a scope.
@@ -60,6 +64,11 @@ export interface CaefResolvableRoleRef {
      * Reference role by id
     */
     readonly immutable?: boolean
+    /**
+     * If true, role name will be resolved to an SSO auto-generated role
+    */
+    readonly sso?: boolean
+
 }
 
 /**
@@ -100,7 +109,14 @@ export class CaefResolvableRole {
      * @returns The immutability flag of the ref (defaults false)
      */
     public immutable (): boolean {
-        return this.roleRef.immutable != undefined && this.roleRef.immutable
+        return this.roleRef.immutable != undefined && this.roleRef.immutable || this.sso()
+    }
+
+    /**
+     * @returns The sso flag of the ref( defaults false )
+    */
+    public sso(): boolean {
+        return this.roleRef.sso != undefined && this.roleRef.sso
     }
 
     /**
