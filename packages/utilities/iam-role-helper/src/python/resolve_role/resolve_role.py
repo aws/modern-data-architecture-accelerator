@@ -2,11 +2,9 @@
 # SPDX - License - Identifier: Apache - 2.0
 
 import json
-import resource
-import time
 import boto3
 import logging
-import os
+import re
 from botocore.exceptions import ClientError
 
 client = boto3.client('iam')
@@ -54,7 +52,20 @@ def resolve_role_ref(role_ref):
         role = role_arn_map.get(resourceId)
     elif(role_ref.get("name", None) is not None):
         resourceId = role_ref.get("name")
-        role = role_name_map.get(resourceId)
+        # Handle SSO roles
+        sso = role_ref.get("sso", False)
+        if sso:
+            role = None
+            regex = "^AWSReservedSSO_" + resourceId +"_[0-9a-zA-Z]{16}$"
+            print(regex)
+            for role_name,check_role in role_name_map.items():
+                print(role_name)
+                if re.match(regex,role_name):
+                    if role is not None:
+                        raise Exception(f"Ambiguous role resolution: {role_name}/{resourceId}")
+                    role = check_role
+        else:   
+            role = role_name_map.get(resourceId)
     else:
         raise Exception("Callied without id, arn or name specified")
 
