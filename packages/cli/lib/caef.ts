@@ -9,7 +9,6 @@ import { CaefDeploy } from "./caef-cli";
 const commandLineArgs = require( 'command-line-args' )
 // nosemgrep
 const pjson = require( '../package.json' );
-console.log( `CAEF Version: ${ pjson.version }` );
 
 const optionDefinitions = [
     {
@@ -75,6 +74,12 @@ const optionDefinitions = [
         description: "Optional - Specify the CAEF module version to be used."
     },
     {
+        name: 'version',
+        alias: 'v',
+        type: Boolean,
+        description: "Provides information about the installed CAEF version"
+    },
+    {
         name: 'npm_debug',
         alias: 'n',
         type: Boolean,
@@ -102,10 +107,17 @@ const optionDefinitions = [
 
 const options = commandLineArgs( optionDefinitions )
 
-if ( options[ 'help' ] ) {
-    console.log( JSON.stringify( optionDefinitions, undefined, 2 ) )
+console.log( `CAEF Version: ${ pjson.version }` );
+if ( options[ 'version' ] ) {
     process.exit( 0 )
 }
+
+if ( options[ 'help' ] ) {
+    // Display concise display of information for better user experience
+    console.table( optionDefinitions, ['name', 'alias', 'description'])
+    process.exit( 0 )
+}
+
 
 const caef = new CaefDeploy( options )
 caef.deploy()
