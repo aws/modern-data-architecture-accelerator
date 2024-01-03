@@ -19,6 +19,7 @@
         "packages/constructs/L2/*",
         "packages/constructs/L3/*/*",
         "packages/utilities/*",
-        "packages/apps/*/*"
+        "packages/apps/*/*",
+        "schemas"
     ]
 }

@@ -1,0 +1,478 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "CaefNagSuppressionByPath": {
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "reason"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "path",
+                "suppressions"
+            ],
+            "type": "object"
+        },
+        "CaefNagSuppressions": {
+            "additionalProperties": false,
+            "properties": {
+                "by_path": {
+                    "items": {
+                        "$ref": "#/definitions/CaefNagSuppressionByPath"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "by_path"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CaefServiceCatalogConstraintRuleConfig"
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "rules"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintRuleAssertionConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assert": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assert",
+                "description"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintRuleCondititionConfig": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "CaefServiceCatalogConstraintRuleConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assertions": {
+                    "items": {
+                        "$ref": "#/definitions/CaefServiceCatalogConstraintRuleAssertionConfig"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/definitions/CaefServiceCatalogConstraintRuleCondititionConfig"
+                }
+            },
+            "required": [
+                "assertions",
+                "condition"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogParameterConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "constraints": {
+                    "$ref": "#/definitions/CaefServiceCatalogConstraintConfig"
+                },
+                "props": {
+                    "$ref": "#/definitions/CfnParameterProps"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "CaefServiceCatalogProductConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "launch_role_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CaefServiceCatalogParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "portfolio_arn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "owner",
+                "portfolio_arn"
+            ],
+            "type": "object"
+        },
+        "CfnCrawler.CatalogTargetProperty": {
+            "additionalProperties": false,
+            "description": "Specifies an AWS Glue Data Catalog target.",
+            "properties": {
+                "connectionName": {
+                    "description": "The name of the connection for an Amazon S3-backed Data Catalog table to be a target of the crawl when using a `Catalog` connection type paired with a `NETWORK` Connection type.",
+                    "type": "string"
+                },
+                "databaseName": {
+                    "description": "The name of the database to be synchronized.",
+                    "type": "string"
+                },
+                "dlqEventQueueArn": {
+                    "description": "A valid Amazon dead-letter SQS ARN.\n\nFor example, `arn:aws:sqs:region:account:deadLetterQueue` .",
+                    "type": "string"
+                },
+                "eventQueueArn": {
+                    "description": "A valid Amazon SQS ARN.\n\nFor example, `arn:aws:sqs:region:account:sqs` .",
+                    "type": "string"
+                },
+                "tables": {
+                    "description": "A list of the tables to be synchronized.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "CfnCrawler.DynamoDBTargetProperty": {
+            "additionalProperties": false,
+            "description": "Specifies an Amazon DynamoDB table to crawl.",
+            "properties": {
+                "path": {
+                    "description": "The name of the DynamoDB table to crawl.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnCrawler.JdbcTargetProperty": {
+            "additionalProperties": false,
+            "description": "Specifies a JDBC data store to crawl.",
+            "properties": {
+                "connectionName": {
+                    "description": "The name of the connection to use to connect to the JDBC target.",
+                    "type": "string"
+                },
+                "exclusions": {
+                    "description": "A list of glob patterns used to exclude from the crawl.\n\nFor more information, see [Catalog Tables with a Crawler](https://docs.aws.amazon.com/glue/latest/dg/add-crawler.html) .",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "path": {
+                    "description": "The path of the JDBC target.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnCrawler.S3TargetProperty": {
+            "additionalProperties": false,
+            "description": "Specifies a data store in Amazon Simple Storage Service (Amazon S3).",
+            "properties": {
+                "connectionName": {
+                    "description": "The name of a connection which allows a job or crawler to access data in Amazon S3 within an Amazon Virtual Private Cloud environment (Amazon VPC).",
+                    "type": "string"
+                },
+                "dlqEventQueueArn": {
+                    "description": "A valid Amazon dead-letter SQS ARN.\n\nFor example, `arn:aws:sqs:region:account:deadLetterQueue` .",
+                    "type": "string"
+                },
+                "eventQueueArn": {
+                    "description": "A valid Amazon SQS ARN.\n\nFor example, `arn:aws:sqs:region:account:sqs` .",
+                    "type": "string"
+                },
+                "exclusions": {
+                    "description": "A list of glob patterns used to exclude from the crawl.\n\nFor more information, see [Catalog Tables with a Crawler](https://docs.aws.amazon.com/glue/latest/dg/add-crawler.html) .",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "path": {
+                    "description": "The path to the Amazon S3 target.",
+                    "type": "string"
+                },
+                "sampleSize": {
+                    "description": "Sets the number of files in each leaf folder to be crawled when crawling sample files in a dataset.\n\nIf not set, all the files are crawled. A valid value is an integer between 1 and 249.",
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "CfnCrawler.ScheduleProperty": {
+            "additionalProperties": false,
+            "description": "A scheduling object using a `cron` statement to schedule an event.",
+            "properties": {
+                "scheduleExpression": {
+                    "description": "A `cron` expression used to specify the schedule.\n\nFor more information, see [Time-Based Schedules for Jobs and Crawlers](https://docs.aws.amazon.com/glue/latest/dg/monitor-data-warehouse-schedule.html) . For example, to run something every day at 12:15 UTC, specify `cron(15 12 * * ? *)` .",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnCrawler.SchemaChangePolicyProperty": {
+            "additionalProperties": false,
+            "description": "The policy that specifies update and delete behaviors for the crawler.\n\nThe policy tells the crawler what to do in the event that it detects a change in a table that already exists in the customer's database at the time of the crawl. The `SchemaChangePolicy` does not affect whether or how new tables and partitions are added. New tables and partitions are always created regardless of the `SchemaChangePolicy` on a crawler.\n\nThe SchemaChangePolicy consists of two components, `UpdateBehavior` and `DeleteBehavior` .",
+            "properties": {
+                "deleteBehavior": {
+                    "description": "The deletion behavior when the crawler finds a deleted object.\n\nA value of `LOG` specifies that if a table or partition is found to no longer exist, do not delete it, only log that it was found to no longer exist.\n\nA value of `DELETE_FROM_DATABASE` specifies that if a table or partition is found to have been removed, delete it from the database.\n\nA value of `DEPRECATE_IN_DATABASE` specifies that if a table has been found to no longer exist, to add a property to the table that says \"DEPRECATED\" and includes a timestamp with the time of deprecation.",
+                    "type": "string"
+                },
+                "updateBehavior": {
+                    "description": "The update behavior when the crawler finds a changed schema.\n\nA value of `LOG` specifies that if a table or a partition already exists, and a change is detected, do not update it, only log that a change was detected. Add new tables and new partitions (including on existing tables).\n\nA value of `UPDATE_IN_DATABASE` specifies that if a table or partition already exists, and a change is detected, update it. Add new tables and partitions.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnParameterProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedPattern": {
+                    "default": "- No constraints on patterns allowed for parameter.",
+                    "description": "A regular expression that represents the patterns to allow for String types.",
+                    "type": "string"
+                },
+                "allowedValues": {
+                    "default": "- No constraints on values allowed for parameter.",
+                    "description": "An array containing the list of values allowed for the parameter.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "constraintDescription": {
+                    "default": "- No description with customized error message when user specifies invalid values.",
+                    "description": "A string that explains a constraint when the constraint is violated.\nFor example, without a constraint description, a parameter that has an allowed\npattern of [A-Za-z0-9]+ displays the following error message when the user specifies\nan invalid value:",
+                    "type": "string"
+                },
+                "default": {
+                    "default": "- No default value for parameter.",
+                    "description": "A value of the appropriate type for the template to use if no value is specified\nwhen a stack is created. If you define constraints for the parameter, you must specify\na value that adheres to those constraints."
+                },
+                "description": {
+                    "default": "- No description for the parameter.",
+                    "description": "A string of up to 4000 characters that describes the parameter.",
+                    "type": "string"
+                },
+                "maxLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the largest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "maxValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the largest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "minLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the smallest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "minValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the smallest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "noEcho": {
+                    "default": "- Parameter values are not masked.",
+                    "description": "Whether to mask the parameter value when anyone makes a call that describes the stack.\nIf you set the value to ``true``, the parameter value is masked with asterisks (``*****``).",
+                    "type": "boolean"
+                },
+                "type": {
+                    "default": "String",
+                    "description": "The data type for the parameter (DataType).",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CrawlerDefinition": {
+            "additionalProperties": false,
+            "properties": {
+                "classifiers": {
+                    "description": "Name of the custom classifier to use from the crawler.yaml configuration",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "databaseName": {
+                    "description": "Name of the database to crawl from the crawler.yaml configuration.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description for the Crawler",
+                    "type": "string"
+                },
+                "executionRoleArn": {
+                    "description": "Arn of the execution role",
+                    "type": "string"
+                },
+                "extraConfiguration": {
+                    "additionalProperties": {},
+                    "description": "Crawler configuration as a string.  See:  https://docs.aws.amazon.com/glue/latest/dg/crawler-configuration.html",
+                    "type": "object"
+                },
+                "recrawlBehavior": {
+                    "description": "Recrawl behaviour: CRAWL_NEW_FOLDERS_ONLY or CRAWL_EVERYTHING or CRAWL_EVENT_MODE",
+                    "type": "string"
+                },
+                "schedule": {
+                    "$ref": "#/definitions/CfnCrawler.ScheduleProperty",
+                    "description": "Crawler schedule.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-schedule.html"
+                },
+                "schemaChangePolicy": {
+                    "$ref": "#/definitions/CfnCrawler.SchemaChangePolicyProperty",
+                    "description": "Crawler schema change policy.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-schemachangepolicy.html"
+                },
+                "tablePrefix": {
+                    "description": "Prefix to use in front of all crawled table names",
+                    "type": "string"
+                },
+                "targets": {
+                    "$ref": "#/definitions/CrawlerTargets",
+                    "description": "Targets to retrieve data from for the crawler.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-targets.html"
+                }
+            },
+            "required": [
+                "databaseName",
+                "description",
+                "executionRoleArn",
+                "targets"
+            ],
+            "type": "object"
+        },
+        "CrawlerTargets": {
+            "additionalProperties": false,
+            "properties": {
+                "catalogTargets": {
+                    "description": "Target Definition for Catalog.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-catalogtarget.html",
+                    "items": {
+                        "$ref": "#/definitions/CfnCrawler.CatalogTargetProperty"
+                    },
+                    "type": "array"
+                },
+                "dynamoDbTargets": {
+                    "description": "Target Definition for DynamoDB.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-dynamodbtarget.html",
+                    "items": {
+                        "$ref": "#/definitions/CfnCrawler.DynamoDBTargetProperty"
+                    },
+                    "type": "array"
+                },
+                "jdbcTargets": {
+                    "description": "Target Definition for JDBC.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-jdbctarget.html",
+                    "items": {
+                        "$ref": "#/definitions/CfnCrawler.JdbcTargetProperty"
+                    },
+                    "type": "array"
+                },
+                "s3Targets": {
+                    "description": "Target Definition for   See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html",
+                    "items": {
+                        "$ref": "#/definitions/CfnCrawler.S3TargetProperty"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "crawlers": {
+            "additionalProperties": {
+                "$ref": "#/definitions/CrawlerDefinition"
+            },
+            "description": "Map of crawler names to crawler definitions",
+            "type": "object"
+        },
+        "deploymentRole": {
+            "type": "string"
+        },
+        "kmsArn": {
+            "type": "string"
+        },
+        "nag_suppressions": {
+            "$ref": "#/definitions/CaefNagSuppressions",
+            "description": "Nag suppressions"
+        },
+        "projectBucket": {
+            "type": "string"
+        },
+        "projectName": {
+            "description": "Name of the Data Ops project. The crawler config will be autowired to use existing resources deployed by the project.",
+            "type": "string"
+        },
+        "projectTopicArn": {
+            "type": "string"
+        },
+        "securityConfigurationName": {
+            "type": "string"
+        },
+        "service_catalog_product_config": {
+            "$ref": "#/definitions/CaefServiceCatalogProductConfig",
+            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+        }
+    },
+    "required": [
+        "crawlers",
+        "deploymentRole",
+        "kmsArn",
+        "projectBucket",
+        "projectName",
+        "projectTopicArn",
+        "securityConfigurationName"
+    ],
+    "type": "object"
+}
+
