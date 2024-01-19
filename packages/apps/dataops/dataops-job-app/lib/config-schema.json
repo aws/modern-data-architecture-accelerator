@@ -272,6 +272,13 @@
         "JobConfig": {
             "additionalProperties": false,
             "properties": {
+                "additionalScripts": {
+                    "description": "Additional ETL scripts that are being referenced in main glue etl script\nRelative path to Additional Glue scripts",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "allocatedCapacity": {
                     "description": "The number of capacity units that are allocated to this job.",
                     "type": "number"

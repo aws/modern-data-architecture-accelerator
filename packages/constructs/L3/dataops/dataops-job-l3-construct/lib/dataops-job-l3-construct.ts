@@ -17,6 +17,7 @@ import * as path from 'path';
 import { SnsTopic } from 'aws-cdk-lib/aws-events-targets';
 import { CaefSnsTopic } from '@aws-caef/sns-constructs';
 import { Rule } from 'aws-cdk-lib/aws-events';
+import {Fn } from 'aws-cdk-lib'
 
 
 export type JobCommandPythonVersion = "2" | "3" | undefined
@@ -100,6 +101,11 @@ export interface JobConfig {
      * "Standard" | "G.1X" | "G.2X"
      */
     readonly workerType?: JobWorkerType
+    /**
+     * Additional ETL scripts that are being referenced in main glue etl script
+     * Relative path to Additional Glue scripts
+     */
+    readonly additionalScripts?: string[]
 }
 
 
@@ -151,13 +157,62 @@ export class GlueJobL3Construct extends CaefL3Construct {
             const scriptPath = path.dirname( jobConfig.command.scriptLocation.trim() )
             const scriptName = path.basename( jobConfig.command.scriptLocation.trim() )
             const scriptSource = Source.asset( scriptPath, { exclude: [ '**', `!${ scriptName }` ] } )
+            const defaultArguments = jobConfig.defaultArguments ? jobConfig.defaultArguments : {}
 
             new BucketDeployment( this.scope, `job-deployment-${ jobName }`, {
                 sources: [ scriptSource ],
                 destinationBucket: projectBucket,
                 destinationKeyPrefix: `deployment/jobs/${ jobName }`,
-                role: deploymentRole
+                role: deploymentRole,
+                extract: true
             } );
+
+            if(jobConfig.additionalScripts){
+                /**
+                 * Group all scripts at parent directory level. This will allow creating zip lib assests at various directory levels
+                 * ex. '/main/script1.py' , '/util/script2.py' , '/util/script3.py' will create 2 zip files representing 'main' and 'utils'
+                 *  */ 
+                const directoryToScript: { [ scriptPath: string] : string[]} = {}
+                jobConfig.additionalScripts.map(scriptLocation => {
+                    const scriptPath = path.dirname( scriptLocation.trim())
+                    if( scriptPath in directoryToScript ) {
+                        directoryToScript[scriptPath].push( `!${path.basename(scriptLocation.trim())}` )
+                    }
+                    else{
+                        directoryToScript[ scriptPath ] = [`!${path.basename(scriptLocation.trim())}`]
+                    }                    
+                })
+                
+                // Create Source asset for each directory
+                const additionalScriptsSources = Object.entries(directoryToScript).map(([scriptPath, scriptNames]) => {
+                    return Source.asset( scriptPath, { exclude: [ '**', ...scriptNames ] } )
+                })
+
+                // Deploy Source asset(s) to /deployment/libs/<job> location.
+                const additionalScriptDeployment = new BucketDeployment( this.scope, `job-deployment-${ jobName }-additional-script`, {
+                    sources: additionalScriptsSources ,
+                    destinationBucket: projectBucket,
+                    destinationKeyPrefix: `deployment/libs/${ jobName }`,
+                    role: deploymentRole,
+                    extract: false,     // Glue expects zip of additional scripts, hence disabling the extraction
+                } );
+                
+                // Extract zip name(s) for each source and create comma separated list of s3 locations
+                const libraryZipNames: string[] = []
+                for(let i=0; i< additionalScriptsSources.length; i++) {
+                    const libName = Fn.select(i,additionalScriptDeployment.objectKeys) // Extract file name of zip containing additional scripts
+                    libraryZipNames.push(`s3://${ this.props.projectBucketName }/deployment/libs/${ jobName }/${libName }`)
+                }
+
+                // Add comma separated list of zip file names to default arguments.
+                if( defaultArguments[ '--extra-py-files' ]) {
+                    defaultArguments[ '--extra-py-files' ] += ',' + libraryZipNames.join(',')
+                
+                } else {
+                    defaultArguments[ '--extra-py-files' ] =  libraryZipNames.join(',')
+                }
+                
+            }
 
             NagSuppressions.addResourceSuppressions(
                 this.scope,
@@ -180,7 +235,6 @@ export class GlueJobL3Construct extends CaefL3Construct {
                 }
             }
 
-            const defaultArguments = jobConfig.defaultArguments ? jobConfig.defaultArguments : {}
             defaultArguments[ "--TempDir" ] = `s3://${ this.props.projectBucketName }/temp/jobs/${ jobName }`
 
             const job = new CaefCfnJob( this.scope, `${ jobName }-job`, {
