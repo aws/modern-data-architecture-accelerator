@@ -7,6 +7,8 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.dynamicframe import DynamicFrame
 from awsglue.job import Job
+from helper_etl import display
+from core import welcomeMessage
 
 glueContext = GlueContext(SparkContext.getOrCreate())
 spark = glueContext.spark_session
@@ -14,6 +16,10 @@ spark = glueContext.spark_session
 # catalog: database and table name
 db_name = "payments"
 tbl_name = "medicare"
+
+# Test calls to functions from external libs
+display("Test call to external menthod")
+welcomeMessage()
 
 # s3 output directories
 medicare_cast = "s3://glue-sample-target/output-dir/medicare_json_cast"

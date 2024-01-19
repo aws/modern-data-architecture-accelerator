@@ -53,4 +53,15 @@ jobs:
     template: "ExampleTemplate" # Reference a job template.
     defaultArguments:
       --Input: s3://some-bucket/some-location2
+      --enable-spark-ui: 'true'
+      --spark-event-logs-path: s3://some-bucket/spark-event-logs-path/JobTwo/
     allocatedCapacity: 20
+    # (Optional) List of all the helper scripts reference in main glue ETL script. 
+    # All these helper scripts will be grouped at immediate parent directory level, which will result in dedicated zip. 
+    # After deployment, they will be alongside the main script. Hence, must be referenced by file names directly from main glue script
+    # Example (main.py)
+    # from core import core_function1, core_function2;
+    # from helper_etl import helper_function1, helper_function2;
+    additionalScripts:
+      - ./src/glue/helper_etl.py    
+      - ./src/glue/utils/core.py    
