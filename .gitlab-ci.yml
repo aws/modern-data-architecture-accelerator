@@ -144,6 +144,7 @@ feature_version:
       - package-lock.json
       - packages
       - target
+      - schemas
     exclude:
       - "**/node_modules/**"
   allow_failure: false
@@ -178,6 +179,7 @@ feature_build:
       - package-lock.json
       - packages
       - target
+      - schemas
     exclude:
       - "**/node_modules/**"
   allow_failure: false
@@ -318,6 +320,7 @@ prerelease_version:
       - package-lock.json
       - packages
       - target
+      - schemas
     exclude:
       - "**/node_modules/**"
   stage: build
@@ -622,6 +625,7 @@ release_version_package:
       - package-lock.json
       - packages
       - target
+      - schemas
     exclude:
       - "**/node_modules/**"
   allow_failure: false
