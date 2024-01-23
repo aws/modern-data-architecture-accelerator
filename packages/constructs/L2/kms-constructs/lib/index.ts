@@ -174,22 +174,22 @@ export class CaefKmsKey extends Key implements ICaefKmsKey {
 
 
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "kms",
                 resourceId: props.alias,
                 name: "arn",
                 value: this.keyArn
             }, ...props
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "kms",
                 resourceId: props.alias,
                 name: "id",
                 value: this.keyId
             }, ...props
-        } )
+        },scope )
     }
 }

@@ -340,13 +340,13 @@ export class CaefECSContainerDefinition extends ContainerDefinition {
             ], true );
         }
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "containerdefinition",
                 resourceId: props.containerName,
                 name: "name",
                 value: this.containerName
             }, ...props
-        } )
+        },scope )
     }
 }

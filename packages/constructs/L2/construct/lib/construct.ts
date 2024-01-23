@@ -35,6 +35,8 @@ export interface CaefParamAndOutputProps extends CaefConstructProps {
 /** A construct which creates SSM Params and Cfn Outputs/Exports in a standard fashion. */
 export class CaefParamAndOutput extends Construct {
 
+    public static readonly PARAM_SCOPE_CONTEXT_KEY = "@aws-caef/legacyParamScope"
+
     private static createId ( props: CaefParamAndOutputProps ): string {
         if ( props.overrideResourceId ) {
             return `${ props.resourceType }-${ props.overrideResourceId }`
@@ -44,8 +46,14 @@ export class CaefParamAndOutput extends Construct {
         return id
     }
 
-    constructor( scope: Construct, props: CaefParamAndOutputProps ) {
-        super( scope, CaefParamAndOutput.createId( props ) )
+    private static determineScope ( thisScope: Construct, legacyScope?:Construct):Construct {
+        const contextValue =  thisScope.node.tryGetContext( CaefParamAndOutput.PARAM_SCOPE_CONTEXT_KEY )?.valueOf()
+        const useLegacyParamScope =  contextValue ? Boolean(contextValue):false
+        return useLegacyParamScope ? legacyScope || thisScope : thisScope 
+    }
+
+    constructor( scope: Construct, props: CaefParamAndOutputProps, legacyScope?: Construct ) {
+        super( CaefParamAndOutput.determineScope( scope, legacyScope ), CaefParamAndOutput.createId( props ) )
         const ssmPath = props.resourceId ? `${ props.resourceType }/${ props.resourceId }/${ props.name }` : `${ props.resourceType }/${ props.name }`
         const ssmFullPath = props.naming.ssmPath( ssmPath )
 

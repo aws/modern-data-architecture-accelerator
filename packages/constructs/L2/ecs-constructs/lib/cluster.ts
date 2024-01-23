@@ -80,13 +80,13 @@ export class CaefECSCluster extends Cluster {
     constructor( scope: Construct, id: string, props: CaefECSClusterProps ) {
         super( scope, id, CaefECSCluster.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "cluster",
                 resourceId: props.clusterName,
                 name: "arn",
                 value: this.clusterArn
             }, ...props
-        } )
+        },scope )
     }
 }

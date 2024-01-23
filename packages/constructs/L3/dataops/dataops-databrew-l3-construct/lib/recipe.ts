@@ -39,14 +39,14 @@ export class CaefDataBrewRecipe extends CfnRecipe {
     constructor( scope: Construct, id: string, props: CaefDataBrewRecipeProps ) {
         super( scope, id, CaefDataBrewRecipe.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Recipe",
                 resourceId: props.name,
                 name: props.name,
                 value: this.name
             }, ...props
-        } )
+        },scope )
     }
 }
 

@@ -42,14 +42,14 @@ export class CaefDataBrewRuleset extends CfnRuleset {
     constructor( scope: Construct, id: string, props: CaefDataBrewRulesetProps ) {
         super( scope, id, CaefDataBrewRuleset.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Ruleset",
                 resourceId: props.name,
                 name: "name",
                 value: this.name
             }, ...props
-        } )
+        },scope )
     }
 }
 

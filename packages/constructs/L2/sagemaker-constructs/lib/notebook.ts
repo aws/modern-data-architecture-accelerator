@@ -91,22 +91,22 @@ export class CaefNoteBook extends CfnNotebookInstance {
     constructor( scope: Construct, id: string, props: CaefNoteBookProps ) {
         super( scope, id, CaefNoteBook.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "notebook",
                 overrideResourceId: "id-" + props.notebookInstanceId,
                 name: "id-" + props.notebookInstanceName,
                 value: this.ref
             }, ...props
-        } )
-        new CaefParamAndOutput( scope, {
+        },scope )
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "notebook",
                 overrideResourceId: "subnet-" + props.notebookInstanceId,
                 name: "subnetId-" + props.notebookInstanceName,
                 value: props.subnetId
             }, ...props
-        } )
+        },scope )
     }
 }
 

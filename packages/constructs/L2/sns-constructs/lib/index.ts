@@ -69,23 +69,23 @@ export class CaefSnsTopic extends Topic {
         enforceSslStatement.addAnyPrincipal()
         this.addToResourcePolicy( enforceSslStatement )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Topic",
                 resourceId: props.topicName,
                 name: "name",
                 value: this.topicName
             }, ...props
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Topic",
                 resourceId: props.topicName,
                 name: "arn",
                 value: this.topicArn
             }, ...props
-        } )
+        },scope )
     }
 }
 

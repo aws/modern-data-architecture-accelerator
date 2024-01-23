@@ -172,13 +172,13 @@ export class CaefSecurityGroup extends SecurityGroup {
             }
         }
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             naming: props.naming,
             resourceType: "security-group",
             resourceId: props.securityGroupName,
             name: "id",
             value: this.securityGroupId
-        } )
+        },scope )
 
     }
 

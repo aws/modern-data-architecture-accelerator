@@ -41,30 +41,30 @@ export class CaefDataBrewProject extends CfnProject {
     constructor( scope: Construct, id: string, props: CaefDataBrewProjectProps ) {
         super( scope, id, CaefDataBrewProject.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Project",
                 resourceId: props.name,
                 name: props.name,
                 value: this.name
             }, ...props
-        } )
-        new CaefParamAndOutput( scope, {
+        },scope )
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Project",
                 resourceId: props.datasetName,
                 name: "datasetName",
                 value: this.datasetName
             }, ...props
-        } )
-        new CaefParamAndOutput( scope, {
+        },scope )
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Project",
                 resourceId: props.recipeName,
                 name: "recipeName",
                 value: this.recipeName
             }, ...props
-        } )
+        },scope )
     }
 }
 

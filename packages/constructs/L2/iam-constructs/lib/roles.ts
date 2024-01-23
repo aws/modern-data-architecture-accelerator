@@ -137,32 +137,32 @@ export class CaefRole extends Role {
     constructor( scope: Construct, id: string, props: CaefRoleProps ) {
         super( scope, id, CaefRole.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "role",
                 resourceId: props.roleName,
                 name: "arn",
                 value: this.roleArn
             }, ...props
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "role",
                 resourceId: props.roleName,
                 name: "id",
                 value: this.roleId
             }, ...props
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "role",
                 resourceId: props.roleName,
                 name: "name",
                 value: this.roleName
             }, ...props
-        } )
+        },scope )
 
     }
 }

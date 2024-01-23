@@ -69,23 +69,23 @@ export class CaefEventBus extends EventBus implements ICaefEventBus {
 
             this.addToResourcePolicy( policyStatement );
         }
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "eventbus",
                 resourceId: props.eventBusName,
                 name: "name",
                 value: this.eventBusName
             }, ...props
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "eventbus",
                 resourceId: props.eventBusName,
                 name: "arn",
                 value: this.eventBusArn
             }, ...props
-        } )
+        },scope )
 
     }
 }

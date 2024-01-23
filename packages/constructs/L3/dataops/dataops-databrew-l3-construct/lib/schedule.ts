@@ -38,14 +38,14 @@ export class CaefDataBrewSchedule extends CfnSchedule {
     constructor( scope: Construct, id: string, props: CaefDataBrewScheduleProps ) {
         super( scope, id, CaefDataBrewSchedule.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Schedule",
                 resourceId: props.name,
                 name: "name",
                 value: this.name
             }, ...props
-        } )
+        },scope )
     }
 }
 
