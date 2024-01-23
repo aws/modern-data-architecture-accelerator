@@ -105,23 +105,23 @@ export class CaefManagedPolicy extends ManagedPolicy {
         super( scope, id, CaefManagedPolicy.setProps( props ) )
         this.props = props
         this.checkPolicyLength()
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "managed-policy",
                 resourceId: props.managedPolicyName,
                 name: "arn",
                 value: this.managedPolicyArn
             }, ...props
-        } )
+        } ,scope)
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "managed-policy",
                 resourceId: props.managedPolicyName,
                 name: "name",
                 value: this.managedPolicyName
             }, ...props
-        } )
+        },scope )
     }
 
     public addStatements ( ...statement: PolicyStatement[] ): void {

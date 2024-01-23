@@ -170,27 +170,27 @@ export class CaefStudioDomain extends CfnDomain {
 
         new CaefCustomResource( this, 'update-domain-cr', crProps )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "domain",
                 name: "id",
                 value: this.ref
             }, ...props
-        } )
-        new CaefParamAndOutput( scope, {
+        },scope )
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "domain",
                 name: "vpc-id",
                 value: props.vpcId
             }, ...props
-        } )
-        new CaefParamAndOutput( scope, {
+        },scope )
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "domain",
                 name: "subnet-ids",
                 value: props.subnetIds.join( "," )
             }, ...props
-        } )
+        },scope)
     }
 
 

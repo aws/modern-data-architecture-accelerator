@@ -145,21 +145,21 @@ export class CaefECSFargateService extends FargateService {
     constructor( scope: Construct, id: string, props: CaefECSFargateServiceProps ) {
         super( scope, id, CaefECSFargateService.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "fargateservice",
                 resourceId: props.serviceName,
                 name: "arn",
                 value: this.serviceArn
             }, ...props
-        } )
-        new CaefParamAndOutput( scope, {
+        },scope )
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "fargateservice",
                 resourceId: props.serviceName,
                 name: "name",
                 value: this.serviceName
             }, ...props
-        } )
+        },scope )
     }
 }

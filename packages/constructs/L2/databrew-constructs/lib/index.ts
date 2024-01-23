@@ -85,14 +85,14 @@ export class CaefDataBrewJob extends CfnJob {
     constructor( scope: Construct, id: string, props: CaefDataBrewJobProps ) {
         super( scope, id, CaefDataBrewJob.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Job",
                 resourceId: props.name,
                 name: "name",
                 value: this.name
             }, ...props
-        } )
+        },scope )
     }
 }
 

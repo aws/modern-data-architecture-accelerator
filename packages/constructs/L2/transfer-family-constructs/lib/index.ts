@@ -119,19 +119,19 @@ export class CaefSFTPServer extends CfnServer {
     constructor( scope: Construct, id: string, props: CaefSFTPServerProps ) {
         super( scope, id, CaefSFTPServer.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             naming: props.naming,
             resourceType: "server",
             name: "arn",
             value: this.attrArn
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             naming: props.naming,
             resourceType: "server",
             name: "id",
             value: this.attrServerId
-        } )
+        },scope )
 
     }
 }

@@ -32,13 +32,13 @@ export class CaefBoto3LayerVersion extends LayerVersion {
     constructor( scope: Construct, id: string, props: CaefBoto3LayerVersionProps ) {
         super( scope, id, CaefBoto3LayerVersion.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "layer-version",
                 resourceId: props.boto3Version,
                 name: "arn",
                 value: this.layerVersionArn
             }, ...props
-        } )
+        },scope )
     }
 }

@@ -392,23 +392,23 @@ export class CaefEKSCluster extends Cluster {
             ], true );
         }
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "cluster",
                 resourceId: props.clusterName,
                 name: "arn",
                 value: this.clusterFargateProfileArn
             }, ...props
-        } )
+        } ,scope)
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "cluster",
                 resourceId: props.clusterName,
                 name: "name",
                 value: this.clusterName
             }, ...props
-        } )
+        },scope )
     }
 
 

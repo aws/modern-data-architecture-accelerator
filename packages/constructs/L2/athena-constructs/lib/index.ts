@@ -103,13 +103,13 @@ export class CaefAthenaWorkgroup extends CfnWorkGroup {
     constructor( scope: Construct, id: string, props: CaefAthenaWorkgroupProps ) {
         super( scope, id, CaefAthenaWorkgroup.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             naming: props.naming,
             resourceType: "workgroup",
             resourceId: props.name,
             name: "name",
             value: this.name
-        } )
+        },scope )
     }
 }
 

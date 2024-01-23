@@ -184,16 +184,16 @@ export class CaefSqsQueue extends Queue {
         enforceSslStatement.addAnyPrincipal()
         this.addToResourcePolicy( enforceSslStatement )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "queue",
                 resourceId: props.queueName,
                 name: "name",
                 value: this.queueName
             }, ...props
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
 
                 resourceType: "queue",
@@ -201,16 +201,16 @@ export class CaefSqsQueue extends Queue {
                 name: "arn",
                 value: this.queueArn
             }, ...props
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "queue",
                 resourceId: props.queueName,
                 name: "url",
                 value: this.queueUrl
             }, ...props
-        } )
+        },scope )
     }
 }
 

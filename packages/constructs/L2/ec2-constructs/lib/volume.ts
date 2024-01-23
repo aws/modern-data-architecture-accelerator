@@ -84,19 +84,19 @@ export class CaefEC2Volume extends Volume {
             },
         ] );
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "volume",
                 name: "id",
                 value: this.volumeId
             }, ...props
-        } )
-        new CaefParamAndOutput( scope, {
+        },scope )
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "volume",
                 name: "az",
                 value: this.availabilityZone
             }, ...props
-        } )
+        },scope )
     }
 }

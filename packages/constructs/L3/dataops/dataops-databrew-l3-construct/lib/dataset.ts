@@ -45,14 +45,14 @@ export class CaefDataBrewDataset extends CfnDataset {
     constructor( scope: Construct, id: string, props: CaefDataBrewDatasetProps ) {
         super( scope, id, CaefDataBrewDataset.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "Dataset",
                 resourceId: props.name,
                 name: props.name,
                 value: this.name
             }, ...props
-        } )
+        },scope )
     }
 }
 

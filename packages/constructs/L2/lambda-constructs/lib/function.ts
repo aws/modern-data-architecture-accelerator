@@ -300,22 +300,22 @@ export class CaefLambdaFunction extends Function {
     constructor( scope: Construct, id: string, props: CaefLambdaFunctionProps ) {
         super( scope, id, CaefLambdaFunction.setProps( props ) )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "lambda",
                 resourceId: props.functionName,
                 name: "name",
                 value: this.functionName
             }, ...props
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "lambda",
                 resourceId: props.functionName,
                 name: "arn",
                 value: this.functionArn
             }, ...props
-        } )
+        },scope )
     }
 }

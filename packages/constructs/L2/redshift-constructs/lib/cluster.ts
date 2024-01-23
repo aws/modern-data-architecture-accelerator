@@ -177,14 +177,14 @@ export class CaefRedshiftCluster extends Cluster {
         }
 
         if ( this.secret ) {
-            new CaefParamAndOutput( scope, {
+            new CaefParamAndOutput( this, {
                 ...{
                     resourceType: "cluster-secret",
                     resourceId: props.clusterName,
                     name: "name",
                     value: this.secret.secretName
                 }, ...props
-            } )
+            },scope )
         }
         NagSuppressions.addResourceSuppressions( this, [
             {
@@ -201,16 +201,16 @@ export class CaefRedshiftCluster extends Cluster {
             }
         ] );
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "cluster",
                 resourceId: props.clusterName,
                 name: "endpoint",
                 value: this.clusterEndpoint.socketAddress
             }, ...props
-        } )
+        },scope )
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
 
                 resourceType: "cluster",
@@ -218,7 +218,7 @@ export class CaefRedshiftCluster extends Cluster {
                 name: "security-group-id",
                 value: props.securityGroup.securityGroupId
             }, ...props
-        } )
+        },scope )
 
     }
 }

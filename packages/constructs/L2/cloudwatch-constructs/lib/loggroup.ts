@@ -73,14 +73,14 @@ export class CaefLogGroup extends LogGroup implements ICaefLogGroup {
             );
         }
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "loggroup",
                 resourceId: props.logGroupName,
                 name: "name",
                 value: this.logGroupPhysicalName()
             }, ...props
-        } )
+        },scope )
 
     }
 }

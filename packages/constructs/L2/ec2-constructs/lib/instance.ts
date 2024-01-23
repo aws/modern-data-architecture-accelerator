@@ -242,12 +242,12 @@ export class CaefEC2Instance extends Instance {
             },
         ] );
 
-        new CaefParamAndOutput( scope, {
+        new CaefParamAndOutput( this, {
             ...{
                 resourceType: "instance",
                 name: "id-" + props.naming.resourceName( props.instanceName ),
                 value: this.instanceId
             }, ...props
-        } )
+        },scope )
     }
 }
