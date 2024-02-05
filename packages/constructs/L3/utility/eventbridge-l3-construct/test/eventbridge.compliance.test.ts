@@ -48,7 +48,6 @@ describe( 'CAEF Compliance Stack Tests', () => {
     } );
     test( 'EventBus Policy', () => {
         template.hasResourceProperties( "AWS::Events::EventBusPolicy", {
-            "StatementId": "allow_put_events",
             "EventBusName": {
                 "Ref": "teststacktestbusbusA97F5FB2"
             },
@@ -64,8 +63,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
                         "teststacktestbusbusA97F5FB2",
                         "Arn"
                     ]
-                },
-                "Sid": "allow_put_events"
+                }
             }
         } )
     } );

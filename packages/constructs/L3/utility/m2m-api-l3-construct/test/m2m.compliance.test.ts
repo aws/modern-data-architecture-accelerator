@@ -240,7 +240,7 @@ describe( 'Mandatory Prop Tests', () => {
         },
         "FunctionName": "test-org-test-env-test-domain-test-module-log-auth-event",
         "Handler": "index.handler",
-        "Runtime": "nodejs18.x"
+        "Runtime": "nodejs20.x"
       } )
     } );
   } )
@@ -538,7 +538,7 @@ describe( 'Mandatory Prop Tests', () => {
         "FunctionName": "test-org-test-env-test-domain-test-module-signed-s3-url-gen",
         "Handler": "s3_url.handler",
         "ReservedConcurrentExecutions": 10,
-        "Runtime": "python3.11"
+        "Runtime": "python3.12"
       } )
     } );
   } )
@@ -839,7 +839,7 @@ describe( 'Optional Prop Tests', () => {
       "FunctionName": "test-org-test-env-test-domain-test-module-signed-s3-url-gen",
       "Handler": "s3_url.handler",
       "ReservedConcurrentExecutions": 10,
-      "Runtime": "python3.11"
+      "Runtime": "python3.12"
     } )
   } );
 } )

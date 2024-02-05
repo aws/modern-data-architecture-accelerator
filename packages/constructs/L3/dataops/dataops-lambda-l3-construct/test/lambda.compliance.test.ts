@@ -25,7 +25,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     srcDir: "./test/src/lambda/test",
     handler: "test_handler",
     roleArn: "arn:test-partition:iam::test-acct:role/test-lambda-role",
-    runtime: "python3.11"
+    runtime: "python3.12"
   }
 
   const functionVpcProps: FunctionProps = {

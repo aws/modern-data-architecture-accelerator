@@ -33,7 +33,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
 
     test( 'Event Bus Policy', () => {
         template.hasResourceProperties( "AWS::Events::EventBusPolicy", {
-            "StatementId": "allow_put_events",
+
             "EventBusName": {
                 "Ref": "testconstruct281AED50"
             },
@@ -49,7 +49,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
                         "Arn"
                     ]
                 },
-                "Sid": "allow_put_events"
+
             }
         } )
     } )

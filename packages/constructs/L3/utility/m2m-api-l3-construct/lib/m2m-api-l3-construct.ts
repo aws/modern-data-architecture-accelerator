@@ -248,7 +248,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
         } );
 
         const postAuthLogFn = new CaefLambdaFunction( this, 'postAuthLogFn', {
-            runtime: Runtime.NODEJS_18_X,
+            runtime: Runtime.NODEJS_20_X,
             handler: 'index.handler',
             functionName: "log-auth-event",
             role: cognitoAuthLogFunctionRole,
@@ -325,7 +325,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
 
         // creates lambda function to generate presigned URL
         const s3UrlGenLambda = new CaefLambdaFunction( this, 's3-url-gen-lambda', {
-            runtime: Runtime.PYTHON_3_11,
+            runtime: Runtime.PYTHON_3_12,
             handler: 's3_url.handler',
             functionName: "signed-s3-url-gen",
             role: integrationLambdaRole,
