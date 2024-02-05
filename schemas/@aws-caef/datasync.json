@@ -276,7 +276,7 @@
                     "type": "string"
                 },
                 "logLevel": {
-                    "description": "Specifies the type of logs that DataSync publishes to a Amazon CloudWatch Logs log group.\n\nTo specify the log group, see [CloudWatchLogGroupArn](https://docs.aws.amazon.com/datasync/latest/userguide/API_CreateTask.html#DataSync-CreateTask-request-CloudWatchLogGroupArn) .\n\nIf you set `LogLevel` to `OFF` , no logs are published. `BASIC` publishes logs on errors for individual files transferred. `TRANSFER` publishes logs for every file or object that is transferred and integrity checked.",
+                    "description": "Specifies the type of logs that DataSync publishes to a Amazon CloudWatch Logs log group.\n\nTo specify the log group, see [CloudWatchLogGroupArn](https://docs.aws.amazon.com/datasync/latest/userguide/API_CreateTask.html#DataSync-CreateTask-request-CloudWatchLogGroupArn) .\n\n- `BASIC` - Publishes logs with only basic information (such as transfer errors).\n- `TRANSFER` - Publishes logs for all files or objects that your DataSync task transfers and performs data-integrity checks on.\n- `OFF` - No logs are published.",
                     "type": "string"
                 },
                 "mtime": {
@@ -284,11 +284,11 @@
                     "type": "string"
                 },
                 "objectTags": {
-                    "description": "Specifies whether object tags are preserved when transferring between object storage systems.\n\nIf you want your DataSync task to ignore object tags, specify the `NONE` value.\n\nDefault Value: `PRESERVE`",
+                    "description": "Specifies whether you want DataSync to `PRESERVE` object tags (default behavior) when transferring between object storage systems.\n\nIf you want your DataSync task to ignore object tags, specify the `NONE` value.",
                     "type": "string"
                 },
                 "overwriteMode": {
-                    "description": "Specifies whether data at the destination location should be overwritten or preserved.\n\nIf set to `NEVER` , a destination file for example will not be replaced by a source file (even if the destination file differs from the source file). If you modify files in the destination and you sync the files, you can use this value to protect against overwriting those changes.\n\nSome storage classes have specific behaviors that can affect your Amazon S3 storage cost. For detailed information, see [Considerations when working with Amazon S3 storage classes in DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/create-s3-location.html#using-storage-classes) .",
+                    "description": "Specifies whether DataSync should modify or preserve data at the destination location.\n\n- `ALWAYS` (default) - DataSync modifies data in the destination location when source data (including metadata) has changed.\n\nIf DataSync overwrites objects, you might incur additional charges for certain Amazon S3 storage classes (for example, for retrieval or early deletion). For more information, see [Storage class considerations with Amazon S3 transfers](https://docs.aws.amazon.com/datasync/latest/userguide/create-s3-location.html#using-storage-classes) .\n- `NEVER` - DataSync doesn't overwrite data in the destination location even if the source data has changed. You can use this option to protect against overwriting changes made to files or objects in the destination.",
                     "type": "string"
                 },
                 "posixPermissions": {

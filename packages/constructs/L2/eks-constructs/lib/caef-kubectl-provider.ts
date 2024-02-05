@@ -91,7 +91,7 @@ export class CaefKubectlProvider extends NestedStack implements IKubectlProvider
 
     const handler = new Function( this, 'Handler', {
       code: Code.fromAsset( path.join( __dirname, 'kubectl-handler' ) ),
-      runtime: Runtime.PYTHON_3_10,
+      runtime: Runtime.PYTHON_3_12,
       handler: 'index.handler',
       timeout: Duration.minutes( 15 ),
       description: 'onEvent handler for EKS kubectl resource provider',

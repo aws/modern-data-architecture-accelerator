@@ -152,7 +152,7 @@ export class CaefStudioDomain extends CfnDomain {
         const crProps: CaefCustomResourceProps = {
             resourceType: "StudioDomainUpdate",
             code: Code.fromAsset( `${ __dirname }/../src/lambda/update_domain` ),
-            runtime: Runtime.PYTHON_3_11,
+            runtime: Runtime.PYTHON_3_12,
             handler: "update_domain.lambda_handler",
             handlerRolePolicyStatements: updateDomainStatements,
             handlerProps: {

@@ -14,7 +14,6 @@ import { Arn } from "aws-cdk-lib";
 describe( 'CAEF Construct Mandatory Prop Compliance Tests', () => {
     const testApp = new CaefTestApp()
 
-
     const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
     const testContstructProps: CaefBucketProps = {

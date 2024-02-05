@@ -214,7 +214,7 @@ export class CaefEC2Instance extends Instance {
         const crProps: CaefCustomResourceProps = {
             resourceType: "Ec2VolumeEncryptionCheck",
             code: Code.fromAsset( `${ __dirname }/../src/lambda/volume_check` ),
-            runtime: Runtime.PYTHON_3_11,
+            runtime: Runtime.PYTHON_3_12,
             handler: "volume_check.lambda_handler",
             handlerRolePolicyStatements: [ statement ],
             handlerProps: handlerProps,
