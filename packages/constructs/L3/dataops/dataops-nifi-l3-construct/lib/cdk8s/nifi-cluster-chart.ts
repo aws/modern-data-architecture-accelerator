@@ -92,7 +92,7 @@ export class NifiClusterChart extends cdk8s.Chart {
         const stableJson = json.replace( /Token\[.*?\]/g, "Token" )
         // nosemgrep
         const crypto = require( 'crypto' )
-        const hash = crypto.createHash( 'sha1' )
+        const hash = crypto.createHash( 'sha1' ) //NOSONAR not used in senstive context
             .update( stableJson ).digest( 'hex' );
         return hash
     }
@@ -278,7 +278,7 @@ export class NifiClusterChart extends cdk8s.Chart {
             data: nifiInitScriptsConfigMapData
         } )
 
-        var volId = 0
+        let volId = 0
         const pvs = this.props.efsPersistentVolumes.map( efsPvProps => {
             const pv = new k8s.KubePersistentVolume( this, `nifi-persistent-volume-${ volId }`, {
                 metadata: {
@@ -861,11 +861,11 @@ export class NifiClusterChart extends cdk8s.Chart {
 
         nifiPropertiesMap[ 'nifi.security.keystore' ] = `${ nifiDataDir }/ssl/keystore/keystore.jks`
         nifiPropertiesMap[ 'nifi.security.keystoreType' ] = "JKS"
-        nifiPropertiesMap[ 'nifi.security.keystorePasswd' ] = "INIT_KEYSTORE_PASSWORD"
-        nifiPropertiesMap[ 'nifi.security.keyPasswd' ] = "INIT_KEYSTORE_PASSWORD"
+        nifiPropertiesMap[ 'nifi.security.keystorePasswd' ] = "INIT_KEYSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
+        nifiPropertiesMap[ 'nifi.security.keyPasswd' ] = "INIT_KEYSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
         nifiPropertiesMap[ 'nifi.security.truststore' ] = `${ nifiDataDir }/ssl/truststore/truststore.jks`
         nifiPropertiesMap[ 'nifi.security.truststoreType' ] = "JKS"
-        nifiPropertiesMap[ 'nifi.security.truststorePasswd' ] = "INIT_TRUSTSTORE_PASSWORD"
+        nifiPropertiesMap[ 'nifi.security.truststorePasswd' ] = "INIT_TRUSTSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
         nifiPropertiesMap[ 'nifi.security.user.authorizer' ] = "managed-authorizer"
         nifiPropertiesMap[ 'nifi.security.autoreload.enabled' ] = "true"
         nifiPropertiesMap[ 'nifi.security.autoreload.interval' ] = "10 secs"
@@ -896,11 +896,11 @@ export class NifiClusterChart extends cdk8s.Chart {
             baseUrl: `https://${ hostname  }:${ httpsPort.toString() }`,
             keystore: `${ sslBasePath }/manager/keystore.jks`,
             keystoreType: "JKS",
-            keystorePasswd: "INIT_KEYSTORE_PASSWORD",
-            keyPasswd: "INIT_KEYSTORE_PASSWORD",
+            keystorePasswd: "INIT_KEYSTORE_PASSWORD", //NOSONAR placeholder value replaced at runtime
+            keyPasswd: "INIT_KEYSTORE_PASSWORD", //NOSONAR placeholder value replaced at runtime
             truststore: `${ sslBasePath }/manager/truststore.jks`,
             truststoreType: "JKS",
-            truststorePasswd: "INIT_KEYSTORE_PASSWORD"
+            truststorePasswd: "INIT_KEYSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
         }
 
         const toolkitConfig = Object.entries( toolkitConfigMap ).map( entry => {

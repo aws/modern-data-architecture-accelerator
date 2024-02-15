@@ -113,11 +113,9 @@ export class CaefBucket extends Bucket implements ICaefBucket {
         const uniqueBucketNamePrefix = props.uniqueBucketName?.valueOf() ||
             ( uniqueBucketNamePrefixContext ? Boolean( uniqueBucketNamePrefixContext ) : false )
 
-        const prefix = Fn.select( 0, Fn.split( "-", Fn.select( 2, Fn.split( "/", Stack.of( scope ).stackId ) ) ) )
-
-        const bucketName = uniqueBucketNamePrefix ?
-            props.bucketName ? prefix + '-' + props.naming.resourceName( props.bucketName, 62 - prefix.length ) : prefix
-            : props.naming.resourceName( props.bucketName, 63 )
+        const stackId = Fn.select( 0, Fn.split( "-", Fn.select( 2, Fn.split( "/", Stack.of( scope ).stackId ) ) ) )
+        const prefix = props.bucketName ? stackId + '-' + props.naming.resourceName( props.bucketName, 62 - stackId.length ) : stackId
+        const bucketName = uniqueBucketNamePrefix ? prefix : props.naming.resourceName( props.bucketName, 63 )
 
         const overrideProps = {
             bucketName: bucketName,

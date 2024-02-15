@@ -46,8 +46,7 @@ export class SftpServerL3Construct extends CaefL3Construct {
     constructor( scope: Construct, id: string, props: SftpServerL3ConstructProps ) {
         super( scope, id, props )
         this.props = props
-
-        let elasticIp = undefined;
+       
 
         // Create our Security Group
         let ingressRules: CfnSecurityGroup.IngressProperty[] = this.props.server.ingressCidrs.map( cidr => {
@@ -74,17 +73,15 @@ export class SftpServerL3Construct extends CaefL3Construct {
             createParams: false
         } )
 
-        if ( this.props.server.internetFacing === true ) {
-            elasticIp = new CfnEIP( this, 'EIP', {
+        const elasticIp =  this.props.server.internetFacing === true ? new CfnEIP( this, 'EIP', {
                 domain: this.props.server.vpcId
-            } )
-        }
+            } ) : undefined
 
         const SFTPServerProps =
         {
             naming: props.naming,
             vpcId: this.props.server.vpcId,
-            addressAllocationIds: ( this.props.server.internetFacing === true ) ? [ elasticIp!.attrAllocationId ] : undefined,
+            addressAllocationIds: elasticIp ? [ elasticIp.attrAllocationId ] : undefined,
             securityGroupId: securityGroup.attrGroupId,
             subnetIds: this.props.server.subnetIds,
             loggingRole: loggingRole

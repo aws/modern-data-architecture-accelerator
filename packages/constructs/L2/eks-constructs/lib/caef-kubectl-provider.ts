@@ -89,7 +89,7 @@ export class CaefKubectlProvider extends NestedStack implements IKubectlProvider
 
     const memorySize = cluster.kubectlMemory ? cluster.kubectlMemory.toMebibytes() : 1024;
 
-    const handler = new Function( this, 'Handler', {
+    const handler = new Function( this, 'Handler', { //NOSONAR false positive
       code: Code.fromAsset( path.join( __dirname, 'kubectl-handler' ) ),
       runtime: Runtime.PYTHON_3_12,
       handler: 'index.handler',

@@ -52,7 +52,7 @@ export class ZookeeperChart extends cdk8s.Chart {
         const stableJson = json.replace( /Token\[.*?\]/g, "Token" )
         // nosemgrep
         const crypto = require( 'crypto' )
-        const hash = crypto.createHash( 'sha1' )
+        const hash = crypto.createHash( 'sha1' ) //NOSONAR not used in senstive context
             .update( stableJson ).digest( 'hex' );
         return hash
     }
@@ -172,7 +172,7 @@ export class ZookeeperChart extends cdk8s.Chart {
     }
 
     private createPersistentVolumes (): k8s.KubePersistentVolume[] {
-        var volId = 0
+        let volId = 0
         const pvs = this.props.efsPersistentVolumes.map( efsPvProps => {
             const pv = new k8s.KubePersistentVolume( this, `zookeeper-persistent-volume-${ volId }`, {
                 metadata: {
@@ -455,7 +455,7 @@ export class ZookeeperChart extends cdk8s.Chart {
             } ) )
 
         //perform config-driven overrides here
-        var nodeIndex = 0
+        let nodeIndex = 0
         nodeList.forEach( nodeName => {
             zooCfgMap[ `server.${ nodeIndex }` ] = `${ nodeName }.${ zookeeperServiceName }.${ this.namespace }.svc.cluster.local:2888:3888`
             nodeIndex = nodeIndex + 1
@@ -469,17 +469,17 @@ export class ZookeeperChart extends cdk8s.Chart {
         zooCfgMap[ 'sslQuorum' ] = 'true'
         zooCfgMap[ 'ssl.quorum.keyStore.type' ] = 'JKS'
         zooCfgMap[ 'ssl.quorum.keyStore.location' ] = `${ sslBasePath }/INIT_HOSTNAME/keystore.jks`
-        zooCfgMap[ 'ssl.quorum.keyStore.password' ] = "INIT_KEYSTORE_PASSWORD"
+        zooCfgMap[ 'ssl.quorum.keyStore.password' ] = "INIT_KEYSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime 
         zooCfgMap[ 'ssl.quorum.trustStore.type' ] = 'JKS'
         zooCfgMap[ 'ssl.quorum.trustStore.location' ] = `${ sslBasePath }/INIT_HOSTNAME/truststore.jks`
-        zooCfgMap[ 'ssl.quorum.trustStore.password' ] = "INIT_TRUSTSTORE_PASSWORD"
+        zooCfgMap[ 'ssl.quorum.trustStore.password' ] = "INIT_TRUSTSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
 
         zooCfgMap[ 'ssl.keyStore.type' ] = 'JKS'
         zooCfgMap[ 'ssl.keyStore.location' ] = `${ sslBasePath }/INIT_HOSTNAME/keystore.jks`
-        zooCfgMap[ 'ssl.keyStore.password' ] = "INIT_KEYSTORE_PASSWORD"
+        zooCfgMap[ 'ssl.keyStore.password' ] = "INIT_KEYSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
         zooCfgMap[ 'ssl.trustStore.type' ] = 'JKS'
         zooCfgMap[ 'ssl.trustStore.location' ] = `${ sslBasePath }/INIT_HOSTNAME/truststore.jks`
-        zooCfgMap[ 'ssl.trustStore.password' ] = "INIT_TRUSTSTORE_PASSWORD"
+        zooCfgMap[ 'ssl.trustStore.password' ] = "INIT_TRUSTSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
 
         const zooCfg = Object.entries( zooCfgMap ).map( entry => {
             return `${ entry[ 0 ] }=${ entry[ 1 ] }`

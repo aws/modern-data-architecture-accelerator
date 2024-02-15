@@ -12,4 +12,5 @@ sonar-scanner \
   -Dsonar.javascript.lcov.reportPaths=./coverage/merged_lcov.info \
   -Dsonar.qualitygate.wait=${QUALITY_WAIT} \
   -Dsonar.host.url=${SONAR_SERVER} \
-  -Dsonar.login=${SONAR_LOGIN}
+  -Dsonar.login=${SONAR_LOGIN} \
+  -Dsonar.sourceEncoding=utf-8
