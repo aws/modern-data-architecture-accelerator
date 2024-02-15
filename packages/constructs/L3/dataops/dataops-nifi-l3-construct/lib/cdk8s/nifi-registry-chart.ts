@@ -85,7 +85,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
         const stableJson = json.replace( /Token\[.*?\]/g, "Token" )
         // nosemgrep
         const crypto = require( 'crypto' )
-        const hash = crypto.createHash( 'sha1' )
+        const hash = crypto.createHash( 'sha1' ) //NOSONAR not used in senstive context
             .update( stableJson ).digest( 'hex' );
         return hash
     }
@@ -756,11 +756,11 @@ export class NifiRegistryChart extends cdk8s.Chart {
         nifiRegistryPropertiesMap[ 'nifi.registry.web.http.host' ] = ""
         nifiRegistryPropertiesMap[ 'nifi.registry.security.keystore' ] = `${ nifiRegistryDataDir }/ssl/keystore/keystore.jks`
         nifiRegistryPropertiesMap[ 'nifi.registry.security.keystoreType' ] = "JKS"
-        nifiRegistryPropertiesMap[ 'nifi.registry.security.keystorePasswd' ] = "INIT_KEYSTORE_PASSWORD"
-        nifiRegistryPropertiesMap[ 'nifi.registry.security.keyPasswd' ] = "INIT_KEYSTORE_PASSWORD"
+        nifiRegistryPropertiesMap[ 'nifi.registry.security.keystorePasswd' ] = "INIT_KEYSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
+        nifiRegistryPropertiesMap[ 'nifi.registry.security.keyPasswd' ] = "INIT_KEYSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
         nifiRegistryPropertiesMap[ 'nifi.registry.security.truststore' ] = `${ nifiRegistryDataDir }/ssl/truststore/truststore.jks`
         nifiRegistryPropertiesMap[ 'nifi.registry.security.truststoreType' ] = "JKS"
-        nifiRegistryPropertiesMap[ 'nifi.registry.security.truststorePasswd' ] = "INIT_TRUSTSTORE_PASSWORD"
+        nifiRegistryPropertiesMap[ 'nifi.registry.security.truststorePasswd' ] = "INIT_TRUSTSTORE_PASSWORD" //NOSONAR placeholder value replaced at runtime
         nifiRegistryPropertiesMap[ 'nifi.registry.security.user.authorizer' ] = "managed-authorizer"
         nifiRegistryPropertiesMap[ 'nifi.registry.security.autoreload.enabled' ] = "true"
         nifiRegistryPropertiesMap[ 'nifi.registry.security.autoreload.interval' ] = "10 secs"

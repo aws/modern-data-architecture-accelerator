@@ -19,9 +19,7 @@ import { NagSuppressions } from 'cdk-nag';
 import * as cdk8s from 'cdk8s';
 import { Construct } from "constructs";
 import { NifiClusterChart, NodeResources } from './cdk8s/nifi-cluster-chart';
-import { NamedNifiRegistryClientProps, NifiClusterOptions,  NodeSize } from './nifi-options';
-import { NifiIdentityAuthorizationOptions, NifiNetworkOptions } from './nifi-options';
-
+import { NamedNifiRegistryClientProps, NifiClusterOptions,  NifiIdentityAuthorizationOptions,  NifiNetworkOptions,  NodeSize } from './nifi-options';
 
 
 export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthorizationOptions, NifiNetworkOptions {
@@ -43,6 +41,16 @@ export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthor
     readonly registryClients?: NamedNifiRegistryClientProps
 }
 
+interface CreateEfsPvsProps {
+    scope: Construct,
+    naming: ICaefResourceNaming,
+    name: string,
+    nodeCount: number,
+    vpc: IVpc,
+    subnets: ISubnet[],
+    kmsKey: IKey,
+    efsSecurityGroup: ISecurityGroup
+}
 
 export class NifiCluster extends Construct {
     private readonly props: NifiClusterProps
@@ -95,7 +103,15 @@ export class NifiCluster extends Construct {
 
         const efsSecurityGroup = NifiCluster.createEfsSecurityGroup( 'nifi-cluster', this, props.naming, props.vpc, [ this.securityGroup, ...additionalEfsIngressSecurityGroups || [] ] )
 
-        const nifiEfsPvs = NifiCluster.createEfsPvs( this, props.naming, 'nifi', nodeCount, props.vpc, props.subnets, props.kmsKey, efsSecurityGroup )
+        const nifiEfsPvs = NifiCluster.createEfsPvs( {
+            scope:this, 
+            naming: props.naming, 
+            name: 'nifi', 
+            nodeCount: nodeCount,
+            vpc: props.vpc, 
+            subnets:props.subnets, 
+            kmsKey: props.kmsKey, 
+            efsSecurityGroup: efsSecurityGroup })
         const efsManagedPolicy = NifiCluster.createEfsAccessPolicy( 'nifi-cluster', this, props.naming, props.kmsKey, nifiEfsPvs )
 
         const fargateProfile = props.eksCluster.addFargateProfile( props.clusterName, {
@@ -321,17 +337,17 @@ export class NifiCluster extends Construct {
         return efsManagedPolicy
     }
 
-    public static createEfsPvs ( scope: Construct, naming: ICaefResourceNaming, name: string, nodeCount: number, vpc: IVpc, subnets: ISubnet[], kmsKey: IKey, efsSecurityGroup: ISecurityGroup ): [ FileSystem, AccessPoint ][] {
-        const efs = new FileSystem( scope, `efs-${ name }`, {
-            fileSystemName: naming.resourceName( name, 256 ),
-            vpc: vpc,
+    public static createEfsPvs ( createEfsPvsProps: CreateEfsPvsProps ): [ FileSystem, AccessPoint ][] {
+        const efs = new FileSystem( createEfsPvsProps.scope, `efs-${ createEfsPvsProps.name }`, {
+            fileSystemName: createEfsPvsProps.naming.resourceName( createEfsPvsProps.name, 256 ),
+            vpc: createEfsPvsProps.vpc,
             vpcSubnets: {
-                subnets: subnets
+                subnets: createEfsPvsProps.subnets
             },
             performanceMode: PerformanceMode.MAX_IO,
-            securityGroup: efsSecurityGroup,
+            securityGroup: createEfsPvsProps.efsSecurityGroup,
             encrypted: true,
-            kmsKey: kmsKey
+            kmsKey: createEfsPvsProps.kmsKey
         } )
         NagSuppressions.addResourceSuppressions( efs, [
             {
@@ -344,10 +360,10 @@ export class NifiCluster extends Construct {
             },
         ] );
 
-        const efsPvs: [ FileSystem, AccessPoint ][] = [ ...Array( nodeCount ).keys() ].map( i => {
-            const ap = new AccessPoint( scope, `${ name }-pv-ap-${ i }`, {
+        const efsPvs: [ FileSystem, AccessPoint ][] = [ ...Array( createEfsPvsProps.nodeCount ).keys() ].map( i => {
+            const ap = new AccessPoint( createEfsPvsProps.scope, `${ createEfsPvsProps.name }-pv-ap-${ i }`, {
                 fileSystem: efs,
-                path: `/${ name }/${ i }`,
+                path: `/${ createEfsPvsProps.name }/${ i }`,
                 posixUser: {
                     uid: "1000",
                     gid: "1000"
