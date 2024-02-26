@@ -234,7 +234,7 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
             const lifecycleTransitionResolved: NoncurrentVersionTransition = {
                 storageClass: new StorageClass( transition.storageClass ),
                 transitionAfter: Duration.days( transition.days ),
-                noncurrentVersionsToRetain: transition.days
+                noncurrentVersionsToRetain: transition.newerNoncurrentVersions ? transition.newerNoncurrentVersions : undefined
             }
             return lifecycleTransitionResolved
         } )
