@@ -128,10 +128,11 @@ buckets:
     createFolderSkeleton: true
     enableEventBridgeNotifications: true
     lakeFormationLocations:
-      all-data:
+      read-data:
         prefix: data
-      all-data2:
-        prefix: data2
+      read-write-data:
+        prefix: data
+        write: true
     accessPolicies:
       - Root
       - Data

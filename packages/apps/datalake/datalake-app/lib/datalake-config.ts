@@ -47,6 +47,10 @@ export interface LakeFormationLocationConfig {
      * The S3 prefix of the location
      */
     readonly prefix: string
+    /**
+     * If true, LF role will be granted read-write access to the location
+     */
+    readonly write?: boolean
 }
 
 export interface AccessPolicyRuleConfig {
@@ -159,7 +163,8 @@ export class DataLakeConfigParser extends CaefAppConfigParser<DataLakeConfigCont
             const lakeFormationLocations = Object.fromEntries( Object.keys( configBucketProps.lakeFormationLocations || {} ).map( lfLocationName => {
                 const lfLocation = ( configBucketProps.lakeFormationLocations || {} )[ lfLocationName ]
                 return [ lfLocationName, {
-                    prefix: lfLocation.prefix
+                    prefix: lfLocation.prefix,
+                    write: lfLocation.write
                 } ]
             } ) )
 

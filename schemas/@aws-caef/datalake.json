@@ -369,6 +369,10 @@
                 "prefix": {
                     "description": "The S3 prefix of the location",
                     "type": "string"
+                },
+                "write": {
+                    "description": "If true, LF role will be granted read-write access to the location",
+                    "type": "boolean"
                 }
             },
             "required": [

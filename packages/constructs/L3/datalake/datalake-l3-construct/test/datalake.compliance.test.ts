@@ -59,12 +59,43 @@ describe( 'CAEF Compliance Stack Tests', () => {
         bucketZone: "test-zone",
         accessPolicies: [ testAccessPolicy ],
         lifecycleConfiguration: [ testLifecycleConfiguration ],
-        defaultDeny: true
+        defaultDeny: true,
+        inventories: {
+            "test": {
+                prefix: "data"
+            },
+            "test-destination": {
+                prefix: "data",
+                destinationBucket: "test-dest",
+                destinationPrefix: "test-dest-prefix"
+            }
+        }
+    }
+
+    const testLfBucketProps: BucketDefinition = {
+        bucketZone: "test-lf-zone",
+        accessPolicies: [ testAccessPolicy ],
+        lifecycleConfiguration: [ testLifecycleConfiguration ],
+        defaultDeny: true,
+        lakeFormationLocations: {
+            "read-only": {
+                prefix: "data"
+            },
+            "read-write": {
+                prefix: "data",
+                write: true
+            },
+            "read-write-false": {
+                prefix: "data",
+                write: false
+            }
+        }
     }
 
     const constructProps: DataLakeL3ConstructProps = {
         buckets: [
-            testBucketProps
+            testBucketProps,
+            testLfBucketProps
         ],
         naming: testApp.naming,
 
@@ -150,6 +181,9 @@ describe( 'CAEF Compliance Stack Tests', () => {
                                             ]
                                         ]
                                     },
+                                    "test-read-role-id:*",
+                                    "test-read-write-role-id:*",
+                                    "test-read-write-super-role-id:*",
                                     "test-read-role-id:*",
                                     "test-read-write-role-id:*",
                                     "test-read-write-super-role-id:*"
