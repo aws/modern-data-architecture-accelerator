@@ -29,3 +29,4 @@ coverage
 cdk.context.json
 __pycache__
 .nx
+test-template.json

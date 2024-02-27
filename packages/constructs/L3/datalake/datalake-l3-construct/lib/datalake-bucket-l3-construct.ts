@@ -47,6 +47,10 @@ export interface LakeFormationLocation {
      * The S3 prefix of the location
      */
     readonly prefix: string
+    /**
+     * If true, LF role will be granted write access to the location in addition to read.
+     */
+    readonly write?: boolean
 
 }
 
@@ -182,14 +186,16 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
             roleName: "lake-formation",
             description: "Role for accessing the data lake via LakeFormation."
         } )
-
-        const allRoleIds = this.props.buckets.flatMap( bucketProps => bucketProps.accessPolicies.flatMap( ap => this.resolveAccessPolicy( ap ) ).flatMap( ap =>
+        this.props.buckets.sort( ( a, b ) => a.bucketZone.localeCompare( b.bucketZone ) )
+        const allRoleIds = this.props.buckets.flatMap( bucketProps => {
+            bucketProps.accessPolicies.sort( ( a, b ) => a.s3Prefix.localeCompare( b.s3Prefix ))
+            return bucketProps.accessPolicies.flatMap( ap => this.resolveAccessPolicy( ap ) ).flatMap( ap =>
             [
                 ...ap.readRoleIds,
                 ...ap.readWriteRoleIds,
                 ...ap.readWriteSuperRoleIds
             ]
-        ) )
+        )} )
 
         this.kmsKey = this.createDataLakeKmsKey( [ dataLakeFolderFunctionRole.roleId, lakeFormationRole.roleId, ...allRoleIds ] )
 
@@ -438,17 +444,26 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
         bucketZone: string,
         bucket: IBucket,
         lakeFormationRole: IRole ) {
+
         new CfnResource( this.scope, `lf-resource-${ bucketZone }-${ locationName }`, {
             resourceArn: `${ bucket.bucketArn }/${ CaefBucket.formatS3Prefix( locationProps.prefix ) }`,
             useServiceLinkedRole: false,
             roleArn: lakeFormationRole.roleArn
         } )
-        //Add Read Access for the LF Role to the Prefix
+
+        const permissions = locationProps.write?.valueOf ? {
+            readWritePrincipals: [ lakeFormationRole ]
+        } : {
+            readPrincipals: [ lakeFormationRole ]
+        }
+
+        //Add Access for the LF Role to the Prefix
         const lfPrefixRestrictPolicies = new RestrictObjectPrefixToRoles( {
             s3Bucket: bucket,
             s3Prefix: locationProps.prefix,
-            readPrincipals: [ lakeFormationRole ]
+            ...permissions,
         } )
+
         lfPrefixRestrictPolicies.statements().forEach( statement => bucket.addToResourcePolicy( statement ) )
     }
 

@@ -153,7 +153,7 @@ export class CaefKmsKey extends Key implements ICaefKmsKey {
             } )
             // We're including a condition with a stringlike condition that prevents this from being overly broad
             KeyUserPolicyStatement.addAnyPrincipal()
-            KeyUserPolicyStatement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.keyUserRoleIds.map( x => `${ x }:*` ) ) ].sort( ( a, b ) => a.localeCompare( b ) ) } )
+            KeyUserPolicyStatement.addCondition( "StringLike", { "aws:userId": props.keyUserRoleIds.map( x => `${ x }:*` ) } )
             this.addToResourcePolicy( KeyUserPolicyStatement )
         }
         if ( props.keyAdminRoleIds && props.keyAdminRoleIds.length > 0 ) {
@@ -168,7 +168,7 @@ export class CaefKmsKey extends Key implements ICaefKmsKey {
             } )
             // We're including a condition with a stringlike condition that prevents this from being overly broad
             KeyAdminPolicyStatement.addAnyPrincipal()
-            KeyAdminPolicyStatement.addCondition( "StringLike", { "aws:userId": [ ...new Set( props.keyAdminRoleIds.map( x => `${ x }:*` ) ) ].sort( ( a, b ) => a.localeCompare( b ) ) } )
+            KeyAdminPolicyStatement.addCondition( "StringLike", { "aws:userId":  props.keyAdminRoleIds.map( x => `${ x }:*` )  } )
             this.addToResourcePolicy( KeyAdminPolicyStatement )
         }
 
