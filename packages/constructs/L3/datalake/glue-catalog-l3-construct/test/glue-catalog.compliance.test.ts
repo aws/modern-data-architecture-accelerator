@@ -25,6 +25,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     naming: testApp.naming,
     accessPolicies: { [ 'test-access-policy' ]: catalogAccessPolicyProps },
     consumerAccounts: { 'id': 'test1' },
+    kmsKeyConsumerAccounts: { 'id': 'test3' },
     producerAccounts: { 'id': 'test2' }
   };
 

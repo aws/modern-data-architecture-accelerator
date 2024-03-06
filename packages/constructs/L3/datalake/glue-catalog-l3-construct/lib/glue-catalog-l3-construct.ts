@@ -9,7 +9,7 @@ import { CaefLambdaFunction, CaefLambdaRole } from '@aws-caef/lambda-constructs'
 import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
 import { CustomResource, Duration } from 'aws-cdk-lib';
 import { CfnDataCatalog } from 'aws-cdk-lib/aws-athena';
-import { ArnPrincipal, Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { ArnPrincipal, Effect, IPrincipal, PolicyDocument, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
@@ -24,6 +24,9 @@ const GLUE_READ_ACTIONS: string[] = [
 ]
 const GLUE_WRITE_ACTIONS: string[] = [
     ...GLUE_READ_ACTIONS,
+]
+const GLUE_SHARE_RESOURCE_ACTIONS: string[] = [
+    "glue:ShareResource"
 ]
 
 export interface CatalogAccessPolicyProps {
@@ -54,6 +57,10 @@ export interface GlueCatalogL3ConstructProps extends CaefL3ConstructProps {
      * List of accounts for which additional Athena catalogs will be created pointing to the producer account Glue catalog
      */
     readonly producerAccounts?: { [ key: string ]: string };
+    /**
+     * List of accounts which will be provided read access to the catalog KMS key only
+     */
+    readonly kmsKeyConsumerAccounts?: { [ key: string ]: string };
 
 }
 
@@ -63,12 +70,14 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
 
     private catalogResourcePolicyProvider?: Provider;
     private consumerAccounts?: { [ key: string ]: string; }
+    private kmsKeyConsumerAccounts?: { [ key: string ]: string; }
     private producerAccounts?: { [ key: string ]: string; }
 
     constructor( scope: Construct, id: string, props: GlueCatalogL3ConstructProps ) {
         super( scope, id, props )
         this.props = props
         this.consumerAccounts = Object.fromEntries( Object.entries( this.props.consumerAccounts || [] ).filter( x => x[ 1 ] != this.account ) )
+        this.kmsKeyConsumerAccounts = Object.fromEntries( Object.entries( this.props.kmsKeyConsumerAccounts || [] ).filter( x => x[ 1 ] != this.account ) )
         this.producerAccounts = Object.fromEntries( Object.entries( this.props.producerAccounts || [] ).filter( x => x[ 1 ] != this.account ) )
         const allReadPrincipalArns: string[] = []
         const allWritePrincipalArns: string[] = []
@@ -96,6 +105,11 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
         }
 
         if ( resourcePolicyDocument.statementCount > 0 ) {
+
+            //Required as per https://docs.aws.amazon.com/lake-formation/latest/dg/hybrid-cross-account.html
+            const shareResourceStatement = this.getShareResourcePolicyStatement()
+            resourcePolicyDocument.addStatements( shareResourceStatement )
+            
             const catalogCrProvider = this.getGlueCatalogResourcePolicyCrProvider()
             const catalogResourcePolicy = new CustomResource( this.scope, `catalog-resource-policy`, {
                 serviceToken: catalogCrProvider.serviceToken,
@@ -124,9 +138,9 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
                 } )
             } )
         }
-
+        const catalogKmsKeyConsumerAccounts = Object.entries( { ...this.consumerAccounts || {}, ...this.kmsKeyConsumerAccounts || {} } ).map( x => x[ 1 ] )
         //Use some private helper functions to create the catalog resources
-        let catalogKmsKey = this.createCatalogKmsKey( allReadPrincipalArns, allWritePrincipalArns, Object.entries( this.consumerAccounts || {} ).map( x => x[ 1 ] ) )
+        const catalogKmsKey = this.createCatalogKmsKey( allReadPrincipalArns, allWritePrincipalArns, catalogKmsKeyConsumerAccounts )
 
         new CaefCatalogSettings( this.scope, "glue-catalog-settings", {
             naming: this.props.naming,
@@ -135,6 +149,47 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
         } )
 
         return this
+    }
+
+    /**
+     * Creates a new PolicyStatement with ALLOW set as a default Effect.
+     * 
+     * @param policyName Name to give to the policy
+     * @param resources List of resources
+     * @param principalArns List of ARNs
+     * @param actions List of Actions
+     * @returns PolicyStatement
+     */
+    private createPolicyStatement(policyName: string, resources: string[], principalArns: IPrincipal[], actions: string[]): PolicyStatement {
+        return new PolicyStatement({
+            sid: policyName,
+            actions: actions,
+            principals: principalArns,
+            resources: resources,
+        })
+    }
+
+    /**
+     * Returns a new policy statement to allow `ram.amazonaws.com` to access all databases and tables.
+     * The purpose is to allow cross-account data sharing.
+     * Based on https://docs.aws.amazon.com/lake-formation/latest/dg/cross-account-prereqs.html
+     * 
+     * @returns PolicyStatement
+     */
+    private getShareResourcePolicyStatement(): PolicyStatement {
+        const glueResourceArns: string[] = []
+        glueResourceArns.push(`arn:${ this.partition }:glue:${ this.region }:${ this.account }:catalog`)
+        glueResourceArns.push(`arn:${ this.partition }:glue:${ this.region }:${ this.account }:database/*`)
+        glueResourceArns.push(`arn:${ this.partition }:glue:${ this.region }:${ this.account }:table/*/*`) 
+
+        const glueShareResourcePolicyStatement = this.createPolicyStatement(
+            'allow-ram-sharing',
+            glueResourceArns,
+            [new ServicePrincipal("ram.amazonaws.com")],
+            GLUE_SHARE_RESOURCE_ACTIONS
+        )
+
+        return glueShareResourcePolicyStatement
     }
 
     private createResourcePolicyStatements ( accessPolicyName: string, resources: string[], readPrincipalArns?: string[], writePrincipalArns?: string[] ): PolicyStatement[] {
@@ -148,23 +203,24 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
         glueResourceArns.push( `arn:${ this.partition }:glue:${ this.region }:${ this.account }:catalog` )
         glueResourceArns.push( `arn:${ this.partition }:glue:${ this.region }:${ this.account }:database/default` )
         if ( readPrincipalArns && readPrincipalArns.length > 0 ) {
-            const readPolicyStatement = new PolicyStatement( {
-                sid: `${ accessPolicyName }-read`,
-                actions: GLUE_READ_ACTIONS,
-                principals: readPrincipalArns.map( x => new ArnPrincipal( x ) ),
-                resources: glueResourceArns
-            } )
+            const readPolicyStatement = this.createPolicyStatement(
+                `${ accessPolicyName }-read`,
+                glueResourceArns,
+                readPrincipalArns.map( x => new ArnPrincipal( x ) ),
+                GLUE_READ_ACTIONS 
+            )
             policyStatements.push( readPolicyStatement )
         }
         if ( writePrincipalArns && writePrincipalArns.length > 0 ) {
-            const writePolicyStatement = new PolicyStatement( {
-                sid: `${ accessPolicyName }-write`,
-                actions: GLUE_WRITE_ACTIONS,
-                principals: writePrincipalArns.map( x => new ArnPrincipal( x ) ),
-                resources: glueResourceArns
-            } )
+            const writePolicyStatement = this.createPolicyStatement(
+                `${ accessPolicyName }-write`,
+                glueResourceArns,
+                writePrincipalArns.map( x => new ArnPrincipal( x ) ),
+                GLUE_WRITE_ACTIONS
+            )
             policyStatements.push( writePolicyStatement )
         }
+        
         return policyStatements
     }
 
@@ -243,7 +299,7 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
         } )
 
         //Permissions for managing Glue Resource Policies
-        const manageCatalogPolicy = new PolicyStatement( {
+        const manageCatalogStatement = new PolicyStatement( {
             effect: Effect.ALLOW,
             resources: [ `arn:${ this.partition }:glue:${ this.region }:${ this.account }:catalog` ],
             actions: [
@@ -251,7 +307,17 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
                 "glue:DeleteResourcePolicy"
             ],
         } )
-        catalogCrFunctionRole.addToPolicy( manageCatalogPolicy )
+        catalogCrFunctionRole.addToPolicy( manageCatalogStatement )
+
+        //Permissions for managing Glue Resource Policies
+        const queryRamStatement = new PolicyStatement( {
+            effect: Effect.ALLOW,
+            resources: [ `arn:${ this.partition }:ram:${ this.region }:${ this.account }:resource-share/*` ],
+            actions: [
+                "ram:ListResources"
+            ],
+        } )
+        catalogCrFunctionRole.addToPolicy( queryRamStatement )
 
         NagSuppressions.addResourceSuppressions(
             catalogCrFunctionRole,
