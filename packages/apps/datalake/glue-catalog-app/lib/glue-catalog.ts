@@ -18,11 +18,8 @@ export class GlueCatalogSettingsCDKApp extends CaefCdkApp {
 
         const appConfig = new GlueCatalogConfigParser( stack, parserProps )
         const constructProps: GlueCatalogL3ConstructProps = {
-            ...{
-                accessPolicies: appConfig.accessPolicies,
-                consumerAccounts: appConfig.consumerAccounts,
-                producerAccounts: appConfig.producerAccounts
-            }, ...l3ConstructProps
+            ...appConfig,
+            ...l3ConstructProps
         }
 
         new GlueCatalogL3Construct( stack, "construct", constructProps );

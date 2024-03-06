@@ -260,6 +260,13 @@
             "description": "\"(Optional) A map of name to account ids which will be granted read access to the entire catalog\"",
             "type": "object"
         },
+        "kmsKeyConsumerAccounts": {
+            "additionalProperties": {
+                "type": "string"
+            },
+            "description": "\"(Optional) A map of name to account ids which will be granted read access to the catalog kms key only\"",
+            "type": "object"
+        },
         "nag_suppressions": {
             "$ref": "#/definitions/CaefNagSuppressions",
             "description": "Nag suppressions"
