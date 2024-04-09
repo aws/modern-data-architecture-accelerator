@@ -15,7 +15,7 @@ find ./packages -type f -name ".jsii" | grep -v node_modules | xargs -n1 -I{} se
 
 # Update peerDependency and devDependency versions in package.json files
 find ./packages -type f -name "package.json" | grep -v node_modules | xargs -n1 -I{} sed -i  "s/@aws-caef\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-caef\1\"\2$NEW_VERSION\"/" {}
-
+sed -i  "s/@aws-caef\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-caef\1\"\2$NEW_VERSION\"/" ./schemas/package.json
 
 
 
