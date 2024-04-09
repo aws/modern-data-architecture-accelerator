@@ -63,6 +63,7 @@ feature_merge_build:
     untracked: false
     paths:
       - packages
+      - schemas
     exclude:
       - "**/node_modules/**"
   allow_failure: false
@@ -91,6 +92,7 @@ feature_merge_test:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -115,6 +117,7 @@ feature_merge_analyze:
     untracked: false
     paths:
       - packages
+      - schemas
     exclude:
       - "**/node_modules/**"
   allow_failure: false
@@ -208,6 +211,7 @@ feature_test:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -353,6 +357,7 @@ prerelease_build:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -388,6 +393,7 @@ prerelease_test:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -423,6 +429,7 @@ prerelease_analyze:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -458,6 +465,7 @@ prerelease_package:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -586,6 +594,7 @@ prerelease_publish_s3:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -686,6 +695,7 @@ release_publish_npm_prerelease:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -726,6 +736,7 @@ release_publish_npm:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -766,6 +777,7 @@ release_publish_pip:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -806,6 +818,7 @@ release_publish_s3:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -883,6 +896,7 @@ prerelease_push_git:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
@@ -925,6 +939,7 @@ release_push_git:
       - lerna.json
       - package-lock.json
       - packages
+      - schemas
       - target
     exclude:
       - "**/node_modules/**"
