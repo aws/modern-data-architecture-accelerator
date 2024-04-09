@@ -55,6 +55,9 @@
       "path": "../../../utilities/caef-naming"
     },
     {
+      "path": "../ec2-constructs"
+    },
+    {
       "path": "../../../utilities/caef-testing"
     }
   ],

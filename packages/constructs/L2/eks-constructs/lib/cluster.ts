@@ -4,12 +4,13 @@
  */
 
 import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { CaefEC2Instance, CaefEC2InstanceProps, CaefEC2SecretKeyPair, CaefEC2SecretKeyPairProps } from "@aws-caef/ec2-constructs";
 import { ICaefResourceNaming } from "@aws-caef/naming";
 import { KubectlV27Layer } from "@aws-cdk/lambda-layer-kubectl-v27";
-import { Size, Stack } from "aws-cdk-lib";
-import { ISecurityGroup, ISubnet, IVpc, Port } from "aws-cdk-lib/aws-ec2";
+import { Fn, Size, Stack } from "aws-cdk-lib";
+import { ISecurityGroup, ISubnet, IVpc, Port, InstanceType, InstanceClass, InstanceSize, MachineImage, Subnet, UserData, IInstance } from "aws-cdk-lib/aws-ec2";
 import { AlbControllerOptions, Cluster, ClusterLoggingTypes, ClusterProps, CoreDnsComputeType, EndpointAccess, FargateProfile, FargateProfileOptions, IKubectlProvider, IpFamily, KubernetesManifest, KubernetesVersion } from "aws-cdk-lib/aws-eks";
-import { Effect, IRole, ManagedPolicy, OpenIdConnectProvider, PolicyStatement, PrincipalWithConditions, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { ArnPrincipal, Effect, IRole, ManagedPolicy, OpenIdConnectProvider,  PolicyStatement, PrincipalWithConditions, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { IKey } from "aws-cdk-lib/aws-kms";
 import { ILayerVersion } from "aws-cdk-lib/aws-lambda";
 import { LogGroup, LogGroupProps, RetentionDays } from "aws-cdk-lib/aws-logs";
@@ -18,11 +19,26 @@ import * as cdk8s from 'cdk8s';
 import { Construct } from "constructs";
 import * as k8s from '../imports/k8s';
 import { CaefKubectlProvider } from "./caef-kubectl-provider";
+import { CaefManagedPolicy, CaefRole, CaefRoleProps } from "@aws-caef/iam-constructs";
+
+export interface MgmtInstanceProps {
+    readonly instanceType?: InstanceType
+    readonly subnetId: string
+    readonly availabilityZone: string
+    readonly keyPairName?: string
+    readonly userDataCommands?: string[]
+    readonly mgmtPolicyStatements?: PolicyStatement[]
+}
+
 /**
  * Properties for creating a Compliance EKS cluster
  */
-
 export interface CaefEKSClusterProps extends CaefConstructProps {
+    /**
+     * If defined, an EC2 instance will be created with connectivity, permissions, and tooling to manage the EKS cluster
+     */
+    readonly mgmtInstance?: MgmtInstanceProps
+
     readonly adminRoles: IRole[]
     /**
      * The IAM role to pass to the Kubectl Lambda Handler.
@@ -218,7 +234,7 @@ export interface CaefEKSClusterProps extends CaefConstructProps {
  */
 export class CaefEKSCluster extends Cluster {
 
-
+    private static KUBECTL_URL = "https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.9/2024-01-04/bin/linux/amd64/kubectl"
 
     private static setProps ( scope: Construct, props: CaefEKSClusterProps ): ClusterProps {
 
@@ -227,7 +243,6 @@ export class CaefEKSCluster extends Cluster {
             endpointAccess: EndpointAccess.PRIVATE, // Force private endpoint access only
             defaultCapacity: 0, // Force specification of a node group to ensure encryption at rest
             secretsEncryptionKey: props.kmsKey,
-            placeClusterHandlerInVpc: true,
             kubectlLayer: new KubectlV27Layer( scope, 'kubectl-layer' ),
             vpcSubnets: [ {
                 subnets: props.subnets
@@ -253,6 +268,8 @@ export class CaefEKSCluster extends Cluster {
     public readonly caefKubeCtlProvider: IKubectlProvider
     public readonly clusterFargateProfileArn: string
     private podExecutionRolePolicy: ManagedPolicy;
+    public readonly mgmtInstance?: IInstance
+
     constructor( scope: Construct, id: string, props: CaefEKSClusterProps ) {
         super( scope, id, CaefEKSCluster.setProps( scope, props ) )
 
@@ -263,10 +280,11 @@ export class CaefEKSCluster extends Cluster {
         props.adminRoles.map( adminRole => {
             this.awsAuth.addMastersRole( adminRole )
         } )
+        const stackId = Fn.select( 0, Fn.split( "-", Fn.select( 2, Fn.split( "/", Stack.of( scope ).stackId ) ) ) )
 
         const podLogGroupProps: LogGroupProps = {
             encryptionKey: this.props.kmsKey,
-            logGroupName: `/aws/eks/${ props.naming.resourceName( props.clusterName, 255 ) }/pods`,
+            logGroupName: `/aws/eks/${ props.naming.resourceName( props.clusterName, 255 ) }/${stackId}/pods`,
             retention: RetentionDays.INFINITE
         }
         const podLogGroup = new LogGroup( this, 'pod-log-group', podLogGroupProps )
@@ -370,6 +388,8 @@ export class CaefEKSCluster extends Cluster {
                 { id: "NIST.800.53.R5-LambdaConcurrency", reason: "Function is used as Cfn Custom Resource only during deployment time. Concurrency managed via Cfn." },
                 { id: "NIST.800.53.R5-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn." },
                 { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
+                { id: "NIST.800.53.R5-LambdaInsideVPC", reason: "Function is used as Cfn Custom Resource only during deployment time." },
+                { id: "HIPAA.Security-LambdaInsideVPC", reason: "Function is used as Cfn Custom Resource only during deployment time." },
                 { id: "HIPAA.Security-LambdaConcurrency", reason: "Function is used as Cfn Custom Resource only during deployment time. Concurrency managed via Cfn." },
                 { id: "HIPAA.Security-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn." },
                 { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
@@ -409,8 +429,113 @@ export class CaefEKSCluster extends Cluster {
                 value: this.clusterName
             }, ...props
         },scope )
+        //Required to describe the cluster and configure kubectl
+        const eksStatment = new PolicyStatement( {
+            actions: [ "eks:DescribeCluster" ],
+            effect: Effect.ALLOW,
+            resources: [ this.clusterArn ]
+        } )
+        //Required to run SSM patching against instance
+        const ssmStatement = new PolicyStatement( {
+            actions: [ 
+                "ssm:UpdateInstanceInformation",
+                "ssm:UpdateInstanceAssociationStatus",
+                "ssm:UpdateAssociationStatus",
+                "ssm:PutInventory",
+                "ssm:PutConfigurePackageResult",
+                "ssm:PutComplianceItems",
+                "ssm:ListInstanceAssociations",
+                "ssm:ListAssociations",
+                "ssm:GetManifest",
+                "ssm:GetDocument",
+                "ssm:GetDeployablePatchSnapshotForInstance",
+                "ssm:DescribeDocument",
+                "ssm:DescribeAssociation",
+                "ssmmessages:OpenDataChannel",
+                "ssmmessages:OpenControlChannel",
+                "ssmmessages:CreateDataChannel",
+                "ssmmessages:CreateControlChannel",
+                "ec2messages:SendReply",
+                "ec2messages:GetMessages",
+                "ec2messages:GetEndpoint",
+                "ec2messages:FailMessage",
+                "ec2messages:DeleteMessage",
+                "ec2messages:AcknowledgeMessage"
+            ],
+            effect: Effect.ALLOW,
+            resources: [ "*" ]
+        } )
+
+        const mgmtPolicy = new CaefManagedPolicy(this,'cluster-mgmt-policy',{
+            naming: props.naming,
+            managedPolicyName: "cluster-mgmt",
+            statements: [ eksStatment, ssmStatement, ...props.mgmtInstance?.mgmtPolicyStatements || [] ]
+        })
+        NagSuppressions.addResourceSuppressions( mgmtPolicy, [
+            {
+                id: "AwsSolutions-IAM5", reason: "Resource names not known at deployment time.",
+            }
+        ], true );
+        this.mgmtInstance = this.createMgmtInstance(mgmtPolicy)
     }
 
+    private createMgmtInstance (mgmtPolicy:ManagedPolicy): IInstance | undefined {
+        if(this.props.mgmtInstance){
+            const instanceRoleProps: CaefRoleProps = {
+                roleName: "mgmt-instance",
+                assumedBy: new ServicePrincipal("ec2.amazonaws.com"),
+                naming: this.props.naming,
+                managedPolicies: [mgmtPolicy]
+            }
+            const instanceRole = new CaefRole( this, "mgmt-instance-role", instanceRoleProps )
+            this.awsAuth.addMastersRole( instanceRole )
+            const createKeyPairProps: CaefEC2SecretKeyPairProps = {
+                name: "mgmt-instance",
+                kmsKey: this.props.kmsKey,
+                naming: this.props.naming,
+                readPrincipals: this.props.adminRoles.map( x => new ArnPrincipal( x.roleArn) ) 
+            }
+
+            const keyPair = this.props.mgmtInstance?.keyPairName ? undefined :  new CaefEC2SecretKeyPair( this, `key-pair-mgmt-instance`, createKeyPairProps )
+            const keyPairName = this.props.mgmtInstance?.keyPairName ?? keyPair?.name
+
+            const mgmtUserData: UserData = UserData.forLinux()
+            mgmtUserData.addCommands(
+                `mkdir -p /usr/local/bin && cd /usr/local/bin && curl -O ${ CaefEKSCluster.KUBECTL_URL} && chmod +x /usr/local/bin/kubectl && cd ~`,
+                `aws eks update-kubeconfig --region ${ Stack.of( this ).region} --name ${this.clusterName}`,
+                `cp /root/.kube/config /etc/kubeconfig && chmod o+r /etc/kubeconfig`,
+                `echo 'export KUBECONFIG=/etc/kubeconfig' >> /etc/profile.d/kubectl.sh`,
+                ...this.props.mgmtInstance.userDataCommands ?? []
+                )
+            const mgmtInstanceProps: CaefEC2InstanceProps = {
+                instanceName: "mgmt",
+                instanceType: this.props.mgmtInstance.instanceType ?? InstanceType.of(InstanceClass.T3,InstanceSize.MICRO),
+                machineImage: MachineImage.latestAmazonLinux2023(),
+                vpc: this.props.vpc,
+                instanceSubnet: Subnet.fromSubnetAttributes(this,"mgmt-instance-subnet",{
+                    subnetId: this.props.mgmtInstance.subnetId,
+                    availabilityZone: this.props.mgmtInstance.availabilityZone
+                }),
+                blockDeviceProps: [
+                    {
+                        deviceName: '/dev/xvda',
+                        volumeSizeInGb: 50,
+                    }
+                ],
+                kmsKey: this.props.kmsKey,
+                role: instanceRole,
+                naming: this.props.naming,
+                securityGroup: this.clusterSecurityGroup,
+                keyName: keyPairName,
+                userData: mgmtUserData
+            }
+            const instance  = new CaefEC2Instance(this,"mgmt-instance",mgmtInstanceProps)
+            if ( keyPair )
+                instance.node.addDependency( keyPair )
+            return instance
+        }
+        return undefined
+    }
 
     private defineCaefKubectlProvider () {
         const uid = '@aws-caef/CaefKubectlProvider';
@@ -438,7 +563,6 @@ export class CaefEKSCluster extends Cluster {
                 ManagedPolicy.fromAwsManagedPolicyName( "AmazonEKSFargatePodExecutionRolePolicy" )
             ]
         } )
-
         NagSuppressions.addResourceSuppressions( podExecutionRole, [
             {
                 id: "AwsSolutions-IAM4", reason: "AmazonEKSFargatePodExecutionRolePolicy is required for proper cluster function.",

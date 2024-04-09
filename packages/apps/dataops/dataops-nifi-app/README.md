@@ -1,4 +1,4 @@
-DataOps Nifi Clusters
+# DataOps Nifi Clusters
 
 The Data Ops Nifi CDK App is used to deploy the resources required to orchestrate data operations on the data lake using Nifi clusters and flows.
 
@@ -49,6 +49,18 @@ nifi:
   adminRoles:
     - name: Admin
     - name: eks-admin
+
+  # (Optional) - If specified, an EC2 instance will be created with tooling and access required
+  # to manage the EKS cluster.
+  mgmtInstance:
+    # The subnet on which the Management Instance will be placed
+    subnetId: test-subnet-id
+    # The AZ in which the Management Instance will be placed.
+    # This must be the AZ in which the subnet is located.
+    availabilityZone: test-az
+    # (Optional) - The name of an SSH keypair to use.
+    # If not specified, one will be created and then private key placed in a Secret
+    keyPairName: test-key-pair
 
   # The VPC onto which Nifi clusters will be deployed
   vpcId: test-vpc-id

@@ -34,7 +34,11 @@ describe( 'CAEF Construct Compliance Tests', () => {
         vpc: testVpc,
         subnets: [ testSubnet ],
         kmsKey: testKmsKey,
-        version: KubernetesVersion.V1_26
+        version: KubernetesVersion.V1_26,
+        mgmtInstance: {
+            subnetId: "test-subnet-id",
+            availabilityZone: "test-az"
+        },
     }
 
     const eksCluster = new CaefEKSCluster( testApp.testStack, "test-construct", testContstructProps )

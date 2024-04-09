@@ -63,7 +63,7 @@ export interface NifiRegistryChartProps extends cdk8s.ChartProps, NifiIdentityAu
 export class NifiRegistryChart extends cdk8s.Chart {
 
     private readonly props: NifiRegistryChartProps
-    private static DEFAULT_NIFI_IMAGE_TAG: string = '1.23.2'
+    private static DEFAULT_NIFI_IMAGE_TAG: string = '1.25.0'
 
   
     private readonly nifiNodes:string[]
@@ -93,7 +93,10 @@ export class NifiRegistryChart extends cdk8s.Chart {
     private createExternalSecrets (
         props: NifiRegistryChartProps ): string {
 
-        const secretStoreChart = new ExternalSecretStore( this, 'secret-store', props )
+        const secretStoreChart = new ExternalSecretStore( this, 'secret-store', {
+            storeName: "external-secret-store",
+            ...props,
+        } )
 
         const targetSecretName = 'nifi-registry-secret'
 
@@ -101,7 +104,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
             apiVersion: "external-secrets.io/v1beta1",
             kind: "ExternalSecret",
             metadata: {
-                name: 'nifi-registry-external-secret'
+                name: 'external-secret'
             },
             spec: {
                 refreshInterval: "1h",
@@ -144,7 +147,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
             },
             spec: {
                 isCA: false,
-                commonName: this.props.hostname,
+                commonName: "nifi-registry",
                 dnsNames: [
                     'localhost',
                    this.props.hostname

@@ -31,7 +31,7 @@
     "@types/jest": "27.4.1",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
-    "aws-cdk-lib": "2.126.0",
+    "aws-cdk-lib": "2.132.1",
     "constructs": "10.0.96",
     "jest": "29.5.0",
     "source-map-support": "0.5.21",
@@ -47,11 +47,11 @@
     "@aws-caef/eks-constructs": "0.40.0",
     "@aws-caef/iam-role-helper": "0.40.0",
     "@aws-caef/l3-construct": "0.40.0",
-    "aws-cdk-lib": "2.126.0",
+    "aws-cdk-lib": "2.132.1",
     "constructs": "10.0.96"
   },
   "overrides": {
-    "aws-cdk-lib": "2.126.0",
+    "aws-cdk-lib": "2.132.1",
     "@types/babel__traverse": "7.18.2"
   },
   "bundledDependencies": [
@@ -70,9 +70,9 @@
     "@aws-caef/l3-construct": "^0.40.0",
     "@aws-caef/naming": "^0.40.0",
     "@aws-caef/sqs-constructs": "^0.40.0",
-    "aws-cdk-lib": "2.126.0",
+    "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
-    "cdk8s": "2.68.32",
+    "cdk8s": "2.68.56",
     "constructs": "10.0.96",
     "fast-xml-parser": "4.2.7"
   },

@@ -10,7 +10,7 @@ import { CfnJson } from 'aws-cdk-lib';
 import { ISecurityGroup, ISubnet, IVpc, Protocol, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
 import { AccessPoint, FileSystem, PerformanceMode } from 'aws-cdk-lib/aws-efs';
-import { KubernetesManifest } from 'aws-cdk-lib/aws-eks';
+import { FargateProfile, KubernetesManifest } from 'aws-cdk-lib/aws-eks';
 import { Effect, IRole, ManagedPolicy, OpenIdConnectPrincipal, PolicyStatement, PrincipalWithConditions, Role } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { IHostedZone } from 'aws-cdk-lib/aws-route53';
@@ -39,6 +39,7 @@ export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthor
     readonly certKeySize: number
     readonly nifiManagerImage: DockerImageAsset
     readonly registryClients?: NamedNifiRegistryClientProps
+    readonly fargateProfile: FargateProfile
 }
 
 interface CreateEfsPvsProps {
@@ -114,19 +115,13 @@ export class NifiCluster extends Construct {
             efsSecurityGroup: efsSecurityGroup })
         const efsManagedPolicy = NifiCluster.createEfsAccessPolicy( 'nifi-cluster', this, props.naming, props.kmsKey, nifiEfsPvs )
 
-        const fargateProfile = props.eksCluster.addFargateProfile( props.clusterName, {
-            fargateProfileName: props.clusterName,
-            selectors: [ {
-                namespace: nifiNamespaceName
-            } ]
-        } )
-        fargateProfile.podExecutionRole.addManagedPolicy( efsManagedPolicy )
+        props.fargateProfile.podExecutionRole.addManagedPolicy( efsManagedPolicy )
 
         const nifiAdminCredentialsSecret = NifiCluster.createSecret( this, 'nifi-admin-creds-secret', props.naming, 'admin-creds-secret', props.kmsKey )
         const nifiSensitivePropSecret = NifiCluster.createSecret( this, 'nifi-sensitive-props-secret', props.naming, 'sensitive-props-key', props.kmsKey )
         const keystorePasswordSecret = NifiCluster.createSecret( this, 'keystore-password-secret', props.naming, 'keystore-password', props.kmsKey )
 
-        const externalSecretsRole = NifiCluster.createExternalSecretsServiceRole( this, props.naming, nifiNamespaceName, props.eksCluster, props.kmsKey, [ nifiSensitivePropSecret, keystorePasswordSecret, nifiAdminCredentialsSecret ] )
+        const externalSecretsRole = NifiCluster.createExternalSecretsServiceRole( this, 'external-secrets',props.naming, nifiNamespaceName, props.eksCluster, props.kmsKey, [ nifiSensitivePropSecret, keystorePasswordSecret, nifiAdminCredentialsSecret ] )
 
         const clusterServiceRole = NifiCluster.createServiceRole( this, 'nifi-service-role', props.naming.resourceName( 'nifi-service-role', 64 ), nifiNamespaceName, props.eksCluster )
 
@@ -146,8 +141,8 @@ export class NifiCluster extends Construct {
 
         const nodeSize = NifiCluster.nodeSizeMap[ this.props.nodeSize || "SMALL" ]
 
-        this.props.nifiManagerImage.repository.grantPull( fargateProfile.podExecutionRole )
-        NagSuppressions.addResourceSuppressions( fargateProfile.podExecutionRole, [
+        this.props.nifiManagerImage.repository.grantPull( props.fargateProfile.podExecutionRole )
+        NagSuppressions.addResourceSuppressions( props.fargateProfile.podExecutionRole, [
             { id: "AwsSolutions-IAM5", reason: "ecr:GetAuthorizationToken does not accept a resource." },
             { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Permissions are appropriate as inline policy." },
             { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Permissions are appropriate as inline policy." },
@@ -191,7 +186,7 @@ export class NifiCluster extends Construct {
         } )
         this.nodeList = nifiK8sChart.nodeList.map( nodeName => `${ nodeName }.${ nifiK8sChart.domain }` )
         const nifiNamespaceManifest = props.eksCluster.addNamespace( new cdk8s.App(), `nifi-namespace-${ props.clusterName }`, nifiNamespaceName, this.securityGroup )
-        nifiNamespaceManifest.node.addDependency( fargateProfile )
+        nifiNamespaceManifest.node.addDependency( props.fargateProfile )
         this.nifiManifest = props.eksCluster.addCdk8sChart( `nifi-${ props.clusterName }`, nifiK8sChart )
         this.nifiManifest.node.addDependency( nifiNamespaceManifest )
 
@@ -380,8 +375,9 @@ export class NifiCluster extends Construct {
     }
 
     public static createSecret ( scope: Construct, id: string, naming: ICaefResourceNaming, secretName: string, kmsKey: IKey ): ISecret {
+        const secretResourceName = naming.resourceName( secretName, 255 )
         const nifiSensitivePropSecret = new Secret( scope, id, {
-            secretName: naming.resourceName( secretName, 255 ),
+            secretName: secretResourceName,
             encryptionKey: kmsKey,
             generateSecretString: {
                 excludeCharacters: '\'',
@@ -399,6 +395,7 @@ export class NifiCluster extends Construct {
 
     public static createExternalSecretsServiceRole (
         scope: Construct,
+        roleName: string,
         naming: ICaefResourceNaming,
         namespaceName: string,
         eksCluster: CaefEKSCluster,
@@ -426,7 +423,7 @@ export class NifiCluster extends Construct {
         } )
 
         const externalSecretsServiceRole = NifiCluster.createServiceRole( scope,
-            'external-secrets',
+            roleName,
             externalSecretServiceRoleName,
             namespaceName,
             eksCluster,

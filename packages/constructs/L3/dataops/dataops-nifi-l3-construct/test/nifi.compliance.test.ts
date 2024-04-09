@@ -42,9 +42,9 @@ describe( 'Nifi Mandatory Compliance Stack Tests', () => {
 
   new NifiL3Construct( stack, "teststack", constructProps );
   testApp.checkCdkNagCompliance( testApp.testStack )
-  const template = Template.fromStack( testApp.testStack )
+  Template.fromStack( testApp.testStack )
 
-  console.log( JSON.stringify( template, undefined, 2 ) )
+  // console.log( JSON.stringify( template, undefined, 2 ) )
 
   // test( 'Validate resource counts', () => {
   //   template.resourceCountIs( "AWS::Glue::Job", 1 );
@@ -106,6 +106,10 @@ describe( 'Nifi Optional Compliance Stack Tests', () => {
     naming: testApp.naming,
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
     nifi: {
+      mgmtInstance: {
+        subnetId: "test-subnet-id",
+        availabilityZone: "test-az"
+      },
       vpcId: "test-vpc-id",
       subnetIds: {
         "test-subnet-1": "test-subnet-id"
@@ -169,10 +173,10 @@ describe( 'Nifi Optional Compliance Stack Tests', () => {
 
   new NifiL3Construct( stack, "teststack", constructProps );
   testApp.checkCdkNagCompliance( testApp.testStack )
-  const template = Template.fromStack( testApp.testStack )
+  Template.fromStack( testApp.testStack )
 
 
-  console.log( JSON.stringify( template, undefined, 2 ) )
+  // console.log( JSON.stringify( template, undefined, 2 ) )
 
   // test( 'Validate resource counts', () => {
   //   template.resourceCountIs( "AWS::Glue::Job", 1 );
@@ -208,10 +212,10 @@ describe( 'Registry Mandatory Compliance Stack Tests', () => {
 
   new NifiL3Construct( stack, "teststack", constructProps );
   testApp.checkCdkNagCompliance( testApp.testStack )
-  const template = Template.fromStack( testApp.testStack )
+  Template.fromStack( testApp.testStack )
 
 
-  console.log( JSON.stringify( template, undefined, 2 ) )
+  // console.log( JSON.stringify( template, undefined, 2 ) )
 
   // test( 'Validate resource counts', () => {
   //   template.resourceCountIs( "AWS::Glue::Job", 1 );
@@ -305,10 +309,10 @@ describe( 'Registry Optional Compliance Stack Tests', () => {
 
   new NifiL3Construct( stack, "teststack", constructProps );
   testApp.checkCdkNagCompliance( testApp.testStack )
-  const template = Template.fromStack( testApp.testStack )
+  Template.fromStack( testApp.testStack )
 
 
-  console.log( JSON.stringify( template, undefined, 2 ) )
+  // console.log( JSON.stringify( template, undefined, 2 ) )
 
   // test( 'Validate resource counts', () => {
   //   template.resourceCountIs( "AWS::Glue::Job", 1 );
