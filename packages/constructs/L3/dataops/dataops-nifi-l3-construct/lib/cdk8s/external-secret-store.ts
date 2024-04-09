@@ -9,6 +9,7 @@ import * as k8s from './imports/k8s';
 
 
 export interface SecretStoreConstructProps {
+    readonly storeName: string
     readonly externalSecretsRoleArn: string
     readonly awsRegion: string
     readonly namespace?: string
@@ -21,7 +22,7 @@ export class ExternalSecretStore extends Construct {
 
         const serviceAccount = new k8s.KubeServiceAccount( this, 'external-secrets-service-account', {
             metadata: {
-                name: 'external-secrets',
+                name: props.storeName,
                 namespace: props.namespace,
                 annotations: {
                     "eks.amazonaws.com/role-arn": props.externalSecretsRoleArn
@@ -33,7 +34,7 @@ export class ExternalSecretStore extends Construct {
             apiVersion: "external-secrets.io/v1beta1",
             kind: "SecretStore",
             metadata: {
-                name: 'external-secret-store',
+                name: props.storeName,
                 namespace: props.namespace,
             },
             spec: {

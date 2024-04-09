@@ -25,7 +25,10 @@ export class CaIssuerChart extends cdk8s.Chart {
     constructor( scope: Construct, id: string, props: CaIssuerChartProps ) {
         super( scope, id, props )
 
-        const secretStoreChart = new ExternalSecretStore( this, 'secret-store', props )
+        const secretStoreChart = new ExternalSecretStore( this, 'secret-store', {
+            storeName: "ca-issuer-external-secret-store",
+            ...props,
+        } )
 
         const keystorePasswordSecretTargetName = 'ca-keystore-secret'
         const keystorePasswordExternalSecret = new cdk8s.ApiObject( this, 'ca-external-secret', {
@@ -46,7 +49,7 @@ export class CaIssuerChart extends cdk8s.Chart {
                 },
                 data: [
                     {
-                        secretKey: "keystore-password",
+                        secretKey: "ca-keystore-password",
                         remoteRef: {
                             key: props.keystorePasswordSecretName
                         }
@@ -85,7 +88,7 @@ export class CaIssuerChart extends cdk8s.Chart {
                         create: true,
                         passwordSecretRef: {
                             name: keystorePasswordSecretTargetName,
-                            key: "keystore-password"
+                            key: "ca-keystore-password"
                         }
                     }
                 }

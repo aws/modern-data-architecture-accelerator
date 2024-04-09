@@ -13,12 +13,14 @@
     "overrides": {
         "semver": "7.5.2",
         "axios": "^1.6.0",
-        "aws-cdk-lib": "2.126.0",
+        "aws-cdk-lib": "2.132.1",
         "cdk-nag": "2.28.27",
-        "cdk8s": "2.68.32",
+        "cdk8s": "2.68.56",
         "socks": "2.7.3",
+        "follow-redirects": "^1.15.6",
         "cdk8s@>=2.68.32":{
-            "backport": "^9.4.3"    
+            "backport": "^9.4.3",
+            "follow-redirects": "^1.15.6"
         }
 
     },

@@ -36,7 +36,7 @@
     "@aws-caef/dataops-stepfunction-l3-construct": "^0.40.0",
     "@aws-caef/l3-construct": "^0.40.0",
     "ajv": "8.8.2",
-    "aws-cdk-lib": "2.126.0",
+    "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
     "constructs": "10.0.96",
     "source-map-support": "0.5.21",

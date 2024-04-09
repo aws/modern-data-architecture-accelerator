@@ -23,7 +23,7 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.126.0"
+    "aws-cdk-lib": "2.132.1"
   },
   "gitHead": "bb9c8d94a850be6573e8a5a7b9ba705c366bf107"
 }

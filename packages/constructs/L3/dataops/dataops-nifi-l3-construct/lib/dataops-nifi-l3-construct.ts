@@ -4,12 +4,12 @@
  */
 
 import { CaefSecurityGroup, CaefSecurityGroupProps, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { CaefEKSCluster, CaefEKSClusterProps, KubernetesCmd, KubernetesCmdProps } from '@aws-caef/eks-constructs';
+import { CaefEKSCluster, CaefEKSClusterProps, KubernetesCmd, KubernetesCmdProps, MgmtInstanceProps } from '@aws-caef/eks-constructs';
 import { CaefRoleRef } from '@aws-caef/iam-role-helper';
 import { CaefKmsKey } from '@aws-caef/kms-constructs';
 import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
 import { ISecurityGroup, ISubnet, IVpc, Port, Protocol, SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { CoreDnsComputeType, HelmChart, KubernetesManifest, KubernetesVersion } from 'aws-cdk-lib/aws-eks';
+import { CoreDnsComputeType, FargateProfile, KubernetesManifest, KubernetesVersion } from 'aws-cdk-lib/aws-eks';
 import { Effect, IRole, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { HostedZone, PrivateHostedZone } from 'aws-cdk-lib/aws-route53';
@@ -26,6 +26,8 @@ import { ZookeeperChart } from './cdk8s/zookeeper-chart';
 import { NifiCluster, NifiClusterProps } from './nifi-cluster';
 import { AwsManagedPolicySpec, NamedNifiRegistryClientProps, NifiClusterOptions, NifiIdentityAuthorizationOptions, NifiNetworkOptions, PolicyAction } from './nifi-options';
 
+
+
 export interface NifiClusterOptionsWithPeers extends NifiClusterOptions {
     /**
      * Other clusters within this module which will be provided SecurityGroup and Node remote access to this cluster.
@@ -41,6 +43,12 @@ export interface NamedNifiClusterOptions {
 }
 
 export interface NifiProps {
+    /**
+     * If defined, an EC2 instance will be created with connectivity, permissions, and tooling to manage the EKS cluster
+     */
+    readonly mgmtInstance?: MgmtInstanceProps
+
+
     /**
      * List of admin roles which will be provided access to EKS cluster resources 
      */
@@ -125,7 +133,7 @@ export interface NifiProps {
 
 export type NifiRegistryBucketProps = {
     [ key in PolicyAction ]?: {
-        readonly identities?:string[]
+        readonly identities?: string[]
         readonly groups?: string[]
     }
 }
@@ -136,7 +144,7 @@ export interface NifiRegistryProps extends NifiIdentityAuthorizationOptions, Nif
 
     /**
      * The tag of the Nifi docker image to use. If not specified,
-     * defaults to the latest tested version (currently 1.23.2). Specify 'latest' to pull
+     * defaults to the latest tested version (currently 1.25.0). Specify 'latest' to pull
      * the latest version (might be untested).
      */
     readonly registryImageTag?: string
@@ -152,7 +160,7 @@ export interface NifiRegistryProps extends NifiIdentityAuthorizationOptions, Nif
     /**
      * @jsii ignore
      */
-    readonly buckets?: {[bucketName:string]:NifiRegistryBucketProps}
+    readonly buckets?: { [ bucketName: string ]: NifiRegistryBucketProps }
 
 }
 
@@ -175,6 +183,7 @@ interface AddNifiServiceProps {
     subnets: ISubnet[],
     hostedZone: HostedZone,
     caIssuerCdk8sChart: CaIssuerChart,
+    fargateProfile: FargateProfile
 }
 
 interface AddNifiClustersProps extends AddNifiServiceProps {
@@ -196,20 +205,30 @@ interface AddNifiClusterProps {
     zkK8sChart: ZookeeperChart,
     caIssuerCdk8sChart: CaIssuerChart,
     nifiManagerImage: DockerImageAsset,
-    registryUrl?: string
+    registryUrl?: string,
+    fargateProfile: FargateProfile
 }
 
-interface AddRegistryProps extends AddNifiServiceProps { 
-    registryProps: NifiRegistryProps, 
+interface AddRegistryProps extends AddNifiServiceProps {
+    registryProps: NifiRegistryProps,
     kmsKey: IKey,
     registryHostname: string,
     nifiClusters: { [ clusterName: string ]: NifiCluster },
-    nifiManagerImageUri: string
+    nifiManagerImageUri: string,
+    dependencies: Construct[]
 }
 
 export class NifiL3Construct extends CaefL3Construct {
     protected readonly props: NifiL3ConstructProps
     private readonly projectKmsKey: IKey
+
+
+    private static readonly CERT_MANAGER_NAMESPACE = "cert-manager"
+    private static readonly EXTERNAL_DNS_NAMESPACE = "external-dns"
+    private static readonly EXTERNAL_SECRETS_NAMESPACE = "external-secrets"
+    private static readonly REGISTRY_NAMESPACE = "registry"
+    private static readonly ZOOKEEPER_NAMESPACE = "zookeeper"
+
     constructor( scope: Construct, id: string, props: NifiL3ConstructProps ) {
         super( scope, id, props )
         this.props = props
@@ -235,73 +254,137 @@ export class NifiL3Construct extends CaefL3Construct {
         }
         const clusterSecurityGroup = new CaefSecurityGroup( scope, 'cluster-sg', clusterSecurityGroupProps )
 
-        const eksCluster = this.createEksCluster( vpc, subnets, this.projectKmsKey, clusterSecurityGroup )
-        const externalSecretsHelm = this.addExternalSecrets( eksCluster, clusterSecurityGroup )
-        const [ externalDnsManifest, hostedZone ] = this.addExternalDns( eksCluster, vpc, clusterSecurityGroup )
+        const [ privateCaArn, privateCa ] = this.createAcmPca()
+        const hostedZone = this.createHostedZone( vpc )
+        const eksCluster = this.createEksCluster( vpc, subnets, this.projectKmsKey, clusterSecurityGroup, privateCaArn )
 
-        const certManagerHelm = this.addCertManager( eksCluster, clusterSecurityGroup )
-        certManagerHelm.node.addDependency( externalSecretsHelm )
+        const servicesFargateProfile = eksCluster.addFargateProfile( "services-fargate-profile",
+            {
+                fargateProfileName: "services",
+                selectors: [ {
+                    namespace: NifiL3Construct.EXTERNAL_DNS_NAMESPACE,
+                },
+                {
+                    namespace: NifiL3Construct.EXTERNAL_SECRETS_NAMESPACE,
+                },
+                {
+                    namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
+                },
+                {
+                    namespace: NifiL3Construct.ZOOKEEPER_NAMESPACE,
+                },
+                {
+                    namespace: NifiL3Construct.REGISTRY_NAMESPACE,
+                },
+                ]
+            }
+        )
+        const nifiNamespaces = Object.entries( props.nifi.clusters || {} ).map( cluster => {
+            return {
+                namespace: `nifi-${ cluster[ 0 ] }`
+            }
+        } ) 
+        if(nifiNamespaces.length > 0) {
+            const nifiFargateProfile = eksCluster.addFargateProfile( "nifi-fargate-profile",
+                {
+                    fargateProfileName: "nifi",
+                    selectors: nifiNamespaces
+                }
+            )
 
-        const [ caIssuerManifest, caIssuerCdk8sChart ] = this.addCA( eksCluster, certManagerHelm, clusterSecurityGroup )
+            const externalSecretsNamespaceManifest = eksCluster.addNamespace( new cdk8s.App(), 'external-secrets-namespace', NifiL3Construct.EXTERNAL_SECRETS_NAMESPACE, clusterSecurityGroup )
+            externalSecretsNamespaceManifest.node.addDependency( servicesFargateProfile )
+            const externalSecretsReadyCmd = this.addExternalSecrets( eksCluster, externalSecretsNamespaceManifest )
 
-        const [ zkK8sChart, zkSecurityGroup ] = this.addZookeeper( vpc, subnets, this.projectKmsKey, eksCluster, hostedZone, caIssuerCdk8sChart )
+            const externalSecretsDnsManifest = eksCluster.addNamespace( new cdk8s.App(), 'external-dns-namespace', NifiL3Construct.EXTERNAL_DNS_NAMESPACE, clusterSecurityGroup )
+            externalSecretsDnsManifest.node.addDependency( servicesFargateProfile )
+            const externalDnsReady = this.addExternalDns( hostedZone, eksCluster, externalSecretsDnsManifest )
 
-        const nifiManagerImage = this.createNifiManagerImage()
+            const certManagerNamespaceManifest = eksCluster.addNamespace( new cdk8s.App(), 'cert-manager-namespace', NifiL3Construct.CERT_MANAGER_NAMESPACE, clusterSecurityGroup )
+            certManagerNamespaceManifest.node.addDependency( servicesFargateProfile )
+            const certManagerReady = this.addCertManager( eksCluster, certManagerNamespaceManifest )
+            certManagerReady.node.addDependency( externalSecretsReadyCmd )
 
-        const registryHostname = this.props.nifi.registry ? `nifi-registry.${ hostedZone.zoneName}` : undefined
-        const registryUrl = this.props.nifi.registry && registryHostname ? `https://${ registryHostname }:${ this.props.nifi.registry.httpsPort || 8443}` : undefined
-        const nifiClusters = this.addNifiClusters(
-            { 
-                eksCluster: eksCluster,
-                vpc: vpc,
-                subnets: subnets,
-                hostedZone: hostedZone,
-                zkK8sChart: zkK8sChart,
-                caIssuerCdk8sChart: caIssuerCdk8sChart,
-                zkSecurityGroup: zkSecurityGroup,
-                dependencies: [
-                    externalDnsManifest,
-                    externalSecretsHelm,
-                    certManagerHelm,
-                    caIssuerManifest
-                ], 
-                nifiManagerImage: nifiManagerImage,
-                registryUrl: registryUrl 
-            })
-            
-        if ( this.props.nifi.registry && registryHostname ) {
-            this.addRegistry( {
-                registryProps: this.props.nifi.registry, vpc,
-                subnets: subnets,
-                kmsKey: this.projectKmsKey,
-                eksCluster,
-                registryHostname,
-                hostedZone,
-                caIssuerCdk8sChart,
-                nifiClusters,
-                nifiManagerImageUri: nifiManagerImage.imageUri }
+            const [ caIssuerManifest, caIssuerCdk8sChart ] = this.addCA( eksCluster, certManagerNamespaceManifest, privateCa )
+            caIssuerManifest.node.addDependency( certManagerReady )
+
+            const registryHostname = this.props.nifi.registry ? `nifi-registry.${ hostedZone.zoneName }` : undefined
+            const registryUrl = this.props.nifi.registry && registryHostname ? `https://${ registryHostname }:${ this.props.nifi.registry?.httpsPort || 8443 }` : undefined
+
+            const [ zkManifest, zkK8sChart, zkSecurityGroup ] = this.addZookeeper( vpc, subnets, this.projectKmsKey, eksCluster, hostedZone, caIssuerCdk8sChart, servicesFargateProfile )
+            zkManifest.node.addDependency( externalSecretsReadyCmd )
+            zkManifest.node.addDependency( externalDnsReady )
+            zkManifest.node.addDependency( caIssuerManifest )
+            zkManifest.node.addDependency( certManagerReady )
+
+            const nifiManagerImage = this.createNifiManagerImage()
+
+            const nifiClusters = this.addNifiClusters(
+                {
+                    eksCluster: eksCluster,
+                    vpc: vpc,
+                    subnets: subnets,
+                    hostedZone: hostedZone,
+                    zkK8sChart: zkK8sChart,
+                    caIssuerCdk8sChart: caIssuerCdk8sChart,
+                    zkSecurityGroup: zkSecurityGroup,
+                    dependencies: [
+                        externalDnsReady,
+                        externalSecretsReadyCmd,
+                        certManagerReady,
+                        caIssuerManifest
+                    ],
+                    nifiManagerImage: nifiManagerImage,
+                    registryUrl: registryUrl,
+                    fargateProfile: nifiFargateProfile
+                } )
+
+            if ( this.props.nifi.registry && registryHostname ) {
+                this.addRegistry( {
+                    registryProps: this.props.nifi.registry,
+                    vpc: vpc,
+                    subnets: subnets,
+                    kmsKey: this.projectKmsKey,
+                    eksCluster: eksCluster,
+                    registryHostname: registryHostname,
+                    hostedZone,
+                    caIssuerCdk8sChart,
+                    nifiClusters,
+                    nifiManagerImageUri: nifiManagerImage.imageUri,
+                    dependencies: [
+                        externalDnsReady,
+                        externalSecretsReadyCmd,
+                        certManagerReady,
+                        caIssuerManifest
+                    ],
+                    fargateProfile: servicesFargateProfile
+                },
                 )
+            }
+
         }
     }
 
-    private addNifiClusters ( 
-        addClusterProps:AddNifiClustersProps
-        ): {[clusterName:string]:NifiCluster} {
+    private addNifiClusters (
+        addClusterProps: AddNifiClustersProps
+    ): { [ clusterName: string ]: NifiCluster } {
 
         const nifiClusters = Object.fromEntries( Object.entries( this.props.nifi.clusters || {} ).map( nifiClusterEntry => {
             const nifiClusterName = nifiClusterEntry[ 0 ]
             const nifiClusterOptions = nifiClusterEntry[ 1 ]
             const nifiCluster = this.addNifiCluster( {
-                nifiClusterName: nifiClusterName, 
-                nifiClusterOptions: nifiClusterOptions, 
-                vpc: addClusterProps.vpc, 
+                nifiClusterName: nifiClusterName,
+                nifiClusterOptions: nifiClusterOptions,
+                vpc: addClusterProps.vpc,
                 subnets: addClusterProps.subnets,
                 eksCluster: addClusterProps.eksCluster,
                 hostedZone: addClusterProps.hostedZone,
                 zkK8sChart: addClusterProps.zkK8sChart,
                 caIssuerCdk8sChart: addClusterProps.caIssuerCdk8sChart,
                 nifiManagerImage: addClusterProps.nifiManagerImage,
-                registryUrl: addClusterProps.registryUrl })
+                registryUrl: addClusterProps.registryUrl,
+                fargateProfile: addClusterProps.fargateProfile
+            } )
             addClusterProps.dependencies.forEach( dependency => nifiCluster.nifiManifest.node.addDependency( dependency ) )
             return [ nifiClusterName, { cluster: nifiCluster, options: nifiClusterOptions } ]
         } ) )
@@ -309,6 +392,7 @@ export class NifiL3Construct extends CaefL3Construct {
         Object.entries( nifiClusters ).map( nifiClusterEntry => {
             const nifiClusterName = nifiClusterEntry[ 0 ]
             const nifiCluster = nifiClusterEntry[ 1 ]
+            nifiCluster.cluster.node.addDependency( addClusterProps.zkK8sChart )
             addClusterProps.zkSecurityGroup.connections.allowFrom( nifiCluster.cluster.securityGroup, Port.tcp( 2181 ) )
             nifiCluster.options.peerClusters?.forEach( peerClusterName => {
                 const peerCluster = nifiClusters[ peerClusterName ]
@@ -320,15 +404,15 @@ export class NifiL3Construct extends CaefL3Construct {
                 nifiCluster.cluster.securityGroup.connections.allowFrom( peerCluster.cluster.securityGroup, Port.tcp( nifiCluster.cluster.httpsPort ) )
             } )
         } )
-        return Object.fromEntries(Object.entries( nifiClusters ).map( x => [x[0],x[ 1 ].cluster] ))
+        return Object.fromEntries( Object.entries( nifiClusters ).map( x => [ x[ 0 ], x[ 1 ].cluster ] ) )
 
     }
 
     private addRegistry ( addRegistryProps: AddRegistryProps ) {
 
-        const registryNamespaceName = "nifi-registry"
+
         const allIngressSgIds = [
-            ...Object.entries(addRegistryProps.nifiClusters).map( x => x[1].securityGroup.securityGroupId),
+            ...Object.entries( addRegistryProps.nifiClusters ).map( x => x[ 1 ].securityGroup.securityGroupId ),
             ...this.props.nifi.securityGroupIngressSGs || []
         ]
 
@@ -389,7 +473,7 @@ export class NifiL3Construct extends CaefL3Construct {
         const externalSecretsServiceRole = NifiCluster.createServiceRole( this,
             'registry-external-secrets',
             this.props.naming.resourceName( 'registry-external-secrets-service-role', 64 ),
-            registryNamespaceName,
+            NifiL3Construct.REGISTRY_NAMESPACE,
             addRegistryProps.eksCluster,
             [ kmsKeyStatement, secretsManagerStatement ] )
 
@@ -399,30 +483,25 @@ export class NifiL3Construct extends CaefL3Construct {
 
         const efsSecurityGroup = NifiCluster.createEfsSecurityGroup( 'registry', this, this.props.naming, addRegistryProps.vpc, [ registrySecurityGroup, ...additionalEfsIngressSecurityGroups || [] ] )
         const registryEfsPvs = NifiCluster.createEfsPvs( {
-            scope: this, 
-            naming: this.props.naming, 
-            name: 'registry', 
-            nodeCount: 1, 
-            vpc: addRegistryProps.vpc, 
-            subnets: addRegistryProps.subnets, 
-            kmsKey: addRegistryProps.kmsKey, 
-            efsSecurityGroup:efsSecurityGroup} )[ 0 ]
+            scope: this,
+            naming: this.props.naming,
+            name: 'registry',
+            nodeCount: 1,
+            vpc: addRegistryProps.vpc,
+            subnets: addRegistryProps.subnets,
+            kmsKey: addRegistryProps.kmsKey,
+            efsSecurityGroup: efsSecurityGroup
+        } )[ 0 ]
         const efsManagedPolicy = NifiCluster.createEfsAccessPolicy( 'registry', this, this.props.naming, this.projectKmsKey, [ registryEfsPvs ] )
 
-        const fargateProfile = addRegistryProps.eksCluster.addFargateProfile( registryNamespaceName, {
-            fargateProfileName: registryNamespaceName,
-            selectors: [ {
-                namespace: registryNamespaceName
-            } ]
-        } )
-        fargateProfile.podExecutionRole.addManagedPolicy( efsManagedPolicy )
+        addRegistryProps.fargateProfile.podExecutionRole.addManagedPolicy( efsManagedPolicy )
 
-        const registryNamespaceManifest = addRegistryProps.eksCluster.addNamespace( new cdk8s.App(), 'registry-ns', registryNamespaceName, registrySecurityGroup )
+        const registryNamespaceManifest = addRegistryProps.eksCluster.addNamespace( new cdk8s.App(), 'registry-ns', NifiL3Construct.REGISTRY_NAMESPACE, registrySecurityGroup )
 
-        const clusterServiceRole = NifiCluster.createServiceRole( this, 'registry-service-role', this.props.naming.resourceName( 'registry-service-role', 64 ), registryNamespaceName, addRegistryProps.eksCluster )
+        const clusterServiceRole = NifiCluster.createServiceRole( this, 'registry-service-role', this.props.naming.resourceName( 'registry-service-role', 64 ), NifiL3Construct.REGISTRY_NAMESPACE, addRegistryProps.eksCluster )
 
         const registryChartProps: NifiRegistryChartProps = {
-            namespace: registryNamespaceName,
+            namespace: NifiL3Construct.REGISTRY_NAMESPACE,
             awsRegion: this.region,
             adminCredsSecretName: registryAdminCredentialsSecret.secretName,
             keystorePasswordSecretName: registryKeystorePasswordSecret.secretName,
@@ -449,23 +528,24 @@ export class NifiL3Construct extends CaefL3Construct {
         registryManifest.node.addDependency( registryNamespaceManifest )
         const restartRegistryCmdProps: KubernetesCmdProps = {
             cluster: addRegistryProps.eksCluster,
-            namespace: 'nifi-registry',
+            namespace: NifiL3Construct.REGISTRY_NAMESPACE,
             cmd: [ "delete", "pod", "-l", "app=nifi-registry" ],
             executionKey: registryChart.hash()
         }
         const restartRegistryCmd = new KubernetesCmd( this, 'restart-registry-cmd', restartRegistryCmdProps )
         restartRegistryCmd.node.addDependency( registryManifest )
+        addRegistryProps.dependencies.forEach( dependency => registryManifest.node.addDependency( dependency ) )
     }
 
-    private addCA ( eksCluster: CaefEKSCluster, certManagerHelm: HelmChart, clusterSecurityGroup: ISecurityGroup ): [ KubernetesManifest, CaIssuerChart ] {
+    private addCA ( eksCluster: CaefEKSCluster, servicesNamespaceManifest: KubernetesManifest, privateCa?: CfnCertificateAuthorityActivation ): [ KubernetesManifest, CaIssuerChart ] {
 
-        const [ rootClusterIssuerName, rootClusterIssuerReadyCmd ] = this.addPrivateCA( eksCluster, clusterSecurityGroup )
+        const [ rootClusterIssuerName, rootClusterIssuerReadyCmd ] = this.addPrivateCAChart( eksCluster, servicesNamespaceManifest, privateCa )
 
-        const caKeystorePasswordSecret = NifiCluster.createSecret( this, 'keystore-password-secret', this.props.naming, 'keystore-password', this.projectKmsKey )
-        const caExternalSecretsRole = NifiCluster.createExternalSecretsServiceRole( this, this.props.naming, "cert-manager", eksCluster, this.projectKmsKey, [ caKeystorePasswordSecret ] )
+        const caKeystorePasswordSecret = NifiCluster.createSecret( this, 'ca-keystore-password-secret', this.props.naming, 'ca-keystore-password', this.projectKmsKey )
+        const caExternalSecretsRole = NifiCluster.createExternalSecretsServiceRole( this, 'ca-external-secrets', this.props.naming, NifiL3Construct.CERT_MANAGER_NAMESPACE, eksCluster, this.projectKmsKey, [ caKeystorePasswordSecret ] )
 
         const caIssuerCdk8sChart = new CaIssuerChart( new cdk8s.App(), 'ca-issuer', {
-            namespace: "cert-manager",
+            namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
             awsRegion: this.region,
             keystorePasswordSecretName: caKeystorePasswordSecret.secretName,
             externalSecretsRoleArn: caExternalSecretsRole.roleArn,
@@ -479,7 +559,6 @@ export class NifiL3Construct extends CaefL3Construct {
         const caManifest = eksCluster.addCdk8sChart( 'ca-issuer', caIssuerCdk8sChart )
 
         caManifest.node.addDependency( rootClusterIssuerReadyCmd )
-        caManifest.node.addDependency( certManagerHelm )
         return [ caManifest, caIssuerCdk8sChart ]
     }
 
@@ -520,7 +599,7 @@ export class NifiL3Construct extends CaefL3Construct {
         }
     }
 
-    private computeClusterCertProps() {
+    private computeClusterCertProps () {
         return {
             nifiCertDuration: this.props.nifi.nodeCertDuration ?? "24h0m0s",
             nifiCertRenewBefore: this.props.nifi.nodeCertRenewBefore ?? "1h0m0s",
@@ -529,9 +608,9 @@ export class NifiL3Construct extends CaefL3Construct {
         }
     }
 
-    private addNifiCluster ( addNifiClusterProps: AddNifiClusterProps  ): NifiCluster {
+    private addNifiCluster ( addNifiClusterProps: AddNifiClusterProps ): NifiCluster {
 
-        const peerNodeIdentities: string[] | undefined = this.computePeerNodeIdentities(addNifiClusterProps)
+        const peerNodeIdentities: string[] | undefined = this.computePeerNodeIdentities( addNifiClusterProps )
 
         const defaultRegistryClient: NamedNifiRegistryClientProps = this.computeDefaultRegistryClient( addNifiClusterProps )
 
@@ -542,7 +621,7 @@ export class NifiL3Construct extends CaefL3Construct {
             kmsKey: this.projectKmsKey,
             vpc: addNifiClusterProps.vpc,
             subnets: addNifiClusterProps.subnets,
-            naming: this.props.naming.withModuleName( addNifiClusterProps.nifiClusterName ),
+            naming: this.props.naming.withModuleName( `${ this.props.naming.props.moduleName }-${ addNifiClusterProps.nifiClusterName }` ),
             region: this.region,
             zkConnectString: addNifiClusterProps.zkK8sChart.zkConnectString,
             nifiHostedZone: addNifiClusterProps.hostedZone,
@@ -550,11 +629,12 @@ export class NifiL3Construct extends CaefL3Construct {
             ...this.computeClusterCertProps(),
             nifiManagerImage: addNifiClusterProps.nifiManagerImage,
             externalNodeIdentities: [ ...addNifiClusterProps.nifiClusterOptions.externalNodeIdentities || [], ...peerNodeIdentities || [] ],
-            registryClients: { 
+            registryClients: {
                 ...addNifiClusterProps.nifiClusterOptions.registryClients || {},
-                ...defaultRegistryClient 
+                ...defaultRegistryClient
             },
-            ...this.computeClusterSecurityGroups( addNifiClusterProps )
+            ...this.computeClusterSecurityGroups( addNifiClusterProps ),
+            fargateProfile: addNifiClusterProps.fargateProfile
         }
         return new NifiCluster( this, `nifi-cluster-${ addNifiClusterProps.nifiClusterName }`, clusterProps )
     }
@@ -564,7 +644,8 @@ export class NifiL3Construct extends CaefL3Construct {
         kmsKey: IKey,
         eksCluster: CaefEKSCluster,
         hostedZone: HostedZone,
-        caIssuerCdk8sChart: CaIssuerChart ): [ ZookeeperChart, ISecurityGroup ] {
+        caIssuerCdk8sChart: CaIssuerChart,
+        fargateProfile: FargateProfile ): [ KubernetesManifest, ZookeeperChart, ISecurityGroup ] {
 
         const zkSecurityGroupProps: CaefSecurityGroupProps = {
             securityGroupName: 'zk',
@@ -599,7 +680,7 @@ export class NifiL3Construct extends CaefL3Construct {
         const externalSecretsServiceRole = NifiCluster.createServiceRole( this,
             'zk-external-secrets',
             this.props.naming.resourceName( 'zk-external-secrets-service-role', 64 ),
-            'zookeeper',
+            NifiL3Construct.ZOOKEEPER_NAMESPACE,
             eksCluster,
             [ kmsKeyStatement, secretsManagerStatement ] )
 
@@ -607,31 +688,25 @@ export class NifiL3Construct extends CaefL3Construct {
             return SecurityGroup.fromSecurityGroupId( this, `zk-efs-ingress-sg-${ id }`, id )
         } )
 
-        const fargateProfile = eksCluster.addFargateProfile( 'zookeeper', {
-            fargateProfileName: 'zookeeper',
-            selectors: [ {
-                namespace: 'zookeeper'
-            } ]
-        } )
-
         const efsSecurityGroup = NifiCluster.createEfsSecurityGroup( 'zookeeper', this, this.props.naming, vpc, [ zkSecurityGroup, ...additionalEfsIngressSecurityGroups || [] ] )
         const zkEfsPvs = NifiCluster.createEfsPvs( {
-            scope: this, 
-            naming: this.props.naming, 
+            scope: this,
+            naming: this.props.naming,
             name: 'zk',
-             nodeCount: 3, 
-             vpc: vpc,
-            subnets:subnets, 
-            kmsKey:kmsKey, 
-            efsSecurityGroup: efsSecurityGroup })
+            nodeCount: 3,
+            vpc: vpc,
+            subnets: subnets,
+            kmsKey: kmsKey,
+            efsSecurityGroup: efsSecurityGroup
+        } )
         const efsManagedPolicy = NifiCluster.createEfsAccessPolicy( 'zookeeper', this, this.props.naming, this.projectKmsKey, zkEfsPvs )
         fargateProfile.podExecutionRole.addManagedPolicy( efsManagedPolicy )
-        const zkNamespaceManifest = eksCluster.addNamespace( new cdk8s.App(), 'zookeeper-ns', "zookeeper", zkSecurityGroup )
+        const zkNamespaceManifest = eksCluster.addNamespace( new cdk8s.App(), 'zookeeper-ns', NifiL3Construct.ZOOKEEPER_NAMESPACE, zkSecurityGroup )
         zkNamespaceManifest.node.addDependency( fargateProfile )
 
 
         const zkK8sChart = new ZookeeperChart( new cdk8s.App(), 'zookeeper-chart', {
-            namespace: "zookeeper",
+            namespace: NifiL3Construct.ZOOKEEPER_NAMESPACE,
             hostedZoneName: hostedZone.zoneName,
             externalSecretsRoleArn: externalSecretsServiceRole.roleArn,
             caIssuerName: caIssuerCdk8sChart.caIssuerName,
@@ -646,15 +721,16 @@ export class NifiL3Construct extends CaefL3Construct {
         } )
         const zkManifest = eksCluster.addCdk8sChart( 'zookeeper', zkK8sChart )
         zkManifest.node.addDependency( zkNamespaceManifest )
+        zkManifest.node.addDependency( caIssuerCdk8sChart )
         const restartNifiCmdProps: KubernetesCmdProps = {
             cluster: eksCluster,
-            namespace: 'zookeeper',
+            namespace: NifiL3Construct.ZOOKEEPER_NAMESPACE,
             cmd: [ "delete", "pod", "-l", "app=zookeeper" ],
             executionKey: zkK8sChart.hash()
         }
         const restartNifiCmd = new KubernetesCmd( this, 'restart-zk-cmd', restartNifiCmdProps )
         restartNifiCmd.node.addDependency( zkManifest )
-        return [ zkK8sChart, zkSecurityGroup ]
+        return [ zkManifest, zkK8sChart, zkSecurityGroup ]
     }
 
 
@@ -665,30 +741,33 @@ export class NifiL3Construct extends CaefL3Construct {
         } )
     }
 
-    private addExternalDns ( eksCluster: CaefEKSCluster,
-        vpc: IVpc,
-        clusterSecurityGroup: ISecurityGroup ): [ KubernetesManifest, HostedZone ] {
+    private addExternalDns ( hostedZone: HostedZone, eksCluster: CaefEKSCluster,
+        servicesNamespaceManifest: KubernetesManifest ): KubernetesCmd {
 
-        eksCluster.addFargateProfile( "external-dns", {
-            fargateProfileName: "external-dns",
-            selectors: [ {
-                namespace: "external-dns"
-            } ]
-        } )
-        const hostedZone = this.createHostedZone( vpc )
-        const externalDnsRole = this.createExternalDnsServiceRole( 'external-dns', eksCluster, hostedZone )
-        const externalDnsNamespaceManifest = eksCluster.addNamespace( new cdk8s.App(), 'external-dns-namespace', "external-dns", clusterSecurityGroup )
+        const externalDnsRole = this.createExternalDnsServiceRole( NifiL3Construct.EXTERNAL_DNS_NAMESPACE, eksCluster, hostedZone )
+
         const chartProps: ExternalDnsChartProps = {
-            namespace: 'external-dns',
+            namespace: NifiL3Construct.EXTERNAL_DNS_NAMESPACE,
             region: this.region,
             externalDnsRoleArn: externalDnsRole.roleArn
         }
         const externalDnsManifest = eksCluster.addCdk8sChart( 'external-dns', new ExternalDnsChart( new cdk8s.App(), 'external-dns', chartProps ) )
-        externalDnsManifest.node.addDependency( externalDnsNamespaceManifest )
-        return [ externalDnsManifest, hostedZone ]
+        externalDnsManifest.node.addDependency( servicesNamespaceManifest )
+
+        //Ensure External Dns is Ready
+        const checkReadyProps: KubernetesCmdProps = {
+            cluster: eksCluster,
+            namespace: NifiL3Construct.EXTERNAL_DNS_NAMESPACE,
+            cmd: [ "get", "deployment.apps", "external-dns", "-o", "jsonpath='{.status.readyReplicas}'" ],
+            expectedOutput: "1"
+        }
+        const checkReadyCmd = new KubernetesCmd( this, 'check-external-dns-ready', checkReadyProps )
+        checkReadyCmd.node.addDependency( externalDnsManifest )
+
+        return checkReadyCmd
     }
 
-    private createEksCluster ( vpc: IVpc, subnets: ISubnet[], kmsKey: IKey, clusterSecurityGroup: ISecurityGroup ): CaefEKSCluster {
+    private createEksCluster ( vpc: IVpc, subnets: ISubnet[], kmsKey: IKey, clusterSecurityGroup: ISecurityGroup, privateCaArn: string ): CaefEKSCluster {
 
         const resolvedAdminRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.nifi.adminRoles, "Admin" )
 
@@ -696,7 +775,11 @@ export class NifiL3Construct extends CaefL3Construct {
             return Role.fromRoleArn( this, `admin-role-${ resolvedRole.refId() }`, resolvedRole.arn() )
         } )
 
+
+        const mgmtInstanceProps = this.createMgmtInstanceProps( privateCaArn )
+
         const clusterProps: CaefEKSClusterProps = {
+            mgmtInstance: mgmtInstanceProps,
             version: KubernetesVersion.V1_27,
             coreDnsComputeType: CoreDnsComputeType.FARGATE,
             adminRoles: adminRoles,
@@ -704,32 +787,79 @@ export class NifiL3Construct extends CaefL3Construct {
             vpc: vpc,
             subnets: subnets,
             naming: this.props.naming,
-            securityGroup: clusterSecurityGroup
+            securityGroup: clusterSecurityGroup,
         }
 
         const cluster = new CaefEKSCluster( this, 'eks-cluster', clusterProps )
         return cluster
     }
+    private createMgmtInstanceProps ( privateCaArn: string ): MgmtInstanceProps | undefined {
+
+        if ( this.props.nifi.mgmtInstance ) {
+
+            const mgmtInstanceKeystorePasswordSecret = NifiCluster.createSecret( this, 'mgmt-instance-keystore-secret', this.props.naming, 'mgmt-instance-keystore-password', this.projectKmsKey )
+            const secretsManagerStatement = new PolicyStatement( {
+                sid: "GetSecretValue",
+                effect: Effect.ALLOW,
+                actions: [
+                    "SecretsManager:GetSecretValue"
+                ],
+                resources: [ mgmtInstanceKeystorePasswordSecret.secretFullArn || mgmtInstanceKeystorePasswordSecret.secretArn ],
+            } )
+            const projectKmsStatement = new PolicyStatement( {
+                sid: "ProjectKms",
+                effect: Effect.ALLOW,
+                actions: [
+                    "kms:Decrypt"
+                ],
+                resources: [ this.projectKmsKey.keyArn ],
+            } )
+            const issueCertStatement = new PolicyStatement( {
+                sid: "IssueCert",
+                effect: Effect.ALLOW,
+                actions: [
+                    "acm-pca:IssueCertificate",
+                    "acm-pca:GetCertificate",
+                ],
+                resources: [ privateCaArn ],
+            } )
+            return {
+                ...this.props.nifi.mgmtInstance,
+                mgmtPolicyStatements: [
+                    secretsManagerStatement,
+                    issueCertStatement,
+                    projectKmsStatement
+                ],
+                userDataCommands: [
+                    ...this.props.nifi.mgmtInstance?.userDataCommands ?? [],
+                    `yum install -y java-21-amazon-corretto.x86_64`,
+                    `aws secretsmanager get-secret-value --secret-id ${ mgmtInstanceKeystorePasswordSecret.secretArn } |jq -r '.SecretString' > /tmp/keystore-passwd`,
+                    `openssl ecparam -name secp384r1 -genkey -noout -out /root/mgmt-instance.key.pem`,
+                    `openssl req -new -sha256 -key /root/mgmt-instance.key.pem -out /root/mgmt-instance.csr -subj "/CN=mgmt-instance"`,
+                    `aws acm-pca issue-certificate --certificate-authority-arn ${ privateCaArn } --csr fileb:///root/mgmt-instance.csr  --signing-algorithm "SHA512WITHECDSA" --validity Value=7,Type="DAYS"|jq -r '.CertificateArn' > /tmp/certificate-arn`,
+                    `cd /root && wget https://dlcdn.apache.org/nifi/1.25.0/nifi-toolkit-1.25.0-bin.zip && unzip nifi-toolkit-1.25.0-bin.zip && mv /root/nifi-toolkit-1.25.0 /opt/nifi-toolkit`,
+                    `export CERT_ARN=\`cat /tmp/certificate-arn\` && aws acm-pca get-certificate --certificate-authority-arn ${ privateCaArn } --certificate-arn $CERT_ARN | jq -r .Certificate > /root/mgmt-instance.cert.pem`,
+                    `export CERT_ARN=\`cat /tmp/certificate-arn\` && aws acm-pca get-certificate --certificate-authority-arn ${ privateCaArn } --certificate-arn $CERT_ARN | jq -r .CertificateChain > /root/ca.cert.pem`,
+                    `openssl pkcs12 -export -in /root/mgmt-instance.cert.pem -inkey /root/mgmt-instance.key.pem -out /opt/nifi-toolkit/conf/mgmt-instance.cert.p12 -name mgmt-instance -password pass:\`cat /tmp/keystore-passwd\``,
+                    ``
+                ]
+            }
+
+        } else {
+            return undefined
+        }
+    }
 
     private addExternalSecrets (
         eksCluster: CaefEKSCluster,
-        clusterSecurityGroup: ISecurityGroup ): HelmChart {
-
-        eksCluster.addFargateProfile( "external-secrets", {
-            fargateProfileName: "external-secrets",
-            selectors: [ {
-                namespace: "external-secrets"
-            } ]
-        }, )
-
-        const externalSecretsNamespaceManifest = eksCluster.addNamespace( new cdk8s.App(), 'external-secrets-namespace', "external-secrets", clusterSecurityGroup )
+        servicesNamespaceManifest: KubernetesManifest ): KubernetesCmd {
 
         const externalSecretsHelm = eksCluster.addHelmChart( 'external-secrets-helm', {
             repository: "https://charts.external-secrets.io",
             chart: "external-secrets",
             version: "0.9.5",
             release: "external-secrets",
-            namespace: "external-secrets",
+            namespace: NifiL3Construct.EXTERNAL_SECRETS_NAMESPACE,
             createNamespace: false,
             values: {
                 installCRDs: true,
@@ -744,12 +874,23 @@ export class NifiL3Construct extends CaefL3Construct {
                 }
             }
         } )
-        externalSecretsHelm.node.addDependency( externalSecretsNamespaceManifest )
-        return externalSecretsHelm
+        externalSecretsHelm.node.addDependency( servicesNamespaceManifest )
+        //Ensure External Secrets is Ready
+        const checkReadyProps: KubernetesCmdProps = {
+            cluster: eksCluster,
+            namespace: NifiL3Construct.EXTERNAL_SECRETS_NAMESPACE,
+            cmd: [ "get", "deployment.apps", "external-secrets-webhook", "-o", "jsonpath='{.status.readyReplicas}'" ],
+            expectedOutput: "1"
+        }
+        const checkReadyCmd = new KubernetesCmd( this, 'check-external-secrets-ready', checkReadyProps )
+        checkReadyCmd.node.addDependency( externalSecretsHelm )
+        return checkReadyCmd
     }
 
-    private createAcmPca (): CfnCertificateAuthorityActivation {
-
+    private createAcmPca (): [ string, CfnCertificateAuthorityActivation | undefined ] {
+        if ( this.props.nifi.existingPrivateCaArn ) {
+            return [ this.props.nifi.existingPrivateCaArn, undefined ]
+        }
         const pcaProps: CfnCertificateAuthorityProps = {
             keyAlgorithm: 'EC_secp384r1',
             signingAlgorithm: 'SHA512WITHECDSA',
@@ -775,24 +916,16 @@ export class NifiL3Construct extends CaefL3Construct {
             templateArn: `arn:${ this.partition }:acm-pca:::template/RootCACertificate/V1`
         } )
 
-        return new CfnCertificateAuthorityActivation( this, 'acm-pca-activation', {
+        const pcaAct = new CfnCertificateAuthorityActivation( this, 'acm-pca-activation', {
             certificateAuthorityArn: pca.attrArn,
             certificate: caCert.attrCertificate,
             status: "ACTIVE"
         } )
+        return [ pcaAct.certificateAuthorityArn, pcaAct ]
 
     }
 
-    private addPrivateCA ( eksCluster: CaefEKSCluster, clusterSecurityGroup: ISecurityGroup ): [ string, Construct ] {
-
-        const fargateProfile = eksCluster.addFargateProfile( "private-ca", {
-            fargateProfileName: "private-ca",
-            selectors: [ {
-                namespace: "private-ca"
-            } ]
-        } )
-
-        const privateCa = this.props.nifi.existingPrivateCaArn ? undefined : this.createAcmPca()
+    private addPrivateCAChart ( eksCluster: CaefEKSCluster, servicesNamespaceManifest: KubernetesManifest, privateCa?: CfnCertificateAuthorityActivation ): [ string, Construct ] {
         let privateCaArn: string
         if ( privateCa ) {
             privateCaArn = privateCa.certificateAuthorityArn
@@ -815,7 +948,13 @@ export class NifiL3Construct extends CaefL3Construct {
             resources: [ privateCaArn ]
         } )
 
-        const serviceRole = NifiCluster.createServiceRole( this, 'private-ca-service-role', 'private-ca-svc', 'private-ca', eksCluster, [ acmPcaStatement ] )
+        const serviceRole = NifiCluster.createServiceRole( this,
+            'private-ca-service-role',
+            this.props.naming.resourceName( 'private-ca-svc', 64 ),
+            NifiL3Construct.CERT_MANAGER_NAMESPACE,
+            eksCluster,
+            [ acmPcaStatement ]
+        )
 
         const serviceAccountChart = new class extends cdk8s.Chart {
             public serviceAccountName: string
@@ -824,7 +963,7 @@ export class NifiL3Construct extends CaefL3Construct {
                 const serviceAccount = new k8s.KubeServiceAccount( this, 'service-account', {
                     metadata: {
                         name: 'private-ca-service-account',
-                        namespace: 'private-ca',
+                        namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
                         labels: {
                             'app.kubernetes.io/name': 'private-ca'
                         },
@@ -837,17 +976,15 @@ export class NifiL3Construct extends CaefL3Construct {
             }
         }( new cdk8s.App(), 'private-ca-service-account-chart' )
 
-        const pcaNamespaceManifest = eksCluster.addNamespace( new cdk8s.App(), 'private-ca-namespace', "private-ca", clusterSecurityGroup )
-
         const serviceAccountManifest = eksCluster.addCdk8sChart( 'private-ca-service-account', serviceAccountChart )
-        serviceAccountManifest.node.addDependency( pcaNamespaceManifest )
+        serviceAccountManifest.node.addDependency( servicesNamespaceManifest )
 
         const pcaManagerHelm = eksCluster.addHelmChart( 'private-ca-helm', {
             repository: "https://cert-manager.github.io/aws-privateca-issuer",
             chart: "aws-privateca-issuer",
             version: "1.2.5",
             release: "aws-privateca-issuer",
-            namespace: "private-ca",
+            namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
             createNamespace: false,
             values: {
                 installCRDs: true,
@@ -865,9 +1002,9 @@ export class NifiL3Construct extends CaefL3Construct {
             }
         } )
 
-        pcaManagerHelm.node.addDependency( fargateProfile )
         pcaManagerHelm.node.addDependency( serviceAccountManifest )
-        pcaManagerHelm.node.addDependency( pcaNamespaceManifest )
+
+
         if ( privateCa ) {
             pcaManagerHelm.node.addDependency( privateCa )
         }
@@ -896,7 +1033,7 @@ export class NifiL3Construct extends CaefL3Construct {
         //Ensure PCA Cluster Issuer is Ready
         const checkPcaClusterIssuerReadyProps: KubernetesCmdProps = {
             cluster: eksCluster,
-            namespace: "cert-manager",
+            namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
             cmd: [ "get", "awspcaclusterissuer", "private-ca-cluster-issuer", "-o", "jsonpath=\"{.status.conditions[?(@.type=='Ready')].status }\"" ],
             expectedOutput: "True"
         }
@@ -906,22 +1043,18 @@ export class NifiL3Construct extends CaefL3Construct {
         return [ pcaClusterIssuerChart.clusterIssuerName, checkPcaClusterIssuerReadyCmd ]
     }
 
-    private addCertManager ( eksCluster: CaefEKSCluster, clusterSecurityGroup: ISecurityGroup ): HelmChart {
-        eksCluster.addFargateProfile( "cert-manager", {
-            fargateProfileName: "cert-manager",
-            selectors: [ {
-                namespace: "cert-manager"
-            } ]
-        } )
-        const certManagerNamespaceManifest = eksCluster.addNamespace( new cdk8s.App(), 'cert-manager-namespace', "cert-manager", clusterSecurityGroup )
+    private addCertManager ( eksCluster: CaefEKSCluster, servicesNamespaceManifest: KubernetesManifest ): KubernetesCmd {
+
+
         const certManagerHelm = eksCluster.addHelmChart( 'cert-manager-helm', {
             repository: "https://charts.jetstack.io",
             chart: "cert-manager",
             version: "1.13.0",
             release: "cert-manager",
-            namespace: "cert-manager",
+            namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
             createNamespace: false,
             values: {
+                namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
                 installCRDs: true,
                 global: {
                     tolerations: [
@@ -950,8 +1083,17 @@ export class NifiL3Construct extends CaefL3Construct {
                 }
             }
         } )
-        certManagerHelm.node.addDependency( certManagerNamespaceManifest )
-        return certManagerHelm
+        certManagerHelm.node.addDependency( servicesNamespaceManifest )
+        //Ensure External Secrets is Ready
+        const checkReadyProps: KubernetesCmdProps = {
+            cluster: eksCluster,
+            namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
+            cmd: [ "get", "deployment.apps", "cert-manager-webhook", "-o", "jsonpath='{.status.readyReplicas}'" ],
+            expectedOutput: "1"
+        }
+        const checkReadyCmd = new KubernetesCmd( this, 'check-cert-manager-ready', checkReadyProps )
+        checkReadyCmd.node.addDependency( certManagerHelm )
+        return checkReadyCmd
     }
 
     private createExternalDnsServiceRole (
@@ -980,7 +1122,7 @@ export class NifiL3Construct extends CaefL3Construct {
         } )
 
         const suppressions = [ { id: 'AwsSolutions-IAM5', reason: 'Access Point Names not known at deployment time. Permissions restricted by condition.' } ]
-        const externalSecretsServiceRole = NifiCluster.createServiceRole( this,
+        const externalDnsServiceRole = NifiCluster.createServiceRole( this,
             'external-dns',
             this.props.naming.resourceName( 'external-dns-service-role', 64 ),
             namespaceName,
@@ -988,7 +1130,7 @@ export class NifiL3Construct extends CaefL3Construct {
             [ route53UpdateStatement, route53ListStatement ],
             suppressions )
 
-        return externalSecretsServiceRole
+        return externalDnsServiceRole
 
     }
 

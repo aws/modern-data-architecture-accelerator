@@ -66,7 +66,7 @@ export class NifiClusterChart extends cdk8s.Chart {
     public readonly nodeList: string[]
     public readonly domain: string
 
-    private static DEFAULT_NIFI_IMAGE_TAG: string = '1.23.2'
+    private static DEFAULT_NIFI_IMAGE_TAG: string = '1.25.0'
 
     constructor( scope: Construct, id: string, props: NifiClusterChartProps ) {
         super( scope, id, props );
@@ -100,7 +100,10 @@ export class NifiClusterChart extends cdk8s.Chart {
     private createExternalSecrets (
         props: NifiClusterChartProps ): string {
 
-        const secretStoreChart = new ExternalSecretStore( this, 'secret-store', props )
+        const secretStoreChart = new ExternalSecretStore( this, 'secret-store', {
+            storeName: "external-secret-store",
+            ...props,
+        } )
 
         const targetSecretName = 'nifi-secret'
 
@@ -195,7 +198,7 @@ export class NifiClusterChart extends cdk8s.Chart {
                 },
                 spec: {
                     isCA: false,
-                    commonName: `${ nifiSts.name }-${ i }.${ this.namespace }.${ this.props.hostedZoneName }`,
+                    commonName: `${ nifiSts.name }-${ i }.${ this.namespace }`,
                     dnsNames: [
                         'localhost',
                         `${ nifiSts.name }-${ i }.${ nifiService.name }.${ this.namespace }.svc.cluster.local`,

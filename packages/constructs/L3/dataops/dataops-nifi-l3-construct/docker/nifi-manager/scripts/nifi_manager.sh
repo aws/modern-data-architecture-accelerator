@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 mkdir -p $NIFI_TOOLKIT_HOME/conf/
 rm -rf $NIFI_TOOLKIT_HOME/conf/*
 cp -rL $NIFI_INIT_DIR/conf/* $NIFI_TOOLKIT_HOME/conf

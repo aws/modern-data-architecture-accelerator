@@ -380,6 +380,106 @@
             },
             "type": "object"
         },
+        "Conditions": {
+            "additionalProperties": false,
+            "description": "Conditions for when an IAM Policy is in effect, specified in the following structure:\n\n`{ \"Operator\": { \"keyInRequestContext\": \"value\" } }`\n\nThe value can be either a single string value or an array of string values.\n\nFor more information, including which operators are supported, see [the IAM\ndocumentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html).",
+            "type": "object"
+        },
+        "Effect": {
+            "description": "The Effect element of an IAM policy",
+            "enum": [
+                "Allow",
+                "Deny"
+            ],
+            "type": "string"
+        },
+        "IPrincipal": {
+            "additionalProperties": false,
+            "description": "Represents a logical IAM principal.\n\nAn IPrincipal describes a logical entity that can perform AWS API calls\nagainst sets of resources, optionally under certain conditions.\n\nExamples of simple principals are IAM objects that you create, such\nas Users or Roles.\n\nAn example of a more complex principals is a `ServicePrincipal` (such as\n`new ServicePrincipal(\"sns.amazonaws.com\")`, which represents the Simple\nNotifications Service).\n\nA single logical Principal may also map to a set of physical principals.\nFor example, `new OrganizationPrincipal('o-1234')` represents all\nidentities that are part of the given AWS Organization.",
+            "properties": {
+                "assumeRoleAction": {
+                    "description": "When this Principal is used in an AssumeRole policy, the action to use.",
+                    "type": "string"
+                },
+                "grantPrincipal": {
+                    "$ref": "#/definitions/IPrincipal",
+                    "description": "The principal to grant permissions to"
+                },
+                "policyFragment": {
+                    "$ref": "#/definitions/PrincipalPolicyFragment",
+                    "description": "Return the policy fragment that identifies this principal in a Policy."
+                },
+                "principalAccount": {
+                    "description": "The AWS account ID of this principal.\nCan be undefined when the account is not known\n(for example, for service principals).\nCan be a Token - in that case,\nit's assumed to be AWS::AccountId.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assumeRoleAction",
+                "grantPrincipal",
+                "policyFragment"
+            ],
+            "type": "object"
+        },
+        "InstanceArchitecture": {
+            "description": "Identifies an instance's CPU architecture",
+            "enum": [
+                "arm64",
+                "x86_64"
+            ],
+            "type": "string"
+        },
+        "InstanceType": {
+            "additionalProperties": false,
+            "description": "Instance type for EC2 instances\n\nThis class takes a literal string, good if you already\nknow the identifier of the type you want.",
+            "properties": {
+                "architecture": {
+                    "$ref": "#/definitions/InstanceArchitecture",
+                    "description": "The instance's CPU architecture"
+                },
+                "instanceTypeIdentifier": {}
+            },
+            "required": [
+                "architecture",
+                "instanceTypeIdentifier"
+            ],
+            "type": "object"
+        },
+        "MgmtInstanceProps": {
+            "additionalProperties": false,
+            "properties": {
+                "availabilityZone": {
+                    "type": "string"
+                },
+                "instanceType": {
+                    "$ref": "#/definitions/InstanceType",
+                    "description": "Instance type for EC2 instances\n\nThis class takes a literal string, good if you already\nknow the identifier of the type you want."
+                },
+                "keyPairName": {
+                    "type": "string"
+                },
+                "mgmtPolicyStatements": {
+                    "items": {
+                        "$ref": "#/definitions/PolicyStatement"
+                    },
+                    "type": "array"
+                },
+                "subnetId": {
+                    "type": "string"
+                },
+                "userDataCommands": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "availabilityZone",
+                "subnetId"
+            ],
+            "type": "object"
+        },
         "NagSuppressionProps": {
             "additionalProperties": false,
             "properties": {
@@ -505,7 +605,7 @@
                     "type": "array"
                 },
                 "nifiImageTag": {
-                    "description": "The tag of the Nifi docker image to use. If not specified,\ndefaults to the latest tested version (currently 1.23.2). Specify 'latest' to pull\nthe latest version (might be untested).",
+                    "description": "The tag of the Nifi docker image to use. If not specified,\ndefaults to the latest tested version (currently 1.25.0). Specify 'latest' to pull\nthe latest version (might be untested).",
                     "type": "string"
                 },
                 "nodeCount": {
@@ -630,6 +730,10 @@
                 "existingPrivateCaArn": {
                     "description": "(Optional) If specified, this ACM Private CA will be used to sign the internal CA running\nwithin EKS. If not specified, an ACM Private CA will be created.",
                     "type": "string"
+                },
+                "mgmtInstance": {
+                    "$ref": "#/definitions/MgmtInstanceProps",
+                    "description": "If defined, an EC2 instance will be created with connectivity, permissions, and tooling to manage the EKS cluster"
                 },
                 "nodeCertDuration": {
                     "description": "The certificate validity period for the Zookeeper and Nifi Node certs. If using an ACM Private CA with short-term certificates,\nthis should be set to less than 6 days. Defaults to 5 days.",
@@ -811,7 +915,7 @@
                     "type": "array"
                 },
                 "registryImageTag": {
-                    "description": "The tag of the Nifi docker image to use. If not specified,\ndefaults to the latest tested version (currently 1.23.2). Specify 'latest' to pull\nthe latest version (might be untested).",
+                    "description": "The tag of the Nifi docker image to use. If not specified,\ndefaults to the latest tested version (currently 1.25.0). Specify 'latest' to pull\nthe latest version (might be untested).",
                     "type": "string"
                 },
                 "registryRoleAwsManagedPolicies": {
@@ -868,6 +972,151 @@
                 "WRITE"
             ],
             "type": "string"
+        },
+        "PolicyStatement": {
+            "additionalProperties": false,
+            "description": "Represents a statement in an IAM policy document.",
+            "properties": {
+                "_action": {},
+                "_condition": {},
+                "_effect": {},
+                "_frozen": {},
+                "_notAction": {},
+                "_notPrincipal": {},
+                "_notPrincipals": {},
+                "_notResource": {},
+                "_principal": {},
+                "_principals": {},
+                "_resource": {},
+                "_sid": {},
+                "actions": {
+                    "description": "The Actions added to this statement",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "addPrincipalConditions": {
+                    "description": "Add a principal's conditions\n\nFor convenience, principals have been modeled as both a principal\nand a set of conditions. This makes it possible to have a single\nobject represent e.g. an \"SNS Topic\" (SNS service principal + aws:SourcArn\ncondition) or an Organization member (* + aws:OrgId condition).\n\nHowever, when using multiple principals in the same policy statement,\nthey must all have the same conditions or the OR samentics\nimplied by a list of principals cannot be guaranteed (user needs to\nadd multiple statements in that case)."
+                },
+                "assertNotFrozen": {
+                    "description": "Throw an exception when the object is frozen"
+                },
+                "conditions": {
+                    "description": "The conditions added to this statement"
+                },
+                "effect": {
+                    "$ref": "#/definitions/Effect",
+                    "description": "Whether to allow or deny the actions in this statement\nSet effect for this statement"
+                },
+                "frozen": {
+                    "description": "Whether the PolicyStatement has been frozen\n\nThe statement object is frozen when `freeze()` is called.",
+                    "type": "boolean"
+                },
+                "hasPrincipal": {
+                    "description": "Indicates if this permission has a \"Principal\" section.",
+                    "type": "boolean"
+                },
+                "hasResource": {
+                    "description": "Indicates if this permission has at least one resource associated with it.",
+                    "type": "boolean"
+                },
+                "notActions": {
+                    "description": "The NotActions added to this statement",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "notPrincipals": {
+                    "description": "The NotPrincipals added to this statement",
+                    "items": {
+                        "$ref": "#/definitions/IPrincipal"
+                    },
+                    "type": "array"
+                },
+                "notResources": {
+                    "description": "The NotResources added to this statement",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "principalConditionsJson": {},
+                "principals": {
+                    "description": "The Principals added to this statement",
+                    "items": {
+                        "$ref": "#/definitions/IPrincipal"
+                    },
+                    "type": "array"
+                },
+                "resources": {
+                    "description": "The Resources added to this statement",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "sid": {
+                    "description": "Statement ID for this statement\nSet Statement ID for this statement",
+                    "type": "string"
+                },
+                "validatePolicyActions": {},
+                "validatePolicyPrincipal": {}
+            },
+            "required": [
+                "_action",
+                "_condition",
+                "_effect",
+                "_frozen",
+                "_notAction",
+                "_notPrincipal",
+                "_notPrincipals",
+                "_notResource",
+                "_principal",
+                "_principals",
+                "_resource",
+                "actions",
+                "addPrincipalConditions",
+                "assertNotFrozen",
+                "conditions",
+                "effect",
+                "frozen",
+                "hasPrincipal",
+                "hasResource",
+                "notActions",
+                "notPrincipals",
+                "notResources",
+                "principals",
+                "resources",
+                "validatePolicyActions",
+                "validatePolicyPrincipal"
+            ],
+            "type": "object"
+        },
+        "PrincipalPolicyFragment": {
+            "additionalProperties": false,
+            "description": "A collection of the fields in a PolicyStatement that can be used to identify a principal.\n\nThis consists of the JSON used in the \"Principal\" field, and optionally a\nset of \"Condition\"s that need to be applied to the policy.\n\nGenerally, a principal looks like:\n\n    { '<TYPE>': ['ID', 'ID', ...] }\n\nAnd this is also the type of the field `principalJson`.  However, there is a\nspecial type of principal that is just the string '*', which is treated\ndifferently by some services. To represent that principal, `principalJson`\nshould contain `{ 'LiteralString': ['*'] }`.",
+            "properties": {
+                "conditions": {
+                    "$ref": "#/definitions/Conditions",
+                    "description": "The conditions under which the policy is in effect.\nSee [the IAM documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html)."
+                },
+                "principalJson": {
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "conditions",
+                "principalJson"
+            ],
+            "type": "object"
         }
     },
     "properties": {

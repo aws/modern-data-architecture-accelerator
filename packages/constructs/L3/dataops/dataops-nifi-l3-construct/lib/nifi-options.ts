@@ -29,6 +29,7 @@ export interface NifiRegistryClientProps {
 }
 
 export interface NifiClusterOptions extends NifiIdentityAuthorizationOptions, NifiNetworkOptions {
+
     /**
      * Initial number of nodes in the cluster.
      * Defaults to 1.
@@ -43,7 +44,7 @@ export interface NifiClusterOptions extends NifiIdentityAuthorizationOptions, Ni
 
     /**
      * The tag of the Nifi docker image to use. If not specified,
-     * defaults to the latest tested version (currently 1.23.2). Specify 'latest' to pull
+     * defaults to the latest tested version (currently 1.25.0). Specify 'latest' to pull
      * the latest version (might be untested).
      */
     readonly nifiImageTag?: string

@@ -39,10 +39,12 @@ export class ZookeeperChart extends cdk8s.Chart {
         const zkService = this.createZkService()
         const zkSecretName = this.createExternalSecrets( props )
         const persistentVolumes = this.createPersistentVolumes()
-        const zkSts = this.createZkStatefulSet( zkService, zkSecretName, persistentVolumes )
-        this.createSslResources( zkService, zkSts, zkSecretName )
+        this.createSslResources( zkService, zkSecretName )
+        
+        this.createZkStatefulSet( zkService, zkSecretName, persistentVolumes )
+        
         this.zkConnectString = [ ...Array( 3 ).keys() ].map( i => {
-            return `${ zkSts.name }-${ i }.${ this.namespace }.${ this.props.hostedZoneName }:2181`
+            return `zookeeper-${ i }.${ this.namespace }.${ this.props.hostedZoneName }:2181`
         } ).join( "," )
 
     }
@@ -60,7 +62,10 @@ export class ZookeeperChart extends cdk8s.Chart {
     private createExternalSecrets (
         props: ZookeeperChartProps ): string {
 
-        const secretStoreChart = new ExternalSecretStore( this, 'secret-store', props )
+        const secretStoreChart = new ExternalSecretStore( this, 'secret-store', {
+            storeName: "external-secret-store",
+            ...props,
+        } )
 
         const targetSecretName = 'zk-secret'
 
@@ -94,24 +99,25 @@ export class ZookeeperChart extends cdk8s.Chart {
 
     }
 
-    private createSslResources ( zkService: k8s.KubeService, zkSts: k8s.KubeStatefulSet,
-        zkSecretName: string ) {
+    private createSslResources ( zkService: k8s.KubeService,
+        zkSecretName: string ): {[name:string]:cdk8s.ApiObject} {
 
-        const nodeCerts = [ ...Array( 3 ).keys() ].map( i => {
-            return new cdk8s.ApiObject( this, `${ zkSts.name }-${ i }-cert`, {
+        const nodeCerts = Object.fromEntries([ ...Array( 3 ).keys() ].map( i => {
+            const certName = `zookeeper-${ i }-cert`
+            const cert =  new cdk8s.ApiObject( this, certName, {
                 apiVersion: "cert-manager.io/v1",
                 kind: "Certificate",
                 metadata: {
-                    name: `${ zkSts.name }-${ i }-cert`
+                    name: certName
                 },
                 spec: {
                     isCA: false,
-                    commonName: `${ zkSts.name }-${ i }.${ this.namespace }.${ this.props.hostedZoneName }`,
+                    commonName: `zookeeper-${ i }`,
                     dnsNames: [
-                        `${ zkSts.name }-${ i }.${ zkService.name }.${ this.namespace }.svc.cluster.local`,
-                        `${ zkSts.name }-${ i }.${ this.namespace }.${ this.props.hostedZoneName }`
+                        `zookeeper-${ i }.${ zkService.name }.${ this.namespace }.svc.cluster.local`,
+                        `zookeeper-${ i }.${ this.namespace }.${ this.props.hostedZoneName }`
                     ],
-                    secretName: `${ zkSts.name }-${ i }-ssl`,
+                    secretName: `zookeeper-${ i }-ssl`,
                     privateKey: {
                         algorithm: this.props.certKeyAlg,
                         encoding: "PKCS1",
@@ -138,7 +144,8 @@ export class ZookeeperChart extends cdk8s.Chart {
                     renewBefore: this.props.zookeeperCertRenewBefore
                 }
             } )
-        } )
+            return [certName,cert]
+        } ))
         return nodeCerts
     }
     private createZkService (): k8s.KubeService {
@@ -205,7 +212,9 @@ export class ZookeeperChart extends cdk8s.Chart {
         return pvs
     }
 
-    private createZkStatefulSet ( zookeeperService: k8s.KubeService, zkSecretName: string, persistentVolumes: k8s.KubePersistentVolume[] ): k8s.KubeStatefulSet {
+    private createZkStatefulSet ( zookeeperService: k8s.KubeService, 
+        zkSecretName: string, 
+        persistentVolumes: k8s.KubePersistentVolume[] ): k8s.KubeStatefulSet {
 
         const nodeIds = [ ...Array( 3 ).keys() ]
 
