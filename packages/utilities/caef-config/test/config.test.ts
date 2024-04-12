@@ -7,6 +7,7 @@ import { App, Stack } from "aws-cdk-lib"
 // nosemgrep
 import path = require( "path" )
 import { CaefConfigRefValueTransformer, CaefConfigSSMValueTransformer, CaefConfigTransformer, ConfigConfigPathValueTransformer, CaefServiceCatalogProductConfig, ICaefConfigValueTransformer, CaefConfigParamRefValueTransformer } from "../lib"
+import * as console from "console";
 
 class TestKeyTransformer implements ICaefConfigValueTransformer {
     public transformValue ( value: string, contextPath?: string | undefined ): string {
@@ -284,6 +285,21 @@ describe( 'Test ConfigConfigPathValueTransformer', () => {
         const transformedValue = new ConfigConfigPathValueTransformer( "testBaseDir" ).transformValue( "./relative" )
         expect( transformedValue ).toBe( path.resolve( "./relative".replace( /^\./, "testBaseDir" ) ) )
     } )
+
+    test('Parent Relative', () => {
+        const transformedValue = new ConfigConfigPathValueTransformer( "testBaseDir" ).transformValue( "../relative-parent" )
+        expect( transformedValue ).toBe( path.resolve( "./relative-parent" ))
+    })
+
+    test('Parent Sub folder Relative', () => {
+        const transformedValue = new ConfigConfigPathValueTransformer( "testBaseDir" ).transformValue( "../app/code" )
+        expect( transformedValue ).toBe( path.resolve( "./app/code" ))
+    })
+
+    test('Grandparent folder Relative', () => {
+        const transformedValue = new ConfigConfigPathValueTransformer( "testBaseDir" ).transformValue( "../../caef-naming" )
+        expect( transformedValue ).toBe( path.resolve( "../caef-naming" ))
+    })
 } )
 
 

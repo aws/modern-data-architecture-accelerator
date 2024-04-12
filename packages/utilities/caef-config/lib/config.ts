@@ -84,10 +84,14 @@ export class ConfigConfigPathValueTransformer implements ICaefConfigValueTransfo
         this.baseDir = baseDir
     }
     public transformValue ( value: string ): string {
-        if ( value.startsWith( "./" ) ) {
-            return path.resolve( value.replace( /^\./, this.baseDir ) )
+        if(value.startsWith('../')) {
+            // Resolve to baseDir's parent path
+            return path.resolve(this.baseDir, value)
+        } else if(value.startsWith('./')) {
+            // Resolve relative to baseDir
+             return path.resolve( value.replace( /^\./, this.baseDir ) )
         } else {
-            return value
+            return value;
         }
     }
 }
