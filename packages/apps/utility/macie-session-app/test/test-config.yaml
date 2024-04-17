@@ -1,0 +1,5 @@
+# Configuration of Macie Session
+session:
+  # Frequency at which macie will publish updates
+  # Possible values: FIFTEEN_MINUTES | ONE_HOUR | SIX_HOURS
+  findingPublishingFrequency: SIX_HOURS
