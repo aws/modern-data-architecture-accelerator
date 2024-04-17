@@ -1,0 +1,23 @@
+# List of domains to create
+domains:
+  # domain's name (must be unique)
+  test-domain:
+    # Required - Description to give to the domain
+    description: DataZone Domain Description
+
+    # Optional - Type of SSO (default: DISABLED): DISABLED | IAM_IDC
+    singleSignOnType: DISABLED
+
+    # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
+    userAssignment: MANUAL
+
+    # Optional - Environment Blueprints to enable for the domain.
+    # At the moment, there are 2 available blueprints `dataLake` and `dataWarehouse` and it's possible to enable either one or both of them.
+    environmentBlueprints:
+      dataLake: 
+        enabledRegions:
+          - ca-central-1
+      dataWarehouse:
+        enabledRegions:
+          - ca-central-1
+
