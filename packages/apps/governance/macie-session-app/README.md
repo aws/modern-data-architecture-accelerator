@@ -5,7 +5,7 @@ This Macie Session CDK application is used to configure a the session account wi
 ***
 
 ## Deployed Resources and Compliance Details
-![MacieSession](../../../constructs/L3/utility/macie-session-l3-construct/docs/MacieSession.png)
+![MacieSession](../../../constructs/L3/governance/macie-session-l3-construct/docs/MacieSession.png)
 
 ## Configuration
 ```yaml

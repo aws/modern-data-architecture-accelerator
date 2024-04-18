@@ -6,7 +6,7 @@ The Glue Catalog CDK application is used to configure an account's Glue Catalog 
 
 ## Deployed Resources and Compliance Details
 
-![GlueCatalog](../../../constructs/L3/datalake/glue-catalog-l3-construct/docs/GlueCatalog.png)
+![GlueCatalog](../../../constructs/L3/governance/glue-catalog-l3-construct/docs/GlueCatalog.png)
 
 **Glue Catalog KMS Key** - This key will be used to encrypt the Glue Catalog metadata.
   

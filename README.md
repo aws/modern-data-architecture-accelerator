@@ -96,13 +96,22 @@ CAEF is implemented as a set of compliant CDK Constructs and configuration-drive
 
 ## Available CAEF Modules (CDK Apps and L3 Constructs)
 
+### Governance Modules (CDK Apps and L3 Constructs)
+
+* [**(Preview)DataZone**](packages/apps/governance/datazone-app/README.md) - Allows DataZone domains and environment blueprints to be deployed.
+* [**(Preview)Macie Session**](packages/apps/governance/macie-session-app/README.md) - Allows Macie sessions to be deployed at the account level.
+* [**LakeFormation Data Lake Settings**](packages/apps/governance/lakeformation-settings-app/README.md) - Allows LF Settings to be administred using IaC.
+* [**LakeFormation Access Controls**](packages/apps/governance/lakeformation-access-control-app/README.md) - Allows LF Access Controls to be administered using IaC
+* [**Glue Catalog**](packages/apps/governance/glue-catalog-app/README.md) - Configures the Encryption at Rest settings for Glue Catalog at the account level. Additionally, configures Glue catalogs for cross account access required by a Data Mesh architecture.
+* [**IAM Roles and Policies**](packages/apps/governance/roles-app/README.md) - Generates IAM roles for use within the Data Environment
+* [**Audit**](packages/apps/governance/audit-app/README.md) - Generates Audit resources to use as target for audit data and for querying audit data via Athena
+* [**Audit Trail**](packages/apps/governance/audit-trail-app/README.md) - Generates CloudTrail to capture S3 Data Events into Audit Bucket
+* [**Service Catalog**](packages/apps/governance/service-catalog-app/README.md) - Allows Service Catalog Portfolios do be deployed and access granted to principals
+
 ### Data Lake Modules (CDK Apps and L3 Constructs)
 
 * [**Datalake KMS and Buckets**](packages/apps/datalake/datalake-app/README.md) - Generates a set of encrypted data lake buckets and bucket policies. Bucket policies are suitable for direct access via IAM and/or federated roles, as well as indirect access via LakeFormation/Athena.
-* [**Glue Catalog**](packages/apps/datalake/glue-catalog-app/README.md) - Configures the Encryption at Rest settings for Glue Catalog. Additionally, configures Glue catalogs for cross account access required by a Data Mesh architecture.
 * [**Athena Workgroup**](packages/apps/datalake/athena-workgroup-app/README.md) - Generates Athena Workgroups for use on the Data Lake
-* [**LakeFormation Data Lake Settings**](packages/apps/datalake/lakeformation-settings-app/README.md) - Allows LF Settings to be administred using IaC.
-* [**LakeFormation Access Controls**](packages/apps/datalake/lakeformation-access-control-app/README.md) - Allows LF Access Controls to be administered using IaC
 
 ### Data Ops Modules (CDK Apps and L3 Constructs)
 
@@ -112,34 +121,30 @@ CAEF is implemented as a set of compliant CDK Constructs and configuration-drive
 * [**Data Ops Workflows**](packages/apps/dataops/dataops-workflow-app/README.md) - Generates Glue workflows for orchestrating Data Ops pipelines
 * [**Data Ops Step Functions**](packages/apps/dataops/dataops-stepfunction-app/README.md) - Generates Step Functions for orchestrating Data Ops pipelines
 * [**Data Ops Lambda**](packages/apps/dataops/dataops-lambda-app/README.md) - Deploys Lambda functions for reacting to data events and performing smaller scale data processing
-* [**(Preview) Data Ops DataBrew**](packages/apps/dataops/dataops-databrew-app/README.md) - Generates Glue DataBrew resources (Jobs, Recipicees) for performing data profiling and cleansing
+* [**Data Ops DataBrew**](packages/apps/dataops/dataops-databrew-app/README.md) - Generates Glue DataBrew resources (Jobs, Recipicees) for performing data profiling and cleansing
 * [**(Preview) Data Ops Nifi**](packages/apps/dataops/dataops-nifi-app/README.md) - Generates Apache Nifi clusters for building event-driven data flows
 * [**(Preview) Data Ops Database Migration Service (DMS)**](packages/apps/dataops/dataops-dms-app/README.md) - Generates DMS Replication Instances, Endpoints, and Tasks
 
 ### Data Analytics Modules (CDK Apps and L3 Constructs)
 
 * [**Redshift Data Warehouse**](packages/apps/analytics/datawarehouse-app/README.md) - Deploys secure Redshift Data Warehouse clusters
-* [**(Preview) Opensearch Domain**](packages/apps/analytics/opensearch-app/README.md) - Deploys secure Opensearch Domains and Opensearch Dashboards
-* [**(Preview) QuickSight Account**](packages/apps/analytics/quicksight-account-app/README.md) - Deploys resources which can be used to deploy a QuickSight account
-* [**(Preview) QuickSight Namespace**](packages/apps/analytics/quicksight-namespace-app/README.md) - Deploys QuickSight namespaces into an account to allow for QuickSight multi tenancy in the same QuickSight/AWS Account
-* [**(Preview) QuickSight Project**](packages/apps/analytics/quicksight-project-app/README.md) - Deploys QuickSight Shared Folders and permissions
+* [**Opensearch Domain**](packages/apps/analytics/opensearch-app/README.md) - Deploys secure Opensearch Domains and Opensearch Dashboards
+* [**QuickSight Account**](packages/apps/analytics/quicksight-account-app/README.md) - Deploys resources which can be used to deploy a QuickSight account
+* [**QuickSight Namespace**](packages/apps/analytics/quicksight-namespace-app/README.md) - Deploys QuickSight namespaces into an account to allow for QuickSight multi tenancy in the same QuickSight/AWS Account
+* [**QuickSight Project**](packages/apps/analytics/quicksight-project-app/README.md) - Deploys QuickSight Shared Folders and permissions
 
 ### Data Science Modules (CDK Apps and L3 Constructs)
 
 * [**SageMaker Studio Domain**](packages/apps/datascience/sm-studio-domain-app/README.md) - Deploys secured SageMaker Studio Domain
-* [**(Preview) SageMaker Notebooks**](packages/apps/datascience/sm-notebook-app/README.md) - Deploys secured SageMaker Notebooks
+* [**SageMaker Notebooks**](packages/apps/datascience/sm-notebook-app/README.md) - Deploys secured SageMaker Notebooks
 * [**Data Science Team/Project**](packages/apps/datascience/data-science-team-app/README.md) - Deploys resource to support a team's Data Science activities
 
 ### Core/Utility Modules (CDK Apps and L3 Constructs)
 
-* [**Audit**](packages/apps/utility/audit-app/README.md) - Generates Audit resources to use as target for audit data and for querying audit data via Athena
-* [**Audit Trail**](packages/apps/utility/audit-trail-app/README.md) - Generates CloudTrail to capture S3 Data Events into Audit Bucket
-* [**(Preview) EC2**](packages/apps/utility/ec2-app/README.md) - Generates secure EC2 instances and Security groups
-* [**Roles Generator**](packages/apps/utility/roles-app/README.md) - Generates IAM roles for use within the Data Environment
+* [**EC2**](packages/apps/utility/ec2-app/README.md) - Generates secure EC2 instances and Security groups
 * [**SFTP Transfer Family Server**](packages/apps/utility/sftp-server-app/README.md) - Deploys SFTP Transfer Family service for loading data into the Data Lake
 * [**SFTP Transfer Family User Administrator**](packages/apps/utility/sftp-users-app/README.md) - Allows SFTP Transfer Family users to be administered in IaC
-* [**Service Catalog**](packages/apps/utility/service-catalog-app/README.md) - Allows Service Catalog Portfolios do be deployed and access granted to principals
-* [**(Preview) DataSync**](packages/apps/utility/datasync-app/README.md) - Deploys DataSync resources for data movement service between on-premises storage systems and cloud-based storage services
+* [**DataSync**](packages/apps/utility/datasync-app/README.md) - Deploys DataSync resources for data movement service between on-premises storage systems and cloud-based storage services
 * [**EventBridge**](packages/apps/utility/eventbridge-app/README.md) - Deploys EventBridge resoruces such as EventBuses
 
 ***
@@ -164,6 +169,8 @@ These constructs are specifically designed to be compliant with the AWSSolutions
 * [**SQS Queue Construct**](packages/constructs/L2/sqs-constructs/README.md)
 * [**SNS Topic Construct**](packages/constructs/L2/sns-constructs/README.md)
 * [**SFTP Transfer Family Server Construct**](packages/constructs/L2/transfer-family-constructs/README.md)
+* [**(Preview) RDS Aurora Constructs**](packages/constructs/L2/rds-constructs/README.md)
+* [**(Preview) DynamoDB Construct**](packages/constructs/L2/ddb-constructs/README.md)
 
 ***
 

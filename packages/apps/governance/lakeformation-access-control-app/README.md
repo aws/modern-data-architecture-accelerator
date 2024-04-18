@@ -6,7 +6,7 @@ The Lake Formation Access Control CDK application is used to deploy Lakeformatio
 
 ## Deployed Resources and Compliance Details
 
-![LakeFormation](../../../constructs/L3/datalake/lakeformation-access-control-l3-construct/docs/LakeFormation.png)
+![LakeFormation](../../../constructs/L3/governance/lakeformation-access-control-l3-construct/docs/LakeFormation.png)
 
 **Lake Formation Access Grants** - For each access grant specified in the config, a Lake Formation Access Grant resource will be deployed by the CDK.
   

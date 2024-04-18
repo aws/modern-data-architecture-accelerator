@@ -61,7 +61,7 @@
       "path": "../../core/l3-construct"
     },
     {
-      "path": "../../datalake/lakeformation-access-control-l3-construct"
+      "path": "../../governance/lakeformation-access-control-l3-construct"
     },
     {
       "path": "../../../L2/lambda-constructs"

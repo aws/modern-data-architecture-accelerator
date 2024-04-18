@@ -4,7 +4,7 @@ The ServiceCatalog CDK application is used to deploy Service Catalog resources w
 
 ## Deployed Resources and Compliance Details
 
-![ServiceCatalog](../../../constructs/L3/utility/service-catalog-l3-construct/docs/ServiceCatalog.png)
+![ServiceCatalog](../../../constructs/L3/governance/service-catalog-l3-construct/docs/ServiceCatalog.png)
 
 **Service Catalog Portfolios** - Portfolios to which products can be added via the CAEF framework.
 

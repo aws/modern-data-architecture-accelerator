@@ -4,18 +4,55 @@
 
 ### General Changes
 
+* Reorganized DEPLOYMENT configs to emphasize CAEF local mode as the preferred approach
 * Added functionality to allow referencing of roles by IAM Identity Center/SSO permission set name.
   * Adding 'sso: true' to a role ref will treat the role name as the name of an IAM Identity Center permission set name
   * The role will be resolved by searching for the 'AWSReservedSSO_' role created for that permission set within the account by IAM Identity Center
   * SSO roles will be automatically treated as immutable
 * Fixed issue with "@aws-caef/enableUniqueBucketNames" not account for prefix in max bucket name length
 * Added boto version 1.33.13 to boto lambda layers, and set as default
+* Enhance CAEF CLI to print current (installed) version
+* Surfaced config schemas in ./schemas under the repo root. All compiled schemas are placed here for convenience, to be used by YAML editors.
+  * Schemas also published as '@aws-caef/schemas' NPM package
+* Fixed various NPM Dependency CVEs through overrides
+* Fixed a number of SSM Parameter constructs to be appropriately scoped
+  * The legacy scoping can be retained by setting the "@aws-caef/legacyParamScope" global context value
+* Bumped CDK to latest version (2.132.1)
+* Bumped CDK NAG to latest version (2.28.27)
+* Bumped JSII to latest version (5.4.0)
+* Added support for higher/sibling directory relative paths to CAEF configs processor ("../< some-path >")
+  * CAEF configs can now reference source code, config files, and assets outside of the config directory/repo itself
 
-### Data Science Changes
+### Governance Changes
+
+* Moved governance related modules under a 'governance' package directory
+* Added DataZone module in Preview
+* Added Macie module in Preview
+
+### Data Science/AI/ML Changes
 
 * Added permissions to allow use of new SageMaker Studio Spaces feature in SM Studio and Data Science Team modules
   * Added support for 'studioWebPortal' configuration on SM Studio, which forces use of SM Spaces instead of SM Studio Classic
   * Newly created SM Studio Domains will automatically use Spaces
+* Moved all DataScience/AI/ML modules under ./packages/ai from ./packages/data-science
+
+### Data Ops Changes
+
+* Added support for DataOps Glue Jobs to reference additional libraries placed next to the job script
+* Improved compatability of DataOps Nifi module with LZA, fixing various issues
+* Added automatic creation of EC2 management node to DataOps Nifi Module, preconfigured with KubeCTL and access to manage the EKS cluster
+
+### Data Lake Changes
+
+* Fixed issue with Data Lake Lifecycle policy configurations using wrong object transition values
+* Added missing write permission on Data Lake LakeFormation roles so they can be used to write to the Data Lake
+* Added missing Glue Catalog Resource Policy permissions, improving cross account LakeFormation support
+* Added "kmsKeyConsumerAccounts" to Glue Catalog module, allowing permissions to KMS key to be added independently of catalog permissions
+
+### L2 Construct Changes
+
+* Added DynamoDB L2 Constructs
+* Added Aurora L2 Constructs
 
 ## 0.40.0
 
@@ -25,7 +62,7 @@
   * No NPM publishing or installation of CAEF packages required.
   * All modules will be built and executed from the local source code.
   * CAEF config must not specify a CAEF version. Whatever is cloned/checked out from the CAEF repo will be used.
-* Updated CDK to latest version (2.97.1)
+* Updated CDK to latest version (2.126.0)
 * Update CDK Nag to latest version (2.27.142)
 * Added "@aws-caef/enableUniqueBucketNames" CDK context feature flag, which, when set to true, results in a unique prefix being automatically added to all S3 bucket names.
   * Unique prefix is based on stack id, so is stable across stack updates

@@ -6,7 +6,7 @@ This Audit CDK application is used to configure deploy the resources required to
 
 ## Deployed Resources and Compliance Details
 
-![Audit](../../../constructs/L3/utility/audit-l3-construct/docs/Audit.png)
+![Audit](../../../constructs/L3/governance/audit-l3-construct/docs/Audit.png)
 
 **Audit KMS Key** - This key will be used to encrypt all Audit resources which support encryption at rest (including the Audit S3 Bucket).
 

@@ -6,7 +6,7 @@ The LakeFormation Settings CDK application is used to configure an account's Lak
 
 ## Deployed Resources and Compliance Details
 
-![LakeFormationSettings](../../../constructs/L3/datalake/lakeformation-settings-l3-construct/docs/LakeFormationSettings.png)
+![LakeFormationSettings](../../../constructs/L3/governance/lakeformation-settings-l3-construct/docs/LakeFormationSettings.png)
 
 **LakeFormation Settings** - Deployed to configure LakeFormation admins and default permissions
   

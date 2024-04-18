@@ -6,7 +6,7 @@ This Audit Trail CDK application is used to configure deploy the resources requi
 
 ## Deployed Resources and Compliance Details
 
-![AuditTrail](../../../constructs/L3/utility/audit-trail-l3-construct/docs/AuditTrail.png)
+![AuditTrail](../../../constructs/L3/governance/audit-trail-l3-construct/docs/AuditTrail.png)
 
 **CloudTrail Audit Trail** - CloudTrail containing S3 Data Events will be configured to write to an audit bucket
 
