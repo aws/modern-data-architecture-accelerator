@@ -6,7 +6,7 @@ The DataZone CDK application is used to configure and deploy DataZone Domains an
 ## Deployed Resources and Compliance Details
 
 
-![datazone](../../../constructs/L3/utility/datazone-l3-construct/docs/DataZone.png)
+![datazone](../../../constructs/L3/governance/datazone-l3-construct/docs/DataZone.png)
 
 * **DataZone Domain** - A DataZone Domain
 

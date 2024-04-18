@@ -4,7 +4,7 @@ The Roles CDK application is used to deploy IAM roles which can be used within a
 
 ## Deployed Resources and Compliance Details
 
-![Roles](../../../constructs/L3/utility/roles-l3-construct/docs/Roles.png)
+![Roles](../../../constructs/L3/governance/roles-l3-construct/docs/Roles.png)
 
 **IAM Managed Policies** - 
   * An IAM 'Customer' Managed Policy will be created for each policy specified in the config.

@@ -218,17 +218,28 @@
             "additionalProperties": false,
             "properties": {
                 "findingPublishingFrequency": {
-                    "type": "string"
+                    "$ref": "#/definitions/SessionFindingPublishingFrequencyEnum"
                 },
                 "status": {
+                    "enum": [
+                        "ENABLED",
+                        "PAUSED"
+                    ],
                     "type": "string"
                 }
             },
             "required": [
-                "findingPublishingFrequency",
-                "status"
+                "findingPublishingFrequency"
             ],
             "type": "object"
+        },
+        "SessionFindingPublishingFrequencyEnum": {
+            "enum": [
+                "FIFTEEN_MINUTES",
+                "ONE_HOUR",
+                "SIX_HOURS"
+            ],
+            "type": "string"
         }
     },
     "properties": {

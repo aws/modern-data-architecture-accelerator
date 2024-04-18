@@ -61,7 +61,7 @@
       "path": "../../../../utilities/caef-naming"
     },
     {
-      "path": "../../utility/roles-l3-construct"
+      "path": "../../governance/roles-l3-construct"
     },
     {
       "path": "../../../../utilities/s3-bucketpolicy-helper"

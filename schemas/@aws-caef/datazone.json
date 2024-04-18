@@ -223,10 +223,17 @@
                 "environmentBlueprints": {
                     "$ref": "#/definitions/EnvironmentBlueprints"
                 },
-                "singleSignOn": {
-                    "$ref": "#/definitions/SingleSignOnProps"
+                "singleSignOnType": {
+                    "type": "string"
+                },
+                "userAssignment": {
+                    "type": "string"
                 }
             },
+            "required": [
+                "singleSignOnType",
+                "userAssignment"
+            ],
             "type": "object"
         },
         "EnvironmentBlueprintConfig": {
@@ -260,22 +267,6 @@
             "additionalProperties": {
                 "$ref": "#/definitions/DomainProps"
             },
-            "type": "object"
-        },
-        "SingleSignOnProps": {
-            "additionalProperties": false,
-            "properties": {
-                "ssoType": {
-                    "type": "string"
-                },
-                "userAssignment": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "ssoType",
-                "userAssignment"
-            ],
             "type": "object"
         }
     },
