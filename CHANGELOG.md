@@ -4,7 +4,8 @@
 
 ### General Changes
 
-* Reorganized DEPLOYMENT configs to emphasize CAEF local mode as the preferred approach
+* Reorganized DEPLOYMENT documentation to emphasize CAEF local mode (-l) as the preferred approach
+  * Local mode (introduced 0.40) avoids requiring CAEF npm packages to be published to an NPM repo
 * Added functionality to allow referencing of roles by IAM Identity Center/SSO permission set name.
   * Adding 'sso: true' to a role ref will treat the role name as the name of an IAM Identity Center permission set name
   * The role will be resolved by searching for the 'AWSReservedSSO_' role created for that permission set within the account by IAM Identity Center
@@ -52,7 +53,7 @@
 ### L2 Construct Changes
 
 * Added DynamoDB L2 Constructs
-* Added Aurora L2 Constructs
+* Added RDS Aurora L2 Constructs
 
 ## 0.40.0
 
