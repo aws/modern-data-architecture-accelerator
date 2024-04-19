@@ -2,6 +2,39 @@
 
 ## 0.41.0
 
+### Governance Changes
+
+* Added DataZone module in Preview
+  * Allows provisioning of DataZone Domains and Environment Blueprints
+* Added Macie Sessions module in Preview
+  * Allows provisioning of account-wide Macie Sessions
+* Moved governance related modules under a 'governance' package directory
+
+### Data Science/AI/ML Changes
+
+* Added the Generative AI Accelerator (GAIA) module in Preview
+  * Provides a compliant Generative AI workspace backend, allowing both experimentation and production Generative AI capabilities
+  * Supports pluggable LLM models (including BedRock and SageMaker hosted models)
+  * Supports Kendra and RDS Aurora RAG engine backends
+  * Supports pluggable backend processing functions
+* Added permissions to allow use of new SageMaker Studio Spaces feature in SM Studio and Data Science Team modules
+  * Added support for 'studioWebPortal' configuration on SM Studio, which forces use of SM Spaces instead of SM Studio Classic
+  * Newly created SM Studio Domains will automatically use Spaces
+* Moved all DataScience/AI/ML modules under ./packages/ai from ./packages/data-science
+
+### Data Ops Changes
+
+* Added support for DataOps Glue Jobs to reference additional libraries placed next to the job script
+* Improved compatability of DataOps Nifi module with LZA, fixing various issues
+* Added automatic creation of EC2 management node to DataOps Nifi Module, preconfigured with KubeCTL and access to manage the EKS cluster
+
+### Data Lake Changes
+
+* Fixed issue with Data Lake Lifecycle policy configurations using wrong object transition values
+* Added missing write permission on Data Lake LakeFormation roles so they can be used to write to the Data Lake
+* Added missing Glue Catalog Resource Policy permissions, improving cross account LakeFormation support
+* Added "kmsKeyConsumerAccounts" to Glue Catalog module, allowing permissions to KMS key to be added independently of catalog permissions
+
 ### General Changes
 
 * Reorganized DEPLOYMENT documentation to emphasize CAEF local mode (-l) as the preferred approach
@@ -23,32 +56,6 @@
 * Bumped JSII to latest version (5.4.0)
 * Added support for higher/sibling directory relative paths to CAEF configs processor ("../< some-path >")
   * CAEF configs can now reference source code, config files, and assets outside of the config directory/repo itself
-
-### Governance Changes
-
-* Moved governance related modules under a 'governance' package directory
-* Added DataZone module in Preview
-* Added Macie module in Preview
-
-### Data Science/AI/ML Changes
-
-* Added permissions to allow use of new SageMaker Studio Spaces feature in SM Studio and Data Science Team modules
-  * Added support for 'studioWebPortal' configuration on SM Studio, which forces use of SM Spaces instead of SM Studio Classic
-  * Newly created SM Studio Domains will automatically use Spaces
-* Moved all DataScience/AI/ML modules under ./packages/ai from ./packages/data-science
-
-### Data Ops Changes
-
-* Added support for DataOps Glue Jobs to reference additional libraries placed next to the job script
-* Improved compatability of DataOps Nifi module with LZA, fixing various issues
-* Added automatic creation of EC2 management node to DataOps Nifi Module, preconfigured with KubeCTL and access to manage the EKS cluster
-
-### Data Lake Changes
-
-* Fixed issue with Data Lake Lifecycle policy configurations using wrong object transition values
-* Added missing write permission on Data Lake LakeFormation roles so they can be used to write to the Data Lake
-* Added missing Glue Catalog Resource Policy permissions, improving cross account LakeFormation support
-* Added "kmsKeyConsumerAccounts" to Glue Catalog module, allowing permissions to KMS key to be added independently of catalog permissions
 
 ### L2 Construct Changes
 
