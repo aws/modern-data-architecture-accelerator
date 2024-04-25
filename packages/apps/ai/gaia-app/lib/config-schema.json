@@ -422,6 +422,9 @@
                 "llms": {
                     "$ref": "#/definitions/LlmsProps"
                 },
+                "mainDomain": {
+                    "type": "string"
+                },
                 "prefix": {
                     "type": "string"
                 },

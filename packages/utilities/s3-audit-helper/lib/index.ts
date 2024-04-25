@@ -6,7 +6,7 @@
 import { ICaefKmsKey } from '@aws-caef/kms-constructs';
 import { ICaefResourceNaming } from "@aws-caef/naming";
 import { ICaefBucket } from '@aws-caef/s3-constructs';
-import { DataFormat, IDatabase, Schema, Table } from "@aws-cdk/aws-glue-alpha";
+import { DataFormat, IDatabase, Schema, S3Table } from "@aws-cdk/aws-glue-alpha";
 import { ReadWriteType, Trail } from "aws-cdk-lib/aws-cloudtrail";
 import { CfnTable } from "aws-cdk-lib/aws-glue";
 import { IBucket } from "aws-cdk-lib/aws-s3";
@@ -77,9 +77,9 @@ export class AuditHelper {
         bucket: ICaefBucket,
         database: IDatabase,
         accounts: string[],
-        regions: string[] ): Table {
+        regions: string[] ): S3Table {
         const location = `s3://${ bucket.bucketName }/AWSLogs`
-        const cloudTrailTable = new Table( scope, "CloudTrailGlueTable", {
+        const cloudTrailTable = new S3Table( scope, "CloudTrailGlueTable", {
             columns: [
                 { name: "eventversion", type: Schema.STRING },
                 {
