@@ -28,6 +28,7 @@
 * Added support for DataOps Glue Jobs to reference additional libraries placed next to the job script
 * Improved compatability of DataOps Nifi module with LZA, fixing various issues
 * Added automatic creation of EC2 management node to DataOps Nifi Module, preconfigured with KubeCTL and access to manage the EKS cluster
+* Updated CDK version for Glue to match aws-cdk-lib
 
 ### Data Lake Changes
 
@@ -35,6 +36,10 @@
 * Added missing write permission on Data Lake LakeFormation roles so they can be used to write to the Data Lake
 * Added missing Glue Catalog Resource Policy permissions, improving cross account LakeFormation support
 * Added "kmsKeyConsumerAccounts" to Glue Catalog module, allowing permissions to KMS key to be added independently of catalog permissions
+
+### Analytics Changes
+
+* Updated CDK version for Redshift to match aws-cdk-lib
 
 ### General Changes
 

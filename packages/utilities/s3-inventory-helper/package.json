@@ -32,7 +32,7 @@
   "dependencies": {
     "@aws-caef/naming": "^0.40.0",
     "@aws-caef/s3-constructs": "^0.40.0",
-    "@aws-cdk/aws-glue-alpha": "2.54.0-alpha.0",
+    "@aws-cdk/aws-glue-alpha": "2.132.1-alpha.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
     "constructs": "10.0.96"
