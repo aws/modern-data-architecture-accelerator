@@ -182,23 +182,23 @@ export class CaefBucket extends Bucket implements ICaefBucket {
             this.addToResourcePolicy( ForceKMSKeyStatement )
         }
 
-        new caef_construct.CaefParamAndOutput( scope, {
+        new caef_construct.CaefParamAndOutput( this, {
             ...{
                 resourceType: "bucket",
                 resourceId: props.bucketName,
                 name: "name",
                 value: this.bucketName
             }, ...props
-        } )
+        },scope )
 
-        new caef_construct.CaefParamAndOutput( scope, {
+        new caef_construct.CaefParamAndOutput( this, {
             ...{
                 resourceType: "bucket",
                 resourceId: props.bucketName,
                 name: "arn",
                 value: this.bucketArn
             }, ...props
-        } )
+        },scope )
     }
     /**
      * Helper function to format S3 prefixes. By default, strips leading and trailing slashes.

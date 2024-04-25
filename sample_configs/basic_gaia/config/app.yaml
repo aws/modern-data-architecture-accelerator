@@ -1,0 +1,45 @@
+gaia:
+  dataAdminRoles: []
+  prefix: "{{context:prefix}}"
+  bedrock:
+    enabled: "{{context:bedrockEnabled}}"
+    region: "{{context:bedrockRegion}}"
+  llms:
+    # A list of Sagemaker Hosted llms (Cost Implication)
+    # accepted values: [Mistral7b_Instruct2, Mistral7b_Instruct, FalconLite, Llama2_13b_Chat]
+    sagemaker: []
+  rag:
+    engines:
+      aurora: {}
+    # A list of Embedding models, for basic GAIA we opt for Bedrock based Titan Embed
+    embeddingsModels: [{
+        "provider": "bedrock",
+        "name": "amazon.titan-embed-text-v1",
+        "dimensions": 1536,
+        "default": true
+      }
+    ]
+    # A list of Cross Encoding models, only one model supported out of the box
+    crossEncoderModels: [{
+      "provider": "sagemaker",
+      "name": "cross-encoder/ms-marco-MiniLM-L-12-v2",
+      "default": true
+    }]
+  auth:
+    authType: "{{context:authType}}"
+  api:
+    restApiDomainName: "{{context:restApiDomainName}}"
+    hostedZoneName: "{{context:hostedZoneName}}"
+    socketApiDomainName: "{{context:socketApiDomainName}}"
+  setApiGateWayAccountCloudwatchRole: "{{context:setApiGateWayAccountCloudwatchRole}}"
+  skipApiGatewayDefaultWaf: "{{context:skipApiGatewayDefaultWaf}}"
+  vpc:
+    vpcId: "{{context:vpcId}}"
+    appSecurityGroupId: "{{context:appSecurityGroupId}}"
+    appSubnets:
+      - "{{context:appSubnet1}}"
+      - "{{context:appSubnet2}}"
+    dataSecurityGroupId: "{{context:dataSecurityGroupId}}"
+    dataSubnets:
+      - "{{context:dataSubnet1}}"
+      - "{{context:dataSubnet2}}"

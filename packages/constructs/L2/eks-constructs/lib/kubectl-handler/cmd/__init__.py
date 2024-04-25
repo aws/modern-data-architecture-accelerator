@@ -10,6 +10,7 @@ logger.setLevel(logging.INFO)
 # these are coming from the kubectl layer
 os.environ['PATH'] = '/opt/kubectl:/opt/awscli:' + os.environ['PATH']
 
+# nosec
 outdir = os.environ.get('TEST_OUTDIR', '/tmp')
 kubeconfig = os.path.join(outdir, 'kubeconfig')
 

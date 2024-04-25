@@ -26,6 +26,7 @@ sast:
   artifacts:
     paths:
       - reports/
+      
 
 # Exclude bulk of CDK TS under **/lib from semgrep, as it is not application code.
 # Other code (such as Lambda, application code) should typically be

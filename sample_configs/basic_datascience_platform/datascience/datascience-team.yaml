@@ -7,7 +7,7 @@ team:
   # Can be either directly referenced Role Arns, Role Arns via SSM Params,
   # or generated roles created using the CAEF roles module.
   teamUserRoles:
-    - id: generated-role-id:data-scientist
+    - id: generated-role-id:data-user
 
   # The role which will be used to execute Team SageMaker resources (Studio Domain Apps, SageMaker Jobs/Pipelines, etc)
   teamExecutionRole:
@@ -20,10 +20,6 @@ team:
     subnetIds:
       - "{{context:subnet_id}}"
     notebookSharingPrefix: sagemaker/notebooks/
-    defaultUserSettings:
-      KernelGatewayAppSettings:
-        DefaultResourceSpec:
-          InstanceType: ml.c5.large
 
     # List of Studio user profiles which will be created.
     userProfiles:
@@ -36,16 +32,6 @@ team:
         # The role's id will be combined with the userid
         # to grant the user access to launch the user profile.
         userRole:
-          id: generated-role-id:data-scientist
+          id: generated-role-id:data-user
 
-    # Lifecycle config to be added to all jupyter apps in the domain
-    jupyterLifecycleConfig:
-      script:
-        cmds:
-          - echo "testing jupyter new"
 
-    # Lifecycle config to be added to all kernal apps in the domain
-    kernelLifecycleConfig:
-      script:
-        cmds:
-          - echo "testing kernel new"

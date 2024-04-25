@@ -566,7 +566,6 @@ export class NifiL3Construct extends CaefL3Construct {
         const imageAsset = new DockerImageAsset( this, 'nifi-update-image', {
             directory: `${ __dirname }/../docker/nifi-manager`
         } )
-
         return imageAsset
     }
 

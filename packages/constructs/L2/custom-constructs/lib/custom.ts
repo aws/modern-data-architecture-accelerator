@@ -11,6 +11,7 @@ import { Code, ILayerVersion, Runtime } from "aws-cdk-lib/aws-lambda";
 import { Provider } from "aws-cdk-lib/custom-resources";
 import { NagPackSuppression, NagSuppressions } from "cdk-nag";
 import { Construct } from "constructs";
+import {ISecurityGroup, IVpc, SubnetSelection} from "aws-cdk-lib/aws-ec2";
 // nosemgrep
 const _ = require( 'lodash' );
 
@@ -25,11 +26,14 @@ export interface CaefCustomResourceProps extends CaefConstructProps {
     readonly handlerLayers?: ILayerVersion[]
     readonly pascalCaseProperties?: boolean
     readonly handlerTimeout?: Duration
+    readonly vpc?: IVpc
+    readonly subnet?: SubnetSelection
+    readonly securityGroup?: ISecurityGroup
 }
 
 export class CaefCustomResource extends CustomResource {
-
-
+    public handlerFunction: CaefLambdaFunction;
+    protected static handlerFunctionPlaceHolder: CaefLambdaFunction;
     private static setProps ( scope: Construct, props: CaefCustomResourceProps ) {
         const stack = Stack.of( scope );
 
@@ -70,7 +74,7 @@ export class CaefCustomResource extends CustomResource {
 
         const handlerFunctionResourceId = `custom-${ props.resourceType }-handler-function`
         const existingHandlerFunction = stack.node.tryFindChild( handlerFunctionResourceId ) as CaefLambdaFunction;
-        const handlerFunction = existingHandlerFunction ? existingHandlerFunction : new CaefLambdaFunction( stack, handlerFunctionResourceId, {
+        this.handlerFunctionPlaceHolder = existingHandlerFunction ? existingHandlerFunction : new CaefLambdaFunction( stack, handlerFunctionResourceId, {
             naming: props.naming,
             runtime: props.runtime,
             code: props.code,
@@ -78,13 +82,16 @@ export class CaefCustomResource extends CustomResource {
             role: handlerRole,
             functionName: `${ props.resourceType }-handler`,
             layers: props.handlerLayers,
-            timeout: props.handlerTimeout ? props.handlerTimeout : Duration.seconds( 60 )
+            timeout: props.handlerTimeout ? props.handlerTimeout : Duration.seconds( 60 ),
+            vpc: props.vpc,
+            vpcSubnets: props.subnet,
+            securityGroups: props.securityGroup ? [props.securityGroup] : undefined
         } )
 
-        handlerFunction.node.addDependency( handlerPolicy )
+        this.handlerFunctionPlaceHolder.node.addDependency( handlerPolicy )
 
         NagSuppressions.addResourceSuppressions(
-            handlerFunction,
+            this.handlerFunctionPlaceHolder,
             [
                 { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.' },
                 { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function is for custom resource.' },
@@ -135,7 +142,7 @@ export class CaefCustomResource extends CustomResource {
         const providerResourceId = `custom-${ props.resourceType }-provider`
         const existingProvider = stack.node.tryFindChild( providerResourceId ) as Provider;
         const provider = existingProvider ? existingProvider : new Provider( stack, providerResourceId, {
-            onEventHandler: handlerFunction,
+            onEventHandler: this.handlerFunctionPlaceHolder,
             role: providerRole,
             providerFunctionName: providerFunctionName
         } );
@@ -191,6 +198,8 @@ export class CaefCustomResource extends CustomResource {
 
     constructor( scope: Construct, id: string, props: CaefCustomResourceProps ) {
         super( scope, id, CaefCustomResource.setProps( scope, props ) )
+
+        this.handlerFunction = CaefCustomResource.handlerFunctionPlaceHolder
 
     }
 

@@ -133,7 +133,7 @@ CAEF is implemented as a set of compliant CDK Constructs and configuration-drive
 * [**QuickSight Namespace**](packages/apps/analytics/quicksight-namespace-app/README.md) - Deploys QuickSight namespaces into an account to allow for QuickSight multi tenancy in the same QuickSight/AWS Account
 * [**QuickSight Project**](packages/apps/analytics/quicksight-project-app/README.md) - Deploys QuickSight Shared Folders and permissions
 
-### Data Science Modules (CDK Apps and L3 Constructs)
+### AI/Data Science Modules (CDK Apps and L3 Constructs)
 
 * [**SageMaker Studio Domain**](packages/apps/datascience/sm-studio-domain-app/README.md) - Deploys secured SageMaker Studio Domain
 * [**SageMaker Notebooks**](packages/apps/datascience/sm-notebook-app/README.md) - Deploys secured SageMaker Notebooks

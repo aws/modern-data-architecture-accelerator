@@ -9,6 +9,8 @@ import { CaefKmsKey } from '@aws-caef/kms-constructs';
 import { SecurityGroup,  Vpc } from "aws-cdk-lib/aws-ec2";
 import * as rds from "aws-cdk-lib/aws-rds";
 import { CaefRdsServerlessCluster, CaefRdsServerlessClusterProps } from "../lib";
+import {CaefRole} from "@aws-caef/iam-constructs";
+import {ServicePrincipal} from "aws-cdk-lib/aws-iam";
 
 describe( 'Aurora MySql: CAEF Construct Compliance Tests', () => {
     const testApp = new CaefTestApp()
@@ -23,10 +25,16 @@ describe( 'Aurora MySql: CAEF Construct Compliance Tests', () => {
     } )
     
     const testSecurityGroup = new SecurityGroup( testApp.testStack, "test-security-group", { vpc: testVpc } )
+    const monitoringRole = new CaefRole(testApp.testStack, `aurora-mysql-enhanced-monitoring-role`, {
+        naming: testApp.naming,
+        roleName: `test-cluster-enhanced-monitoring-role`,
+        assumedBy: new ServicePrincipal('monitoring.rds.amazonaws.com')
+    })
 
     const testContstructProps: CaefRdsServerlessClusterProps = {
         naming: testApp.naming,
         engine: testEngine,
+        monitoringRole,
         engineVersion: testEngineVersion,
         backupRetention: 10,
         clusterIdentifier: "test-cluster",
@@ -35,8 +43,6 @@ describe( 'Aurora MySql: CAEF Construct Compliance Tests', () => {
         vpc: testVpc,
         securityGroups: [ testSecurityGroup ],
         port: 33060,
-        
-        
     }
 
     new CaefRdsServerlessCluster( testApp.testStack, "test-construct", testContstructProps )
@@ -51,8 +57,14 @@ describe( 'Aurora MySql: CAEF Construct Compliance Tests', () => {
         } )
     } )
     test( 'Is EngineMode serverless', () => {
-        template.hasResourceProperties( "AWS::RDS::DBCluster", {
-            "EngineMode": "serverless"
+        template.hasResourceProperties( "AWS::RDS::DBInstance", {
+            "DBInstanceClass": "db.serverless"
+        } )
+    } )
+
+    test( 'Is EngineMode serverless', () => {
+        template.hasResourceProperties( "AWS::RDS::DBInstance", {
+            "Engine": "aurora-mysql"
         } )
     } )
 
