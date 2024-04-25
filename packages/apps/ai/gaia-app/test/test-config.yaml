@@ -1,0 +1,28 @@
+gaia:
+  # List of roles which will be provided admin access to the gaia app resources
+  dataAdminRoles:
+    - name: Admin
+  prefix: testing
+  llms:
+    sagemaker: []
+  rag:
+    engines:
+      aurora: {}
+      kendra:
+        createIndex: true
+    embeddingsModels: []
+    crossEncoderModels: []
+  auth:
+    authType: 'email_pass'
+    cognitoDomain: 'some-unique-pool-domain-name'
+  vpc:
+    vpcId: XXXXXXXX
+    appSecurityGroupId: 'sg-12345351356'
+    appSubnets:
+      - subnet1
+    dataSecurityGroupId: 'sg-46576878787'
+    dataSubnets:
+      - subnet2
+
+
+

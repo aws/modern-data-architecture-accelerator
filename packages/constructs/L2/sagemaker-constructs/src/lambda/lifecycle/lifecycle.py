@@ -41,7 +41,7 @@ def handle_create(event, context):
     if (lifecycleConfigContent is None):
         raise Exception(
             "Unable to parse lifecycleConfigContent from event.")
-
+    # nosec
     lifecycleConfigContentHash = hashlib.sha1(
         lifecycleConfigContent.encode("UTF-8"), usedforsecurity=False).hexdigest()[:10]
 

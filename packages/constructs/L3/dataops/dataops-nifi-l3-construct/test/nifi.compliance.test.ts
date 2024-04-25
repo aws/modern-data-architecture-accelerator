@@ -304,6 +304,15 @@ describe( 'Registry Optional Compliance Stack Tests', () => {
       additionalEfsIngressSecurityGroupIds: [
         "sg-12312421421"
       ],
+      clusters: {
+        testCluster: {
+          adminIdentities: ["test-admin-identity"],
+          saml: {
+            idpMetadataUrl: "test-metadata-url",
+          },
+          nodeCount: 4
+        }
+      }
     }
   }
 

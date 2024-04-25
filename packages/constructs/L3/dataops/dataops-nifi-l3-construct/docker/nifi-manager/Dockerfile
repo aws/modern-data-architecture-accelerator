@@ -8,14 +8,12 @@ RUN apt-get update \
     && apt-get clean autoclean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir boto3 pexpect
+RUN pip install --no-cache-dir boto3 pexpect 
 
 ENV NIFI_SCRIPTS_HOME=/opt/nifi/scripts
 
 COPY --chown=nifi ./scripts /opt/nifi/scripts
 
 USER nifi
-
-
 
 ENTRYPOINT [ "sh","${NIFI_SCRIPTS_HOME}/nifi_manager.sh" ]

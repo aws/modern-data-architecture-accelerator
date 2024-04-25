@@ -10,6 +10,7 @@ deployment
 node_modules
 .history
 .vscode
+.idea
 # CDK asset staging directory
 .cdk.staging
 cdk.out

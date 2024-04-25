@@ -9,7 +9,18 @@ import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
 import { NagPackSuppression, NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
-import { DatabaseClusterEngine, ISubnetGroup, ServerlessCluster, ServerlessScalingOptions, ServerlessClusterProps, IParameterGroup, CfnDBCluster, AuroraMysqlEngineVersion, AuroraPostgresEngineVersion } from 'aws-cdk-lib/aws-rds';
+import {
+    DatabaseClusterEngine,
+    ISubnetGroup,
+    ServerlessScalingOptions,
+    IParameterGroup,
+    CfnDBCluster,
+    AuroraMysqlEngineVersion,
+    AuroraPostgresEngineVersion,
+    DatabaseCluster, DatabaseClusterProps, ClusterInstance
+} from 'aws-cdk-lib/aws-rds';
+import { SecretRotationApplication } from 'aws-cdk-lib/aws-secretsmanager';
+import { CaefRole } from '@aws-caef/iam-constructs';
 
 
 /**
@@ -26,13 +37,25 @@ export interface CaefRdsServerlessClusterProps extends CaefConstructProps {
      */
     readonly engineVersion: AuroraPostgresEngineVersion | AuroraMysqlEngineVersion
     /**
+     * Monitoring Role.
+     *
+     */
+    readonly monitoringRole: CaefRole;
+    /**
      * The number of days during which automatic DB snapshots are retained.
      * Automatic backup retention cannot be disabled on serverless clusters. 
      * @default: 1
      * Must be a value from 1 day to 35 days.
      */
+
     readonly backupRetention?: number
-    
+
+    /**
+     * Intervals in second between points of collecting metrics
+     * @see: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseCluster.html#monitoringinterval
+     */
+    readonly monitoringIntervalsInSeconds?: number
+
     /**
      * An optional identifier for the cluster.
      * @default: - A name is automatically generated.
@@ -157,8 +180,8 @@ export interface CaefRdsServerlessClusterProps extends CaefConstructProps {
  * * SSL must be utilized to connect to the cluster.
  * * The cluster is VPC connected and not publicly accessible.
  */
-export class CaefRdsServerlessCluster extends ServerlessCluster {
-    private static setProps ( props: CaefRdsServerlessClusterProps ): ServerlessClusterProps {
+export class CaefRdsServerlessCluster extends DatabaseCluster {
+    private static setProps ( props: CaefRdsServerlessClusterProps ): DatabaseClusterProps {
         const overrideProps = {
             engine: props.engine=="aurora-mysql" 
                         ? DatabaseClusterEngine.auroraMysql( { version: <AuroraMysqlEngineVersion>props.engineVersion} ) 
@@ -166,7 +189,22 @@ export class CaefRdsServerlessCluster extends ServerlessCluster {
             clusterIdentifier: props.naming.resourceName( props.clusterIdentifier ),
             storageEncryptionKey: props.encryptionKey,
             removalPolicy: RemovalPolicy.RETAIN,
-            backupRetention: Duration.days( props.backupRetention || 1 ),
+            writer: ClusterInstance.serverlessV2(`${props.clusterIdentifier}-cluster-writer`),
+            readers: [ClusterInstance.serverlessV2(`${props.clusterIdentifier}-cluster-readers`)],
+            backup: {
+                retention: Duration.days( props.backupRetention || 1 )
+            },
+            iamAuthentication: props.enableIamDatabaseAuthentication ?? true,
+            singleUserRotationApplication: {
+                application: SecretRotationApplication.POSTGRES_ROTATION_SINGLE_USER,
+                vpc: props.vpc,
+                vpcSubnets: props.vpcSubnets,
+                securityGroup: props.securityGroups,
+            },
+            subnets: props.vpcSubnets,
+            vpc: props.vpc,
+            storageEncrypted: true,
+            monitoringInterval: Duration.seconds( props.monitoringIntervalsInSeconds || 60 ),
             credentials: {
                 /** The master/admin username to be configured on the cluster */
                 username: props.masterUsername,
@@ -206,6 +244,15 @@ export class CaefRdsServerlessCluster extends ServerlessCluster {
             },scope )
         }
         NagSuppressions.addResourceSuppressions( this, suppressions );
+        // Children specific nag suppressions to avoid bloating template:
+        NagSuppressions.addResourceSuppressions(this, [
+            { id: 'NIST.800.53.R5-RDSEnhancedMonitoringEnabled', reason: 'Monitoring role required and monitoring intervals set with a minimum default.' },
+            { id: 'HIPAA.Security-RDSEnhancedMonitoringEnabled', reason: 'Monitoring role required and monitoring intervals set with a minimum default.' },
+            { id: 'HIPAA.Security-RDSInstancePublicAccess', reason: 'Deployed within private subnets and vpc along with iam auth enforced and security group.' },
+            { id: 'NIST.800.53.R5-RDSInstancePublicAccess', reason: 'Deployed within private subnets and vpc along with iam auth enforced and security group.' },
+            { id: 'NIST.800.53.R5-RDSInBackupPlan', reason: 'Instance is serverless and has a backup retention policy defaulting to 1.' },
+            { id: 'HIPAA.Security-RDSInBackupPlan', reason: 'Instance is serverless and has a backup retention policy defaulting to 1.' },
+        ], true)
 
         new CaefParamAndOutput( this, {
             ...{
@@ -239,7 +286,7 @@ export class CaefRdsServerlessCluster extends ServerlessCluster {
                 } )
             }
         }
-        const _enableIamDatabaseAuthentication: boolean = this.props.enableIamDatabaseAuthentication != undefined ? this.props.enableIamDatabaseAuthentication : true  
+        const _enableIamDatabaseAuthentication: boolean = this.props.enableIamDatabaseAuthentication != undefined ? this.props.enableIamDatabaseAuthentication : true
 
         // EnableIAMDatabaseAuthentication Override
         if ( _enableIamDatabaseAuthentication ) {
