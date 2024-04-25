@@ -5,20 +5,33 @@
 
 import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
 import { Duration, Size } from 'aws-cdk-lib';
-import { IKey } from 'aws-cdk-lib/aws-kms';
-import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import { IProfilingGroup } from 'aws-cdk-lib/aws-codeguruprofiler';
-import { ITopic } from 'aws-cdk-lib/aws-sns';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Architecture, Code, FileSystem, Function, FunctionProps, ICodeSigningConfig, ILayerVersion, LambdaInsightsVersion, LogRetentionRetryOptions, Runtime, Tracing, VersionOptions } from 'aws-cdk-lib/aws-lambda';
+import { IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { IKey } from 'aws-cdk-lib/aws-kms';
+import { AdotInstrumentationConfig, Architecture, Code, DockerImageCode, FileSystem, Function, FunctionProps, Handler, ICodeSigningConfig, IEventSource, ILayerVersion, LambdaInsightsVersion, LogRetentionRetryOptions, LoggingFormat, ParamsAndSecretsLayerVersion, Runtime, RuntimeManagementMode, SnapStartConf, Tracing, VersionOptions } from 'aws-cdk-lib/aws-lambda';
+import { ILogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { ITopic } from 'aws-cdk-lib/aws-sns';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import { ICaefLambdaRole } from './role';
+
+
+
+export interface CaefDockerImageFunctionProps extends CaefLambdaFunctionOptions {
+    /**
+     * The source code of your Lambda function. You can point to a file in an
+     * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
+     * code as inline text.
+     */
+    readonly code: DockerImageCode;
+}
+
 
 /**
  * Properties for creating a compliant Lambda function
  */
-export interface CaefLambdaFunctionProps extends CaefConstructProps {
+export interface CaefLambdaFunctionProps extends CaefLambdaFunctionOptions {
     /**
      * The runtime environment for the Lambda function that you are uploading.
      * For valid values, see the Runtime property in the AWS Lambda Developer
@@ -46,6 +59,9 @@ export interface CaefLambdaFunctionProps extends CaefConstructProps {
      * the handler.
      */
     readonly handler: string;
+}
+
+export interface CaefLambdaFunctionOptions extends CaefConstructProps {
     /**
      * A description of the function.
      *
@@ -182,6 +198,13 @@ export interface CaefLambdaFunctionProps extends CaefConstructProps {
      */
     readonly tracing?: Tracing;
     /**
+    * Enable SnapStart for Lambda Function.
+    * SnapStart is currently supported only for Java 11, 17 runtime
+    *
+    * @default - No snapstart
+    */
+    readonly snapStart?: SnapStartConf;
+    /**
      * Enable profiling.
      * @see https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html
      *
@@ -207,6 +230,22 @@ export interface CaefLambdaFunctionProps extends CaefConstructProps {
      */
     readonly insightsVersion?: LambdaInsightsVersion;
     /**
+     * Specify the configuration of AWS Distro for OpenTelemetry (ADOT) instrumentation
+     * @see https://aws-otel.github.io/docs/getting-started/lambda
+     *
+     * @default - No ADOT instrumentation
+     */
+    readonly adotInstrumentation?: AdotInstrumentationConfig;
+
+    /**
+     * Specify the configuration of Parameters and Secrets Extension
+     * @see https://docs.aws.amazon.com/secretsmanager/latest/userguide/retrieving-secrets_lambda.html
+     * @see https://docs.aws.amazon.com/systems-manager/latest/userguide/ps-integration-lambda-extensions.html
+     *
+     * @default - No Parameters and Secrets Extension
+     */
+    readonly paramsAndSecrets?: ParamsAndSecretsLayerVersion;
+    /**
      * A list of layers to add to the function's execution environment. You can configure your Lambda function to pull in
      * additional code during initialization in the form of layers. Layers are packages of libraries or other dependencies
      * that can be used by multiple functions.
@@ -221,6 +260,47 @@ export interface CaefLambdaFunctionProps extends CaefConstructProps {
      * @see https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html
      */
     readonly reservedConcurrentExecutions?: number;
+    /**
+     * Event sources for this function.
+     *
+     * You can also add event sources using `addEventSource`.
+     *
+     * @default - No event sources.
+     */
+    readonly events?: IEventSource[];
+    /**
+     * The number of days log events are kept in CloudWatch Logs. When updating
+     * this property, unsetting it doesn't remove the log retention policy. To
+     * remove the retention policy, set the value to `INFINITE`.
+     *
+     * This is a legacy API and we strongly recommend you move away from it if you can.
+     * Instead create a fully customizable log group with `logs.LogGroup` and use the `logGroup` property
+     * to instruct the Lambda function to send logs to it.
+     * Migrating from `logRetention` to `logGroup` will cause the name of the log group to change.
+     * Users and code and referencing the name verbatim will have to adjust.
+     *
+     * In AWS CDK code, you can access the log group name directly from the LogGroup construct:
+     * ```ts
+     * import * as logs from 'aws-cdk-lib/aws-logs';
+     *
+     * declare const myLogGroup: logs.LogGroup;
+     * myLogGroup.logGroupName;
+     * ```
+     *
+     * @default logs.RetentionDays.INFINITE
+     */
+    readonly logRetention?: RetentionDays;
+
+    /**
+     * The IAM role for the Lambda function associated with the custom resource
+     * that sets the retention policy.
+     *
+     * This is a legacy API and we strongly recommend you migrate to `logGroup` if you can.
+     * `logGroup` allows you to create a fully customizable log group and instruct the Lambda function to send logs to it.
+     *
+     * @default - A new role is created.
+     */
+    readonly logRetentionRole?: IRole;
     /**
      * When log retention is specified, a custom resource attempts to create the CloudWatch log group.
      * These options control the retry policy when interacting with CloudWatch APIs.
@@ -266,6 +346,11 @@ export interface CaefLambdaFunctionProps extends CaefConstructProps {
      */
     readonly architecture?: Architecture;
     /**
+ * Sets the runtime management configuration for a function's version.
+ * @default Auto
+ */
+    readonly runtimeManagementMode?: RuntimeManagementMode;
+    /**
      * The maximum age of a request that Lambda sends to a function for
      * processing.
      *
@@ -284,7 +369,47 @@ export interface CaefLambdaFunctionProps extends CaefConstructProps {
      * @default 2
      */
     readonly retryAttempts?: number;
+    /**
+ * The log group the function sends logs to.
+ *
+ * By default, Lambda functions send logs to an automatically created default log group named /aws/lambda/\<function name\>.
+ * However you cannot change the properties of this auto-created log group using the AWS CDK, e.g. you cannot set a different log retention.
+ *
+ * Use the `logGroup` property to create a fully customizable LogGroup ahead of time, and instruct the Lambda function to send logs to it.
+ *
+ * Providing a user-controlled log group was rolled out to commercial regions on 2023-11-16.
+ * If you are deploying to another type of region, please check regional availability first.
+ *
+ * @default `/aws/lambda/${this.functionName}` - default log group created by Lambda
+ */
+    readonly logGroup?: ILogGroup;
+
+    /**
+     * Sets the logFormat for the function.
+     * @default "Text"
+     */
+    readonly logFormat?: string;
+
+    /**
+     * Sets the loggingFormat for the function.
+     * @default LoggingFormat.TEXT
+     */
+    readonly loggingFormat?: LoggingFormat;
+
+    /**
+     * Sets the application log level for the function.
+     * @default "INFO"
+     */
+    readonly applicationLogLevel?: string;
+
+    /**
+     * Sets the system log level for the function.
+     * @default "INFO"
+     */
+    readonly systemLogLevel?: string;
 }
+
+
 
 /**
  * Construct for creating a compliant Lambda Function
@@ -297,6 +422,7 @@ export class CaefLambdaFunction extends Function {
         }
         return { ...props, ...overrideProps }
     }
+
     constructor( scope: Construct, id: string, props: CaefLambdaFunctionProps ) {
         super( scope, id, CaefLambdaFunction.setProps( props ) )
 
@@ -307,7 +433,7 @@ export class CaefLambdaFunction extends Function {
                 name: "name",
                 value: this.functionName
             }, ...props
-        },scope )
+        }, scope )
 
         new CaefParamAndOutput( this, {
             ...{
@@ -316,6 +442,20 @@ export class CaefLambdaFunction extends Function {
                 name: "arn",
                 value: this.functionArn
             }, ...props
-        },scope )
+        }, scope )
+    }
+}
+
+/**
+ * Create a lambda function where the handler is a docker image
+ */
+export class CaefDockerImageFunction extends CaefLambdaFunction {
+    constructor( scope: Construct, id: string, props: CaefDockerImageFunctionProps ) {
+        super( scope, id, {
+            ...props,
+            handler: Handler.FROM_IMAGE,
+            runtime: Runtime.FROM_IMAGE,
+            code: props.code._bind( props.architecture ),
+        } );
     }
 }

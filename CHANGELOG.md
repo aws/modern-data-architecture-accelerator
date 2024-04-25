@@ -24,6 +24,7 @@
 
 ### Data Ops Changes
 
+* Added Docker support to DataOps Lambda module
 * Added support for DataOps Glue Jobs to reference additional libraries placed next to the job script
 * Improved compatability of DataOps Nifi module with LZA, fixing various issues
 * Added automatic creation of EC2 management node to DataOps Nifi Module, preconfigured with KubeCTL and access to manage the EKS cluster
