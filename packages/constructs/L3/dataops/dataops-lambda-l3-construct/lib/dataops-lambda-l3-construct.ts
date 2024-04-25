@@ -8,12 +8,12 @@ import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-caef/ec2-l3-construct'
 import { EventBridgeHelper, EventBridgeProps } from '@aws-caef/eventbridge-helper';
 import { CaefKmsKey } from '@aws-caef/kms-constructs';
 import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefLambdaFunction, CaefLambdaFunctionProps, CaefLambdaRole } from '@aws-caef/lambda-constructs';
+import { CaefDockerImageFunction, CaefDockerImageFunctionProps, CaefLambdaFunction, CaefLambdaFunctionOptions, CaefLambdaFunctionProps, CaefLambdaRole } from '@aws-caef/lambda-constructs';
 import { Duration, Size, aws_events_targets } from 'aws-cdk-lib';
 import { SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { RuleTargetInput } from 'aws-cdk-lib/aws-events';
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { Code, Function, IFunction, LayerVersion, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Code, DockerImageCode, Function, IFunction, LayerVersion, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -39,7 +39,27 @@ export interface VpcConfigProps {
     readonly securityGroupEgressRules?: CaefSecurityGroupRuleProps
 }
 
-export interface FunctionProps {
+export interface FunctionProps extends FunctionOptions {
+    /**
+     * Function source code location
+     */
+    readonly srcDir: string
+    /**
+     * The Lambda handler in the source code
+     */
+    readonly handler?: string
+    /**
+     * The name of the Lambda runtime. IE 'python3.8' 'nodejs14.x'
+     */
+    readonly runtime?: string
+    /**
+     * If true, srcDir is expected to contain a DockerFile
+     */
+    readonly dockerBuild?: boolean
+}
+
+export interface FunctionOptions {
+
     /**
      * The basic function name
      */
@@ -50,22 +70,11 @@ export interface FunctionProps {
      * @default - No description.
      */
     readonly description?: string;
-    /**
-     * Function source code location
-     */
-    readonly srcDir: string
-    /**
-     * The Lambda handler in the source code
-     */
-    readonly handler: string
+
     /**
      * The arn of the role with which the function will be executed
      */
     readonly roleArn: string
-    /**
-     * The name of the Lambda runtime. IE 'python3.8' 'nodejs14.x'
-     */
-    readonly runtime: string
     /**
      * EventBridge props
      */
@@ -247,30 +256,18 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
 
         const dlq = EventBridgeHelper.createDlq( this.scope, this.props.naming, functionProps.functionName, this.projectKmsKey, role )
 
-        const existingLayers = Object.entries( functionProps.layerArns || {} ).map( entry => LayerVersion.fromLayerVersionArn( this.scope, `${ functionProps.functionName }-${ entry[ 0 ] }`, entry[ 1 ] ) )
 
-        const generatedLayers = functionProps.generatedLayerNames?.map( generatedLayerName => {
-            const generatedLayer = generatedLayersByName[ generatedLayerName ]
-            if ( !generatedLayer ) {
-                throw new Error( `Function references non-existant generated layer ${ generatedLayerName }` )
-            }
-            return generatedLayer
-        } )
-
-        const lambdaProps: CaefLambdaFunctionProps = {
+        const lambdaOptions: CaefLambdaFunctionOptions = {
             ...functionVpcProps,
             functionName: functionProps.functionName,
             description: functionProps.description,
-            runtime: new Runtime( functionProps.runtime ),
-            code: Code.fromAsset( functionProps.srcDir ),
-            handler: functionProps.handler,
+
             role: role,
             environmentEncryption: this.projectKmsKey,
             naming: this.props.naming,
             deadLetterQueue: dlq,
             retryAttempts: functionProps.retryAttempts,
             maxEventAge: functionProps.maxEventAgeSeconds ? Duration.seconds( functionProps.maxEventAgeSeconds ) : undefined,
-            layers: [ ...generatedLayers || [], ...existingLayers ],
             timeout: functionProps.timeoutSeconds ? Duration.seconds( functionProps.timeoutSeconds ) : undefined,
             environment: functionProps.environment,
             reservedConcurrentExecutions: functionProps.reservedConcurrentExecutions,
@@ -278,7 +275,7 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
             ephemeralStorageSize: functionProps.ephemeralStorageSizeMB ? Size.mebibytes( functionProps.ephemeralStorageSizeMB ) : undefined
         }
 
-        const lambdaFunction = new CaefLambdaFunction( this.scope, functionProps.functionName, lambdaProps )
+        const lambdaFunction = this.createDockerOrLambdaFunction(lambdaOptions,functionProps,generatedLayersByName)
 
         //An inline policy to allow the Lambda role to write to DLQ is automatically added,
         //but this triggers Nags. Instead, we use the Queue Resource policy,
@@ -302,6 +299,41 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
 
         return lambdaFunction
     }
+    private createDockerOrLambdaFunction ( lambdaOptions: CaefLambdaFunctionOptions, functionProps: FunctionProps, generatedLayersByName: { [ name: string ]: LayerVersion} ) : Function {
+        
+        if ( functionProps.dockerBuild ) {
+            const lambdaProps: CaefDockerImageFunctionProps = {
+                ...lambdaOptions,
+                code: DockerImageCode.fromImageAsset( functionProps.srcDir ),
+            }
+            return new CaefDockerImageFunction( this.scope, functionProps.functionName, lambdaProps )
+        } else {
+            if ( !functionProps.runtime ) {
+                throw new Error( "Function runtime must be defined for non-docker functions" )
+            }
+            if ( !functionProps.handler ) {
+                throw new Error( "Function handler must be defined for non-docker functions" )
+            }
+            const existingLayers = Object.entries( functionProps.layerArns || {} ).map( entry => LayerVersion.fromLayerVersionArn( this.scope, `${ functionProps.functionName }-${ entry[ 0 ] }`, entry[ 1 ] ) )
+
+            const generatedLayers = functionProps.generatedLayerNames?.map( generatedLayerName => {
+                const generatedLayer = generatedLayersByName[ generatedLayerName ]
+                if ( !generatedLayer ) {
+                    throw new Error( `Function references non-existant generated layer ${ generatedLayerName }` )
+                }
+                return generatedLayer
+            } )
+            const lambdaProps: CaefLambdaFunctionProps = {
+                ...lambdaOptions,
+                runtime: new Runtime( functionProps.runtime ),
+                code: Code.fromAsset( functionProps.srcDir ),
+                handler: functionProps.handler,
+                layers: [ ...generatedLayers || [], ...existingLayers ],
+            }
+
+            return new CaefLambdaFunction( this.scope, functionProps.functionName, lambdaProps )
+        }
+    }
 
     private createFunctionSecurityGroup ( sgName: string, vpcId: string, securityGroupEgressRules?: CaefSecurityGroupRuleProps ): SecurityGroup {
         const ec2L3Props: Ec2L3ConstructProps = {
@@ -322,20 +354,20 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
 
         const dlq = EventBridgeHelper.createDlq( this.scope, this.props.naming, `${ functionName }-events`, this.projectKmsKey )
 
-        const eventBridgeRuleProps = EventBridgeHelper.createNamedEventBridgeRuleProps( eventBridgeProps ,functionName)
-        
+        const eventBridgeRuleProps = EventBridgeHelper.createNamedEventBridgeRuleProps( eventBridgeProps, functionName )
+
         Object.entries( eventBridgeRuleProps ).forEach( propsEntry => {
             const ruleName = propsEntry[ 0 ]
-            const ruleProps = propsEntry[1]
+            const ruleProps = propsEntry[ 1 ]
             const target = new aws_events_targets.LambdaFunction( lambdaFunction, {
                 deadLetterQueue: dlq,
                 maxEventAge: eventBridgeProps.maxEventAgeSeconds ? Duration.seconds( eventBridgeProps.maxEventAgeSeconds ) : undefined,
                 retryAttempts: eventBridgeProps.retryAttempts,
-                event: RuleTargetInput.fromObject( ruleProps.input ) 
+                event: RuleTargetInput.fromObject( ruleProps.input )
             } )
             EventBridgeHelper.createEventBridgeRuleForTarget( this.scope, this.props.naming, target, ruleName, ruleProps )
-        })
-        
+        } )
+
     }
 
 }

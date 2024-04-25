@@ -465,6 +465,10 @@
                     "description": "A description of the function.",
                     "type": "string"
                 },
+                "dockerBuild": {
+                    "description": "If true, srcDir is expected to contain a DockerFile",
+                    "type": "boolean"
+                },
                 "environment": {
                     "additionalProperties": {
                         "type": "string"
@@ -547,9 +551,7 @@
             },
             "required": [
                 "functionName",
-                "handler",
                 "roleArn",
-                "runtime",
                 "srcDir"
             ],
             "type": "object"

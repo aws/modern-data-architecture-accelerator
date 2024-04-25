@@ -28,6 +28,13 @@ describe( 'CAEF Compliance Stack Tests', () => {
     runtime: "python3.12"
   }
 
+  const dockerImageFunctionProps: FunctionProps = {
+    functionName: "docker-test-function",
+    srcDir: "./test/src/lambda/docker",
+    roleArn: "arn:test-partition:iam::test-acct:role/test-lambda-role",
+    dockerBuild: true
+  }
+
   const functionVpcProps: FunctionProps = {
     ...functionProps,
     functionName: "test-vpc-function",
@@ -85,11 +92,10 @@ describe( 'CAEF Compliance Stack Tests', () => {
   }
 
   const constructProps: LambdaFunctionL3ConstructProps = {
-
     roleHelper: new CaefRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
-    functions: [ functionProps, functionVpcProps, functionVpcExistingSgProps, functionEventBridgeProps, functionWithLayer ],
+    functions: [ functionProps, functionVpcProps, functionVpcExistingSgProps, functionEventBridgeProps, functionWithLayer, dockerImageFunctionProps ],
     layers: [ layerProps ]
   };
 
@@ -99,11 +105,11 @@ describe( 'CAEF Compliance Stack Tests', () => {
 
   // console.log( JSON.stringify( template, undefined, 2 ) )
 
-  test( 'Validate resource counts', () => {
-    template.resourceCountIs( "AWS::Lambda::Function", 5 );
+  test( 'Validate function counts', () => {
+    template.resourceCountIs( "AWS::Lambda::Function", 6 );
   } );
 
-  test( 'Validate resource counts', () => {
+  test( 'Validate layer counts', () => {
     template.resourceCountIs( "AWS::Lambda::LayerVersion", 1 );
   } );
 
@@ -269,5 +275,91 @@ describe( 'CAEF Compliance Stack Tests', () => {
         ],
       } )
     } )
+  } )
+
+} )
+describe( 'Bad function config', () => {
+
+
+  const layerProps: LayerProps = {
+    layerName: "test-layer",
+    src: "./test/src/lambda/test-layer.zip",
+    description: "layer testing"
+  }
+
+  const functionNoRuntimeProps: FunctionProps = {
+    functionName: "test-function-no-runtime",
+    srcDir: "./test/src/lambda/test",
+    roleArn: "arn:test-partition:iam::test-acct:role/test-lambda-role",
+    handler: "test"
+  }
+
+  const functionNoHandlerProps: FunctionProps = {
+    functionName: "test-function-no-handler",
+    srcDir: "./test/src/lambda/test",
+    roleArn: "arn:test-partition:iam::test-acct:role/test-lambda-role",
+    runtime: "test"
+  }
+
+  const functionWithBadLayer: FunctionProps = {
+    ...functionNoRuntimeProps,
+    functionName: "test-bad-layer-function",
+    generatedLayerNames: [ "no-test-layer" ],
+    runtime:"test"
+  }
+
+
+
+
+  test("Test No Runtime",() => {
+    const testApp = new CaefTestApp()
+    const stack = testApp.testStack
+    const constructProps: LambdaFunctionL3ConstructProps = {
+      roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+      naming: testApp.naming,
+      kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
+      functions: [ functionNoRuntimeProps ],
+      layers: [ layerProps ]
+    };
+
+    expect( () => {
+      new LambdaFunctionL3Construct( stack, "test-no-runtime", constructProps );
+      testApp.checkCdkNagCompliance( testApp.testStack )
+      Template.fromStack( testApp.testStack )
+    } ).toThrow()
+  } )
+  test( "Test No Handler", () => {
+    const testApp = new CaefTestApp()
+    const stack = testApp.testStack
+    const constructProps: LambdaFunctionL3ConstructProps = {
+      roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+      naming: testApp.naming,
+      kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
+      functions: [  functionNoHandlerProps,  ],
+      layers: [ layerProps ]
+    };
+
+    expect( () => {
+      new LambdaFunctionL3Construct( stack, "test-no-handler", constructProps );
+      testApp.checkCdkNagCompliance( testApp.testStack )
+      Template.fromStack( testApp.testStack )
+    } ).toThrow()
+  } )
+  test( "Test Bad Layer", () => {
+    const testApp = new CaefTestApp()
+    const stack = testApp.testStack
+    const constructProps: LambdaFunctionL3ConstructProps = {
+      roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+      naming: testApp.naming,
+      kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
+      functions: [  functionWithBadLayer ],
+      layers: [ layerProps ]
+    };
+
+    expect( () => {
+      new LambdaFunctionL3Construct( stack, "test-bad-layer", constructProps );
+      testApp.checkCdkNagCompliance( testApp.testStack )
+      Template.fromStack( testApp.testStack )
+    } ).toThrow()
   } )
 } )

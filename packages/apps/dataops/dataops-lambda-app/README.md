@@ -196,4 +196,11 @@ functions:
     generatedLayerNames:
       - "test-layer"
 
+  # Example of a function which uses a DockerBuild
+  - functionName: testdockerfunction
+    srcDir: ./src/lambda/docker
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    # If true, lambda function will be built and deployed using Docker
+    # In this case, the srcDir is expected to container a Dockerfile
+    dockerBuild: true
 ```
