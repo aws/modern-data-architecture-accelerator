@@ -40,25 +40,19 @@
       "path": "../../datalake/athena-workgroup-l3-construct"
     },
     {
+      "path": "../../../L2/cloudwatch-constructs"
+    },
+    {
       "path": "../../../L2/construct"
     },
     {
       "path": "../../datalake/datalake-l3-construct"
     },
     {
-      "path": "../../../L2/iam-constructs"
-    },
-    {
-      "path": "../../../L2/rds-constructs"
-    },
-    {
       "path": "../../../L2/ddb-constructs"
     },
     {
-      "path": "../../../L2/sns-constructs"
-    },
-    {
-      "path": "../../../L2/sqs-constructs"
+      "path": "../../../L2/iam-constructs"
     },
     {
       "path": "../../../../utilities/iam-role-helper"
@@ -73,6 +67,9 @@
       "path": "../../../../utilities/caef-naming"
     },
     {
+      "path": "../../../L2/rds-constructs"
+    },
+    {
       "path": "../../governance/roles-l3-construct"
     },
     {
@@ -82,9 +79,6 @@
       "path": "../../../L2/s3-constructs"
     },
     {
-      "path": "../../../L2/cloudwatch-constructs"
-    },
-    {
       "path": "../../../../utilities/s3-inventory-helper"
     },
     {
@@ -92,6 +86,12 @@
     },
     {
       "path": "../sm-studio-domain-l3-construct"
+    },
+    {
+      "path": "../../../L2/sns-constructs"
+    },
+    {
+      "path": "../../../L2/sqs-constructs"
     },
     {
       "path": "../../../../utilities/caef-testing"

@@ -345,6 +345,9 @@
                 "pgVectorDbSetupCodePath": {
                     "type": "string"
                 },
+                "ragEnginesInferenceCodePath": {
+                    "type": "string"
+                },
                 "restApiHandlerCodePath": {
                     "type": "string"
                 },
@@ -388,14 +391,14 @@
         "EngineProps": {
             "additionalProperties": false,
             "properties": {
-                "sagemaker": {
-                    "$ref": "#/definitions/SagemakerRagProps"
-                },
                 "aurora": {
                     "$ref": "#/definitions/AuroraEngineProps"
                 },
                 "kendra": {
                     "$ref": "#/definitions/KendraEngineProps"
+                },
+                "sagemaker": {
+                    "$ref": "#/definitions/SagemakerRagProps"
                 }
             },
             "type": "object"
@@ -555,12 +558,12 @@
         "LlmsProps": {
             "additionalProperties": false,
             "properties": {
-                "huggingFaceApiToken" : {
+                "huggingFaceApiToken": {
                     "type": "string"
                 },
                 "sagemaker": {
                     "items": {
-                        "$ref": "#/definitions/SagemakerLlmModelConfigProps"
+                        "$ref": "#/definitions/SagemakerLlmModelConfig"
                     },
                     "type": "array"
                 }
@@ -568,37 +571,6 @@
             "required": [
                 "sagemaker"
             ],
-            "type": "object"
-        },
-        "SagemakerLlmModelConfigProps": {
-            "additionalProperties": false,
-            "properties": {
-                "model":{
-                    "enum": [
-                        "FalconLite",
-                        "Llama2_13b_Chat",
-                        "Mistral7b_Instruct",
-                        "Mistral7b_Instruct2"
-                    ],
-                    "type": "string"
-                },
-                "instanceType": {
-                    "type": "string"
-                },
-                "initialInstanceCount": {
-                    "type": "number",
-                    "default": 1
-                },
-                "minimumInstanceCount": {
-                    "type": "number",
-                    "default": 1
-                },
-                "maxInstanceCount": {
-                    "type": "number",
-                    "default": 1
-                }
-            },
-            "required": ["model"],
             "type": "object"
         },
         "ModelProps": {
@@ -632,27 +604,6 @@
             ],
             "type": "string"
         },
-        "SagemakerRagProps": {
-            "additionalProperties": false,
-            "properties": {
-                "instanceType": {
-                    "type": "string"
-                },
-                "initialInstanceCount": {
-                    "type": "number",
-                    "default": 1
-                },
-                "minimumInstanceCount": {
-                    "type": "number",
-                    "default": 1
-                },
-                "maxInstanceCount": {
-                    "type": "number",
-                    "default": 1
-                }
-            },
-            "type": "object"
-        },
         "RagProps": {
             "additionalProperties": false,
             "properties": {
@@ -677,6 +628,48 @@
                 "embeddingsModels",
                 "engines"
             ],
+            "type": "object"
+        },
+        "SagemakerLlmModelConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "initialInstanceCount": {
+                    "type": "number"
+                },
+                "instanceType": {
+                    "type": "string"
+                },
+                "maximumInstanceCount": {
+                    "type": "number"
+                },
+                "minimumInstanceCount": {
+                    "type": "number"
+                },
+                "model": {
+                    "$ref": "#/definitions/SupportedSageMakerModels"
+                }
+            },
+            "required": [
+                "model"
+            ],
+            "type": "object"
+        },
+        "SagemakerRagProps": {
+            "additionalProperties": false,
+            "properties": {
+                "initialInstanceCount": {
+                    "type": "number"
+                },
+                "instanceType": {
+                    "type": "string"
+                },
+                "maxInstanceCount": {
+                    "type": "number"
+                },
+                "minInstanceCount": {
+                    "type": "number"
+                }
+            },
             "type": "object"
         },
         "SupportedAuthTypes": {
@@ -717,6 +710,14 @@
                 "us-east-2",
                 "us-west-1",
                 "us-west-2"
+            ],
+            "type": "string"
+        },
+        "SupportedSageMakerModels": {
+            "enum": [
+                "FalconLite",
+                "Llama2_13b_Chat",
+                "Mistral7b_Instruct2"
             ],
             "type": "string"
         },
