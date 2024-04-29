@@ -21,6 +21,7 @@ export enum DeploymentType {
   CustomInferenceScript = "custom-inference-script",
 }
 
+
 export type ModelConfig =
   | ModelContainerConfig
   | ModelPackageConfig
@@ -29,6 +30,9 @@ export type ModelConfig =
 export interface ModelConfigBase {
   modelId: string;
   instanceType: string;
+  initialInstanceCount: number
+  minInstanceCount: number;
+  maxInstanceCount: number;
 }
 
 export interface ModelContainerConfig extends ModelConfigBase {

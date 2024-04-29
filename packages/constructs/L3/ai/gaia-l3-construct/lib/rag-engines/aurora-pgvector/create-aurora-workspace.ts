@@ -98,6 +98,7 @@ export class CreateAuroraWorkspace extends CaefL3Construct {
     ], true );
 
     props.dbCluster.secret?.grantRead(createFunctionRole);
+    props.dbCluster.grantConnect(createFunction, 'postgres')
     props.encryptionKey.grantEncryptDecrypt(createFunctionRole);
     props.dbCluster.connections.allowDefaultPortFrom(createFunction);
     props.ragDynamoDBTables.workspacesTable.grantReadWriteData(createFunctionRole);
@@ -209,6 +210,7 @@ export class CreateAuroraWorkspace extends CaefL3Construct {
         level: sfn.LogLevel.ALL
       },
     });
+    props.encryptionKey.grantEncryptDecrypt(stateMachine.role)
     NagSuppressions.addResourceSuppressions( stateMachine, [
       { id: 'AwsSolutions-IAM5', reason: 'Invoke function restricted to delete workspace lambda.  The lambda arn is not known at deployment time.' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },

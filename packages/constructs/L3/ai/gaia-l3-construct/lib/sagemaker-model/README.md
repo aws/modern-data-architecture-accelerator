@@ -26,8 +26,20 @@ You might consider requesting an increase in service quota for specific SageMake
 If you are looking to deploy models from SageMaker foundation models, you need to request preview access from the AWS console.
 Futhermore, make sure which regions are currently supported for SageMaker foundation models.
 
+## HuggingFace Authentication
 
-#### Deploy from SageMaker Foundation/Jumpstart Models
+Some models hosted on HuggingFace require an API key for access, for example MistralAI and Meta models have now changed to be gated behind accepting their EULA
+
+If you wish to continue using these models or access other models on HuggingFace which require authentication you can now supply this HF token as part of the installer.
+
+When enabling sagemaker models in the installer it will now ask you for a Secrets Manager Secret ARN containing the HF API token.
+
+You can read more about setting up access tokens on the [HF website](https://huggingface.co/docs/hub/en/security-tokens) Once you've got a token you may need to also navigate to a models page such as mistral7B to accept their terms before you can then use your token to access the model.
+
+The secret you would create in secrets manager would be a plain text secret containing just the HF token itself.
+
+
+## Deploy from SageMaker Foundation/Jumpstart Models
 The sample allows you to deploy models from [**Amazon SageMaker Foundation models**](https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models-choose.html) by specifying the model ARN. This simplifies the deployment process of these AI models on AWS.
 
 ```typescript
@@ -55,7 +67,7 @@ The `container-arn` of interest can be found in different places:
 - For SM Jumpstart Models, at the moment, you need to deploy the model of insterest from SageMaker Studio and then from the console and copy the `ModelPackage` ARN from `SageMaker -> Models -> Deployed model` in the console.
 
 
-#### Hugging Face LLM Inference Container
+## Hugging Face LLM Inference Container
 The solution provides support for all publicly accessible LLMs supported by [HuggingFace LLM Inference container](https://huggingface.co/blog/sagemaker-huggingface-llm), thereby expanding your model options and letting you leverage a wide variety of pre-trained models available on this platform.
 
 ```typescript
@@ -74,7 +86,7 @@ new SageMakerModel(this, 'HFModel', {
   });
 ```
 
-#### Models with custom inference
+## Models with custom inference
 While the options above are preferred, for broader compatibility, the sample also showcases deployment of all other models from Hugging Face not supported by HuggingFace LLM Infernce container using custom inference code. This process is powered by **AWS CodeBuild**.
 
 For this kind of deployment you need to choose the right container for your model from this list of [AWS Deep Learning Containers](https://github.com/aws/deep-learning-containers/blob/master/available_images.md). Based on PyTorch/Transformers versions, Python version etc.

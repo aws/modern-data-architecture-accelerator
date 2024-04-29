@@ -24,8 +24,7 @@ logger.setLevel(logging.INFO)
 """
 
 embeddings_models = [
-    "intfloat/multilingual-e5-large",
-    "sentence-transformers/all-MiniLM-L6-v2",
+    "intfloat/multilingual-e5-large"
 ]
 cross_encoder_models = ["cross-encoder/ms-marco-MiniLM-L-12-v2"]
 

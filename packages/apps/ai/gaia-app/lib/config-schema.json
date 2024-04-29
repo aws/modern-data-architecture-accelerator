@@ -388,6 +388,9 @@
         "EngineProps": {
             "additionalProperties": false,
             "properties": {
+                "sagemaker": {
+                    "$ref": "#/definitions/SagemakerRagProps"
+                },
                 "aurora": {
                     "$ref": "#/definitions/AuroraEngineProps"
                 },
@@ -552,15 +555,12 @@
         "LlmsProps": {
             "additionalProperties": false,
             "properties": {
+                "huggingFaceApiToken" : {
+                    "type": "string"
+                },
                 "sagemaker": {
                     "items": {
-                        "enum": [
-                            "FalconLite",
-                            "Llama2_13b_Chat",
-                            "Mistral7b_Instruct",
-                            "Mistral7b_Instruct2"
-                        ],
-                        "type": "string"
+                        "$ref": "#/definitions/SagemakerLlmModelConfigProps"
                     },
                     "type": "array"
                 }
@@ -568,6 +568,37 @@
             "required": [
                 "sagemaker"
             ],
+            "type": "object"
+        },
+        "SagemakerLlmModelConfigProps": {
+            "additionalProperties": false,
+            "properties": {
+                "model":{
+                    "enum": [
+                        "FalconLite",
+                        "Llama2_13b_Chat",
+                        "Mistral7b_Instruct",
+                        "Mistral7b_Instruct2"
+                    ],
+                    "type": "string"
+                },
+                "instanceType": {
+                    "type": "string"
+                },
+                "initialInstanceCount": {
+                    "type": "number",
+                    "default": 1
+                },
+                "minimumInstanceCount": {
+                    "type": "number",
+                    "default": 1
+                },
+                "maxInstanceCount": {
+                    "type": "number",
+                    "default": 1
+                }
+            },
+            "required": ["model"],
             "type": "object"
         },
         "ModelProps": {
@@ -600,6 +631,27 @@
                 "sagemaker"
             ],
             "type": "string"
+        },
+        "SagemakerRagProps": {
+            "additionalProperties": false,
+            "properties": {
+                "instanceType": {
+                    "type": "string"
+                },
+                "initialInstanceCount": {
+                    "type": "number",
+                    "default": 1
+                },
+                "minimumInstanceCount": {
+                    "type": "number",
+                    "default": 1
+                },
+                "maxInstanceCount": {
+                    "type": "number",
+                    "default": 1
+                }
+            },
+            "type": "object"
         },
         "RagProps": {
             "additionalProperties": false,
