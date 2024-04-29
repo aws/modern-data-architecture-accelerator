@@ -10,7 +10,16 @@ export function deployCustomScriptModel(
   modelConfig: ModelCustomScriptConfig
 ) {
   const { vpc, region, encryptionKey } = props;
-  const { modelId, instanceType, codeFolder, container, env } = modelConfig;
+  const {
+    modelId,
+    instanceType,
+    initialInstanceCount,
+    minInstanceCount,
+    maxInstanceCount,
+    codeFolder,
+    container,
+    env
+  } = modelConfig;
 
   const endpointName = (
     Array.isArray(modelId)
@@ -31,6 +40,9 @@ export function deployCustomScriptModel(
     region,
     modelId,
     instanceType,
+    initialInstanceCount,
+    minInstanceCount,
+    maxInstanceCount,
     codeFolder,
     container,
     env,

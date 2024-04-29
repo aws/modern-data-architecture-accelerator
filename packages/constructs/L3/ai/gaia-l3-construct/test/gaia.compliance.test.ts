@@ -29,10 +29,15 @@ describe( 'CAEF Compliance Stack Tests', () => {
             prefix: "test",
             llms: {
                 sagemaker: [
-                    SupportedSageMakerModels.FALCON_LITE,
-                    SupportedSageMakerModels.MISTRAL7B_INSTRUCT,
-                    SupportedSageMakerModels.MISTRAL7B_INSTRUCT2,
-                    SupportedSageMakerModels.LLAMA2_13B_CHAT
+                    {
+                        model: SupportedSageMakerModels.FALCON_LITE
+                    },
+                    {
+                        model: SupportedSageMakerModels.MISTRAL7B_INSTRUCT2
+                    },
+                    {
+                        model: SupportedSageMakerModels.LLAMA2_13B_CHAT
+                    }
                 ],
             },
             bedrock: {

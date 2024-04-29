@@ -18,12 +18,15 @@ export function deployContainerModel(
     modelId,
     instanceType,
     containerStartupHealthCheckTimeoutInSeconds = 900,
-    env = {},
+    env,
+    initialInstanceCount,
+    minInstanceCount,
+    maxInstanceCount
   } = modelConfig;
 
   const executionRole = new CaefRole(scope, `SageMakerContainer${modelId}ModelExecutionRole`, {
     naming: props.naming,
-    roleName: `SageMakerContainer${modelId}ModelExecutionRole`,
+    roleName: `SageMakerContainer${modelId.replace("/", "")}ModelExecutionRole`,
     createParams: false,
     createOutputs: false,
     assumedBy: new iam.ServicePrincipal("sagemaker.amazonaws.com"),
@@ -73,10 +76,14 @@ export function deployContainerModel(
         {
           instanceType,
           initialVariantWeight: 1,
-          initialInstanceCount: 1,
+          initialInstanceCount: initialInstanceCount,
           variantName: "AllTraffic",
           modelName: model.getAtt("ModelName").toString(),
           containerStartupHealthCheckTimeoutInSeconds,
+          managedInstanceScaling: {
+            minInstanceCount,
+            maxInstanceCount
+          }
         },
       ],
     }

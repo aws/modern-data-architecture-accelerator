@@ -5,7 +5,6 @@ export type ModelProvider = "sagemaker" | "bedrock" | "openai";
 export enum SupportedSageMakerModels {
   FALCON_LITE = "FalconLite",
   LLAMA2_13B_CHAT = "Llama2_13b_Chat",
-  MISTRAL7B_INSTRUCT = "Mistral7b_Instruct",
   MISTRAL7B_INSTRUCT2 = "Mistral7b_Instruct2",
 }
 
@@ -70,6 +69,7 @@ export interface VpcProps {
 
 export interface CodeOverwritesProps {
   readonly restApiHandlerCodePath?: string
+  readonly ragEnginesInferenceCodePath?: string
   readonly commonLibsLayerCodeZipPath?: string
   readonly genAiCoreLayerCodePath?: string
   readonly pgVectorDbSetupCodePath?: string
@@ -101,8 +101,17 @@ export interface BedrockProps {
   readonly roleArn?: string;
 }
 
+export interface SagemakerLlmModelConfig {
+  readonly model: SupportedSageMakerModels
+  readonly instanceType?: string
+  readonly initialInstanceCount?: number
+  readonly minimumInstanceCount?: number
+  readonly maximumInstanceCount?: number
+}
+
 export interface LlmsProps {
-  readonly sagemaker: SupportedSageMakerModels[];
+  readonly huggingFaceApiToken?: string
+  readonly sagemaker: SagemakerLlmModelConfig[];
 }
 
 export interface AuroraEngineProps {
@@ -130,7 +139,15 @@ export interface KendraEngineProps {
   readonly external?: KendraExternalProps[];
 }
 
+export interface SagemakerRagProps {
+  readonly instanceType?: string;
+  readonly minInstanceCount?: number;
+  readonly maxInstanceCount?: number;
+  readonly initialInstanceCount?: number
+}
+
 export interface EngineProps {
+  readonly sagemaker?: SagemakerRagProps
   readonly aurora?: AuroraEngineProps;
   readonly kendra?: KendraEngineProps ;
 }

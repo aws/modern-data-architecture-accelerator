@@ -25,6 +25,9 @@ export interface HuggingFaceCustomScriptModelProps extends CaefL3ConstructProps 
   shared: Shared;
   region: string;
   instanceType: string;
+  initialInstanceCount: number;
+  minInstanceCount: number;
+  maxInstanceCount: number;
   modelId: string | string[];
   container?: string;
   codeFolder?: string;
@@ -53,6 +56,9 @@ export class HuggingFaceCustomScriptModel extends Construct {
       codeFolder,
       codeBuildComputeType,
       env,
+      initialInstanceCount,
+      minInstanceCount,
+      maxInstanceCount
     } = props;
     const modelId = Array.isArray(props.modelId)
       ? props.modelId.join(",")
@@ -308,10 +314,14 @@ export class HuggingFaceCustomScriptModel extends Construct {
           {
             instanceType,
             initialVariantWeight: 1,
-            initialInstanceCount: 1,
+            initialInstanceCount: initialInstanceCount,
             variantName: "AllTraffic",
             modelName: model.getAtt("ModelName").toString(),
             containerStartupHealthCheckTimeoutInSeconds: 900,
+            managedInstanceScaling: {
+              minInstanceCount,
+              maxInstanceCount
+            }
           },
         ],
       }

@@ -204,6 +204,8 @@ export class DeleteWorkspace extends CaefL3Construct {
       },
     });
 
+    props.encryptionKey.grantEncryptDecrypt(stateMachine)
+
     NagSuppressions.addResourceSuppressions(deleteFunctionRole, [
       { id: 'AwsSolutions-IAM5', reason: 'Permissions are restrictive to stack resources. Processing s3 bucket managed and deployed by stack, not known at deployment.  KMS key resource deployed and managed by stack, not known at deployment time.' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },

@@ -30,6 +30,9 @@ export class SageMakerRagModels extends CaefL3Construct {
           .filter((c) => c.provider === "sagemaker")
           .map((c) => c.name);
 
+      const codeAssets = props.config?.codeOverwrites?.ragEnginesInferenceCodePath !== undefined ?
+          props.config.codeOverwrites.ragEnginesInferenceCodePath : path.join( __dirname, "./model" )
+
       const model = new SageMakerModel(this, "Model", {
         ...props,
         vpc: props.shared.vpc,
@@ -41,8 +44,11 @@ export class SageMakerRagModels extends CaefL3Construct {
             ...sageMakerEmbeddingsModelIds || [],
             ...sageMakerCrossEncoderModelIds || [],
           ],
-          codeFolder: path.join(__dirname, "./model"),
-          instanceType: sageMakerEmbeddingsModelIds.length === 0 ? "ml.m5.large" :  "ml.m5.2xlarge",
+          codeFolder: codeAssets,
+          instanceType: props.config.rag.engines.sagemaker?.instanceType || "ml.m5.2xlarge",
+          initialInstanceCount: props.config.rag.engines.sagemaker?.initialInstanceCount || 1,
+          minInstanceCount: props.config.rag.engines.sagemaker?.minInstanceCount || 1,
+          maxInstanceCount: props.config.rag.engines.sagemaker?.maxInstanceCount || 1,
         },
       });
 
