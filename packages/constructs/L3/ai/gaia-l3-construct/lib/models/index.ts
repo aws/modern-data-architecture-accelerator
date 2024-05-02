@@ -172,7 +172,7 @@ export class Models extends CaefL3Construct {
         model: {
           type: DeploymentType.Container,
           modelId: "amazon/FalconLite",
-          container: ContainerImages.HF_PYTORCH_LLM_TGI_INFERENCE_1_3_3,
+          container: ContainerImages.HF_PYTORCH_LLM_TGI_INFERENCE_0_9_3,
           instanceType: falconLiteConfig?.instanceType || "ml.g5.12xlarge",
           initialInstanceCount: falconLiteConfig?.initialInstanceCount || 1,
           minInstanceCount: falconLiteConfig?.minimumInstanceCount || 1,
