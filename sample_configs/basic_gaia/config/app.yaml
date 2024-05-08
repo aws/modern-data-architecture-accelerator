@@ -6,7 +6,7 @@ gaia:
     region: "{{context:bedrockRegion}}"
   llms:
     # A list of Sagemaker Hosted llms (Cost Implication)
-    # accepted values: [Mistral7b_Instruct2, Mistral7b_Instruct, FalconLite, Llama2_13b_Chat]
+    # accepted values: [Mistral7b_Instruct2, FalconLite, Llama2_13b_Chat]
     sagemaker: []
   rag:
     engines:
