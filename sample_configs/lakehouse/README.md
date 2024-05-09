@@ -8,24 +8,22 @@ This is a sample CAEF Modern Data Architecture/LakeHouse, including S3 Data Lake
 
 ## Deployment Instructions
 
-The following instructions assume you have CDK bootstrapped your target account, and that the CAEF NPM packages are available to you either in a local or remote NPM repo.
+The following instructions assume you have CDK bootstrapped your target account, and that the CAEF source repo is cloned locally.
 More predeployment info and procedures are available in [PREDEPLOYMENT](../../PREDEPLOYMENT.md).
 
-1. Deploy sample configurations into the specified directory structure (or obtain from the CAEF repo under `sample_configs/lakehouse`).
+1. Deploy sample configurations into the specified directory structure (or obtain from the CAEF repo under `sample_configs/basic_datalake`).
 
 2. Edit the `caef.yaml` to specify an organization name. This must be a globally unqique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
 3. Edit the `caef.yaml` to specify `context:` values specific to your environment.
 
-4. Install CDK and CAEF CLIs with `npm install -g aws-cdk@2.x @aws-caef/cli`
+4. Ensure you are authenticated to your target AWS account.
 
-5. Ensure you are authenticated to your target AWS account.
+5. Optionally, run `<path_to_caef_repo>/bin/caef ls` from the directory containing `caef.yaml` to understand what stacks will be deployed.
 
-6. Optionally, run `caef ls` from the directory containing `caef.yaml` to understand what stacks will be deployed.
+6. Optionally, run `<path_to_caef_repo>/bin/caef synth` from the directory containing `caef.yaml` and review the produced templates.
 
-7. Optionally, run `caef synth` from the directory containing `caef.yaml` and review the produced templates.
-
-8. Run `caef deploy` from the directory containing `caef.yaml`
+7. Run `<path_to_caef_repo>/bin/caef deploy` from the directory containing `caef.yaml`
 
 Additional CAEF deployment commands/procedures can be reviewed in [DEPLOYMENT](../../DEPLOYMENT.md).
 

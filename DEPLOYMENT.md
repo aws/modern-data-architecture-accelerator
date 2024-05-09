@@ -34,14 +34,81 @@ region=ca-central-1
 
 ### Deployment from Locally Cloned Source Code (-l or 'local_mode')
 
-1. Clone CAEF repo.
-2. Run `<repo_path>/bin/caef -l -c <path_to_caef_yaml> <action>`
-   * CAEF will run npm install at the root of the cloned repo to install CDK and all necessary third-party dependencies.
-   * CAEF will locate its own modules within the local source code repo instead of NPM installing them
-   * **Note that specifying specific CAEF versions in local_mode is not supported**
-   * See **CAEF Deployment using CLI** for more CLI options.
+As of CAEF 0.40, local mode ('-l') is the preferred deployment mode, as it avoids requiring CAEF NPM packages to be published.
 
-### Deployment from Published NPM Packages
+1. Clone CAEF repo.
+2. Run `<path_to_cloned_repo>/bin/caef -l -c <path_to_caef_yaml> <cdk action>`
+   * CAEF will run npm install at the root of the cloned repo to install CDK and all necessary third-party dependencies.
+   * CAEF will locate its own modules within the local source code repo
+   * **Note that specifying specific CAEF versions in local_mode is not supported**
+
+Additional CAEF CLI commands:
+
+Use the -h parameter to print a list of all CAEF CLI parameters
+
+```bash
+<path_to_cloned_repo>/bin/caef -l -h
+```
+
+Use the -c parameter to specify a config config file. Otherwise CAEF CLI will attempt to use caef.yaml from the local directory.
+
+```bash
+<path_to_cloned_repo>/bin/caef -l -c <optional-path-to-caef-config-file> <cdk action>
+```
+
+Specify a < cdk action >, which CAEF CLI will run against every configured module/CDK app:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l <cdk action>
+```
+
+To CDK list all stacks:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l list
+```
+
+To CDK synth all stacks:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l synth
+```
+
+To CDK diff all stacks:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l diff
+```
+
+To CDK deploy all stacks:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l deploy
+```
+
+To CDK deploy only env=dev modules/stacks:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l deploy -e dev
+```
+
+To CDK deploy only domain1 and domain2 modules/stacks:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l deploy -i domain1,domain2
+```
+
+To CDK deploy only the test_roles_module and test_datalake_module modules/stacks:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l deploy -m test_roles_module,test_datalake_module
+```
+
+***
+
+### Deployment from Published NPM Packages (w/o '-l' flag)
+
+CAEF can be installed from a private NPM package repo, and will also attempt to install CAEF modules from a private NPM repo if executed without the '-l' flag. This is necessary if modules within the same caef.yaml are configured with different CAEF versions.
 
 Ensure that your private NPM repo is accessible and contains the appropriate CAEF NPM artifacts. If using a localhost based NPM repo (such as Verdaccio), ensure it is running on localhost and updated with the latest CAEF packages from S3 (See [PREDEPLOYMENT](PREDEPLOYMENT.md)). When executed without the `-l` flag, CAEF will attempt to NPM install each CAEF module from NPM repo.
 
@@ -59,76 +126,10 @@ Optionally, both CDK and CAEF CLI can be instead npm installed in a local direct
 npm install aws-cdk@2.x @aws-caef/cli
 ```
 
-If CAEF CLI is installed locally, all CAEF commands will need to be executed using npx.
-
-***
-
-## CAEF Deployment using CLI
-
-If running CAEF from locally cloned CAEF source code repo:
-
-```bash
-<path_to_cloned_repo>/bin/caef -l <cdk action>
-```
-
-If CAEF CLI is npm installed globally, CAEF can be executed from a shell as follows:
-
-```bash
-caef <cdk action>
-```
-
-If CAEF CLI is npm installed in the local directory, the command should be prefixed with 'npx':
-
-```bash
-npx caef <cdk action>
-```
-
-Use the -h parameter to print a list of all CAEF CLI parameters
+CAEF commands can then be run globally without the '-l' flag:
 
 ```bash
 caef -h
-```
-
-Use the -c parameter to specify a config config file. Otherwise CAEF CLI will attempt to use caef.yaml from the local directory.
-
-```bash
-caef -c <optional-path-to-caef-config-file> <cdk action>
-```
-
-To CDK synth all stacks:
-
-```bash
-caef synth
-```
-
-To CDK diff all stacks:
-
-```bash
-caef diff
-```
-
-To CDK deploy all stacks:
-
-```bash
-caef deploy
-```
-
-To CDK deploy only env=dev modules/stacks:
-
-```bash
-caef deploy -e dev
-```
-
-To CDK deploy only domain1 and domain2 modules/stacks:
-
-```bash
-caef deploy -i domain1,domain2
-```
-
-To CDK deploy only the test_roles_module and test_datalake_module modules/stacks:
-
-```bash
-caef deploy -m test_roles_module,test_datalake_module
 ```
 
 ***
