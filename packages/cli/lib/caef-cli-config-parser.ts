@@ -25,7 +25,7 @@ export interface CaefModuleConfig {
     /**
      * Additional CDK Context key/value pairs
      */
-    readonly context?: { [ key: string ]: string }
+    readonly context?: { [ key: string ]: any }
 
     /**
      * A list of paths to tag configuration files. 
@@ -81,7 +81,7 @@ export interface CaefEnvironmentConfig {
     /**
      * Additional CDK Context key/value pairs
      */
-    readonly context?: { [ key: string ]: string }
+    readonly context?: { [ key: string ]: any }
     /**
      * Override the CAEF version
      */
@@ -130,7 +130,7 @@ export interface CaefDomainConfig {
     /**
      * Additional CDK Context key/value pairs
      */
-    readonly context?: { [ key: string ]: string }
+    readonly context?: { [ key: string ]: any }
     /**
      * Override the CAEF version
      */
@@ -267,7 +267,7 @@ export class CaefCliConfig {
                     this.contents = relativePathTransformedContents as CaefConfigContents
                 }
             } catch ( err ) {
-                throw Error( `${ this.props.filename }: Structural problem found in the YAML file. ` )
+                throw Error( `${ this.props.filename }: Structural problem found in the YAML file: ${err} ` )
             }
         } else {
             if ( !configValidator( this.props.configContents ) ) {

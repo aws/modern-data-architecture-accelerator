@@ -35,7 +35,8 @@ export interface CaefParamAndOutputProps extends CaefConstructProps {
 /** A construct which creates SSM Params and Cfn Outputs/Exports in a standard fashion. */
 export class CaefParamAndOutput extends Construct {
 
-    public static readonly PARAM_SCOPE_CONTEXT_KEY = "@aws-caef/legacyParamScope"
+    public static readonly LEGACY_PARAM_SCOPE_CONTEXT_KEY = "@aws-caef/legacyParamScope"
+    public static readonly SKIP_CREATE_PARAMS = "@aws-caef/skipCreateParams"
 
     private static createId ( props: CaefParamAndOutputProps ): string {
         if ( props.overrideResourceId ) {
@@ -47,8 +48,8 @@ export class CaefParamAndOutput extends Construct {
     }
 
     private static determineScope ( thisScope: Construct, legacyScope?:Construct):Construct {
-        const contextValue =  thisScope.node.tryGetContext( CaefParamAndOutput.PARAM_SCOPE_CONTEXT_KEY )?.valueOf()
-        const useLegacyParamScope =  contextValue ? Boolean(contextValue):false
+        const contextValue = thisScope.node.tryGetContext( CaefParamAndOutput.LEGACY_PARAM_SCOPE_CONTEXT_KEY )?.valueOf()
+        const useLegacyParamScope = contextValue ? ( /true/i ).test( contextValue):false
         return useLegacyParamScope ? legacyScope || thisScope : thisScope 
     }
 
@@ -57,16 +58,20 @@ export class CaefParamAndOutput extends Construct {
         const ssmPath = props.resourceId ? `${ props.resourceType }/${ props.resourceId }/${ props.name }` : `${ props.resourceType }/${ props.name }`
         const ssmFullPath = props.naming.ssmPath( ssmPath )
 
-        if ( props.createParams == undefined || props.createParams != undefined && props.createParams.valueOf() ) {
-
+        const skipCreateParamsContextString = this.node.tryGetContext( CaefParamAndOutput.SKIP_CREATE_PARAMS )
+        const skipCreateParamsContext = skipCreateParamsContextString != undefined ? 
+            ( /true/i ).test( skipCreateParamsContextString ) : undefined
+        const createParamsProps = props.createParams == undefined || props.createParams != undefined && props.createParams.valueOf()
+        const createParams = skipCreateParamsContext == undefined || !skipCreateParamsContext ? createParamsProps : false
+        
+        if ( createParams ) {
             console.log( `Creating SSM Param: ${ ssmFullPath }` )
             new StringParameter( this, `ssm`, {
                 parameterName: ssmFullPath,
                 stringValue: props.value,
                 simpleName: Token.isUnresolved( ssmFullPath )
             } )
-
-        }
+        } 
 
         if ( props.createOutputs == undefined || props.createOutputs != undefined && props.createOutputs.valueOf() ) {
             const exportName = props.resourceId ?
