@@ -62,9 +62,7 @@
                     "type": "string"
                 },
                 "context": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
+                    "additionalProperties": {},
                     "description": "Additional CDK Context key/value pairs",
                     "type": "object"
                 },
@@ -130,9 +128,7 @@
                     "type": "string"
                 },
                 "context": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
+                    "additionalProperties": {},
                     "description": "Additional CDK Context key/value pairs",
                     "type": "object"
                 },
@@ -216,9 +212,7 @@
                     "type": "string"
                 },
                 "context": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
+                    "additionalProperties": {},
                     "description": "Additional CDK Context key/value pairs",
                     "type": "object"
                 },
