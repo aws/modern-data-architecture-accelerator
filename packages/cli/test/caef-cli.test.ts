@@ -60,7 +60,7 @@ test( 'CdkCmdTest', () => {
         }
     }
 
-    const caef = new CaefDeploy( options, configContents )
+    const caef = new CaefDeploy( options, ["test-extra-cdk-param"],configContents )
     caef.deploy()
 } );
 
@@ -116,7 +116,7 @@ test( 'CdkCmdTest2', () => {
         }
     }
 
-    const caef = new CaefDeploy( options, configContents )
+    const caef = new CaefDeploy( options, undefined,configContents )
     caef.deploy()
 } );
 
@@ -186,6 +186,6 @@ test( 'CdkCmdTest3', () => {
         }
     }
 
-    const caef = new CaefDeploy( options, configContents )
+    const caef = new CaefDeploy( options,undefined, configContents )
     caef.deploy()
 } );

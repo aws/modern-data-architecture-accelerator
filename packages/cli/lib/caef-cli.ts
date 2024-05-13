@@ -28,15 +28,17 @@ export class CaefDeploy {
     private readonly localMode?:boolean
     private static readonly DEFAULT_DEPLOY_STAGE = "1"
     private readonly localPackages : {[packageName:string]:string}
+    private readonly cdkPushdown?:string[]
 
-    constructor( options: { [ key: string ]: string }, configContents?: { [ key: string ]: any } ) {
+
+    constructor( options: { [ key: string ]: string }, cdkPushdown?: string[],configContents?: { [ key: string ]: any } ) {
         this.action = options[ 'action' ]
         if ( !this.action ) {
             throw new Error( "CAEF action must be specified on command line: caef <action>" )
         }
         this.cwd = process.cwd()
         this.caefVersion = options[ 'caef_version' ]
-        this.domainFilter = options[ 'domain' ]?.split( "," ).map( x => x.trim() )
+        this.domainFilter =options[ 'domain' ]?.split( "," ).map( x => x.trim() )
         this.envFilter = options[ 'env' ]?.split( "," ).map( x => x.trim() )
         this.moduleFilter = options[ 'module' ]?.split( "," ).map( x => x.trim() )
         this.roleArn = options[ 'role_arn' ]
@@ -45,6 +47,7 @@ export class CaefDeploy {
         this.npmDebug = options[ 'npm_debug' ] ? true : false
         this.outputEffectiveConfig = options[ 'output_effective_config' ] ? true : false
         this.localMode = options[ 'local_mode' ] ? true : false
+        this.cdkPushdown = cdkPushdown
 
         if ( !this.localMode && options[ 'clear' ] && this.action != 'dryrun' ) {
             console.log( `Removing all previously installed packages from ${ this.workingDir }/packages` )
@@ -325,6 +328,12 @@ export class CaefDeploy {
         }
 
         cdkCmd.push( ...this.generateContextCdkParams( moduleEffectiveConfig ) )
+
+        if(this.cdkPushdown) {
+            console.log( `CDK Pushdown Options: ${ JSON.stringify( this.cdkPushdown, undefined, 2 ) }` )
+            cdkCmd.push(...this.cdkPushdown)
+        
+        }
 
         const execCmd = cdkEnv.length > 0 ? `${ cdkEnv.join( ";" ) };${ cdkCmd.join( ' \\\n\t' ) }` : cdkCmd.join( ' \\\n\t' )
         return execCmd

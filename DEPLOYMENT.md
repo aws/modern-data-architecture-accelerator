@@ -104,6 +104,12 @@ To CDK deploy only the test_roles_module and test_datalake_module modules/stacks
 <path_to_cloned_repo>/bin/caef -l deploy -m test_roles_module,test_datalake_module
 ```
 
+Any CLI params not recognized by CAEF CLI will be pushed down to the CDK CLI. In this examle, `--no-rollback` will be pushed down to CDK:
+
+```bash
+<path_to_cloned_repo>/bin/caef -l deploy --no-rollback
+```
+
 ***
 
 ### Deployment from Published NPM Packages (w/o '-l' flag)

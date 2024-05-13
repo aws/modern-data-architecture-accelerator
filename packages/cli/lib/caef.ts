@@ -105,7 +105,7 @@ const optionDefinitions = [
     }
 ]
 
-const options = commandLineArgs( optionDefinitions )
+const options = commandLineArgs( optionDefinitions, { partial: true } )
 
 console.log( `CAEF Version: ${ pjson.version }` );
 if ( options[ 'version' ] ) {
@@ -118,6 +118,5 @@ if ( options[ 'help' ] ) {
     process.exit( 0 )
 }
 
-
-const caef = new CaefDeploy( options )
+const caef = new CaefDeploy( options,options['_unknown'] )
 caef.deploy()
