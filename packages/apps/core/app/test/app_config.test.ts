@@ -63,7 +63,6 @@ describe( 'ConfigParseTest', () => {
         module_name: context.module_name,
         rawConfig: appConfigRaw,
         naming: testApp.naming,
-        outputEffectiveConfig: true,
         env: {
         }
     }

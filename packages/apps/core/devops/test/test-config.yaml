@@ -1,0 +1,94 @@
+# The CodeCommit repo containing these configs
+# Pipelines will be triggered on updates to this repo
+configsCodeCommitRepo: test-config-repo
+# (Optional) - The branch within the configs repo to be deployed
+configsBranch: test-branch
+# The CodeCommit repo containing the CAEF source code
+# Pipelines will be triggered on updates to this repo
+caefCodeCommitRepo: test-caef-repo
+# (Optional) - The branch within the CAEF repo to be deployed
+caefBranch: test-caef-branch
+# (Optional) - Install commands to be run on all stages of all pipelines
+install:
+  - echo testing
+# (Optional) - Pre commands to be run on all stages of all pipelines
+pre:
+  - echo testing
+# (Optional) - Post commands to be run on all stages of all pipelines
+post:
+  - echo testing
+# (Optional) - Commands to be run on PreDeploy stage of all pipelines
+preDeploy:
+  install:
+    - echo testing
+  pre:
+    - echo testing
+  post:
+    - echo testing
+# (Optional) - Commands to be run on PreDeployValidate stage of all pipelines
+preDeployValidate:
+  install:
+    - echo testing
+  commands:
+    - echo testing
+# (Optional) - Commands to be run on Deploy stage of all pipelines
+deploy:
+  install:
+    - echo testing
+  pre:
+    - echo testing
+  post:
+    - echo testing
+# (Optional) - Commands to be run on PostDeployValidate stage of all pipelines
+postDeployValidate:
+  install:
+    - echo testing
+  commands:
+    - echo testing
+# Pipelines to be deployed.
+pipelines:
+  # Pipeline Name
+  domain-test1:
+    # Each pipeline will run on the Domains, Envs, and Modules specified by a set of filters passed to the
+    # -d, -e, and -m params of the CAEF CLI. These filters are effectively ANDed together.
+    # Domains which will be deployed via this pipeline
+    domainFilter:
+      - testdomain1
+    # Envs which will be deployed via this pipeline
+    envFilter:
+      - testenv
+    # Modules which will be deployed via this pipeline
+    moduleFilter:
+      - testmodule1
+    # (Optional) Commands to be run on all stages of this pipeline
+    install:
+      - echo testing
+    pre:
+      - echo testing
+    post:
+      - echo testing
+    # (Optional) Stage-specific commands to be run on this pipeline
+    preDeploy:
+      install:
+        - echo testing
+      pre:
+        - echo testing
+      post:
+        - echo testing
+    preDeployValidate:
+      install:
+        - echo testing
+      commands:
+        - echo testing
+    deploy:
+      install:
+        - echo testing
+      pre:
+        - echo testing
+      post:
+        - echo testing
+    postDeployValidate:
+      install:
+        - echo testing
+      commands:
+        - echo testing

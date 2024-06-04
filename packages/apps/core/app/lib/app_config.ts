@@ -30,8 +30,7 @@ export interface CaefAppConfigParserProps {
     readonly environment: string,
     readonly module_name: string,
     readonly rawConfig: { [ key: string ]: any },
-    readonly naming: ICaefResourceNaming,
-    readonly outputEffectiveConfig?: boolean
+    readonly naming: ICaefResourceNaming
 }
 
 /**
@@ -53,7 +52,7 @@ export class CaefAppConfigParser<T extends CaefBaseConfigContents> {
      * @param props 
      * @param configTransformers 
      */
-    constructor( stack: Stack, props: CaefAppConfigParserProps, configSchema: Schema, configTransformers?: ICaefConfigTransformer[] ) {
+    constructor( stack: Stack, props: CaefAppConfigParserProps, configSchema: Schema, configTransformers?: ICaefConfigTransformer[],suppressOutputConfigContents?:boolean ) {
         this.stack = stack
         this.props = props
 
@@ -67,8 +66,6 @@ export class CaefAppConfigParser<T extends CaefBaseConfigContents> {
         const configRefValueTranformer = new CaefConfigRefValueTransformer( this.stack )
         const resolvedRefsConfigContents = new CaefConfigTransformer( configRefValueTranformer, configRefValueTranformer ).transformConfig( ssmToRefResolvedConfigContents )
 
-
-
         const baseConfigContents = ( resolvedRefsConfigContents as CaefBaseConfigContents )
         this.serviceCatalogConfig = baseConfigContents.service_catalog_product_config
         this.nagSuppressions = baseConfigContents.nag_suppressions
@@ -80,13 +77,11 @@ export class CaefAppConfigParser<T extends CaefBaseConfigContents> {
         // Confirm our provided config matches our Schema (verification of Data shape)
         const avj = new Ajv()
         const configValidator = avj.compile( configSchema )
-        if ( !configValidator( this.configContents ) ) {
+        if ( !suppressOutputConfigContents ){
             console.log( `Effective App Config:\n============\n${ yaml.stringify( this.configContents ) }\n============\nEnd Effective App Config` )
-            throw new Error( `Config contains shape errors\n: ${ JSON.stringify( configValidator.errors, null, 2 ) }` )
         }
-
-        if ( props.outputEffectiveConfig ) {
-            console.log( `Effective App Config:\n============\n${ yaml.stringify( this.configContents ) }\n============\nEnd Effective App Config` )
+        if ( !configValidator( this.configContents ) ) {
+            throw new Error( `Config contains shape errors\n: ${ JSON.stringify( configValidator.errors, null, 2 ) }` )
         }
     }
 }

@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import path = require( 'path' );
 import * as yaml from 'yaml';
 import * as configSchema from './config-schema.json';
+import { DevOpsConfigContents } from '@aws-caef/devops';
 const avj = new Ajv()
 
 export interface CaefModuleConfig {
@@ -226,6 +227,11 @@ export interface CaefConfigContents {
      * Tagging data which will be passed directly to apps
      */
     readonly tag_config_data?: { [ key: string ]: string }
+
+    /**
+     * Configurations used when deploying CAEF DevOps resources
+     */
+    readonly devops?: DevOpsConfigContents
 }
 
 export interface CaefParserConfig {

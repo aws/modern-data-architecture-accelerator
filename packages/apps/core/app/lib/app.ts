@@ -47,7 +47,6 @@ export abstract class CaefCdkApp extends App {
     private readonly baseConfigParser: CaefAppConfigParser<CaefBaseConfigContents>;
     private readonly additionalAccounts?: string[]
     private readonly additionalAccountStacks: { [ AccountRecovery: string ]: Stack; };
-    private readonly outputEffectiveConfig: boolean
     /**
      * Constructor does most of the app initialization, reading inputs from CDK context, parsing App config files, configuring resource naming, and configuring CDK Nag.
      * @param app_name - Name of the application
@@ -118,8 +117,8 @@ export abstract class CaefCdkApp extends App {
             additionalAccountStack.addDependency( this.stack )
             return [ account, additionalAccountStack ]
         } ) || [] )
-        this.baseConfigParser = new CaefAppConfigParser<CaefBaseConfigContents>( this.stack, this.getConfigParserProps(), configSchema )
-        this.outputEffectiveConfig = true// this.node.tryGetContext( 'output_effective_config' ) == undefined ? false : ( /true/i ).test( this.node.tryGetContext( 'output_effective_config' ) )
+        this.baseConfigParser = new CaefAppConfigParser<CaefBaseConfigContents>( this.stack, this.getConfigParserProps(), configSchema,undefined,true )
+        
     }
 
     private loadTagConfigDataFromContext (): { [ key: string ]: string } {
@@ -345,8 +344,7 @@ export abstract class CaefCdkApp extends App {
             environment: this.env,
             module_name: this.moduleName,
             rawConfig: this.appConfigRaw,
-            naming: this.naming,
-            outputEffectiveConfig: this.outputEffectiveConfig
+            naming: this.naming
         }
     }
 

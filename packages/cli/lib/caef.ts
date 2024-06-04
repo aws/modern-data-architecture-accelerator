@@ -86,16 +86,22 @@ const optionDefinitions = [
         description: "Optional - Runs all NPM commands in debug mode"
     },
     {
-        name: 'output_effective_config',
-        alias: 'o',
-        type: Boolean,
-        description: "Each module will output it's effective config to console."
-    },
-    {
         name: 'local_mode',
         alias: 'l',
         type: Boolean,
         description: "CAEF code will be executed from local source code instead of from installed NPM packages"
+    },
+    {
+        name: 'devops',
+        alias: 'p',
+        type: Boolean,
+        description: "Deploys CAEF DevOps Resources and Pipelines."
+    },
+    {
+        name: 'cdk_verbose',
+        alias: 'b',
+        type: Boolean,
+        description: "Increase CDK cli verbosity"
     },
     {
         name: 'help',
