@@ -8,13 +8,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { CaefCliConfig, CaefDomainConfig, CaefEnvironmentConfig, CaefModuleConfig } from './caef-cli-config-parser';
 
-
 export interface DeployStageMap { [ key: string ]: { moduleConfig: ModuleEffectiveConfig, modulePath: string }[] }
 
 export class CaefDeploy {
     private readonly config: CaefCliConfig
     private readonly action: string
-    private readonly cwd:string 
+    private readonly cwd: string
     private readonly domainFilter?: string[]
     private readonly envFilter?: string[]
     private readonly moduleFilter?: string[]
@@ -24,30 +23,32 @@ export class CaefDeploy {
     private readonly caefVersion?: string
     private readonly npmDebug: boolean;
     private readonly updateCache: { [ prefix: string ]: boolean } = {};
-    private readonly outputEffectiveConfig: boolean;
-    private readonly localMode?:boolean
+    private readonly localMode?: boolean
+    private readonly devopsMode?: boolean
     private static readonly DEFAULT_DEPLOY_STAGE = "1"
-    private readonly localPackages : {[packageName:string]:string}
-    private readonly cdkPushdown?:string[]
+    private readonly localPackages: { [ packageName: string ]: string }
+    private readonly cdkPushdown?: string[]
+    private readonly cdkVerbose?: boolean
 
 
-    constructor( options: { [ key: string ]: string }, cdkPushdown?: string[],configContents?: { [ key: string ]: any } ) {
+    constructor( options: { [ key: string ]: string }, cdkPushdown?: string[], configContents?: { [ key: string ]: any } ) {
         this.action = options[ 'action' ]
         if ( !this.action ) {
             throw new Error( "CAEF action must be specified on command line: caef <action>" )
         }
         this.cwd = process.cwd()
         this.caefVersion = options[ 'caef_version' ]
-        this.domainFilter =options[ 'domain' ]?.split( "," ).map( x => x.trim() )
+        this.domainFilter = options[ 'domain' ]?.split( "," ).map( x => x.trim() )
         this.envFilter = options[ 'env' ]?.split( "," ).map( x => x.trim() )
         this.moduleFilter = options[ 'module' ]?.split( "," ).map( x => x.trim() )
         this.roleArn = options[ 'role_arn' ]
         this.npmTag = options[ 'tag' ] ? options[ 'tag' ] : "latest"
-        this.workingDir = options[ "working_dir" ] ? path.resolve(options[ "working_dir" ]) : path.resolve("./.caef_working")
+        this.workingDir = options[ "working_dir" ] ? path.resolve( options[ "working_dir" ] ) : path.resolve( "./.caef_working" )
         this.npmDebug = options[ 'npm_debug' ] ? true : false
-        this.outputEffectiveConfig = options[ 'output_effective_config' ] ? true : false
         this.localMode = options[ 'local_mode' ] ? true : false
+        this.devopsMode = options[ 'devops' ] ? true : false
         this.cdkPushdown = cdkPushdown
+        this.cdkVerbose = options[ 'cdk_verbose' ] ? true : false
 
         if ( !this.localMode && options[ 'clear' ] && this.action != 'dryrun' ) {
             console.log( `Removing all previously installed packages from ${ this.workingDir }/packages` )
@@ -55,10 +56,12 @@ export class CaefDeploy {
         }
 
         this.localPackages = this.localMode ? this.loadLocalPackages() : {}
-        if(this.localMode) {
-            console.log("Running CAEF in local mode.")
+        if ( this.localMode ) {
+            console.log( "Running CAEF in local mode." )
         }
-
+        if ( this.devopsMode ) {
+            console.log( "Running CAEF in devops mode." )
+        }
         const configFileName = options[ 'config' ]
         if ( configContents ) {
             this.config = new CaefCliConfig( { configContents: configContents } )
@@ -72,14 +75,11 @@ export class CaefDeploy {
         const workspaceQueryJson = require( 'child_process' ).execSync( `npm query .workspace --prefix ${ __dirname }/../../../` ).toString()
         const workspace: any[] = JSON.parse( workspaceQueryJson )
         return Object.fromEntries( workspace.map( pkgInfo => {
-            return [ `${pkgInfo[ 'name' ]}@latest`, path.resolve(`${__dirname}/../../../${pkgInfo[ 'location' ]}`) ]
+            return [ `${ pkgInfo[ 'name' ] }@latest`, path.resolve( `${ __dirname }/../../../${ pkgInfo[ 'location' ] }` ) ]
         } ) )
     }
 
     public deploy () {
-        if ( this.domainFilter ) {
-            console.log( `Filtering for domain ${ this.domainFilter }` )
-        }
         const globalEffectiveConfig: EffectiveConfig = {
             effectiveContext: this.config.contents.context || {},
             effectiveAppConfig: this.config.contents.app_config_data || {},
@@ -90,24 +90,51 @@ export class CaefDeploy {
             customAspects: this.config.contents.custom_aspects || [],
             customNaming: this.config.contents.naming_module && this.config.contents.naming_class ? { naming_module: this.config.contents.naming_module, naming_class: this.config.contents.naming_class, naming_props: this.config.contents.naming_props } : undefined
         }
-        Object.keys( this.config.contents.domains ).filter( domainName => this.domainFilter == undefined || this.domainFilter?.includes( domainName ) ).forEach( domainName => {
+        this.deployDomains( globalEffectiveConfig )
+        if ( this.devopsMode ) {
+            this.deployDevOps( globalEffectiveConfig )
+        }
+    }
+
+    private deployDevOps ( effectiveConfig: EffectiveConfig ) {
+        const devopsModuleConfig: ModuleEffectiveConfig = {
+            ...effectiveConfig,
+            cdkApp: '@aws-caef/devops',
+            moduleName: 'devops',
+            useBootstrap: false,
+            envName: 'multi-envs',
+            domainName: 'multi-domains',
+            effectiveAppConfig: this.config.contents.devops || {}
+        }
+        this.deployModule( devopsModuleConfig, this.installPackageToPrefix( '@aws-caef/devops@latest' ) )
+    }
+
+    private deployDomains ( globalEffectiveConfig: EffectiveConfig ) {
+        if ( this.domainFilter  && !this.devopsMode) {
+            console.log( `Filtering for domain ${ this.domainFilter }` )
+        }
+
+        Object.keys( this.config.contents.domains ).filter( domainName => this.devopsMode || this.domainFilter == undefined || this.domainFilter?.includes( domainName ) ).forEach( domainName => {
             const domain = this.config.contents.domains[ domainName ]
             const domainEffectiveConfig: DomainEffectiveConfig = this.computeDomainEffectiveConfig( domainName, domain, globalEffectiveConfig )
             this.deployDomain( domain, domainEffectiveConfig )
         } )
     }
 
+
+
     public deployDomain (
         domain: CaefDomainConfig,
         domainEffectiveConfig: DomainEffectiveConfig ) {
-
-        console.log( `-----------------------------------------------------------` )
-        console.log( `${ this.action.charAt( 0 ).toUpperCase() + this.action.slice( 1 ) }ing Domain ${ domainEffectiveConfig.domainName }` )
-        console.log( `-----------------------------------------------------------` )
-        if ( this.envFilter ) {
+        if(!this.devopsMode){
+            console.log( `-----------------------------------------------------------` )
+            console.log( `Running ${ this.action} for Domain ${ domainEffectiveConfig.domainName }` )
+            console.log( `-----------------------------------------------------------` )
+        }
+        if ( this.envFilter && !this.devopsMode ) {
             console.log( `Filtering for env ${ this.envFilter }` )
         }
-        Object.keys( domain.environments ).filter( envName => this.envFilter == undefined || this.envFilter?.includes( envName ) ).forEach( envName => {
+        Object.keys( domain.environments ).filter( envName => this.devopsMode || this.envFilter == undefined || this.envFilter?.includes( envName ) ).forEach( envName => {
             const env = domain.environments[ envName ]
             const envEffectiveConfig: EnvEffectiveConfig = this.computeEnvEffectiveConfig( envName, env, domainEffectiveConfig )
             this.deployEnv( env, envEffectiveConfig )
@@ -118,7 +145,7 @@ export class CaefDeploy {
         env: CaefEnvironmentConfig,
         envEffectiveConfig: EnvEffectiveConfig ) {
 
-        if ( this.moduleFilter ) {
+        if ( this.moduleFilter && !this.devopsMode ) {
             console.log( `Filtering for module ${ this.moduleFilter }` )
         }
         if ( envEffectiveConfig.useBootstrap ) {
@@ -129,15 +156,44 @@ export class CaefDeploy {
         }
 
         const moduleEffectiveConfigs = Object.entries( env.modules ).map( entry => {
-            return this.computeModuleEffectiveConfig( entry[ 0 ], entry[ 1 ], envEffectiveConfig )
+            const moduleEffectiveConfig = this.computeModuleEffectiveConfig( entry[ 0 ], entry[ 1 ], envEffectiveConfig )
+            return moduleEffectiveConfig
         } )
+        if(!this.devopsMode) {
+            this.deployEnvModules( envEffectiveConfig, moduleEffectiveConfigs )
+        } else {
+            moduleEffectiveConfigs.forEach(config => {
+                this.testModuleEffectiveConfigForPipelines(config)
+            })
+        }
+    }
+
+    private testModuleEffectiveConfigForPipelines (moduleEffectiveConfig: ModuleEffectiveConfig){
+        const pipelines = Object.entries(this.config.contents.devops?.pipelines || {}).filter(pipelineEntry => {
+            const pipelineConfig = pipelineEntry[1]
+            return (pipelineConfig.domainFilter == undefined || pipelineConfig.domainFilter?.includes( moduleEffectiveConfig.domainName )) &&
+                ( pipelineConfig.envFilter == undefined || pipelineConfig.envFilter?.includes( moduleEffectiveConfig.envName ) ) &&
+                ( pipelineConfig.moduleFilter == undefined || pipelineConfig.moduleFilter?.includes( moduleEffectiveConfig.moduleName ) )
+        }).map(entry => entry[0])
+        if(pipelines.length == 1) {
+            console.log( `${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName} will be deployed via pipeline ${pipelines[0]}` )
+        } else if(pipelines.length > 1) {
+            throw new Error( `Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName} matches multiple pipeline filters: ${pipelines}`)
+        } else {
+            console.warn( `WARNING: Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName} matches no pipeline filters`)
+        }
+    }
+
+    private deployEnvModules ( envEffectiveConfig: EnvEffectiveConfig, moduleEffectiveConfigs: ModuleEffectiveConfig[] ) {
         console.log( `-----------------------------------------------------------` )
         console.log( `Installing Packages and Computing Stages for Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }` )
         console.log( `-----------------------------------------------------------` )
         const envDeployStages: DeployStageMap = this.computeEnvDeployStages( moduleEffectiveConfigs )
-        console.log( `-----------------------------------------------------------` )
-        console.log( `${ this.action.charAt( 0 ).toUpperCase() + this.action.slice( 1 ) }ing Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }` )
-        console.log( `-----------------------------------------------------------` )
+        if ( !this.devopsMode ) {
+            console.log( `-----------------------------------------------------------` )
+            console.log( `Running ${ this.action} for Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }` )
+            console.log( `-----------------------------------------------------------` )
+        }
         const orderedStages = this.action == "destroy" ? Object.keys( envDeployStages ).sort( ( a, b ) => ( +a - +b ) ).reverse() : Object.keys( envDeployStages ).sort( ( a, b ) => ( +a - +b ) )
         orderedStages.forEach( stage => {
             console.log( `Running CAEF stage ${ stage } for ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }` )
@@ -151,7 +207,7 @@ export class CaefDeploy {
     private computeEnvDeployStages ( moduleConfigs: ModuleEffectiveConfig[] ): DeployStageMap {
         const deployStages: DeployStageMap = {}
 
-        moduleConfigs.filter( moduleConfig => this.moduleFilter == undefined || this.moduleFilter?.includes( moduleConfig.moduleName ) ).forEach( moduleConfig => {
+        moduleConfigs.filter( moduleConfig => this.devopsMode|| this.moduleFilter == undefined || this.moduleFilter?.includes( moduleConfig.moduleName ) ).forEach( moduleConfig => {
             console.log( `Installing packages for ${ moduleConfig.moduleName }` )
 
             const moduleCdkAppNpmPackage = moduleConfig.cdkApp.replace( /^@/, "" ).includes( '@' ) ?
@@ -196,14 +252,14 @@ export class CaefDeploy {
         return deployStages
     }
 
-    private resolvePackagePrefix ( npmPackage: string ) : string {
-        if( this.localMode ) {
-            if(this.localPackages.hasOwnProperty(npmPackage)) {
+    private resolvePackagePrefix ( npmPackage: string ): string {
+        if ( this.localMode ) {
+            if ( this.localPackages.hasOwnProperty( npmPackage ) ) {
                 return this.localPackages[ npmPackage ]
             } else {
-                throw new Error(`Unable to find local package location for ${npmPackage}`)
+                throw new Error( `Unable to find local package location for ${ npmPackage }` )
             }
-        } else  {
+        } else {
             return path.resolve( `${ this.workingDir }/packages/${ CaefDeploy.hashCodeHex( npmPackage, this.npmTag ).replace( /^-/, "" ) }` )
         }
     }
@@ -213,15 +269,15 @@ export class CaefDeploy {
         const prefix = this.resolvePackagePrefix( npmPackage )
         const npmPackageNoVersion = npmPackage.replace( /(?<!^)@.*/, "" )
 
-        if ( this.action == "dryrun") {
+        if ( this.action == "dryrun" ) {
             console.log( `Skipping package installation. In dry run mode.` )
             return prefix
         }
         if ( this.localMode ) {
-            console.log( `In local mode. Running package build for ${ npmPackageNoVersion}.` )
-            const buildCmd = `npx lerna run build --scope ${ npmPackageNoVersion}`
+            console.log( `In local mode. Running package build for ${ npmPackageNoVersion }.` )
+            const buildCmd = `npx lerna run build --scope ${ npmPackageNoVersion }`
             console.log( `Running Lerna Build: \n${ buildCmd }` )
-            this.execCmd( `cd ${ __dirname }/../../;${ buildCmd };cd ${ this.cwd}` );
+            this.execCmd( `cd ${ __dirname }/../../;${ buildCmd };cd ${ this.cwd }` );
             return prefix
         }
         // nosemgrep
@@ -267,10 +323,11 @@ export class CaefDeploy {
 
 
     private deployModule ( moduleEffectiveConfig: ModuleEffectiveConfig, modulePath: string ) {
-        console.log( `\n-----------------------------------------------------------` )
-        console.log( `${ this.action.charAt( 0 ).toUpperCase() + this.action.slice( 1 ) }ing Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }` )
-        console.log( `-----------------------------------------------------------` )
-
+        if ( !this.devopsMode ) {
+            console.log( `\n-----------------------------------------------------------` )
+            console.log( `Running ${this.action} for Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }` )
+            console.log( `-----------------------------------------------------------` )
+        }
         if ( this.action != "dryrun" ) {
             const packageJsonPath = `${ modulePath }/package.json`
             // nosemgrep
@@ -278,14 +335,13 @@ export class CaefDeploy {
             console.log( `Running CDK App ${ moduleEffectiveConfig.cdkApp } Version: ${ pjson.version }` );
         }
 
-        const cdkCmd = this.createCdkCommand( moduleEffectiveConfig,modulePath )
+        const cdkCmd = this.createCdkCommand( moduleEffectiveConfig, modulePath )
         console.log( `Running CDK cmd:\n${ cdkCmd }` )
 
         if ( this.action != "dryrun" ) {
-            this.execCmd( `cd ${ modulePath};${cdkCmd};cd ${this.cwd}` );
+            this.execCmd( `cd ${ modulePath } && ${ cdkCmd }` );
         }
     }
-
 
     private createCdkCommand (
         moduleEffectiveConfig: ModuleEffectiveConfig,
@@ -296,9 +352,9 @@ export class CaefDeploy {
 
         const cdkEnv: string[] = this.createCdkCommandEnv( moduleEffectiveConfig )
         const cdkCmd: string[] = []
-        cdkCmd.push( `npx ${ this.npmDebug ? "-d" : "" } cdk ${ action } --require-approval never` )
-        if(!this.localMode){
-            cdkCmd.push( `-a 'npx --loglevel=verbose ${ this.npmDebug ? "-d" : "" } ${ modulePath }/'` )
+        cdkCmd.push( `npx ${ this.npmDebug ? "-d" : "" } cdk ${ action } ${this.cdkVerbose ? "-v": ""} --require-approval never` )
+        if ( !this.localMode ) {
+            cdkCmd.push( `-a 'npx ${ this.npmDebug ? "-d" : "" } ${ modulePath }/'` )
         }
         cdkCmd.push( `-o '${ this.workingDir }/cdk.out'` )
         cdkCmd.push( `-c 'org=${ this.config.contents.organization }'` )
@@ -312,8 +368,6 @@ export class CaefDeploy {
         } else if ( this.config.contents.naming_module || this.config.contents.naming_class ) {
             throw new Error( "Both 'naming_module' and 'naming_class' must be specified together." )
         }
-
-        this.addOptionalCdkContextStringParam( cdkCmd, "output_effective_config", this.outputEffectiveConfig?.toString() )
         this.addOptionalCdkContextStringParam( cdkCmd, "use_bootstrap", moduleEffectiveConfig.useBootstrap?.toString() )
         this.addOptionalCdkContextStringParam( cdkCmd, "app_configs", moduleEffectiveConfig.appConfigFiles?.map( x => path.resolve( x ) ).join( ',' ) )
         this.addOptionalCdkContextStringParam( cdkCmd, "tag_configs", moduleEffectiveConfig.tagConfigFiles?.map( x => path.resolve( x ) ).join( ',' ) )
@@ -329,13 +383,13 @@ export class CaefDeploy {
 
         cdkCmd.push( ...this.generateContextCdkParams( moduleEffectiveConfig ) )
 
-        if(this.cdkPushdown) {
+        if ( this.cdkPushdown ) {
             console.log( `CDK Pushdown Options: ${ JSON.stringify( this.cdkPushdown, undefined, 2 ) }` )
-            cdkCmd.push(...this.cdkPushdown)
-        
+            cdkCmd.push( ...this.cdkPushdown )
+
         }
 
-        const execCmd = cdkEnv.length > 0 ? `${ cdkEnv.join( ";" ) };${ cdkCmd.join( ' \\\n\t' ) }` : cdkCmd.join( ' \\\n\t' )
+        const execCmd = cdkEnv.length > 0 ? `${ cdkEnv.join( " && " ) } && ${ cdkCmd.join( ' \\\n\t' ) }` : cdkCmd.join( ' \\\n\t' )
         return execCmd
     }
 

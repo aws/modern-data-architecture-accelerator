@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@aws-caef/config": "^0.41.0",
+    "@aws-caef/devops": "^0.41.0",
     "ajv": "8.11.0",
     "command-line-args": "5.2.1",
     "yaml": "1.10.2"
