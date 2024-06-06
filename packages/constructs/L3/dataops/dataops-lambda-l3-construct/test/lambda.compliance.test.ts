@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { Protocol } from "aws-cdk-lib/aws-ec2";
 import { FunctionProps, LambdaFunctionL3Construct, LambdaFunctionL3ConstructProps, LayerProps } from "../lib";
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
   const layerProps: LayerProps = {
@@ -92,7 +92,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
   }
 
   const constructProps: LambdaFunctionL3ConstructProps = {
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
     functions: [ functionProps, functionVpcProps, functionVpcExistingSgProps, functionEventBridgeProps, functionWithLayer, dockerImageFunctionProps ],
@@ -312,10 +312,10 @@ describe( 'Bad function config', () => {
 
 
   test("Test No Runtime",() => {
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const stack = testApp.testStack
     const constructProps: LambdaFunctionL3ConstructProps = {
-      roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+      roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
       naming: testApp.naming,
       kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
       functions: [ functionNoRuntimeProps ],
@@ -329,10 +329,10 @@ describe( 'Bad function config', () => {
     } ).toThrow()
   } )
   test( "Test No Handler", () => {
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const stack = testApp.testStack
     const constructProps: LambdaFunctionL3ConstructProps = {
-      roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+      roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
       naming: testApp.naming,
       kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
       functions: [  functionNoHandlerProps,  ],
@@ -346,10 +346,10 @@ describe( 'Bad function config', () => {
     } ).toThrow()
   } )
   test( "Test Bad Layer", () => {
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const stack = testApp.testStack
     const constructProps: LambdaFunctionL3ConstructProps = {
-      roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+      roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
       naming: testApp.naming,
       kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
       functions: [  functionWithBadLayer ],

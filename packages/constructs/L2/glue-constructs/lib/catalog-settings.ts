@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from "@aws-caef/construct"
-import { ICaefKmsKey } from '@aws-caef/kms-constructs'
+import { MdaaConstructProps } from "@aws-mdaa/construct"
+import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs'
 import { CfnDataCatalogEncryptionSettings, CfnDataCatalogEncryptionSettingsProps } from "aws-cdk-lib/aws-glue"
 import { Construct } from "constructs"
 
 /**
  * Interface representing a compliant Glue Security Config
  */
-export interface CaefCatalogSettingsProps extends CaefConstructProps {
+export interface MdaaCatalogSettingsProps extends MdaaConstructProps {
     /**
      * The ID of the Data Catalog in which the settings are created.
      *
@@ -24,7 +24,7 @@ export interface CaefCatalogSettingsProps extends CaefConstructProps {
      *
      * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-datacatalogencryptionsettings-encryptionatrest.html#cfn-glue-datacatalogencryptionsettings-encryptionatrest-sseawskmskeyid
      */
-    readonly catalogKmsKey: ICaefKmsKey,
+    readonly catalogKmsKey: IMdaaKmsKey,
 
 }
 
@@ -35,8 +35,8 @@ export interface CaefCatalogSettingsProps extends CaefConstructProps {
  * * Job Bookbark Encryption enabled
  * * S3 Output Encryption enabled
  */
-export class CaefCatalogSettings extends CfnDataCatalogEncryptionSettings {
-    private static setProps ( props: CaefCatalogSettingsProps ): CfnDataCatalogEncryptionSettingsProps {
+export class MdaaCatalogSettings extends CfnDataCatalogEncryptionSettings {
+    private static setProps ( props: MdaaCatalogSettingsProps ): CfnDataCatalogEncryptionSettingsProps {
 
         const overrideProps = {
             catalogId: props.catalogId,
@@ -54,8 +54,8 @@ export class CaefCatalogSettings extends CfnDataCatalogEncryptionSettings {
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
-    constructor( scope: Construct, id: string, props: CaefCatalogSettingsProps ) {
-        super( scope, id, CaefCatalogSettings.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaCatalogSettingsProps ) {
+        super( scope, id, MdaaCatalogSettings.setProps( props ) )
 
     }
 

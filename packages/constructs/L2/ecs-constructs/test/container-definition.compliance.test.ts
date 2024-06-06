@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
-import { CaefECSContainerDefinition, CaefECSContainerDefinitionProps } from '../lib/container-definition';
+import { MdaaECSContainerDefinition, MdaaECSContainerDefinitionProps } from '../lib/container-definition';
 import { TaskDefinition, Compatibility, ContainerImage } from "aws-cdk-lib/aws-ecs";
-import { CaefRole } from "@aws-caef/iam-constructs";
+import { MdaaRole } from "@aws-mdaa/iam-constructs";
 
-describe( 'CAEF Container Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Container Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const logGroup = LogGroup.fromLogGroupName( testApp.testStack, "test-loggroup", "test-loggroup" )
 
-    const testExRole = CaefRole.fromRoleArn( testApp.testStack, "test-role", "arn:test-partition:iam:test-region:test-account:role/test-role" )
+    const testExRole = MdaaRole.fromRoleArn( testApp.testStack, "test-role", "arn:test-partition:iam:test-region:test-account:role/test-role" )
 
     const testTaskDef: TaskDefinition = new TaskDefinition( testApp.testStack, 'testdef', {
         compatibility: Compatibility.EC2_AND_FARGATE,
@@ -24,7 +24,7 @@ describe( 'CAEF Container Construct Compliance Tests', () => {
         executionRole: testExRole
     } )
 
-    const testContstructProps: CaefECSContainerDefinitionProps = {
+    const testContstructProps: MdaaECSContainerDefinitionProps = {
         naming: testApp.naming,
         logGroup: logGroup,
         streamPrefix: 'test-prefix',
@@ -33,7 +33,7 @@ describe( 'CAEF Container Construct Compliance Tests', () => {
         memoryLimitMiB: 512
     }
 
-    new CaefECSContainerDefinition( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaECSContainerDefinition( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
 
-import { AccessPolicyProps, BucketDefinition, InventoryDefinition, LifecycleConfigurationRuleProps, LifecycleTransitionProps } from '@aws-caef/datalake-l3-construct';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
+import { AccessPolicyProps, BucketDefinition, InventoryDefinition, LifecycleConfigurationRuleProps, LifecycleTransitionProps } from '@aws-mdaa/datalake-l3-construct';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -109,12 +109,12 @@ export interface LifecycleConfigurationConfig {
     [ ruleName: string ]: LifecycleConfigurationRuleConfig
 }
 
-export interface DataLakeConfigContents extends CaefBaseConfigContents {
+export interface DataLakeConfigContents extends MdaaBaseConfigContents {
     /**
      * Map of named role references to be used within accessPolicies. A single config role
      * can reference multiple physical roles.
      */
-    readonly roles: { [ key: string ]: CaefRoleRef[] }
+    readonly roles: { [ key: string ]: MdaaRoleRef[] }
     /**
      * Map of named accessPolicies which will be referenced by bucket definitions.
      */
@@ -132,15 +132,15 @@ export interface DataLakeConfigContents extends CaefBaseConfigContents {
 
 
 
-export class DataLakeConfigParser extends CaefAppConfigParser<DataLakeConfigContents> {
+export class DataLakeConfigParser extends MdaaAppConfigParser<DataLakeConfigContents> {
 
-    public readonly roles: { [ key: string ]: CaefRoleRef[] }
+    public readonly roles: { [ key: string ]: MdaaRoleRef[] }
     public readonly buckets: BucketDefinition[]
     public readonly accessPolicies: { [ name: string ]: AccessPolicyProps }
     public readonly lifecycleConfigurations?: { [ configName: string ]: LifecycleConfigurationRuleProps[] }
     public readonly inventories?: { [ key: string ]: string }
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.roles = this.configContents.hasOwnProperty( 'roles' ) ? this.configContents[ 'roles' ] : {}

@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { IResolvable, CfnTag } from "aws-cdk-lib";
 import { CfnReplicationInstance, CfnReplicationInstanceProps } from "aws-cdk-lib/aws-dms";
 import { IKey } from "aws-cdk-lib/aws-kms";
 import { Construct } from "constructs";
 
-export interface CaefReplicationInstanceProps extends CaefConstructProps {
+export interface MdaaReplicationInstanceProps extends MdaaConstructProps {
     /**
      * The amount of storage (in gigabytes) to be initially allocated for the replication instance.
      *
@@ -139,10 +139,10 @@ export interface CaefReplicationInstanceProps extends CaefConstructProps {
  * Reusable CDK construct for a compliant DMS Replication Instance.
  * Specifically, enforces KMS Encryption, and prevents public accessibility.
  */
-export class CaefReplicationInstance extends CfnReplicationInstance {
+export class MdaaReplicationInstance extends CfnReplicationInstance {
 
     /** Overrides specific compliance-related properties. */
-    private static setProps ( props: CaefReplicationInstanceProps ): CfnReplicationInstanceProps {
+    private static setProps ( props: MdaaReplicationInstanceProps ): CfnReplicationInstanceProps {
 
         const overrideProps = {
             replicationInstanceIdentifier: props.naming.resourceName( props.replicationInstanceIdentifier, 256 ),
@@ -153,10 +153,10 @@ export class CaefReplicationInstance extends CfnReplicationInstance {
         return allProps;
     }
 
-    constructor( scope: Construct, id: string, props: CaefReplicationInstanceProps ) {
-        super( scope, id, CaefReplicationInstance.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaReplicationInstanceProps ) {
+        super( scope, id, MdaaReplicationInstance.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "replicationInstance",
                 resourceId: props.replicationInstanceIdentifier,
@@ -165,7 +165,7 @@ export class CaefReplicationInstance extends CfnReplicationInstance {
             }, ...props
         } )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "replicationInstance",
                 resourceId: props.replicationInstanceIdentifier,

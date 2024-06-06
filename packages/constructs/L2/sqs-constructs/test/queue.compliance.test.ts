@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Match } from "aws-cdk-lib/assertions";
-import { CaefSqsDeadLetterQueue, CaefSqsQueue, CaefSqsQueueProps } from "../lib";
+import { MdaaSqsDeadLetterQueue, MdaaSqsQueue, MdaaSqsQueueProps } from "../lib";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
-    const dlq = new CaefSqsDeadLetterQueue( testApp.testStack, "test-dlq", {
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const dlq = new MdaaSqsDeadLetterQueue( testApp.testStack, "test-dlq", {
         naming: testApp.naming,
         queueName: "test-dlq",
         encryptionMasterKey: testKey
     } )
-    const testContstructProps: CaefSqsQueueProps = {
+    const testContstructProps: MdaaSqsQueueProps = {
         naming: testApp.naming,
         queueName: "test-queue",
         encryptionMasterKey: testKey,
@@ -29,7 +29,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         }
     }
 
-    new CaefSqsQueue( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaSqsQueue( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { IRule, IRuleTarget, RuleTargetConfig } from "aws-cdk-lib/aws-events";
 import { IRole, Role } from "aws-cdk-lib/aws-iam";
@@ -24,9 +24,9 @@ export class TestTarget implements IRuleTarget {
     }
 }
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const stack = testApp.testStack
 
     test( "Test S3 Rule Props to Generic Rule Props", () => {

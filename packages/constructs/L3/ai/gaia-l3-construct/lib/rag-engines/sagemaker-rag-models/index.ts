@@ -4,16 +4,16 @@ import * as path from "path";
 import { DeploymentType, SageMakerModel } from "../../sagemaker-model";
 import { Shared } from "../../shared";
 import { SystemConfig } from "../../shared/types";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import { CaefKmsKey } from "@aws-caef/kms-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import { MdaaKmsKey } from "@aws-mdaa/kms-constructs";
 
-export interface SageMakerRagModelsProps extends CaefL3ConstructProps {
+export interface SageMakerRagModelsProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class SageMakerRagModels extends CaefL3Construct {
+export class SageMakerRagModels extends MdaaL3Construct {
   readonly model?: SageMakerModel;
 
   constructor(scope: Construct, id: string, props: SageMakerRagModelsProps) {

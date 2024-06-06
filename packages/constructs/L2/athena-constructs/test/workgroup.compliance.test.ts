@@ -3,29 +3,29 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefBucket } from '@aws-caef/s3-constructs';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { Match } from "aws-cdk-lib/assertions";
-import { CaefAthenaWorkgroup, CaefAthenaWorkgroupProps, CaefAthenaWorkgroupConfigurationProps } from "../lib";
+import { MdaaAthenaWorkgroup, MdaaAthenaWorkgroupProps, MdaaAthenaWorkgroupConfigurationProps } from "../lib";
 
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
+describe( 'MDAA Construct Compliance Tests', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
-    const testBucket = CaefBucket.fromBucketName( testApp.testStack, "test-bucket", "test-bucket-name" )
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testBucket = MdaaBucket.fromBucketName( testApp.testStack, "test-bucket", "test-bucket-name" )
     const testPrefix = "athena-results"
 
-    const CaefAthenaWorkgroupConfigurationProps: CaefAthenaWorkgroupConfigurationProps =
+    const MdaaAthenaWorkgroupConfigurationProps: MdaaAthenaWorkgroupConfigurationProps =
     {
         bytesScannedCutoffPerQuery: 987654321
     }
 
-    const testContstructProps: CaefAthenaWorkgroupProps = {
+    const testContstructProps: MdaaAthenaWorkgroupProps = {
         naming: testApp.naming,
         kmsKey: testKey,
         bucket: testBucket,
@@ -33,11 +33,11 @@ describe( 'CAEF Construct Compliance Tests', () => {
         name: "test-workgroup",
         createOutputs: false,
         createParams: false,
-        workGroupConfiguration: CaefAthenaWorkgroupConfigurationProps
+        workGroupConfiguration: MdaaAthenaWorkgroupConfigurationProps
     }
 
 
-    new CaefAthenaWorkgroup( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaAthenaWorkgroup( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

@@ -6,7 +6,7 @@
 import { CustomResource, Duration, Token } from 'aws-cdk-lib';
 
 import { Construct } from 'constructs';
-import { CaefEKSCluster } from './cluster';
+import { MdaaEKSCluster } from './cluster';
 
 /**
  * Properties for KubernetesCmd.
@@ -17,7 +17,7 @@ export interface KubernetesCmdProps {
    *
    * [disable-awslint:ref-via-interface]
    */
-  readonly cluster: CaefEKSCluster;
+  readonly cluster: MdaaEKSCluster;
 
   /**
    * The command to run.
@@ -65,7 +65,7 @@ export class KubernetesCmd extends Construct {
   constructor( scope: Construct, id: string, props: KubernetesCmdProps ) {
     super( scope, id );
 
-    const provider = props.cluster.caefKubeCtlProvider
+    const provider = props.cluster.mdaaKubeCtlProvider
 
     this._resource = new CustomResource( this, 'Resource', {
       resourceType: KubernetesCmd.RESOURCE_TYPE,

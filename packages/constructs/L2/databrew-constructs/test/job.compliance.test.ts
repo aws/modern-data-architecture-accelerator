@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefDataBrewJob, CaefDataBrewJobProps } from "../lib";
+import { MdaaDataBrewJob, MdaaDataBrewJobProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-  const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+  const testApp = new MdaaTestApp()
 
 
-  const testContstructProps: CaefDataBrewJobProps = {
+  const testContstructProps: MdaaDataBrewJobProps = {
     naming: testApp.naming,
     name: "test-job",
     roleArn: "test-arn",
@@ -41,7 +41,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
     } ]
   }
 
-  new CaefDataBrewJob( testApp.testStack, "test-construct", testContstructProps )
+  new MdaaDataBrewJob( testApp.testStack, "test-construct", testContstructProps )
 
   testApp.checkCdkNagCompliance( testApp.testStack )
   const template = Template.fromStack( testApp.testStack )

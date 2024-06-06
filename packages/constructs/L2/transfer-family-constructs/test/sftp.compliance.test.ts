@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefSFTPServer, CaefSFTPServerProps } from "../lib";
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaSFTPServer, MdaaSFTPServerProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
+describe( 'MDAA Construct Compliance Tests', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
 
-    const testRole = CaefRole.fromRoleArn( testApp.testStack, "test-role", 'arn:test-partition:iam::test-account:role/test-role' )
+    const testRole = MdaaRole.fromRoleArn( testApp.testStack, "test-role", 'arn:test-partition:iam::test-account:role/test-role' )
 
-    const testContstructProps: CaefSFTPServerProps = {
+    const testContstructProps: MdaaSFTPServerProps = {
         naming: testApp.naming,
         vpcId: "test-vpc-id",
         subnetIds: [ "test-subnet-id1", "test-subnet-id2" ],
@@ -22,7 +22,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         loggingRole: testRole
     }
 
-    new CaefSFTPServer( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaSFTPServer( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

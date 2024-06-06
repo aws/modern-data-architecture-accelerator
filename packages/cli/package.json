@@ -1,7 +1,7 @@
 {
-  "name": "@aws-caef/cli",
+  "name": "@aws-mdaa/cli",
   "version": "0.41.0",
-  "description": "Compliant Analytics Environment Framework (CAEF) CLI",
+  "description": "Modern Data Architecture Accelerator (MDAA) CLI",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",
@@ -14,10 +14,10 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "bin": {
-    "caef": "./bin/caef"
+    "mdaa": "./bin/mdaa"
   },
   "scripts": {
-    "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json CaefConfigContents --include 'lib/*.ts' --include '../../node_modules/@types/**/*.ts' --include 'lib/config-schema.json' > lib/config-schema.json && cp lib/config-schema.json ../../schemas/${npm_package_name}.json",
+    "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json MdaaConfigContents --include 'lib/*.ts' --include '../../node_modules/@types/**/*.ts' --include 'lib/config-schema.json' > lib/config-schema.json && cp lib/config-schema.json ../../schemas/${npm_package_name}.json",
     "watch": "tsc -w",
     "test": "jest --passWithNoTests --coverage"
   },
@@ -36,8 +36,8 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/config": "^0.41.0",
-    "@aws-caef/devops": "^0.41.0",
+    "@aws-mdaa/config": "^0.41.0",
+    "@aws-mdaa/devops": "^0.41.0",
     "ajv": "8.11.0",
     "command-line-args": "5.2.1",
     "yaml": "1.10.2"

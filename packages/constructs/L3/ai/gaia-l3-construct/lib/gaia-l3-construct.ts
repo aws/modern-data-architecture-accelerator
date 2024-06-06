@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
+import { MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaL3Construct, MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
 
 import { FilterOrPolicy, SubscriptionFilter } from "aws-cdk-lib/aws-sns";
 import { SqsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
@@ -18,7 +18,7 @@ import { Shared } from "./shared";
 import { Direction, ModelInterface, SystemConfig } from "./shared/types";
 import { Stack } from "aws-cdk-lib";
 import { NagSuppressions } from "cdk-nag";
-import { CaefKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from "@aws-caef/kms-constructs";
+import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from "@aws-mdaa/kms-constructs";
 import { Effect, PolicyStatement, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
 
@@ -28,17 +28,17 @@ export interface GAIAProps extends SystemConfig {
   /**
    * List of admin roles which will be provided access to team resources (like KMS/Bucket)
    */
-  readonly dataAdminRoles: CaefRoleRef[]
+  readonly dataAdminRoles: MdaaRoleRef[]
 
 
 }
 
-export interface GAIAL3ConstructProps extends CaefL3ConstructProps {
+export interface GAIAL3ConstructProps extends MdaaL3ConstructProps {
   readonly gaia: GAIAProps
 }
 
 //This stack creates all the resources required for a Gen AI Factory Application
-export class GAIAL3Construct extends CaefL3Construct {
+export class GAIAL3Construct extends MdaaL3Construct {
   protected readonly props: GAIAL3ConstructProps
 
 
@@ -46,7 +46,7 @@ export class GAIAL3Construct extends CaefL3Construct {
     super( scope, id, props )
     this.props = props
 
-    const stackEncryptionKey = new CaefKmsKey(this, 'StackEncryptionKey', {
+    const stackEncryptionKey = new MdaaKmsKey(this, 'StackEncryptionKey', {
       naming: props.naming,
       createParams: false,
       createOutputs: false,

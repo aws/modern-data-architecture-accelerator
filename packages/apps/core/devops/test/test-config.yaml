@@ -3,11 +3,11 @@
 configsCodeCommitRepo: test-config-repo
 # (Optional) - The branch within the configs repo to be deployed
 configsBranch: test-branch
-# The CodeCommit repo containing the CAEF source code
+# The CodeCommit repo containing the MDAA source code
 # Pipelines will be triggered on updates to this repo
-caefCodeCommitRepo: test-caef-repo
-# (Optional) - The branch within the CAEF repo to be deployed
-caefBranch: test-caef-branch
+mdaaCodeCommitRepo: test-mdaa-repo
+# (Optional) - The branch within the MDAA repo to be deployed
+mdaaBranch: test-mdaa-branch
 # (Optional) - Install commands to be run on all stages of all pipelines
 install:
   - echo testing
@@ -50,7 +50,7 @@ pipelines:
   # Pipeline Name
   domain-test1:
     # Each pipeline will run on the Domains, Envs, and Modules specified by a set of filters passed to the
-    # -d, -e, and -m params of the CAEF CLI. These filters are effectively ANDed together.
+    # -d, -e, and -m params of the MDAA CLI. These filters are effectively ANDed together.
     # Domains which will be deployed via this pipeline
     domainFilter:
       - testdomain1

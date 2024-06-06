@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { M2MApiL3Construct, M2MApiL3ConstructProps, M2MApiProps } from '../lib/m2m-api-l3-construct';
 
 describe( 'Mandatory Prop Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
   const apiProps: M2MApiProps = {
@@ -29,7 +29,7 @@ describe( 'Mandatory Prop Tests', () => {
   const constructProps: M2MApiL3ConstructProps = {
     naming: testApp.naming,
 
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     m2mApiProps: apiProps
   }
 
@@ -661,7 +661,7 @@ describe( 'Mandatory Prop Tests', () => {
 
 describe( 'Optional Prop Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
   const apiProps: M2MApiProps = {
@@ -697,7 +697,7 @@ describe( 'Optional Prop Tests', () => {
   const constructProps: M2MApiL3ConstructProps = {
     naming: testApp.naming,
 
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     m2mApiProps: apiProps
   }
 

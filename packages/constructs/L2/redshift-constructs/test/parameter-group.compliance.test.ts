@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { Match } from "aws-cdk-lib/assertions";
-import { CaefRedshiftClusterParameterGroup, CaefRedshiftClusterParameterGroupProps } from "../lib";
+import { MdaaRedshiftClusterParameterGroup, MdaaRedshiftClusterParameterGroupProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
 
-    const testContstructProps: CaefRedshiftClusterParameterGroupProps = {
+    const testContstructProps: MdaaRedshiftClusterParameterGroupProps = {
         naming: testApp.naming,
         description: "test-param-group",
         parameters: {
@@ -20,7 +20,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         }
     }
 
-    new CaefRedshiftClusterParameterGroup( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaRedshiftClusterParameterGroup( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefParamAndOutput, CaefConstructProps } from "@aws-caef/construct"
-import { ICaefKmsKey } from "@aws-caef/kms-constructs"
-import { ICaefBucket } from "@aws-caef/s3-constructs"
+import { MdaaParamAndOutput, MdaaConstructProps } from "@aws-mdaa/construct"
+import { IMdaaKmsKey } from "@aws-mdaa/kms-constructs"
+import { IMdaaBucket } from "@aws-mdaa/s3-constructs"
 import { IResolvable, CfnTag } from "aws-cdk-lib"
 import { CfnWorkGroup, CfnWorkGroupProps } from "aws-cdk-lib/aws-athena"
 import { Construct } from "constructs"
 
 /**
- * Props for creating a CAEF Athena Workgroup.
+ * Props for creating a MDAA Athena Workgroup.
  */
-export interface CaefAthenaWorkgroupProps extends CaefConstructProps {
+export interface MdaaAthenaWorkgroupProps extends MdaaConstructProps {
     /** The KMS CMK to be used to encrypt all Athena query results */
-    readonly kmsKey: ICaefKmsKey
+    readonly kmsKey: IMdaaKmsKey
     /** The S3 Bucket where Athena query results will be stored. */
-    readonly bucket: ICaefBucket
+    readonly bucket: IMdaaBucket
     /** The S3 prefix under which results will be stored */
     readonly resultsPrefix?: string
     /**
@@ -49,7 +49,7 @@ export interface CaefAthenaWorkgroupProps extends CaefConstructProps {
      *
      * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-athena-workgroup-workgroupconfiguration.html
      */
-    readonly workGroupConfiguration?: CaefAthenaWorkgroupConfigurationProps;
+    readonly workGroupConfiguration?: MdaaAthenaWorkgroupConfigurationProps;
     /** 
      * The tags (key-value pairs) to associate with this resource.
      *
@@ -58,7 +58,7 @@ export interface CaefAthenaWorkgroupProps extends CaefConstructProps {
     readonly tags?: CfnTag[];
 }
 
-export interface CaefAthenaWorkgroupConfigurationProps {
+export interface MdaaAthenaWorkgroupConfigurationProps {
     /**
      * The upper limit (cutoff) for the amount of bytes a single query in a workgroup is allowed to scan. No default is defined.
      *
@@ -73,12 +73,12 @@ export interface CaefAthenaWorkgroupConfigurationProps {
  * Specifically, enforces KMS and bucket configurations
  * for Athena query results.
  */
-export class CaefAthenaWorkgroup extends CfnWorkGroup {
+export class MdaaAthenaWorkgroup extends CfnWorkGroup {
 
     /** Overrides specific compliance-related properties. */
-    private static setProps ( props: CaefAthenaWorkgroupProps ): CfnWorkGroupProps {
+    private static setProps ( props: MdaaAthenaWorkgroupProps ): CfnWorkGroupProps {
         const overrideProps = {
-            // Add a workgroup name using the CAEF naming implementation.
+            // Add a workgroup name using the MDAA naming implementation.
             name: props.naming.resourceName( props.name ),
             // Enforce the workgroup results configuration using the provided KMS key and S3 Bucket.
             workGroupConfiguration: {
@@ -100,10 +100,10 @@ export class CaefAthenaWorkgroup extends CfnWorkGroup {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefAthenaWorkgroupProps ) {
-        super( scope, id, CaefAthenaWorkgroup.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaAthenaWorkgroupProps ) {
+        super( scope, id, MdaaAthenaWorkgroup.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             naming: props.naming,
             resourceType: "workgroup",
             resourceId: props.name,

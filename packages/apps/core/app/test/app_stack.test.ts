@@ -4,9 +4,9 @@
  */
 
 import { AppProps, Stack } from "aws-cdk-lib";
-import { CaefCdkApp } from "../lib";
+import { MdaaCdkApp } from "../lib";
 
-class TestCaefCdkApp extends CaefCdkApp {
+class TestMdaaCdkApp extends MdaaCdkApp {
     constructor( appProps: AppProps ) {
         super( "testApp", appProps )
     }
@@ -35,14 +35,14 @@ describe( 'Test App Stack', () => {
 
     test( 'App Basic Context', () => {
         expect( () => {
-            const testApp = new TestCaefCdkApp( { context: context } )
+            const testApp = new TestMdaaCdkApp( { context: context } )
             testApp.generateStack()
         } ).not.toThrow()
     } )
 
     test( 'App Extra Context', () => {
         expect( () => {
-            const testApp = new TestCaefCdkApp( { context: { ...extraContext, ...context } } )
+            const testApp = new TestMdaaCdkApp( { context: { ...extraContext, ...context } } )
             testApp.generateStack()
         } ).not.toThrow()
     } )
@@ -50,7 +50,7 @@ describe( 'Test App Stack', () => {
     test( 'App Service Catalog Product Stack', () => {
         const serviceCatalogConfig = { service_catalog_product_config: '{"portfolio_arn":"arn:test-partition:catalog:test-region:test-account:portfolio/test-portfolio","owner":"testOwner","name":"testName","launch_role_name":"test-launch-role"}' }
         expect( () => {
-            const testApp = new TestCaefCdkApp( { context: { ...serviceCatalogConfig, ...context } } )
+            const testApp = new TestMdaaCdkApp( { context: { ...serviceCatalogConfig, ...context } } )
             testApp.generateStack()
         } ).not.toThrow()
     } )

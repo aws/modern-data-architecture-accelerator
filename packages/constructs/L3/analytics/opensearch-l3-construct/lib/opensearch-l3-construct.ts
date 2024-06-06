@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefLogGroup } from '@aws-caef/cloudwatch-constructs';
-import { CaefSecurityGroup, CaefSecurityGroupProps, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { EventBridgeHelper, EventBridgeRuleProps } from '@aws-caef/eventbridge-helper';
-import { CaefResolvableRole, CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { ICaefResourceNaming } from '@aws-caef/naming';
-import { CaefOpensearchDomain, CaefOpensearchDomainProps } from '@aws-caef/opensearch-constructs';
-import { CaefSnsTopic } from '@aws-caef/sns-constructs';
+import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
+import { MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { EventBridgeHelper, EventBridgeRuleProps } from '@aws-mdaa/eventbridge-helper';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { IMdaaResourceNaming } from '@aws-mdaa/naming';
+import { MdaaOpensearchDomain, MdaaOpensearchDomainProps } from '@aws-mdaa/opensearch-constructs';
+import { MdaaSnsTopic } from '@aws-mdaa/sns-constructs';
 import { aws_events_targets } from 'aws-cdk-lib';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { Protocol, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
@@ -64,10 +64,10 @@ export interface OpensearchDomainProps {
   /**
    * Required. ARN of Data Admin role. This role will be granted admin access to Opensearch Dashboard to update SAML configurations via web interface
    */
-  readonly dataAdminRole: CaefRoleRef
+  readonly dataAdminRole: MdaaRoleRef
   /**
    * Required. Functional Name of Opensearch Domain.
-   * This will be prefixed as per CAEF naming convention.
+   * This will be prefixed as per MDAA naming convention.
    * If resultant name is longer than 28 characters, a randomly generated ID will be suffixed to truncated name.
    */
   readonly opensearchDomainName: string
@@ -135,16 +135,16 @@ export interface SuppressionProps {
   readonly reason: string
 }
 
-export interface OpensearchL3ConstructProps extends CaefL3ConstructProps {
+export interface OpensearchL3ConstructProps extends MdaaL3ConstructProps {
   readonly domain: OpensearchDomainProps
 }
 //This stack creates all of the resources required for a Data Warehouse
-export class OpensearchL3Construct extends CaefL3Construct {
+export class OpensearchL3Construct extends MdaaL3Construct {
   protected readonly props: OpensearchL3ConstructProps
  
-  private dataAdminRole: CaefResolvableRole
-  private opensearchDomainKmsKey: CaefKmsKey
-  private logGroup: CaefLogGroup
+  private dataAdminRole: MdaaResolvableRole
+  private opensearchDomainKmsKey: MdaaKmsKey
+  private logGroup: MdaaLogGroup
 
 constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
   super( scope, id, props )
@@ -160,18 +160,18 @@ constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
     privateSubnetIds: subnetIds
   } )
 
-  const securityGroupIngress: CaefSecurityGroupRuleProps = {
+  const securityGroupIngress: MdaaSecurityGroupRuleProps = {
     ipv4: this.props.domain.securityGroupIngress.ipv4?.map( x => { return { cidr: x, port: 443, protocol: Protocol.TCP, description: `https Ingress for IPV4 CIDR ${ x }` } } ),
     sg: this.props.domain.securityGroupIngress.sg?.map( x => { return { sgId: x, port: 443, protocol: Protocol.TCP, description: `https Ingress for SG ${ x }` } } )
   }
 
-  const securityGroupProps: CaefSecurityGroupProps = {
+  const securityGroupProps: MdaaSecurityGroupProps = {
     vpc: vpc,
     naming: this.props.naming,
     ingressRules: securityGroupIngress
   }
 
-  const securityGroup = new CaefSecurityGroup( this, 'domain-sg', securityGroupProps )
+  const securityGroup = new MdaaSecurityGroup( this, 'domain-sg', securityGroupProps )
 
   this.dataAdminRole = this.props.roleHelper.resolveRoleRefWithRefId( this.props.domain.dataAdminRole, "DataAdmin" )
 
@@ -188,7 +188,7 @@ constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
   const hostedZone = ( hostedZoneProviderProps != undefined ) ?
     HostedZone.fromLookup( this.scope, `opensearch-custom-endpoint-hosted-zone-${ this.props.domain.opensearchDomainName }`, hostedZoneProviderProps ) : undefined
 
-  const domainL2Props: CaefOpensearchDomainProps = {
+  const domainL2Props: MdaaOpensearchDomainProps = {
     masterUserRoleArn: this.dataAdminRole.arn(),
     version: EngineVersion.openSearch( this.props.domain.opensearchEngineVersion ),
     opensearchDomainName: this.props.naming.props.moduleName,
@@ -208,7 +208,7 @@ constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
   }
 
   //Create the domain
-  const domain = new CaefOpensearchDomain( this.scope, `opensearch-domain-${ props.domain.opensearchDomainName }`, domainL2Props );
+  const domain = new MdaaOpensearchDomain( this.scope, `opensearch-domain-${ props.domain.opensearchDomainName }`, domainL2Props );
   if ( props.domain.eventNotifications ) {
     this.createEventNotifications( this.props.domain.opensearchDomainName, domain, this.opensearchDomainKmsKey, props.domain.eventNotifications )
   }
@@ -216,7 +216,7 @@ constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
 }
 
   private createEventNotifications( domainName: string,
-  domain: CaefOpensearchDomain,
+  domain: MdaaOpensearchDomain,
   domainKmsKey: IKey,
   eventNotifications: EventNotificationsProps ) {
 
@@ -231,7 +231,7 @@ constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
   const rule = EventBridgeHelper.createEventRule( this.scope, this.props.naming, `${ domainName }-opensearch-events`, ruleProps )
 
   //Create Topic
-  const topic = new CaefSnsTopic( this.scope, `domain-events-topic`, {
+  const topic = new MdaaSnsTopic( this.scope, `domain-events-topic`, {
     naming: this.props.naming,
     topicName: `${ domainName }-opensearch-events`,
     masterKey: domainKmsKey
@@ -254,8 +254,8 @@ constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
   rule.addTarget( target )
 }
 
-  private createOpensearchDomainKMSKey(): CaefKmsKey {
-  const kmsKey = new CaefKmsKey( this.scope, 'opensearch-domain-key', {
+  private createOpensearchDomainKMSKey(): MdaaKmsKey {
+  const kmsKey = new MdaaKmsKey( this.scope, 'opensearch-domain-key', {
     alias: "opensearch-domain",
     naming: this.props.naming,
     keyAdminRoleIds: [ this.dataAdminRole.id() ],
@@ -288,7 +288,7 @@ constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
   return kmsKey
 }
 
-  private createLogGroup( encryptionKey: CaefKmsKey, opensearchDomainName: string, naming: ICaefResourceNaming ): CaefLogGroup {
+  private createLogGroup( encryptionKey: MdaaKmsKey, opensearchDomainName: string, naming: IMdaaResourceNaming ): MdaaLogGroup {
   const logGroupProps = {
     encryptionKey: encryptionKey,
     logGroupNamePathPrefix: '/aws/opensearch-logs/',
@@ -297,7 +297,7 @@ constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
     naming: naming
   }
 
-  const logGroup = new CaefLogGroup( this.scope, `cloudwatch-log-group-${ opensearchDomainName }`, logGroupProps )
+  const logGroup = new MdaaLogGroup( this.scope, `cloudwatch-log-group-${ opensearchDomainName }`, logGroupProps )
 
   return logGroup
 }

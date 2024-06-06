@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
 import { Template } from "aws-cdk-lib/assertions";
 import { SftpUsersL3Construct, SftpUsersL3ConstructProps, UserProps } from '../lib/sftp-users-l3-construct';
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
   const userProps: UserProps = {
@@ -26,7 +26,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     users: [ userProps ],
     serverId: "test-server-id",
 
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming
   };
 

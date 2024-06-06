@@ -3,31 +3,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Match } from "aws-cdk-lib/assertions";
 import { NagSuppressions } from "cdk-nag";
-import { CaefBucket, CaefBucketProps } from "../lib";
+import { MdaaBucket, MdaaBucketProps } from "../lib";
 import { Arn } from "aws-cdk-lib";
 
-describe( 'CAEF Construct Mandatory Prop Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Mandatory Prop Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
-    const testContstructProps: CaefBucketProps = {
+    const testContstructProps: MdaaBucketProps = {
         naming: testApp.naming,
         bucketName: "test-bucket",
         encryptionKey: testKey
     }
 
-    const testConstruct = new CaefBucket( testApp.testStack, "test-construct", testContstructProps )
+    const testConstruct = new MdaaBucket( testApp.testStack, "test-construct", testContstructProps )
     NagSuppressions.addResourceSuppressions(
         testConstruct,
         [
-            { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF Data Lake does not use bucket replication.' },
-            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF Data Lake does not use bucket replication.' }
+            { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
+            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
         ],
         true
     );
@@ -149,19 +149,19 @@ describe( 'CAEF Construct Mandatory Prop Compliance Tests', () => {
     } );
 } )
 
-describe( 'CAEF Construct Optional Prop Compliance Tests', () => {
-    const testApp = new CaefTestApp( {
-        "@aws-caef/enableUniqueBucketNames": "true"
+describe( 'MDAA Construct Optional Prop Compliance Tests', () => {
+    const testApp = new MdaaTestApp( {
+        "@aws-mdaa/enableUniqueBucketNames": "true"
     } )
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
     const additionalKmsKeyArn = Arn.format( {
         service: "kms",
         resource: "test-key-id"
     }, testApp.testStack )
 
-    const testContstructProps: CaefBucketProps = {
+    const testContstructProps: MdaaBucketProps = {
         naming: testApp.naming,
         bucketName: "test-bucket",
         encryptionKey: testKey,
@@ -171,12 +171,12 @@ describe( 'CAEF Construct Optional Prop Compliance Tests', () => {
 
     }
 
-    const testConstruct = new CaefBucket( testApp.testStack, "test-construct", testContstructProps )
+    const testConstruct = new MdaaBucket( testApp.testStack, "test-construct", testContstructProps )
     NagSuppressions.addResourceSuppressions(
         testConstruct,
         [
-            { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF Data Lake does not use bucket replication.' },
-            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF Data Lake does not use bucket replication.' }
+            { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
+            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
         ],
         true
     );
@@ -316,14 +316,14 @@ describe( 'CAEF Construct Optional Prop Compliance Tests', () => {
 
 describe( 'Public Methods', () => {
     test( 'formatS3Prefix defaults', () => {
-        expect( CaefBucket.formatS3Prefix( undefined ) ).toBe( undefined )
-        expect( CaefBucket.formatS3Prefix( "/test/" ) ).toBe( "test" )
-        expect( CaefBucket.formatS3Prefix( "test/" ) ).toBe( "test" )
-        expect( CaefBucket.formatS3Prefix( "test" ) ).toBe( "test" )
+        expect( MdaaBucket.formatS3Prefix( undefined ) ).toBe( undefined )
+        expect( MdaaBucket.formatS3Prefix( "/test/" ) ).toBe( "test" )
+        expect( MdaaBucket.formatS3Prefix( "test/" ) ).toBe( "test" )
+        expect( MdaaBucket.formatS3Prefix( "test" ) ).toBe( "test" )
     } )
     test( 'formatS3Prefix optional params', () => {
-        expect( CaefBucket.formatS3Prefix( "test", true, true ) ).toBe( "/test/" )
-        expect( CaefBucket.formatS3Prefix( "test/", true, true ) ).toBe( "/test/" )
-        expect( CaefBucket.formatS3Prefix( "/test", true, true ) ).toBe( "/test/" )
+        expect( MdaaBucket.formatS3Prefix( "test", true, true ) ).toBe( "/test/" )
+        expect( MdaaBucket.formatS3Prefix( "test/", true, true ) ).toBe( "/test/" )
+        expect( MdaaBucket.formatS3Prefix( "/test", true, true ) ).toBe( "/test/" )
     } )
 } )

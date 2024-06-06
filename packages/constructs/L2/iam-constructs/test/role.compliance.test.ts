@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import { CaefRole, CaefRoleProps } from "../lib";
+import { MdaaRole, MdaaRoleProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
 
-    const testContstructProps: CaefRoleProps = {
+    const testContstructProps: MdaaRoleProps = {
         naming: testApp.naming,
         roleName: "test-role",
         assumedBy: new ServicePrincipal( "s3.amazonaws.com" ),
@@ -20,7 +20,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         createParams: false
     }
 
-    new CaefRole( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaRole( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

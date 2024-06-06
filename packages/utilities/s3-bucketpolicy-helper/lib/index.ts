@@ -17,17 +17,17 @@ export interface IRestrictObjectPrefixToRoles {
     s3Prefix: string
     /**
      * Array of Role ARNs to provide Read Access to the prefix.
-     *                        Must be resolvable to AROAs using the CaefRoleResolver class included.
+     *                        Must be resolvable to AROAs using the MdaaRoleResolver class included.
      */
     readRoleIds?: string[]
     /**
      * Array of Role ARNs to provide Read/Write access to the prefix.
-     *                        Must be resolvable to AROAs using the CaefRoleResolver class included.
+     *                        Must be resolvable to AROAs using the MdaaRoleResolver class included.
      */
     readWriteRoleIds?: string[]
     /**
      * Array of Role ARNs to provide Read/Write/Super (Permanent Delete) access to the prefix.
-     *                        Must be resolvable to AROAs using the CaefRoleResolver class included.
+     *                        Must be resolvable to AROAs using the MdaaRoleResolver class included.
      */
     readWriteSuperRoleIds?: string[]
     /**
@@ -51,7 +51,7 @@ export interface IRestrictBucketToRoles {
     s3Bucket: IBucket
     /**
      * Array of Role ARNs to provide Access to the bucket.
-     *                        Must be resolvable to AROAs using the CaefRoleResolver class included.
+     *                        Must be resolvable to AROAs using the MdaaRoleResolver class included.
      */
     roleExcludeIds: string[]
     /**

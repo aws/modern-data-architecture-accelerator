@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
-import { CaefCustomResource, CaefCustomResourceProps } from "../lib";
+import { MdaaCustomResource, MdaaCustomResourceProps } from "../lib";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const policyStatement = new PolicyStatement( {
         actions: [ "s3:GetObject" ],
@@ -19,7 +19,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         effect: Effect.ALLOW
     } )
 
-    const testContstructProps: CaefCustomResourceProps = {
+    const testContstructProps: MdaaCustomResourceProps = {
         naming: testApp.naming,
         resourceType: "testing",
         handlerRolePolicyStatements: [ policyStatement ],
@@ -31,7 +31,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         }
     }
 
-    new CaefCustomResource( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaCustomResource( testApp.testStack, "test-construct", testContstructProps )
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )
 
@@ -128,9 +128,9 @@ describe( 'CAEF Construct Compliance Tests', () => {
                 "test"
             ]
         }
-        const params = CaefCustomResource.pascalCase( testProps )
+        const params = MdaaCustomResource.pascalCase( testProps )
         console.log( params )
-        test( 'CaefCustomResource.propsToParams', () => {
+        test( 'MdaaCustomResource.propsToParams', () => {
             expect( params ).toStrictEqual( {
                 Testing: 'test',
                 TestingNum: 1,

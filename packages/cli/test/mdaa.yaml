@@ -1,0 +1,108 @@
+mdaa_version: "test_global_version"
+log_suppressions: true
+# All resources will be deployed to the default region specified in the environment or AWS configurations.
+# Can optional specify a specific AWS Region Name.
+region: default
+
+# Path to a custom naming module implementation and class name
+# naming_module: ../custom-naming
+# naming_class: ExtendedDefaultNaming
+
+# One or more tag files containing tags which will be applied to all deployed resources
+tag_configs:
+  - tags.yaml
+
+# Will be injected into CDK context as 'org', and will be used by default naming implementation
+# to prefix all resource names with the org name.
+organization: sample-org
+
+# (Optional) Custom Aspects which will be applied to all resources produced by MDAA apps
+custom_aspects:
+  - aspect_module: ./some_local_module
+    aspect_class: SomeAspectClass
+    aspect_props:
+      prop1: propvalue1
+      prop2:
+        prop2prop1: propvalue2
+
+# One or more domains may be specified. Domain name will be incorporated by default naming implementation
+# to prefix all resource names. This allows for multiple MDAA deployments into the same account
+# for separate purposes (such as a centralized data lake account hosting separate lines of business.)
+domains:
+  shared:
+    # One or more tag files containing tags which will be applied to all deployed resources for this domain
+    tag_configs:
+      - tags.yaml
+    environments:
+      dev:
+        mdaa_version: "test_env_version"
+        account: default
+        # One or more tag files containing tags which will be applied to all deployed resources for this env
+        tag_configs:
+          - tags.yaml
+        modules:
+          audit:
+            mdaa_version: "test_module_version"
+            cdk_app: "@aws-mdaa/audit"
+            # One or more tag files containing tags which will be applied to all deployed resources for this env
+            tag_configs:
+              - tags.yaml
+            app_configs:
+              - ./audit.yaml
+          audit-trail:
+            cdk_app: "@aws-mdaa/audit-trail@test_spec_version"
+            app_configs:
+              - ./audit-trail.yaml
+          glue-catalog:
+            cdk_app: "@aws-mdaa/glue-catalog"
+          datawarehouse:
+            cdk_app: "@aws-mdaa/datawarehouse"
+            app_configs:
+              - ./datawarehouse.yaml
+
+  instance1: # Example of a specific domain name.
+    environments:
+      dev:
+        account: default
+        modules:
+          roles:
+            cdk_app: "@aws-mdaa/roles"
+            app_configs:
+              - ./roles.yaml
+          datalake:
+            cdk_app: "@aws-mdaa/datalake"
+            app_configs:
+              - ./datalake.yaml
+          athena-workgroup:
+            cdk_app: "@aws-mdaa/athena-workgroup"
+            app_configs:
+              - ./athena-workgroup.yaml
+          dataops-project-test:
+            cdk_app: "@aws-mdaa/dataops-project"
+            app_configs:
+              - ./dataops/dataops-project.yaml
+          dataops-crawler-test:
+            cdk_app: "@aws-mdaa/dataops-crawler"
+            app_configs:
+              - ./dataops/dataops-crawler.yaml
+  instance2:
+    environments:
+      dev:
+        account: default
+        modules:
+          roles:
+            cdk_app: "@aws-mdaa/roles"
+            app_configs:
+              - ./roles.yaml
+          datalake:
+            cdk_app: "@aws-mdaa/datalake"
+            app_configs:
+              - ./datalake.yaml
+          athena-workgroup:
+            cdk_app: "@aws-mdaa/athena-workgroup"
+            app_configs:
+              - ./athena-workgroup.yaml
+          # test_dataops:
+          #   cdk_app: "@aws-mdaa/dataops-project"
+          #   app_configs:
+          #     - ./dataops-project.yaml

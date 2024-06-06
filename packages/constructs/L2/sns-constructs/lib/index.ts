@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
-import { ICaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Topic, TopicProps } from 'aws-cdk-lib/aws-sns';
 import { Construct } from 'constructs';
 
 /**
- * Properties for creating a CAEF SNS Topic
+ * Properties for creating a MDAA SNS Topic
  */
-export interface CaefSnsTopicProps extends CaefConstructProps {
+export interface MdaaSnsTopicProps extends MdaaConstructProps {
 
     // A name for the topic.
     readonly topicName: string;
 
     // A KMS Key, either managed by this CDK app, or imported.
-    readonly masterKey: ICaefKmsKey;
+    readonly masterKey: IMdaaKmsKey;
 
     // Enables content-based deduplication for FIFO topics.
     readonly contentBasedDeduplication?: boolean;
@@ -34,17 +34,17 @@ export interface CaefSnsTopicProps extends CaefConstructProps {
 /**
  * A construct which creates a compliant SNS Topic.
  */
-export class CaefSnsTopic extends Topic {
+export class MdaaSnsTopic extends Topic {
 
-    private static setProps ( props: CaefSnsTopicProps ): TopicProps {
+    private static setProps ( props: MdaaSnsTopicProps ): TopicProps {
         const overrideProps = {
             topicName: props.naming.resourceName( props.topicName, 80 )
         }
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefSnsTopicProps ) {
-        super( scope, id, CaefSnsTopic.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaSnsTopicProps ) {
+        super( scope, id, MdaaSnsTopic.setProps( props ) )
 
         const enforceSslStatement = new PolicyStatement( {
             sid: "EnforceSSL",
@@ -69,7 +69,7 @@ export class CaefSnsTopic extends Topic {
         enforceSslStatement.addAnyPrincipal()
         this.addToResourcePolicy( enforceSslStatement )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Topic",
                 resourceId: props.topicName,
@@ -78,7 +78,7 @@ export class CaefSnsTopic extends Topic {
             }, ...props
         },scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Topic",
                 resourceId: props.topicName,

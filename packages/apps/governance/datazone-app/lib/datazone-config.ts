@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 
 
 import * as configSchema from './config-schema.json';
-import { NamedDomainsProps } from '@aws-caef/datazone-l3-construct';
+import { NamedDomainsProps } from '@aws-mdaa/datazone-l3-construct';
 
-export interface DataZoneConfigContents extends CaefBaseConfigContents {
+export interface DataZoneConfigContents extends MdaaBaseConfigContents {
     readonly domains: NamedDomainsProps
 }
 
-export class DataZoneConfigParser extends CaefAppConfigParser<DataZoneConfigContents> {
+export class DataZoneConfigParser extends MdaaAppConfigParser<DataZoneConfigContents> {
     public domains: NamedDomainsProps
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
         this.domains = this.configContents.domains
     }

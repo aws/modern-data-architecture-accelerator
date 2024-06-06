@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { BucketInventoryProps } from '@aws-caef/audit-l3-construct';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { BucketInventoryProps } from '@aws-mdaa/audit-l3-construct';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 
 import * as configSchema from './config-schema.json';
 
-export interface AuditConfigContents extends CaefBaseConfigContents {
+export interface AuditConfigContents extends MdaaBaseConfigContents {
     /**
      * List of refs to roles which will be provided read access to the audit logs
      */
-    readRoles?: CaefRoleRef[]
+    readRoles?: MdaaRoleRef[]
     /**
      * List of source accounts from which audit logs will be accepted
      */
@@ -34,15 +34,15 @@ export interface AuditConfigContents extends CaefBaseConfigContents {
     inventories?: BucketInventoryProps[]
 }
 
-export class AuditConfigParser extends CaefAppConfigParser<AuditConfigContents> {
+export class AuditConfigParser extends MdaaAppConfigParser<AuditConfigContents> {
 
-    public readonly readRoleRefs: CaefRoleRef[]
+    public readonly readRoleRefs: MdaaRoleRef[]
     public readonly sourceAccounts: string[]
     public readonly sourceRegions: string[]
     public readonly inventoryPrefix: string
     public readonly inventories?: BucketInventoryProps[]
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.readRoleRefs = this.configContents.readRoles ? this.configContents.readRoles : []

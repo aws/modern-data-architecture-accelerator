@@ -1,146 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
-        "CaefNagSuppressionByPath": {
-            "properties": {
-                "path": {
-                    "type": "string"
-                },
-                "suppressions": {
-                    "items": {
-                        "properties": {
-                            "id": {
-                                "type": "string"
-                            },
-                            "reason": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "id",
-                            "reason"
-                        ],
-                        "type": "object"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "path",
-                "suppressions"
-            ],
-            "type": "object"
-        },
-        "CaefNagSuppressions": {
-            "properties": {
-                "by_path": {
-                    "items": {
-                        "$ref": "#/definitions/CaefNagSuppressionByPath"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "by_path"
-            ],
-            "type": "object"
-        },
-        "CaefServiceCatalogConstraintConfig": {
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "rules": {
-                    "additionalProperties": {
-                        "$ref": "#/definitions/CaefServiceCatalogConstraintRuleConfig"
-                    },
-                    "type": "object"
-                }
-            },
-            "required": [
-                "description",
-                "rules"
-            ],
-            "type": "object"
-        },
-        "CaefServiceCatalogConstraintRuleAssertionConfig": {
-            "properties": {
-                "assert": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "assert",
-                "description"
-            ],
-            "type": "object"
-        },
-        "CaefServiceCatalogConstraintRuleCondititionConfig": {
-            "type": "object"
-        },
-        "CaefServiceCatalogConstraintRuleConfig": {
-            "properties": {
-                "assertions": {
-                    "items": {
-                        "$ref": "#/definitions/CaefServiceCatalogConstraintRuleAssertionConfig"
-                    },
-                    "type": "array"
-                },
-                "condition": {
-                    "$ref": "#/definitions/CaefServiceCatalogConstraintRuleCondititionConfig"
-                }
-            },
-            "required": [
-                "assertions",
-                "condition"
-            ],
-            "type": "object"
-        },
-        "CaefServiceCatalogParameterConfig": {
-            "properties": {
-                "constraints": {
-                    "$ref": "#/definitions/CaefServiceCatalogConstraintConfig"
-                },
-                "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
-                }
-            },
-            "required": [
-                "props"
-            ],
-            "type": "object"
-        },
-        "CaefServiceCatalogProductConfig": {
-            "properties": {
-                "launch_role_name": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "owner": {
-                    "type": "string"
-                },
-                "parameters": {
-                    "additionalProperties": {
-                        "$ref": "#/definitions/CaefServiceCatalogParameterConfig"
-                    },
-                    "type": "object"
-                },
-                "portfolio_arn": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "owner",
-                "portfolio_arn"
-            ],
-            "type": "object"
-        },
         "CfnParameterProps": {
             "properties": {
                 "allowedPattern": {
@@ -202,15 +62,155 @@
                 }
             },
             "type": "object"
+        },
+        "MdaaNagSuppressionByPath": {
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "reason"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "path",
+                "suppressions"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressions": {
+            "properties": {
+                "by_path": {
+                    "items": {
+                        "$ref": "#/definitions/MdaaNagSuppressionByPath"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "by_path"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintConfig": {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "rules"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleAssertionConfig": {
+            "properties": {
+                "assert": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assert",
+                "description"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleCondititionConfig": {
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleConfig": {
+            "properties": {
+                "assertions": {
+                    "items": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                }
+            },
+            "required": [
+                "assertions",
+                "condition"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogParameterConfig": {
+            "properties": {
+                "constraints": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                },
+                "props": {
+                    "$ref": "#/definitions/CfnParameterProps"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogProductConfig": {
+            "properties": {
+                "launch_role_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "portfolio_arn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "owner",
+                "portfolio_arn"
+            ],
+            "type": "object"
         }
     },
     "properties": {
         "nag_suppressions": {
-            "$ref": "#/definitions/CaefNagSuppressions",
+            "$ref": "#/definitions/MdaaNagSuppressions",
             "description": "Nag suppressions"
         },
         "service_catalog_product_config": {
-            "$ref": "#/definitions/CaefServiceCatalogProductConfig",
+            "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
             "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
         }
     },

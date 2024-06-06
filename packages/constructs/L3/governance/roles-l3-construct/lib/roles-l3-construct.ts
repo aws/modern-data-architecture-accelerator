@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefManagedPolicy, CaefRole } from '@aws-caef/iam-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AccountPrincipal, ArnPrincipal, Condition, Effect, IPrincipal, IRole, ISamlProvider, ManagedPolicy, PolicyDocument, PolicyStatement, PrincipalWithConditions, SamlMetadataDocument, SamlPrincipal, SamlProvider, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { NagSuppressions } from 'cdk-nag';
@@ -117,7 +117,7 @@ export interface GenerateRoleProps {
     readonly suppressions?: SuppressionProps[]
 }
 
-export interface RolesL3ConstructProps extends CaefL3ConstructProps {
+export interface RolesL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * A map of federation names to federation definitions.
      */
@@ -133,30 +133,30 @@ export interface RolesL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-interface CaefPersonaAndManagedPolicies {
+interface MdaaPersonaAndManagedPolicies {
     /**
      * Map of persona names to list of managed policy names
      */
-    readonly personaToCaefPolicyMap: { [ personaName: string ]: string[] };
+    readonly personaToMdaaPolicyMap: { [ personaName: string ]: string[] };
     /**
-     * Map of managed policy-name to CAEF Managed Policy
+     * Map of managed policy-name to MDAA Managed Policy
      */
-    readonly caefPolicies: { [ policyName: string ]: CaefManagedPolicy };
+    readonly mdaaPolicies: { [ policyName: string ]: MdaaManagedPolicy };
 }
 
-export class RolesL3Construct extends CaefL3Construct {
+export class RolesL3Construct extends MdaaL3Construct {
     protected readonly props: RolesL3ConstructProps
-    protected readonly personaToCaefPolicyMap: { [ personaName: string ]: string[] }
-    protected readonly caefManagedPolicies: { [ policyName: string ]: CaefManagedPolicy }
+    protected readonly personaToMdaaPolicyMap: { [ personaName: string ]: string[] }
+    protected readonly mdaaManagedPolicies: { [ policyName: string ]: MdaaManagedPolicy }
 
     public readonly generatedRoles: { [ key: string ]: IRole }
 
     constructor( scope: Construct, id: string, props: RolesL3ConstructProps ) {
         super( scope, id, props )
         this.props = props
-        const caefPersonaAndManagedPolicies = this.createCaefManagedPolicies()
-        this.personaToCaefPolicyMap = caefPersonaAndManagedPolicies.personaToCaefPolicyMap
-        this.caefManagedPolicies = caefPersonaAndManagedPolicies.caefPolicies
+        const mdaaPersonaAndManagedPolicies = this.createMdaaManagedPolicies()
+        this.personaToMdaaPolicyMap = mdaaPersonaAndManagedPolicies.personaToMdaaPolicyMap
+        this.mdaaManagedPolicies = mdaaPersonaAndManagedPolicies.mdaaPolicies
         const federationProviders = this.createFederations()
         const generatedPolicies = this.createManagedPolicies()
         this.generatedRoles = this.createRoles( federationProviders, generatedPolicies ) || {}
@@ -191,7 +191,7 @@ export class RolesL3Construct extends CaefL3Construct {
         const generatedPolicies: { [ key: string ]: ManagedPolicy } = {}
         this.props.generatePolicies?.forEach( policyProps => {
 
-            const policy = new CaefManagedPolicy( this.scope, `policy-${ policyProps.name }`, {
+            const policy = new MdaaManagedPolicy( this.scope, `policy-${ policyProps.name }`, {
                 naming: this.props.naming,
                 managedPolicyName: policyProps.name,
                 verbatimPolicyName: policyProps.verbatimPolicyName,
@@ -209,32 +209,32 @@ export class RolesL3Construct extends CaefL3Construct {
         return generatedPolicies
     }
 
-    private createCaefManagedPolicies (): CaefPersonaAndManagedPolicies  {
-        const personaToCaefPolicyMap: { [ key: string ]: string[] } = {}
+    private createMdaaManagedPolicies (): MdaaPersonaAndManagedPolicies  {
+        const personaToMdaaPolicyMap: { [ key: string ]: string[] } = {}
         const personaConfig = this.loadPolicyConfig("../policy-statements/persona-map.yaml") as PersonaConfigProps
-        const caefPolicySet = new Set<string>()
+        const mdaaPolicySet = new Set<string>()
         Object.entries(personaConfig.personas).map( ([ basePersona, personaProps]) => {
             personaProps.forEach( policyConfigFile => {
-                caefPolicySet.add(policyConfigFile)
+                mdaaPolicySet.add(policyConfigFile)
                 if ( this.getFileName(policyConfigFile) ) {
-                    if ( !personaToCaefPolicyMap[ basePersona ] ) {
-                        personaToCaefPolicyMap[ basePersona ] = []
+                    if ( !personaToMdaaPolicyMap[ basePersona ] ) {
+                        personaToMdaaPolicyMap[ basePersona ] = []
                     }
-                    personaToCaefPolicyMap[ basePersona ].push( this.getFileName(policyConfigFile) )                
+                    personaToMdaaPolicyMap[ basePersona ].push( this.getFileName(policyConfigFile) )                
                 }
             })
         })
 
-        const caefGeneratedPolicies: { [ key: string ]: CaefManagedPolicy } = {}
-        caefPolicySet.forEach( policyConfigFile => {
+        const mdaaGeneratedPolicies: { [ key: string ]: MdaaManagedPolicy } = {}
+        mdaaPolicySet.forEach( policyConfigFile => {
             const name = this.getFileName(policyConfigFile)
             if ( name ) {
                 const managedPolicyProps = this.loadPolicyConfig(`../policy-statements/${policyConfigFile}.yaml`) as {statements?:PolicyStatement[]; suppressions? : SuppressionProps[] }
                 const policyStatements: PolicyStatement[] = ( managedPolicyProps.statements || [] ).map( statement => {
                     return PolicyStatement.fromJson( statement )
                 })
-                // Create CAEF Managed Policy
-                const caefPolicy = new CaefManagedPolicy( this.scope, `caef-managed-policy-${name}`,{
+                // Create MDAA Managed Policy
+                const mdaaPolicy = new MdaaManagedPolicy( this.scope, `mdaa-managed-policy-${name}`,{
                     naming: this.props.naming,
                     managedPolicyName: name,
                     document: new PolicyDocument({
@@ -245,18 +245,18 @@ export class RolesL3Construct extends CaefL3Construct {
                 // Add Suppression
                 if ( managedPolicyProps.suppressions ) {
                     NagSuppressions.addResourceSuppressions(
-                        caefPolicy,
+                        mdaaPolicy,
                         managedPolicyProps.suppressions,
                         true
                     );
                 }
-                caefGeneratedPolicies[ name ] = caefPolicy
+                mdaaGeneratedPolicies[ name ] = mdaaPolicy
             }
         })
 
         return {
-            personaToCaefPolicyMap: personaToCaefPolicyMap,
-            caefPolicies: caefGeneratedPolicies
+            personaToMdaaPolicyMap: personaToMdaaPolicyMap,
+            mdaaPolicies: mdaaGeneratedPolicies
         }
     }
 
@@ -267,13 +267,13 @@ export class RolesL3Construct extends CaefL3Construct {
     private createRoles ( federationProviders: { [ key: string ]: ISamlProvider }, generatedPolicies: { [ key: string ]: ManagedPolicy } ): { [ key: string ]: IRole } | undefined {
         const generatedRoles = this.props.generateRoles?.map( generateRole => {
 
-            const awsManagedPolicies = generateRole.awsManagedPolicies?.map( policyName => CaefManagedPolicy.fromAwsManagedPolicyNameWithPartition( this, policyName ) )
+            const awsManagedPolicies = generateRole.awsManagedPolicies?.map( policyName => MdaaManagedPolicy.fromAwsManagedPolicyNameWithPartition( this, policyName ) )
             const customerManagedPolicies = generateRole.customerManagedPolicies?.map( policyName => ManagedPolicy.fromManagedPolicyName( this.scope, `${ generateRole.name }-${ policyName }`, policyName ) )
             const managedPolicies = [ ...awsManagedPolicies || [], ...customerManagedPolicies || [] ]
 
             const resolvedTrustPrincipal = this.resolveTrustedPrincipal( generateRole.trustedPrincipal, federationProviders )
             const trustPrincipal = generateRole.assumeRoleTrustConditions ? new PrincipalWithConditions( resolvedTrustPrincipal, generateRole.assumeRoleTrustConditions ) : resolvedTrustPrincipal
-            const role = new CaefRole( this.scope, generateRole.name, {
+            const role = new MdaaRole( this.scope, generateRole.name, {
                 assumedBy: trustPrincipal,
                 roleName: generateRole.name,
                 managedPolicies: managedPolicies,
@@ -292,9 +292,9 @@ export class RolesL3Construct extends CaefL3Construct {
             } )
 
             if ( generateRole.basePersona ){
-                // Attach Caef Generated Policies to the roles based on the persona defined in 'persona-map.yaml'
-                this.personaToCaefPolicyMap[ generateRole.basePersona ].forEach( policyName => {
-                    this.caefManagedPolicies[ policyName ].attachToRole( role )
+                // Attach Mdaa Generated Policies to the roles based on the persona defined in 'persona-map.yaml'
+                this.personaToMdaaPolicyMap[ generateRole.basePersona ].forEach( policyName => {
+                    this.mdaaManagedPolicies[ policyName ].attachToRole( role )
                 })
             }
 

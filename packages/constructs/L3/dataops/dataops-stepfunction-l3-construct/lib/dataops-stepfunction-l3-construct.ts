@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefLogGroup } from '@aws-caef/cloudwatch-constructs';
-import { DataOpsProjectUtils } from '@aws-caef/dataops-project-l3-construct';
-import { EventBridgeHelper, EventBridgeProps } from '@aws-caef/eventbridge-helper';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
+import { DataOpsProjectUtils } from '@aws-mdaa/dataops-project-l3-construct';
+import { EventBridgeHelper, EventBridgeProps } from '@aws-mdaa/eventbridge-helper';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { aws_events_targets, Duration } from 'aws-cdk-lib';
 import { RuleTargetInput } from 'aws-cdk-lib/aws-events';
 import { Role } from 'aws-cdk-lib/aws-iam';
@@ -60,7 +60,7 @@ export interface SuppressionProps {
     readonly reason: string
 }
 
-export interface StepFunctionL3ConstructProps extends CaefL3ConstructProps {
+export interface StepFunctionL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * Dataops project name.
      */
@@ -76,7 +76,7 @@ export interface StepFunctionL3ConstructProps extends CaefL3ConstructProps {
 }
 
 
-export class StepFunctionL3Construct extends CaefL3Construct {
+export class StepFunctionL3Construct extends MdaaL3Construct {
     protected readonly props: StepFunctionL3ConstructProps
 
 
@@ -123,7 +123,7 @@ export class StepFunctionL3Construct extends CaefL3Construct {
             logGroupRetentionDays = RetentionDays.TWO_YEARS
         }
 
-        const logGroup: LogGroup = new CaefLogGroup( this, `${ stepfunctionProps.stateMachineName }-loggroup`, {
+        const logGroup: LogGroup = new MdaaLogGroup( this, `${ stepfunctionProps.stateMachineName }-loggroup`, {
             naming: this.props.naming,
             logGroupName: stepfunctionProps.stateMachineName,
             logGroupNamePathPrefix: `/aws/stepfunction/`,

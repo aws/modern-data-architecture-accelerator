@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
 
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { NifiConfigParser } from './dataops-nifi-config';
-import { NifiL3Construct, NifiL3ConstructProps } from '@aws-caef/dataops-nifi-l3-construct';
+import { NifiL3Construct, NifiL3ConstructProps } from '@aws-mdaa/dataops-nifi-l3-construct';
 
 
-export class NifiClusterCDKApp extends CaefCdkApp {
+export class NifiClusterCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "dataops-nifi", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
         const appConfig = new NifiConfigParser( stack, parserProps )
         const constructProps: NifiL3ConstructProps = {

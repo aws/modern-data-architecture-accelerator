@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConfigTransformer, CaefCustomAspect, ConfigConfigPathValueTransformer } from "@aws-caef/config";
-import { CaefL3ConstructProps } from "@aws-caef/l3-construct";
-import { CaefLambdaFunction, CaefLambdaFunctionProps, CaefLambdaRole } from "@aws-caef/lambda-constructs";
-import { CaefDefaultResourceNaming, ICaefResourceNaming } from "@aws-caef/naming";
+import { MdaaConfigTransformer, MdaaCustomAspect, ConfigConfigPathValueTransformer } from "@aws-mdaa/config";
+import { MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
+import { MdaaLambdaFunction, MdaaLambdaFunctionProps, MdaaLambdaRole } from "@aws-mdaa/lambda-constructs";
+import { MdaaDefaultResourceNaming, IMdaaResourceNaming } from "@aws-mdaa/naming";
 import { App, AppProps, Aspects, CfnMacro, Stack, Tags } from "aws-cdk-lib";
 import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { CfnLaunchRoleConstraint, CfnLaunchRoleConstraintProps, CloudFormationProduct, CloudFormationProductProps, CloudFormationTemplate, Portfolio } from "aws-cdk-lib/aws-servicecatalog";
@@ -14,26 +14,26 @@ import { AwsSolutionsChecks, HIPAASecurityChecks, NagSuppressions, NIST80053R5Ch
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'yaml';
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from "./app_config";
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from "./app_config";
 import * as configSchema from './config-schema.json';
-import { CaefProductStack, CaefProductStackProps, CaefStack } from "./stack";
+import { MdaaProductStack, MdaaProductStackProps, MdaaStack } from "./stack";
 // nosemgrep
 import assert = require( "assert" )
 
 
-export interface CaefAppProps extends AppProps {
+export interface MdaaAppProps extends AppProps {
     readonly appConfigRaw?: { [ key: string ]: any }
     readonly useBootstrap?: boolean
 }
 
 /**
- * Base class for CAEF CDK Apps. Provides consistent app behaviours in 
+ * Base class for MDAA CDK Apps. Provides consistent app behaviours in 
  * configuration parsing, stack generation, resource naming, 
  * and CDK Nag compliance configurations.
  * Reads all required inputs as CDK Context.
  */
-export abstract class CaefCdkApp extends App {
-    private readonly naming: ICaefResourceNaming
+export abstract class MdaaCdkApp extends App {
+    private readonly naming: IMdaaResourceNaming
     protected readonly moduleName: string
     private readonly appConfigRaw: { [ key: string ]: any }
     private readonly tags: { [ name: string ]: string }
@@ -43,8 +43,8 @@ export abstract class CaefCdkApp extends App {
     protected readonly deployRegion?: string
     protected readonly deployAccount?: string
     private readonly useBootstrap: boolean;
-    private readonly stack: CaefStack
-    private readonly baseConfigParser: CaefAppConfigParser<CaefBaseConfigContents>;
+    private readonly stack: MdaaStack
+    private readonly baseConfigParser: MdaaAppConfigParser<MdaaBaseConfigContents>;
     private readonly additionalAccounts?: string[]
     private readonly additionalAccountStacks: { [ AccountRecovery: string ]: Stack; };
     /**
@@ -52,7 +52,7 @@ export abstract class CaefCdkApp extends App {
      * @param app_name - Name of the application
      * @param props - CDK AppProps (default empty). Not typically required if running using the CDK cli, but useful for direct instantiation.
      */
-    constructor( app_name: string, props: CaefAppProps ) {
+    constructor( app_name: string, props: MdaaAppProps ) {
         super( props )
 
         this.node.setContext( "aws-cdk:enableDiffNoFail", true )
@@ -67,11 +67,22 @@ export abstract class CaefCdkApp extends App {
         this.env = this.node.tryGetContext( "env" ).toLowerCase()
         this.domain = this.node.tryGetContext( "domain" ).toLowerCase()
         this.moduleName = this.node.tryGetContext( 'module_name' ).toLowerCase()
-        this.tags = {
-            caef_org: this.org,
-            caef_env: this.env,
-            caef_domain: this.domain,
-            caef_module_name: this.moduleName
+        if(this.node.tryGetContext("@aws-mdaa/legacyCaefTags")) {
+            this.tags = {
+                caef_org: this.org,
+                caef_env: this.env,
+                caef_domain: this.domain,
+                caef_module_name: this.moduleName,
+                caef_cdk_app: app_name
+            }
+        } else {
+            this.tags = {
+                mdaa_org: this.org,
+                mdaa_env: this.env,
+                mdaa_domain: this.domain,
+                mdaa_module_name: this.moduleName,
+                mdaa_cdk_app: app_name
+            }
         }
 
         if ( props.useBootstrap != undefined ) {
@@ -87,8 +98,7 @@ export abstract class CaefCdkApp extends App {
         // nosemgrep
         const pjson = require( "../package.json" )
         const packageVersion = pjson.version.replace( /\.\d*$/, ".x" )
-        console.log( `Running CAEF CDK App ${ app_name } Version: ${ packageVersion }` );
-        this.tags[ 'caef_cdk_app' ] = `${ app_name }`
+        console.log( `Running MDAA CDK App ${ app_name } Version: ${ packageVersion }` );
 
         Aspects.of( this ).add( new AwsSolutionsChecks( { verbose: true, logIgnores: logSuppressions } ) )
         Aspects.of( this ).add( new NIST80053R5Checks( { verbose: true, logIgnores: logSuppressions } ) )
@@ -117,7 +127,7 @@ export abstract class CaefCdkApp extends App {
             additionalAccountStack.addDependency( this.stack )
             return [ account, additionalAccountStack ]
         } ) || [] )
-        this.baseConfigParser = new CaefAppConfigParser<CaefBaseConfigContents>( this.stack, this.getConfigParserProps(), configSchema,undefined,true )
+        this.baseConfigParser = new MdaaAppConfigParser<MdaaBaseConfigContents>( this.stack, this.getConfigParserProps(), configSchema,undefined,true )
         
     }
 
@@ -159,14 +169,14 @@ export abstract class CaefCdkApp extends App {
             const parsedYaml = yaml.parse( fs.readFileSync( fileName.trim(), 'utf8' ) )
             //Resolve relative paths in parsedYaml
             const baseDir = path.dirname( fileName.trim() )
-            const pathResolvedYaml = new CaefConfigTransformer( new ConfigConfigPathValueTransformer( baseDir ) ).transformConfig( parsedYaml )
+            const pathResolvedYaml = new MdaaConfigTransformer( new ConfigConfigPathValueTransformer( baseDir ) ).transformConfig( parsedYaml )
             configRaw = _.mergeWith( configRaw, pathResolvedYaml, customizer )
         } );
 
         return configRaw
     }
 
-    private configNamingModule ( namingModule: string, namingClass: string ): ICaefResourceNaming {
+    private configNamingModule ( namingModule: string, namingClass: string ): IMdaaResourceNaming {
         if ( namingModule ) {
             // nosemgrep
             const naming_module_path = namingModule.startsWith( "./" ) ? path.resolve( namingModule ) : namingModule
@@ -180,7 +190,7 @@ export abstract class CaefCdkApp extends App {
                 moduleName: this.moduleName
             } )
         } else {
-            return new CaefDefaultResourceNaming( {
+            return new MdaaDefaultResourceNaming( {
                 cdkNode: this.node,
                 org: this.org,
                 env: this.env,
@@ -193,12 +203,12 @@ export abstract class CaefCdkApp extends App {
     private applyCustomAspects () {
         const customAspectsContextString: string = this.node.tryGetContext( 'custom_aspects' )
         if ( customAspectsContextString ) {
-            const customAspects: CaefCustomAspect[] = JSON.parse( customAspectsContextString )
+            const customAspects: MdaaCustomAspect[] = JSON.parse( customAspectsContextString )
             customAspects.forEach( customAspect => this.applyCustomAspect( customAspect ) )
         }
     }
 
-    private applyCustomAspect ( customAspect: CaefCustomAspect ) {
+    private applyCustomAspect ( customAspect: MdaaCustomAspect ) {
         const customAspectModulePath = customAspect.aspect_module.startsWith( "./" ) ? path.resolve( customAspect.aspect_module ) : customAspect.aspect_module
         console.log( `Applying custom aspect: ${ customAspect.aspect_module }:${ customAspect.aspect_class }` )
         // nosemgrep
@@ -240,11 +250,11 @@ export abstract class CaefCdkApp extends App {
     }
 
     /**
-     * Implemented in derived CAEF App classes in order to generate CDK scopes.
+     * Implemented in derived MDAA App classes in order to generate CDK scopes.
      */
-    protected abstract subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ): void
+    protected abstract subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ): void
 
-    private createEmptyStack (): CaefStack {
+    private createEmptyStack (): MdaaStack {
         const stackName = this.naming.stackName()
         const stackProps = {
             naming: this.naming,
@@ -254,18 +264,18 @@ export abstract class CaefCdkApp extends App {
                 account: this.deployAccount
             }
         }
-        return new CaefStack( this, stackName, stackProps )
+        return new MdaaStack( this, stackName, stackProps )
     }
 
-    private createEmptyProductStack ( stack: CaefStack ): CaefProductStack {
+    private createEmptyProductStack ( stack: MdaaStack ): MdaaProductStack {
 
-        const productStackProps: CaefProductStackProps = {
+        const productStackProps: MdaaProductStackProps = {
             naming: this.naming,
             useBootstrap: this.useBootstrap,
             moduleName: this.moduleName
         }
-        const productStack = new CaefProductStack( stack, `${ stack.stackName }-product`, productStackProps )
-        const provisioningMacroFunctionRole = new CaefLambdaRole( stack, "provisioning-macro-function-role", {
+        const productStack = new MdaaProductStack( stack, `${ stack.stackName }-product`, productStackProps )
+        const provisioningMacroFunctionRole = new MdaaLambdaRole( stack, "provisioning-macro-function-role", {
             description: 'Provisioning Macro Role',
             roleName: "prov-macro",
             naming: this.naming,
@@ -273,7 +283,7 @@ export abstract class CaefCdkApp extends App {
             createParams: false,
             createOutputs: false
         } )
-        const provisioningMacroFunctionProps: CaefLambdaFunctionProps = {
+        const provisioningMacroFunctionProps: MdaaLambdaFunctionProps = {
             runtime: Runtime.PYTHON_3_12,
             code: Code.fromAsset( `${ __dirname }/../src/python/provisioning_macro` ),
             handler: "provisioning_macro.lambda_handler",
@@ -281,7 +291,7 @@ export abstract class CaefCdkApp extends App {
             role: provisioningMacroFunctionRole,
             naming: this.naming
         }
-        const provisioningMacroFunction = new CaefLambdaFunction( stack, "provisioning-macro-function", provisioningMacroFunctionProps )
+        const provisioningMacroFunction = new MdaaLambdaFunction( stack, "provisioning-macro-function", provisioningMacroFunctionProps )
         NagSuppressions.addResourceSuppressions(
             provisioningMacroFunction,
             [
@@ -326,7 +336,7 @@ export abstract class CaefCdkApp extends App {
         } )
     }
 
-    private createL3ConstructProps ( stack: CaefStack ): CaefL3ConstructProps {
+    private createL3ConstructProps ( stack: MdaaStack ): MdaaL3ConstructProps {
         return {
             naming: this.naming,
             roleHelper: stack.roleHelper,
@@ -335,9 +345,9 @@ export abstract class CaefCdkApp extends App {
     }
     /**
      * 
-     * @returns Astandard set of CAEF Stack Props for use in Caef App Configs
+     * @returns Astandard set of MDAA Stack Props for use in Mdaa App Configs
      */
-    private getConfigParserProps (): CaefAppConfigParserProps {
+    private getConfigParserProps (): MdaaAppConfigParserProps {
         return {
             org: this.org,
             domain: this.domain,

@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { NagSuppressions } from "cdk-nag";
-import { CaefLambdaFunction, CaefLambdaRole, CaefLambdaFunctionProps } from "../lib";
+import { MdaaLambdaFunction, MdaaLambdaRole, MdaaLambdaFunctionProps } from "../lib";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testLambdaRole = CaefLambdaRole.fromRoleArn( testApp.testStack, "test-role", "arn:test-partition:iam:test-region:test-account:role/test-role" )
+    const testLambdaRole = MdaaLambdaRole.fromRoleArn( testApp.testStack, "test-role", "arn:test-partition:iam:test-region:test-account:role/test-role" )
 
-    const testContstructProps: CaefLambdaFunctionProps = {
+    const testContstructProps: MdaaLambdaFunctionProps = {
         naming: testApp.naming,
         functionName: "test-function",
         role: testLambdaRole,
@@ -24,7 +24,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         handler: "index.handler"
     }
 
-    const testConstruct = new CaefLambdaFunction( testApp.testStack, "test-construct", testContstructProps )
+    const testConstruct = new MdaaLambdaFunction( testApp.testStack, "test-construct", testContstructProps )
     NagSuppressions.addResourceSuppressions(
         testConstruct,
         [

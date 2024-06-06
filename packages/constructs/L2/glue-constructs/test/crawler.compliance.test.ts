@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefCfnCrawler, CaefCfnCrawlerProps } from "../lib";
+import { MdaaCfnCrawler, MdaaCfnCrawlerProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testContstructProps: CaefCfnCrawlerProps = {
+    const testContstructProps: MdaaCfnCrawlerProps = {
         naming: testApp.naming,
         crawlerSecurityConfiguration: "test-security-config",
         name: "test-crawler",
@@ -20,7 +20,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         createParams: false
     }
 
-    new CaefCfnCrawler( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaCfnCrawler( testApp.testStack, "test-construct", testContstructProps )
 
 
     testApp.checkCdkNagCompliance( testApp.testStack )

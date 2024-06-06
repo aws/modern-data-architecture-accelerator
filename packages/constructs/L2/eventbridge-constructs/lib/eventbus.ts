@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { Duration, Stack } from "aws-cdk-lib";
 import { EventBus, EventBusProps, IEventBus } from "aws-cdk-lib/aws-events";
 import { Effect, PolicyStatement, PrincipalBase } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 
-export interface CaefEventBusProps extends CaefConstructProps {
+export interface MdaaEventBusProps extends MdaaConstructProps {
     /**
     * Unique name that defines the event bus
     */
@@ -25,18 +25,18 @@ export interface CaefEventBusProps extends CaefConstructProps {
 }
 
 /**
- * Interface for ICaefEventBus.
+ * Interface for IMdaaEventBus.
  */
-export interface ICaefEventBus extends IEventBus {
+export interface IMdaaEventBus extends IEventBus {
 
 }
 
 /**
  * Construct for a compliant CloudWatch Log Group
  */
-export class CaefEventBus extends EventBus implements ICaefEventBus {
+export class MdaaEventBus extends EventBus implements IMdaaEventBus {
 
-    private static setProps ( props: CaefEventBusProps ): EventBusProps {
+    private static setProps ( props: MdaaEventBusProps ): EventBusProps {
 
         const overrideProps = {
             eventBusName: props.naming.resourceName( props.eventBusName, 48 )
@@ -44,8 +44,8 @@ export class CaefEventBus extends EventBus implements ICaefEventBus {
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefEventBusProps ) {
-        super( scope, id, CaefEventBus.setProps( props ) );
+    constructor( scope: Construct, id: string, props: MdaaEventBusProps ) {
+        super( scope, id, MdaaEventBus.setProps( props ) );
 
         if ( props.archiveRetention ) {
             this.archive( `archive`, {
@@ -69,7 +69,7 @@ export class CaefEventBus extends EventBus implements ICaefEventBus {
 
             this.addToResourcePolicy( policyStatement );
         }
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "eventbus",
                 resourceId: props.eventBusName,
@@ -78,7 +78,7 @@ export class CaefEventBus extends EventBus implements ICaefEventBus {
             }, ...props
         },scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "eventbus",
                 resourceId: props.eventBusName,

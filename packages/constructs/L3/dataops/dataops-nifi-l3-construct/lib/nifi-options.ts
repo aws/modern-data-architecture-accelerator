@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
+import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
 
 export type NodeSize = "SMALL" | "MEDIUM" | "LARGE" | "XLARGE" | "2XLARGE"
 
@@ -68,7 +68,7 @@ export interface NifiClusterOptions extends NifiIdentityAuthorizationOptions, Ni
      * Egress rules to be added to all Nifi cluster security groups.
      * These may also be specified globally.
      */
-    readonly securityGroupEgressRules?: CaefSecurityGroupRuleProps
+    readonly securityGroupEgressRules?: MdaaSecurityGroupRuleProps
 
     /**
      * AWS managed policies which will be granted to the Nifi cluster role for access to AWS services.

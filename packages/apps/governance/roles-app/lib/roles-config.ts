@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { FederationProps, GenerateManagedPolicyWithNameProps, GenerateRoleProps, GenerateRoleWithNameProps, SuppressionProps } from '@aws-caef/roles-l3-construct';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { FederationProps, GenerateManagedPolicyWithNameProps, GenerateRoleProps, GenerateRoleWithNameProps, SuppressionProps } from '@aws-mdaa/roles-l3-construct';
 import { Schema } from 'ajv';
 import { PolicyDocument } from 'aws-cdk-lib/aws-iam';
 import { Stack } from 'aws-cdk-lib';
@@ -16,7 +16,7 @@ export interface GenerateManagedPolicyConfig {
     readonly verbatimPolicyName?: boolean
 }
 
-export interface RolesConfigContents extends CaefBaseConfigContents {
+export interface RolesConfigContents extends MdaaBaseConfigContents {
     /**
      * List of roles to generate.
      */
@@ -31,11 +31,11 @@ export interface RolesConfigContents extends CaefBaseConfigContents {
     readonly federations?: { [ key: string ]: FederationProps };
 }
 
-export class RolesConfigParser extends CaefAppConfigParser<RolesConfigContents> {
+export class RolesConfigParser extends MdaaAppConfigParser<RolesConfigContents> {
     public readonly federations?: { [ key: string ]: FederationProps }
     public readonly generateRoles?: GenerateRoleWithNameProps[]
     public readonly generatePolicies?: GenerateManagedPolicyWithNameProps[]
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.federations = this.configContents.federations

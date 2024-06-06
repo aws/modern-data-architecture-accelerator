@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 
 import { Schema } from 'ajv';
 import { PortfolioProps } from 'aws-cdk-lib/aws-servicecatalog';
@@ -14,16 +14,16 @@ import * as configSchema from './config-schema.json';
 export interface PortfolioConfig {
     readonly providerName: string,
     readonly description?: string,
-    readonly access?: CaefRoleRef[]
+    readonly access?: MdaaRoleRef[]
 }
 
-export interface CaefServiceCatalogProductConfigContents extends CaefBaseConfigContents {
+export interface MdaaServiceCatalogProductConfigContents extends MdaaBaseConfigContents {
     readonly portfolios: { [ portfolioName: string ]: PortfolioConfig }
 }
 
-export class CaefServiceCatalogProductConfigParser extends CaefAppConfigParser<CaefServiceCatalogProductConfigContents> {
+export class MdaaServiceCatalogProductConfigParser extends MdaaAppConfigParser<MdaaServiceCatalogProductConfigContents> {
     public readonly portfolioProps: PortfolioProps[]
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
         this.portfolioProps = Object.entries( this.configContents.portfolios ).map( nameAndProps => {
             return { ...{ displayName: nameAndProps[ 0 ] }, ...nameAndProps[ 1 ] }

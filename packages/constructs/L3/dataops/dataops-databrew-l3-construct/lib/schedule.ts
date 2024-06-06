@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { CfnSchedule, CfnScheduleProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
 /**
- * Properties for creating a Caef Databrew Schedule
+ * Properties for creating a Mdaa Databrew Schedule
  */
-export interface CaefDataBrewScheduleProps extends CaefConstructProps {
+export interface MdaaDataBrewScheduleProps extends MdaaConstructProps {
 
     // 	The name of the schedule.
     readonly name: string;
@@ -26,19 +26,19 @@ export interface CaefDataBrewScheduleProps extends CaefConstructProps {
 /**
  * A construct which creates a compliant Databrew Schedule.
  */
-export class CaefDataBrewSchedule extends CfnSchedule {
+export class MdaaDataBrewSchedule extends CfnSchedule {
 
-    private static setProps ( props: CaefDataBrewScheduleProps ): CfnScheduleProps {
+    private static setProps ( props: MdaaDataBrewScheduleProps ): CfnScheduleProps {
         const overrideProps = {
             name: props.naming.resourceName( props.name, 80 )
         }
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataBrewScheduleProps ) {
-        super( scope, id, CaefDataBrewSchedule.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataBrewScheduleProps ) {
+        super( scope, id, MdaaDataBrewSchedule.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Schedule",
                 resourceId: props.name,

@@ -3,34 +3,34 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { DomainProps } from "@aws-caef/sm-studio-domain-l3-construct";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { DomainProps } from "@aws-mdaa/sm-studio-domain-l3-construct";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { InventoryDefinition } from '../../../datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct';
 import { DataScienceTeamL3Construct, DataScienceTeamL3ConstructProps } from "../lib";
 
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
 
-    const teamExecutionRoleRef: CaefRoleRef = {
+    const teamExecutionRoleRef: MdaaRoleRef = {
         arn: "arn:test-partition:iam::test-account:role/team-execution-role",
         name: "team-execution-role"
     }
 
-    const dataAdminRoleRef: CaefRoleRef = {
+    const dataAdminRoleRef: MdaaRoleRef = {
         arn: "arn:test-partition:iam::test-account:role/test-role",
         name: "test-role"
     }
 
-    const dataScientistRoleRef: CaefRoleRef = {
+    const dataScientistRoleRef: MdaaRoleRef = {
         arn: "arn:test-partition:iam::test-account:role/test-role",
         name: "test-role"
     }
 
-    const immutableDataScientistRoleRef: CaefRoleRef = {
+    const immutableDataScientistRoleRef: MdaaRoleRef = {
         arn: "arn:test-partition:iam::test-account:role/test-role2",
         name: "test-role2",
         immutable: true
@@ -42,7 +42,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         destinationAccount: "test-account",
         destinationPrefix: "test-destination-prefix",
     }
-    const roleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+    const roleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
     const studioDomainProps: DomainProps = {
         authMode: "SSO",
         vpcId: "test-vpc",

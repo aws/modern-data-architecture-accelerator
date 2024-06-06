@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefDevopsCDKApp } from "../lib/devops";
-new CaefDevopsCDKApp().generateStack()
+import { MdaaDevopsCDKApp } from "../lib/devops";
+new MdaaDevopsCDKApp().generateStack()

@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DataOpsProjectUtils } from '@aws-caef/dataops-project-l3-construct';
-import { EventBridgeHelper } from '@aws-caef/eventbridge-helper';
-import { CaefCfnJob } from '@aws-caef/glue-constructs';
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefBucket } from '@aws-caef/s3-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { DataOpsProjectUtils } from '@aws-mdaa/dataops-project-l3-construct';
+import { EventBridgeHelper } from '@aws-mdaa/eventbridge-helper';
+import { MdaaCfnJob } from '@aws-mdaa/glue-constructs';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CfnJob } from 'aws-cdk-lib/aws-glue';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 import * as path from 'path';
 import { SnsTopic } from 'aws-cdk-lib/aws-events-targets';
-import { CaefSnsTopic } from '@aws-caef/sns-constructs';
+import { MdaaSnsTopic } from '@aws-mdaa/sns-constructs';
 import { Rule } from 'aws-cdk-lib/aws-events';
 import {Fn } from 'aws-cdk-lib'
 
@@ -109,7 +109,7 @@ export interface JobConfig {
 }
 
 
-export interface GlueJobL3ConstructProps extends CaefL3ConstructProps {
+export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * Role which will be used to deploy the Job code. Should be obtained from the DataOps Project
      */
@@ -138,7 +138,7 @@ export interface GlueJobL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-export class GlueJobL3Construct extends CaefL3Construct {
+export class GlueJobL3Construct extends MdaaL3Construct {
     protected readonly props: GlueJobL3ConstructProps
 
 
@@ -146,8 +146,8 @@ export class GlueJobL3Construct extends CaefL3Construct {
         super( scope, id, props )
         this.props = props
 
-        const deploymentRole = CaefRole.fromRoleArn( this.scope, `deployment-role`, this.props.deploymentRoleArn )
-        const projectBucket = CaefBucket.fromBucketName( this.scope, `project-bucket`, this.props.projectBucketName )
+        const deploymentRole = MdaaRole.fromRoleArn( this.scope, `deployment-role`, this.props.deploymentRoleArn )
+        const projectBucket = MdaaBucket.fromBucketName( this.scope, `project-bucket`, this.props.projectBucketName )
 
         // Build our jobs!
         const allJobs = this.props.jobConfigs
@@ -237,7 +237,7 @@ export class GlueJobL3Construct extends CaefL3Construct {
 
             defaultArguments[ "--TempDir" ] = `s3://${ this.props.projectBucketName }/temp/jobs/${ jobName }`
 
-            const job = new CaefCfnJob( this.scope, `${ jobName }-job`, {
+            const job = new MdaaCfnJob( this.scope, `${ jobName }-job`, {
                 command: {
                     name: jobConfig.command.name,
                     pythonVersion: jobConfig.command.pythonVersion,
@@ -264,7 +264,7 @@ export class GlueJobL3Construct extends CaefL3Construct {
                 DataOpsProjectUtils.createProjectSSMParam( this.scope, this.props.naming, this.props.projectName, `job/name/${ jobName }`, job.name )
 
                 const eventRule = this.createJobMonitoringEventRule( `${ jobName }-monitor`, [ job.name ] )
-                eventRule.addTarget( new SnsTopic( CaefSnsTopic.fromTopicArn( this.scope, `${ jobName }-topic`, this.props.notificationTopicArn ) ) );
+                eventRule.addTarget( new SnsTopic( MdaaSnsTopic.fromTopicArn( this.scope, `${ jobName }-topic`, this.props.notificationTopicArn ) ) );
             }
         } )
         //CDK S3 Deployment automatically adds inline policy to project deployment role.

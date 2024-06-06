@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { Duration } from "aws-cdk-lib";
 import { ISecurityGroup, ISubnet } from "aws-cdk-lib/aws-ec2";
 import { CapacityProviderStrategy, CloudMapOptions, DeploymentCircuitBreaker, DeploymentController, FargatePlatformVersion, FargateService, FargateServiceProps, ICluster, PropagatedTagSource, ServiceConnectProps, TaskDefinition } from "aws-cdk-lib/aws-ecs";
@@ -14,7 +14,7 @@ import { Construct } from "constructs";
  * Properties for creating a Compliance ECS fargateservice
  */
 
-export interface CaefECSFargateServiceProps extends CaefConstructProps {
+export interface MdaaECSFargateServiceProps extends MdaaConstructProps {
     /**
      * The task definition to use for tasks in the service.
      */
@@ -125,9 +125,9 @@ export interface CaefECSFargateServiceProps extends CaefConstructProps {
 /**
  * A construct for creating a compliant ECS fargateservice resource.
  */
-export class CaefECSFargateService extends FargateService {
+export class MdaaECSFargateService extends FargateService {
 
-    private static setProps ( props: CaefECSFargateServiceProps ): FargateServiceProps {
+    private static setProps ( props: MdaaECSFargateServiceProps ): FargateServiceProps {
         const overrideProps = {
             serviceName: props.naming.resourceName( props.serviceName, 255 ),
             assignPublicIp: false,
@@ -142,10 +142,10 @@ export class CaefECSFargateService extends FargateService {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefECSFargateServiceProps ) {
-        super( scope, id, CaefECSFargateService.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaECSFargateServiceProps ) {
+        super( scope, id, MdaaECSFargateService.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "fargateservice",
                 resourceId: props.serviceName,
@@ -153,7 +153,7 @@ export class CaefECSFargateService extends FargateService {
                 value: this.serviceArn
             }, ...props
         },scope )
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "fargateservice",
                 resourceId: props.serviceName,

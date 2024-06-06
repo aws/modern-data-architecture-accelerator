@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey, CaefKmsKeyProps } from "../lib";
+import { MdaaKmsKey, MdaaKmsKeyProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testContstructProps: CaefKmsKeyProps = {
+    const testContstructProps: MdaaKmsKeyProps = {
         naming: testApp.naming,
         alias: 'test-key',
         keyUserRoleIds: [ 'test-user-id1', 'test-user-id2' ],
@@ -19,7 +19,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         createParams: false
     }
 
-    new CaefKmsKey( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaKmsKey( testApp.testStack, "test-construct", testContstructProps )
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )
 

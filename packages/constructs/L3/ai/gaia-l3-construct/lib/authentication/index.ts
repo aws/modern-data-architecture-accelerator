@@ -6,9 +6,9 @@ import * as ssm from "aws-cdk-lib/aws-ssm";
 import {Construct} from "constructs";
 import {SupportedAuthTypes, SystemConfig} from "../shared/types";
 import {NagSuppressions} from "cdk-nag";
-import {CaefConstructProps} from "@aws-caef/construct";
+import {MdaaConstructProps} from "@aws-mdaa/construct";
 
-export interface AuthenticationProps extends CaefConstructProps {
+export interface AuthenticationProps extends MdaaConstructProps {
   readonly config: SystemConfig;
 }
 

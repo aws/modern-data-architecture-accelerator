@@ -6,7 +6,7 @@ The SageMaker Studio Domain CDK application is used to configure and deploy a se
 
 ## Deployed Resources and Compliance Details
 
-![studio-domain](../../../constructs/L3/datascience/sm-studio-domain-l3-construct/docs/studio-domain.png)
+![studio-domain](../../../constructs/L3/ai/sm-studio-domain-l3-construct/docs/studio-domain.png)
 
 **Studio EFS KMS CMK** - The KMS CMK which will be used to encrypt the SageMaker Domain EFS volume (created automatically by SageMaker).
   

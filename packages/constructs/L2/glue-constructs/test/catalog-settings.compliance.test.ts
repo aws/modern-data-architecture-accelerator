@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefCatalogSettings, CaefCatalogSettingsProps } from "../lib";
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaCatalogSettings, MdaaCatalogSettingsProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
-    const testContstructProps: CaefCatalogSettingsProps = {
+    const testContstructProps: MdaaCatalogSettingsProps = {
         naming: testApp.naming,
         catalogId: "test-catalog-id",
         catalogKmsKey: testKey
     }
 
-    new CaefCatalogSettings( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaCatalogSettings( testApp.testStack, "test-construct", testContstructProps )
 
 
     testApp.checkCdkNagCompliance( testApp.testStack )

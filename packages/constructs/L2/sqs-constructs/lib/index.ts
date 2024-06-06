@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefParamAndOutput, CaefConstructProps } from '@aws-caef/construct';
-import { ICaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct';
+import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DeadLetterQueue, DeduplicationScope, FifoThroughputLimit, Queue, QueueEncryption, QueueProps } from 'aws-cdk-lib/aws-sqs';
@@ -12,9 +12,9 @@ import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 
 /**
- * Properties for creating a CAEF SQS Queue
+ * Properties for creating a MDAA SQS Queue
  */
-export interface CaefSqsQueueProps extends CaefConstructProps {
+export interface MdaaSqsQueueProps extends MdaaConstructProps {
 
     /**
      * A name for the queue.
@@ -93,7 +93,7 @@ export interface CaefSqsQueueProps extends CaefConstructProps {
      *
      * @default If encryption is set to KMS and not specified, a key will be created.
      */
-    readonly encryptionMasterKey: ICaefKmsKey
+    readonly encryptionMasterKey: IMdaaKmsKey
     /**
      * The length of time that Amazon SQS reuses a data key before calling KMS again.
      *
@@ -159,17 +159,17 @@ export interface CaefSqsQueueProps extends CaefConstructProps {
  * A construct which creates a compliance SQS queue.
  * Specifically, we ensure the Queue will be encrypted through use of a KMS key.
  */
-export class CaefSqsQueue extends Queue {
+export class MdaaSqsQueue extends Queue {
 
-    private static setProps ( props: CaefSqsQueueProps ): QueueProps {
+    private static setProps ( props: MdaaSqsQueueProps ): QueueProps {
         const overrideProps = {
             encyption: QueueEncryption.KMS,
             queueName: props.naming.resourceName( props.queueName, 80 )
         }
         return { ...props, ...overrideProps }
     }
-    constructor( scope: Construct, id: string, props: CaefSqsQueueProps ) {
-        super( scope, id, CaefSqsQueue.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaSqsQueueProps ) {
+        super( scope, id, MdaaSqsQueue.setProps( props ) )
         const enforceSslStatement = new PolicyStatement( {
             sid: "EnforceSSL",
             effect: Effect.DENY,
@@ -184,7 +184,7 @@ export class CaefSqsQueue extends Queue {
         enforceSslStatement.addAnyPrincipal()
         this.addToResourcePolicy( enforceSslStatement )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "queue",
                 resourceId: props.queueName,
@@ -193,7 +193,7 @@ export class CaefSqsQueue extends Queue {
             }, ...props
         },scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
 
                 resourceType: "queue",
@@ -203,7 +203,7 @@ export class CaefSqsQueue extends Queue {
             }, ...props
         },scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "queue",
                 resourceId: props.queueName,
@@ -218,8 +218,8 @@ export class CaefSqsQueue extends Queue {
  * A construct for a complaince SQS queue which is suitable for use as a DeadLetterQueue.
  * Specifically, we suppress the Nag which requires a Queue to have a DLQ.
  */
-export class CaefSqsDeadLetterQueue extends CaefSqsQueue {
-    constructor( scope: Construct, id: string, props: CaefSqsQueueProps ) {
+export class MdaaSqsDeadLetterQueue extends MdaaSqsQueue {
+    constructor( scope: Construct, id: string, props: MdaaSqsQueueProps ) {
         super( scope, id, props )
         NagSuppressions.addResourceSuppressions(
             this,

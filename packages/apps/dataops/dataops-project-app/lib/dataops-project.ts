@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps } from '@aws-caef/dataops-project-l3-construct';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps } from '@aws-mdaa/dataops-project-l3-construct';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { DataOpsProjectConfigParser } from './dataops-project-config';
 
 
-export class DataOpsProjectCDKApp extends CaefCdkApp {
+export class DataOpsProjectCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "dataops-project", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
 
         const appConfig = new DataOpsProjectConfigParser( stack, parserProps )

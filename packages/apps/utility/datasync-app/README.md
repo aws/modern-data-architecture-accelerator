@@ -21,7 +21,7 @@ AWS DataSync is an online data transfer service that simplifies, automates, and 
 **DataSync Location** - Locations are endpoints for tasks, such as an on-premises file system or cloud-based storage service.
 
 * Currently, four types of storage are supported; NFS, SMB, S3, and object storage (cloud-based storage).
-* Any location type which requires username/password credentials (SMB, Object Storage) must first have these credentials stored in a Secret, created and managed outside of CAEF
+* Any location type which requires username/password credentials (SMB, Object Storage) must first have these credentials stored in a Secret, created and managed outside of MDAA
 
 **DataSync Task** - Tasks are configurations for data transfer and synchronization between two locations.
 
@@ -37,16 +37,16 @@ AWS DataSync is an online data transfer service that simplifies, automates, and 
   * For SMB location: {user:< username >,password:< pwd >}
   * For cloud-based object storage: {"accessKey":< access_key >","secretKey":"< secret_key >"}
 
-Note: If you want CAEF to handle the above security group requirement, two-stage deployment is required.
+Note: If you want MDAA to handle the above security group requirement, two-stage deployment is required.
 
 1. Put the information in the *connection:* section. Put the *agents:* configuration but do not specify *activationKey:* parameter in the agent configuration (Refer to the example for *agent1:* further below.)
-2. Run the first pass CAEF deployment. CAEF will deploy the security group and required ingress rules.
+2. Run the first pass MDAA deployment. MDAA will deploy the security group and required ingress rules.
 3. Retrieve the agent activation key(s) and put in the *agents:* configuration, one for each agent.
-4. Run the second pass CAEF deployment. CAEF will register the agent(s) and other DataSync resources.
+4. Run the second pass MDAA deployment. MDAA will register the agent(s) and other DataSync resources.
 
 ### Pre-deployment Tasks
 
-This process must be completed prior to DataSync deployment using CAEF.
+This process must be completed prior to DataSync deployment using MDAA.
 
 ![Pre-DeploymentTask](../../../constructs/L3/utility/datasync-l3-construct/docs/DataSync-pre-deployment.png)
 
@@ -73,7 +73,7 @@ This process must be completed prior to DataSync deployment using CAEF.
 
 ```yaml
 # Information for looking up network infrastructure information
-# Based on this information, CAEF will create a security group with all required ingress rules and attach to the existing VPC endpoint for datasync service
+# Based on this information, MDAA will create a security group with all required ingress rules and attach to the existing VPC endpoint for datasync service
 vpc:
   # The id of the VPC that DataSync service will use
   vpcId: vpc-009ce5ec1cff75fx6
@@ -96,7 +96,7 @@ agents:
     # The ID of the subnet that will be used for data transfer with DataSync elastic network interfaces/ENIs.
     subnetId: example-subnet    
     agentIpAddress: 1.1.1.2
-  # In the example below, the security group resource is deployed outside CAEF. All below information are required.
+  # In the example below, the security group resource is deployed outside MDAA. All below information are required.
   agent3:
     activationKey: XXXXX-YYYYY-XXXXX-YYYYY-XXXXX
     subnetId: "{{resolve:ssm:/path/to/subnet-id-ssm}}"
@@ -141,7 +141,7 @@ locations:
       # Optional - the SMB version. Valid values: AUTOMATIC (default) | SMB2 | SMB3
       smbVersion: AUTOMATIC
     smb-loc2:
-      # ARN of the DataSync agent or a dynamic reference to it. Alternatively, use agentNames with referring to the generated DataSync agent name specified in the above `agents` configuration section. Use this only when the agent registration process was done outside CAEF.
+      # ARN of the DataSync agent or a dynamic reference to it. Alternatively, use agentNames with referring to the generated DataSync agent name specified in the above `agents` configuration section. Use this only when the agent registration process was done outside MDAA.
       agentArns:
         - arn:{{partition}}:datasync:{{region}}:{{account}}:agent/existing-agent-id
       secretName: some-secret-name
@@ -192,7 +192,7 @@ tasks:
       - filterType: SIMPLE_PATTERN
         value: "/data*|/ingestion*"   # Begins with / and only accepts asterisk at the most right position
   mytask2:
-    # In this example, source and destination locations are specified using locations. Use this parameters only for existing locations that have been created outside CAEF. Otherwise, use sourceLocationName and destinationLocationName.
+    # In this example, source and destination locations are specified using locations. Use this parameters only for existing locations that have been created outside MDAA. Otherwise, use sourceLocationName and destinationLocationName.
     sourceLocationArn: "{{resolve:ssm:/path/to/source/location/arn}}"
     destinationLocationArn: "{{resolve:ssm:/path/to/destination/location/arn}}"
     options:

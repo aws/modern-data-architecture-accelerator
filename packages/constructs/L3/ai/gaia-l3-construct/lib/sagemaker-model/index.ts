@@ -1,4 +1,4 @@
-import {CaefL3Construct} from "@aws-caef/l3-construct";
+import {MdaaL3Construct} from "@aws-mdaa/l3-construct";
 
 export * from "./container-images";
 export * from "./types";
@@ -9,7 +9,7 @@ import { deployCustomScriptModel } from "./deploy-custom-script-model";
 import { deployPackageModel } from "./deploy-package-model";
 import { DeploymentType, SageMakerModelProps } from "./types";
 
-export class SageMakerModel extends CaefL3Construct {
+export class SageMakerModel extends MdaaL3Construct {
   public readonly endpoint: sagemaker.CfnEndpoint;
   public readonly modelId: string | string[];
 

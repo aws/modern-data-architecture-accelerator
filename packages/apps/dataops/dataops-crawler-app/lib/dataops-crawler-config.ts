@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps } from '@aws-caef/app';
-import { CrawlerDefinition } from '@aws-caef/dataops-crawler-l3-construct';
-import { CaefDataOpsConfigParser, CaefDataOpsConfigContents } from '@aws-caef/dataops-shared';
+import { MdaaAppConfigParserProps } from '@aws-mdaa/app';
+import { CrawlerDefinition } from '@aws-mdaa/dataops-crawler-l3-construct';
+import { MdaaDataOpsConfigParser, MdaaDataOpsConfigContents } from '@aws-mdaa/dataops-shared';
 import { Schema } from "ajv";
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 
-export interface GlueCrawlerConfigContents extends CaefDataOpsConfigContents {
+export interface GlueCrawlerConfigContents extends MdaaDataOpsConfigContents {
     /**
      * Name of the Data Ops project. The crawler config will be autowired to use existing resources deployed by the project.
      */
@@ -22,10 +22,10 @@ export interface GlueCrawlerConfigContents extends CaefDataOpsConfigContents {
     crawlers: { [ key: string ]: CrawlerDefinition }
 }
 
-export class GlueCrawlerConfigParser extends CaefDataOpsConfigParser<GlueCrawlerConfigContents> {
+export class GlueCrawlerConfigParser extends MdaaDataOpsConfigParser<GlueCrawlerConfigContents> {
     public readonly crawlerConfigs: { [ key: string ]: CrawlerDefinition }
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.crawlerConfigs = this.configContents.crawlers

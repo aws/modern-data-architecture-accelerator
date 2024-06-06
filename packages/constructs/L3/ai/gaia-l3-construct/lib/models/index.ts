@@ -10,16 +10,16 @@ import {
   SupportedSageMakerModels,
   SystemConfig,
 } from "../shared/types";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface ModelsProps extends CaefL3ConstructProps {
+export interface ModelsProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class Models extends CaefL3Construct {
+export class Models extends MdaaL3Construct {
   public readonly models: SageMakerModelEndpoint[];
   public readonly modelsParameter: ssm.StringParameter;
 

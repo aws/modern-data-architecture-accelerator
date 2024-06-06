@@ -2,12 +2,12 @@
 
 ## Pre-deployment Overview
 
-These procedures should be followed in order to prepare accounts for CAEF deployment. The steps to be followed are:
+These procedures should be followed in order to prepare accounts for MDAA deployment. The steps to be followed are:
 
-1. CDK Bootstrap each account where CAEF will be deployed
-2. Obtain pre-built CAEF packages and publish to private NPM repo
+1. CDK Bootstrap each account where MDAA will be deployed
+2. Obtain pre-built MDAA packages and publish to private NPM repo
 
-![CAEF Pre-Deployment](docs/CAEF-Predeployment.png)
+![MDAA Pre-Deployment](docs/MDAA-Predeployment.png)
 
 ***
 
@@ -15,10 +15,10 @@ These procedures should be followed in order to prepare accounts for CAEF deploy
 
 In these procedures, the following terminology is used:
 
-* **Deployment Account** - The AWS account where deployment activities will be occuring. This includes source control for CAEF, CAEF artifact building and publishing, and CAEF execution.
-* **Target Account** - The AWS account where Data Analytics Environment resources will ultimately be deployed by CAEF. Note that CAEF can execute in one account and deploy to another, or can execute and deploy to the same account.
+* **Deployment Account** - The AWS account where deployment activities will be occuring. This includes source control for MDAA, MDAA artifact building and publishing, and MDAA execution.
+* **Target Account** - The AWS account where Data Analytics Environment resources will ultimately be deployed by MDAA. Note that MDAA can execute in one account and deploy to another, or can execute and deploy to the same account.
 
-## CDK Bootstrap CAEF Target Accounts
+## CDK Bootstrap MDAA Target Accounts
 
 ### Manual Bootstrap (Single Deployment Source/Target Account)
 
@@ -61,4 +61,4 @@ export CDK_NEW_BOOTSTRAP=1
 cdk bootstrap --cloudformation-execution-policies <CDK Deployment IAM Policy Arns> --trust <Source Account Number> aws://<Target AWS Account Number>/<Target Region>...
 ```
 
-Note that the permissions specified with cloudformation-execution-policies are granted to CloudFormation during deployment into the account. These permissions should be sufficient to deploy CAEF resources, but not overly permissive.
+Note that the permissions specified with cloudformation-execution-policies are granted to CloudFormation during deployment into the account. These permissions should be sufficient to deploy MDAA resources, but not overly permissive.

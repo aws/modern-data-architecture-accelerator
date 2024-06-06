@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { Duration, Size } from 'aws-cdk-lib';
 import { IProfilingGroup } from 'aws-cdk-lib/aws-codeguruprofiler';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
@@ -14,11 +14,11 @@ import { ILogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { ITopic } from 'aws-cdk-lib/aws-sns';
 import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
-import { ICaefLambdaRole } from './role';
+import { IMdaaLambdaRole } from './role';
 
 
 
-export interface CaefDockerImageFunctionProps extends CaefLambdaFunctionOptions {
+export interface MdaaDockerImageFunctionProps extends MdaaLambdaFunctionOptions {
     /**
      * The source code of your Lambda function. You can point to a file in an
      * Amazon Simple Storage Service (Amazon S3) bucket or specify your source
@@ -31,7 +31,7 @@ export interface CaefDockerImageFunctionProps extends CaefLambdaFunctionOptions 
 /**
  * Properties for creating a compliant Lambda function
  */
-export interface CaefLambdaFunctionProps extends CaefLambdaFunctionOptions {
+export interface MdaaLambdaFunctionProps extends MdaaLambdaFunctionOptions {
     /**
      * The runtime environment for the Lambda function that you are uploading.
      * For valid values, see the Runtime property in the AWS Lambda Developer
@@ -61,7 +61,7 @@ export interface CaefLambdaFunctionProps extends CaefLambdaFunctionOptions {
     readonly handler: string;
 }
 
-export interface CaefLambdaFunctionOptions extends CaefConstructProps {
+export interface MdaaLambdaFunctionOptions extends MdaaConstructProps {
     /**
      * A description of the function.
      *
@@ -132,7 +132,7 @@ export interface CaefLambdaFunctionOptions extends CaefConstructProps {
      *
      * Both supplied and generated roles can always be changed by calling `addToRolePolicy`.
      */
-    readonly role: ICaefLambdaRole
+    readonly role: IMdaaLambdaRole
     /**
      * VPC network to place Lambda network interfaces
      *
@@ -414,19 +414,19 @@ export interface CaefLambdaFunctionOptions extends CaefConstructProps {
 /**
  * Construct for creating a compliant Lambda Function
  */
-export class CaefLambdaFunction extends Function {
+export class MdaaLambdaFunction extends Function {
 
-    private static setProps ( props: CaefLambdaFunctionProps ): FunctionProps {
+    private static setProps ( props: MdaaLambdaFunctionProps ): FunctionProps {
         const overrideProps = {
             functionName: props.naming.resourceName( props.functionName, 64 )
         }
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefLambdaFunctionProps ) {
-        super( scope, id, CaefLambdaFunction.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaLambdaFunctionProps ) {
+        super( scope, id, MdaaLambdaFunction.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "lambda",
                 resourceId: props.functionName,
@@ -435,7 +435,7 @@ export class CaefLambdaFunction extends Function {
             }, ...props
         }, scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "lambda",
                 resourceId: props.functionName,
@@ -449,8 +449,8 @@ export class CaefLambdaFunction extends Function {
 /**
  * Create a lambda function where the handler is a docker image
  */
-export class CaefDockerImageFunction extends CaefLambdaFunction {
-    constructor( scope: Construct, id: string, props: CaefDockerImageFunctionProps ) {
+export class MdaaDockerImageFunction extends MdaaLambdaFunction {
+    constructor( scope: Construct, id: string, props: MdaaDockerImageFunctionProps ) {
         super( scope, id, {
             ...props,
             handler: Handler.FROM_IMAGE,

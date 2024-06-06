@@ -3,25 +3,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefParamAndOutput, CaefParamAndOutputProps } from "../lib";
+import { MdaaParamAndOutput, MdaaParamAndOutputProps } from "../lib";
 
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testContstructProps1: CaefParamAndOutputProps = {
+    const testContstructProps1: MdaaParamAndOutputProps = {
         name: "test-name",
         resourceType: "test-type",
         value: "test-val",
         naming: testApp.naming
     }
 
-    new CaefParamAndOutput( testApp.testStack, testContstructProps1 )
+    new MdaaParamAndOutput( testApp.testStack, testContstructProps1 )
 
-    const testContstructProps2: CaefParamAndOutputProps = {
+    const testContstructProps2: MdaaParamAndOutputProps = {
         name: "test-name2",
         resourceType: "test-type2",
         value: "test-val2",
@@ -29,9 +29,9 @@ describe( 'CAEF Construct Compliance Tests', () => {
         naming: testApp.naming
     }
 
-    new CaefParamAndOutput( testApp.testStack, testContstructProps2 )
+    new MdaaParamAndOutput( testApp.testStack, testContstructProps2 )
 
-    const testContstructProps3: CaefParamAndOutputProps = {
+    const testContstructProps3: MdaaParamAndOutputProps = {
         name: "test-name3",
         resourceType: "test-type3",
         value: "test-val3",
@@ -41,7 +41,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         createParams: false
     }
 
-    new CaefParamAndOutput( testApp.testStack, testContstructProps3 )
+    new MdaaParamAndOutput( testApp.testStack, testContstructProps3 )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

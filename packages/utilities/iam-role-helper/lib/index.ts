@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefLambdaFunction, CaefLambdaRole } from '@aws-caef/lambda-constructs';
-import { ICaefResourceNaming } from '@aws-caef/naming';
+import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
+import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import { CustomResource, Duration } from 'aws-cdk-lib';
 import { ManagedPolicy, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
@@ -14,9 +14,9 @@ import { Construct } from 'constructs';
 /**
  * A reference to an IAM role. Roles can be referenced by name, arn, and/or id.
  */
-export interface CaefRoleRef {
+export interface MdaaRoleRef {
     /**
-     * A string which uniquely identifies the CaefRoleRef within a scope.
+     * A string which uniquely identifies the MdaaRoleRef within a scope.
      */
     readonly refId?: string
     /**
@@ -41,11 +41,11 @@ export interface CaefRoleRef {
     readonly sso?: boolean
 }
 /**
- * A CaefRoleRef which can be resolved within a scope.
+ * A MdaaRoleRef which can be resolved within a scope.
  */
-export interface CaefResolvableRoleRef {
+export interface MdaaResolvableRoleRef {
     /**
-     * A string which uniquely identifies the CaefRoleRef within a scope.
+     * A string which uniquely identifies the MdaaRoleRef within a scope.
      */
     readonly refId: string
     /**
@@ -76,21 +76,21 @@ export interface CaefResolvableRoleRef {
  * properties is requested of the object and is not already populated, then a custom Cfn resource
  * will be created to facilitate the lookup.
  */
-export class CaefResolvableRole {
+export class MdaaResolvableRole {
     private readonly scope: Construct;
-    private readonly roleHelper: CaefRoleHelper;
-    private readonly roleRef: CaefResolvableRoleRef
+    private readonly roleHelper: MdaaRoleHelper;
+    private readonly roleRef: MdaaResolvableRoleRef
     private roleCr?: CustomResource;
 
     /**
      * 
      * @param scope The scope in which custom resources for role resolution will be created (if required)
-     * @param naming The CAEF naming implementation which will be used to name custom resources
-     * @param roleHelper The CAEF role helper which will be used as a custom resource Provider
+     * @param naming The MDAA naming implementation which will be used to name custom resources
+     * @param roleHelper The MDAA role helper which will be used as a custom resource Provider
      * @param roleRef The role reference which will be used to resolve a role. The role ref must contain at least
      * one 'anchor' property (one of id, arn, or name) on which the remaining properties can be resolved.
      */
-    constructor( scope: Construct, roleHelper: CaefRoleHelper, roleRef: CaefResolvableRoleRef ) {
+    constructor( scope: Construct, roleHelper: MdaaRoleHelper, roleRef: MdaaResolvableRoleRef ) {
         this.scope = scope
         this.roleHelper = roleHelper
         this.roleRef = roleRef
@@ -163,38 +163,38 @@ export class CaefResolvableRole {
 }
 
 /**
- * A Helper class which can be used to resolve CaefRoleRefs using CustomResources.
+ * A Helper class which can be used to resolve MdaaRoleRefs using CustomResources.
  */
-export class CaefRoleHelper {
+export class MdaaRoleHelper {
     private readonly scope: Construct;
     private providerServiceToken?: string;
-    private readonly naming: ICaefResourceNaming;
+    private readonly naming: IMdaaResourceNaming;
 
-    private readonly resolveRefCache: { [ key: string ]: CaefResolvableRole } = {}
-    private readonly resolveIdCache: { [ key: string ]: CaefResolvableRole } = {}
-    private readonly resolveArnCache: { [ key: string ]: CaefResolvableRole } = {}
-    private readonly resolveNameCache: { [ key: string ]: CaefResolvableRole } = {}
+    private readonly resolveRefCache: { [ key: string ]: MdaaResolvableRole } = {}
+    private readonly resolveIdCache: { [ key: string ]: MdaaResolvableRole } = {}
+    private readonly resolveArnCache: { [ key: string ]: MdaaResolvableRole } = {}
+    private readonly resolveNameCache: { [ key: string ]: MdaaResolvableRole } = {}
     /**
      * 
      * @param scope The scope in which role resolution CR Provider will be created.
-     * @param naming The CAEF naming implementation which will be used to name resources
+     * @param naming The MDAA naming implementation which will be used to name resources
      * from the perspective of the calling module.
      */
-    constructor( scope: Construct, naming: ICaefResourceNaming, providerServiceToken?: string ) {
+    constructor( scope: Construct, naming: IMdaaResourceNaming, providerServiceToken?: string ) {
         this.scope = scope
         this.naming = naming
         this.providerServiceToken = providerServiceToken
     }
 
     /**
-     * Can be used to resolve CaefRoleRefs. Each CaefRoleRef is first converted
-     * to a CaefResolvableRoleRef by auto generating a role ref unique id using
+     * Can be used to resolve MdaaRoleRefs. Each MdaaRoleRef is first converted
+     * to a MdaaResolvableRoleRef by auto generating a role ref unique id using
      * refPrefix and a generated ordinal.
      * @param roleRefs The role references to be resolved
      * @param refPrefix The prefix which will be used with ordinal to create a unique ID for use as a resource ID within scopes
      * @returns Resolvable roles.
      */
-    public resolveRoleRefsWithOrdinals ( roleRefs: CaefRoleRef[], refPrefix: string ): CaefResolvableRole[] {
+    public resolveRoleRefsWithOrdinals ( roleRefs: MdaaRoleRef[], refPrefix: string ): MdaaResolvableRole[] {
         let i = 0
         const resolvableRoleRefs = roleRefs.map( roleRef => {
             return {
@@ -211,7 +211,7 @@ export class CaefRoleHelper {
      * @param roleRefs The role references to be resolved
      * @returns Resolvable roles.
      */
-    public resolveRoleRefs ( roleRefs: CaefResolvableRoleRef[] ): CaefResolvableRole[] {
+    public resolveRoleRefs ( roleRefs: MdaaResolvableRoleRef[] ): MdaaResolvableRole[] {
         return roleRefs.map( roleRef => {
             return this.resolveRoleRef( roleRef )
         } )
@@ -222,7 +222,7 @@ export class CaefRoleHelper {
      * @param refId The id of the reference to be used in creating the custom resource
      * @returns Resolvable roles.
      */
-    public resolveRoleRefWithRefId ( roleRef: CaefRoleRef, refId: string ): CaefResolvableRole {
+    public resolveRoleRefWithRefId ( roleRef: MdaaRoleRef, refId: string ): MdaaResolvableRole {
         const resolvableRoleRef = {
             ...{
                 refId: refId
@@ -235,7 +235,7 @@ export class CaefRoleHelper {
      * @param roleRef The role reference to be resolved
      * @returns Resolvable roles.
      */
-    public resolveRoleRef ( roleRef: CaefResolvableRoleRef ): CaefResolvableRole {
+    public resolveRoleRef ( roleRef: MdaaResolvableRoleRef ): MdaaResolvableRole {
         if ( !roleRef.id && !roleRef.arn && !roleRef.name ) {
             throw new Error( "Role References must have at least one of arn, id, or name specified." )
         }
@@ -250,8 +250,8 @@ export class CaefRoleHelper {
         }
     }
 
-    private createAndReturnResolvableRole ( roleRef: CaefResolvableRoleRef ) {
-        const resolvableRole = new CaefResolvableRole( this.scope, this, roleRef )
+    private createAndReturnResolvableRole ( roleRef: MdaaResolvableRoleRef ) {
+        const resolvableRole = new MdaaResolvableRole( this.scope, this, roleRef )
         this.resolveRefCache[ roleRef.refId ] = resolvableRole
         if ( roleRef.id ) {
             this.resolveIdCache[ roleRef.id ] = resolvableRole
@@ -279,7 +279,7 @@ export class CaefRoleHelper {
     }
 
     private createResolveRoleProvider (): Provider {
-        const crLambdaRole = new CaefLambdaRole( this.scope, "role-res-cr", {
+        const crLambdaRole = new MdaaLambdaRole( this.scope, "role-res-cr", {
             description: 'CR Role',
             roleName: "role-res-cr",
             naming: this.naming,
@@ -313,7 +313,7 @@ export class CaefRoleHelper {
         );
 
         // This Lambda is used as a Custom Resource in order to create the Data Lake Folder
-        const resolveRoleLambda = new CaefLambdaFunction( this.scope, "resolve-role-res-cr-function", {
+        const resolveRoleLambda = new MdaaLambdaFunction( this.scope, "resolve-role-res-cr-function", {
             functionName: "role-res-cr",
             code: Code.fromAsset( `${ __dirname }/../src/python/resolve_role/` ),
             handler: "resolve_role.lambda_handler",
@@ -338,7 +338,7 @@ export class CaefRoleHelper {
             true
         );
         const resolveRoleProviderFunctionName = this.naming.resourceName( "role-res-cr-prov", 64 )
-        const resolveRoleCrProviderRole = new CaefLambdaRole( this.scope, "role-res-cr-prov", {
+        const resolveRoleCrProviderRole = new MdaaLambdaRole( this.scope, "role-res-cr-prov", {
             description: 'CR Role Resolver Provider',
             roleName: "role-res-cr-prov",
             naming: this.naming,

@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { DataSyncL3Construct, DataSyncL3ConstructProps } from '@aws-caef/datasync-l3-construct';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { DataSyncL3Construct, DataSyncL3ConstructProps } from '@aws-mdaa/datasync-l3-construct';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { DataSyncConfigParser } from './datasync-config';
 
-export class DataSyncCDKApp extends CaefCdkApp {
+export class DataSyncCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "datasync", props )
     }
 
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
         const appConfig = new DataSyncConfigParser( stack, parserProps )
         const constructProps: DataSyncL3ConstructProps = {
             vpc: appConfig.vpc,

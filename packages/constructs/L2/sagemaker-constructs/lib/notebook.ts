@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefParamAndOutput, CaefConstructProps } from "@aws-caef/construct"
+import { MdaaParamAndOutput, MdaaConstructProps } from "@aws-mdaa/construct"
 import { CfnNotebookInstance, CfnNotebookInstanceProps } from "aws-cdk-lib/aws-sagemaker"
 import { Construct } from "constructs"
 
 /**
  * Properties for creating a Compliance SageMaker NoteBook Instance
  */
-export interface CaefNoteBookProps extends CaefConstructProps {
+export interface MdaaNoteBookProps extends MdaaConstructProps {
     /**
      * The id of the new notebook instance.
      */
@@ -76,9 +76,9 @@ export interface CaefNoteBookProps extends CaefConstructProps {
 /**
  * A construct for creating a compliance sagemaker Notebook instance.
  */
-export class CaefNoteBook extends CfnNotebookInstance {
+export class MdaaNoteBook extends CfnNotebookInstance {
 
-    private static setProps ( props: CaefNoteBookProps ): CfnNotebookInstanceProps {
+    private static setProps ( props: MdaaNoteBookProps ): CfnNotebookInstanceProps {
         const overrideProps = {
             notebookInstanceName: props.naming.resourceName( props.notebookInstanceName ),
             rootAccess: ( props.rootAccess == "Enabled" ? "Enabled" : "Disabled" ),
@@ -88,10 +88,10 @@ export class CaefNoteBook extends CfnNotebookInstance {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefNoteBookProps ) {
-        super( scope, id, CaefNoteBook.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaNoteBookProps ) {
+        super( scope, id, MdaaNoteBook.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "notebook",
                 overrideResourceId: "id-" + props.notebookInstanceId,
@@ -99,7 +99,7 @@ export class CaefNoteBook extends CfnNotebookInstance {
                 value: this.ref
             }, ...props
         },scope )
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "notebook",
                 overrideResourceId: "subnet-" + props.notebookInstanceId,

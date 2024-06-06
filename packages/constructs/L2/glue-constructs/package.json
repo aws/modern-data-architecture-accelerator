@@ -1,7 +1,7 @@
 {
-  "name": "@aws-caef/glue-constructs",
+  "name": "@aws-mdaa/glue-constructs",
   "version": "0.41.0",
-  "description": "CAEF Glue Constructs",
+  "description": "MDAA Glue Constructs",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",
@@ -21,9 +21,9 @@
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "devDependencies": {
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/kms-constructs": "0.41.0",
-    "@aws-caef/testing": "^0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/kms-constructs": "0.41.0",
+    "@aws-mdaa/testing": "^0.41.0",
     "@aws-cdk/aws-glue-alpha": "2.132.1-alpha.0",
     "@types/jest": "27.4.1",
     "@types/node": "17.0.23",
@@ -42,16 +42,16 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/construct": "^0.41.0",
-    "@aws-caef/kms-constructs": "^0.41.0",
+    "@aws-mdaa/construct": "^0.41.0",
+    "@aws-mdaa/kms-constructs": "^0.41.0",
     "@aws-cdk/aws-glue-alpha": "2.132.1-alpha.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
     "constructs": "10.0.96"
   },
   "peerDependencies": {
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/kms-constructs": "0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/kms-constructs": "0.41.0",
     "@aws-cdk/aws-glue-alpha": "2.132.1-alpha.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
@@ -64,15 +64,15 @@
     "versionFormat": "full",
     "targets": {
       "java_disabled": {
-        "package": "software.amazon.awscaef.construct.glue",
+        "package": "software.amazon.awsmdaa.construct.glue",
         "maven": {
-          "groupId": "software.amazon.awscaef.construct",
+          "groupId": "software.amazon.awsmdaa.construct",
           "artifactId": "glue"
         }
       },
       "python": {
-        "distName": "aws-caef.glue-constructs",
-        "module": "aws_caef.glue_constructs"
+        "distName": "aws-mdaa.glue-constructs",
+        "module": "aws_mdaa.glue_constructs"
       }
     }
   }

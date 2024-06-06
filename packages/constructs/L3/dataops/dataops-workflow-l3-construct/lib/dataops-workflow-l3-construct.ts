@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DataOpsProjectUtils } from '@aws-caef/dataops-project-l3-construct';
-import { EventBridgeHelper, EventBridgeProps } from '@aws-caef/eventbridge-helper';
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefKmsKey, ICaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { DataOpsProjectUtils } from '@aws-mdaa/dataops-project-l3-construct';
+import { EventBridgeHelper, EventBridgeProps } from '@aws-mdaa/eventbridge-helper';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaKmsKey, IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { Duration } from 'aws-cdk-lib';
 import { IRule, IRuleTarget, RuleTargetConfig, RuleTargetInput } from 'aws-cdk-lib/aws-events';
 import { TargetBaseProps } from 'aws-cdk-lib/aws-events-targets';
@@ -26,7 +26,7 @@ export interface WorkflowProps {
     readonly eventBridge?: EventBridgeProps
 }
 
-export interface GlueWorkflowL3ConstructProps extends CaefL3ConstructProps {
+export interface GlueWorkflowL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * The Kms key which will be used to encrypt resources
      */
@@ -89,11 +89,11 @@ export class GlueWorkflowTarget implements IRuleTarget {
     }
 }
 
-export class GlueWorkflowL3Construct extends CaefL3Construct {
+export class GlueWorkflowL3Construct extends MdaaL3Construct {
     protected readonly props: GlueWorkflowL3ConstructProps
 
 
-    private readonly projectKmsKey: ICaefKmsKey;
+    private readonly projectKmsKey: IMdaaKmsKey;
     private readonly projectName: string;
 
     private eventBridgePolicy?: ManagedPolicy
@@ -103,7 +103,7 @@ export class GlueWorkflowL3Construct extends CaefL3Construct {
         super( scope, id, props )
         this.props = props
 
-        this.projectKmsKey = CaefKmsKey.fromKeyArn( this.scope, "project-kms", this.props.kmsArn )
+        this.projectKmsKey = MdaaKmsKey.fromKeyArn( this.scope, "project-kms", this.props.kmsArn )
         this.projectName = this.props.projectName
 
         // Build our workflows!
@@ -120,7 +120,7 @@ export class GlueWorkflowL3Construct extends CaefL3Construct {
 
     private getEventBridgeRole (): IRole {
         if ( !this.eventBridgeRole ) {
-            this.eventBridgeRole = new CaefRole( this.scope, 'event-bridge-role', {
+            this.eventBridgeRole = new MdaaRole( this.scope, 'event-bridge-role', {
                 naming: this.props.naming,
                 roleName: "event-bridge",
                 assumedBy: new ServicePrincipal( "events.amazonaws.com" )

@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { AuditTrailL3Construct, AuditTrailL3ConstructProps } from "../lib";
 
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const stack = testApp.testStack
 
 
@@ -22,7 +22,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
             includeManagementEvents: true
         },
 
-        roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+        roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
         naming: testApp.naming,
     }
 

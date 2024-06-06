@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CfnPortfolioPrincipalAssociation, CfnPortfolioPrincipalAssociationProps, Portfolio, PortfolioProps } from 'aws-cdk-lib/aws-servicecatalog';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
 export interface PortfolioPropsWithAccess extends PortfolioProps {
-    readonly access?: CaefRoleRef[]
+    readonly access?: MdaaRoleRef[]
 }
 
-export interface ServiceCatalogL3ConstructProps extends CaefL3ConstructProps {
+export interface ServiceCatalogL3ConstructProps extends MdaaL3ConstructProps {
     readonly portfolios: PortfolioPropsWithAccess[]
 }
 
-export class ServiceCatalogL3Construct extends CaefL3Construct {
+export class ServiceCatalogL3Construct extends MdaaL3Construct {
     protected readonly props: ServiceCatalogL3ConstructProps
 
 

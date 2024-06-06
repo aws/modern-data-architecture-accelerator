@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { AthenaWorkgroupL3Construct, AthenaWorkgroupL3ConstructProps } from '@aws-caef/athena-workgroup-l3-construct';
-import { AccessPolicyProps, BucketDefinition, DataLakeL3ConstructProps, InventoryDefinition, S3DatalakeBucketL3Construct } from '@aws-caef/datalake-l3-construct';
-import { CaefManagedPolicy } from '@aws-caef/iam-constructs';
-import { CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
-import { CaefLambdaRole } from '@aws-caef/lambda-constructs';
-import { DomainProps, SagemakerStudioDomainL3Construct, SagemakerStudioDomainL3ConstructProps } from '@aws-caef/sm-studio-domain-l3-construct';
+import { AthenaWorkgroupL3Construct, AthenaWorkgroupL3ConstructProps } from '@aws-mdaa/athena-workgroup-l3-construct';
+import { AccessPolicyProps, BucketDefinition, DataLakeL3ConstructProps, InventoryDefinition, S3DatalakeBucketL3Construct } from '@aws-mdaa/datalake-l3-construct';
+import { MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
+import { MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaL3Construct, MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
+import { MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
+import { DomainProps, SagemakerStudioDomainL3Construct, SagemakerStudioDomainL3ConstructProps } from '@aws-mdaa/sm-studio-domain-l3-construct';
 
 import { Effect, IRole, ManagedPolicy, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
 import { IKey } from "aws-cdk-lib/aws-kms";
@@ -21,17 +21,17 @@ export interface DataScienceTeamProps {
   /**
    * List of admin roles which will be provided access to team resources (like KMS/Bucket)
    */
-  readonly dataAdminRoles: CaefRoleRef[]
+  readonly dataAdminRoles: MdaaRoleRef[]
   /**
    * List of admin roles which will be provided access to team resources (like KMS/Bucket)
    */
-  readonly teamUserRoles?: CaefRoleRef[]
+  readonly teamUserRoles?: MdaaRoleRef[]
   /**
    * Reference to role which will be used as execution role on all team SageMaker resources.
    * The role must have assume role trust with sagemaker.amazonaws.com. Additional managed polies
    * may be added to the role to grant it access to team resources and relevant services.
    */
-  readonly teamExecutionRole: CaefRoleRef
+  readonly teamExecutionRole: MdaaRoleRef
   /**
    * List of inventory configurations to be applied to the bucket
    */
@@ -47,13 +47,13 @@ export interface DataScienceTeamProps {
   readonly verbatimPolicyNamePrefix?: string
 }
 
-export interface DataScienceTeamL3ConstructProps extends CaefL3ConstructProps {
+export interface DataScienceTeamL3ConstructProps extends MdaaL3ConstructProps {
   readonly team: DataScienceTeamProps
 }
 
 //This stack creates all of the resources required for a Data Science Team
 //to use SageMaker Studio on top of a Data Lake
-export class DataScienceTeamL3Construct extends CaefL3Construct {
+export class DataScienceTeamL3Construct extends MdaaL3Construct {
   protected readonly props: DataScienceTeamL3ConstructProps
 
 
@@ -107,7 +107,7 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
   }
 
   private createAssetDeploymentRole (): Role {
-    const role = new CaefLambdaRole( this.scope, `asset-deployment-role`, {
+    const role = new MdaaLambdaRole( this.scope, `asset-deployment-role`, {
       roleName: "deployment",
       naming: this.props.naming,
       logGroupNames: [ `*CustomCDK*` ]
@@ -118,7 +118,7 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
 
   private createAthenaWorkgroup ( teamExecutionRole: IRole, teamKmsKey: IKey, teamBucket: IBucket ) {
     const workgroupL3ConstructProps: AthenaWorkgroupL3ConstructProps = {
-      ...this.props as CaefL3ConstructProps, ...{
+      ...this.props as MdaaL3ConstructProps, ...{
         naming: this.props.naming.withModuleName( this.props.naming.props.moduleName + "-athena" ),
         dataAdminRoles: this.props.team.dataAdminRoles,
         athenaUserRoles: [ ...[ {
@@ -159,7 +159,7 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
     }
 
     const studioDomainL3ConstructProps: SagemakerStudioDomainL3ConstructProps = {
-      ...this.props as CaefL3ConstructProps, ...{ domain: overrideDomainProps }
+      ...this.props as MdaaL3ConstructProps, ...{ domain: overrideDomainProps }
     }
 
     return new SagemakerStudioDomainL3Construct( this, "studio", studioDomainL3ConstructProps )
@@ -212,7 +212,7 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
     }
 
     const minilakeL3ConstructProps: DataLakeL3ConstructProps = {
-      ...this.props as CaefL3ConstructProps, ...{
+      ...this.props as MdaaL3ConstructProps, ...{
         naming: this.props.naming.withModuleName( this.props.naming.props.moduleName + "-minilake" ),
         buckets: [ minilakeBucketProps ]
       }
@@ -221,7 +221,7 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
   }
 
   private createTeamPolicy ( teamExecutionRole: IRole, teamBucket: IBucket ): ManagedPolicy {
-    const teamManagedPolicy = new CaefManagedPolicy( this, "team-managed-pol", {
+    const teamManagedPolicy = new MdaaManagedPolicy( this, "team-managed-pol", {
       managedPolicyName: this.props.team.verbatimPolicyNamePrefix ? this.props.team.verbatimPolicyNamePrefix : undefined,
       verbatimPolicyName: this.props.team.verbatimPolicyNamePrefix != undefined,
       naming: this.props.naming
@@ -285,7 +285,7 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
   }
 
   private createSageMakerReadPolicy (): ManagedPolicy {
-    const sagemakerReadonlyManagedPolicy = new CaefManagedPolicy( this, "read-managed-pol", {
+    const sagemakerReadonlyManagedPolicy = new MdaaManagedPolicy( this, "read-managed-pol", {
       managedPolicyName: this.props.team.verbatimPolicyNamePrefix ? this.props.team.verbatimPolicyNamePrefix + "-" + "sm-read" : "sm-read",
       verbatimPolicyName: this.props.team.verbatimPolicyNamePrefix != undefined,
       naming: this.props.naming
@@ -404,7 +404,7 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
   private createSageMakerWritePolicies ( teamBucket: IBucket, teamKey: IKey, teamExecutionRole: IRole ): ManagedPolicy[] {
 
     //We use two write policies in order to avoid policy length limits within IAM
-    const sagemakerWriteManagedPolicy1 = new CaefManagedPolicy( this, "ex-write-managed-pol", {
+    const sagemakerWriteManagedPolicy1 = new MdaaManagedPolicy( this, "ex-write-managed-pol", {
       managedPolicyName: this.props.team.verbatimPolicyNamePrefix ? this.props.team.verbatimPolicyNamePrefix + "-" + "sm-write" : "sm-write",
       verbatimPolicyName: this.props.team.verbatimPolicyNamePrefix != undefined,
       naming: this.props.naming
@@ -412,7 +412,7 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
 
     //We use two write policies in order to avoid policy length limits within IAM
     //New statements should be added 
-    const sagemakerWriteManagedPolicy2 = new CaefManagedPolicy( this, "sm-write-managed-pol2", {
+    const sagemakerWriteManagedPolicy2 = new MdaaManagedPolicy( this, "sm-write-managed-pol2", {
       managedPolicyName: this.props.team.verbatimPolicyNamePrefix ? this.props.team.verbatimPolicyNamePrefix + "-" + "sm-write-2" : "sm-write-2",
       verbatimPolicyName: this.props.team.verbatimPolicyNamePrefix != undefined,
       naming: this.props.naming
@@ -1058,7 +1058,7 @@ export class DataScienceTeamL3Construct extends CaefL3Construct {
   }
 
   private createSageMakerGuardrailPolicy ( teamKey: IKey ): ManagedPolicy {
-    const sagemakerGuardrailManagedPolicy = new CaefManagedPolicy( this, "sm-guardrail-managed-pol", {
+    const sagemakerGuardrailManagedPolicy = new MdaaManagedPolicy( this, "sm-guardrail-managed-pol", {
       managedPolicyName: this.props.team.verbatimPolicyNamePrefix ? this.props.team.verbatimPolicyNamePrefix + "-" + "sm-guardrail" : "sm-guardrail",
       verbatimPolicyName: this.props.team.verbatimPolicyNamePrefix != undefined,
       naming: this.props.naming

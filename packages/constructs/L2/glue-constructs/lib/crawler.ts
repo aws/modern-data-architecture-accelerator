@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from "@aws-caef/construct"
+import { MdaaConstructProps } from "@aws-mdaa/construct"
 import { IResolvable } from "aws-cdk-lib";
 import { CfnCrawlerProps, CfnCrawler } from "aws-cdk-lib/aws-glue"
 import { NagSuppressions } from "cdk-nag"
@@ -12,7 +12,7 @@ import { Construct } from "constructs"
 /**
  * Interface representing a compliant Glue Crawler Config
  */
-export interface CaefCfnCrawlerProps extends CaefConstructProps {
+export interface MdaaCfnCrawlerProps extends MdaaConstructProps {
     /**
      * The Amazon Resource Name (ARN) of an IAM role that's used to access customer resources, such as Amazon Simple Storage Service (Amazon S3) data.
      *
@@ -98,17 +98,17 @@ export interface CaefCfnCrawlerProps extends CaefConstructProps {
  * Enforces the following:
  * * Security Configuration is set
  */
-export class CaefCfnCrawler extends CfnCrawler {
+export class MdaaCfnCrawler extends CfnCrawler {
 
-    private static setProps ( props: CaefCfnCrawlerProps ): CfnCrawlerProps {
+    private static setProps ( props: MdaaCfnCrawlerProps ): CfnCrawlerProps {
         const overrideProps = {
             name: props.naming.resourceName( props.name )
         }
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
-    constructor( scope: Construct, id: string, props: CaefCfnCrawlerProps ) {
-        super( scope, id, CaefCfnCrawler.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaCfnCrawlerProps ) {
+        super( scope, id, MdaaCfnCrawler.setProps( props ) )
         NagSuppressions.addResourceSuppressions(
             this,
             [

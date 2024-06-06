@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {CaefRoleHelper} from "@aws-caef/iam-role-helper";
-import {CaefTestApp} from "@aws-caef/testing";
+import {MdaaRoleHelper} from "@aws-mdaa/iam-role-helper";
+import {MdaaTestApp} from "@aws-mdaa/testing";
 import {Template} from "aws-cdk-lib/assertions";
 import {
     GAIAL3Construct,
@@ -15,12 +15,12 @@ import {
 } from "../lib";
 import * as fs from 'fs';
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
 
 
-    const roleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+    const roleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
 
     const constructProps: GAIAL3ConstructProps = {
 

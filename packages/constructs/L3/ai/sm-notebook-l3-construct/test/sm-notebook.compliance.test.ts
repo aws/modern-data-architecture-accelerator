@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefSecurityGroupRuleProps } from "@aws-caef/ec2-constructs";
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaSecurityGroupRuleProps } from "@aws-mdaa/ec2-constructs";
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { NamedLifecycleConfigProps, NotebookProps, SagemakerNotebookL3Construct, SagemakerNotebookL3ConstructProps } from '../lib/sm-notebook-l3-construct';
 
-describe( 'CAEF Notebook Tests', () => {
+describe( 'MDAA Notebook Tests', () => {
 
-    const testRoleRef: CaefRoleRef = {
+    const testRoleRef: MdaaRoleRef = {
         arn: "arn:test-partition:iam::test-account:role/test-role",
         id: "test-id",
         name: "test-role"
     }
 
-    const ingress: CaefSecurityGroupRuleProps = {
+    const ingress: MdaaSecurityGroupRuleProps = {
         ipv4: [ {
             cidr: "10.0.0.0/28",
             port: 443,
             protocol: "tcp"
         } ]
     }
-    const egress: CaefSecurityGroupRuleProps = {
+    const egress: MdaaSecurityGroupRuleProps = {
         ipv4: [ {
             cidr: "10.1.1.1/28",
             port: 443,
@@ -64,7 +64,7 @@ describe( 'CAEF Notebook Tests', () => {
     }
 
     describe( 'w/Auto Generated Key', () => {
-        const testApp = new CaefTestApp()
+        const testApp = new MdaaTestApp()
         const stack = testApp.testStack
         const constructProps: SagemakerNotebookL3ConstructProps = {
             assetDeployment: {
@@ -74,7 +74,7 @@ describe( 'CAEF Notebook Tests', () => {
             lifecycleConfigs: lifecycleConfigs,
             notebooks: { "test-notebook": notebook },
             naming: testApp.naming,
-            roleHelper: new CaefRoleHelper( stack, testApp.naming )
+            roleHelper: new MdaaRoleHelper( stack, testApp.naming )
         }
 
         new SagemakerNotebookL3Construct( stack, "notebooks", constructProps );
@@ -149,7 +149,7 @@ describe( 'CAEF Notebook Tests', () => {
 
     } )
     describe( 'w/Existing Key and SG, no Lifecycle, no Root Access, no custom Egress', () => {
-        const testApp = new CaefTestApp()
+        const testApp = new MdaaTestApp()
         const stack = testApp.testStack
         const notebook2 = {
             ...notebook,
@@ -170,7 +170,7 @@ describe( 'CAEF Notebook Tests', () => {
                 "test-notebook": notebook2
             },
             naming: testApp.naming,
-            roleHelper: new CaefRoleHelper( stack, testApp.naming )
+            roleHelper: new MdaaRoleHelper( stack, testApp.naming )
         }
         new SagemakerNotebookL3Construct( stack, "notebooks", constructProps );
         testApp.checkCdkNagCompliance( testApp.testStack )

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefDevopsCDKApp } from "../lib/devops";
+import { MdaaDevopsCDKApp } from "../lib/devops";
 
 test( 'SynthTest', () => {
     const context = {
@@ -13,7 +13,7 @@ test( 'SynthTest', () => {
         module_name: "test-module",
         app_configs: "./test/test-config.yaml"
     }
-    const app = new CaefDevopsCDKApp( { context: context } )
+    const app = new MdaaDevopsCDKApp( { context: context } )
     app.generateStack()
     expect( () => app.synth( {
         force: true,

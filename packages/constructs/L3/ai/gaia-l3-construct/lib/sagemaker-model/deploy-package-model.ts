@@ -3,7 +3,7 @@ import * as sagemaker from "aws-cdk-lib/aws-sagemaker";
 import { Construct } from "constructs";
 
 import { SageMakerModelProps, ModelPackageConfig } from "./types";
-import {CaefRole} from "@aws-caef/iam-constructs";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
 import {NagSuppressions} from "cdk-nag";
 
 export function deployPackageModel(
@@ -21,7 +21,7 @@ export function deployPackageModel(
     containerStartupHealthCheckTimeoutInSeconds = 900,
   } = modelConfig;
 
-  const executionRole = new CaefRole(scope, `SageMakerPackage${modelId}ModelExecutionRole`, {
+  const executionRole = new MdaaRole(scope, `SageMakerPackage${modelId}ModelExecutionRole`, {
     naming: props.naming,
     roleName: `SageMakerPackage${modelId.replace("/", "")}ModelExecutionRole`,
     createParams: false,

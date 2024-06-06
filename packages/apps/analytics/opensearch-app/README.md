@@ -41,7 +41,7 @@ domain:
     arn: arn:{{partition}}:iam::{{account}}:role/test-admin
 
   # Required. Functional Name of Opensearch Domain. 
-  # This will be prefixed as per CAEF naming convention. 
+  # This will be prefixed as per MDAA naming convention. 
   #If resultant name is longer than 28 characters, a randomly generated ID will be suffixed to truncated name.
   opensearchDomainName: osdomain
 

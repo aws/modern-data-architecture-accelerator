@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ICaefConfigTransformer } from "@aws-caef/config";
-import { CaefTestApp } from "@aws-caef/testing";
+import { IMdaaConfigTransformer } from "@aws-mdaa/config";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Schema } from "ajv";
 import { Stack } from "aws-cdk-lib";
-import { CaefAppConfigParser, CaefAppConfigParserProps } from "../lib";
+import { MdaaAppConfigParser, MdaaAppConfigParserProps } from "../lib";
 
 
 
-class TestAppConfigParser extends CaefAppConfigParser<any> {
-    constructor( stack: Stack, configSchema: Schema, props: CaefAppConfigParserProps, configTransformers?: ICaefConfigTransformer[] ) {
+class TestAppConfigParser extends MdaaAppConfigParser<any> {
+    constructor( stack: Stack, configSchema: Schema, props: MdaaAppConfigParserProps, configTransformers?: IMdaaConfigTransformer[] ) {
         super( stack, props, configSchema, configTransformers )
     }
     public getValidatedConfig () {
@@ -54,7 +54,7 @@ describe( 'ConfigParseTest', () => {
         output_effective_config: "true"
     }
 
-    const testApp = new CaefTestApp( context )
+    const testApp = new MdaaTestApp( context )
     const testStack = new Stack( testApp, "test-stack" )
     const appConfigProps = {
         org: context.org,
@@ -67,7 +67,7 @@ describe( 'ConfigParseTest', () => {
         }
     }
     describe( 'BasicConfigParseTest', () => {
-        class TestTransformer implements ICaefConfigTransformer {
+        class TestTransformer implements IMdaaConfigTransformer {
             transformConfig ( config: { [ key: string ]: any; } ): { [ key: string ]: any; } {
                 return config
             }

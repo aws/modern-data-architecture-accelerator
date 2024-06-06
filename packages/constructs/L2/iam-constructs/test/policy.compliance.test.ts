@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { PolicyDocument } from "aws-cdk-lib/aws-iam";
-import { CaefManagedPolicy, CaefManagedPolicyProps } from "../lib";
+import { MdaaManagedPolicy, MdaaManagedPolicyProps } from "../lib";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const policyDocument = {
         Statement: [
@@ -23,14 +23,14 @@ describe( 'CAEF Construct Compliance Tests', () => {
         ]
     }
 
-    const testContstructProps: CaefManagedPolicyProps = {
+    const testContstructProps: MdaaManagedPolicyProps = {
         naming: testApp.naming,
         managedPolicyName: "testing",
         document: PolicyDocument.fromJson( policyDocument )
     }
 
-    new CaefManagedPolicy( testApp.testStack, "test-construct", testContstructProps )
-    new CaefManagedPolicy( testApp.testStack, "test-construct-verbatim", { ...testContstructProps, ...{ verbatimPolicyName: true, managedPolicyName: "testing-verbatim" } } )
+    new MdaaManagedPolicy( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaManagedPolicy( testApp.testStack, "test-construct-verbatim", { ...testContstructProps, ...{ verbatimPolicyName: true, managedPolicyName: "testing-verbatim" } } )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

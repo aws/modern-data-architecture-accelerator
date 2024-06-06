@@ -1,6 +1,6 @@
-import { CaefLogGroup } from "@aws-caef/cloudwatch-constructs";
-import { CaefConstructProps } from "@aws-caef/construct";
-import { CaefSqsDeadLetterQueue } from "@aws-caef/sqs-constructs";
+import { MdaaLogGroup } from "@aws-mdaa/cloudwatch-constructs";
+import { MdaaConstructProps } from "@aws-mdaa/construct";
+import { MdaaSqsDeadLetterQueue } from "@aws-mdaa/sqs-constructs";
 import * as cdk from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
@@ -16,19 +16,19 @@ import * as path from "path";
 import { Shared } from "../../shared";
 import { SystemConfig } from "../../shared/types";
 import { RagDynamoDBTables } from "../rag-dynamodb-tables";
-import { CaefLambdaFunction } from "@aws-caef/lambda-constructs";
-import { CaefRole } from "@aws-caef/iam-constructs";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import { MdaaLambdaFunction } from "@aws-mdaa/lambda-constructs";
+import { MdaaRole } from "@aws-mdaa/iam-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
 
-export interface WebsiteCrawlingWorkflowProps extends CaefConstructProps {
+export interface WebsiteCrawlingWorkflowProps extends MdaaConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraDatabase?: rds.DatabaseCluster;
   readonly processingBucket: s3.Bucket;
   readonly sageMakerRagModelsEndpoint?: sagemaker.CfnEndpoint;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
 export class WebsiteCrawlingWorkflow extends Construct {
@@ -41,7 +41,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
   ) {
     super(scope, id);
 
-    const uploadDlq = new CaefSqsDeadLetterQueue( this, "WebsiteParserFunctionDLQ", {
+    const uploadDlq = new MdaaSqsDeadLetterQueue( this, "WebsiteParserFunctionDLQ", {
       encryptionMasterKey: props.encryptionKey,
       naming: props.naming,
       createParams: false,
@@ -49,7 +49,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
       queueName: "WebsiteParserFunctionDLQ"
     } );
 
-    const websitParserRole = new CaefRole( this, "WebsiteParserFunctionRole", {
+    const websitParserRole = new MdaaRole( this, "WebsiteParserFunctionRole", {
       naming: props.naming,
       roleName:  "WebsiteParserFunctionRole",
       createParams: false,
@@ -74,7 +74,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
             "./functions/website-crawling-workflow/website-parser"
         )
 
-    const websiteParserFunction = new CaefLambdaFunction(
+    const websiteParserFunction = new MdaaLambdaFunction(
       this,
       "WebsiteParserFunction",
       {
@@ -257,7 +257,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
       .when(sfn.Condition.booleanEquals("$.done", false), parserStep)
       .otherwise(setProcessed);
 
-    const logGroup: logs.LogGroup = new CaefLogGroup( this, `WebsiteCrawling-log-group`, {
+    const logGroup: logs.LogGroup = new MdaaLogGroup( this, `WebsiteCrawling-log-group`, {
       naming: props.naming,
       createParams: false,
       createOutputs: false,
@@ -293,8 +293,8 @@ export class WebsiteCrawlingWorkflow extends Construct {
         reason: 'Managed policies are restrictive, logs group resource unknown at deployment and only used during deployment',
       },
       { id: 'AwsSolutions-IAM5', reason: 'AmazonEC2ContainerServiceforEC2Role is restrictive enough.  Resources actions for ECS only support widlcard log group name not known at deployment time.' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy maintained by CAEF framework.'},
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy maintained by CAEF framework.'},
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.'},
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.'},
     ], true );
 
     NagSuppressions.addResourceSuppressions(websiteParserFunction, [
@@ -306,14 +306,14 @@ export class WebsiteCrawlingWorkflow extends Construct {
         id: 'AwsSolutions-IAM5',
         reason: 'Policy restricted to stack managed processing bucket and embedding model invoke endpoint unknown at deployment'
       },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     NagSuppressions.addResourceSuppressions(stateMachine, [
       { id: 'AwsSolutions-IAM5', reason: 'Permissions are restrictive to stack resources. Processing s3 bucket managed and deployed by stack, not known at deployment.  KMS key resource deployed and managed by stack, not known at deployment time.' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     this.stateMachine = stateMachine;

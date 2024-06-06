@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { Duration } from "aws-cdk-lib";
 import { IManagedPolicy, IPrincipal, IRole, PolicyDocument, Role, RoleProps } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
@@ -11,7 +11,7 @@ import { Construct } from "constructs";
 /**
  * Interface definging a compliant IAM Role
  */
-export interface CaefRoleProps extends CaefConstructProps {
+export interface MdaaRoleProps extends MdaaConstructProps {
     /**
      * The IAM principal (i.e. `new ServicePrincipal('sns.amazonaws.com')`)
      * which can assume this role.
@@ -118,26 +118,26 @@ export interface CaefRoleProps extends CaefConstructProps {
 /**
  * Interface representing a compliant Role
  */
-export interface ICaefRole extends IRole {
+export interface IMdaaRole extends IRole {
 
 }
 
 /**
  * Construct for creating compliant IAM Roles
  */
-export class CaefRole extends Role {
+export class MdaaRole extends Role {
 
 
-    private static setProps ( props: CaefRoleProps ): RoleProps {
+    private static setProps ( props: MdaaRoleProps ): RoleProps {
         const overrideProps = {
             roleName: props.naming.resourceName( props.roleName, 64 )
         }
         return { ...props, ...overrideProps }
     }
-    constructor( scope: Construct, id: string, props: CaefRoleProps ) {
-        super( scope, id, CaefRole.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaRoleProps ) {
+        super( scope, id, MdaaRole.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "role",
                 resourceId: props.roleName,
@@ -146,7 +146,7 @@ export class CaefRole extends Role {
             }, ...props
         },scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "role",
                 resourceId: props.roleName,
@@ -155,7 +155,7 @@ export class CaefRole extends Role {
             }, ...props
         },scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "role",
                 resourceId: props.roleName,

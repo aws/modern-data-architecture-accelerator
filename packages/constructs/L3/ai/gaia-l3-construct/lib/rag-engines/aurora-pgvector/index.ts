@@ -1,7 +1,7 @@
-import {CaefCustomResource} from "@aws-caef/custom-constructs";
-import {CaefRole} from "@aws-caef/iam-constructs";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefRdsServerlessCluster, CaefRdsServerlessClusterProps} from "@aws-caef/rds-constructs";
+import {MdaaCustomResource} from "@aws-mdaa/custom-constructs";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaRdsServerlessCluster, MdaaRdsServerlessClusterProps} from "@aws-mdaa/rds-constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Effect, ManagedPolicy, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
@@ -14,23 +14,23 @@ import {SystemConfig} from "../../shared/types";
 import {RagDynamoDBTables} from "../rag-dynamodb-tables";
 import {CreateAuroraWorkspace} from "./create-aurora-workspace";
 import {NagSuppressions} from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface AuroraPgVectorProps extends CaefL3ConstructProps {
+export interface AuroraPgVectorProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly ragDynamoDBTables: RagDynamoDBTables;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class AuroraPgVector extends CaefL3Construct {
+export class AuroraPgVector extends MdaaL3Construct {
   readonly database: rds.DatabaseCluster;
   public readonly createAuroraWorkspaceWorkflow: sfn.StateMachine;
 
   constructor(scope: Construct, id: string, props: AuroraPgVectorProps) {
     super(scope, id, props);
 
-    const monitoringRole = new CaefRole(this, `aurora-postgres-enhanced-monitoring-role`, {
+    const monitoringRole = new MdaaRole(this, `aurora-postgres-enhanced-monitoring-role`, {
       naming: props.naming,
       roleName: `test-cluster-enhanced-monitoring-role`,
       assumedBy: new ServicePrincipal('monitoring.rds.amazonaws.com'),
@@ -50,7 +50,7 @@ export class AuroraPgVector extends CaefL3Construct {
       }
     ], true)
 
-    const databaseProps: CaefRdsServerlessClusterProps = {
+    const databaseProps: MdaaRdsServerlessClusterProps = {
       naming: props.naming,
       createParams: false,
       createOutputs: false,
@@ -68,11 +68,11 @@ export class AuroraPgVector extends CaefL3Construct {
       securityGroups: [props.shared.dataSecurityGroup]
     }
 
-    const dbCluster = new CaefRdsServerlessCluster( this, "aurora-postgres-pgvector", databaseProps )
+    const dbCluster = new MdaaRdsServerlessCluster( this, "aurora-postgres-pgvector", databaseProps )
 
     const dbSetupResourceCodePath = props.config?.codeOverwrites?.pgVectorDbSetupCodePath !== undefined ?
         props.config.codeOverwrites.pgVectorDbSetupCodePath : path.join(__dirname, "./functions/pgvector-setup")
-    const dbSetupResource = new CaefCustomResource(
+    const dbSetupResource = new MdaaCustomResource(
       this,
       "DatabaseSetupCustomResource",
       {

@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
-import { ICaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Cluster, ClusterProps, ClusterSubnetGroup, ClusterType, LoggingProperties, NodeType } from '@aws-cdk/aws-redshift-alpha';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SecurityGroup, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
@@ -12,12 +12,12 @@ import { IRole } from 'aws-cdk-lib/aws-iam';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
-import { CaefRedshiftClusterParameterGroup } from './parameter-group';
+import { MdaaRedshiftClusterParameterGroup } from './parameter-group';
 
 /**
  * Properties for creating a compliant Redshift Cluster
  */
-export interface CaefRedshiftClusterProps extends CaefConstructProps {
+export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
     /** The security group with which cluster interfaces will be configured. */
     readonly securityGroup: SecurityGroup
 
@@ -35,7 +35,7 @@ export interface CaefRedshiftClusterProps extends CaefConstructProps {
      *
      * @default - No parameter group.
      */
-    readonly parameterGroup: CaefRedshiftClusterParameterGroup;
+    readonly parameterGroup: MdaaRedshiftClusterParameterGroup;
     /**
      * Number of compute nodes in the cluster. Only specify this property for multi-node clusters.
      *
@@ -67,7 +67,7 @@ export interface CaefRedshiftClusterProps extends CaefConstructProps {
      *
      * @default - AWS-managed key, if encryption at rest is enabled
      */
-    readonly encryptionKey: ICaefKmsKey
+    readonly encryptionKey: IMdaaKmsKey
     /**
      * A preferred maintenance window day/time range. Should be specified as a range ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC).
      *
@@ -139,8 +139,8 @@ export interface CaefRedshiftClusterProps extends CaefConstructProps {
  * * SSL must be utilized to connect to the cluster.
  * * The cluster is VPC connected and not publicly accessible.
  */
-export class CaefRedshiftCluster extends Cluster {
-    private static setProps ( props: CaefRedshiftClusterProps ): ClusterProps {
+export class MdaaRedshiftCluster extends Cluster {
+    private static setProps ( props: MdaaRedshiftClusterProps ): ClusterProps {
         const overrideProps = {
             clusterName: props.naming.resourceName( props.clusterName ),
             publiclyAccessible: false,
@@ -158,8 +158,8 @@ export class CaefRedshiftCluster extends Cluster {
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
-    constructor( scope: Construct, id: string, props: CaefRedshiftClusterProps ) {
-        super( scope, id, CaefRedshiftCluster.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaRedshiftClusterProps ) {
+        super( scope, id, MdaaRedshiftCluster.setProps( props ) )
         NagSuppressions.addResourceSuppressions( this, [
             {
                 id: 'CdkNagValidationFailure',
@@ -177,7 +177,7 @@ export class CaefRedshiftCluster extends Cluster {
         }
 
         if ( this.secret ) {
-            new CaefParamAndOutput( this, {
+            new MdaaParamAndOutput( this, {
                 ...{
                     resourceType: "cluster-secret",
                     resourceId: props.clusterName,
@@ -201,7 +201,7 @@ export class CaefRedshiftCluster extends Cluster {
             }
         ] );
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "cluster",
                 resourceId: props.clusterName,
@@ -210,7 +210,7 @@ export class CaefRedshiftCluster extends Cluster {
             }, ...props
         },scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
 
                 resourceType: "cluster",

@@ -10,12 +10,12 @@ import * as aws_ecr_assets from "aws-cdk-lib/aws-ecr-assets";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as rds from "aws-cdk-lib/aws-rds";
 import * as sagemaker from "aws-cdk-lib/aws-sagemaker";
-import {CaefRole} from "@aws-caef/iam-constructs";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
 import {NagSuppressions} from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface FileImportBatchJobProps extends CaefL3ConstructProps {
+export interface FileImportBatchJobProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly uploadBucket: s3.Bucket;
@@ -23,10 +23,10 @@ export interface FileImportBatchJobProps extends CaefL3ConstructProps {
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraDatabase?: rds.DatabaseCluster;
   readonly sageMakerRagModelsEndpoint?: sagemaker.CfnEndpoint;
-  encryptionKey: CaefKmsKey
+  encryptionKey: MdaaKmsKey
 }
 
-export class FileImportBatchJob extends CaefL3Construct {
+export class FileImportBatchJob extends MdaaL3Construct {
   public readonly jobQueue: batch.JobQueue;
   public readonly fileImportJob: batch.EcsJobDefinition;
 
@@ -58,7 +58,7 @@ export class FileImportBatchJob extends CaefL3Construct {
       priority: 1,
     });
 
-    const fileImportJobRole = new CaefRole(this, "FileImportJobRole", {
+    const fileImportJobRole = new MdaaRole(this, "FileImportJobRole", {
       naming: props.naming,
       roleName:  "FileImportJobRole",
       createParams: false,
@@ -176,8 +176,8 @@ export class FileImportBatchJob extends CaefL3Construct {
           reason: 'Cluster unknown at runtime.  Created during deployment and strictly used for AWS Batch job',
       },
       { id: 'AwsSolutions-IAM5', reason: 'AmazonEC2ContainerServiceforEC2Role is restrictive enough.  Resources actions for ECS only support widlcard log group name not known at deployment time.' },
-        { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy maintained by CAEF framework.  Wildcard is towards bedrock but service enabled on region level controls are in place.'},
-        { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy maintained by CAEF framework.  Wildcard is towards bedrock but service enabled on region level controls are in place.'},
+        { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.  Wildcard is towards bedrock but service enabled on region level controls are in place.'},
+        { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.  Wildcard is towards bedrock but service enabled on region level controls are in place.'},
     ], true );
 
     NagSuppressions.addResourceSuppressions(fileImportContainer, [
@@ -186,14 +186,14 @@ export class FileImportBatchJob extends CaefL3Construct {
           reason: 'Log stream generated at deployment time by AWS batch and ecr get authorization only supports * for resource',
 
       },
-    { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.'},
-    { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.'},
+    { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.'},
+    { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.'},
     ], true)
 
     NagSuppressions.addResourceSuppressions(fileImportJob, [
         { id: 'AwsSolutions-IAM5', reason: 'Events handled by upstream dynamodb service, resource unknown at deployment time' },
-        { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-        { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+        { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+        { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     this.jobQueue = jobQueue;

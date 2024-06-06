@@ -95,8 +95,8 @@ statements:
     Resource: '*'
     Effect: Allow
 
-  # TODO: Discuss with CAEF core team if we would like such basic actions
-  # defined in our CAEF managed policies 
+  # TODO: Discuss with MDAA core team if we would like such basic actions
+  # defined in our MDAA managed policies 
   - Sid: AllowLogGroupAndStreamWriteAccess
     Action:
       - 'logs:CreateLogStream'

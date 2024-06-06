@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { Match } from "aws-cdk-lib/assertions";
-import { CaefLambdaRole, CaefLambdaRoleProps } from "../lib";
+import { MdaaLambdaRole, MdaaLambdaRoleProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
 
-    const testContstructProps: CaefLambdaRoleProps = {
+    const testContstructProps: MdaaLambdaRoleProps = {
         naming: testApp.naming,
         roleName: "test-lambda-role",
         logGroupNames: [ "test-log-group" ],
@@ -20,7 +20,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         createParams: false
     }
 
-    new CaefLambdaRole( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaLambdaRole( testApp.testStack, "test-construct", testContstructProps )
 
 
     testApp.checkCdkNagCompliance( testApp.testStack )

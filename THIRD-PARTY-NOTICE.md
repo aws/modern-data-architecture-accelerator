@@ -1,6 +1,6 @@
 # Third Party Depedencies
 
-The following third-party dependecies are used by CAEF:
+The following third-party dependecies are used by MDAA:
 
 ## ajv - [MIT](https://github.com/ajv-validator/ajv/blob/master/LICENSE)
 

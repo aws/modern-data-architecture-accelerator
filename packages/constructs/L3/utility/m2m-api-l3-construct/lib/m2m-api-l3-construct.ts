@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefLogGroup, CaefLogGroupProps } from "@aws-caef/cloudwatch-constructs";
-import { CaefParamAndOutput } from "@aws-caef/construct";
-import { CaefManagedPolicy, CaefRole } from '@aws-caef/iam-constructs';
-import { CaefResolvableRole, CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from "@aws-caef/kms-constructs";
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefLambdaFunction, CaefLambdaRole } from "@aws-caef/lambda-constructs";
+import { MdaaLogGroup, MdaaLogGroupProps } from "@aws-mdaa/cloudwatch-constructs";
+import { MdaaParamAndOutput } from "@aws-mdaa/construct";
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaResolvableRole, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from "@aws-mdaa/kms-constructs";
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaLambdaFunction, MdaaLambdaRole } from "@aws-mdaa/lambda-constructs";
 import { Duration } from 'aws-cdk-lib';
 import { AccessLogFormat, AuthorizationType, CfnAccount, CognitoUserPoolsAuthorizer, LambdaIntegration, LogGroupLogDestination, MethodLoggingLevel, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { AccountRecovery, CfnUserPool, IUserPool, OAuthScope, ResourceServerScope, UserPool, UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
@@ -26,7 +26,7 @@ export interface M2MApiProps {
      * Roles which will be provided Admin access to the 
      * KMS key, and KeyPair secrets.
      */
-    readonly adminRoles: CaefRoleRef[]
+    readonly adminRoles: MdaaRoleRef[]
     /**
      * API stage name. Defaults to 'prod'
      */
@@ -114,17 +114,17 @@ export interface AppClientProps {
     readonly accessTokenValidityMinutes?: number
 }
 
-export interface M2MApiL3ConstructProps extends CaefL3ConstructProps {
+export interface M2MApiL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * The Ingestion App definition.
      */
     readonly m2mApiProps: M2MApiProps;
 }
 
-export class M2MApiL3Construct extends CaefL3Construct {
+export class M2MApiL3Construct extends MdaaL3Construct {
     protected readonly props: M2MApiL3ConstructProps
 
-    private readonly adminRoles: CaefResolvableRole[]
+    private readonly adminRoles: MdaaResolvableRole[]
 
     private static readonly identifier: string = "m2m-api"
 
@@ -149,7 +149,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
     }
 
     private createKmsKey (): IKey {
-        const kmsKey = new CaefKmsKey( this, 'kms-key', {
+        const kmsKey = new MdaaKmsKey( this, 'kms-key', {
             naming: this.props.naming,
             keyAdminRoleIds: this.adminRoles.map( x => x.id() ),
             keyUserRoleIds: this.adminRoles.map( x => x.id() )
@@ -238,7 +238,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
             } );
         } )
 
-        const cognitoAuthLogFunctionRole = new CaefLambdaRole( this, "cognito-auth-lambda-role", {
+        const cognitoAuthLogFunctionRole = new MdaaLambdaRole( this, "cognito-auth-lambda-role", {
             description: 'Lambda Role for Cognito Auth Logger function',
             roleName: "cognito-auth",
             naming: this.props.naming,
@@ -247,7 +247,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
             createOutputs: false
         } );
 
-        const postAuthLogFn = new CaefLambdaFunction( this, 'postAuthLogFn', {
+        const postAuthLogFn = new MdaaLambdaFunction( this, 'postAuthLogFn', {
             runtime: Runtime.NODEJS_20_X,
             handler: 'index.handler',
             functionName: "log-auth-event",
@@ -282,7 +282,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
 
         userPool.addTrigger( UserPoolOperation.POST_AUTHENTICATION, postAuthLogFn );
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "cognito-userpool-id",
                 resourceId: "m2m-cognito-userpool-id",
@@ -292,7 +292,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
             naming: this.props.naming
         } );
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "cognito-userpool-domain-name",
                 resourceId: "cognito-userpool-domain-name-id",
@@ -313,8 +313,8 @@ export class M2MApiL3Construct extends CaefL3Construct {
         const stageName = this.props.m2mApiProps.stageName || "prod"
 
         const integrationLambdaRole = this.props.m2mApiProps.integrationLambdaRoleArn ?
-            CaefLambdaRole.fromRoleArn( this, 'imported-integration-role', this.props.m2mApiProps.integrationLambdaRoleArn )
-            : new CaefLambdaRole( this, "url-gen-lambda-role", {
+            MdaaLambdaRole.fromRoleArn( this, 'imported-integration-role', this.props.m2mApiProps.integrationLambdaRoleArn )
+            : new MdaaLambdaRole( this, "url-gen-lambda-role", {
                 description: 'Lambda Role for presigned S3 URL generation Logger function',
                 roleName: "url-gen-lambda-role",
                 naming: this.props.naming,
@@ -324,7 +324,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
             } );
 
         // creates lambda function to generate presigned URL
-        const s3UrlGenLambda = new CaefLambdaFunction( this, 's3-url-gen-lambda', {
+        const s3UrlGenLambda = new MdaaLambdaFunction( this, 's3-url-gen-lambda', {
             runtime: Runtime.PYTHON_3_12,
             handler: 's3_url.handler',
             functionName: "signed-s3-url-gen",
@@ -376,7 +376,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
             ]
         } )
 
-        const accessLogGroupProps: CaefLogGroupProps = {
+        const accessLogGroupProps: MdaaLogGroupProps = {
             logGroupName: "access-logs",
             encryptionKey: kmsKey,
             logGroupNamePathPrefix: "",
@@ -384,7 +384,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
             naming: this.props.naming
         }
 
-        const accessLogGroup = new CaefLogGroup( this, "access-log-group", accessLogGroupProps )
+        const accessLogGroup = new MdaaLogGroup( this, "access-log-group", accessLogGroupProps )
 
         const restApi = new RestApi( this, "rest-api", {
             restApiName: this.props.naming.resourceName( undefined, 128 ),
@@ -418,12 +418,12 @@ export class M2MApiL3Construct extends CaefL3Construct {
         );
 
         if ( this.props.m2mApiProps.setAccountCloudWatchRole ?? false ) {
-            const cloudwatchRole = new CaefRole( this, 'cloudwatch-role', {
+            const cloudwatchRole = new MdaaRole( this, 'cloudwatch-role', {
                 roleName: "cloudwatch",
                 naming: this.props.naming,
                 assumedBy: new ServicePrincipal( "apigateway.amazonaws.com" ),
             } )
-            cloudwatchRole.addManagedPolicy( CaefManagedPolicy.fromAwsManagedPolicyNameWithPartition( this, "service-role/AmazonAPIGatewayPushToCloudWatchLogs" ) )
+            cloudwatchRole.addManagedPolicy( MdaaManagedPolicy.fromAwsManagedPolicyNameWithPartition( this, "service-role/AmazonAPIGatewayPushToCloudWatchLogs" ) )
 
             NagSuppressions.addResourceSuppressions(
                 cloudwatchRole,
@@ -481,7 +481,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
 
         const defaultWaf = new CfnWebACL( this, 'default-waf', defaultWafProps )
 
-        const defaultWafLogGroupProps: CaefLogGroupProps = {
+        const defaultWafLogGroupProps: MdaaLogGroupProps = {
             logGroupName: "default-waf",
             encryptionKey: kmsKey,
             // WAF log group destination names must start with aws-waf-logs-
@@ -491,7 +491,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
             naming: this.props.naming
         }
 
-        const defaultWafLogGroup = new CaefLogGroup( this, "default-waf-log-group", defaultWafLogGroupProps )
+        const defaultWafLogGroup = new MdaaLogGroup( this, "default-waf-log-group", defaultWafLogGroupProps )
 
         new CfnLoggingConfiguration( this, 'default-waf-logging-config', {
             logDestinationConfigs: [ defaultWafLogGroup.logGroupArn ],
@@ -516,7 +516,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
             cognitoUserPools: [ m2mUserPool ],
         } );
 
-        const restApiRole = new CaefRole( this, `integration-role`, {
+        const restApiRole = new MdaaRole( this, `integration-role`, {
             roleName: `integration`,
             assumedBy: new ServicePrincipal( 'apigateway.amazonaws.com' ),
             naming: this.props.naming,
@@ -566,7 +566,7 @@ export class M2MApiL3Construct extends CaefL3Construct {
         } );
 
         const apistagePath = `/${ stageName }`
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "rest-api-url",
                 resourceId: "rest-api-upload-url",

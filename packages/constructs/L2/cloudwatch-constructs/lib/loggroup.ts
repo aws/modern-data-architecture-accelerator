@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { RemovalPolicy } from "aws-cdk-lib";
 import { IKey } from "aws-cdk-lib/aws-kms";
 import { ILogGroup, LogGroup, LogGroupProps, RetentionDays } from "aws-cdk-lib/aws-logs";
@@ -11,7 +11,7 @@ import { NagSuppressions } from "cdk-nag";
 import { Construct } from "constructs";
 
 
-export interface CaefLogGroupProps extends CaefConstructProps {
+export interface MdaaLogGroupProps extends MdaaConstructProps {
     /**
      * The KMS customer managed key to encrypt the log group with.
      *
@@ -39,18 +39,18 @@ export interface CaefLogGroupProps extends CaefConstructProps {
 }
 
 /**
- * Interface for ICaefLogGroup.
+ * Interface for IMdaaLogGroup.
  */
-export interface ICaefLogGroup extends ILogGroup {
+export interface IMdaaLogGroup extends ILogGroup {
 
 }
 
 /**
  * Construct for a compliant CloudWatch Log Group
  */
-export class CaefLogGroup extends LogGroup implements ICaefLogGroup {
+export class MdaaLogGroup extends LogGroup implements IMdaaLogGroup {
 
-    private static setProps ( props: CaefLogGroupProps ): LogGroupProps {
+    private static setProps ( props: MdaaLogGroupProps ): LogGroupProps {
         const pathPrefix = props.logGroupNamePathPrefix.endsWith( "/" ) ? props.logGroupNamePathPrefix : props.logGroupNamePathPrefix + "/"
         const overrideProps = {
             logGroupName: pathPrefix + props.naming.resourceName( props.logGroupName ),
@@ -59,8 +59,8 @@ export class CaefLogGroup extends LogGroup implements ICaefLogGroup {
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefLogGroupProps ) {
-        super( scope, id, CaefLogGroup.setProps( props ) );
+    constructor( scope: Construct, id: string, props: MdaaLogGroupProps ) {
+        super( scope, id, MdaaLogGroup.setProps( props ) );
 
         if ( props.retention == RetentionDays.INFINITE ) {
             NagSuppressions.addResourceSuppressions(
@@ -73,7 +73,7 @@ export class CaefLogGroup extends LogGroup implements ICaefLogGroup {
             );
         }
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "loggroup",
                 resourceId: props.logGroupName,

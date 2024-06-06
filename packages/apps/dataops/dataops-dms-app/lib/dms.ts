@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { DMSL3Construct, DMSL3ConstructProps } from '@aws-caef/dataops-dms-l3-construct';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { DMSL3Construct, DMSL3ConstructProps } from '@aws-mdaa/dataops-dms-l3-construct';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { DMSConfigParser } from './dms-config';
 
-export class DMSCDKApp extends CaefCdkApp {
+export class DMSCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "dms", props )
     }
 
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
         const appConfig = new DMSConfigParser( stack, parserProps )
 
         const constructProps: DMSL3ConstructProps = {

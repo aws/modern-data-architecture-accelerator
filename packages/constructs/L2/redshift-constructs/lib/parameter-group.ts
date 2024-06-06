@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from '@aws-caef/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct';
 import { ClusterParameterGroup, ClusterParameterGroupProps } from '@aws-cdk/aws-redshift-alpha';
 import { Construct } from 'constructs';
 
 
 
 /** Props for the creation of a compliant Redshift Cluster Paramater group */
-export interface CaefRedshiftClusterParameterGroupProps extends CaefConstructProps {
+export interface MdaaRedshiftClusterParameterGroupProps extends MdaaConstructProps {
     /**
      * Description for this parameter group
      *
@@ -34,8 +34,8 @@ export interface CaefRedshiftClusterParameterGroupProps extends CaefConstructPro
  * 
  * All other parameters will be passed through.
  */
-export class CaefRedshiftClusterParameterGroup extends ClusterParameterGroup {
-    private static setProps ( props: CaefRedshiftClusterParameterGroupProps ): ClusterParameterGroupProps {
+export class MdaaRedshiftClusterParameterGroup extends ClusterParameterGroup {
+    private static setProps ( props: MdaaRedshiftClusterParameterGroupProps ): ClusterParameterGroupProps {
         const overrideProps = {
             description: props.naming.resourceName( props.description ),
             parameters: {
@@ -50,7 +50,7 @@ export class CaefRedshiftClusterParameterGroup extends ClusterParameterGroup {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefRedshiftClusterParameterGroupProps ) {
-        super( scope, id, CaefRedshiftClusterParameterGroup.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaRedshiftClusterParameterGroupProps ) {
+        super( scope, id, MdaaRedshiftClusterParameterGroup.setProps( props ) )
     }
 }

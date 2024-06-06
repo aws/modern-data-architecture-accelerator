@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefParamAndOutput } from '@aws-caef/construct';
-import { CaefSecurityGroup, CaefSecurityGroupProps, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { CaefResolvableRole, CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
-import { CaefNoteBook, CaefNoteBookProps } from '@aws-caef/sagemaker-constructs';
-import { AssetDeploymentProps, AssetProps, LifeCycleConfigHelper, LifecycleScriptProps } from "@aws-caef/sm-shared";
+import { MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
+import { MdaaNoteBook, MdaaNoteBookProps } from '@aws-mdaa/sagemaker-constructs';
+import { AssetDeploymentProps, AssetProps, LifeCycleConfigHelper, LifecycleScriptProps } from "@aws-mdaa/sm-shared";
 import { Stack } from "aws-cdk-lib";
 import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
@@ -34,7 +34,7 @@ export interface NamedAssetProps {
   readonly [ name: string ]: AssetProps
 }
 
-export interface SagemakerNotebookL3ConstructProps extends CaefL3ConstructProps {
+export interface SagemakerNotebookL3ConstructProps extends MdaaL3ConstructProps {
   readonly assetDeployment?: NotebookAssetDeploymentConfig
   readonly lifecycleConfigs?: NamedLifecycleConfigProps
   /**
@@ -70,9 +70,9 @@ export interface NotebookProps {
   readonly subnetId: string
   readonly instanceType: string
   readonly securityGroupId?: string
-  readonly securityGroupIngress?: CaefSecurityGroupRuleProps
-  readonly securityGroupEgress?: CaefSecurityGroupRuleProps
-  readonly notebookRole: CaefRoleRef
+  readonly securityGroupIngress?: MdaaSecurityGroupRuleProps
+  readonly securityGroupEgress?: MdaaSecurityGroupRuleProps
+  readonly notebookRole: MdaaRoleRef
   readonly acceleratorTypes?: string[]
   readonly additionalCodeRepositories?: string[]
   readonly defaultCodeRepository?: string
@@ -85,7 +85,7 @@ export interface NotebookProps {
 
 
 //This stack creates and manages a SageMaker Studio Domain
-export class SagemakerNotebookL3Construct extends CaefL3Construct {
+export class SagemakerNotebookL3Construct extends MdaaL3Construct {
   protected readonly props: SagemakerNotebookL3ConstructProps
 
 
@@ -129,7 +129,7 @@ export class SagemakerNotebookL3Construct extends CaefL3Construct {
     notebookProps: NotebookProps,
     kmsKey: IKey,
     lifecycleConfigsMap: { [ k: string ]: CfnNotebookInstanceLifecycleConfig },
-    resolvedRoles: { [ k: string ]: CaefResolvableRole } ) {
+    resolvedRoles: { [ k: string ]: MdaaResolvableRole } ) {
 
     const securityGroup = notebookProps.securityGroupId ?
       SecurityGroup.fromSecurityGroupId( this, `${ notebookId }-sg`, notebookProps.securityGroupId ) :
@@ -139,7 +139,7 @@ export class SagemakerNotebookL3Construct extends CaefL3Construct {
       this.resolveLifecycleConfigName( notebookProps.lifecycleConfigName, lifecycleConfigsMap ) : undefined
 
     // Create notebook instance
-    const createNotebookProps: CaefNoteBookProps = {
+    const createNotebookProps: MdaaNoteBookProps = {
       notebookInstanceId: notebookId,
       naming: this.props.naming,
       notebookInstanceName: notebookProps.notebookName ?? notebookId,
@@ -158,7 +158,7 @@ export class SagemakerNotebookL3Construct extends CaefL3Construct {
       rootAccess: notebookProps.rootAccess != undefined && notebookProps.rootAccess ? "Enabled" : undefined
     }
 
-    new CaefNoteBook( this, notebookId, createNotebookProps )
+    new MdaaNoteBook( this, notebookId, createNotebookProps )
   }
 
   /** @jsii ignore */
@@ -183,7 +183,7 @@ export class SagemakerNotebookL3Construct extends CaefL3Construct {
       ( notebookProps.securityGroupEgress?.prefixList && notebookProps.securityGroupEgress?.prefixList.length > 0 ) ||
       ( notebookProps.securityGroupEgress?.sg && notebookProps.securityGroupEgress?.sg.length > 0 ) || false
 
-    const securityGroupProps: CaefSecurityGroupProps = {
+    const securityGroupProps: MdaaSecurityGroupProps = {
       securityGroupName: notebookId,
       vpc: notebookVpc,
       naming: this.props.naming,
@@ -193,12 +193,12 @@ export class SagemakerNotebookL3Construct extends CaefL3Construct {
       addSelfReferenceRule: false
     }
 
-    const securityGroup = new CaefSecurityGroup( this, `${ notebookId }-sg`, securityGroupProps )
+    const securityGroup = new MdaaSecurityGroup( this, `${ notebookId }-sg`, securityGroupProps )
     return securityGroup
   }
 
   private createKMSKey ( notebookName: string, roleArns: string[] ): IKey {
-    const kmsKey = new CaefKmsKey( this, `kmskey-${ notebookName }`, {
+    const kmsKey = new MdaaKmsKey( this, `kmskey-${ notebookName }`, {
       alias: `kmskey-${ notebookName }`,
       naming: this.props.naming
     } )
@@ -241,7 +241,7 @@ export class SagemakerNotebookL3Construct extends CaefL3Construct {
       onCreate: onCreateContent ? [ { content: onCreateContent } ] : undefined
     }
     const lifecycleConfig = new CfnNotebookInstanceLifecycleConfig( this, `${ lifecycleName }-lifecycle`, cfnLifecycleConfigProps )
-    new CaefParamAndOutput( this, {
+    new MdaaParamAndOutput( this, {
       naming: this.props.naming,
       resourceId: lifecycleName,
       resourceType: "lifecycle-config",

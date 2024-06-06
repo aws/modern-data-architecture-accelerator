@@ -3,24 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match } from "aws-cdk-lib/assertions";
 import { Template } from "aws-cdk-lib/assertions";
 import { AccessPolicyProps, BucketDefinition, DataLakeL3ConstructProps, LifecycleConfigurationRuleProps, LifecycleTransitionProps, S3DatalakeBucketL3Construct } from "../lib";
 
-describe( 'CAEF Compliance Stack Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Compliance Stack Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testReadRoleRef: CaefRoleRef = {
+    const testReadRoleRef: MdaaRoleRef = {
         id: "test-read-role-id"
     }
 
-    const testReadWriteRoleRef: CaefRoleRef = {
+    const testReadWriteRoleRef: MdaaRoleRef = {
         id: "test-read-write-role-id"
     }
 
-    const testReadWriteSuperRoleRef: CaefRoleRef = {
+    const testReadWriteSuperRoleRef: MdaaRoleRef = {
         id: "test-read-write-super-role-id"
     }
 
@@ -99,7 +99,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         ],
         naming: testApp.naming,
 
-        roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming )
+        roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming )
     }
 
     new S3DatalakeBucketL3Construct( testApp.testStack, 'test-stack', constructProps )

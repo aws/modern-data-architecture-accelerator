@@ -1,6 +1,6 @@
 {
-  "name": "@aws-caef/s3-audit-helper",
-  "description": "CAEF s3-audit-helper utility",
+  "name": "@aws-mdaa/s3-audit-helper",
+  "description": "MDAA s3-audit-helper utility",
   "author": {
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"
@@ -30,9 +30,9 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/kms-constructs": "^0.41.0",
-    "@aws-caef/naming": "^0.41.0",
-    "@aws-caef/s3-constructs": "^0.41.0",
+    "@aws-mdaa/kms-constructs": "^0.41.0",
+    "@aws-mdaa/naming": "^0.41.0",
+    "@aws-mdaa/s3-constructs": "^0.41.0",
     "@aws-cdk/aws-glue-alpha": "2.132.1-alpha.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",

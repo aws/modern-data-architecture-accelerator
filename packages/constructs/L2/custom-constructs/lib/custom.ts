@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from "@aws-caef/construct";
-import { CaefLambdaFunction, CaefLambdaRole } from "@aws-caef/lambda-constructs";
+import { MdaaConstructProps } from "@aws-mdaa/construct";
+import { MdaaLambdaFunction, MdaaLambdaRole } from "@aws-mdaa/lambda-constructs";
 import { CustomResource, CustomResourceProps, Duration, Stack } from "aws-cdk-lib";
 import { Policy, PolicyDocument, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
 import { Code, ILayerVersion, Runtime } from "aws-cdk-lib/aws-lambda";
@@ -15,7 +15,7 @@ import {ISecurityGroup, IVpc, SubnetSelection} from "aws-cdk-lib/aws-ec2";
 // nosemgrep
 const _ = require( 'lodash' );
 
-export interface CaefCustomResourceProps extends CaefConstructProps {
+export interface MdaaCustomResourceProps extends MdaaConstructProps {
     readonly resourceType: string
     readonly code: Code
     readonly runtime: Runtime
@@ -31,16 +31,16 @@ export interface CaefCustomResourceProps extends CaefConstructProps {
     readonly securityGroup?: ISecurityGroup
 }
 
-export class CaefCustomResource extends CustomResource {
-    public handlerFunction: CaefLambdaFunction;
-    protected static handlerFunctionPlaceHolder: CaefLambdaFunction;
-    private static setProps ( scope: Construct, props: CaefCustomResourceProps ) {
+export class MdaaCustomResource extends CustomResource {
+    public handlerFunction: MdaaLambdaFunction;
+    protected static handlerFunctionPlaceHolder: MdaaLambdaFunction;
+    private static setProps ( scope: Construct, props: MdaaCustomResourceProps ) {
         const stack = Stack.of( scope );
 
         const handlerFunctionName = props.naming.resourceName( `${ props.resourceType }-handler`, 64 )
         const handlerRoleResourceId = `custom-${ props.resourceType }-handler-role`
         const existingHandlerRole = stack.node.tryFindChild( handlerRoleResourceId ) as Role;
-        const handlerRole = existingHandlerRole ? existingHandlerRole : new CaefLambdaRole( stack, handlerRoleResourceId, {
+        const handlerRole = existingHandlerRole ? existingHandlerRole : new MdaaLambdaRole( stack, handlerRoleResourceId, {
             roleName: `${ props.resourceType }-handler`,
             naming: props.naming,
             logGroupNames: [
@@ -73,8 +73,8 @@ export class CaefCustomResource extends CustomResource {
         }
 
         const handlerFunctionResourceId = `custom-${ props.resourceType }-handler-function`
-        const existingHandlerFunction = stack.node.tryFindChild( handlerFunctionResourceId ) as CaefLambdaFunction;
-        this.handlerFunctionPlaceHolder = existingHandlerFunction ? existingHandlerFunction : new CaefLambdaFunction( stack, handlerFunctionResourceId, {
+        const existingHandlerFunction = stack.node.tryFindChild( handlerFunctionResourceId ) as MdaaLambdaFunction;
+        this.handlerFunctionPlaceHolder = existingHandlerFunction ? existingHandlerFunction : new MdaaLambdaFunction( stack, handlerFunctionResourceId, {
             naming: props.naming,
             runtime: props.runtime,
             code: props.code,
@@ -110,7 +110,7 @@ export class CaefCustomResource extends CustomResource {
         );
         const providerRoleResourceId = `custom-${ props.resourceType }-provider-role`
         const existingProviderRole = stack.node.tryFindChild( providerRoleResourceId ) as Role;
-        const providerRole = existingProviderRole ? existingProviderRole : new CaefLambdaRole(
+        const providerRole = existingProviderRole ? existingProviderRole : new MdaaLambdaRole(
             stack,
             providerRoleResourceId,
             {
@@ -191,20 +191,20 @@ export class CaefCustomResource extends CustomResource {
         const crProps: CustomResourceProps = {
             resourceType: `Custom::${ props.resourceType }`,
             serviceToken: provider.serviceToken,
-            properties: props.pascalCaseProperties ? CaefCustomResource.pascalCase( props.handlerProps ) : props.handlerProps
+            properties: props.pascalCaseProperties ? MdaaCustomResource.pascalCase( props.handlerProps ) : props.handlerProps
         }
         return crProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefCustomResourceProps ) {
-        super( scope, id, CaefCustomResource.setProps( scope, props ) )
+    constructor( scope: Construct, id: string, props: MdaaCustomResourceProps ) {
+        super( scope, id, MdaaCustomResource.setProps( scope, props ) )
 
-        this.handlerFunction = CaefCustomResource.handlerFunctionPlaceHolder
+        this.handlerFunction = MdaaCustomResource.handlerFunctionPlaceHolder
 
     }
 
     public static pascalCase ( props: any ): any {
-        return _.transform( props, CaefCustomResource.transformUpperCaseObj, {} );
+        return _.transform( props, MdaaCustomResource.transformUpperCaseObj, {} );
     }
 
     private static upcaseFirst ( str: string ): string {
@@ -213,13 +213,13 @@ export class CaefCustomResource extends CustomResource {
     }
 
     private static transformUpperCaseObj ( result: { [ key: string ]: any }, value: any, key: string ) {
-        const newKey = CaefCustomResource.upcaseFirst( key );
+        const newKey = MdaaCustomResource.upcaseFirst( key );
         if ( typeof value === 'string' || value instanceof String )
             result[ newKey ] = value
         else if ( value instanceof Array )
-            result[ newKey ] = CaefCustomResource.transformUpperCaseObjArray( value )
+            result[ newKey ] = MdaaCustomResource.transformUpperCaseObjArray( value )
         else if ( value instanceof Object ) {
-            result[ newKey ] = _.transform( value, CaefCustomResource.transformUpperCaseObj, {} )
+            result[ newKey ] = _.transform( value, MdaaCustomResource.transformUpperCaseObj, {} )
         }
         else
             result[ newKey ] = value
@@ -232,7 +232,7 @@ export class CaefCustomResource extends CustomResource {
             else if ( value instanceof Array )
                 return this.transformUpperCaseObjArray( value )
             else if ( value instanceof Object )
-                return _.transform( value, CaefCustomResource.transformUpperCaseObj, {} )
+                return _.transform( value, MdaaCustomResource.transformUpperCaseObj, {} )
             else
                 return value
         } )

@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { CaefEKSCluster, CaefEKSClusterProps, KubernetesCmd } from '../lib';
+import { MdaaEKSCluster, MdaaEKSClusterProps, KubernetesCmd } from '../lib';
 import { KubernetesVersion } from 'aws-cdk-lib/aws-eks';
 import { Role } from 'aws-cdk-lib/aws-iam';
-import { CaefKubectlProvider } from '../lib/caef-kubectl-provider';
+import { MdaaKubectlProvider } from '../lib/mdaa-kubectl-provider';
 import * as cdk8s from 'cdk8s';
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const testAdminRole = Role.fromRoleName( testApp.testStack, `admin-role`, "test-admin-role" )
 
@@ -24,11 +24,11 @@ describe( 'CAEF Construct Compliance Tests', () => {
         privateSubnetIds: [ 'subnet1', 'subnet2' ],
     } );
 
-    const testKmsKey = CaefKmsKey.fromKeyArn( testApp.testStack, 'test-key', "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKmsKey = MdaaKmsKey.fromKeyArn( testApp.testStack, 'test-key', "arn:test-partition:kms:test-region:test-account:key/test-key" )
     const testSubnet = Subnet.fromSubnetId( testApp.testStack, 'subnet', "test-subnet-id" )
     const testSG = SecurityGroup.fromSecurityGroupId( testApp.testStack, 'sg', "test-sg-id" )
 
-    const testContstructProps: CaefEKSClusterProps = {
+    const testContstructProps: MdaaEKSClusterProps = {
         adminRoles: [ testAdminRole ],
         naming: testApp.naming,
         vpc: testVpc,
@@ -41,7 +41,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         },
     }
 
-    const eksCluster = new CaefEKSCluster( testApp.testStack, "test-construct", testContstructProps )
+    const eksCluster = new MdaaEKSCluster( testApp.testStack, "test-construct", testContstructProps )
 
     eksCluster.addNamespace( new cdk8s.App(), 'test-namespace', 'test-namespace', testSG )
 
@@ -103,15 +103,15 @@ describe( 'CAEF Construct Compliance Tests', () => {
             } )
         } )
     } )
-    describe( 'CAEF KubeCtlProvider Tests', () => {
-        const importedEksCluster = CaefEKSCluster.fromClusterAttributes( testApp.testStack, "imported=cluster", {
+    describe( 'MDAA KubeCtlProvider Tests', () => {
+        const importedEksCluster = MdaaEKSCluster.fromClusterAttributes( testApp.testStack, "imported=cluster", {
             clusterName: "imported-cluster",
             kubectlRoleArn: "arn:test-partition:iam::test-account:role/test-role"
         } )
         test( 'KubeCtlProvider Methods', () => {
-            expect( () => CaefKubectlProvider.getOrCreate( testApp.testStack, eksCluster ) ).not.toThrow()
-            expect( () => CaefKubectlProvider.getOrCreate( testApp.testStack, importedEksCluster ) ).not.toThrow()
-            expect( () => CaefKubectlProvider.fromKubectlProviderAttributes( testApp.testStack, 'test-kubectl-from-attrs', {
+            expect( () => MdaaKubectlProvider.getOrCreate( testApp.testStack, eksCluster ) ).not.toThrow()
+            expect( () => MdaaKubectlProvider.getOrCreate( testApp.testStack, importedEksCluster ) ).not.toThrow()
+            expect( () => MdaaKubectlProvider.fromKubectlProviderAttributes( testApp.testStack, 'test-kubectl-from-attrs', {
                 functionArn: "test-function-arn",
                 kubectlRoleArn: "arn:test-partition:iam::test-account:role/test-role",
                 handlerRole: Role.fromRoleName( testApp.testStack, "test-handler-role", "test-handler-role" )

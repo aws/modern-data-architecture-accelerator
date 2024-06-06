@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { IResolvable } from 'aws-cdk-lib';
 import { CfnJob, CfnJobProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
 /**
- * Properties for creating a compliant Caef Databrew Job
+ * Properties for creating a compliant Mdaa Databrew Job
  */
-export interface CaefDataBrewJobProps extends CaefConstructProps {
+export interface MdaaDataBrewJobProps extends MdaaConstructProps {
 
     // The unique name of the job.
     readonly name: string
@@ -72,9 +72,9 @@ export interface CaefDataBrewJobProps extends CaefConstructProps {
 /**
  * A construct which creates a compliant Databrew Job.
  */
-export class CaefDataBrewJob extends CfnJob {
+export class MdaaDataBrewJob extends CfnJob {
 
-    private static setProps ( props: CaefDataBrewJobProps ): CfnJobProps {
+    private static setProps ( props: MdaaDataBrewJobProps ): CfnJobProps {
         const overrideProps = {
             name: props.naming.resourceName( props.name, 80 ),
             encryptionMode: "SSE-KMS"
@@ -82,10 +82,10 @@ export class CaefDataBrewJob extends CfnJob {
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataBrewJobProps ) {
-        super( scope, id, CaefDataBrewJob.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataBrewJobProps ) {
+        super( scope, id, MdaaDataBrewJob.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Job",
                 resourceId: props.name,

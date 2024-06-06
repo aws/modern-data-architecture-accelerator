@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { GlueJobL3Construct, GlueJobL3ConstructProps } from '@aws-caef/dataops-job-l3-construct';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { GlueJobL3Construct, GlueJobL3ConstructProps } from '@aws-mdaa/dataops-job-l3-construct';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { GlueJobConfigParser } from './dataops-job-config';
 
-export class GlueJobCDKApp extends CaefCdkApp {
+export class GlueJobCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "dataops-job", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
         const appConfig = new GlueJobConfigParser( stack, parserProps )
         const constructProps: GlueJobL3ConstructProps = {

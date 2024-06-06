@@ -3,27 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefDataSyncObjectStorageLocation, CaefDataSyncObjectStorageLocationProps, CaefDataSyncS3Location, CaefDataSyncS3LocationProps, CaefDataSyncSmbLocation, CaefDataSyncSmbLocationProps } from "../lib";
+import { MdaaDataSyncObjectStorageLocation, MdaaDataSyncObjectStorageLocationProps, MdaaDataSyncS3Location, MdaaDataSyncS3LocationProps, MdaaDataSyncSmbLocation, MdaaDataSyncSmbLocationProps } from "../lib";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
+describe( 'MDAA Construct Compliance Tests', () => {
 
 
 
     describe( 'Smb Location Compliance Tests', () => {
-        const testApp = new CaefTestApp()
-        const testContstructProps: CaefDataSyncSmbLocationProps = {
+        const testApp = new MdaaTestApp()
+        const testContstructProps: MdaaDataSyncSmbLocationProps = {
             naming: testApp.naming,
             locationName: "smb_loc1",
             agentArns: [ "arn:test-partition:datasync:test-region:test-account:agent/agent-063abf853f2a7ebdd" ],
-            secretName: "/test/caef/secret",
+            secretName: "/test/mdaa/secret",
             serverHostname: "hostname",
             subdirectory: "subdir"
         }
 
-        new CaefDataSyncSmbLocation( testApp.testStack, "test-construct-smb", testContstructProps )
+        new MdaaDataSyncSmbLocation( testApp.testStack, "test-construct-smb", testContstructProps )
         testApp.checkCdkNagCompliance( testApp.testStack )
         const template = Template.fromStack( testApp.testStack );
         //console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
@@ -33,7 +33,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
                 "AgentArns": [ "arn:test-partition:datasync:test-region:test-account:agent/agent-063abf853f2a7ebdd" ]
             } )
         } )
-        const userProp = "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/caef/secret:SecretString:user::}}"
+        const userProp = "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/mdaa/secret:SecretString:user::}}"
 
         test( 'User', () => {
             template.hasResourceProperties( "AWS::DataSync::LocationSMB", {
@@ -41,7 +41,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
             } )
         } )
 
-        const passwordProp = "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/caef/secret:SecretString:password::}}"
+        const passwordProp = "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/mdaa/secret:SecretString:password::}}"
         test( 'Password', () => {
             template.hasResourceProperties( "AWS::DataSync::LocationSMB", {
                 "Password": passwordProp
@@ -61,8 +61,8 @@ describe( 'CAEF Construct Compliance Tests', () => {
     } )
 
     describe( 'S3 Location Compliance Tests', () => {
-        const testApp = new CaefTestApp()
-        const testContstructProps: CaefDataSyncS3LocationProps = {
+        const testApp = new MdaaTestApp()
+        const testContstructProps: MdaaDataSyncS3LocationProps = {
             naming: testApp.naming,
             locationName: "s3_loc1",
             s3BucketArn: "arn:test-partition:s3:::test-bucket-name",
@@ -71,7 +71,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
             }
         }
 
-        new CaefDataSyncS3Location( testApp.testStack, "test-construct-s3", testContstructProps )
+        new MdaaDataSyncS3Location( testApp.testStack, "test-construct-s3", testContstructProps )
         testApp.checkCdkNagCompliance( testApp.testStack )
         const template = Template.fromStack( testApp.testStack );
         //console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
@@ -94,18 +94,18 @@ describe( 'CAEF Construct Compliance Tests', () => {
     } )
 
     describe( 'Object Storage Location Compliance Tests', () => {
-        const testApp = new CaefTestApp()
-        const testContstructProps: CaefDataSyncObjectStorageLocationProps = {
+        const testApp = new MdaaTestApp()
+        const testContstructProps: MdaaDataSyncObjectStorageLocationProps = {
             naming: testApp.naming,
             locationName: "objstorage_loc1",
             agentArns: [ "arn:test-partition:datasync:test-region:test-account:agent/agent-063abf853f2a7ebdd" ],
-            secretName: "/test/caef/secret2",
+            secretName: "/test/mdaa/secret2",
             bucketName: "test-bucket",
             serverHostname: "object-storage-hostname",
             subdirectory: "subdir"
         }
 
-        new CaefDataSyncObjectStorageLocation( testApp.testStack, "test-construct-object-storage", testContstructProps )
+        new MdaaDataSyncObjectStorageLocation( testApp.testStack, "test-construct-object-storage", testContstructProps )
         testApp.checkCdkNagCompliance( testApp.testStack )
         const template = Template.fromStack( testApp.testStack );
         //console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
@@ -125,13 +125,13 @@ describe( 'CAEF Construct Compliance Tests', () => {
                 "ServerHostname": "object-storage-hostname"
             } )
         } )
-        const accessKeyProp = "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/caef/secret2:SecretString:accessKey::}}"
+        const accessKeyProp = "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/mdaa/secret2:SecretString:accessKey::}}"
         test( 'AccessKey', () => {
             template.hasResourceProperties( "AWS::DataSync::LocationObjectStorage", {
                 "AccessKey": accessKeyProp
             } )
         } )
-        const secretKeyProp = "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/caef/secret2:SecretString:secretKey::}}"
+        const secretKeyProp = "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/mdaa/secret2:SecretString:secretKey::}}"
         test( 'SecretKey', () => {
             template.hasResourceProperties( "AWS::DataSync::LocationObjectStorage", {
                 "SecretKey": secretKeyProp

@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefCustomResource, CaefCustomResourceProps } from '@aws-caef/custom-constructs';
-import { CaefSecurityGroup, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
+import { MdaaSecurityGroup, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import {
-  CaefBoto3LayerVersion,
-  CaefLambdaFunction,
-  CaefLambdaRole
-} from "@aws-caef/lambda-constructs";
+  MdaaBoto3LayerVersion,
+  MdaaLambdaFunction,
+  MdaaLambdaRole
+} from "@aws-mdaa/lambda-constructs";
 import { CustomResource, Duration } from "aws-cdk-lib";
 import { Protocol, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -71,7 +71,7 @@ export interface AccountProps {
    * Map of names to security group access definitions. Will be added as egrees/ingress rules to the QuickSight security group, permitting access
    * between the QS account and internal resources on your VPC.
    */
-  readonly securityGroupAccess?: CaefSecurityGroupRuleProps;
+  readonly securityGroupAccess?: MdaaSecurityGroupRuleProps;
   /**
    * List of IP CIDRs which will be provided access to the account via the QuickSight interface. IP access restrictions are disabled by default.
    */
@@ -87,11 +87,11 @@ export interface IpRestrictionProps {
   readonly description?: string
 }
 
-export interface QuickSightAccountL3ConstructProps extends CaefL3ConstructProps {
+export interface QuickSightAccountL3ConstructProps extends MdaaL3ConstructProps {
   readonly qsAccount: AccountProps
 }
 
-export class QuickSightAccountL3Construct extends CaefL3Construct {
+export class QuickSightAccountL3Construct extends MdaaL3Construct {
   protected readonly props: QuickSightAccountL3ConstructProps
 
 
@@ -99,7 +99,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
   constructor( scope: Construct, id: string, props: QuickSightAccountL3ConstructProps ) {
     super( scope, id, props )
     this.props = props
-    this.boto3Layer = new CaefBoto3LayerVersion( this, 'boto3-layer', { naming: this.props.naming } )
+    this.boto3Layer = new MdaaBoto3LayerVersion( this, 'boto3-layer', { naming: this.props.naming } )
 
     const serviceRole = this.buildQuickSightServiceRole();
     const managedPolicy = this.createServiceManagedPolicy( serviceRole )
@@ -131,7 +131,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
     return new CfnVPCConnection( this, 'vpc-connection', vpcConnectionProps )
   }
 
-  private createIpRestrictions ( ipRestrictions: IpRestrictionProps[] ): CaefCustomResource {
+  private createIpRestrictions ( ipRestrictions: IpRestrictionProps[] ): MdaaCustomResource {
     const crStatement: PolicyStatement = new PolicyStatement( {
       effect: Effect.ALLOW,
       actions: [
@@ -145,7 +145,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
       return [ restriction.cidr, restriction.description || `Restriction for ${ restriction.cidr }` ]
     } ) )
 
-    const crProps: CaefCustomResourceProps = {
+    const crProps: MdaaCustomResourceProps = {
       resourceType: 'ip-restrictions',
       code: Code.fromAsset( `${ __dirname }/../src/python/ip_restrictions` ),
       runtime: Runtime.PYTHON_3_12,
@@ -159,7 +159,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
       naming: this.props.naming,
       handlerLayers: [ this.boto3Layer ],
     }
-    return new CaefCustomResource( this, 'update-ip-restrictions-cr', crProps )
+    return new MdaaCustomResource( this, 'update-ip-restrictions-cr', crProps )
   }
 
   // Creates Custom Resource to Manage Quicksight Account - Handles OnCreate, OnUpdate, OnDelete Stack Events
@@ -191,7 +191,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
   //Creates Custom Lambda Provider to create QS Account
   private createAccountProvider (): Provider {
     //Create a role which will be used by the QS Account Custom Resource Lambda Function
-    const accountCrRole = new CaefLambdaRole( this, "qsAccount-cr-role", {
+    const accountCrRole = new MdaaLambdaRole( this, "qsAccount-cr-role", {
       description: "CR Lambda Role",
       roleName: "qsAccount-cr",
       naming: this.props.naming,
@@ -280,7 +280,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
     );
     const srcDir = `${ __dirname }/../src/python/quicksight_account`;
     // This Lambda is used as a Custom Resource in order to create the QuickSight Account
-    const accountCrLambda = new CaefLambdaFunction(
+    const accountCrLambda = new MdaaLambdaFunction(
       this,
       "qsAccount-cr-func",
       {
@@ -338,7 +338,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
       "qsAccount-cr-prov",
       64
     );
-    const accountCrProviderRole = new CaefLambdaRole(
+    const accountCrProviderRole = new MdaaLambdaRole(
       this,
       "qsAccount-cr-prov-role",
       {
@@ -438,14 +438,14 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
     These below ingress rules will allow traffic from data sources in the VPC 
     to return to the QS service via the VPC connection it creates (to which the security group is attached.)
     */
-    const ingressRules: CaefSecurityGroupRuleProps = {
+    const ingressRules: MdaaSecurityGroupRuleProps = {
       ipv4: this.props.qsAccount.securityGroupAccess?.ipv4?.map( rule => { return { cidr: rule.cidr, protocol: Protocol.TCP, port: 1, toPort: 65535 } } ),
       sg: this.props.qsAccount.securityGroupAccess?.sg?.map( rule => { return { sgId: rule.sgId, protocol: Protocol.TCP, port: 1, toPort: 65535 } } ),
       prefixList: this.props.qsAccount.securityGroupAccess?.prefixList?.map( rule => { return { prefixList: rule.prefixList, protocol: Protocol.TCP, port: 1, toPort: 65535 } } )
     }
 
     //Create the SecurityGroup
-    const quickSightSecurityGroup = new CaefSecurityGroup( this, `quicksight-sg`, {
+    const quickSightSecurityGroup = new MdaaSecurityGroup( this, `quicksight-sg`, {
       naming: this.props.naming,
       securityGroupName: "quicksight-sg",
       vpc: vpc,
@@ -459,7 +459,7 @@ export class QuickSightAccountL3Construct extends CaefL3Construct {
   }
 
   private buildQuickSightServiceRole (): IRole {
-    const role = new CaefRole( this, `service-role`, {
+    const role = new MdaaRole( this, `service-role`, {
       assumedBy: new ServicePrincipal( 'quicksight.amazonaws.com' ),
       description: 'QuickSight Service Role',
       roleName: `service-role`,

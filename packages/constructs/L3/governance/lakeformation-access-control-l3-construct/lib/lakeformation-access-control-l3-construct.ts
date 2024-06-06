@@ -6,8 +6,8 @@
 
 
 
-import { CaefResolvableRole, CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { Arn, ArnComponents, ArnFormat } from 'aws-cdk-lib';
 import { CfnDatabase, CfnDatabaseProps } from 'aws-cdk-lib/aws-glue';
 import { CfnPrincipalPermissions } from 'aws-cdk-lib/aws-lakeformation';
@@ -67,7 +67,7 @@ export interface PrincipalProps {
   /**
    * Arn of an IAM principal for the grant.
    */
-  readonly role?: CaefRoleRef | CaefResolvableRole
+  readonly role?: MdaaRoleRef | MdaaResolvableRole
   /**
    * Optionally, the principal account can be specified for cases where the account cannot be 
    * determined from the role arn
@@ -106,7 +106,7 @@ export interface GrantProps {
   readonly principals: NamedPrincipalProps
 }
 
-export interface LakeFormationAccessControlL3ConstructProps extends CaefL3ConstructProps {
+export interface LakeFormationAccessControlL3ConstructProps extends MdaaL3ConstructProps {
   /**
    * List of LakeFormation grant definitions.
    */
@@ -122,7 +122,7 @@ export interface LakeFormationAccessControlL3ConstructProps extends CaefL3Constr
   readonly externalDatabaseDependency?: CfnDatabase
 }
 
-export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
+export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
   protected readonly props: LakeFormationAccessControlL3ConstructProps
   
   public static readonly DATABASE_READ_PERMISSIONS: string[] = [ "DESCRIBE" ]
@@ -333,7 +333,7 @@ export class LakeFormationAccessControlL3Construct extends CaefL3Construct {
       }
     } else {
       if ( principalProps.role ) {
-        if ( principalProps.role instanceof CaefResolvableRole ) {
+        if ( principalProps.role instanceof MdaaResolvableRole ) {
           return principalProps.role.arn()
         } else {
           return this.props.roleHelper.resolveRoleRefWithRefId( principalProps.role, principalName ).arn()

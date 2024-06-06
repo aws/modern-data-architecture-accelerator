@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { OpensearchDomainProps } from '@aws-caef/opensearch-l3-construct';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { OpensearchDomainProps } from '@aws-mdaa/opensearch-l3-construct';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -14,14 +14,14 @@ export interface OpensearchDomainConfig extends Omit<OpensearchDomainProps, 'acc
   readonly accessPolicies: { [ key: string ]: any }[]
 }
 
-export interface OpensearchConfigContents extends CaefBaseConfigContents {
+export interface OpensearchConfigContents extends MdaaBaseConfigContents {
   readonly domain: OpensearchDomainConfig
 }
 
-export class OpensearchConfigParser extends CaefAppConfigParser<OpensearchConfigContents> {
+export class OpensearchConfigParser extends MdaaAppConfigParser<OpensearchConfigContents> {
   public readonly domain: OpensearchDomainProps
 
-  constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+  constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
     super( stack, props, configSchema as Schema )
     this.domain = {
       ...this.configContents.domain, ...{

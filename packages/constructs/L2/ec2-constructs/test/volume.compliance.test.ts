@@ -3,24 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Size } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefEC2Volume, CaefEC2VolumeProps } from "../lib/volume";
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaEC2Volume, MdaaEC2VolumeProps } from "../lib/volume";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
-    const testContstructProps: CaefEC2VolumeProps = {
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testContstructProps: MdaaEC2VolumeProps = {
         naming: testApp.naming,
         availabilityZone: 'az1',
         encryptionKey: testKey,
         size: Size.gibibytes( 10 ),
     }
 
-    new CaefEC2Volume( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaEC2Volume( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

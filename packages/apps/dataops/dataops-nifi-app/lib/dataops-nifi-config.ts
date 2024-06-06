@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps } from '@aws-caef/app';
-import { CaefDataOpsConfigContents, CaefDataOpsConfigParser } from '@aws-caef/dataops-shared';
+import { MdaaAppConfigParserProps } from '@aws-mdaa/app';
+import { MdaaDataOpsConfigContents, MdaaDataOpsConfigParser } from '@aws-mdaa/dataops-shared';
 
 import { Schema } from "ajv";
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
-import { NifiProps } from '@aws-caef/dataops-nifi-l3-construct';
+import { NifiProps } from '@aws-mdaa/dataops-nifi-l3-construct';
 
 
 
 
-export interface NifiConfigContents extends CaefDataOpsConfigContents {
+export interface NifiConfigContents extends MdaaDataOpsConfigContents {
 
     /**
      * Name of the DataOps Project
@@ -25,11 +25,11 @@ export interface NifiConfigContents extends CaefDataOpsConfigContents {
 
 }
 
-export class NifiConfigParser extends CaefDataOpsConfigParser<NifiConfigContents> {
+export class NifiConfigParser extends MdaaDataOpsConfigParser<NifiConfigContents> {
 
     public readonly nifi: NifiProps
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
         this.nifi = this.configContents.nifi
     }

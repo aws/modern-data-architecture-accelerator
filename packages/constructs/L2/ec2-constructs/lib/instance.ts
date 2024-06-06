@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefParamAndOutput, CaefConstructProps } from "@aws-caef/construct";
-import { ICaefRole } from '@aws-caef/iam-constructs';
+import { MdaaParamAndOutput, MdaaConstructProps } from "@aws-mdaa/construct";
+import { IMdaaRole } from '@aws-mdaa/iam-constructs';
 import { Duration, RemovalPolicy } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { Instance, InstanceProps, InstanceType, ApplyCloudFormationInitOptions, BlockDeviceVolume, EbsDeviceVolumeType, CloudFormationInit, IMachineImage, ISecurityGroup, IVpc, UserData, ISubnet, BlockDevice, CfnInstance, LaunchTemplate } from "aws-cdk-lib/aws-ec2";
 import { IKey } from "aws-cdk-lib/aws-kms";
 import { NagSuppressions } from "cdk-nag";
-import { CaefCustomResource, CaefCustomResourceProps } from "@aws-caef/custom-constructs";
+import { MdaaCustomResource, MdaaCustomResourceProps } from "@aws-mdaa/custom-constructs";
 import { PolicyStatement, Effect } from "aws-cdk-lib/aws-iam";
 import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
 
@@ -18,7 +18,7 @@ import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
  * Properties for creating a Compliance EC2 instance
  */
 
-export interface CaefEC2InstanceProps extends CaefConstructProps {
+export interface MdaaEC2InstanceProps extends MdaaConstructProps {
     /**
      * Type of instance to launch.
      */
@@ -88,7 +88,7 @@ export interface CaefEC2InstanceProps extends CaefConstructProps {
     /**
      * An IAM role to associate with the instance profile assigned to this instance.
      */
-    readonly role: ICaefRole;
+    readonly role: IMdaaRole;
     /**
      * Security Group to assign to this instance.
      */
@@ -147,7 +147,7 @@ export interface BlockDeviceProps {
  * Specifically, the construct ensures that the EC2 instance name follows naming convention,
  * and tags are propogated to volume.
  */
-export class CaefEC2Instance extends Instance {
+export class MdaaEC2Instance extends Instance {
 
     private static getBlockDeviceProps ( blockDeviceProps: BlockDeviceProps[], kmsKey: IKey ) {
         return blockDeviceProps.map( blockDeviceProps => {
@@ -164,7 +164,7 @@ export class CaefEC2Instance extends Instance {
         } )
     }
 
-    private static setProps ( props: CaefEC2InstanceProps ): InstanceProps {
+    private static setProps ( props: MdaaEC2InstanceProps ): InstanceProps {
 
         const listofBlockDevices: BlockDevice[] = this.getBlockDeviceProps( props.blockDeviceProps, props.kmsKey )
 
@@ -182,13 +182,13 @@ export class CaefEC2Instance extends Instance {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefEC2InstanceProps ) {
-        super( scope, id, CaefEC2Instance.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaEC2InstanceProps ) {
+        super( scope, id, MdaaEC2Instance.setProps( props ) )
 
         this.applyRemovalPolicy( RemovalPolicy.RETAIN )
 
         const launchTemplate = new LaunchTemplate( this, "launch-template", {
-            blockDevices: CaefEC2Instance.getBlockDeviceProps( props.blockDeviceProps, props.kmsKey ),
+            blockDevices: MdaaEC2Instance.getBlockDeviceProps( props.blockDeviceProps, props.kmsKey ),
             launchTemplateName: props.naming.resourceName( props.instanceName ),
             requireImdsv2: true
         } )
@@ -211,7 +211,7 @@ export class CaefEC2Instance extends Instance {
             kmsKeyArn: props.kmsKey.keyArn
         }
 
-        const crProps: CaefCustomResourceProps = {
+        const crProps: MdaaCustomResourceProps = {
             resourceType: "Ec2VolumeEncryptionCheck",
             code: Code.fromAsset( `${ __dirname }/../src/lambda/volume_check` ),
             runtime: Runtime.PYTHON_3_12,
@@ -225,7 +225,7 @@ export class CaefEC2Instance extends Instance {
             ]
         }
 
-        new CaefCustomResource( this, 'volume-check-cr', crProps )
+        new MdaaCustomResource( this, 'volume-check-cr', crProps )
 
         NagSuppressions.addResourceSuppressions( this, [
             {
@@ -242,7 +242,7 @@ export class CaefEC2Instance extends Instance {
             },
         ] );
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "instance",
                 name: "id-" + props.naming.resourceName( props.instanceName ),

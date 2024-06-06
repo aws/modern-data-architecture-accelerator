@@ -51,15 +51,15 @@ One for write access to an object prefix that generally resolves to:
   Sid: inventory/ReadWrite
 ```
 
-Conditionals against `aws:userId` are used to support federated roles.  The `@aws-caef/iam-role-helper` is used to resolve the requested ARNs to AROA IDs.
+Conditionals against `aws:userId` are used to support federated roles.  The `@aws-mdaa/iam-role-helper` is used to resolve the requested ARNs to AROA IDs.
 
 ## RestrictObjectPrefixToRoles example
 
 ```typescript
-import {CaefRoleResolver} from '@aws-caef/am-role-helper'
-import {RestrictObjectPrefixToRoles} from '@aws-caef/3-bucketpolicy-helper'
+import {MdaaRoleResolver} from '@aws-mdaa/am-role-helper'
+import {RestrictObjectPrefixToRoles} from '@aws-mdaa/3-bucketpolicy-helper'
 
-const roleResolver = new CaefRoleResolver({
+const roleResolver = new MdaaRoleResolver({
     roleArns: [
         'arn:{{partition}}:iam::{{account}}:role/application_abc/component_xyz/S3Access',
         'arn:{{partition}}:iam::{{account}}:role/service-role/QuickSightAction'
@@ -158,10 +158,10 @@ NOTE: To permit things like inventory we exclude the s3 service from the Deny st
 ## RestrictBucketToRoles example
 
 ```typescript
-import {CaefRoleResolver} from '@aws-caef/am-role-helper'
-import {RestrictBucketToRoles} from '@aws-caef/3-bucketpolicy-helper'
+import {MdaaRoleResolver} from '@aws-mdaa/am-role-helper'
+import {RestrictBucketToRoles} from '@aws-mdaa/3-bucketpolicy-helper'
 
-const roleResolver = new CaefRoleResolver({
+const roleResolver = new MdaaRoleResolver({
     roleArns: [
         'arn:{{partition}}:iam::{{account}}:role/application_abc/component_xyz/S3Access',
         'arn:{{partition}}:iam::{{account}}:role/service-role/QuickSightAction'

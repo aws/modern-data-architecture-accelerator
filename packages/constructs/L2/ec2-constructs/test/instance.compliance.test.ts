@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefEC2Instance, CaefEC2InstanceProps, BlockDeviceProps } from "../lib/instance";
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaEC2Instance, MdaaEC2InstanceProps, BlockDeviceProps } from "../lib/instance";
 import { Vpc, InstanceType, InstanceClass, InstanceSize, MachineImage, Subnet, EbsDeviceVolumeType, } from "aws-cdk-lib/aws-ec2";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testRole = CaefRole.fromRoleArn( testApp.testStack, "test-role", "arn:test-partition:iam:test-region:test-account:role/test-role" )
+    const testRole = MdaaRole.fromRoleArn( testApp.testStack, "test-role", "arn:test-partition:iam:test-region:test-account:role/test-role" )
     const testVpc = Vpc.fromVpcAttributes( testApp.testStack, 'VPC', {
         vpcId: 'test-vpc-id',
         availabilityZones: [ 'az1', 'az2' ],
@@ -24,7 +24,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         subnetId: "test-sub-id",
         availabilityZone: 'az1'
     } );
-    const testKmsKey = CaefKmsKey.fromKeyArn( testApp.testStack, 'key for root volume', "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKmsKey = MdaaKmsKey.fromKeyArn( testApp.testStack, 'key for root volume', "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
     const testBlockDeviceProps: BlockDeviceProps = {
         deviceName: '/dev/sda1',
@@ -34,7 +34,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
 
     const testBlockDevicesProps: BlockDeviceProps[] = [ testBlockDeviceProps ]
 
-    const testContstructProps: CaefEC2InstanceProps = {
+    const testContstructProps: MdaaEC2InstanceProps = {
         naming: testApp.naming,
         instanceType: testInstanceType,
         machineImage: MachineImage.latestAmazonLinux2023(),
@@ -45,7 +45,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         role: testRole
     }
 
-    new CaefEC2Instance( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaEC2Instance( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

@@ -1,6 +1,6 @@
 {
-  "name": "@aws-caef/schemas",
-  "description": "CAEF Config Schemas",
+  "name": "@aws-mdaa/schemas",
+  "description": "MDAA Config Schemas",
   "author": {
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"

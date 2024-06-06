@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CfnSession } from "aws-cdk-lib/aws-macie";
 import { Construct } from 'constructs';
 
@@ -12,7 +12,7 @@ export interface MacieSessionProps {
     readonly status?: SessionStatusEnum
 }
 
-export interface MacieSessionL3ConstructProps extends CaefL3ConstructProps {
+export interface MacieSessionL3ConstructProps extends MdaaL3ConstructProps {
     readonly session: MacieSessionProps
 }
 
@@ -27,7 +27,7 @@ export enum SessionFindingPublishingFrequencyEnum {
     SIX_HOURS = "SIX_HOURS"
 }
 
-export class MacieSessionL3Construct extends CaefL3Construct {
+export class MacieSessionL3Construct extends MdaaL3Construct {
     protected readonly props: MacieSessionL3ConstructProps
 
     constructor( scope: Construct, id: string, props: MacieSessionL3ConstructProps ) {

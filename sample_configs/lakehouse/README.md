@@ -1,6 +1,6 @@
 # Modern Data Architecture/Lake House
 
-This is a sample CAEF Modern Data Architecture/LakeHouse, including S3 Data Lake with LakeFormation fine-grained access controls, a Data Warehouse, and DataOps Crawlers, Jobs, and Workflows (illustrated using New York Taxi Data).
+This is a sample MDAA Modern Data Architecture/LakeHouse, including S3 Data Lake with LakeFormation fine-grained access controls, a Data Warehouse, and DataOps Crawlers, Jobs, and Workflows (illustrated using New York Taxi Data).
 
 ![lakehouse](docs/lakehouse.png)
 
@@ -8,36 +8,36 @@ This is a sample CAEF Modern Data Architecture/LakeHouse, including S3 Data Lake
 
 ## Deployment Instructions
 
-The following instructions assume you have CDK bootstrapped your target account, and that the CAEF source repo is cloned locally.
+The following instructions assume you have CDK bootstrapped your target account, and that the MDAA source repo is cloned locally.
 More predeployment info and procedures are available in [PREDEPLOYMENT](../../PREDEPLOYMENT.md).
 
-1. Deploy sample configurations into the specified directory structure (or obtain from the CAEF repo under `sample_configs/basic_datalake`).
+1. Deploy sample configurations into the specified directory structure (or obtain from the MDAA repo under `sample_configs/basic_datalake`).
 
-2. Edit the `caef.yaml` to specify an organization name. This must be a globally unqique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
+2. Edit the `mdaa.yaml` to specify an organization name. This must be a globally unqique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
-3. Edit the `caef.yaml` to specify `context:` values specific to your environment.
+3. Edit the `mdaa.yaml` to specify `context:` values specific to your environment.
 
 4. Ensure you are authenticated to your target AWS account.
 
-5. Optionally, run `<path_to_caef_repo>/bin/caef ls` from the directory containing `caef.yaml` to understand what stacks will be deployed.
+5. Optionally, run `<path_to_mdaa_repo>/bin/mdaa ls` from the directory containing `mdaa.yaml` to understand what stacks will be deployed.
 
-6. Optionally, run `<path_to_caef_repo>/bin/caef synth` from the directory containing `caef.yaml` and review the produced templates.
+6. Optionally, run `<path_to_mdaa_repo>/bin/mdaa synth` from the directory containing `mdaa.yaml` and review the produced templates.
 
-7. Run `<path_to_caef_repo>/bin/caef deploy` from the directory containing `caef.yaml`
+7. Run `<path_to_mdaa_repo>/bin/mdaa deploy` from the directory containing `mdaa.yaml`
 
-Additional CAEF deployment commands/procedures can be reviewed in [DEPLOYMENT](../../DEPLOYMENT.md).
+Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](../../DEPLOYMENT.md).
 
 ***
 
 ## Configurations
 
-The sample configurations for this architecture are provided below. They are also available under sample_configs/lakehouse whithin the CAEF repo.
+The sample configurations for this architecture are provided below. They are also available under sample_configs/lakehouse whithin the MDAA repo.
 
 ### Config Directory Structure
 
 ```bash
 lakehouse
-│   caef.yaml
+│   mdaa.yaml
 │   tags.yaml
 │   roles.yaml
 │
@@ -60,15 +60,15 @@ lakehouse
 
 ***
 
-### caef.yaml
+### mdaa.yaml
 
 This configuration specifies the global, domain, env, and module configurations required to configure and deploy this sample architecture.
 
-*Note* - Before deployment, populate the caef.yaml with appropriate organization and context values for your environment
+*Note* - Before deployment, populate the mdaa.yaml with appropriate organization and context values for your environment
 
 ```yaml
-# Contents available in caef.yaml
---8<-- "target/docs/sample_configs/basic_datalake/caef.yaml"
+# Contents available in mdaa.yaml
+--8<-- "target/docs/sample_configs/basic_datalake/mdaa.yaml"
 ```
 
 ### tags.yaml
@@ -84,7 +84,7 @@ This configuration specifies the tags to be applied to all deployed resources.
 
 ### roles.yaml
 
-This configuration will be used by the CAEF Roles module to deploy IAM roles and Managed Policies required for this sample architecture.
+This configuration will be used by the MDAA Roles module to deploy IAM roles and Managed Policies required for this sample architecture.
 
 ```yaml
 # Contents available in roles.yaml
@@ -95,7 +95,7 @@ This configuration will be used by the CAEF Roles module to deploy IAM roles and
 
 ### datalake/datalake.yaml
 
-This configuration will be used by the CAEF S3 Data Lake module to deploy KMS Keys, S3 Buckets, and S3 Bucket Policies required for the basic Data Lake.
+This configuration will be used by the MDAA S3 Data Lake module to deploy KMS Keys, S3 Buckets, and S3 Bucket Policies required for the basic Data Lake.
 
 ```yaml
 # Contents available in datalake/datalake.yaml
@@ -117,7 +117,7 @@ This configuration will create a standalone Athena Workgroup which can be used t
 
 ### datalake/lakeformation-settings.yaml
 
-This configuration will be used by the CAEF LakeFormation Settings module to ensure LakeFormation is configured to not automatically create IAMAllowPrincipals grants on new Glue databases and tables, as well as to grant LakeFormation administrative access to specified principals.
+This configuration will be used by the MDAA LakeFormation Settings module to ensure LakeFormation is configured to not automatically create IAMAllowPrincipals grants on new Glue databases and tables, as well as to grant LakeFormation administrative access to specified principals.
 
 ```yaml
 # Contents available in datalake/lakeformation-settings.yaml
@@ -128,7 +128,7 @@ This configuration will be used by the CAEF LakeFormation Settings module to ens
 
 ### datawarehouse/datawarehouse.yaml
 
-This configuration will be used by the CAEF Data Warehouse module to deploy a Redshift cluster.
+This configuration will be used by the MDAA Data Warehouse module to deploy a Redshift cluster.
 
 ```yaml
 # Contents available in datawarehouse/datawarehouse.yaml
@@ -139,7 +139,7 @@ This configuration will be used by the CAEF Data Warehouse module to deploy a Re
 
 ### nyc_dataops/project.yaml
 
-This configuration will be used by the CAEF Data Ops Project module to deploy all resources required to support Data Ops activities.
+This configuration will be used by the MDAA Data Ops Project module to deploy all resources required to support Data Ops activities.
 
 ```yaml
 # Contents available in nyc_dataops/project.yaml
@@ -150,7 +150,7 @@ This configuration will be used by the CAEF Data Ops Project module to deploy al
 
 ### nyc_dataops/crawler.yaml
 
-This configuration will be used by the CAEF Data Ops Crawler module to deploy Glue Crawlers for crawling/discovering data in the data lake.
+This configuration will be used by the MDAA Data Ops Crawler module to deploy Glue Crawlers for crawling/discovering data in the data lake.
 
 ```yaml
 # Contents available in nyc_dataops/crawler.yaml
@@ -161,7 +161,7 @@ This configuration will be used by the CAEF Data Ops Crawler module to deploy Gl
 
 ### nyc_dataops/jobs.yaml
 
-This configuration will be used by the CAEF Data Ops Jobs module to deploy Glue Jobs for processing data in the data lake. Note that the Glue job source code is available under sample_configs/lakehouse/nyc_dataops/jobs_src/ directory within the CAEF repo.
+This configuration will be used by the MDAA Data Ops Jobs module to deploy Glue Jobs for processing data in the data lake. Note that the Glue job source code is available under sample_configs/lakehouse/nyc_dataops/jobs_src/ directory within the MDAA repo.
 
 ```yaml
 # Contents available in nyc_dataops/jobs.yaml
@@ -172,7 +172,7 @@ This configuration will be used by the CAEF Data Ops Jobs module to deploy Glue 
 
 ### nyc_dataops/workflow.yaml
 
-This configuration will be used by the CAEF Data Ops Workflows module to deploy Glue Workflows for orchestraing Crawlers and Jobs.
+This configuration will be used by the MDAA Data Ops Workflows module to deploy Glue Workflows for orchestraing Crawlers and Jobs.
 
 ```yaml
 # Contents available in nyc_dataops/workflow.yaml
@@ -198,9 +198,9 @@ Following is the general sequence of operations in the DataOps design.
 
 ## Usage Instructions
 
-Once the CAEF deployment is complete, follow the following steps to interact with the data lake.
+Once the MDAA deployment is complete, follow the following steps to interact with the data lake.
 
-1. Assume the `data-admin` role created by the CAEF deployment. This role is configured with AssumeRole trust to the local account by default. Note that this role is the only role configured with write access to the data lake. All other roles (including existing administrator roles in the account) will be denied write access.
+1. Assume the `data-admin` role created by the MDAA deployment. This role is configured with AssumeRole trust to the local account by default. Note that this role is the only role configured with write access to the data lake. All other roles (including existing administrator roles in the account) will be denied write access.
 
 2. Upload `./sample_data/nyc_taxi` folder and contents to `<raw_bucket>/data/nyc_taxi`. This will trigger the 3 Glue Workflows.
 

@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { NifiL3Construct, NifiL3ConstructProps } from "../lib";
 import { NifiClusterOptions } from "../lib/nifi-options";
@@ -12,7 +12,7 @@ import { NifiClusterOptions } from "../lib/nifi-options";
 
 describe( 'Nifi Mandatory Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
   const clusterOptions: NifiClusterOptions = {
@@ -23,7 +23,7 @@ describe( 'Nifi Mandatory Compliance Stack Tests', () => {
   }
 
   const constructProps: NifiL3ConstructProps = {
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
     nifi: {
@@ -54,7 +54,7 @@ describe( 'Nifi Mandatory Compliance Stack Tests', () => {
 
 describe( 'Nifi Optional Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
   const clusterOptions: NifiClusterOptions = {
@@ -102,7 +102,7 @@ describe( 'Nifi Optional Compliance Stack Tests', () => {
   }
 
   const constructProps: NifiL3ConstructProps = {
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
     nifi: {
@@ -186,13 +186,13 @@ describe( 'Nifi Optional Compliance Stack Tests', () => {
 
 describe( 'Registry Mandatory Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
 
 
   const constructProps: NifiL3ConstructProps = {
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
     nifi: {
@@ -225,12 +225,12 @@ describe( 'Registry Mandatory Compliance Stack Tests', () => {
 
 describe( 'Registry Optional Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
 
   const constructProps: NifiL3ConstructProps = {
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
     nifi: {

@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { DataBrewL3ConstructProps, DataBrewL3Construct, ConfigOptions, DataBrewJobProps, RecipeProps, DatasetProps } from '../lib'
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
 
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const stack = testApp.testStack
 
-    const role: CaefRoleRef = {
+    const role: MdaaRoleRef = {
         arn: "arn:test-partition:iam::test-account:role/test-role",
         id: "test-id",
         name: "test-role"
@@ -75,7 +75,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         kmsKeyArn: "test-kms-key-arn",
         executionRole: role,
         schedule: {
-            name: "caef-test-profile-schedule",
+            name: "mdaa-test-profile-schedule",
             cronExpression: 'Cron(50 21 * * ? *)'
         }
     }
@@ -91,7 +91,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         projectName: "test-glue-project",
         naming: testApp.naming,
 
-        roleHelper: new CaefRoleHelper( stack, testApp.naming )
+        roleHelper: new MdaaRoleHelper( stack, testApp.naming )
     }
 
     new DataBrewL3Construct( stack, "databrew", constructProps );

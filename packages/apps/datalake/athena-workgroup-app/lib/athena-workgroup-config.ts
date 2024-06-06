@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from "ajv";
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 
-export interface AthenaWorkgroupConfigContents extends CaefBaseConfigContents {
+export interface AthenaWorkgroupConfigContents extends MdaaBaseConfigContents {
     /**
      * Array of references to roles which will be provided admin access to workgroup resources
      */
-    dataAdminRoles: CaefRoleRef[]
+    dataAdminRoles: MdaaRoleRef[]
     /**
      * Array of references to roles which will be provided usage access to workgroup resources
      */
-    athenaUserRoles: CaefRoleRef[]
+    athenaUserRoles: MdaaRoleRef[]
     /**
     * Athena workgroup configuration
     */
@@ -39,13 +39,13 @@ export interface WorkgroupConfigurationConfig {
 
 }
 
-export class AthenaWorkgroupConfigParser extends CaefAppConfigParser<AthenaWorkgroupConfigContents> {
+export class AthenaWorkgroupConfigParser extends MdaaAppConfigParser<AthenaWorkgroupConfigContents> {
 
-    public readonly dataAdminRoles: CaefRoleRef[]
-    public readonly athenaUserRoles: CaefRoleRef[]
+    public readonly dataAdminRoles: MdaaRoleRef[]
+    public readonly athenaUserRoles: MdaaRoleRef[]
     public readonly workgroupConfiguration: WorkgroupConfigurationConfig
     public readonly verbatimPolicyNamePrefix?: string
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.dataAdminRoles = this.configContents.dataAdminRoles

@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps } from '@aws-caef/app';
-import { CaefDataOpsConfigParser, CaefDataOpsConfigContents } from '@aws-caef/dataops-shared';
-import { WorkflowProps } from '@aws-caef/dataops-workflow-l3-construct';
+import { MdaaAppConfigParserProps } from '@aws-mdaa/app';
+import { MdaaDataOpsConfigParser, MdaaDataOpsConfigContents } from '@aws-mdaa/dataops-shared';
+import { WorkflowProps } from '@aws-mdaa/dataops-workflow-l3-construct';
 import { Schema } from "ajv";
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 
 
-export interface GlueWorkflowConfigContents extends CaefDataOpsConfigContents {
+export interface GlueWorkflowConfigContents extends MdaaDataOpsConfigContents {
     /**
      * Name of the DataOps Project
      */
@@ -23,11 +23,11 @@ export interface GlueWorkflowConfigContents extends CaefDataOpsConfigContents {
     workflowDefinitions: WorkflowProps[]
 }
 
-export class GlueWorkflowConfigParser extends CaefDataOpsConfigParser<GlueWorkflowConfigContents> {
+export class GlueWorkflowConfigParser extends MdaaDataOpsConfigParser<GlueWorkflowConfigContents> {
 
     public readonly workflowDefinitions: WorkflowProps[]
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.workflowDefinitions = this.configContents.workflowDefinitions

@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { AuditL3Construct, AuditL3ConstructProps } from '@aws-caef/audit-l3-construct';
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { AuditL3Construct, AuditL3ConstructProps } from '@aws-mdaa/audit-l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { AuditConfigParser } from './audit-config';
 
 
-export class AuditCDKApp extends CaefCdkApp {
+export class AuditCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "audit", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
         const appConfig = new AuditConfigParser( stack, parserProps )
         const constructProps: AuditL3ConstructProps = {

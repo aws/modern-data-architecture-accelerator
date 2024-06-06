@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { IRestrictBucketToRoles, IRestrictObjectPrefixToRoles, RestrictBucketToRoles, RestrictObjectPrefixToRoles } from "../lib";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { ArnPrincipal } from "aws-cdk-lib/aws-iam";
@@ -11,7 +11,7 @@ import { ArnPrincipal } from "aws-cdk-lib/aws-iam";
 
 describe( 'Test BucketPolicy Helper', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const testBucket = Bucket.fromBucketName( testApp.testStack, "test-bucket","test-bucket")
     describe( 'RestrictPrefix', () => {
         const baseTestProps: IRestrictObjectPrefixToRoles = {

@@ -4,7 +4,7 @@ dataAdminRoles:
 
 # List of roles which will be provided usage access to the Workgroup Resources
 # Can be either directly referenced Role Arns, Role Arns via SSM Params,
-# or generated roles created using the CAEF roles module.
+# or generated roles created using the MDAA roles module.
 athenaUserRoles:
   - arn: ssm:/sample-org/instance2/generated-role/data-scientist/arn
   - arn: arn:{{partition}}:iam::{{account}}:role/sample-org-dev-instance1-roles-data-scientist

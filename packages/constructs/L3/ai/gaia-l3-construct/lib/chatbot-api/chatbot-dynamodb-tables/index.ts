@@ -1,11 +1,11 @@
 
 import { Construct } from "constructs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
-import { CaefDDBTable } from "@aws-caef/ddb-constructs";
-import { CaefConstructProps } from "@aws-caef/construct";
+import { MdaaDDBTable } from "@aws-mdaa/ddb-constructs";
+import { MdaaConstructProps } from "@aws-mdaa/construct";
 import { IKey } from "aws-cdk-lib/aws-kms";
 
-export interface ChatBotDynamoDBTablesProps extends CaefConstructProps {
+export interface ChatBotDynamoDBTablesProps extends MdaaConstructProps {
   readonly kmsKey: IKey
 }
 
@@ -16,7 +16,7 @@ export class ChatBotDynamoDBTables extends Construct {
   constructor( scope: Construct, id: string, props: ChatBotDynamoDBTablesProps ) {
     super(scope, id);
 
-    const sessionsTable = new CaefDDBTable(this, "SessionsTable", {
+    const sessionsTable = new MdaaDDBTable(this, "SessionsTable", {
       naming: props.naming,
       tableName: props.naming.resourceName('Sessions'),
       createParams: false,

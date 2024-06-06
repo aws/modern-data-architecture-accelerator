@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from "@aws-caef/app";
-import { NamedInitProps, NamedInstanceProps, NamedKeyPairProps, NamedSecurityGroupProps } from "@aws-caef/ec2-l3-construct";
-import { CaefRoleRef } from "@aws-caef/iam-role-helper";
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from "@aws-mdaa/app";
+import { NamedInitProps, NamedInstanceProps, NamedKeyPairProps, NamedSecurityGroupProps } from "@aws-mdaa/ec2-l3-construct";
+import { MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
 import { Schema } from "ajv";
 import { Stack } from "aws-cdk-lib";
 import * as configSchema from './config-schema.json';
 
-export interface InstanceConfigContents extends CaefBaseConfigContents {
+export interface InstanceConfigContents extends MdaaBaseConfigContents {
     /**
      * List of roles which will be granted access to the EC2 KMS Key
      * and KeyPair Secrets
      */
-    readonly adminRoles: CaefRoleRef[]
+    readonly adminRoles: MdaaRoleRef[]
     /**
      * List of ec2 key pairs to be created.
      */
@@ -34,13 +34,13 @@ export interface InstanceConfigContents extends CaefBaseConfigContents {
     readonly instances?: NamedInstanceProps
 }
 
-export class InstanceConfigParser extends CaefAppConfigParser<InstanceConfigContents> {
+export class InstanceConfigParser extends MdaaAppConfigParser<InstanceConfigContents> {
     public readonly keyPairs?: NamedKeyPairProps
     public readonly securityGroups?: NamedSecurityGroupProps
     public readonly cfnInit?: NamedInitProps
     public readonly instances?: NamedInstanceProps
-    public readonly adminRoles: CaefRoleRef[];
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    public readonly adminRoles: MdaaRoleRef[];
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
         this.adminRoles = this.configContents.adminRoles
         this.keyPairs = this.configContents.keyPairs

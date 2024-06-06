@@ -3,29 +3,29 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from "@aws-caef/construct";
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
+import { MdaaConstructProps } from "@aws-mdaa/construct";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
 import { Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
 
 /**
- * Interface for CAEF-specific L3 construct baseprops.
+ * Interface for MDAA-specific L3 construct baseprops.
  */
-export interface CaefL3ConstructProps extends CaefConstructProps {
-    readonly roleHelper: CaefRoleHelper
+export interface MdaaL3ConstructProps extends MdaaConstructProps {
+    readonly roleHelper: MdaaRoleHelper
     readonly crossAccountStacks?: { [ account: string ]: Stack }
 }
 
 /**
- * Base class for CAEF CDK L3 Constructs
+ * Base class for MDAA CDK L3 Constructs
  */
-export abstract class CaefL3Construct extends Construct {
+export abstract class MdaaL3Construct extends Construct {
 
     protected readonly scope: Construct
-    protected readonly baseprops: CaefL3ConstructProps
+    protected readonly baseprops: MdaaL3ConstructProps
 
-    constructor( scope: Construct, id: string, baseprops: CaefL3ConstructProps ) {
+    constructor( scope: Construct, id: string, baseprops: MdaaL3ConstructProps ) {
         super( scope, id )
         this.scope = scope
         this.baseprops = baseprops

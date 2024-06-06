@@ -11,7 +11,7 @@ The Roles CDK application is used to deploy IAM roles which can be used within a
   
     *Policies which violate CDK Nag rule sets will require explicit suppressions*
 
-  * CAEF Managed Policies will be created, which can be attached to the IAM Roles specified in the config.
+  * MDAA Managed Policies will be created, which can be attached to the IAM Roles specified in the config.
 
 
 **IAM Roles** - An IAM role will be created for each role specified in the config.

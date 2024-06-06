@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 
 import { Effect, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { CfnUser } from 'aws-cdk-lib/aws-transfer';
@@ -76,7 +76,7 @@ export interface UserProps {
     readonly accessRoleArn?: string
 }
 
-export interface SftpUsersL3ConstructProps extends CaefL3ConstructProps {
+export interface SftpUsersL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * List of SFTP user definitions
      */
@@ -87,7 +87,7 @@ export interface SftpUsersL3ConstructProps extends CaefL3ConstructProps {
     readonly serverId: string;
 }
 
-export class SftpUsersL3Construct extends CaefL3Construct {
+export class SftpUsersL3Construct extends MdaaL3Construct {
     protected readonly props: SftpUsersL3ConstructProps
 
 
@@ -128,7 +128,7 @@ export class SftpUsersL3Construct extends CaefL3Construct {
         const userConfig = this.props.users.find( x => x.name == user )
         if ( userConfig ) {
 
-            const userRole = new CaefRole( this, `TransferUserSFTPRole-${ userConfig.name }`, {
+            const userRole = new MdaaRole( this, `TransferUserSFTPRole-${ userConfig.name }`, {
                 naming: this.props.naming,
                 assumedBy: new ServicePrincipal( 'transfer.amazonaws.com' ),
                 roleName: userConfig.name

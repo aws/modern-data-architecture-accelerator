@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefLogGroup } from '@aws-caef/cloudwatch-constructs';
-import { CaefParamAndOutput } from "@aws-caef/construct";
-import { CaefDataSyncAgent, CaefDataSyncAgentProps, CaefDataSyncObjectStorageLocation, CaefDataSyncObjectStorageLocationProps, CaefDataSyncS3Location, CaefDataSyncS3LocationProps, CaefDataSyncSmbLocation, CaefDataSyncSmbLocationProps } from '@aws-caef/datasync-constructs';
-import { CaefSecurityGroup } from '@aws-caef/ec2-constructs';
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
+import { MdaaParamAndOutput } from "@aws-mdaa/construct";
+import { MdaaDataSyncAgent, MdaaDataSyncAgentProps, MdaaDataSyncObjectStorageLocation, MdaaDataSyncObjectStorageLocationProps, MdaaDataSyncS3Location, MdaaDataSyncS3LocationProps, MdaaDataSyncSmbLocation, MdaaDataSyncSmbLocationProps } from '@aws-mdaa/datasync-constructs';
+import { MdaaSecurityGroup } from '@aws-mdaa/ec2-constructs';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { IResolvable, SecretValue } from 'aws-cdk-lib';
 import { CfnLocationNFS, CfnLocationObjectStorage, CfnLocationS3, CfnLocationSMB, CfnTask } from 'aws-cdk-lib/aws-datasync';
 import { InterfaceVpcEndpoint, InterfaceVpcEndpointAwsService, InterfaceVpcEndpointProps, ISecurityGroup, IVpc, IVpcEndpoint, Peer, Port, Subnet, SubnetSelection, Vpc } from 'aws-cdk-lib/aws-ec2';
@@ -22,7 +22,7 @@ import { Construct } from 'constructs';
 export interface VpcProps {
     /**
      * The ID of the VPC for the DataSync deployment
-     * CAEF will create a VPC Endpoint for DataSync service forn this VPC ID that will be used for communication between the agent and task
+     * MDAA will create a VPC Endpoint for DataSync service forn this VPC ID that will be used for communication between the agent and task
     */
     readonly vpcId: string;
     readonly vpcCidrBlock: string
@@ -41,7 +41,7 @@ export interface AgentProps {
      *
      * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-agent.html#cfn-datasync-agent-activationkey
      * 
-     * If this parameter is not provided, and the VPC ID is specified in vpcEndpoint configuration, CAEF will assume this is the first pass and will create VPC endpoint and security group.
+     * If this parameter is not provided, and the VPC ID is specified in vpcEndpoint configuration, MDAA will assume this is the first pass and will create VPC endpoint and security group.
     */
     readonly activationKey?: string;
     /**
@@ -54,14 +54,14 @@ export interface AgentProps {
      * For more information about activating your agent in a private network based on a VPC, see [Using AWS DataSync in a Virtual Private Cloud](https://docs.aws.amazon.com/datasync/latest/userguide/datasync-in-vpc.html) in the *AWS DataSync User Guide.*
      * A VPC endpoint ID looks like this: `vpce-01234d5aff67890e1`.
      * 
-     * If the parameter is not provided and the VPC ID is specified in vpcEndpoint configuration, CAEF will create VPC endpoint and security group for agent registration.
+     * If the parameter is not provided and the VPC ID is specified in vpcEndpoint configuration, MDAA will create VPC endpoint and security group for agent registration.
      *
      * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-agent.html#cfn-datasync-agent-vpcendpointid
     */
     readonly vpcEndpointId?: string;
     /**
-      * The ID of the security group to be used to protect your data transfer task subnets, if created outside CAEF.
-      * Otherwise, if not provided and the VPC ID is specified in vpcEndpoint configuration, CAEF will create VPC endpoint and security group and the security group will be used for this agent registration.
+      * The ID of the security group to be used to protect your data transfer task subnets, if created outside MDAA.
+      * Otherwise, if not provided and the VPC ID is specified in vpcEndpoint configuration, MDAA will create VPC endpoint and security group and the security group will be used for this agent registration.
     */
     readonly securityGroupId?: string;
     /**
@@ -83,7 +83,7 @@ export interface LocationS3Props {
      */
     readonly s3BucketArn: string
     /**
-     * CAEF custom parameter to simplify the configuration. This value will be use to construct S3Config.
+     * MDAA custom parameter to simplify the configuration. This value will be use to construct S3Config.
      * The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that is used to access an Amazon S3 bucket.
      */
     readonly bucketAccessRoleArn: string
@@ -105,7 +105,7 @@ export interface LocationS3Props {
 
 export interface LocationSmbProps {
     /**
-     * CAEF custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents)
+     * MDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents)
      */
     readonly agentNames?: string[]
     /**
@@ -148,7 +148,7 @@ export interface LocationSmbProps {
      */
     readonly domain?: string
     /**
-     * CAEF custom parameter to simplify configuration. The value will be used to construct MountOptions object.
+     * MDAA custom parameter to simplify configuration. The value will be used to construct MountOptions object.
      * Valid values: "AUTOMATIC" | "SMB2" | "SMB3"
      * The mount options used by DataSync to access the SMB server.
      *
@@ -159,14 +159,14 @@ export interface LocationSmbProps {
 
 export interface LocationNfsProps {
     /**
-     * CAEF custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents) and be constructed as onPremConfig object.
+     * MDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents) and be constructed as onPremConfig object.
      * Only either agentNames or agentArns can be specified, not both.
      * 
      * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-datasync-locationnfs-mountoptions.html
     */
     readonly agentNames?: string[]
     /**
-     * CAEF custom parameter that refers to the generated agent name. The value will be used constructed as onPremConfig object.
+     * MDAA custom parameter that refers to the generated agent name. The value will be used constructed as onPremConfig object.
      * Only either agentNames or agentArns can be specified, not both.
      * 
      * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-datasync-locationnfs-mountoptions.html
@@ -196,7 +196,7 @@ export interface LocationNfsProps {
      */
     readonly subdirectory: string
     /**
-     * CAEF custom parameter to simplify configuration. The value will be used to construct MountOptions object.
+     * MDAA custom parameter to simplify configuration. The value will be used to construct MountOptions object.
      * Valid values: "AUTOMATIC" | "NFS3" | "NFSv4_0" | "NFSv4_1"
      * 
      * The NFS mount options that DataSync can use to mount your NFS share.
@@ -208,7 +208,7 @@ export interface LocationNfsProps {
 
 export interface LocationObjectStorageProps {
     /**
-     * CAEF custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents).
+     * MDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents).
      * Only either agentNames or agentArns can be specified, not both.
      * 
      * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationobjectstorage.html#cfn-datasync-locationobjectstorage-agentarns
@@ -281,12 +281,12 @@ export interface TaskWithNameProps extends TaskProps {
 
 export interface TaskProps {
     /**
-     * CAEF custom parameter that refers to the generated source location name. The value will resolve to source location ARN (looked up from the generatedLocations).
+     * MDAA custom parameter that refers to the generated source location name. The value will resolve to source location ARN (looked up from the generatedLocations).
      * Only either sourceLocationName or sourceLocationArn can be specified, not both.
      */
     readonly sourceLocationName?: string    // to be resolved from the generatedLocations
     /**
-     * CAEF custom parameter that refers to the generated destination location name. The value will resolve to destination location ARN (looked up from the generatedLocations).
+     * MDAA custom parameter that refers to the generated destination location name. The value will resolve to destination location ARN (looked up from the generatedLocations).
      * Only either destinationLocationName or destinationLocationArn can be specified, not both.
      */
     readonly destinationLocationName?: string    // to be resolved from the generatedLocations
@@ -304,8 +304,8 @@ export interface TaskProps {
     readonly destinationLocationArn?: string
 
     /**
-     * CAEF custom parameter. The ARN of the KMS key that will be used to encrypt the Task logging.
-     * If this parameter is not specified, CAEF will create a new KMS key.
+     * MDAA custom parameter. The ARN of the KMS key that will be used to encrypt the Task logging.
+     * If this parameter is not specified, MDAA will create a new KMS key.
      */
     readonly logGroupEncryptionKeyArn?: string
 
@@ -365,7 +365,7 @@ export interface LocationsByTypeWithNameProps {
     readonly objectStorage?: LocationObjectStorageWithNameProps[]
 }
 
-export interface DataSyncL3ConstructProps extends CaefL3ConstructProps {
+export interface DataSyncL3ConstructProps extends MdaaL3ConstructProps {
     readonly vpc?: VpcProps;
     readonly agents?: AgentWithNameProps[];
     readonly locations?: LocationsByTypeWithNameProps;
@@ -377,7 +377,7 @@ interface VpcEndpointAndSecurityGroup {
     readonly securityGroup: ISecurityGroup
 }
 
-export class DataSyncL3Construct extends CaefL3Construct {
+export class DataSyncL3Construct extends MdaaL3Construct {
     protected readonly props: DataSyncL3ConstructProps
 
 
@@ -403,13 +403,13 @@ export class DataSyncL3Construct extends CaefL3Construct {
     }
 
     private createKmsKey (): IKey {
-        return new CaefKmsKey( this, `kms-key`, {
+        return new MdaaKmsKey( this, `kms-key`, {
             naming: this.props.naming
         } )
     }
 
     private createSecurityGroup ( vpc: IVpc ): ISecurityGroup {
-        const datasyncVpceSg = new CaefSecurityGroup( this, 'vpce-datasync-sg', {
+        const datasyncVpceSg = new MdaaSecurityGroup( this, 'vpce-datasync-sg', {
             naming: this.props.naming,
             vpc: vpc,
             allowAllOutbound: false,
@@ -459,7 +459,7 @@ export class DataSyncL3Construct extends CaefL3Construct {
 
         const datasyncVpce = new InterfaceVpcEndpoint( this, 'datasync-endpoint', vpcEndpointProp );
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "vpc-endpoint",
                 resourceId: "datasync-service",
@@ -478,9 +478,9 @@ export class DataSyncL3Construct extends CaefL3Construct {
         return `arn:${ this.partition }:ec2:${ this.region }:${ this.account }:security-group/${ sgId }`
     }
 
-    private createDataSyncAgents ( vpcEndpointAndSg?: VpcEndpointAndSecurityGroup ): { [ key: string ]: CaefDataSyncAgent } {
+    private createDataSyncAgents ( vpcEndpointAndSg?: VpcEndpointAndSecurityGroup ): { [ key: string ]: MdaaDataSyncAgent } {
         // Create/register agents
-        const generatedAgents: { [ key: string ]: CaefDataSyncAgent } = {}
+        const generatedAgents: { [ key: string ]: MdaaDataSyncAgent } = {}
 
         // Do only if activation key is not empty
         this.props.agents?.filter( x => x.activationKey ).forEach( agentConfig => {
@@ -500,7 +500,7 @@ export class DataSyncL3Construct extends CaefL3Construct {
 
             const subnetArns = `arn:${ this.partition }:ec2:${ this.region }:${ this.account }:subnet/${ agentConfig.subnetId }`
 
-            const agentProps: CaefDataSyncAgentProps = {
+            const agentProps: MdaaDataSyncAgentProps = {
                 activationKey: agentConfig.activationKey as string, //undefined are filtered above
                 agentName: agentConfig.agentName,
                 securityGroupArns: [ securityGroupArn ],
@@ -509,9 +509,9 @@ export class DataSyncL3Construct extends CaefL3Construct {
                 naming: this.props.naming
             }
 
-            generatedAgents[ agentConfig.agentName ] = new CaefDataSyncAgent( this, `${ agentConfig.agentName }-agent`, agentProps )
+            generatedAgents[ agentConfig.agentName ] = new MdaaDataSyncAgent( this, `${ agentConfig.agentName }-agent`, agentProps )
 
-            new CaefParamAndOutput( this, {
+            new MdaaParamAndOutput( this, {
                 ...{
                     resourceType: "agent",
                     resourceId: agentConfig.agentName,
@@ -524,7 +524,7 @@ export class DataSyncL3Construct extends CaefL3Construct {
         return generatedAgents
     }
 
-    private createDataSyncLocations ( generatedAgents: { [ key: string ]: CaefDataSyncAgent }, kmsKey: IKey, allLocationProps?: LocationsByTypeWithNameProps ): GeneratedLocations {
+    private createDataSyncLocations ( generatedAgents: { [ key: string ]: MdaaDataSyncAgent }, kmsKey: IKey, allLocationProps?: LocationsByTypeWithNameProps ): GeneratedLocations {
         // Create locations type by type
         const generatedLocations: GeneratedLocations = {}
 
@@ -547,14 +547,14 @@ export class DataSyncL3Construct extends CaefL3Construct {
         return generatedLocations
     }
 
-    private generateS3Location ( locationProps: LocationS3WithNameProps ): CaefDataSyncS3Location {
-        const datasyncS3LocationProps: CaefDataSyncS3LocationProps = {
+    private generateS3Location ( locationProps: LocationS3WithNameProps ): MdaaDataSyncS3Location {
+        const datasyncS3LocationProps: MdaaDataSyncS3LocationProps = {
             ...locationProps,
             s3BucketArn: locationProps.s3BucketArn,
             s3Config: { "bucketAccessRoleArn": locationProps.bucketAccessRoleArn },
             naming: this.props.naming
         }
-        return new CaefDataSyncS3Location( this, `${ locationProps.locationName }-s3-location`, datasyncS3LocationProps )
+        return new MdaaDataSyncS3Location( this, `${ locationProps.locationName }-s3-location`, datasyncS3LocationProps )
 
     }
 
@@ -578,7 +578,7 @@ export class DataSyncL3Construct extends CaefL3Construct {
         return secret
     }
 
-    private generateObjectStorageLocation ( locationProps: LocationObjectStorageWithNameProps, kmsKey: IKey, generatedAgents: { [ key: string ]: CaefDataSyncAgent } ): CaefDataSyncObjectStorageLocation {
+    private generateObjectStorageLocation ( locationProps: LocationObjectStorageWithNameProps, kmsKey: IKey, generatedAgents: { [ key: string ]: MdaaDataSyncAgent } ): MdaaDataSyncObjectStorageLocation {
 
         // check if the agent is specified by name => lookup from generated agents, if specified by arn => use it.
         if ( locationProps.agentNames == undefined && locationProps.agentArns == undefined ) {
@@ -592,17 +592,17 @@ export class DataSyncL3Construct extends CaefL3Construct {
             secretKey: new SecretValue( 'placeholder-secretKey' ),
         } ).secretName
 
-        const datasyncObjectStorageLocationProps: CaefDataSyncObjectStorageLocationProps = {
+        const datasyncObjectStorageLocationProps: MdaaDataSyncObjectStorageLocationProps = {
             ...locationProps,
             agentArns: agentArns,
             secretName: secretName,
             naming: this.props.naming
         }
-        return new CaefDataSyncObjectStorageLocation( this, `${ locationProps.locationName }-objectstorage-location`, datasyncObjectStorageLocationProps )
+        return new MdaaDataSyncObjectStorageLocation( this, `${ locationProps.locationName }-objectstorage-location`, datasyncObjectStorageLocationProps )
 
     }
 
-    private generateSmbLocation ( locationProps: LocationSmbWithNameProps, kmsKey: IKey, generatedAgents: { [ key: string ]: CaefDataSyncAgent } ): CaefDataSyncSmbLocation {
+    private generateSmbLocation ( locationProps: LocationSmbWithNameProps, kmsKey: IKey, generatedAgents: { [ key: string ]: MdaaDataSyncAgent } ): MdaaDataSyncSmbLocation {
 
         // check if the agent is specified by name => lookup from generated agents, if specified by arn => use it.
         if ( locationProps.agentNames == undefined && locationProps.agentArns == undefined ) {
@@ -614,17 +614,17 @@ export class DataSyncL3Construct extends CaefL3Construct {
             password: new SecretValue( 'placeholder-password' ),
         } ).secretName
 
-        const createLocationProps: CaefDataSyncSmbLocationProps = {
+        const createLocationProps: MdaaDataSyncSmbLocationProps = {
             ...locationProps,
             agentArns: agentArns,
             naming: this.props.naming,
             secretName: secretName,
             mountOptions: locationProps.smbVersion ? { "version": locationProps.smbVersion } : undefined
         }
-        return new CaefDataSyncSmbLocation( this, `${ locationProps.locationName }-smb-location`, createLocationProps )
+        return new MdaaDataSyncSmbLocation( this, `${ locationProps.locationName }-smb-location`, createLocationProps )
     }
 
-    private generateNfsLocation ( locationProps: LocationNfsWithNameProps, generatedAgents: { [ key: string ]: CaefDataSyncAgent } ): CfnLocationNFS {
+    private generateNfsLocation ( locationProps: LocationNfsWithNameProps, generatedAgents: { [ key: string ]: MdaaDataSyncAgent } ): CfnLocationNFS {
 
         // check if the agent is specified by name => lookup from generated agents, if specified by arn => use it.
         if ( locationProps.agentNames == undefined && locationProps.agentArns == undefined ) {
@@ -638,7 +638,7 @@ export class DataSyncL3Construct extends CaefL3Construct {
             mountOptions: locationProps.nfsVersion ? { "version": locationProps.nfsVersion } : undefined
         }
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "location-nfs",
                 resourceId: locationProps.locationName,
@@ -702,7 +702,7 @@ export class DataSyncL3Construct extends CaefL3Construct {
         } )
         kmsKey.addToResourcePolicy( kmsDataSyncPolicy )
 
-        const taskLogGroup: ILogGroup = new CaefLogGroup( this, `task-loggroup`, {
+        const taskLogGroup: ILogGroup = new MdaaLogGroup( this, `task-loggroup`, {
             logGroupNamePathPrefix: "/aws/datasync/task/",
             encryptionKey: kmsKey,
             retention: RetentionDays.INFINITE,

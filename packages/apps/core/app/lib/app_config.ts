@@ -3,56 +3,56 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConfigParamRefValueTransformer, CaefConfigRefValueTransformer, CaefConfigSSMValueTransformer, CaefConfigTransformer, CaefNagSuppressions, CaefServiceCatalogProductConfig, ICaefConfigTransformer, ICaefConfigValueTransformer } from "@aws-caef/config";
-import { ICaefResourceNaming } from "@aws-caef/naming";
+import { MdaaConfigParamRefValueTransformer, MdaaConfigRefValueTransformer, MdaaConfigSSMValueTransformer, MdaaConfigTransformer, MdaaNagSuppressions, MdaaServiceCatalogProductConfig, IMdaaConfigTransformer, IMdaaConfigValueTransformer } from "@aws-mdaa/config";
+import { IMdaaResourceNaming } from "@aws-mdaa/naming";
 import Ajv, { Schema } from "ajv";
 import { Stack } from "aws-cdk-lib"
 import * as yaml from 'yaml';
 
-export interface CaefBaseConfigContents {
+export interface MdaaBaseConfigContents {
     /**
      * Service Catalog Config
      * If specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment
      */
-    readonly service_catalog_product_config?: CaefServiceCatalogProductConfig
+    readonly service_catalog_product_config?: MdaaServiceCatalogProductConfig
     /**
      * Nag suppressions
      */
-    readonly nag_suppressions?: CaefNagSuppressions
+    readonly nag_suppressions?: MdaaNagSuppressions
 }
 
 /**
- * Standard set of props for use with CaefConfigs.
+ * Standard set of props for use with MdaaConfigs.
  */
-export interface CaefAppConfigParserProps {
+export interface MdaaAppConfigParserProps {
     readonly org: string,
     readonly domain: string,
     readonly environment: string,
     readonly module_name: string,
     readonly rawConfig: { [ key: string ]: any },
-    readonly naming: ICaefResourceNaming
+    readonly naming: IMdaaResourceNaming
 }
 
 /**
- * Base class for all CAEF Configurations. Facilitates common config behaviours
+ * Base class for all MDAA Configurations. Facilitates common config behaviours
  * such as SSM parameter references and IAM role resolution.
  */
-export class CaefAppConfigParser<T extends CaefBaseConfigContents> {
+export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
     /** The config on which all transformations have been applied */
     protected readonly configContents: T
 
-    private readonly props: CaefAppConfigParserProps
+    private readonly props: MdaaAppConfigParserProps
     private readonly stack: Stack
 
-    public readonly serviceCatalogConfig?: CaefServiceCatalogProductConfig
-    public readonly nagSuppressions?: CaefNagSuppressions
+    public readonly serviceCatalogConfig?: MdaaServiceCatalogProductConfig
+    public readonly nagSuppressions?: MdaaNagSuppressions
     /**
      * Initializes IAM Role Resolver and performs standard config transformations.
      * @param stack 
      * @param props 
      * @param configTransformers 
      */
-    constructor( stack: Stack, props: CaefAppConfigParserProps, configSchema: Schema, configTransformers?: ICaefConfigTransformer[],suppressOutputConfigContents?:boolean ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps, configSchema: Schema, configTransformers?: IMdaaConfigTransformer[],suppressOutputConfigContents?:boolean ) {
         this.stack = stack
         this.props = props
 
@@ -61,17 +61,17 @@ export class CaefAppConfigParser<T extends CaefBaseConfigContents> {
             transformedConfig = transformer.transformConfig( transformedConfig )
         } )
 
-        const generatedRoleResolvedConfig = new CaefConfigTransformer( new CaefGeneratedRoleConfigValueTransformer( this.props.naming ) ).transformConfig( transformedConfig )
-        const ssmToRefResolvedConfigContents = new CaefConfigTransformer( new CaefConfigSSMValueTransformer() ).transformConfig( generatedRoleResolvedConfig )
-        const configRefValueTranformer = new CaefConfigRefValueTransformer( this.stack )
-        const resolvedRefsConfigContents = new CaefConfigTransformer( configRefValueTranformer, configRefValueTranformer ).transformConfig( ssmToRefResolvedConfigContents )
+        const generatedRoleResolvedConfig = new MdaaConfigTransformer( new MdaaGeneratedRoleConfigValueTransformer( this.props.naming ) ).transformConfig( transformedConfig )
+        const ssmToRefResolvedConfigContents = new MdaaConfigTransformer( new MdaaConfigSSMValueTransformer() ).transformConfig( generatedRoleResolvedConfig )
+        const configRefValueTranformer = new MdaaConfigRefValueTransformer( this.stack )
+        const resolvedRefsConfigContents = new MdaaConfigTransformer( configRefValueTranformer, configRefValueTranformer ).transformConfig( ssmToRefResolvedConfigContents )
 
-        const baseConfigContents = ( resolvedRefsConfigContents as CaefBaseConfigContents )
+        const baseConfigContents = ( resolvedRefsConfigContents as MdaaBaseConfigContents )
         this.serviceCatalogConfig = baseConfigContents.service_catalog_product_config
         this.nagSuppressions = baseConfigContents.nag_suppressions
 
-        const paramTransformer = new CaefConfigParamRefValueTransformer( this.stack, this.serviceCatalogConfig )
-        const resolvedParamsConfigContents = new CaefConfigTransformer( paramTransformer, paramTransformer ).transformConfig( resolvedRefsConfigContents )
+        const paramTransformer = new MdaaConfigParamRefValueTransformer( this.stack, this.serviceCatalogConfig )
+        const resolvedParamsConfigContents = new MdaaConfigTransformer( paramTransformer, paramTransformer ).transformConfig( resolvedRefsConfigContents )
         this.configContents = resolvedParamsConfigContents as T
 
         // Confirm our provided config matches our Schema (verification of Data shape)
@@ -86,9 +86,9 @@ export class CaefAppConfigParser<T extends CaefBaseConfigContents> {
     }
 }
 
-class CaefGeneratedRoleConfigValueTransformer implements ICaefConfigValueTransformer {
-    naming: ICaefResourceNaming;
-    constructor( naming: ICaefResourceNaming ) {
+class MdaaGeneratedRoleConfigValueTransformer implements IMdaaConfigValueTransformer {
+    naming: IMdaaResourceNaming;
+    constructor( naming: IMdaaResourceNaming ) {
         this.naming = naming
     }
     public transformValue ( value: string ): string {

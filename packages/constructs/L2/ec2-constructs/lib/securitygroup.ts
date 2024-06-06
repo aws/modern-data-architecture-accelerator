@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct"
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct"
 import { Token } from "aws-cdk-lib"
 import { CfnSecurityGroupEgress, CfnSecurityGroupIngress, IPeer, IVpc, Peer, Port, PortProps, Protocol, SecurityGroup, SecurityGroupProps } from "aws-cdk-lib/aws-ec2"
 import { NagSuppressions } from "cdk-nag"
 import { Construct } from "constructs"
 
-export interface CaefSecurityGroupRuleProps {
-    readonly ipv4?: CaefCidrPeer[]
-    readonly sg?: CaefSecurityGroupPeer[]
-    readonly prefixList?: CaefPrefixListPeer[]
+export interface MdaaSecurityGroupRuleProps {
+    readonly ipv4?: MdaaCidrPeer[]
+    readonly sg?: MdaaSecurityGroupPeer[]
+    readonly prefixList?: MdaaPrefixListPeer[]
 }
 
 export interface NagSuppressionProps {
@@ -20,7 +20,7 @@ export interface NagSuppressionProps {
     readonly reason: string
 }
 
-export interface CaefPeer {
+export interface MdaaPeer {
     readonly port?: number
     readonly toPort?: number
     readonly protocol: string
@@ -28,19 +28,19 @@ export interface CaefPeer {
     readonly suppressions?: NagSuppressionProps[]
 }
 
-export interface CaefPrefixListPeer extends CaefPeer {
+export interface MdaaPrefixListPeer extends MdaaPeer {
     readonly prefixList: string
 }
 
-export interface CaefCidrPeer extends CaefPeer {
+export interface MdaaCidrPeer extends MdaaPeer {
     readonly cidr: string
 }
 
-export interface CaefSecurityGroupPeer extends CaefPeer {
+export interface MdaaSecurityGroupPeer extends MdaaPeer {
     readonly sgId: string
 }
 
-export interface CaefSecurityGroupProps extends CaefConstructProps {
+export interface MdaaSecurityGroupProps extends MdaaConstructProps {
     /**
      * The name of the security group. For valid values, see the GroupName
      * parameter of the CreateSecurityGroup action in the Amazon EC2 API
@@ -102,18 +102,18 @@ export interface CaefSecurityGroupProps extends CaefConstructProps {
      * @default false
      */
     readonly disableInlineRules?: boolean;
-    readonly ingressRules?: CaefSecurityGroupRuleProps
-    readonly egressRules?: CaefSecurityGroupRuleProps
+    readonly ingressRules?: MdaaSecurityGroupRuleProps
+    readonly egressRules?: MdaaSecurityGroupRuleProps
     readonly addSelfReferenceRule?: boolean
 
 }
 
 /**
- * CAEF L2 Security Group. Provides a simplified interface for SG rules creation
+ * MDAA L2 Security Group. Provides a simplified interface for SG rules creation
  */
-export class CaefSecurityGroup extends SecurityGroup {
+export class MdaaSecurityGroup extends SecurityGroup {
 
-    private static setProps ( props: CaefSecurityGroupProps ): SecurityGroupProps {
+    private static setProps ( props: MdaaSecurityGroupProps ): SecurityGroupProps {
 
         const overrideProps = {
             //Invert the default for allowAllOutbound
@@ -125,34 +125,34 @@ export class CaefSecurityGroup extends SecurityGroup {
     }
 
 
-    constructor( scope: Construct, id: string, props: CaefSecurityGroupProps ) {
-        super( scope, id, CaefSecurityGroup.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaSecurityGroupProps ) {
+        super( scope, id, MdaaSecurityGroup.setProps( props ) )
 
         // Add Ingress rules
         props.ingressRules?.ipv4?.forEach( rule => {
             const peer = Peer.ipv4( rule.cidr )
-            this.addSuppressableIngressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableIngressRule( peer, MdaaSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         props.ingressRules?.sg?.forEach( rule => {
             const peer = Peer.securityGroupId( rule.sgId )
-            this.addSuppressableIngressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableIngressRule( peer, MdaaSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         props.ingressRules?.prefixList?.forEach( rule => {
             const peer = Peer.prefixList( rule.prefixList )
-            this.addSuppressableIngressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableIngressRule( peer, MdaaSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         // Add Egress rules
         props.egressRules?.ipv4?.forEach( rule => {
             const peer = Peer.ipv4( rule.cidr )
-            this.addSuppressableEgressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableEgressRule( peer, MdaaSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         props.egressRules?.sg?.forEach( rule => {
             const peer = Peer.securityGroupId( rule.sgId )
-            this.addSuppressableEgressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableEgressRule( peer, MdaaSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
         props.egressRules?.prefixList?.forEach( rule => {
             const peer = Peer.prefixList( rule.prefixList )
-            this.addSuppressableEgressRule( peer, CaefSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
+            this.addSuppressableEgressRule( peer, MdaaSecurityGroup.resolvePeerToPort( rule ), rule.description, false, rule.suppressions );
         } )
 
         // Allow all tcp connections from the same security group
@@ -172,7 +172,7 @@ export class CaefSecurityGroup extends SecurityGroup {
             }
         }
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             naming: props.naming,
             resourceType: "security-group",
             resourceId: props.securityGroupName,
@@ -224,7 +224,7 @@ export class CaefSecurityGroup extends SecurityGroup {
         }
     }
 
-    public static resolvePeerToPort ( peer: CaefPeer ): Port {
+    public static resolvePeerToPort ( peer: MdaaPeer ): Port {
         const protocol: Protocol = ( <any>Protocol )[ peer.protocol.toUpperCase() ]
         if ( typeof protocol === undefined || protocol == undefined ) {
             throw new Error( `Unknown protocol defined: ${ peer.protocol }` )
@@ -258,7 +258,7 @@ export class CaefSecurityGroup extends SecurityGroup {
         return Token.isUnresolved( port ) ? '{IndirectPort}' : port.toString();
     }
 
-    public static mergeRules ( rules1: CaefSecurityGroupRuleProps, rules2: CaefSecurityGroupRuleProps ): CaefSecurityGroupRuleProps {
+    public static mergeRules ( rules1: MdaaSecurityGroupRuleProps, rules2: MdaaSecurityGroupRuleProps ): MdaaSecurityGroupRuleProps {
         return {
             sg: [
                 ...rules1.sg || [], ...rules2.sg || []

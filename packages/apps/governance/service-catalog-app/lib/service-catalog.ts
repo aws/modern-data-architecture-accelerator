@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { ServiceCatalogL3Construct, ServiceCatalogL3ConstructProps } from '@aws-caef/service-catalog-l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { ServiceCatalogL3Construct, ServiceCatalogL3ConstructProps } from '@aws-mdaa/service-catalog-l3-construct';
 
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
-import { CaefServiceCatalogProductConfigParser } from './service-catalog-config';
+import { MdaaServiceCatalogProductConfigParser } from './service-catalog-config';
 
 
-export class ServiceCatalogCDKApp extends CaefCdkApp {
+export class ServiceCatalogCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "service-catalog", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
-        const appConfig = new CaefServiceCatalogProductConfigParser( stack, parserProps )
+        const appConfig = new MdaaServiceCatalogProductConfigParser( stack, parserProps )
         const constructProps: ServiceCatalogL3ConstructProps = {
             ...{
                 portfolios: appConfig.portfolioProps

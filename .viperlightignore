@@ -9,7 +9,7 @@
 .*/coverage/
 target/
 .*/cdk.out/
-.*/.caef_working/
+.*/.mdaa_working/
 .*node_modules/
 packages/apps/dataops/dataops-lambda-app/test/src/lambda/test-layer.zip # Empty test file
 packages/constructs/L3/dataops/dataops-lambda-l3-construct/test/src/lambda/test-layer.zip # Empty test file

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps } from '@aws-caef/app';
-import { JobConfig } from '@aws-caef/dataops-job-l3-construct';
-import { CaefDataOpsConfigParser, CaefDataOpsConfigContents } from '@aws-caef/dataops-shared';
+import { MdaaAppConfigParserProps } from '@aws-mdaa/app';
+import { JobConfig } from '@aws-mdaa/dataops-job-l3-construct';
+import { MdaaDataOpsConfigParser, MdaaDataOpsConfigContents } from '@aws-mdaa/dataops-shared';
 import { Schema } from "ajv";
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -45,7 +45,7 @@ export function mergeDeep ( target: any, ...sources: any ): any {
   return mergeDeep( target, ...sources );
 }
 
-export interface GlueJobConfigContents extends CaefDataOpsConfigContents {
+export interface GlueJobConfigContents extends MdaaDataOpsConfigContents {
   /**
    * Name of the Data Ops project. The crawler config will be autowired to use existing resources deployed by the project.
    */
@@ -60,7 +60,7 @@ export interface GlueJobConfigContents extends CaefDataOpsConfigContents {
   templates?: { [ key: string ]: JobConfig }
 }
 
-export class GlueJobConfigParser extends CaefDataOpsConfigParser<GlueJobConfigContents> {
+export class GlueJobConfigParser extends MdaaDataOpsConfigParser<GlueJobConfigContents> {
 
   public readonly jobConfigs: { [ key: string ]: JobConfig }
 
@@ -86,7 +86,7 @@ export class GlueJobConfigParser extends CaefDataOpsConfigParser<GlueJobConfigCo
     return newConfig
   }
 
-  private static modifyProps ( props: CaefAppConfigParserProps ): CaefAppConfigParserProps {
+  private static modifyProps ( props: MdaaAppConfigParserProps ): MdaaAppConfigParserProps {
     return {
       ...props, ...{
         rawConfig: GlueJobConfigParser.mergeJobConfigs( props.rawConfig as GlueJobConfigContents )
@@ -94,7 +94,7 @@ export class GlueJobConfigParser extends CaefDataOpsConfigParser<GlueJobConfigCo
     }
   }
 
-  constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+  constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
     super( stack, GlueJobConfigParser.modifyProps( props ), configSchema as Schema )
     this.jobConfigs = this.configContents.jobs
   }

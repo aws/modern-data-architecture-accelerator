@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefStudioLifecycleConfig, CaefStudioLifecycleConfigProps } from "../lib";
+import { MdaaStudioLifecycleConfig, MdaaStudioLifecycleConfigProps } from "../lib";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testContstructProps: CaefStudioLifecycleConfigProps = {
+    const testContstructProps: MdaaStudioLifecycleConfigProps = {
         naming: testApp.naming,
         lifecycleConfigContent: "testing",
         lifecycleConfigAppType: "JupyterServer"
     }
 
-    new CaefStudioLifecycleConfig( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaStudioLifecycleConfig( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

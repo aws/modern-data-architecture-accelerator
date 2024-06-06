@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefBucket } from '@aws-caef/s3-constructs'
+import { MdaaBucket } from '@aws-mdaa/s3-constructs'
 import { Database } from "@aws-cdk/aws-glue-alpha"
 import { CfnTable, CfnTableProps } from "aws-cdk-lib/aws-glue"
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam"
@@ -38,14 +38,14 @@ export class InventoryHelper {
         return {
             destination: {
                 bucket: destinationBucket,
-                prefix: CaefBucket.formatS3Prefix( destinationPrefix ),
+                prefix: MdaaBucket.formatS3Prefix( destinationPrefix ),
                 bucketOwner: bucketOwner
             },
             format: InventoryFormat.PARQUET,
             frequency: InventoryFrequency.DAILY,
             includeObjectVersions: InventoryObjectVersion.ALL,
             inventoryId: inventoryId,
-            objectsPrefix: CaefBucket.formatS3Prefix( objectsPrefix, false, true ),
+            objectsPrefix: MdaaBucket.formatS3Prefix( objectsPrefix, false, true ),
             optionalFields: [ "Size", "LastModifiedDate", "StorageClass", "ETag", "IsMultipartUploaded", "ReplicationStatus", "EncryptionStatus", "ObjectLockRetainUntilDate", "ObjectLockMode", "ObjectLockLegalHoldStatus", "IntelligentTieringAccessTier" ]
         }
     }
@@ -68,7 +68,7 @@ export class InventoryHelper {
         locationBucketName: string,
         bucketInventories: BucketInventory[],
         locationPrefix?: string ): CfnTable {
-        let location = locationPrefix ? `s3://${ locationBucketName }/${ CaefBucket.formatS3Prefix( locationPrefix ) }/` : `s3://${ locationBucketName }/`
+        let location = locationPrefix ? `s3://${ locationBucketName }/${ MdaaBucket.formatS3Prefix( locationPrefix ) }/` : `s3://${ locationBucketName }/`
         const tableInput = {
             name: `${ tableNamePrefix }_inv`.replace( /-/gi, "_" ),
             parameters: {
@@ -194,7 +194,7 @@ export class InventoryHelper {
      * @returns A policy statement which permits the S3 service principal to write inventory for the source bucket/account to the destination bucket.
      */
     public static createInventoryBucketPolicyStatement ( bucketArn: string, srcAccount: string, sourceBucketArn?: string, inventoryPrefix?: string ): PolicyStatement {
-        const resource = inventoryPrefix ? `${ bucketArn }/${ CaefBucket.formatS3Prefix( inventoryPrefix ) }/*` : `${ bucketArn }/*`
+        const resource = inventoryPrefix ? `${ bucketArn }/${ MdaaBucket.formatS3Prefix( inventoryPrefix ) }/*` : `${ bucketArn }/*`
         const allowS3Inventory = new PolicyStatement( {
             sid: "AllowS3Inventory",
             effect: Effect.ALLOW,

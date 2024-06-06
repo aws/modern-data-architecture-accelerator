@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefCfnCrawler } from '@aws-caef/glue-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaCfnCrawler } from '@aws-mdaa/glue-constructs';
 import { Construct } from 'constructs';
 import { CfnCrawler } from 'aws-cdk-lib/aws-glue';
-import { DataOpsProjectUtils } from '@aws-caef/dataops-project-l3-construct';
-import { EventBridgeHelper } from '@aws-caef/eventbridge-helper';
+import { DataOpsProjectUtils } from '@aws-mdaa/dataops-project-l3-construct';
+import { EventBridgeHelper } from '@aws-mdaa/eventbridge-helper';
 import { SnsTopic } from 'aws-cdk-lib/aws-events-targets';
-import { CaefSnsTopic } from '@aws-caef/sns-constructs';
+import { MdaaSnsTopic } from '@aws-mdaa/sns-constructs';
 import { Rule } from 'aws-cdk-lib/aws-events';
 
 export interface CrawlerTargets {
@@ -75,7 +75,7 @@ export interface CrawlerDefinition {
     readonly recrawlBehavior?: string
 }
 
-export interface GlueCrawlerL3ConstructProps extends CaefL3ConstructProps {
+export interface GlueCrawlerL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * Map of names to crawler configs 
      */
@@ -95,7 +95,7 @@ export interface GlueCrawlerL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-export class GlueCrawlerL3Construct extends CaefL3Construct {
+export class GlueCrawlerL3Construct extends MdaaL3Construct {
     protected readonly props: GlueCrawlerL3ConstructProps
 
 
@@ -114,7 +114,7 @@ export class GlueCrawlerL3Construct extends CaefL3Construct {
                 includedClassifiers = { classifiers: crawlerConfig.classifiers }
             }
 
-            const crawler = new CaefCfnCrawler( this.scope, `${ crawlerName }-crawler`, {
+            const crawler = new MdaaCfnCrawler( this.scope, `${ crawlerName }-crawler`, {
                 name: crawlerName,
                 crawlerSecurityConfiguration: this.props.securityConfigurationName,
                 role: crawlerConfig.executionRoleArn,
@@ -140,7 +140,7 @@ export class GlueCrawlerL3Construct extends CaefL3Construct {
             if ( crawler.name ) {
                 const eventRule = this.createCrawlerMonitoringEventRule( `${ crawlerName }-monitor`, [ crawler.name ] )
                 DataOpsProjectUtils.createProjectSSMParam( this.scope, this.props.naming, this.props.projectName, `crawler/name/${ crawlerName }`, crawler.name )
-                eventRule.addTarget( new SnsTopic( CaefSnsTopic.fromTopicArn( this.scope, `${ crawlerName }-topic`, this.props.notificationTopicArn ) ) );
+                eventRule.addTarget( new SnsTopic( MdaaSnsTopic.fromTopicArn( this.scope, `${ crawlerName }-topic`, this.props.notificationTopicArn ) ) );
             }
 
         } )

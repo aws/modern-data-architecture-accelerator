@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
-import { ICaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
 import { NagPackSuppression, NagSuppressions } from 'cdk-nag';
@@ -20,13 +20,13 @@ import {
     DatabaseCluster, DatabaseClusterProps, ClusterInstance
 } from 'aws-cdk-lib/aws-rds';
 import { SecretRotationApplication } from 'aws-cdk-lib/aws-secretsmanager';
-import { CaefRole } from '@aws-caef/iam-constructs';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
 
 
 /**
  * Properties for creating a compliant RDS Serverless Cluster
  */
-export interface CaefRdsServerlessClusterProps extends CaefConstructProps {
+export interface MdaaRdsServerlessClusterProps extends MdaaConstructProps {
     /**
      * Kind of database to deploy
      * Valid values: "aurora-mysql" | "aurora-postgresql"
@@ -40,7 +40,7 @@ export interface CaefRdsServerlessClusterProps extends CaefConstructProps {
      * Monitoring Role.
      *
      */
-    readonly monitoringRole: CaefRole;
+    readonly monitoringRole: MdaaRole;
     /**
      * The number of days during which automatic DB snapshots are retained.
      * Automatic backup retention cannot be disabled on serverless clusters. 
@@ -111,7 +111,7 @@ export interface CaefRdsServerlessClusterProps extends CaefConstructProps {
     /**
      * The KMS key for storage encryption.
      */
-    readonly encryptionKey: ICaefKmsKey
+    readonly encryptionKey: IMdaaKmsKey
 
     /**
      * Existing subnet group for the cluster
@@ -180,8 +180,8 @@ export interface CaefRdsServerlessClusterProps extends CaefConstructProps {
  * * SSL must be utilized to connect to the cluster.
  * * The cluster is VPC connected and not publicly accessible.
  */
-export class CaefRdsServerlessCluster extends DatabaseCluster {
-    private static setProps ( props: CaefRdsServerlessClusterProps ): DatabaseClusterProps {
+export class MdaaRdsServerlessCluster extends DatabaseCluster {
+    private static setProps ( props: MdaaRdsServerlessClusterProps ): DatabaseClusterProps {
         const overrideProps = {
             engine: props.engine=="aurora-mysql" 
                         ? DatabaseClusterEngine.auroraMysql( { version: <AuroraMysqlEngineVersion>props.engineVersion} ) 
@@ -215,9 +215,9 @@ export class CaefRdsServerlessCluster extends DatabaseCluster {
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
-    private props: CaefRdsServerlessClusterProps
-    constructor( scope: Construct, id: string, props: CaefRdsServerlessClusterProps ) {
-        super( scope, id, CaefRdsServerlessCluster.setProps( props ) )
+    private props: MdaaRdsServerlessClusterProps
+    constructor( scope: Construct, id: string, props: MdaaRdsServerlessClusterProps ) {
+        super( scope, id, MdaaRdsServerlessCluster.setProps( props ) )
         this.props = props
         // Default rotation to 30 days.
         // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.RotationSingleUserOptions.html#automaticallyafter
@@ -234,7 +234,7 @@ export class CaefRdsServerlessCluster extends DatabaseCluster {
             this.addOverrides( cfnDbCluster, suppressions )
         }
         if ( this.secret ) {
-            new CaefParamAndOutput( this, {
+            new MdaaParamAndOutput( this, {
                 ...{
                     resourceType: "cluster-secret",
                     resourceId: props.clusterIdentifier,
@@ -254,7 +254,7 @@ export class CaefRdsServerlessCluster extends DatabaseCluster {
             { id: 'HIPAA.Security-RDSInBackupPlan', reason: 'Instance is serverless and has a backup retention policy defaulting to 1.' },
         ], true)
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "cluster",
                 resourceId: props.clusterIdentifier,

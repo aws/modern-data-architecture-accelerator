@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from '@aws-caef/construct';
-import { CaefRole, CaefRoleProps, ICaefRole } from '@aws-caef/iam-constructs';
+import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaRole, MdaaRoleProps, IMdaaRole } from '@aws-mdaa/iam-constructs';
 import { Duration, Stack } from 'aws-cdk-lib';
 import { IManagedPolicy, PolicyDocument, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 
 
-export interface CaefLambdaRoleProps extends CaefConstructProps {
+export interface MdaaLambdaRoleProps extends MdaaConstructProps {
     /**
      * The set of Lambda function CloudWatch log group namess the role should be granted access to write to
      */
@@ -111,21 +111,21 @@ export interface CaefLambdaRoleProps extends CaefConstructProps {
 
 }
 
-export interface ICaefLambdaRole extends ICaefRole {
+export interface IMdaaLambdaRole extends IMdaaRole {
 
 }
 
-export class CaefLambdaRole extends CaefRole {
+export class MdaaLambdaRole extends MdaaRole {
 
-    private static setLambdaProps ( props: CaefLambdaRoleProps ): CaefRoleProps {
+    private static setLambdaProps ( props: MdaaLambdaRoleProps ): MdaaRoleProps {
         const overrideProps = {
             assumedBy: new ServicePrincipal( "lambda.amazonaws.com" )
         }
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefLambdaRoleProps ) {
-        super( scope, id, CaefLambdaRole.setLambdaProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaLambdaRoleProps ) {
+        super( scope, id, MdaaLambdaRole.setLambdaProps( props ) )
 
         if ( props.logGroupNames ) {
             this.addLogGroups( props.logGroupNames )

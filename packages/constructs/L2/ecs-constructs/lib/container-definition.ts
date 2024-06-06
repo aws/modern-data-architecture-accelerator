@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { Duration } from "aws-cdk-lib";
 import { ContainerDefinition, ContainerDefinitionProps, ContainerImage, EnvironmentFile, HealthCheck, LinuxParameters, LogDriver, PortMapping, Secret, SystemControl, TaskDefinition, Ulimit } from "aws-cdk-lib/aws-ecs";
 import { ILogGroup } from "aws-cdk-lib/aws-logs";
@@ -15,7 +15,7 @@ import { Construct } from "constructs";
  * Properties for creating a Compliance ECS containerdefinition
  */
 
-export interface CaefECSContainerDefinitionProps extends CaefConstructProps {
+export interface MdaaECSContainerDefinitionProps extends MdaaConstructProps {
     /**
      * The name of the task definition that includes this container definition.
      *
@@ -302,9 +302,9 @@ export interface CaefECSContainerDefinitionProps extends CaefConstructProps {
 /**
  * A construct for creating a compliant ECS containerdefinition resource.
  */
-export class CaefECSContainerDefinition extends ContainerDefinition {
+export class MdaaECSContainerDefinition extends ContainerDefinition {
 
-    private static setProps ( props: CaefECSContainerDefinitionProps ): ContainerDefinitionProps {
+    private static setProps ( props: MdaaECSContainerDefinitionProps ): ContainerDefinitionProps {
         const overrideProps = {
             containerName: props.naming.resourceName( props.containerName, 255 ),
             logging: LogDriver.awsLogs( {
@@ -320,8 +320,8 @@ export class CaefECSContainerDefinition extends ContainerDefinition {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefECSContainerDefinitionProps ) {
-        super( scope, id, CaefECSContainerDefinition.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaECSContainerDefinitionProps ) {
+        super( scope, id, MdaaECSContainerDefinition.setProps( props ) )
 
         if ( this.taskDefinition.executionRole ) {
             NagSuppressions.addResourceSuppressions( this.taskDefinition.executionRole, [
@@ -340,7 +340,7 @@ export class CaefECSContainerDefinition extends ContainerDefinition {
             ], true );
         }
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "containerdefinition",
                 resourceId: props.containerName,

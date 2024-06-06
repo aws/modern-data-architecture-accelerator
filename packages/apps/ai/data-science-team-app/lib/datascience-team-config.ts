@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from "@aws-caef/app";
-import { DataScienceTeamProps } from "@aws-caef/datascience-team-l3-construct";
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from "@aws-mdaa/app";
+import { DataScienceTeamProps } from "@aws-mdaa/datascience-team-l3-construct";
 import { Schema } from "ajv";
 import { Stack } from "aws-cdk-lib";
 
 import * as configSchema from './config-schema.json';
 
 
-export interface DataScienceTeamConfigContents extends CaefBaseConfigContents {
+export interface DataScienceTeamConfigContents extends MdaaBaseConfigContents {
     readonly team: DataScienceTeamProps
 }
 
-export class DataScienceTeamConfigParser extends CaefAppConfigParser<DataScienceTeamConfigContents> {
+export class DataScienceTeamConfigParser extends MdaaAppConfigParser<DataScienceTeamConfigContents> {
 
     public readonly team: DataScienceTeamProps
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
         this.team = this.configContents.team
     }

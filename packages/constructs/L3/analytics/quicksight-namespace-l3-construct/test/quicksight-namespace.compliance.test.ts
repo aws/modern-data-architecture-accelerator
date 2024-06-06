@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
 import { QuickSightNamespaceL3ConstructProps, QuickSightNamespaceL3Construct, FederationProps, FederationRoleProps } from "../lib";
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
   const federationRoleProps1: FederationRoleProps = {
     qsGroups: [ "TestREADERS", "TestAUTHORS" ],
@@ -34,7 +34,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
   const constructProps: QuickSightNamespaceL3ConstructProps = {
     federations: [ { federationName: "testFederation1", ...federationProps1 }, { federationName: "testFederation2", ...federationProps2 } ],
 
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
     glueResourceAccess: [ "test-glue-resource", "*" ]
   };

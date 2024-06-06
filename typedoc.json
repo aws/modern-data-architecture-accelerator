@@ -4,7 +4,7 @@
         "packages/constructs/L3/*/*",
         "packages/utilities/*",
     ],
-    "name": "CAEF TS Docs",
+    "name": "MDAA TS Docs",
     "entryPointStrategy": "packages"
     // Potentially useful for debugging
     // "logLevel": "Verbose"

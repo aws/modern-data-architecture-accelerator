@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MacieSessionL3Construct, MacieSessionL3ConstructProps } from '@aws-caef/macie-session-l3-construct';
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MacieSessionL3Construct, MacieSessionL3ConstructProps } from '@aws-mdaa/macie-session-l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { MacieSessionConfigParser } from './macie-session-config';
 
 
-export class MacieSessionCDKApp extends CaefCdkApp {
+export class MacieSessionCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "macie-session", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
         const appConfig = new MacieSessionConfigParser( stack, parserProps )
         const constructProps: MacieSessionL3ConstructProps = {

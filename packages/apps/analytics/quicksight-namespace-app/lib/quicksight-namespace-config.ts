@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app'
-import { FederationProps, NameAndFederationProps } from '@aws-caef/quicksight-namespace-l3-construct'
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app'
+import { FederationProps, NameAndFederationProps } from '@aws-mdaa/quicksight-namespace-l3-construct'
 import { Schema } from 'ajv'
 import { Stack } from 'aws-cdk-lib'
 
 import * as configSchema from './config-schema.json'
 
-export interface QuickSightNamespaceConfigContents extends CaefBaseConfigContents {
+export interface QuickSightNamespaceConfigContents extends MdaaBaseConfigContents {
 
     /**
      * Objects representing federations to create
@@ -25,13 +25,13 @@ export interface QuickSightNamespaceConfigContents extends CaefBaseConfigContent
 
 
 
-export class QuickSightNamespaceConfigParser extends CaefAppConfigParser<QuickSightNamespaceConfigContents> {
+export class QuickSightNamespaceConfigParser extends MdaaAppConfigParser<QuickSightNamespaceConfigContents> {
 
     public readonly federations: NameAndFederationProps[]
 
     public readonly glueResourceAccess?: string[]
 
-    constructor( scope: Stack, props: CaefAppConfigParserProps ) {
+    constructor( scope: Stack, props: MdaaAppConfigParserProps ) {
         super( scope, props, configSchema as Schema )
 
         this.federations = Object.entries( this.configContents.federations || {} ).map( nameAndFederationProps => {

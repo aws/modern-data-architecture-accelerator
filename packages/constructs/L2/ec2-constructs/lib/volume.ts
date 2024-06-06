@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefParamAndOutput, CaefConstructProps } from "@aws-caef/construct";
+import { MdaaParamAndOutput, MdaaConstructProps } from "@aws-mdaa/construct";
 import { RemovalPolicy, Size } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { ICaefKmsKey } from '@aws-caef/kms-constructs';
+import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Volume, VolumeProps, EbsDeviceVolumeType } from "aws-cdk-lib/aws-ec2";
 import { NagSuppressions } from "cdk-nag";
 
@@ -14,7 +14,7 @@ import { NagSuppressions } from "cdk-nag";
  * Properties for creating a Compliance EC2 instance
  */
 
-export interface CaefEC2VolumeProps extends CaefConstructProps {
+export interface MdaaEC2VolumeProps extends MdaaConstructProps {
     /**
      * The Availability Zone in which to create the volume.
      */
@@ -30,7 +30,7 @@ export interface CaefEC2VolumeProps extends CaefConstructProps {
     /**
      * The customer-managed encryption key that is used to encrypt the Volume.
      */
-    readonly encryptionKey: ICaefKmsKey;
+    readonly encryptionKey: IMdaaKmsKey;
     /**
      * The number of I/O operations per second (IOPS) to provision for the volume.
      */
@@ -59,9 +59,9 @@ export interface CaefEC2VolumeProps extends CaefConstructProps {
  * Specifically, the construct ensures that the EBS volume
  * is encrypted.
  */
-export class CaefEC2Volume extends Volume {
+export class MdaaEC2Volume extends Volume {
 
-    private static setProps ( props: CaefEC2VolumeProps ): VolumeProps {
+    private static setProps ( props: MdaaEC2VolumeProps ): VolumeProps {
         const overrideProps = {
             volumeName: props.naming.resourceName( props.volumeName ),
             removalPolicy: RemovalPolicy.RETAIN,
@@ -70,28 +70,28 @@ export class CaefEC2Volume extends Volume {
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
-    constructor( scope: Construct, id: string, props: CaefEC2VolumeProps ) {
-        super( scope, id, CaefEC2Volume.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaEC2VolumeProps ) {
+        super( scope, id, MdaaEC2Volume.setProps( props ) )
 
         NagSuppressions.addResourceSuppressions( this, [
             {
                 id: 'NIST.800.53.R5-EC2EBSInBackupPlan',
-                reason: 'CAEF does not enforce NIST.800.53.R5-EC2EBSInBackupPlan on EBS volume.',
+                reason: 'MDAA does not enforce NIST.800.53.R5-EC2EBSInBackupPlan on EBS volume.',
             },
             {
                 id: 'HIPAA.Security-EC2EBSInBackupPlan',
-                reason: 'CAEF does not enforce HIPAA.Security-EC2EBSInBackupPlan on EBS volume.',
+                reason: 'MDAA does not enforce HIPAA.Security-EC2EBSInBackupPlan on EBS volume.',
             },
         ] );
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "volume",
                 name: "id",
                 value: this.volumeId
             }, ...props
         },scope )
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "volume",
                 name: "az",

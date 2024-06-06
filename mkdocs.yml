@@ -1,4 +1,4 @@
-site_name: CAEF
+site_name: MDAA
 docs_dir: target/docs
 site_dir: target/docs_site
 use_directory_urls: false

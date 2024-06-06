@@ -2,17 +2,17 @@ import * as cdk from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
-import {CaefL3ConstructProps} from "@aws-caef/l3-construct";
+import {MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
 import {Shared} from "../shared";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface SageMakerModelProps extends cdk.NestedStackProps, CaefL3ConstructProps {
+export interface SageMakerModelProps extends cdk.NestedStackProps, MdaaL3ConstructProps {
   vpc: ec2.IVpc;
   subnets: ec2.ISubnet[]
   region: string;
   model: ModelConfig;
   shared: Shared;
-  encryptionKey?: CaefKmsKey;
+  encryptionKey?: MdaaKmsKey;
 }
 
 export enum DeploymentType {

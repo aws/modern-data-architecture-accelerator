@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { IResolvable } from 'aws-cdk-lib';
 import { CfnDataset, CfnDatasetProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
 /**
- * Properties for creating a Caef Databrew Dataset
+ * Properties for creating a Mdaa Databrew Dataset
  */
-export interface CaefDataBrewDatasetProps extends CaefConstructProps {
+export interface MdaaDataBrewDatasetProps extends MdaaConstructProps {
 
     // The unique name of the dataset.
     readonly name: string;
@@ -33,19 +33,19 @@ export interface CaefDataBrewDatasetProps extends CaefConstructProps {
 /**
  * A construct which creates a compliant Databrew Dataset.
  */
-export class CaefDataBrewDataset extends CfnDataset {
+export class MdaaDataBrewDataset extends CfnDataset {
 
-    private static setProps ( props: CaefDataBrewDatasetProps ): CfnDatasetProps {
+    private static setProps ( props: MdaaDataBrewDatasetProps ): CfnDatasetProps {
         const overrideProps = {
             name: props.naming.resourceName( props.name, 80 )
         }
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataBrewDatasetProps ) {
-        super( scope, id, CaefDataBrewDataset.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataBrewDatasetProps ) {
+        super( scope, id, MdaaDataBrewDataset.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Dataset",
                 resourceId: props.name,

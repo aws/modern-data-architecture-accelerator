@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as caef_construct from '@aws-caef/construct';
-import { ICaefKmsKey } from '@aws-caef/kms-constructs';
+import * as mdaa_construct from '@aws-mdaa/construct';
+import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Fn, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { BlockPublicAccess, Bucket, BucketEncryption, BucketProps, IBucket, IntelligentTieringConfiguration, Inventory, LifecycleRule } from 'aws-cdk-lib/aws-s3';
@@ -12,9 +12,9 @@ import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 
 /**
- * Properties for the creation of a CAEF S3 Bucket
+ * Properties for the creation of a MDAA S3 Bucket
  */
-export interface CaefBucketProps extends caef_construct.CaefConstructProps {
+export interface MdaaBucketProps extends mdaa_construct.MdaaConstructProps {
     /**
      * Additional KMS key Arns which may be used to write to the bucket (in addition to the default)
      */
@@ -33,7 +33,7 @@ export interface CaefBucketProps extends caef_construct.CaefConstructProps {
      * @default - If encryption is set to "Kms" and this property is undefined,
      * a new KMS key will be created and associated with this bucket.
      */
-    readonly encryptionKey: ICaefKmsKey;
+    readonly encryptionKey: IMdaaKmsKey;
     /**
      * Physical name of this bucket.
      *
@@ -81,16 +81,16 @@ export interface CaefBucketProps extends caef_construct.CaefConstructProps {
     /**
      * If set true, the stack id will be used to set a unique bucket name prefix in order
      * to ensure global uniqueness and protect against bucket name sniping.
-     * Can also be enabled via the "@aws-caef/enableUniqueBucketNames" context key.
+     * Can also be enabled via the "@aws-mdaa/enableUniqueBucketNames" context key.
      */
     readonly uniqueBucketName?: boolean
 
 }
 
 /**
- * Interface spec for CAEF Buckets
+ * Interface spec for MDAA Buckets
  */
-export interface ICaefBucket extends IBucket {
+export interface IMdaaBucket extends IBucket {
 
 }
 
@@ -102,13 +102,13 @@ export interface ICaefBucket extends IBucket {
  *  * SSL is enforced
  *  * Bucket keys are enabled
  */
-export class CaefBucket extends Bucket implements ICaefBucket {
+export class MdaaBucket extends Bucket implements IMdaaBucket {
 
-    public static readonly UNIQUE_NAME_CONTEXT_KEY = "@aws-caef/enableUniqueBucketNames"
+    public static readonly UNIQUE_NAME_CONTEXT_KEY = "@aws-mdaa/enableUniqueBucketNames"
 
-    private static setProps ( props: CaefBucketProps, scope: Construct ): BucketProps {
+    private static setProps ( props: MdaaBucketProps, scope: Construct ): BucketProps {
 
-        const uniqueBucketNamePrefixContext = scope.node.tryGetContext( CaefBucket.UNIQUE_NAME_CONTEXT_KEY )
+        const uniqueBucketNamePrefixContext = scope.node.tryGetContext( MdaaBucket.UNIQUE_NAME_CONTEXT_KEY )
 
         const uniqueBucketNamePrefix = props.uniqueBucketName?.valueOf() ||
             ( uniqueBucketNamePrefixContext ? Boolean( uniqueBucketNamePrefixContext ) : false )
@@ -130,17 +130,17 @@ export class CaefBucket extends Bucket implements ICaefBucket {
         }
         return { ...props, ...overrideProps }
     }
-    constructor( scope: Construct, id: string, props: CaefBucketProps ) {
-        super( scope, id, CaefBucket.setProps( props, scope ) );
+    constructor( scope: Construct, id: string, props: MdaaBucketProps ) {
+        super( scope, id, MdaaBucket.setProps( props, scope ) );
 
         this.policy?.applyRemovalPolicy( RemovalPolicy.RETAIN )
 
         NagSuppressions.addResourceSuppressions(
             this,
             [
-                { id: 'AwsSolutions-S1', reason: 'Server access logs do not support KMS on targets. CAEF uses CloudTrail data events instead.' },
-                { id: 'NIST.800.53.R5-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets. CAEF uses CloudTrail data events instead.' },
-                { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets. CAEF uses CloudTrail data events instead.' }
+                { id: 'AwsSolutions-S1', reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.' },
+                { id: 'NIST.800.53.R5-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.' },
+                { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.' }
             ],
             true
         );
@@ -182,7 +182,7 @@ export class CaefBucket extends Bucket implements ICaefBucket {
             this.addToResourcePolicy( ForceKMSKeyStatement )
         }
 
-        new caef_construct.CaefParamAndOutput( this, {
+        new mdaa_construct.MdaaParamAndOutput( this, {
             ...{
                 resourceType: "bucket",
                 resourceId: props.bucketName,
@@ -191,7 +191,7 @@ export class CaefBucket extends Bucket implements ICaefBucket {
             }, ...props
         },scope )
 
-        new caef_construct.CaefParamAndOutput( this, {
+        new mdaa_construct.MdaaParamAndOutput( this, {
             ...{
                 resourceType: "bucket",
                 resourceId: props.bucketName,

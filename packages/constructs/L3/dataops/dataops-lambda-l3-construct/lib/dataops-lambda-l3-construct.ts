@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-caef/ec2-l3-construct';
-import { EventBridgeHelper, EventBridgeProps } from '@aws-caef/eventbridge-helper';
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefDockerImageFunction, CaefDockerImageFunctionProps, CaefLambdaFunction, CaefLambdaFunctionOptions, CaefLambdaFunctionProps, CaefLambdaRole } from '@aws-caef/lambda-constructs';
+import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-mdaa/ec2-l3-construct';
+import { EventBridgeHelper, EventBridgeProps } from '@aws-mdaa/eventbridge-helper';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaDockerImageFunction, MdaaDockerImageFunctionProps, MdaaLambdaFunction, MdaaLambdaFunctionOptions, MdaaLambdaFunctionProps, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { Duration, Size, aws_events_targets } from 'aws-cdk-lib';
 import { SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { RuleTargetInput } from 'aws-cdk-lib/aws-events';
@@ -36,7 +36,7 @@ export interface VpcConfigProps {
     /**
      * List of egress rules to be added to the function SG
      */
-    readonly securityGroupEgressRules?: CaefSecurityGroupRuleProps
+    readonly securityGroupEgressRules?: MdaaSecurityGroupRuleProps
 }
 
 export interface FunctionProps extends FunctionOptions {
@@ -169,7 +169,7 @@ export interface LayerProps {
     readonly layerName: string
 }
 
-export interface LambdaFunctionL3ConstructProps extends CaefL3ConstructProps {
+export interface LambdaFunctionL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * Arn of KMS key which will be used to encrypt the function environments and dead letter queues
      */
@@ -185,7 +185,7 @@ export interface LambdaFunctionL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-export class LambdaFunctionL3Construct extends CaefL3Construct {
+export class LambdaFunctionL3Construct extends MdaaL3Construct {
     protected readonly props: LambdaFunctionL3ConstructProps
 
 
@@ -195,7 +195,7 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
         super( scope, id, props )
         this.props = props
 
-        this.projectKmsKey = CaefKmsKey.fromKeyArn( this.scope, "project-kms", this.props.kmsArn )
+        this.projectKmsKey = MdaaKmsKey.fromKeyArn( this.scope, "project-kms", this.props.kmsArn )
 
         const generatedLayers = Object.fromEntries( this.props.layers?.map( layerProps => {
             return [ layerProps.layerName, this.createLambdaLayer( layerProps ) ]
@@ -227,7 +227,7 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
     /** @jsii ignore */
     private createFunctionFromProps ( functionProps: FunctionProps, generatedLayersByName: { [ name: string ]: LayerVersion } ): Function {
 
-        const role = CaefLambdaRole.fromRoleArn( this.scope, `lambda-role-${ functionProps.functionName }`, functionProps.roleArn )
+        const role = MdaaLambdaRole.fromRoleArn( this.scope, `lambda-role-${ functionProps.functionName }`, functionProps.roleArn )
 
         let functionVpcProps = {}
         if ( functionProps.vpcConfig ) {
@@ -257,7 +257,7 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
         const dlq = EventBridgeHelper.createDlq( this.scope, this.props.naming, functionProps.functionName, this.projectKmsKey, role )
 
 
-        const lambdaOptions: CaefLambdaFunctionOptions = {
+        const lambdaOptions: MdaaLambdaFunctionOptions = {
             ...functionVpcProps,
             functionName: functionProps.functionName,
             description: functionProps.description,
@@ -299,14 +299,14 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
 
         return lambdaFunction
     }
-    private createDockerOrLambdaFunction ( lambdaOptions: CaefLambdaFunctionOptions, functionProps: FunctionProps, generatedLayersByName: { [ name: string ]: LayerVersion} ) : Function {
+    private createDockerOrLambdaFunction ( lambdaOptions: MdaaLambdaFunctionOptions, functionProps: FunctionProps, generatedLayersByName: { [ name: string ]: LayerVersion} ) : Function {
         
         if ( functionProps.dockerBuild ) {
-            const lambdaProps: CaefDockerImageFunctionProps = {
+            const lambdaProps: MdaaDockerImageFunctionProps = {
                 ...lambdaOptions,
                 code: DockerImageCode.fromImageAsset( functionProps.srcDir ),
             }
-            return new CaefDockerImageFunction( this.scope, functionProps.functionName, lambdaProps )
+            return new MdaaDockerImageFunction( this.scope, functionProps.functionName, lambdaProps )
         } else {
             if ( !functionProps.runtime ) {
                 throw new Error( "Function runtime must be defined for non-docker functions" )
@@ -323,7 +323,7 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
                 }
                 return generatedLayer
             } )
-            const lambdaProps: CaefLambdaFunctionProps = {
+            const lambdaProps: MdaaLambdaFunctionProps = {
                 ...lambdaOptions,
                 runtime: new Runtime( functionProps.runtime ),
                 code: Code.fromAsset( functionProps.srcDir ),
@@ -331,13 +331,13 @@ export class LambdaFunctionL3Construct extends CaefL3Construct {
                 layers: [ ...generatedLayers || [], ...existingLayers ],
             }
 
-            return new CaefLambdaFunction( this.scope, functionProps.functionName, lambdaProps )
+            return new MdaaLambdaFunction( this.scope, functionProps.functionName, lambdaProps )
         }
     }
 
-    private createFunctionSecurityGroup ( sgName: string, vpcId: string, securityGroupEgressRules?: CaefSecurityGroupRuleProps ): SecurityGroup {
+    private createFunctionSecurityGroup ( sgName: string, vpcId: string, securityGroupEgressRules?: MdaaSecurityGroupRuleProps ): SecurityGroup {
         const ec2L3Props: Ec2L3ConstructProps = {
-            ...this.props as CaefL3ConstructProps,
+            ...this.props as MdaaL3ConstructProps,
             adminRoles: [],
             securityGroups: {
                 [ sgName ]: {

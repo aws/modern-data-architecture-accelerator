@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps } from '@aws-caef/app';
-import { CaefDataOpsConfigParser, CaefDataOpsConfigContents } from '@aws-caef/dataops-shared';
-import { StepFunctionProps } from '@aws-caef/dataops-stepfunction-l3-construct';
+import { MdaaAppConfigParserProps } from '@aws-mdaa/app';
+import { MdaaDataOpsConfigParser, MdaaDataOpsConfigContents } from '@aws-mdaa/dataops-shared';
+import { StepFunctionProps } from '@aws-mdaa/dataops-stepfunction-l3-construct';
 import { Schema } from "ajv";
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 
 
-export interface StepFunctionConfigContents extends CaefDataOpsConfigContents {
+export interface StepFunctionConfigContents extends MdaaDataOpsConfigContents {
     /**
      * Name of the DataOps Project
      */
@@ -23,11 +23,11 @@ export interface StepFunctionConfigContents extends CaefDataOpsConfigContents {
     stepfunctionDefinitions: StepFunctionProps[]
 }
 
-export class StepFunctionConfigParser extends CaefDataOpsConfigParser<StepFunctionConfigContents> {
+export class StepFunctionConfigParser extends MdaaDataOpsConfigParser<StepFunctionConfigContents> {
 
     public readonly stepfunctionDefinitions: StepFunctionProps[]
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.stepfunctionDefinitions = this.configContents.stepfunctionDefinitions

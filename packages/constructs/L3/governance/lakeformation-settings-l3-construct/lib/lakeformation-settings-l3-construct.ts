@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefCustomResource, CaefCustomResourceProps } from '@aws-caef/custom-constructs';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefBoto3LayerVersion } from '@aws-caef/lambda-constructs';
+import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaBoto3LayerVersion } from '@aws-mdaa/lambda-constructs';
 import { Duration } from 'aws-cdk-lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
 
-export interface LakeFormationSettingsL3ConstructProps extends CaefL3ConstructProps {
+export interface LakeFormationSettingsL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * If true (default false), IAMAllowedPrincipal grants will automatically be added to all new databases and tables
      */
@@ -21,10 +21,10 @@ export interface LakeFormationSettingsL3ConstructProps extends CaefL3ConstructPr
     /**
      * List of arns for roles which will administer LakeFormation
      */
-    readonly lakeFormationAdminRoleRefs: CaefRoleRef[];
+    readonly lakeFormationAdminRoleRefs: MdaaRoleRef[];
 }
 
-export class LakeFormationSettingsL3Construct extends CaefL3Construct {
+export class LakeFormationSettingsL3Construct extends MdaaL3Construct {
     protected readonly props: LakeFormationSettingsL3ConstructProps
 
 
@@ -54,7 +54,7 @@ export class LakeFormationSettingsL3Construct extends CaefL3Construct {
             ],
         } )
 
-        const settingsCrProps: CaefCustomResourceProps = {
+        const settingsCrProps: MdaaCustomResourceProps = {
             resourceType: 'lakeformation-settings',
             code: Code.fromAsset( `${ __dirname }/../src/python/lakeformation_settings` ),
             handler: "lakeformation_settings.lambda_handler",
@@ -68,7 +68,7 @@ export class LakeFormationSettingsL3Construct extends CaefL3Construct {
             naming: this.props.naming,
             createParams: false,
             createOutputs: false,
-            handlerLayers: [ new CaefBoto3LayerVersion( this, 'boto3-layer', { naming: this.props.naming } ) ],
+            handlerLayers: [ new MdaaBoto3LayerVersion( this, 'boto3-layer', { naming: this.props.naming } ) ],
             handlerProps: {
                 account: this.account,
                 dataLakeSettings: {
@@ -81,7 +81,7 @@ export class LakeFormationSettingsL3Construct extends CaefL3Construct {
                 }
             }
         }
-        new CaefCustomResource( this.scope, `lf-settings`, settingsCrProps )
+        new MdaaCustomResource( this.scope, `lf-settings`, settingsCrProps )
     }
 }
 

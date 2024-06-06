@@ -15,29 +15,29 @@ import * as path from "path";
 import {Shared} from "../shared";
 import {BackendApisProps, Direction, SystemConfig} from "../shared/types";
 import * as cognito from "aws-cdk-lib/aws-cognito";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefSnsTopic} from "@aws-caef/sns-constructs";
-import {CaefLambdaFunction, CaefLambdaRole} from "@aws-caef/lambda-constructs";
-import {CaefRole} from "@aws-caef/iam-constructs";
-import {CaefSqsDeadLetterQueue, CaefSqsQueue} from "@aws-caef/sqs-constructs";
-import {CaefDDBTable} from "@aws-caef/ddb-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaSnsTopic} from "@aws-mdaa/sns-constructs";
+import {MdaaLambdaFunction, MdaaLambdaRole} from "@aws-mdaa/lambda-constructs";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
+import {MdaaSqsDeadLetterQueue, MdaaSqsQueue} from "@aws-mdaa/sqs-constructs";
+import {MdaaDDBTable} from "@aws-mdaa/ddb-constructs";
 import {NagSuppressions} from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
-import {CaefLogGroup, CaefLogGroupProps} from "@aws-caef/cloudwatch-constructs";
+import {MdaaLogGroup, MdaaLogGroupProps} from "@aws-mdaa/cloudwatch-constructs";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import { ApiGatewayv2DomainProperties } from "aws-cdk-lib/aws-route53-targets";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 
-interface WebSocketApiProps extends CaefL3ConstructProps {
+interface WebSocketApiProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly userPool: cognito.IUserPool;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class WebSocketApi extends CaefL3Construct {
+export class WebSocketApi extends MdaaL3Construct {
   public readonly api: apigwv2.WebSocketApi;
   public readonly messagesTopic: sns.Topic;
   private readonly props: WebSocketApiProps
@@ -47,7 +47,7 @@ export class WebSocketApi extends CaefL3Construct {
     this.props = props
 
     // Create the main Message Topic acting as a message bus
-    const messagesTopic = new CaefSnsTopic(this, "WeSocketMessagesTopic", {
+    const messagesTopic = new MdaaSnsTopic(this, "WeSocketMessagesTopic", {
         masterKey: props.encryptionKey,
         naming: props.naming,
         createParams: false,
@@ -56,7 +56,7 @@ export class WebSocketApi extends CaefL3Construct {
 
     });
 
-    const connectionsTable = new CaefDDBTable(this, "ConnectionsTable", {
+    const connectionsTable = new MdaaDDBTable(this, "ConnectionsTable", {
         encryptionKey: props.encryptionKey,
         naming: props.naming,
         tableName: props.naming.resourceName("Connections"),
@@ -84,7 +84,7 @@ export class WebSocketApi extends CaefL3Construct {
         resources: ['*']
     })
 
-    const connectionHandlerFunctionRole = new CaefLambdaRole( this, 'WebSocketConnectionHandlerFunctionRole', {
+    const connectionHandlerFunctionRole = new MdaaLambdaRole( this, 'WebSocketConnectionHandlerFunctionRole', {
       naming: this.props.naming,
       roleName:  "WebSocketConnectionHandlerFunctionRole",
       logGroupNames: [this.props.naming.resourceName( "websocket-connection-handler" )],
@@ -100,7 +100,7 @@ export class WebSocketApi extends CaefL3Construct {
     props.encryptionKey.grantEncryptDecrypt(connectionHandlerFunction);
     connectionsTable.grantReadWriteData(connectionHandlerFunctionRole);
 
-    const authorizerFunctionRole = new CaefLambdaRole( this, 'WebSocketAuthorizerFunctionRole', {
+    const authorizerFunctionRole = new MdaaLambdaRole( this, 'WebSocketAuthorizerFunctionRole', {
       naming: this.props.naming,
       roleName: "WebSocketAuthorizerFunctionRole",
       logGroupNames: [this.props.naming.resourceName( "websocket-authorizer" )],
@@ -150,7 +150,7 @@ export class WebSocketApi extends CaefL3Construct {
         this.applyCustomDomain(apiCustomDomainConfigs, webSocketApi, stage);
     }
 
-    const apiAccessLogGroupProps: CaefLogGroupProps = {
+    const apiAccessLogGroupProps: MdaaLogGroupProps = {
       logGroupName: "genai-admin-websocket-api",
       encryptionKey: this.props.encryptionKey,
       // WAF log group destination names must start with aws-waf-logs-
@@ -162,7 +162,7 @@ export class WebSocketApi extends CaefL3Construct {
       createOutputs: false
     }
 
-    const apiAccessLogGroup = new CaefLogGroup( this, "WebSocketApiLogGroup", apiAccessLogGroupProps )
+    const apiAccessLogGroup = new MdaaLogGroup( this, "WebSocketApiLogGroup", apiAccessLogGroupProps )
 
     const cfnStage = stage.node.defaultChild as unknown as apigwv2.CfnStage;
     cfnStage.accessLogSettings = {
@@ -176,7 +176,7 @@ export class WebSocketApi extends CaefL3Construct {
         })
     }
 
-    const incomingMessageHandlerFunctionRole = new CaefLambdaRole(this, 'WebSocketIncomingMessageHandlerFunctionRole', {
+    const incomingMessageHandlerFunctionRole = new MdaaLambdaRole(this, 'WebSocketIncomingMessageHandlerFunctionRole', {
       naming: props.naming,
       roleName:  "WebSocketIncomingMessageHandlerFunctionRole",
       logGroupNames: [props.naming.resourceName( "websocket-incoming-message-handler" )],
@@ -212,7 +212,7 @@ export class WebSocketApi extends CaefL3Construct {
       ),
     });
 
-    const outgoingMessageHandlerFunctionRole = new CaefLambdaRole(this, 'WebSocketOutgoingMessageFunctionRole', {
+    const outgoingMessageHandlerFunctionRole = new MdaaLambdaRole(this, 'WebSocketOutgoingMessageFunctionRole', {
         naming: props.naming,
         roleName:   "WebSocketOutgoingMessageHandlerFunctionRole",
         logGroupNames:  [props.naming.resourceName( "websocket-outgoing-message-handler" )],
@@ -239,7 +239,7 @@ export class WebSocketApi extends CaefL3Construct {
       })
     );
 
-    const deadLetterQueue = new CaefSqsDeadLetterQueue(this, "WebSocketOutgoingMessagesDLQ", {
+    const deadLetterQueue = new MdaaSqsDeadLetterQueue(this, "WebSocketOutgoingMessagesDLQ", {
         encryptionMasterKey: props.encryptionKey,
         naming: props.naming,
         queueName: "WebSocketOutgoingMessagesDLQ",
@@ -247,7 +247,7 @@ export class WebSocketApi extends CaefL3Construct {
         createOutputs: false
     });
 
-    const queue = new CaefSqsQueue(this, "WebSocketOutgoingMessagesQueue", {
+    const queue = new MdaaSqsQueue(this, "WebSocketOutgoingMessagesQueue", {
         encryptionMasterKey: props.encryptionKey,
         naming: props.naming,
         createParams: false,
@@ -290,14 +290,14 @@ export class WebSocketApi extends CaefL3Construct {
 
     NagSuppressions.addResourceSuppressions(incomingMessageHandlerFunctionRole, [
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only support wildcard and execute api manage connections restricted to stack api gateway' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     NagSuppressions.addResourceSuppressions(outgoingMessageHandlerFunctionRole, [
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only support wildcard and execute api manage connections restricted to stack api gateway, and AWSLambdaBasicExecutionRole restrictive enough' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     NagSuppressions.addResourceSuppressions(webSocketApi, [
@@ -308,7 +308,7 @@ export class WebSocketApi extends CaefL3Construct {
     this.messagesTopic = messagesTopic;
   }
   private createOutgoingMessageHandlerFunction (
-    outgoingMessageHandlerFunctionRole: CaefRole,
+    outgoingMessageHandlerFunctionRole: MdaaRole,
     connectionsTable: dynamodb.ITable,
     apiSecurityGroup: ec2.ISecurityGroup,
     stage: apigwv2.WebSocketStage
@@ -316,7 +316,7 @@ export class WebSocketApi extends CaefL3Construct {
     const outgoingMessageHandlerCodePath = this.props.config?.codeOverwrites?.webSocketOutgoingMessageHandlerCodePath !== undefined ?
         this.props.config.codeOverwrites.webSocketOutgoingMessageHandlerCodePath :
         path.join( __dirname, "./functions/outgoing-message-handler" )
-    const outgoingMessageHandlerFunction = new CaefLambdaFunction(
+    const outgoingMessageHandlerFunction = new MdaaLambdaFunction(
       this,
       "WebSocketOutgoingMessageFunction",
       {
@@ -355,14 +355,14 @@ export class WebSocketApi extends CaefL3Construct {
   }
 
   private createIncomingMessageHandlerFunction ( 
-    incomingMessageHandlerFunctionRole: CaefRole,
+    incomingMessageHandlerFunctionRole: MdaaRole,
     apiSecurityGroup:ec2.ISecurityGroup,
     messagesTopic: sns.ITopic,
     stage: apigwv2.WebSocketStage ) {
     const incomingMessageHandlerCodePath = this.props.config?.codeOverwrites?.webSocketIncomingMessageHandlerCodePath !== undefined ?
         this.props.config.codeOverwrites.webSocketIncomingMessageHandlerCodePath :
         path.join( __dirname, "./functions/incoming-message-handler" )
-    const incomingMessageHandlerFunction = new CaefLambdaFunction(
+    const incomingMessageHandlerFunction = new MdaaLambdaFunction(
       this,
       "WebSocketIncomingMessageHandlerFunction",
       {
@@ -404,7 +404,7 @@ export class WebSocketApi extends CaefL3Construct {
     const authorizerFunctionCodePath = this.props.config?.codeOverwrites?.webSocketAuthorizerFunctionCodePath !== undefined ?
         this.props.config.codeOverwrites.webSocketAuthorizerFunctionCodePath :
         path.join( __dirname, "./functions/authorizer" )
-    const authorizerFunction = new CaefLambdaFunction( this, "WebSocketAuthorizerFunction", {
+    const authorizerFunction = new MdaaLambdaFunction( this, "WebSocketAuthorizerFunction", {
       functionName: "websocket-authorizer",
       naming: this.props.naming,
       createParams: false,
@@ -437,8 +437,8 @@ export class WebSocketApi extends CaefL3Construct {
     this.props.userPool.grant( authorizerFunctionRole, "cognito-idp:GetUser" );
     NagSuppressions.addResourceSuppressions( authorizerFunctionRole, [
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only support wildcard.' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true )
     return authorizerFunction
   }
@@ -477,7 +477,7 @@ export class WebSocketApi extends CaefL3Construct {
       this.props.config.codeOverwrites.webSocketConnectionHandlerCodePath :
       path.join( __dirname, "./functions/connection-handler" )
 
-    const connectionHandlerFunction = new CaefLambdaFunction(
+    const connectionHandlerFunction = new MdaaLambdaFunction(
       this,
       "WebSocketConnectionHandlerFunction",
       {
@@ -513,8 +513,8 @@ export class WebSocketApi extends CaefL3Construct {
     );
     NagSuppressions.addResourceSuppressions( connectionHandlerFunctionRole, [
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only support wildcard and log group not known at deployment.' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true );
 
     return connectionHandlerFunction

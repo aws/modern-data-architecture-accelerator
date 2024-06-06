@@ -17,15 +17,15 @@ import * as s3Notifications from "aws-cdk-lib/aws-s3-notifications";
 import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 import * as rds from "aws-cdk-lib/aws-rds";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefBucket} from "@aws-caef/s3-constructs";
-import {CaefSqsDeadLetterQueue, CaefSqsQueue} from "@aws-caef/sqs-constructs";
-import {CaefLambdaFunction} from "@aws-caef/lambda-constructs";
-import {CaefRole} from "@aws-caef/iam-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaBucket} from "@aws-mdaa/s3-constructs";
+import {MdaaSqsDeadLetterQueue, MdaaSqsQueue} from "@aws-mdaa/sqs-constructs";
+import {MdaaLambdaFunction} from "@aws-mdaa/lambda-constructs";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
 import {NagSuppressions} from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface DataImportProps extends CaefL3ConstructProps {
+export interface DataImportProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly auroraDatabase?: rds.DatabaseCluster;
@@ -36,27 +36,27 @@ export interface DataImportProps extends CaefL3ConstructProps {
   readonly documentsTable: dynamodb.Table;
   readonly workspacesByObjectTypeIndexName: string;
   readonly documentsByCompountKeyIndexName: string;
-  encryptionKey: CaefKmsKey
+  encryptionKey: MdaaKmsKey
 }
 
-export class DataImportWorkflows extends CaefL3Construct {
-  public readonly uploadBucket: CaefBucket;
-  public readonly processingBucket: CaefBucket;
-  public readonly ingestionQueue: CaefSqsQueue;
+export class DataImportWorkflows extends MdaaL3Construct {
+  public readonly uploadBucket: MdaaBucket;
+  public readonly processingBucket: MdaaBucket;
+  public readonly ingestionQueue: MdaaSqsQueue;
   public readonly fileImportWorkflow: sfn.StateMachine;
   public readonly websiteCrawlingWorkflow: sfn.StateMachine;
 
   constructor(scope: Construct, id: string, props: DataImportProps) {
     super(scope, id, props);
 
-    const queueKey = new CaefKmsKey(this, 'DataImportQueuesKey', {
+    const queueKey = new MdaaKmsKey(this, 'DataImportQueuesKey', {
       alias:  props.naming.resourceName('DataImportQueuesKey'),
       naming: props.naming,
       createParams: false,
       createOutputs: false,
     })
 
-    const ingestionDealLetterQueue = new CaefSqsDeadLetterQueue(
+    const ingestionDealLetterQueue = new MdaaSqsDeadLetterQueue(
       this,
       "DataImportWorkFlowDLQ",
       {
@@ -69,7 +69,7 @@ export class DataImportWorkflows extends CaefL3Construct {
       }
     );
 
-    const ingestionQueue = new CaefSqsQueue(this, "IngestionQueue", {
+    const ingestionQueue = new MdaaSqsQueue(this, "IngestionQueue", {
       encryptionMasterKey: queueKey,
       naming: props.naming,
       createParams: false,
@@ -82,7 +82,7 @@ export class DataImportWorkflows extends CaefL3Construct {
       }
     });
 
-    const uploadBucket = new CaefBucket(this, "UploadBucket", {
+    const uploadBucket = new MdaaBucket(this, "UploadBucket", {
       encryptionKey: props.encryptionKey,
       naming: props.naming,
       bucketName: `${props.naming.props.org}-${props.naming.props.domain}-${props.naming.props.env}-rag-upload-bucket`,
@@ -93,8 +93,8 @@ export class DataImportWorkflows extends CaefL3Construct {
     NagSuppressions.addResourceSuppressions(
       uploadBucket,
       [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF does not enforce bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF does not enforce bucket replication.' }
+        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
       ],
       true
     );
@@ -120,7 +120,7 @@ export class DataImportWorkflows extends CaefL3Construct {
         new s3Notifications.SqsDestination(ingestionQueue)
     );
 
-    const processingBucket = new CaefBucket(this, "ProcessingBucket", {
+    const processingBucket = new MdaaBucket(this, "ProcessingBucket", {
       encryptionKey: props.encryptionKey,
       naming: props.naming,
       bucketName: `${props.naming.props.org}-${props.naming.props.domain}-${props.naming.props.env}-rag-processing-bucket`,
@@ -131,8 +131,8 @@ export class DataImportWorkflows extends CaefL3Construct {
     NagSuppressions.addResourceSuppressions(
       processingBucket,
       [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF does not enforce bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF does not enforce bucket replication.' }
+        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
       ],
       true
     );
@@ -182,7 +182,7 @@ export class DataImportWorkflows extends CaefL3Construct {
       }
     );
 
-    const uploadHandlerRole =  new CaefRole(this, 'UploadHandlerRole', {
+    const uploadHandlerRole =  new MdaaRole(this, 'UploadHandlerRole', {
       naming: props.naming,
       roleName:  'VectorDbDataIngestionHandlerRole',
       createParams: false,
@@ -200,7 +200,7 @@ export class DataImportWorkflows extends CaefL3Construct {
       resources: ['*']
     }))
 
-    const uploadDlq = new CaefSqsDeadLetterQueue( this, "UploadHandlerDLQ", {
+    const uploadDlq = new MdaaSqsDeadLetterQueue( this, "UploadHandlerDLQ", {
       encryptionMasterKey: queueKey,
       naming: props.naming,
       createParams: false,
@@ -211,7 +211,7 @@ export class DataImportWorkflows extends CaefL3Construct {
     const dataImportUploadHandlerCodePath = props.config?.codeOverwrites?.dataImportUploadHandlerCodePath !== undefined ?
         props.config.codeOverwrites.dataImportUploadHandlerCodePath : path.join(__dirname, "./functions/upload-handler")
 
-    const uploadHandler = new CaefLambdaFunction(this, "UploadHandler", {
+    const uploadHandler = new MdaaLambdaFunction(this, "UploadHandler", {
       functionName: "VectorDbDataIngestionHandler", naming: props.naming, role: uploadHandlerRole,
       createParams: false,
       createOutputs: false,
@@ -287,8 +287,8 @@ export class DataImportWorkflows extends CaefL3Construct {
 
     NagSuppressions.addResourceSuppressions(uploadHandlerRole, [
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only accept wildcard and s3 operations restricted to kms key and s3 buckets managed by stack' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     this.uploadBucket = uploadBucket;

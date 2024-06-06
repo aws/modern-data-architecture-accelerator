@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as caef_construct from '@aws-caef/construct';
+import * as mdaa_construct from '@aws-mdaa/construct';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Attribute, BillingMode, StreamViewType, Table, TableClass, TableEncryption, TableProps } from 'aws-cdk-lib/aws-dynamodb';
 import { IStream } from 'aws-cdk-lib/aws-kinesis';
@@ -13,9 +13,9 @@ import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 
 /**
- * Properties for the creation of a CAEF DDB DDBTable
+ * Properties for the creation of a MDAA DDB DDBTable
  */
-export interface CaefDDBTableProps extends caef_construct.CaefConstructProps {
+export interface MdaaDDBTableProps extends mdaa_construct.MdaaConstructProps {
     /**
      * Enforces a particular physical table name.
      * @default <generated>
@@ -137,9 +137,9 @@ export interface CaefDDBTableProps extends caef_construct.CaefConstructProps {
  * PITR
  * RETAIN RemovalPolicy
  */
-export class CaefDDBTable extends Table  {
+export class MdaaDDBTable extends Table  {
 
-    private static setProps ( props: CaefDDBTableProps ): TableProps {
+    private static setProps ( props: MdaaDDBTableProps ): TableProps {
 
         const overrideProps = {
             tableName: props.naming.resourceName(props.tableName,254),
@@ -150,21 +150,21 @@ export class CaefDDBTable extends Table  {
         }
         return { ...props, ...overrideProps }
     }
-    constructor( scope: Construct, id: string, props: CaefDDBTableProps ) {
-        super( scope, id, CaefDDBTable.setProps( props ) );
+    constructor( scope: Construct, id: string, props: MdaaDDBTableProps ) {
+        super( scope, id, MdaaDDBTable.setProps( props ) );
 
         NagSuppressions.addResourceSuppressions(
             this,
             [
-                { id: 'HIPAA.Security-DynamoDBInBackupPlan', reason: 'CAEF does not enforce use of AWS Backup' },
-                { id: 'NIST.800.53.R5-DynamoDBInBackupPlan', reason: 'CAEF does not enforce use of AWS Backup' },
-                { id: 'NIST.800.53.R5-DynamoDBAutoScalingEnabled', reason: 'CAEF does not enforce use of Auto Scaling on Provisioned Capacity tables.' },
-                { id: 'HIPAA.Security-DynamoDBAutoScalingEnabled', reason: 'CAEF does not enforce use of Auto Scaling on Provisioned Capacity tables.' },
+                { id: 'HIPAA.Security-DynamoDBInBackupPlan', reason: 'MDAA does not enforce use of AWS Backup' },
+                { id: 'NIST.800.53.R5-DynamoDBInBackupPlan', reason: 'MDAA does not enforce use of AWS Backup' },
+                { id: 'NIST.800.53.R5-DynamoDBAutoScalingEnabled', reason: 'MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.' },
+                { id: 'HIPAA.Security-DynamoDBAutoScalingEnabled', reason: 'MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.' },
             ],
             true
         );
 
-        new caef_construct.CaefParamAndOutput( this, {
+        new mdaa_construct.MdaaParamAndOutput( this, {
             ...{
                 resourceType: "table",
                 resourceId: props.tableName,
@@ -173,7 +173,7 @@ export class CaefDDBTable extends Table  {
             }, ...props
         } )
 
-        new caef_construct.CaefParamAndOutput( this, {
+        new mdaa_construct.MdaaParamAndOutput( this, {
             ...{
                 resourceType: "table",
                 resourceId: props.tableName,
@@ -182,7 +182,7 @@ export class CaefDDBTable extends Table  {
             }, ...props
         } )
         if ( this.tableStreamArn ) {
-            new caef_construct.CaefParamAndOutput( this, {
+            new mdaa_construct.MdaaParamAndOutput( this, {
                 ...{
                     resourceType: "table",
                     resourceId: props.tableName,

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents, CaefCdkApp } from '@aws-caef/app';
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { ICaefResourceNaming } from '@aws-caef/naming';
-import { CaefBucket } from '@aws-caef/s3-constructs';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents, MdaaCdkApp } from '@aws-mdaa/app';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { IMdaaResourceNaming } from '@aws-mdaa/naming';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { Schema } from 'ajv';
 import { AppProps, Aspects, IAspect, Stack } from 'aws-cdk-lib';
 import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject, PipelineProjectProps } from 'aws-cdk-lib/aws-codebuild';
@@ -40,9 +40,9 @@ export interface Commands extends StageCommands {
     readonly postDeployValidate?: ValidateStageCommands
 }
 
-export interface DevOpsConfigContents extends CaefBaseConfigContents, Commands {
-    readonly caefCodeCommitRepo: string
-    readonly caefBranch?: string
+export interface DevOpsConfigContents extends MdaaBaseConfigContents, Commands {
+    readonly mdaaCodeCommitRepo: string
+    readonly mdaaBranch?: string
     readonly configsCodeCommitRepo: string
     readonly configsBranch?: string
     readonly pipelines?: { [ pipelineName: string ]: PipelineConfig }
@@ -55,11 +55,11 @@ export interface PipelineConfig extends Commands {
     readonly moduleFilter?: string[]
 }
 
-export class DevOpsConfigParser extends CaefAppConfigParser<DevOpsConfigContents> {
+export class DevOpsConfigParser extends MdaaAppConfigParser<DevOpsConfigContents> {
 
     public readonly devopsConfig: DevOpsConfigContents
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.devopsConfig = this.configContents
@@ -70,44 +70,44 @@ export class DevOpsConfigParser extends CaefAppConfigParser<DevOpsConfigContents
 
 
 
-export class CaefDevopsCDKApp extends CaefCdkApp {
+export class MdaaDevopsCDKApp extends MdaaCdkApp {
     constructor( props?: AppProps ) {
         super( "devops", { ...props, ...{ useBootstrap: false } } )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
         const appConfig = new DevOpsConfigParser( stack, parserProps )
-        new CaefDevopsL3Construct( stack, 'devops', {
+        new MdaaDevopsL3Construct( stack, 'devops', {
             ...l3ConstructProps,
             ...appConfig.devopsConfig
         } )
         Aspects.of( stack ).add( new FixCdkBuildProject() );
     }
 }
-export interface CaefDevopsL3ConstructProps extends CaefL3ConstructProps, DevOpsConfigContents { }
+export interface MdaaDevopsL3ConstructProps extends MdaaL3ConstructProps, DevOpsConfigContents { }
 
-export class CaefDevopsL3Construct extends CaefL3Construct {
+export class MdaaDevopsL3Construct extends MdaaL3Construct {
     private static readonly DEFAULT_CDK_BOOTSTRAP_CONTEXT = "hnb659fds"
-    private readonly props: CaefDevopsL3ConstructProps
+    private readonly props: MdaaDevopsL3ConstructProps
 
-    constructor( scope: Construct, id: string, props: CaefDevopsL3ConstructProps ) {
+    constructor( scope: Construct, id: string, props: MdaaDevopsL3ConstructProps ) {
         super( scope, id, props )
         this.props = props
 
-        const pipelineRole = new CaefRole( this, 'pipeline-role', {
+        const pipelineRole = new MdaaRole( this, 'pipeline-role', {
             roleName: 'pipeline',
             naming: this.props.naming,
             assumedBy: new ServicePrincipal( 'codepipeline.amazonaws.com' )
         } )
 
-        const caefRepo = Repository.fromRepositoryName( this, "caef-import-repo", this.props.caefCodeCommitRepo )
+        const mdaaRepo = Repository.fromRepositoryName( this, "mdaa-import-repo", this.props.mdaaCodeCommitRepo )
         const configsRepo = Repository.fromRepositoryName( this, "configs-import-repo", this.props.configsCodeCommitRepo )
 
-        const kmsKey = new CaefKmsKey( this, 'kms-key', {
+        const kmsKey = new MdaaKmsKey( this, 'kms-key', {
             naming: this.props.naming,
             keyUserRoleIds: [ pipelineRole.roleId ]
         } )
 
-        const devOpsBucket = new CaefBucket( this, 'pipeline-bucket', {
+        const devOpsBucket = new MdaaBucket( this, 'pipeline-bucket', {
             naming: this.props.naming,
             encryptionKey: kmsKey,
         } )
@@ -121,7 +121,7 @@ export class CaefDevopsL3Construct extends CaefL3Construct {
             true
         );
 
-        const codeCommitEventRole = new CaefRole( this, 'codecommit-event-role', {
+        const codeCommitEventRole = new MdaaRole( this, 'codecommit-event-role', {
             roleName: 'codecommit-event',
             naming: this.props.naming,
             assumedBy: new ServicePrincipal( 'events.amazonaws.com' )
@@ -137,21 +137,21 @@ export class CaefDevopsL3Construct extends CaefL3Construct {
                     "codecommit:GitPull",
                 ],
                 resources: [
-                    caefRepo.repositoryArn,
+                    mdaaRepo.repositoryArn,
                     configsRepo.repositoryArn
                 ]
             } )
             ]
         } )
 
-        const codeCommitActionRole = new CaefRole( this, 'codecommit-action-role', {
+        const codeCommitActionRole = new MdaaRole( this, 'codecommit-action-role', {
             roleName: 'codecommit-action',
             naming: this.props.naming,
             assumedBy: new AccountPrincipal( this.account ),
             inlinePolicies: { "codecommit_read": codeCommitReadPolicy }
         } )
 
-        const codeBuildActionRole = new CaefRole( this, 'codebuild-action-role', {
+        const codeBuildActionRole = new MdaaRole( this, 'codebuild-action-role', {
             roleName: 'codebuild-action',
             naming: this.props.naming,
             assumedBy: new CompositePrincipal( new ServicePrincipal( "codebuild.amazonaws.com" ), new AccountPrincipal( this.account ) ),
@@ -164,7 +164,7 @@ export class CaefDevopsL3Construct extends CaefL3Construct {
         const cdkExecRole = this.importCdkRole( this, "exec", this.props.cdkBootstrapContext )
         const cdkFilePublishingRole = this.importCdkRole( this, "file-publishing", this.props.cdkBootstrapContext )
         const cdkImagePublishingRole = this.importCdkRole( this, "image-publishing", this.props.cdkBootstrapContext )
-        const cdkBucket = Bucket.fromBucketName( this, `cdk-bucket-import`, `cdk-${ this.props.cdkBootstrapContext ?? CaefDevopsL3Construct.DEFAULT_CDK_BOOTSTRAP_CONTEXT }-assets-${ this.account }-${ this.region }` )
+        const cdkBucket = Bucket.fromBucketName( this, `cdk-bucket-import`, `cdk-${ this.props.cdkBootstrapContext ?? MdaaDevopsL3Construct.DEFAULT_CDK_BOOTSTRAP_CONTEXT }-assets-${ this.account }-${ this.region }` )
 
         codeBuildActionPolicy.addStatements( new PolicyStatement( {
             sid: "ASSUMECDKROLES",
@@ -225,7 +225,7 @@ export class CaefDevopsL3Construct extends CaefL3Construct {
             true
         );
         codeBuildActionPolicy.attachToRole( codeBuildActionRole )
-        const manualActionRole = new CaefRole( this, 'manual-action-role', {
+        const manualActionRole = new MdaaRole( this, 'manual-action-role', {
             roleName: 'manual-action',
             naming: this.props.naming,
             assumedBy: new AccountPrincipal( this.account ),
@@ -234,7 +234,7 @@ export class CaefDevopsL3Construct extends CaefL3Construct {
         const assumeActionRoleGrant = codeBuildActionRole.grantAssumeRole( pipelineRole )
 
         Object.entries( this.props.pipelines ?? {} ).forEach( entry => {
-            const pipelineProps: CaefPipelineProps = {
+            const pipelineProps: MdaaPipelineProps = {
                 pipelineType: PipelineType.V2,
                 naming: this.props.naming.withModuleName( `devops-${ entry[ 0 ] }` ),
                 pipelineName: this.props.naming.resourceName( entry[ 0 ] ),
@@ -244,7 +244,7 @@ export class CaefDevopsL3Construct extends CaefL3Construct {
                 codeCommitActionRole: codeCommitActionRole,
                 codeCommitEventRole: codeCommitEventRole,
                 codeBuildActionRole: codeBuildActionRole,
-                caefRepo: caefRepo,
+                mdaaRepo: mdaaRepo,
                 configsRepo: configsRepo,
                 kmsKey: kmsKey,
                 manualActionRole: manualActionRole,
@@ -257,7 +257,7 @@ export class CaefDevopsL3Construct extends CaefL3Construct {
                 postDeployValidate: this.props.postDeployValidate || entry[ 1 ].postDeployValidate ? { ...this.props.postDeployValidate, ...entry[ 1 ].postDeployValidate } : undefined,
             }
 
-            const pipeline = new CaefPipeline( this, `caef-pipeline-${ entry[ 0 ] }`, pipelineProps )
+            const pipeline = new MdaaPipeline( this, `mdaa-pipeline-${ entry[ 0 ] }`, pipelineProps )
             assumeActionRoleGrant.applyBefore( pipeline )
         } )
 
@@ -301,41 +301,41 @@ export class CaefDevopsL3Construct extends CaefL3Construct {
     }
 
     private importCdkRole ( scope: Construct, roleName: string, cdkBootstrapContext?: string ): IRole {
-        return Role.fromRoleName( scope, `cdk-${ roleName }-role-import`, `cdk-${ cdkBootstrapContext ?? CaefDevopsL3Construct.DEFAULT_CDK_BOOTSTRAP_CONTEXT }-${ roleName }-role-${ Stack.of( scope ).account }-${ Stack.of( scope ).region }` )
+        return Role.fromRoleName( scope, `cdk-${ roleName }-role-import`, `cdk-${ cdkBootstrapContext ?? MdaaDevopsL3Construct.DEFAULT_CDK_BOOTSTRAP_CONTEXT }-${ roleName }-role-${ Stack.of( scope ).account }-${ Stack.of( scope ).region }` )
     }
 }
 
-export interface CaefPipelineProps extends PipelineProps, StageCommands, PipelineConfig {
-    readonly naming: ICaefResourceNaming,
+export interface MdaaPipelineProps extends PipelineProps, StageCommands, PipelineConfig {
+    readonly naming: IMdaaResourceNaming,
     readonly pipelineName: string,
     readonly codeCommitActionRole: IRole
     readonly codeCommitEventRole: IRole
     readonly codeBuildActionRole: IRole
-    readonly caefRepo: IRepository
-    readonly caefBranch?: string
+    readonly mdaaRepo: IRepository
+    readonly mdaaBranch?: string
     readonly configsRepo: IRepository
     readonly configsBranch?: string
     readonly kmsKey: IKey
     readonly manualActionRole: IRole
 }
 
-export class CaefPipeline extends Pipeline {
-    private readonly props: CaefPipelineProps
-    constructor( scope: Construct, id: string, props: CaefPipelineProps ) {
+export class MdaaPipeline extends Pipeline {
+    private readonly props: MdaaPipelineProps
+    constructor( scope: Construct, id: string, props: MdaaPipelineProps ) {
         super( scope, id, props )
         this.props = props
 
         const sourceStage = this.addStage( { stageName: 'Source' } );
-        const caefSourceOutput = new Artifact( 'CAEF' );
-        const caefSourceAction = this.createCodeCommitSourceAction( "caef", caefSourceOutput, this.props.codeCommitActionRole, this.props.codeCommitEventRole, this.props.caefRepo, this.props.caefBranch ?? "main" )
+        const mdaaSourceOutput = new Artifact( 'MDAA' );
+        const mdaaSourceAction = this.createCodeCommitSourceAction( "mdaa", mdaaSourceOutput, this.props.codeCommitActionRole, this.props.codeCommitEventRole, this.props.mdaaRepo, this.props.mdaaBranch ?? "main" )
         const configSourceOutput = new Artifact( 'CONFIGS' )
         const configSourceAction = this.createCodeCommitSourceAction( "configs", configSourceOutput, this.props.codeCommitActionRole, this.props.codeCommitEventRole, this.props.configsRepo, this.props.configsBranch ?? "main" )
-        sourceStage.addAction( caefSourceAction );
+        sourceStage.addAction( mdaaSourceAction );
         sourceStage.addAction( configSourceAction );
 
         const pipelineProjects: PipelineProject[] = []
         const preDeployOutput = new Artifact( 'PREDEPLOY_OUTPUT' );
-        this.addPreDeployStage( configSourceOutput, caefSourceOutput, preDeployOutput, pipelineProjects )
+        this.addPreDeployStage( configSourceOutput, mdaaSourceOutput, preDeployOutput, pipelineProjects )
         this.addPreDeployValidateStage( preDeployOutput, pipelineProjects )
         this.addDeployStage( preDeployOutput, pipelineProjects )
         this.addPostDeployValidateStage( preDeployOutput, pipelineProjects )
@@ -405,7 +405,7 @@ export class CaefPipeline extends Pipeline {
                     ...this.props.pre ?? [],
                     ...this.props.deploy?.pre ?? [],
                 ],
-                commands: [ this.createCaefCommand( 'deploy' ) ],
+                commands: [ this.createMdaaCommand( 'deploy' ) ],
                 postCommands: [
                     ...this.props.post ?? [],
                     ...this.props.deploy?.post ?? [],
@@ -442,7 +442,7 @@ export class CaefPipeline extends Pipeline {
     }
 
     private addPreDeployStage ( configSourceOutput: Artifact,
-        caefSourceOutput: Artifact,
+        mdaaSourceOutput: Artifact,
         preDeployOutput: Artifact,
         pipelineProjects: PipelineProject[] ): PipelineProject {
         const preDeployStage = this.addStage( { stageName: 'Pre-Deploy' } );
@@ -450,12 +450,12 @@ export class CaefPipeline extends Pipeline {
         const [ diffAction, diffProject ] = this.createCodeBuildAction(
             "Synth-And-Diff",
             configSourceOutput,
-            [ caefSourceOutput ],
+            [ mdaaSourceOutput ],
             [ preDeployOutput ],
             {
                 installCommands: [
                     "n 18",
-                    "ln -s $CODEBUILD_SRC_DIR_CAEF ./caef",
+                    "ln -s $CODEBUILD_SRC_DIR_MDAA ./mdaa",
                     ...this.props.install ?? [],
                     ...this.props.preDeploy?.install ?? []
                 ],
@@ -463,7 +463,7 @@ export class CaefPipeline extends Pipeline {
                     ...this.props.pre ?? [],
                     ...this.props.preDeploy?.pre ?? [],
                 ],
-                commands: [ this.createCaefCommand( 'diff' ) ],
+                commands: [ this.createMdaaCommand( 'diff' ) ],
                 postCommands: [
                     ...this.props.post ?? [],
                     ...this.props.preDeploy?.post ?? [],
@@ -494,18 +494,18 @@ export class CaefPipeline extends Pipeline {
         } )
     }
 
-    private createCaefCommand ( caefAction: string ): string {
-        const caefCmd = [ `./caef/bin/caef -l ${ caefAction }` ]
+    private createMdaaCommand ( mdaaAction: string ): string {
+        const mdaaCmd = [ `./mdaa/bin/mdaa -l ${ mdaaAction }` ]
         if ( this.props.domainFilter ) {
-            caefCmd.push( `-d ${ this.props.domainFilter.join( "," ) }` )
+            mdaaCmd.push( `-d ${ this.props.domainFilter.join( "," ) }` )
         }
         if ( this.props.envFilter ) {
-            caefCmd.push( `-e ${ this.props.envFilter.join( "," ) }` )
+            mdaaCmd.push( `-e ${ this.props.envFilter.join( "," ) }` )
         }
         if ( this.props.moduleFilter ) {
-            caefCmd.push( `-m ${ this.props.moduleFilter.join( "," ) }` )
+            mdaaCmd.push( `-m ${ this.props.moduleFilter.join( "," ) }` )
         }
-        return caefCmd.join( " " )
+        return mdaaCmd.join( " " )
     }
 
     private createCodeBuildAction (

@@ -1,15 +1,15 @@
 # Customization
 
-CAEF can optionally be customized using code-based extension points/escape hatches. Specifically, a custom naming module and custom CDK aspects can be used to modify the resources/stacks produced by CAEF before deployment.
+MDAA can optionally be customized using code-based extension points/escape hatches. Specifically, a custom naming module and custom CDK aspects can be used to modify the resources/stacks produced by MDAA before deployment.
 
 ## Custom Naming Implementation
 
-Custom naming modules can be implemented through implementation of the *ICaefResourceNaming* interface located in the @aws-caef/naming npm package. Sample code is available below and also in the `./sample_code/custom-naming` subdirectory of the CAEF repo (along with full package structure).
+Custom naming modules can be implemented through implementation of the *IMdaaResourceNaming* interface located in the @aws-mdaa/naming npm package. Sample code is available below and also in the `./sample_code/custom-naming` subdirectory of the MDAA repo (along with full package structure).
 
-Custom naming implementations can be used in CAEF via the following config in the caef.yaml. This config can be applied globally, per domain, environment, or module
+Custom naming implementations can be used in MDAA via the following config in the mdaa.yaml. This config can be applied globally, per domain, environment, or module
 
 ```yaml
-# Path to a custom naming module (relative to caef.yaml) implementation and class name
+# Path to a custom naming module (relative to mdaa.yaml) implementation and class name
 naming_module: ../custom-naming
 naming_class: YourCustomNamingClass
 ```
@@ -22,16 +22,16 @@ naming_class: YourCustomNamingClass
 
 ### Example/Default naming implementation
 
-The following is the default naming implementation for CAEF. This can be modified, built, and included in your CAEF config to provide custom naming to all deployed resources.
+The following is the default naming implementation for MDAA. This can be modified, built, and included in your MDAA config to provide custom naming to all deployed resources.
 
 ```typescript
 /**
- * A default CAEF Naming implementation
+ * A default MDAA Naming implementation
  */
 export class ExampleCustomNaming {
-    public readonly props: CaefResourceNamingConfig;
+    public readonly props: MdaaResourceNamingConfig;
 
-    constructor( props: CaefResourceNamingConfig ) {
+    constructor( props: MdaaResourceNamingConfig ) {
         this.props = props
     }
     /**
@@ -39,15 +39,15 @@ export class ExampleCustomNaming {
      * 
      * @param moduleName The new module name
      */
-    public withModuleName ( moduleName: string ): ICaefResourceNaming {
-        const newProps: CaefResourceNamingConfig = {
+    public withModuleName ( moduleName: string ): IMdaaResourceNaming {
+        const newProps: MdaaResourceNamingConfig = {
             cdkNode: this.props.cdkNode,
             org: this.props.org,
             env: this.props.env,
             domain: this.props.domain,
             moduleName: moduleName
         }
-        return new CaefDefaultResourceNaming( newProps )
+        return new MdaaDefaultResourceNaming( newProps )
     }
 
     /**
@@ -59,7 +59,7 @@ export class ExampleCustomNaming {
             name = `${ name }-${ resourceNameSuffix.toLowerCase() }`
         }
         if ( maxLength && name.length >= maxLength ) {
-            const hashCodeHex = CaefDefaultResourceNaming.hashCodeHex( name )
+            const hashCodeHex = MdaaDefaultResourceNaming.hashCodeHex( name )
             return `${ name.substring( 0, maxLength - ( hashCodeHex.length + 1 ) ) }-${ hashCodeHex }`
         }
         return name
@@ -93,11 +93,11 @@ export class ExampleCustomNaming {
      */
     public stackName ( stackNameSuffix: string ): string {
 
-        const org = CaefDefaultResourceNaming.sanitize( this.props.org )
-        const env = CaefDefaultResourceNaming.sanitize( this.props.env )
-        const domain = CaefDefaultResourceNaming.sanitize( this.props.domain )
-        const module_name = CaefDefaultResourceNaming.sanitize( this.props.moduleName )
-        const suffix = CaefDefaultResourceNaming.sanitize( stackNameSuffix )
+        const org = MdaaDefaultResourceNaming.sanitize( this.props.org )
+        const env = MdaaDefaultResourceNaming.sanitize( this.props.env )
+        const domain = MdaaDefaultResourceNaming.sanitize( this.props.domain )
+        const module_name = MdaaDefaultResourceNaming.sanitize( this.props.moduleName )
+        const suffix = MdaaDefaultResourceNaming.sanitize( stackNameSuffix )
 
         let stackName = `${ org }-${ env }-${ domain }-${ module_name }`
         if ( suffix ) {
@@ -125,10 +125,10 @@ export class ExampleCustomNaming {
 #### Example Extended Naming Implementation
 
 ```typescript
-import { ICaefResourceNaming, CaefResourceNamingConfig, CaefDefaultResourceNaming } from '@aws-caef/naming'
+import { IMdaaResourceNaming, MdaaResourceNamingConfig, MdaaDefaultResourceNaming } from '@aws-mdaa/naming'
 
-export class ExtendedDefaultNaming extends CaefDefaultResourceNaming {
-    constructor( props: CaefResourceNamingConfig ) {
+export class ExtendedDefaultNaming extends MdaaDefaultResourceNaming {
+    constructor( props: MdaaResourceNamingConfig ) {
         super( props )
         console.log( 'Using ExtendedDefaultNaming2' );
     }
@@ -142,30 +142,30 @@ export class ExtendedDefaultNaming extends CaefDefaultResourceNaming {
 
 ## Custom Aspects
 
-CDK [Custom Aspects](https://docs.aws.amazon.com/cdk/v2/guide/aspects.html) can be used to customize the stacks and resources CAEF produces before they are deployed. Custom aspects use the visitor pattern to 'visit' each resource, the properties of which can be modified as required. Sample code is available below and also in the ./samples/sample-code/custom-aspects subdirectory of the CAEF repo.
+CDK [Custom Aspects](https://docs.aws.amazon.com/cdk/v2/guide/aspects.html) can be used to customize the stacks and resources MDAA produces before they are deployed. Custom aspects use the visitor pattern to 'visit' each resource, the properties of which can be modified as required. Sample code is available below and also in the ./samples/sample-code/custom-aspects subdirectory of the MDAA repo.
 
-Custom aspects implementations can be used in CAEF via the following config in the caef.yaml. This config can be applied globally, per domain, environment, or module
+Custom aspects implementations can be used in MDAA via the following config in the mdaa.yaml. This config can be applied globally, per domain, environment, or module
 
 ```yaml
 custom_aspects:
-  # Example of a local custom aspect module, located relative to caef.yaml
+  # Example of a local custom aspect module, located relative to mdaa.yaml
   - aspect_module: ./custom-aspects
     aspect_class: RolePermissionsBoundaryAspect
     # props which will be passed to the custom aspect constructor
     aspect_props:
       permissionsBoundaryArn: some-test-arn
   # Example of a custom module which will be installed from NPM package
-  - aspect_module: "@aws-caef-testing/sample-custom-aspects@0.0.3"
+  - aspect_module: "@aws-mdaa-testing/sample-custom-aspects@0.0.3"
     aspect_class: SampleCustomAspect
 ```
 
 ### Example Custom Aspects
 
-This sample custom aspect illustrates the basic structure/use of custom aspects in CAEF.
+This sample custom aspect illustrates the basic structure/use of custom aspects in MDAA.
 
 ```yaml
 custom_aspects:
-  - aspect_module: "@aws-caef-testing/sample-custom-aspects@0.0.3"
+  - aspect_module: "@aws-mdaa-testing/sample-custom-aspects@0.0.3"
     aspect_class: SampleCustomAspect
 ```
 
@@ -192,7 +192,7 @@ export class SampleCustomAspect implements IAspect {
 
 #### Role Permission Boundary Custom Aspect
 
-This sample custom aspect is used to apply a permission boundary (by policy arn) to any role produced by CAEF.
+This sample custom aspect is used to apply a permission boundary (by policy arn) to any role produced by MDAA.
 
 ```yaml
 custom_aspects:

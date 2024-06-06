@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefSecurityGroup, CaefSecurityGroupProps, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { CaefEKSCluster, CaefEKSClusterProps, KubernetesCmd, KubernetesCmdProps, MgmtInstanceProps } from '@aws-caef/eks-constructs';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { MdaaEKSCluster, MdaaEKSClusterProps, KubernetesCmd, KubernetesCmdProps, MgmtInstanceProps } from '@aws-mdaa/eks-constructs';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { ISecurityGroup, ISubnet, IVpc, Port, Protocol, SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { CoreDnsComputeType, FargateProfile, KubernetesManifest, KubernetesVersion } from 'aws-cdk-lib/aws-eks';
 import { Effect, IRole, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
@@ -52,7 +52,7 @@ export interface NifiProps {
     /**
      * List of admin roles which will be provided access to EKS cluster resources 
      */
-    readonly adminRoles: CaefRoleRef[]
+    readonly adminRoles: MdaaRoleRef[]
 
     /**
      * VPC on which EKS and Nifi clusters will be deployed
@@ -67,13 +67,13 @@ export interface NifiProps {
     /**
      * Ingress rules to be added to the EKS control plane security group
      */
-    readonly eksSecurityGroupIngressRules?: CaefSecurityGroupRuleProps
+    readonly eksSecurityGroupIngressRules?: MdaaSecurityGroupRuleProps
 
     /**
      * Egress rules to be added to all Nifi cluster security groups.
      * These may also be specified for each cluster.
      */
-    readonly securityGroupEgressRules?: CaefSecurityGroupRuleProps
+    readonly securityGroupEgressRules?: MdaaSecurityGroupRuleProps
 
     /**
      * Security groups which will be provided ingress access to all Nifi cluster security groups.
@@ -164,7 +164,7 @@ export interface NifiRegistryProps extends NifiIdentityAuthorizationOptions, Nif
 
 }
 
-export interface NifiL3ConstructProps extends CaefL3ConstructProps {
+export interface NifiL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * Arn of KMS key which will be used to encrypt the cluster resources
      */
@@ -178,7 +178,7 @@ export interface NifiL3ConstructProps extends CaefL3ConstructProps {
 }
 
 interface AddNifiServiceProps {
-    eksCluster: CaefEKSCluster,
+    eksCluster: MdaaEKSCluster,
     vpc: IVpc,
     subnets: ISubnet[],
     hostedZone: HostedZone,
@@ -187,7 +187,7 @@ interface AddNifiServiceProps {
 }
 
 interface AddNifiClustersProps extends AddNifiServiceProps {
-    eksCluster: CaefEKSCluster,
+    eksCluster: MdaaEKSCluster,
     zkK8sChart: ZookeeperChart,
     zkSecurityGroup: ISecurityGroup,
     dependencies: Construct[],
@@ -200,7 +200,7 @@ interface AddNifiClusterProps {
     nifiClusterOptions: NifiClusterOptionsWithPeers,
     vpc: IVpc,
     subnets: ISubnet[],
-    eksCluster: CaefEKSCluster,
+    eksCluster: MdaaEKSCluster,
     hostedZone: HostedZone,
     zkK8sChart: ZookeeperChart,
     caIssuerCdk8sChart: CaIssuerChart,
@@ -218,7 +218,7 @@ interface AddRegistryProps extends AddNifiServiceProps {
     dependencies: Construct[]
 }
 
-export class NifiL3Construct extends CaefL3Construct {
+export class NifiL3Construct extends MdaaL3Construct {
     protected readonly props: NifiL3ConstructProps
     private readonly projectKmsKey: IKey
 
@@ -233,7 +233,7 @@ export class NifiL3Construct extends CaefL3Construct {
         super( scope, id, props )
         this.props = props
 
-        this.projectKmsKey = CaefKmsKey.fromKeyArn( this.scope, "project-kms", this.props.kmsArn )
+        this.projectKmsKey = MdaaKmsKey.fromKeyArn( this.scope, "project-kms", this.props.kmsArn )
 
         const vpc = Vpc.fromVpcAttributes( this, 'vpc', {
             vpcId: this.props.nifi.vpcId,
@@ -244,7 +244,7 @@ export class NifiL3Construct extends CaefL3Construct {
             return Subnet.fromSubnetId( this, `subnet-${ entry[ 0 ] }`, entry[ 1 ] )
         } )
 
-        const clusterSecurityGroupProps: CaefSecurityGroupProps = {
+        const clusterSecurityGroupProps: MdaaSecurityGroupProps = {
             securityGroupName: 'eks',
             vpc: vpc,
             addSelfReferenceRule: true,
@@ -252,7 +252,7 @@ export class NifiL3Construct extends CaefL3Construct {
             allowAllOutbound: true,
             ingressRules: props.nifi.eksSecurityGroupIngressRules
         }
-        const clusterSecurityGroup = new CaefSecurityGroup( scope, 'cluster-sg', clusterSecurityGroupProps )
+        const clusterSecurityGroup = new MdaaSecurityGroup( scope, 'cluster-sg', clusterSecurityGroupProps )
 
         const [ privateCaArn, privateCa ] = this.createAcmPca()
         const hostedZone = this.createHostedZone( vpc )
@@ -418,7 +418,7 @@ export class NifiL3Construct extends CaefL3Construct {
 
         const registryHttpsPort = addRegistryProps.registryProps.httpsPort ?? 8443
 
-        const ingressRules: CaefSecurityGroupRuleProps = {
+        const ingressRules: MdaaSecurityGroupRuleProps = {
             sg: allIngressSgIds.map( sgId => {
                 return [
                     {
@@ -438,7 +438,7 @@ export class NifiL3Construct extends CaefL3Construct {
             } ).flat()
         }
 
-        const registrySecurityGroupProps: CaefSecurityGroupProps = {
+        const registrySecurityGroupProps: MdaaSecurityGroupProps = {
             securityGroupName: 'registry',
             vpc: addRegistryProps.vpc,
             addSelfReferenceRule: true,
@@ -447,7 +447,7 @@ export class NifiL3Construct extends CaefL3Construct {
             ingressRules: ingressRules,
 
         }
-        const registrySecurityGroup = new CaefSecurityGroup( this, 'registry-sg', registrySecurityGroupProps )
+        const registrySecurityGroup = new MdaaSecurityGroup( this, 'registry-sg', registrySecurityGroupProps )
 
         const registryKeystorePasswordSecret = NifiCluster.createSecret( this, 'registry-keystore-password-secret', this.props.naming, 'registry-keystore-password', this.projectKmsKey )
         const registryAdminCredentialsSecret = NifiCluster.createSecret( this, 'registry-admin-creds-secret', this.props.naming, 'registry-admin-creds-secret', addRegistryProps.kmsKey )
@@ -537,7 +537,7 @@ export class NifiL3Construct extends CaefL3Construct {
         addRegistryProps.dependencies.forEach( dependency => registryManifest.node.addDependency( dependency ) )
     }
 
-    private addCA ( eksCluster: CaefEKSCluster, servicesNamespaceManifest: KubernetesManifest, privateCa?: CfnCertificateAuthorityActivation ): [ KubernetesManifest, CaIssuerChart ] {
+    private addCA ( eksCluster: MdaaEKSCluster, servicesNamespaceManifest: KubernetesManifest, privateCa?: CfnCertificateAuthorityActivation ): [ KubernetesManifest, CaIssuerChart ] {
 
         const [ rootClusterIssuerName, rootClusterIssuerReadyCmd ] = this.addPrivateCAChart( eksCluster, servicesNamespaceManifest, privateCa )
 
@@ -591,7 +591,7 @@ export class NifiL3Construct extends CaefL3Construct {
     }
     private computeClusterSecurityGroups ( addNifiClusterProps: AddNifiClusterProps ) {
         return {
-            securityGroupEgressRules: CaefSecurityGroup.mergeRules( this.props.nifi.securityGroupEgressRules || {}, addNifiClusterProps.nifiClusterOptions.securityGroupEgressRules || {} ),
+            securityGroupEgressRules: MdaaSecurityGroup.mergeRules( this.props.nifi.securityGroupEgressRules || {}, addNifiClusterProps.nifiClusterOptions.securityGroupEgressRules || {} ),
             securityGroupIngressSGs: [ ...this.props.nifi.securityGroupIngressSGs || [], ...addNifiClusterProps.nifiClusterOptions.securityGroupIngressSGs || [] ],
             securityGroupIngressIPv4s: [ ...this.props.nifi.securityGroupIngressIPv4s || [], ...addNifiClusterProps.nifiClusterOptions.securityGroupIngressIPv4s || [] ],
             additionalEfsIngressSecurityGroupIds: [ ...this.props.nifi.additionalEfsIngressSecurityGroupIds || [], ...addNifiClusterProps.nifiClusterOptions.additionalEfsIngressSecurityGroupIds || [] ],
@@ -641,12 +641,12 @@ export class NifiL3Construct extends CaefL3Construct {
     private addZookeeper ( vpc: IVpc,
         subnets: ISubnet[],
         kmsKey: IKey,
-        eksCluster: CaefEKSCluster,
+        eksCluster: MdaaEKSCluster,
         hostedZone: HostedZone,
         caIssuerCdk8sChart: CaIssuerChart,
         fargateProfile: FargateProfile ): [ KubernetesManifest, ZookeeperChart, ISecurityGroup ] {
 
-        const zkSecurityGroupProps: CaefSecurityGroupProps = {
+        const zkSecurityGroupProps: MdaaSecurityGroupProps = {
             securityGroupName: 'zk',
             vpc: vpc,
             addSelfReferenceRule: true,
@@ -654,7 +654,7 @@ export class NifiL3Construct extends CaefL3Construct {
             allowAllOutbound: true,
             ingressRules: this.props.nifi.eksSecurityGroupIngressRules
         }
-        const zkSecurityGroup = new CaefSecurityGroup( this, 'zk-sg', zkSecurityGroupProps )
+        const zkSecurityGroup = new MdaaSecurityGroup( this, 'zk-sg', zkSecurityGroupProps )
 
         const zkCeystorePasswordSecret = NifiCluster.createSecret( this, 'zk-keystore-password-secret', this.props.naming, 'zk-keystore-password', this.projectKmsKey )
 
@@ -740,7 +740,7 @@ export class NifiL3Construct extends CaefL3Construct {
         } )
     }
 
-    private addExternalDns ( hostedZone: HostedZone, eksCluster: CaefEKSCluster,
+    private addExternalDns ( hostedZone: HostedZone, eksCluster: MdaaEKSCluster,
         servicesNamespaceManifest: KubernetesManifest ): KubernetesCmd {
 
         const externalDnsRole = this.createExternalDnsServiceRole( NifiL3Construct.EXTERNAL_DNS_NAMESPACE, eksCluster, hostedZone )
@@ -766,7 +766,7 @@ export class NifiL3Construct extends CaefL3Construct {
         return checkReadyCmd
     }
 
-    private createEksCluster ( vpc: IVpc, subnets: ISubnet[], kmsKey: IKey, clusterSecurityGroup: ISecurityGroup, privateCaArn: string ): CaefEKSCluster {
+    private createEksCluster ( vpc: IVpc, subnets: ISubnet[], kmsKey: IKey, clusterSecurityGroup: ISecurityGroup, privateCaArn: string ): MdaaEKSCluster {
 
         const resolvedAdminRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.nifi.adminRoles, "Admin" )
 
@@ -777,7 +777,7 @@ export class NifiL3Construct extends CaefL3Construct {
 
         const mgmtInstanceProps = this.createMgmtInstanceProps( privateCaArn )
 
-        const clusterProps: CaefEKSClusterProps = {
+        const clusterProps: MdaaEKSClusterProps = {
             mgmtInstance: mgmtInstanceProps,
             version: KubernetesVersion.V1_27,
             coreDnsComputeType: CoreDnsComputeType.FARGATE,
@@ -789,7 +789,7 @@ export class NifiL3Construct extends CaefL3Construct {
             securityGroup: clusterSecurityGroup,
         }
 
-        const cluster = new CaefEKSCluster( this, 'eks-cluster', clusterProps )
+        const cluster = new MdaaEKSCluster( this, 'eks-cluster', clusterProps )
         return cluster
     }
     private createMgmtInstanceProps ( privateCaArn: string ): MgmtInstanceProps | undefined {
@@ -850,7 +850,7 @@ export class NifiL3Construct extends CaefL3Construct {
     }
 
     private addExternalSecrets (
-        eksCluster: CaefEKSCluster,
+        eksCluster: MdaaEKSCluster,
         servicesNamespaceManifest: KubernetesManifest ): KubernetesCmd {
 
         const externalSecretsHelm = eksCluster.addHelmChart( 'external-secrets-helm', {
@@ -924,7 +924,7 @@ export class NifiL3Construct extends CaefL3Construct {
 
     }
 
-    private addPrivateCAChart ( eksCluster: CaefEKSCluster, servicesNamespaceManifest: KubernetesManifest, privateCa?: CfnCertificateAuthorityActivation ): [ string, Construct ] {
+    private addPrivateCAChart ( eksCluster: MdaaEKSCluster, servicesNamespaceManifest: KubernetesManifest, privateCa?: CfnCertificateAuthorityActivation ): [ string, Construct ] {
         let privateCaArn: string
         if ( privateCa ) {
             privateCaArn = privateCa.certificateAuthorityArn
@@ -1042,7 +1042,7 @@ export class NifiL3Construct extends CaefL3Construct {
         return [ pcaClusterIssuerChart.clusterIssuerName, checkPcaClusterIssuerReadyCmd ]
     }
 
-    private addCertManager ( eksCluster: CaefEKSCluster, servicesNamespaceManifest: KubernetesManifest ): KubernetesCmd {
+    private addCertManager ( eksCluster: MdaaEKSCluster, servicesNamespaceManifest: KubernetesManifest ): KubernetesCmd {
 
 
         const certManagerHelm = eksCluster.addHelmChart( 'cert-manager-helm', {
@@ -1097,7 +1097,7 @@ export class NifiL3Construct extends CaefL3Construct {
 
     private createExternalDnsServiceRole (
         namespaceName: string,
-        eksCluster: CaefEKSCluster,
+        eksCluster: MdaaEKSCluster,
         zone: HostedZone ): IRole {
 
         const route53UpdateStatement = new PolicyStatement( {

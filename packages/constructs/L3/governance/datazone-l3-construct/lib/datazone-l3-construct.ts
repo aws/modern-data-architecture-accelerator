@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { CfnDomain, CfnEnvironmentBlueprintConfiguration } from 'aws-cdk-lib/aws-datazone';
 import { Construct } from 'constructs';
-import { CaefManagedPolicy, CaefRole } from '@aws-caef/iam-constructs';
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { PolicyStatement, Effect, ServicePrincipal, Conditions } from 'aws-cdk-lib/aws-iam';
 import { NagSuppressions } from 'cdk-nag';
 
@@ -31,7 +31,7 @@ export interface NamedDomainsProps {
     /** @jsii ignore */
     readonly [ name: string ]: DomainProps;
 }
-export interface DataZoneL3ConstructProps extends CaefL3ConstructProps {
+export interface DataZoneL3ConstructProps extends MdaaL3ConstructProps {
     readonly domains?: NamedDomainsProps;
 }
 
@@ -43,7 +43,7 @@ enum EnvironmentBlueprintIdentifier {
 const DEFAULT_SSO_TYPE = "DISABLED"
 const DEFAULT_USER_ASSIGNMENT = "MANUAL"
 
-export class DataZoneL3Construct extends CaefL3Construct {
+export class DataZoneL3Construct extends MdaaL3Construct {
     protected readonly props: DataZoneL3ConstructProps;
 
     constructor( scope: Construct, id: string, props: DataZoneL3ConstructProps ) {
@@ -55,7 +55,7 @@ export class DataZoneL3Construct extends CaefL3Construct {
             const domainProps = entry[1];
 
             // Create KMS Key
-            const kmsKey = new CaefKmsKey(this.scope, `${domainName}-cmk`, {
+            const kmsKey = new MdaaKmsKey(this.scope, `${domainName}-cmk`, {
                 naming: this.props.naming,
             });
             
@@ -113,7 +113,7 @@ export class DataZoneL3Construct extends CaefL3Construct {
      * @param kmsArn KMS key ARN created for the domain
      * @returns a Role
      */
-    private createExecutionRole(roleName: string, kmsArn: string): CaefRole {
+    private createExecutionRole(roleName: string, kmsArn: string): MdaaRole {
         const executionRoleCondition: Conditions = {
             "StringEquals": {
                 "aws:SourceAccount": this.account
@@ -123,12 +123,12 @@ export class DataZoneL3Construct extends CaefL3Construct {
             }
         }
 
-        const executionRole = new CaefRole(this.scope, roleName, {
+        const executionRole = new MdaaRole(this.scope, roleName, {
             naming: this.props.naming,
             roleName: roleName,
             assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions(executionRoleCondition),
             managedPolicies: [
-                CaefManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneDomainExecutionRolePolicy')
+                MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneDomainExecutionRolePolicy')
             ]
         });
 
@@ -172,8 +172,8 @@ export class DataZoneL3Construct extends CaefL3Construct {
      * @param roleName name to use for the role
      * @returns a Role
      */
-    private createProvisioningRole(roleName: string): CaefRole {
-        const provisioningRole = new CaefRole(this.scope, roleName, {
+    private createProvisioningRole(roleName: string): MdaaRole {
+        const provisioningRole = new MdaaRole(this.scope, roleName, {
             naming: this.props.naming,
             roleName: roleName,
             assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions({
@@ -182,7 +182,7 @@ export class DataZoneL3Construct extends CaefL3Construct {
                 }
             }),
             managedPolicies: [
-                CaefManagedPolicy.fromAwsManagedPolicyName('AmazonDataZoneRedshiftGlueProvisioningPolicy')
+                MdaaManagedPolicy.fromAwsManagedPolicyName('AmazonDataZoneRedshiftGlueProvisioningPolicy')
             ],
         });
 
@@ -203,8 +203,8 @@ export class DataZoneL3Construct extends CaefL3Construct {
      * @param domain domain to authorize
      * @returns a Role
      */
-    private createDataLakeManageAccessRole(roleName: string, domain: CfnDomain): CaefRole {
-        const manageAccessRole = new CaefRole(this.scope, roleName, {
+    private createDataLakeManageAccessRole(roleName: string, domain: CfnDomain): MdaaRole {
+        const manageAccessRole = new MdaaRole(this.scope, roleName, {
             naming: this.props.naming,
             roleName: roleName,
             assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions({
@@ -216,7 +216,7 @@ export class DataZoneL3Construct extends CaefL3Construct {
                 }
             }),
             managedPolicies: [
-                CaefManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneGlueManageAccessRolePolicy')
+                MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneGlueManageAccessRolePolicy')
             ],
         });
 
@@ -237,8 +237,8 @@ export class DataZoneL3Construct extends CaefL3Construct {
      * @param domain domain to authorize
      * @returns a Role
      */
-    private createDataWarehouseManageAccessRole(roleName: string, domain: CfnDomain): CaefRole {
-        const manageAccessRole = new CaefRole(this.scope, roleName, {
+    private createDataWarehouseManageAccessRole(roleName: string, domain: CfnDomain): MdaaRole {
+        const manageAccessRole = new MdaaRole(this.scope, roleName, {
             naming: this.props.naming,
             roleName: roleName,
             assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions({
@@ -250,7 +250,7 @@ export class DataZoneL3Construct extends CaefL3Construct {
                 }
             }),
             managedPolicies: [
-                CaefManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneRedshiftManageAccessRolePolicy')
+                MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneRedshiftManageAccessRolePolicy')
             ],
         });
 

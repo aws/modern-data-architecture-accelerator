@@ -5,7 +5,7 @@ team:
 
   # List of roles which will be provided usage access to the team resources
   # Can be either directly referenced Role Arns, Role Arns via SSM Params,
-  # or generated roles created using the CAEF roles module.
+  # or generated roles created using the MDAA roles module.
   teamUserRoles:
     - id: generated-role-id:data-user
 

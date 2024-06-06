@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { SharedFoldersPermissionsProps, SharedFoldersProps, DataSourcePermissionsProps, DataSourceWithIdAndTypeProps, QuickSightProjectL3ConstructProps, QuickSightProjectL3Construct } from "../lib";
 import { Match, Template } from "aws-cdk-lib/assertions";
 
 
-describe( 'CAEF Compliance Stack Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Compliance Stack Tests', () => {
+    const testApp = new MdaaTestApp()
     //Shared Folders Related Objects
     const testFolderReaderPermissions: SharedFoldersPermissionsProps =
     {
@@ -87,7 +87,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         dataSources: [ testAthenaDataSource, testRedshiftDataSource ],
         naming: testApp.naming,
 
-        roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming )
+        roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming )
     };
 
     new QuickSightProjectL3Construct( testApp.testStack, 'test-stack', constructProps )

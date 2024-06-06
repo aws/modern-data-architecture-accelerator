@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from '@aws-caef/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct';
 import { CfnDataSource, CfnDataSourceProps } from 'aws-cdk-lib/aws-quicksight';
 import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib'
 /** Props for the creation of a compliant Quicksight DataSource */
-export interface CaefQuickSightDataSourceProps extends CaefConstructProps {
+export interface MdaaQuickSightDataSourceProps extends MdaaConstructProps {
     /**
      * A set of alternate data source parameters that you want to share for the credentials stored with this data source. The credentials are applied in tandem with the data source parameters when you copy a data source by using a create or update request. The API operation compares the `DataSourceParameters` structure that's in the request with the structures in the `AlternateDataSourceParameters` allow list. If the structures are an exact match, the request is allowed to use the credentials from this existing data source. If the `AlternateDataSourceParameters` list is null, the `Credentials` originally used with this `DataSourceParameters` are automatically allowed.
      *
@@ -85,8 +85,8 @@ export interface CaefQuickSightDataSourceProps extends CaefConstructProps {
  * * sslProperties ; disableSsl is forced to be false
  * All other parameters will be passed through.
  */
-export class CaefQuickSightDataSource extends CfnDataSource {
-    private static setProps ( props: CaefQuickSightDataSourceProps ): CfnDataSourceProps {
+export class MdaaQuickSightDataSource extends CfnDataSource {
+    private static setProps ( props: MdaaQuickSightDataSourceProps ): CfnDataSourceProps {
         const overrideProps = {
             name: props.naming.resourceName( props.name, 80 ),
             sslProperties: {
@@ -97,7 +97,7 @@ export class CaefQuickSightDataSource extends CfnDataSource {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefQuickSightDataSourceProps ) {
-        super( scope, id, CaefQuickSightDataSource.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaQuickSightDataSourceProps ) {
+        super( scope, id, MdaaQuickSightDataSource.setProps( props ) )
     }
 }

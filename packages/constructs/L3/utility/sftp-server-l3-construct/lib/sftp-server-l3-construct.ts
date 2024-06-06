@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefSFTPServer } from '@aws-caef/transfer-family-constructs';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaSFTPServer } from '@aws-mdaa/transfer-family-constructs';
 
 import { CfnSecurityGroup, CfnEIP } from 'aws-cdk-lib/aws-ec2';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -31,14 +31,14 @@ export interface ServerProps {
      */
     readonly ingressCidrs: string[]
 }
-export interface SftpServerL3ConstructProps extends CaefL3ConstructProps {
+export interface SftpServerL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * The SFTP Server definition.
      */
     readonly server: ServerProps;
 }
 
-export class SftpServerL3Construct extends CaefL3Construct {
+export class SftpServerL3Construct extends MdaaL3Construct {
     protected readonly props: SftpServerL3ConstructProps
 
     protected readonly server: CfnServer
@@ -65,7 +65,7 @@ export class SftpServerL3Construct extends CaefL3Construct {
         } )
 
         // Create our role to permit the SFTP server to create logs
-        const loggingRole = new CaefRole( this, 'TransferServerSFTPLoggingRole', {
+        const loggingRole = new MdaaRole( this, 'TransferServerSFTPLoggingRole', {
             naming: props.naming,
             roleName: 'logging-role',
             assumedBy: new ServicePrincipal( 'transfer.amazonaws.com' ),
@@ -88,7 +88,7 @@ export class SftpServerL3Construct extends CaefL3Construct {
         }
 
         // Build our SFTP server!
-        this.server = new CaefSFTPServer( this, 'SFTPServer', SFTPServerProps )
+        this.server = new MdaaSFTPServer( this, 'SFTPServer', SFTPServerProps )
 
         // Grant logging role access to the server's cloudwatch log groups
         const cloudwatchPolicyStatement = new PolicyStatement( {

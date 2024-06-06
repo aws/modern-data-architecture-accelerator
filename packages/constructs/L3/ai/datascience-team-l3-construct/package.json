@@ -1,7 +1,7 @@
 {
-  "name": "@aws-caef/datascience-team-l3-construct",
+  "name": "@aws-mdaa/datascience-team-l3-construct",
   "version": "0.41.0",
-  "description": "CAEF Data Science Team L3 Construct",
+  "description": "MDAA Data Science Team L3 Construct",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",
@@ -21,14 +21,14 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-caef/athena-workgroup-l3-construct": "0.41.0",
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/datalake-l3-construct": "0.41.0",
-    "@aws-caef/iam-role-helper": "0.41.0",
-    "@aws-caef/l3-construct": "0.41.0",
-    "@aws-caef/roles-l3-construct": "0.41.0",
-    "@aws-caef/sm-studio-domain-l3-construct": "0.41.0",
-    "@aws-caef/testing": "^0.41.0",
+    "@aws-mdaa/athena-workgroup-l3-construct": "0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/datalake-l3-construct": "0.41.0",
+    "@aws-mdaa/iam-role-helper": "0.41.0",
+    "@aws-mdaa/l3-construct": "0.41.0",
+    "@aws-mdaa/roles-l3-construct": "0.41.0",
+    "@aws-mdaa/sm-studio-domain-l3-construct": "0.41.0",
+    "@aws-mdaa/testing": "^0.41.0",
     "@types/jest": "27.4.1",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -42,17 +42,17 @@
     "typescript-json-schema": "0.53.0"
   },
   "bundledDependencies": [
-    "@aws-caef/s3-bucketpolicy-helper",
-    "@aws-caef/s3-inventory-helper"
+    "@aws-mdaa/s3-bucketpolicy-helper",
+    "@aws-mdaa/s3-inventory-helper"
   ],
   "peerDependencies": {
-    "@aws-caef/athena-workgroup-l3-construct": "0.41.0",
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/datalake-l3-construct": "0.41.0",
-    "@aws-caef/iam-role-helper": "0.41.0",
-    "@aws-caef/l3-construct": "0.41.0",
-    "@aws-caef/roles-l3-construct": "0.41.0",
-    "@aws-caef/sm-studio-domain-l3-construct": "0.41.0",
+    "@aws-mdaa/athena-workgroup-l3-construct": "0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/datalake-l3-construct": "0.41.0",
+    "@aws-mdaa/iam-role-helper": "0.41.0",
+    "@aws-mdaa/l3-construct": "0.41.0",
+    "@aws-mdaa/roles-l3-construct": "0.41.0",
+    "@aws-mdaa/sm-studio-domain-l3-construct": "0.41.0",
     "aws-cdk-lib": "2.132.1",
     "constructs": "10.0.96"
   },
@@ -61,20 +61,20 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/athena-workgroup-l3-construct": "^0.41.0",
-    "@aws-caef/construct": "^0.41.0",
-    "@aws-caef/datalake-l3-construct": "^0.41.0",
-    "@aws-caef/iam-constructs": "^0.41.0",
-    "@aws-caef/iam-role-helper": "^0.41.0",
-    "@aws-caef/kms-constructs": "^0.41.0",
-    "@aws-caef/l3-construct": "^0.41.0",
-    "@aws-caef/naming": "^0.41.0",
-    "@aws-caef/roles-l3-construct": "^0.41.0",
-    "@aws-caef/s3-bucketpolicy-helper": "^0.41.0",
-    "@aws-caef/s3-constructs": "^0.41.0",
-    "@aws-caef/s3-inventory-helper": "^0.41.0",
-    "@aws-caef/sagemaker-constructs": "^0.41.0",
-    "@aws-caef/sm-studio-domain-l3-construct": "^0.41.0",
+    "@aws-mdaa/athena-workgroup-l3-construct": "^0.41.0",
+    "@aws-mdaa/construct": "^0.41.0",
+    "@aws-mdaa/datalake-l3-construct": "^0.41.0",
+    "@aws-mdaa/iam-constructs": "^0.41.0",
+    "@aws-mdaa/iam-role-helper": "^0.41.0",
+    "@aws-mdaa/kms-constructs": "^0.41.0",
+    "@aws-mdaa/l3-construct": "^0.41.0",
+    "@aws-mdaa/naming": "^0.41.0",
+    "@aws-mdaa/roles-l3-construct": "^0.41.0",
+    "@aws-mdaa/s3-bucketpolicy-helper": "^0.41.0",
+    "@aws-mdaa/s3-constructs": "^0.41.0",
+    "@aws-mdaa/s3-inventory-helper": "^0.41.0",
+    "@aws-mdaa/sagemaker-constructs": "^0.41.0",
+    "@aws-mdaa/sm-studio-domain-l3-construct": "^0.41.0",
     "@aws-cdk/aws-glue-alpha": "2.132.1-alpha.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
@@ -87,15 +87,15 @@
     "versionFormat": "full",
     "targets": {
       "java_disabled": {
-        "package": "software.amazon.awscaef.l3-construct.datascience-team-l3-construct",
+        "package": "software.amazon.awsmdaa.l3-construct.datascience-team-l3-construct",
         "maven": {
-          "groupId": "software.amazon.awscaef.l3-construct",
+          "groupId": "software.amazon.awsmdaa.l3-construct",
           "artifactId": "datascience-team-l3-construct"
         }
       },
       "python": {
-        "distName": "aws-caef.datascience-team-l3-construct",
-        "module": "aws_caef.datascience_team_l3_construct"
+        "distName": "aws-mdaa.datascience-team-l3-construct",
+        "module": "aws_mdaa.datascience_team_l3_construct"
       }
     }
   }
