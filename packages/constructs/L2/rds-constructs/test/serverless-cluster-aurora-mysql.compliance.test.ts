@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { SecurityGroup,  Vpc } from "aws-cdk-lib/aws-ec2";
 import * as rds from "aws-cdk-lib/aws-rds";
-import { CaefRdsServerlessCluster, CaefRdsServerlessClusterProps } from "../lib";
-import {CaefRole} from "@aws-caef/iam-constructs";
+import { MdaaRdsServerlessCluster, MdaaRdsServerlessClusterProps } from "../lib";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
 import {ServicePrincipal} from "aws-cdk-lib/aws-iam";
 
-describe( 'Aurora MySql: CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'Aurora MySql: MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const testEngine = "aurora-mysql"
     const testEngineVersion= rds.AuroraMysqlEngineVersion.VER_3_04_0
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
     const testVpc = Vpc.fromVpcAttributes( testApp.testStack, "test-vpc", {
         vpcId: "test-vpc-id",
         availabilityZones: [ "test-az" ],
@@ -25,13 +25,13 @@ describe( 'Aurora MySql: CAEF Construct Compliance Tests', () => {
     } )
     
     const testSecurityGroup = new SecurityGroup( testApp.testStack, "test-security-group", { vpc: testVpc } )
-    const monitoringRole = new CaefRole(testApp.testStack, `aurora-mysql-enhanced-monitoring-role`, {
+    const monitoringRole = new MdaaRole(testApp.testStack, `aurora-mysql-enhanced-monitoring-role`, {
         naming: testApp.naming,
         roleName: `test-cluster-enhanced-monitoring-role`,
         assumedBy: new ServicePrincipal('monitoring.rds.amazonaws.com')
     })
 
-    const testContstructProps: CaefRdsServerlessClusterProps = {
+    const testContstructProps: MdaaRdsServerlessClusterProps = {
         naming: testApp.naming,
         engine: testEngine,
         monitoringRole,
@@ -45,7 +45,7 @@ describe( 'Aurora MySql: CAEF Construct Compliance Tests', () => {
         port: 33060,
     }
 
-    new CaefRdsServerlessCluster( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaRdsServerlessCluster( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

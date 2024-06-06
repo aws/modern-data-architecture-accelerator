@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefParamAndOutput, CaefConstructProps } from "@aws-caef/construct";
+import { MdaaParamAndOutput, MdaaConstructProps } from "@aws-mdaa/construct";
 import { IResolvable } from "aws-cdk-lib";
 import { CfnLocationSMB, CfnLocationSMBProps, CfnLocationS3, CfnLocationS3Props, CfnLocationObjectStorage, CfnLocationObjectStorageProps } from "aws-cdk-lib/aws-datasync";
 import { Secret } from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 
 
-export interface CaefDataSyncSmbLocationProps extends CaefConstructProps {
+export interface MdaaDataSyncSmbLocationProps extends MdaaConstructProps {
     /**
-     * CAEF internal attribute to get the unique location name
+     * MDAA internal attribute to get the unique location name
      */
     readonly locationName: string;
     /**
@@ -62,9 +62,9 @@ export interface CaefDataSyncSmbLocationProps extends CaefConstructProps {
     readonly mountOptions?: CfnLocationSMB.MountOptionsProperty | IResolvable;
 }
 
-export interface CaefDataSyncS3LocationProps extends CaefConstructProps {
+export interface MdaaDataSyncS3LocationProps extends MdaaConstructProps {
     /**
-     * CAEF internal attribute to get the unique location name
+     * MDAA internal attribute to get the unique location name
      */
     readonly locationName: string;
     /**
@@ -97,9 +97,9 @@ export interface CaefDataSyncS3LocationProps extends CaefConstructProps {
     readonly subdirectory?: string;
 }
 
-export interface CaefDataSyncObjectStorageLocationProps extends CaefConstructProps {
+export interface MdaaDataSyncObjectStorageLocationProps extends MdaaConstructProps {
     /**
-     * CAEF internal attribute to get the unique location name
+     * MDAA internal attribute to get the unique location name
      */
     readonly locationName: string;
     /**
@@ -153,10 +153,10 @@ export interface CaefDataSyncObjectStorageLocationProps extends CaefConstructPro
  * Reusable CDK construct for a compliant DataSync configuration.
  * Specifically, enforces VPC configuration, logging, and security policy
 */
-export class CaefDataSyncSmbLocation extends CfnLocationSMB {
+export class MdaaDataSyncSmbLocation extends CfnLocationSMB {
 
     /** Overrides specific compliance-related properties. */
-    private static setProps ( scope: Construct, props: CaefDataSyncSmbLocationProps ): CfnLocationSMBProps {
+    private static setProps ( scope: Construct, props: MdaaDataSyncSmbLocationProps ): CfnLocationSMBProps {
 
         const getSecret = Secret.fromSecretNameV2( scope, `${ props.locationName }-smb-secret`, props.secretName );
         const getSecretValueUser = getSecret.secretValueFromJson( 'user' );
@@ -171,11 +171,11 @@ export class CaefDataSyncSmbLocation extends CfnLocationSMB {
         return allProps;
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataSyncSmbLocationProps ) {
-        super( scope, id, CaefDataSyncSmbLocation.setProps( scope, props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataSyncSmbLocationProps ) {
+        super( scope, id, MdaaDataSyncSmbLocation.setProps( scope, props ) )
 
         if ( this.serverHostname ) {
-            new CaefParamAndOutput( this, {
+            new MdaaParamAndOutput( this, {
                 ...{
                     resourceType: "location-smb",
                     resourceId: props.locationName,
@@ -184,7 +184,7 @@ export class CaefDataSyncSmbLocation extends CfnLocationSMB {
                 }, ...props
             } );
         }
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "location-smb",
                 resourceId: props.locationName,
@@ -195,10 +195,10 @@ export class CaefDataSyncSmbLocation extends CfnLocationSMB {
     }
 }
 
-export class CaefDataSyncS3Location extends CfnLocationS3 {
+export class MdaaDataSyncS3Location extends CfnLocationS3 {
 
     /** Overrides specific compliance-related properties. */
-    private static setProps ( props: CaefDataSyncS3LocationProps ): CfnLocationS3Props {
+    private static setProps ( props: MdaaDataSyncS3LocationProps ): CfnLocationS3Props {
 
         const overrideProps = {
             s3Config: props.s3Config
@@ -207,10 +207,10 @@ export class CaefDataSyncS3Location extends CfnLocationS3 {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataSyncS3LocationProps ) {
-        super( scope, id, CaefDataSyncS3Location.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataSyncS3LocationProps ) {
+        super( scope, id, MdaaDataSyncS3Location.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "location-s3",
                 resourceId: props.locationName,
@@ -221,10 +221,10 @@ export class CaefDataSyncS3Location extends CfnLocationS3 {
     }
 }
 
-export class CaefDataSyncObjectStorageLocation extends CfnLocationObjectStorage {
+export class MdaaDataSyncObjectStorageLocation extends CfnLocationObjectStorage {
 
     /** Overrides specific compliance-related properties. */
-    private static setProps ( scope: Construct, props: CaefDataSyncObjectStorageLocationProps ): CfnLocationObjectStorageProps {
+    private static setProps ( scope: Construct, props: MdaaDataSyncObjectStorageLocationProps ): CfnLocationObjectStorageProps {
 
         const secret = Secret.fromSecretNameV2( scope, `${ props.locationName }-objectstorage-secret`, props.secretName )
         const secretValueAccess = secret.secretValueFromJson( 'accessKey' )
@@ -239,11 +239,11 @@ export class CaefDataSyncObjectStorageLocation extends CfnLocationObjectStorage 
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataSyncObjectStorageLocationProps ) {
-        super( scope, id, CaefDataSyncObjectStorageLocation.setProps( scope, props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataSyncObjectStorageLocationProps ) {
+        super( scope, id, MdaaDataSyncObjectStorageLocation.setProps( scope, props ) )
 
         if ( this.serverHostname ) {
-            new CaefParamAndOutput( this, {
+            new MdaaParamAndOutput( this, {
                 ...{
                     resourceType: "location-object-storage",
                     resourceId: props.locationName,
@@ -253,7 +253,7 @@ export class CaefDataSyncObjectStorageLocation extends CfnLocationObjectStorage 
             } )
         }
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "location-object-storage",
                 resourceId: props.locationName,

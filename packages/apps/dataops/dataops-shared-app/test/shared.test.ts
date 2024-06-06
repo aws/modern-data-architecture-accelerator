@@ -3,27 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps } from "@aws-caef/app";
+import { MdaaAppConfigParserProps } from "@aws-mdaa/app";
 import { Schema } from "ajv";
 import { Stack } from "aws-cdk-lib";
-import { CaefDataOpsConfigContents, CaefDataOpsConfigParser } from "../lib"
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaDataOpsConfigContents, MdaaDataOpsConfigParser } from "../lib"
+import { MdaaTestApp } from "@aws-mdaa/testing";
 
 
 describe( 'Dataops Shared Config Parser Testing', () => {
-    interface TestConfigContents extends CaefDataOpsConfigContents {
+    interface TestConfigContents extends MdaaDataOpsConfigContents {
         testing: string
     }
 
-    class TestDataOpsConfigParser extends CaefDataOpsConfigParser<TestConfigContents> {
+    class TestDataOpsConfigParser extends MdaaDataOpsConfigParser<TestConfigContents> {
 
-        constructor( stack: Stack, props: CaefAppConfigParserProps, configSchema: Schema ) {
+        constructor( stack: Stack, props: MdaaAppConfigParserProps, configSchema: Schema ) {
             super( stack, props, configSchema )
         }
     }
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const testStack = new Stack( testApp, "testStack" )
-    const parserProps: CaefAppConfigParserProps = {
+    const parserProps: MdaaAppConfigParserProps = {
         org: "test-org",
         domain: "test-domain",
         environment: "test-env",

@@ -3,30 +3,30 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
-export interface LakeFormationSettingsConfigContents extends CaefBaseConfigContents {
+export interface LakeFormationSettingsConfigContents extends MdaaBaseConfigContents {
     /**
      * An array of role references to Lake Formation admin roles
      */
-    lakeFormationAdminRoles: CaefRoleRef[]
+    lakeFormationAdminRoles: MdaaRoleRef[]
     /**
      * If true, sets IAM_ALLOW_PRINCIPALS by default on all new databases/tables
      */
     iamAllowedPrincipalsDefault: boolean
 }
 
-export class LakeFormationSettingsConfigParser extends CaefAppConfigParser<LakeFormationSettingsConfigContents> {
+export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeFormationSettingsConfigContents> {
 
-    public readonly lakeFormationAdminRoles: CaefRoleRef[];
+    public readonly lakeFormationAdminRoles: MdaaRoleRef[];
     public readonly iamAllowedPrincipalsDefault: boolean;
 
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.lakeFormationAdminRoles = this.configContents.lakeFormationAdminRoles

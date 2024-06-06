@@ -1,5 +1,5 @@
 # The name of the dataops project this crawler will be created within.
-# The dataops project name is the CAEF module name for the project.
+# The dataops project name is the MDAA module name for the project.
 projectName: example-project
 
 crawlers:

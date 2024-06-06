@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefLambdaFunction, CaefLambdaRole } from '@aws-caef/lambda-constructs';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { aws_events_targets, CustomResource, Duration } from 'aws-cdk-lib';
 import { Rule } from 'aws-cdk-lib/aws-events';
 import { Effect, FederatedPrincipal, IRole, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -46,7 +46,7 @@ export interface NameAndFederationProps extends FederationProps {
     readonly federationName: string
 }
 
-export interface QuickSightNamespaceL3ConstructProps extends CaefL3ConstructProps {
+export interface QuickSightNamespaceL3ConstructProps extends MdaaL3ConstructProps {
     /** 
      * Map of federation names to federation definitions
      */
@@ -58,7 +58,7 @@ export interface QuickSightNamespaceL3ConstructProps extends CaefL3ConstructProp
 }
 
 //This stack creates QuickSight namespaces
-export class QuickSightNamespaceL3Construct extends CaefL3Construct {
+export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
     protected readonly props: QuickSightNamespaceL3ConstructProps
 
 
@@ -98,7 +98,7 @@ export class QuickSightNamespaceL3Construct extends CaefL3Construct {
         } )
     }
 
-    private createNamespaceUserMonitor ( namespace: string, iamRoleName: string[], qsUserType: string, qsGroupNames: string[], roleName: string, namespaceLambdaUserRole: CaefLambdaRole ): void {
+    private createNamespaceUserMonitor ( namespace: string, iamRoleName: string[], qsUserType: string, qsGroupNames: string[], roleName: string, namespaceLambdaUserRole: MdaaLambdaRole ): void {
         //Create the Lambda Function for this namespace and role
         const namespaceUserFunction = this.createNamespaceUserFunction( this.namespaceName, qsUserType, qsGroupNames, roleName, namespaceLambdaUserRole )
 
@@ -130,9 +130,9 @@ export class QuickSightNamespaceL3Construct extends CaefL3Construct {
 
     }
 
-    private createNamespaceUserLambdaRole (): CaefLambdaRole {
+    private createNamespaceUserLambdaRole (): MdaaLambdaRole {
 
-        const namespaceUserRole: CaefLambdaRole = new CaefLambdaRole( this, "user-cr-role", {
+        const namespaceUserRole: MdaaLambdaRole = new MdaaLambdaRole( this, "user-cr-role", {
             description: 'CR Role',
             roleName: "user-cr",
             naming: this.props.naming,
@@ -202,9 +202,9 @@ export class QuickSightNamespaceL3Construct extends CaefL3Construct {
         return namespaceUserRole
     }
 
-    private createNamespaceUserFunction ( namespace: string, qsUserType: string, qsGroupNames: string[], roleName: string, namespaceLambdaUserRole: CaefLambdaRole ): Function {
+    private createNamespaceUserFunction ( namespace: string, qsUserType: string, qsGroupNames: string[], roleName: string, namespaceLambdaUserRole: MdaaLambdaRole ): Function {
         // This Lambda is used as a Custom Resource in order to create the QuickSight Namespace
-        const quicksightNamespaceUserLambda: CaefLambdaFunction = new CaefLambdaFunction( this, `user-${ roleName }`, {
+        const quicksightNamespaceUserLambda: MdaaLambdaFunction = new MdaaLambdaFunction( this, `user-${ roleName }`, {
             functionName: `user-${ roleName }`,
             naming: this.props.naming,
             code: Code.fromAsset( `${ __dirname }/../src/python/quicksight_namespace_user` ),
@@ -247,7 +247,7 @@ export class QuickSightNamespaceL3Construct extends CaefL3Construct {
 
     private createNamespaceProvider (): Provider {
         //Create a role which will be used by the Namespace Custom Resource Function
-        const namespaceCrRole: CaefLambdaRole = new CaefLambdaRole( this, "namespace-cr-role", {
+        const namespaceCrRole: MdaaLambdaRole = new MdaaLambdaRole( this, "namespace-cr-role", {
             description: 'CR Role',
             roleName: "namespace-cr",
             naming: this.props.naming,
@@ -316,7 +316,7 @@ export class QuickSightNamespaceL3Construct extends CaefL3Construct {
         );
         const srcDir: string = `${ __dirname }/../src/python/quicksight_namespace`
         // This Lambda is used as a Custom Resource in order to create the QuickSight Namespace
-        const quicksightNamespaceCrLambda: CaefLambdaFunction = new CaefLambdaFunction( this, "ns-cr-func", {
+        const quicksightNamespaceCrLambda: MdaaLambdaFunction = new MdaaLambdaFunction( this, "ns-cr-func", {
             functionName: "namespace-cr",
             naming: this.props.naming,
             code: Code.fromAsset( srcDir ),
@@ -344,7 +344,7 @@ export class QuickSightNamespaceL3Construct extends CaefL3Construct {
             true
         );
         const namespaceCrProviderFunctionName: string = this.props.naming.resourceName( "ns-cr-prov", 64 )
-        const namespaceCrProviderRole: CaefLambdaRole = new CaefLambdaRole( this, "namespace-cr-prov-role", {
+        const namespaceCrProviderRole: MdaaLambdaRole = new MdaaLambdaRole( this, "namespace-cr-prov-role", {
             description: 'CR Role',
             roleName: "namespace-cr-prov",
             naming: this.props.naming,
@@ -385,7 +385,7 @@ export class QuickSightNamespaceL3Construct extends CaefL3Construct {
     //Creates Federation roles for each federation config
     private createFederationRoles ( federation: NameAndFederationProps, roleName: string ): IRole {
         //Create a Role which will be provided the accesses required to access Athena via Lake Formation
-        const role: IRole = new CaefRole( this, `role-${ roleName }-${ federation.federationName }`, {
+        const role: IRole = new MdaaRole( this, `role-${ roleName }-${ federation.federationName }`, {
             naming: this.props.naming,
             assumedBy: new FederatedPrincipal( federation.providerArn, {}, "sts:AssumeRoleWithSAML" ),
             description: `QuickSight Federation Role for ${ roleName }`,

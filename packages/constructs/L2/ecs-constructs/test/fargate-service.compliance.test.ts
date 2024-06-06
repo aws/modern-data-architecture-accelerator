@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRole } from "@aws-caef/iam-constructs";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRole } from "@aws-mdaa/iam-constructs";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Compatibility, ContainerImage, PropagatedTagSource, TaskDefinition } from 'aws-cdk-lib/aws-ecs';
 import { LogGroup } from "aws-cdk-lib/aws-logs";
-import { CaefECSCluster, CaefECSContainerDefinition } from '../lib';
-import { CaefECSFargateService, CaefECSFargateServiceProps } from '../lib/fargate-service';
+import { MdaaECSCluster, MdaaECSContainerDefinition } from '../lib';
+import { MdaaECSFargateService, MdaaECSFargateServiceProps } from '../lib/fargate-service';
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
     const testVpc = Vpc.fromVpcAttributes( testApp.testStack, 'VPC', {
         vpcId: 'test-vpc-id',
         availabilityZones: [ 'az1', 'az2' ],
         privateSubnetIds: [ 'subnet1', 'subnet2' ],
     } );
-    const testCluster = CaefECSCluster.fromClusterAttributes( testApp.testStack, "test-cluster", {
+    const testCluster = MdaaECSCluster.fromClusterAttributes( testApp.testStack, "test-cluster", {
         clusterName: 'test-cluster',
         vpc: testVpc
     } )
@@ -28,7 +28,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
 
     const logGroup = LogGroup.fromLogGroupName( testApp.testStack, "test-loggroup", "test-loggroup" )
 
-    const testExRole = CaefRole.fromRoleArn( testApp.testStack, "test-role", "arn:test-partition:iam:test-region:test-account:role/test-role" )
+    const testExRole = MdaaRole.fromRoleArn( testApp.testStack, "test-role", "arn:test-partition:iam:test-region:test-account:role/test-role" )
 
     const testTaskDef: TaskDefinition = new TaskDefinition( testApp.testStack, 'testdef', {
         compatibility: Compatibility.EC2_AND_FARGATE,
@@ -37,7 +37,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         executionRole: testExRole
     } )
 
-    new CaefECSContainerDefinition( testApp.testStack, "test-container", {
+    new MdaaECSContainerDefinition( testApp.testStack, "test-container", {
         naming: testApp.naming,
         logGroup: logGroup,
         streamPrefix: 'test-prefix',
@@ -47,7 +47,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
     } )
 
 
-    const testContstructProps: CaefECSFargateServiceProps = {
+    const testContstructProps: MdaaECSFargateServiceProps = {
         naming: testApp.naming,
         taskDefinition: testTaskDef,
         subnets: [ testSubnet ],
@@ -56,7 +56,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         propagateTags: PropagatedTagSource.SERVICE
     }
 
-    new CaefECSFargateService( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaECSFargateService( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

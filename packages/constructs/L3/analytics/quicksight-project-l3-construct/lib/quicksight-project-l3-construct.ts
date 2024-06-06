@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
+import { MdaaL3Construct, MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
 import {
-  CaefLambdaFunction,
-  CaefLambdaRole,
-} from "@aws-caef/lambda-constructs";
+  MdaaLambdaFunction,
+  MdaaLambdaRole,
+} from "@aws-mdaa/lambda-constructs";
 import { Effect, ManagedPolicy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { CustomResource, Duration } from "aws-cdk-lib";
 import { Provider } from "aws-cdk-lib/custom-resources";
 import { NagSuppressions } from "cdk-nag";
 import { Construct } from "constructs";
-import { CaefQuickSightDataSource } from '@aws-caef/quicksight-constructs';
+import { MdaaQuickSightDataSource } from '@aws-mdaa/quicksight-constructs';
 //Interfaces for Shared Folders
 export type FolderActions = "READER_FOLDER" | "AUTHOR_FOLDER";
 export interface SharedFoldersPermissionsProps {
@@ -185,7 +185,7 @@ export interface DataSourceWithIdAndTypeProps extends DataSourceProps {
   readonly dataSourceId: string;
 }
 export interface QuickSightProjectL3ConstructProps
-  extends CaefL3ConstructProps {
+  extends MdaaL3ConstructProps {
   /**
    *(Required) Details about the Data Sources to be created
    */
@@ -199,7 +199,7 @@ export interface QuickSightProjectL3ConstructProps
    */
   readonly sharedFolders?: { [ key: string ]: SharedFoldersProps };
 };
-export class QuickSightProjectL3Construct extends CaefL3Construct {
+export class QuickSightProjectL3Construct extends MdaaL3Construct {
   protected readonly props: QuickSightProjectL3ConstructProps
 
   public static sharedFoldersActions: { [ key: string ]: string[] } =
@@ -271,7 +271,7 @@ export class QuickSightProjectL3Construct extends CaefL3Construct {
 
   private createQSFoldersProvider (): Provider {
     //Create a role which will be used by the QSFolders Custom Resource Lambda Function
-    const qsFoldersCrRole = new CaefLambdaRole( this, "qsFolders-cr-role", {
+    const qsFoldersCrRole = new MdaaLambdaRole( this, "qsFolders-cr-role", {
       description: "CR Lambda Role",
       roleName: "qsFolders-cr",
       naming: this.props.naming,
@@ -334,7 +334,7 @@ export class QuickSightProjectL3Construct extends CaefL3Construct {
     );
     const srcDir = `${ __dirname }/../src/python/quicksight_folders`;
     // This Lambda is used as a Custom Resource in order to create the QuickSight Folders
-    const quicksightFoldersCrLambda = new CaefLambdaFunction(
+    const quicksightFoldersCrLambda = new MdaaLambdaFunction(
       this,
       "qsFolders-cr-func",
       {
@@ -391,7 +391,7 @@ export class QuickSightProjectL3Construct extends CaefL3Construct {
       "qsFolders-cr-prov",
       64
     );
-    const qsFoldersCrProviderRole = new CaefLambdaRole(
+    const qsFoldersCrProviderRole = new MdaaLambdaRole(
       this,
       "qsFolders-cr-prov-role",
       {
@@ -510,7 +510,7 @@ export class QuickSightProjectL3Construct extends CaefL3Construct {
         return qsDataSourcePermission
       } );
 
-      const dataSourceResponse: CaefQuickSightDataSource = new CaefQuickSightDataSource( this, this.props.naming.resourceName( dataSourceWithIdAndTypeProps.dataSourceId ), {
+      const dataSourceResponse: MdaaQuickSightDataSource = new MdaaQuickSightDataSource( this, this.props.naming.resourceName( dataSourceWithIdAndTypeProps.dataSourceId ), {
         naming: this.props.naming,
         alternateDataSourceParameters: [ dataSourceWithIdAndTypeProps.dataSourceSpecificParameters ],
         awsAccountId: this.account,

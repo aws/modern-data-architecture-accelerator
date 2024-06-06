@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { EbsDeviceVolumeType } from "aws-cdk-lib/aws-ec2";
 import { AccountPrincipal, Effect } from "aws-cdk-lib/aws-iam";
@@ -12,12 +12,12 @@ import { OpensearchL3Construct, OpensearchL3ConstructProps } from "../lib";
 import { CustomEndpointConfig } from '../lib/opensearch-l3-construct';
 
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
-  const dataAdminRoleRef: CaefRoleRef = {
+  const dataAdminRoleRef: MdaaRoleRef = {
     arn: "arn:test-partition:iam::test-account:role/data-admin"
   }
 
@@ -56,7 +56,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     },
     naming: testApp.naming,
 
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
   };
 
   new OpensearchL3Construct( stack, "teststack", constructProps );

@@ -1,7 +1,7 @@
 {
-  "name": "@aws-caef/iam-role-helper",
+  "name": "@aws-mdaa/iam-role-helper",
   "version": "0.41.0",
-  "description": "CAEF Role Utilities",
+  "description": "MDAA Role Utilities",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",
@@ -21,8 +21,8 @@
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "devDependencies": {
-    "@aws-caef/naming": "0.41.0",
-    "@aws-caef/testing": "^0.41.0",
+    "@aws-mdaa/naming": "0.41.0",
+    "@aws-mdaa/testing": "^0.41.0",
     "@types/jest": "27.4.1",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -35,7 +35,7 @@
     "typescript-json-schema": "0.53.0"
   },
   "peerDependencies": {
-    "@aws-caef/naming": "0.41.0",
+    "@aws-mdaa/naming": "0.41.0",
     "aws-cdk-lib": "2.132.1",
     "constructs": "10.0.96"
   },
@@ -44,8 +44,8 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/lambda-constructs": "^0.41.0",
-    "@aws-caef/naming": "^0.41.0",
+    "@aws-mdaa/lambda-constructs": "^0.41.0",
+    "@aws-mdaa/naming": "^0.41.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
     "constructs": "10.0.96"
@@ -57,15 +57,15 @@
     "versionFormat": "full",
     "targets": {
       "java_disabled": {
-        "package": "software.amazon.awscaef.utility.roles",
+        "package": "software.amazon.awsmdaa.utility.roles",
         "maven": {
-          "groupId": "software.amazon.awscaef.utility",
+          "groupId": "software.amazon.awsmdaa.utility",
           "artifactId": "roles"
         }
       },
       "python": {
-        "distName": "aws-caef.roles-utility",
-        "module": "aws_caef.roles_utility"
+        "distName": "aws-mdaa.roles-utility",
+        "module": "aws_mdaa.roles_utility"
       }
     }
   }

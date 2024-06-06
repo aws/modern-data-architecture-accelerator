@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from "@aws-caef/app";
-import { CaefConfigTransformer, ICaefConfigTransformer, ICaefConfigValueTransformer } from "@aws-caef/config";
-import { ICaefResourceNaming } from "@aws-caef/naming";
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from "@aws-mdaa/app";
+import { MdaaConfigTransformer, IMdaaConfigTransformer, IMdaaConfigValueTransformer } from "@aws-mdaa/config";
+import { IMdaaResourceNaming } from "@aws-mdaa/naming";
 import { Schema } from "ajv";
 import { Stack } from "aws-cdk-lib";
 
 
-export interface CaefDataOpsConfigContents extends CaefBaseConfigContents {
+export interface MdaaDataOpsConfigContents extends MdaaBaseConfigContents {
     readonly securityConfigurationName: string
     readonly projectName: string
     readonly projectBucket: string
@@ -19,7 +19,7 @@ export interface CaefDataOpsConfigContents extends CaefBaseConfigContents {
     readonly kmsArn: string
 }
 
-export class CaefDataOpsConfigParser<T extends CaefDataOpsConfigContents> extends CaefAppConfigParser<T> {
+export class MdaaDataOpsConfigParser<T extends MdaaDataOpsConfigContents> extends MdaaAppConfigParser<T> {
     public readonly securityConfigurationName: string
     public readonly projectName: string
     public readonly projectBucket: string
@@ -27,7 +27,7 @@ export class CaefDataOpsConfigParser<T extends CaefDataOpsConfigContents> extend
     public readonly deploymentRole: string
     public readonly kmsArn: string
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps, configSchema: Schema ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps, configSchema: Schema ) {
         super( stack, props, configSchema, [ new ProjectConfigTransformer( props.naming ) ] )
         this.securityConfigurationName = this.configContents.securityConfigurationName
         this.projectName = this.configContents.projectName
@@ -39,9 +39,9 @@ export class CaefDataOpsConfigParser<T extends CaefDataOpsConfigContents> extend
 
 }
 
-class ProjectConfigTransformer implements ICaefConfigTransformer {
-    private readonly naming: ICaefResourceNaming;
-    constructor( naming: ICaefResourceNaming ) {
+class ProjectConfigTransformer implements IMdaaConfigTransformer {
+    private readonly naming: IMdaaResourceNaming;
+    constructor( naming: IMdaaResourceNaming ) {
         this.naming = naming
     }
     public transformConfig ( config: { [ key: string ]: any; } ): { [ key: string ]: any; } {
@@ -54,14 +54,14 @@ class ProjectConfigTransformer implements ICaefConfigTransformer {
         moddedConfig[ "kmsArn" ] = moddedConfig[ "kmsArn" ] ? moddedConfig[ "kmsArn" ] : "project:kmsArn/default"
 
         const projectConfigValTransformer = new ProjectConfigValueTransformer( projectName, this.naming )
-        return new CaefConfigTransformer( projectConfigValTransformer ).transformConfig( moddedConfig )
+        return new MdaaConfigTransformer( projectConfigValTransformer ).transformConfig( moddedConfig )
     }
 }
 
-class ProjectConfigValueTransformer implements ICaefConfigValueTransformer {
+class ProjectConfigValueTransformer implements IMdaaConfigValueTransformer {
     private readonly projectName: string;
-    private readonly naming: ICaefResourceNaming;
-    constructor( projectName: string, naming: ICaefResourceNaming ) {
+    private readonly naming: IMdaaResourceNaming;
+    constructor( projectName: string, naming: IMdaaResourceNaming ) {
         this.projectName = projectName
         this.naming = naming
     }

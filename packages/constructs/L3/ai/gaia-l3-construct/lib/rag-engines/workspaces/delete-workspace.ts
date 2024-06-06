@@ -10,34 +10,34 @@ import { AuroraPgVector } from "../aurora-pgvector";
 import { DataImportWorkflows } from "../data-import";
 import { KendraRetrieval } from "../kendra-retrieval";
 import { RagDynamoDBTables } from "../rag-dynamodb-tables";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefLambdaFunction, CaefLambdaRole} from "@aws-caef/lambda-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaLambdaFunction, MdaaLambdaRole} from "@aws-mdaa/lambda-constructs";
 import {Effect} from "aws-cdk-lib/aws-iam";
-import { CaefSqsDeadLetterQueue } from "@aws-caef/sqs-constructs";
-import { CaefLogGroup } from "@aws-caef/cloudwatch-constructs";
+import { MdaaSqsDeadLetterQueue } from "@aws-mdaa/sqs-constructs";
+import { MdaaLogGroup } from "@aws-mdaa/cloudwatch-constructs";
 import * as logs from "aws-cdk-lib/aws-logs";
 import { NagSuppressions } from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 
 
-export interface DeleteWorkspaceProps extends CaefL3ConstructProps {
+export interface DeleteWorkspaceProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly dataImport: DataImportWorkflows;
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraPgVector?: AuroraPgVector;
   readonly kendraRetrieval?: KendraRetrieval;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class DeleteWorkspace extends CaefL3Construct {
+export class DeleteWorkspace extends MdaaL3Construct {
   public readonly stateMachine?: sfn.StateMachine;
 
   constructor(scope: Construct, id: string, props: DeleteWorkspaceProps) {
     super(scope, id, props);
 
-    const deleteFunctionRole = new CaefLambdaRole(this, 'DeleteFunctionRole', {
+    const deleteFunctionRole = new MdaaLambdaRole(this, 'DeleteFunctionRole', {
       naming: props.naming,
       roleName: 'DeleteWorkspaceFunctionRole',
       logGroupNames: [props.naming.resourceName('delete-workspace-handler')],
@@ -55,7 +55,7 @@ export class DeleteWorkspace extends CaefL3Construct {
       resources: ['*']
     }))
 
-    const deleteDlq = new CaefSqsDeadLetterQueue( this, "DeleteWorkspaceHandlerDLQ", {
+    const deleteDlq = new MdaaSqsDeadLetterQueue( this, "DeleteWorkspaceHandlerDLQ", {
       encryptionMasterKey: props.encryptionKey,
       naming: props.naming,
       createParams: false,
@@ -67,7 +67,7 @@ export class DeleteWorkspace extends CaefL3Construct {
         props.config.codeOverwrites.deleteWorkspaceHandlerCodePath :
         path.join(__dirname, "./functions/delete-workspace-workflow/delete")
 
-    const deleteFunction = new CaefLambdaFunction(
+    const deleteFunction = new MdaaLambdaFunction(
       this,
       "DeleteWorkspaceFunction",
       {
@@ -183,7 +183,7 @@ export class DeleteWorkspace extends CaefL3Construct {
       .next(deleteTask)
       .next(new sfn.Succeed(this, "Success"));
 
-    const logGroup: logs.LogGroup = new CaefLogGroup( this, `DeleteWorkspace-loggroup`, {
+    const logGroup: logs.LogGroup = new MdaaLogGroup( this, `DeleteWorkspace-loggroup`, {
       naming: props.naming,
       createParams: false,
       createOutputs: false,
@@ -208,14 +208,14 @@ export class DeleteWorkspace extends CaefL3Construct {
 
     NagSuppressions.addResourceSuppressions(deleteFunctionRole, [
       { id: 'AwsSolutions-IAM5', reason: 'Permissions are restrictive to stack resources. Processing s3 bucket managed and deployed by stack, not known at deployment.  KMS key resource deployed and managed by stack, not known at deployment time.' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     NagSuppressions.addResourceSuppressions(stateMachine, [
       { id: 'AwsSolutions-IAM5', reason: 'Invoke function restricted to delete workspace lambda.  The lambda arn is not known at deployment time.' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     this.stateMachine = stateMachine;

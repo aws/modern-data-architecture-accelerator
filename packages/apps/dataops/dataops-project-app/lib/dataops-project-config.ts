@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { NamedClassifierProps, NamedConnectionProps, NamedDatabaseProps, FailureNotificationsProps, NamedSecurityGroupConfigProps } from '@aws-caef/dataops-project-l3-construct';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { NamedClassifierProps, NamedConnectionProps, NamedDatabaseProps, FailureNotificationsProps, NamedSecurityGroupConfigProps } from '@aws-mdaa/dataops-project-l3-construct';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from "ajv";
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
-export interface DataOpsProjectConfigContents extends CaefBaseConfigContents {
+export interface DataOpsProjectConfigContents extends MdaaBaseConfigContents {
 
-    readonly dataEngineerRoles?: CaefRoleRef[]
+    readonly dataEngineerRoles?: MdaaRoleRef[]
 
-    readonly dataAdminRoles: CaefRoleRef[]
+    readonly dataAdminRoles: MdaaRoleRef[]
     /**
      * Glue Database definitions to create (required)
      */
@@ -30,7 +30,7 @@ export interface DataOpsProjectConfigContents extends CaefBaseConfigContents {
     /**
      * Pre-defined roles to use
      */
-    readonly projectExecutionRoles?: CaefRoleRef[]
+    readonly projectExecutionRoles?: MdaaRoleRef[]
 
     readonly s3OutputKmsKeyArn: string
 
@@ -46,12 +46,12 @@ export interface DataOpsProjectConfigContents extends CaefBaseConfigContents {
     readonly securityGroupConfigs?: NamedSecurityGroupConfigProps
 }
 
-export class DataOpsProjectConfigParser extends CaefAppConfigParser<DataOpsProjectConfigContents> {
+export class DataOpsProjectConfigParser extends MdaaAppConfigParser<DataOpsProjectConfigContents> {
 
-    public readonly dataAdminRoleRefs: CaefRoleRef[]
-    public readonly dataEngineerRoleRefs: CaefRoleRef[]
+    public readonly dataAdminRoleRefs: MdaaRoleRef[]
+    public readonly dataEngineerRoleRefs: MdaaRoleRef[]
     public readonly databases?: NamedDatabaseProps
-    public readonly projectExecutionRoleRefs: CaefRoleRef[]
+    public readonly projectExecutionRoleRefs: MdaaRoleRef[]
     public readonly connections?: NamedConnectionProps
     public readonly classifiers?: NamedClassifierProps
     public readonly s3OutputKmsKeyArn: string;
@@ -59,7 +59,7 @@ export class DataOpsProjectConfigParser extends CaefAppConfigParser<DataOpsProje
     public readonly failureNotifications?: FailureNotificationsProps;
     public readonly securityGroupConfigs?: NamedSecurityGroupConfigProps
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.dataAdminRoleRefs = this.configContents.dataAdminRoles

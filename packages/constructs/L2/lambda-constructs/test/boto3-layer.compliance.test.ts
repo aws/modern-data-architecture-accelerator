@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefBoto3LayerVersion, CaefBoto3LayerVersionProps } from "../lib/boto3-layer";
+import { MdaaBoto3LayerVersion, MdaaBoto3LayerVersionProps } from "../lib/boto3-layer";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testContstructProps: CaefBoto3LayerVersionProps = {
+    const testContstructProps: MdaaBoto3LayerVersionProps = {
         naming: testApp.naming,
         boto3Version: "1.33.13"
     }
 
-    new CaefBoto3LayerVersion( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaBoto3LayerVersion( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

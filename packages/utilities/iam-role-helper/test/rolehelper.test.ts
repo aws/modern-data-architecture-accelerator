@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
-import { CaefRoleHelper, CaefRoleRef } from "../lib";
+import { MdaaTestApp } from "@aws-mdaa/testing";
+import { MdaaRoleHelper, MdaaRoleRef } from "../lib";
 
 describe( 'Test RoleHelper', () => {
     test( "Missing references", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
         expect( () => {
             testRoleHelper.resolveRoleRef( {
                 refId: "testRefId"
@@ -18,8 +18,8 @@ describe( 'Test RoleHelper', () => {
     } )
 
     test( "By Id", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
         const resolved = testRoleHelper.resolveRoleRef( {
             refId: "testRefId",
             id: "test-id"
@@ -30,8 +30,8 @@ describe( 'Test RoleHelper', () => {
     } )
 
     test( "By Arn", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
         const resolved = testRoleHelper.resolveRoleRef( {
             refId: "testRefId",
             arn: "test-arn"
@@ -41,8 +41,8 @@ describe( 'Test RoleHelper', () => {
         expect( resolved.name() ).toMatch( /\${Token\[TOKEN.\d+\]}/ )
     } )
     test( "By Name", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
         const resolved = testRoleHelper.resolveRoleRef( {
             refId: "testRefId",
             name: "test-name"
@@ -52,8 +52,8 @@ describe( 'Test RoleHelper', () => {
         expect( resolved.name() ).toBe( "test-name" )
     } )
     test( "Immutability Undefined is False", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
         const resolved = testRoleHelper.resolveRoleRef( {
             refId: "testRefId",
             name: "test-name",
@@ -63,8 +63,8 @@ describe( 'Test RoleHelper', () => {
         expect( resolved.immutable() ).toBe( false )
     } )
     test( "Immutability False", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
         const resolved = testRoleHelper.resolveRoleRef( {
             refId: "testRefId",
             name: "test-name",
@@ -76,8 +76,8 @@ describe( 'Test RoleHelper', () => {
     } )
 
     test( "Immutability True", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
         const resolved = testRoleHelper.resolveRoleRef( {
             refId: "testRefId",
             name: "test-name",
@@ -89,9 +89,9 @@ describe( 'Test RoleHelper', () => {
     } )
 
     test( "resolveRoleRefsWithOrdinals", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
-        const roleRef: CaefRoleRef = {
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
+        const roleRef: MdaaRoleRef = {
             name: "test-name",
             arn: "test-arn",
             id: "test-id",
@@ -104,9 +104,9 @@ describe( 'Test RoleHelper', () => {
     } )
 
     test( "resolveRoleRefWithRefId", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
-        const roleRef: CaefRoleRef = {
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
+        const roleRef: MdaaRoleRef = {
             name: "test-name",
             arn: "test-arn",
             id: "test-id"
@@ -116,8 +116,8 @@ describe( 'Test RoleHelper', () => {
     } )
 
     test( "Multiple Resolution", () => {
-        const testApp = new CaefTestApp()
-        const testRoleHelper = new CaefRoleHelper( testApp.testStack, testApp.naming )
+        const testApp = new MdaaTestApp()
+        const testRoleHelper = new MdaaRoleHelper( testApp.testStack, testApp.naming )
         const roleRefAll = {
             refId: "testingAll",
             name: "test-name",
@@ -126,19 +126,19 @@ describe( 'Test RoleHelper', () => {
         }
         testRoleHelper.resolveRoleRef( roleRefAll )
 
-        const roleRefName: CaefRoleRef = {
+        const roleRefName: MdaaRoleRef = {
             name: "test-name"
         }
         const resolvedByName = testRoleHelper.resolveRoleRefWithRefId( roleRefName, "testing2" )
         expect( resolvedByName.refId() ).toBe( "testingAll" )
 
-        const roleRefArn: CaefRoleRef = {
+        const roleRefArn: MdaaRoleRef = {
             arn: "test-arn"
         }
         const resolvedByArn = testRoleHelper.resolveRoleRefWithRefId( roleRefArn, "testing2" )
         expect( resolvedByArn.refId() ).toBe( "testingAll" )
 
-        const roleRefById: CaefRoleRef = {
+        const roleRefById: MdaaRoleRef = {
             id: "test-id"
         }
         const resolvedById = testRoleHelper.resolveRoleRefWithRefId( roleRefById, "testing2" )

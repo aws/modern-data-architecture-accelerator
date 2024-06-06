@@ -9,24 +9,24 @@ import { KendraRetrieval } from "./kendra-retrieval";
 import { RagDynamoDBTables } from "./rag-dynamodb-tables";
 import { SageMakerRagModels } from "./sagemaker-rag-models";
 import { Workspaces } from "./workspaces";
-import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
-import { CaefDDBTable } from "@aws-caef/ddb-constructs";
-import { CaefBucket } from "@aws-caef/s3-constructs";
-import { CaefKmsKey } from "@aws-caef/kms-constructs";
+import { MdaaL3Construct, MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
+import { MdaaDDBTable } from "@aws-mdaa/ddb-constructs";
+import { MdaaBucket } from "@aws-mdaa/s3-constructs";
+import { MdaaKmsKey } from "@aws-mdaa/kms-constructs";
 
-export interface RagEnginesProps extends CaefL3ConstructProps {
+export interface RagEnginesProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class RagEngines extends CaefL3Construct {
+export class RagEngines extends MdaaL3Construct {
   public readonly auroraPgVector: AuroraPgVector | null;
   public readonly kendraRetrieval: KendraRetrieval | null;
-  public readonly uploadBucket: CaefBucket;
-  public readonly processingBucket: CaefBucket;
-  public readonly documentsTable: CaefDDBTable;
-  public readonly workspacesTable: CaefDDBTable;
+  public readonly uploadBucket: MdaaBucket;
+  public readonly processingBucket: MdaaBucket;
+  public readonly documentsTable: MdaaDDBTable;
+  public readonly workspacesTable: MdaaDDBTable;
   public readonly workspacesByObjectTypeIndexName: string;
   public readonly documentsByCompountKeyIndexName: string;
   public readonly sageMakerRagModelsEndpoint?: sagemaker.CfnEndpoint;

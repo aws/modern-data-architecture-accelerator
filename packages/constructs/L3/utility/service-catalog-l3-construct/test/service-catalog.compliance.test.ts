@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { PortfolioPropsWithAccess, ServiceCatalogL3Construct, ServiceCatalogL3ConstructProps } from "../lib";
 
 
-describe( 'CAEF Compliance Stack Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Compliance Stack Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const portfolio: PortfolioPropsWithAccess = {
         displayName: "testing",
@@ -22,7 +22,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         portfolios: [ portfolio ],
         naming: testApp.naming,
 
-        roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming )
+        roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming )
     }
 
     new ServiceCatalogL3Construct( testApp.testStack, 'test-stack', constructProps )

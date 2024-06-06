@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
 
 import { LakeFormationSettingsL3ConstructProps, LakeFormationSettingsL3Construct } from "../lib";
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
-  const lakeFormationAccessControlConfigParser: CaefRoleRef = {
+  const lakeFormationAccessControlConfigParser: MdaaRoleRef = {
     id: "test-role-access-control",
     arn: "arn:test-partition:iam::test-account:role/TestAccess"
   }
@@ -23,7 +23,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     lakeFormationAdminRoleRefs: [ lakeFormationAccessControlConfigParser ],
 
 
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
     iamAllowedPrincipalsDefault: true
   };

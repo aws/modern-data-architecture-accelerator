@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { IResolvable } from 'aws-cdk-lib';
 import { CfnRecipe, CfnRecipeProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
 /**
- * Properties for creating a Caef Databrew Recipe
+ * Properties for creating a Mdaa Databrew Recipe
  */
-export interface CaefDataBrewRecipeProps extends CaefConstructProps {
+export interface MdaaDataBrewRecipeProps extends MdaaConstructProps {
 
     // The unique name for the recipe.
     readonly name: string;
@@ -27,19 +27,19 @@ export interface CaefDataBrewRecipeProps extends CaefConstructProps {
 /**
  * A construct which creates a compliant Databrew Recipe.
  */
-export class CaefDataBrewRecipe extends CfnRecipe {
+export class MdaaDataBrewRecipe extends CfnRecipe {
 
-    private static setProps ( props: CaefDataBrewRecipeProps ): CfnRecipeProps {
+    private static setProps ( props: MdaaDataBrewRecipeProps ): CfnRecipeProps {
         const overrideProps = {
             name: props.naming.resourceName( props.name, 80 )
         }
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataBrewRecipeProps ) {
-        super( scope, id, CaefDataBrewRecipe.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataBrewRecipeProps ) {
+        super( scope, id, MdaaDataBrewRecipe.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Recipe",
                 resourceId: props.name,

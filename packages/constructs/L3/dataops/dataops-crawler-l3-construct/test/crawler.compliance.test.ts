@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
 import { CfnCrawler } from 'aws-cdk-lib/aws-glue';
 import { Template } from "aws-cdk-lib/assertions";
 import { GlueCrawlerL3ConstructProps, GlueCrawlerL3Construct } from "../lib";
 import { CrawlerDefinition, CrawlerTargets } from '../lib/dataops-crawler-l3-construct';
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
   const s3Target: CfnCrawler.S3TargetProperty = {
@@ -68,7 +68,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     projectName: "test-project",
     notificationTopicArn: "arn:test-partition:sns:test-region:test-account:MyTopic",
 
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming
   };
 

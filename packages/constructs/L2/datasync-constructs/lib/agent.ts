@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefParamAndOutput, CaefConstructProps } from "@aws-caef/construct";
+import { MdaaParamAndOutput, MdaaConstructProps } from "@aws-mdaa/construct";
 import { CfnAgent, CfnAgentProps } from "aws-cdk-lib/aws-datasync";
 import { Construct } from "constructs";
 
 
-export interface CaefDataSyncAgentProps extends CaefConstructProps {
+export interface MdaaDataSyncAgentProps extends MdaaConstructProps {
     /**
      * Your agent activation key. You can get the activation key either by sending an HTTP GET request with redirects that enable you to get the agent IP address (port 80). Alternatively, you can get it from the DataSync console.
      *
@@ -55,10 +55,10 @@ export interface CaefDataSyncAgentProps extends CaefConstructProps {
  * Reusable CDK construct for a compliant DataSync service.
  * Specifically, enforces VPC configuration, logging, and security policy
  */
-export class CaefDataSyncAgent extends CfnAgent {
+export class MdaaDataSyncAgent extends CfnAgent {
 
     /** Overrides specific compliance-related properties. */
-    private static setProps ( props: CaefDataSyncAgentProps ): CfnAgentProps {
+    private static setProps ( props: MdaaDataSyncAgentProps ): CfnAgentProps {
 
         const overrideProps = {
             agentName: props.naming.resourceName( props.agentName, 256 )
@@ -67,10 +67,10 @@ export class CaefDataSyncAgent extends CfnAgent {
         return allProps;
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataSyncAgentProps ) {
-        super( scope, id, CaefDataSyncAgent.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataSyncAgentProps ) {
+        super( scope, id, MdaaDataSyncAgent.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "agent",
                 resourceId: props.agentName,

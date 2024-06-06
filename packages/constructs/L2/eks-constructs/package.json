@@ -1,7 +1,7 @@
 {
-  "name": "@aws-caef/eks-constructs",
+  "name": "@aws-mdaa/eks-constructs",
   "version": "0.41.0",
-  "description": "CAEF Eks Constructs",
+  "description": "MDAA Eks Constructs",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",
@@ -21,13 +21,13 @@
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "devDependencies": {
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/custom-constructs": "0.41.0",
-    "@aws-caef/ec2-constructs": "^0.41.0",
-    "@aws-caef/iam-constructs": "0.41.0",
-    "@aws-caef/kms-constructs": "0.41.0",
-    "@aws-caef/naming": "0.41.0",
-    "@aws-caef/testing": "^0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/custom-constructs": "0.41.0",
+    "@aws-mdaa/ec2-constructs": "^0.41.0",
+    "@aws-mdaa/iam-constructs": "0.41.0",
+    "@aws-mdaa/kms-constructs": "0.41.0",
+    "@aws-mdaa/naming": "0.41.0",
+    "@aws-mdaa/testing": "^0.41.0",
     "@types/jest": "27.4.1",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -45,12 +45,12 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/cloudwatch-constructs": "^0.41.0",
-    "@aws-caef/construct": "^0.41.0",
-    "@aws-caef/custom-constructs": "^0.41.0",
-    "@aws-caef/iam-constructs": "^0.41.0",
-    "@aws-caef/kms-constructs": "^0.41.0",
-    "@aws-caef/naming": "^0.41.0",
+    "@aws-mdaa/cloudwatch-constructs": "^0.41.0",
+    "@aws-mdaa/construct": "^0.41.0",
+    "@aws-mdaa/custom-constructs": "^0.41.0",
+    "@aws-mdaa/iam-constructs": "^0.41.0",
+    "@aws-mdaa/kms-constructs": "^0.41.0",
+    "@aws-mdaa/naming": "^0.41.0",
     "@aws-cdk/lambda-layer-kubectl-v27": "2.0.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
@@ -58,11 +58,11 @@
     "constructs": "10.0.96"
   },
   "peerDependencies": {
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/custom-constructs": "0.41.0",
-    "@aws-caef/iam-constructs": "0.41.0",
-    "@aws-caef/kms-constructs": "0.41.0",
-    "@aws-caef/naming": "0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/custom-constructs": "0.41.0",
+    "@aws-mdaa/iam-constructs": "0.41.0",
+    "@aws-mdaa/kms-constructs": "0.41.0",
+    "@aws-mdaa/naming": "0.41.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
     "constructs": "10.0.96"
@@ -74,15 +74,15 @@
     "versionFormat": "full",
     "targets": {
       "java_disabled": {
-        "package": "software.amazon.awscaef.construct.eks",
+        "package": "software.amazon.awsmdaa.construct.eks",
         "maven": {
-          "groupId": "software.amazon.awscaef.construct",
+          "groupId": "software.amazon.awsmdaa.construct",
           "artifactId": "eks"
         }
       },
       "python": {
-        "distName": "aws-caef.eks-constructs",
-        "module": "aws_caef.eks_constructs"
+        "distName": "aws-mdaa.eks-constructs",
+        "module": "aws_mdaa.eks_constructs"
       }
     }
   }

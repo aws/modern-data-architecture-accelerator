@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from "@aws-caef/construct";
-import { CaefCustomResourceProps, CaefCustomResource } from "@aws-caef/custom-constructs";
+import { MdaaConstructProps } from "@aws-mdaa/construct";
+import { MdaaCustomResourceProps, MdaaCustomResource } from "@aws-mdaa/custom-constructs";
 import { Duration, RemovalPolicy, SecretValue, Stack } from "aws-cdk-lib";
 import { Effect, PolicyStatement, PrincipalBase } from "aws-cdk-lib/aws-iam";
 import { IKey } from "aws-cdk-lib/aws-kms";
@@ -16,7 +16,7 @@ import { Construct } from "constructs";
 /**
  * Properties for creating a Secret Ec2 KeyPair 
  */
-export interface CaefEC2SecretKeyPairProps extends CaefConstructProps {
+export interface MdaaEC2SecretKeyPairProps extends MdaaConstructProps {
     readonly name: string
     readonly kmsKey: IKey
     readonly readPrincipals?: PrincipalBase[]
@@ -26,10 +26,10 @@ export interface CaefEC2SecretKeyPairProps extends CaefConstructProps {
  * Construct for creating an Ec2 KeyPair which stores its key material in a Secret.
  * This can be used instead of the CfnKeyPair, which stores the key material in an SSM parameter.
  */
-export class CaefEC2SecretKeyPair extends Construct {
+export class MdaaEC2SecretKeyPair extends Construct {
     public readonly secret: Secret;
     public readonly name: string
-    constructor( scope: Construct, id: string, props: CaefEC2SecretKeyPairProps ) {
+    constructor( scope: Construct, id: string, props: MdaaEC2SecretKeyPairProps ) {
         super( scope, id )
 
         this.name = props.naming.resourceName( props.name, 255 )
@@ -44,7 +44,7 @@ export class CaefEC2SecretKeyPair extends Construct {
             keypairName: this.name
         }
 
-        const crProps: CaefCustomResourceProps = {
+        const crProps: MdaaCustomResourceProps = {
             resourceType: "SecretKeyPair",
             code: Code.fromAsset( `${ __dirname }/../src/lambda/keypair` ),
             runtime: Runtime.PYTHON_3_12,
@@ -55,7 +55,7 @@ export class CaefEC2SecretKeyPair extends Construct {
             handlerTimeout: Duration.seconds( 120 )
         }
 
-        const cr = new CaefCustomResource( this, 'custom-resource', crProps )
+        const cr = new MdaaCustomResource( this, 'custom-resource', crProps )
 
         const keyPairId = cr.getAttString( 'key_pair_id' )
         const keyMaterial = cr.getAttString( 'key_material' )

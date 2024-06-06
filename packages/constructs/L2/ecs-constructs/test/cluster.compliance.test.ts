@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
-import { CaefECSCluster, CaefECSClusterProps } from '../lib';
+import { MdaaECSCluster, MdaaECSClusterProps } from '../lib';
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const testVpc = Vpc.fromVpcAttributes( testApp.testStack, 'VPC', {
         vpcId: 'test-vpc-id',
@@ -20,18 +20,18 @@ describe( 'CAEF Construct Compliance Tests', () => {
         privateSubnetIds: [ 'subnet1', 'subnet2' ],
     } );
 
-    const testKmsKey = CaefKmsKey.fromKeyArn( testApp.testStack, 'test-key', "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKmsKey = MdaaKmsKey.fromKeyArn( testApp.testStack, 'test-key', "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
     const logGroup = LogGroup.fromLogGroupName( testApp.testStack, "test-loggroup", "test-loggroup" )
 
-    const testContstructProps: CaefECSClusterProps = {
+    const testContstructProps: MdaaECSClusterProps = {
         naming: testApp.naming,
         vpc: testVpc,
         kmsKey: testKmsKey,
         logGroup: logGroup
     }
 
-    new CaefECSCluster( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaECSCluster( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

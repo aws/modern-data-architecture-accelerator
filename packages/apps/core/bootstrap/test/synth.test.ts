@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefBootstrapCDKApp } from "../lib/bootstrap";
+import { MdaaBootstrapCDKApp } from "../lib/bootstrap";
 
 
 test( 'SynthTest', () => {
@@ -13,7 +13,7 @@ test( 'SynthTest', () => {
         domain: "test-domain",
         module_name: "test-module"
     }
-    const app = new CaefBootstrapCDKApp( { context: context } )
+    const app = new MdaaBootstrapCDKApp( { context: context } )
     app.generateStack()
     expect( () => app.synth( {
         force: true,

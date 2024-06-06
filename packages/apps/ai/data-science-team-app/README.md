@@ -6,7 +6,7 @@ The Data Science Team CDK App is used to deploy stacks and resources which suppo
 
 ## Deployed Resources and Compliance Details
 
-![data-science-team](../../../constructs/L3/datascience/datascience-team-l3-construct/docs/datascience-team.png)
+![data-science-team](../../../constructs/L3/ai/datascience-team-l3-construct/docs/datascience-team.png)
 
 **Team Mini Lake and KMS KEY** - An S3-based mini data lake which the team can use as a persistence layer for their activities. Deployed using the [Datalake KMS and Buckets L3 Construct](../../../constructs/L3/datalake/datalake-l3-construct/README.md).
 
@@ -17,9 +17,9 @@ The Data Science Team CDK App is used to deploy stacks and resources which suppo
 * Results bucket encrypted using Team KMS Key (from Team MiniLake)
 * Results bucket access limited to team execution role, team user roles, and data admin roles (via bucket policy)
 * Workgroup access granted to team execution role, and mutable team user roles via IAM managed policy
-  * Immutable team user roles (such as IAM Identity Center SSO Roles) will need to be manually bound to this IAM managed policy (IE via permission set Managed Policy binding), or otherwise have the permissions manually provided outside of CAEF (such as via SSO permission set inline policy)
+  * Immutable team user roles (such as IAM Identity Center SSO Roles) will need to be manually bound to this IAM managed policy (IE via permission set Managed Policy binding), or otherwise have the permissions manually provided outside of MDAA (such as via SSO permission set inline policy)
 
-**SageMaker Studio Domain and User Profiles** - SageMaker Studio Domain configured to use the Team Execution Role, with optional user-specific User Profiles. Deployed using the [Studio Domain L3 Construct](../../../constructs/L3/datascience/sm-studio-domain-l3-construct/README.md).
+**SageMaker Studio Domain and User Profiles** - SageMaker Studio Domain configured to use the Team Execution Role, with optional user-specific User Profiles. Deployed using the [Studio Domain L3 Construct](../../../constructs/L3/ai/sm-studio-domain-l3-construct/README.md).
 
 * Encrypted using Team KMS Key (from Team MiniLake)
 
@@ -54,7 +54,7 @@ team:
 
   # Role which will be used as execution role for team SageMaker resources.
   # Requires an assume role trust for sagemaker.amazonaws.com, with assume role actions
-  # of sts:AssumeRole and sts:SetSourceIdentity. Can be produced using the CAEF roles module with the
+  # of sts:AssumeRole and sts:SetSourceIdentity. Can be produced using the MDAA roles module with the
   # following config:
   # team-execution-role:
   #   trustedPrincipal: service:sagemaker.amazonaws.com

@@ -1,5 +1,5 @@
 {
-  "name": "@aws-caef-testing/test-custom-aspect",
+  "name": "@aws-mdaa-testing/test-custom-aspect",
   "version": "0.0.2",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

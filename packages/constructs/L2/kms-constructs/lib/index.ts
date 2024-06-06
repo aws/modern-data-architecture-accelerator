@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { Duration, RemovalPolicy } from "aws-cdk-lib";
 import { Effect, PolicyDocument, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { IKey, Key, KeyProps, KeySpec, KeyUsage } from "aws-cdk-lib/aws-kms";
@@ -36,7 +36,7 @@ export const DECRYPT_ACTIONS = [
     'kms:Decrypt',
 ];
 
-export interface CaefKmsKeyProps extends CaefConstructProps {
+export interface MdaaKmsKeyProps extends MdaaConstructProps {
 
     /**
      * @param {string[]} keyUserRoles - Array of Role ARNs to provide key usage (Encrypt, Decrypt) access
@@ -113,9 +113,9 @@ export interface CaefKmsKeyProps extends CaefConstructProps {
 }
 
 /**
- * Interface for ICaefKmsKey.
+ * Interface for IMdaaKmsKey.
  */
-export interface ICaefKmsKey extends IKey {
+export interface IMdaaKmsKey extends IKey {
 
 }
 
@@ -124,9 +124,9 @@ export interface ICaefKmsKey extends IKey {
  * Ensures the following:
  * * Key Rotation enabled
  */
-export class CaefKmsKey extends Key implements ICaefKmsKey {
+export class MdaaKmsKey extends Key implements IMdaaKmsKey {
 
-    private static setProps ( props: CaefKmsKeyProps ): KeyProps {
+    private static setProps ( props: MdaaKmsKeyProps ): KeyProps {
         const overrideProps = {
             enableKeyRotation: true,
             enabled: true,
@@ -136,8 +136,8 @@ export class CaefKmsKey extends Key implements ICaefKmsKey {
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefKmsKeyProps ) {
-        super( scope, id, CaefKmsKey.setProps( props ) );
+    constructor( scope: Construct, id: string, props: MdaaKmsKeyProps ) {
+        super( scope, id, MdaaKmsKey.setProps( props ) );
 
         if ( props.keyUserRoleIds && props.keyUserRoleIds.length > 0 ) {
 
@@ -174,7 +174,7 @@ export class CaefKmsKey extends Key implements ICaefKmsKey {
 
 
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "kms",
                 resourceId: props.alias,
@@ -183,7 +183,7 @@ export class CaefKmsKey extends Key implements ICaefKmsKey {
             }, ...props
         },scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "kms",
                 resourceId: props.alias,

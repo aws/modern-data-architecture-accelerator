@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Stack } from "aws-cdk-lib";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { NamedDatabaseGrantProps, DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps } from "../lib";
@@ -12,18 +12,18 @@ import { NamedDatabaseGrantProps, DataOpsProjectL3Construct, DataOpsProjectL3Con
 import path = require( "path" );
 import { Protocol } from "aws-cdk-lib/aws-ec2";
 
-describe( 'CAEF Compliance Stack Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Compliance Stack Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testGlueRoleRef: CaefRoleRef = {
+    const testGlueRoleRef: MdaaRoleRef = {
         id: "test-glue-role-id"
     }
 
-    const testAdminRoleRef: CaefRoleRef = {
+    const testAdminRoleRef: MdaaRoleRef = {
         id: "test-admin-role-id"
     }
 
-    const testEngRoleRef: CaefRoleRef = {
+    const testEngRoleRef: MdaaRoleRef = {
         id: "test-eng-super-role-id"
     }
 
@@ -54,7 +54,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     const constructProps: DataOpsProjectL3ConstructProps = {
         naming: testApp.naming,
 
-        roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming, path.dirname( require.resolve( "@aws-caef/iam-role-helper/package.json" ) ) ),
+        roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming, path.dirname( require.resolve( "@aws-mdaa/iam-role-helper/package.json" ) ) ),
         crossAccountStacks: { 'test-cross-account': crossAccountStack },
         s3OutputKmsKeyArn: "arn:test-partition:kms:test-region:test-account:key/s3-output-key-id",
         glueCatalogKmsKeyArn: "arn:test-partition:kms:test-region:test-account:key/glue-catalog-key-id",

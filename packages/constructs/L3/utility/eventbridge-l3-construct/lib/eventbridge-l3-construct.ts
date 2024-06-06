@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefEventBus, CaefEventBusProps } from '@aws-caef/eventbridge-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaEventBus, MdaaEventBusProps } from '@aws-mdaa/eventbridge-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { ArnPrincipal, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
@@ -23,11 +23,11 @@ export interface NamedEventBusProps {
     readonly [ name: string ]: EventBusProps
 }
 
-export interface EventBridgeL3ConstructProps extends CaefL3ConstructProps {
+export interface EventBridgeL3ConstructProps extends MdaaL3ConstructProps {
     readonly eventBuses?: NamedEventBusProps
 }
 
-export class EventBridgeL3Construct extends CaefL3Construct {
+export class EventBridgeL3Construct extends MdaaL3Construct {
     protected readonly props: EventBridgeL3ConstructProps
 
 
@@ -41,13 +41,13 @@ export class EventBridgeL3Construct extends CaefL3Construct {
 
             const principals = eventBusProps.principals?.map( x => this.createPrincipalFromProps( x ) )
 
-            const eventBusL2Props: CaefEventBusProps = {
+            const eventBusL2Props: MdaaEventBusProps = {
                 eventBusName: eventBusName,
                 naming: this.props.naming,
                 archiveRetention: eventBusProps.archiveRetention,
                 principals: principals
             }
-            new CaefEventBus( this, `${ eventBusName }-bus`, eventBusL2Props )
+            new MdaaEventBus( this, `${ eventBusName }-bus`, eventBusL2Props )
         } )
     }
     private createPrincipalFromProps ( principalProps: EventBusPrincipalProps ): any {

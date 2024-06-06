@@ -7,11 +7,11 @@ import { Construct } from "constructs";
 import * as path from "path";
 import { Layer } from "../layer";
 import { SystemConfig } from "./types";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
-import {CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefRole} from "@aws-caef/iam-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
+import {MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
 import {Effect, ServicePrincipal} from "aws-cdk-lib/aws-iam";
-import {CaefLambdaFunction} from "@aws-caef/lambda-constructs";
+import {MdaaLambdaFunction} from "@aws-mdaa/lambda-constructs";
 import {NagSuppressions} from "cdk-nag";
 import * as iam from "aws-cdk-lib/aws-iam";
 
@@ -19,9 +19,9 @@ const pythonRuntime = lambda.Runtime.PYTHON_3_11;
 const lambdaArchitecture = lambda.Architecture.X86_64;
 process.env.DOCKER_DEFAULT_PLATFORM = lambdaArchitecture.dockerPlatform;
 
-export interface GAIASharedL3ConstructProps extends CaefL3ConstructProps {
+export interface GAIASharedL3ConstructProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
 export class Shared extends Construct {
@@ -110,7 +110,7 @@ export class Shared extends Construct {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    const secretRotationLambdaRole = new CaefRole(this, 'SecretsRotationLambdaRole', {
+    const secretRotationLambdaRole = new MdaaRole(this, 'SecretsRotationLambdaRole', {
       roleName:  'GAIASecretsRotationLambdaRole',
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
       naming: props.naming,
@@ -127,7 +127,7 @@ export class Shared extends Construct {
       resources: ["*"]
     }))
 
-    const secretRotationLambda = new CaefLambdaFunction(this, "SecretRotationLambda", {
+    const secretRotationLambda = new MdaaLambdaFunction(this, "SecretRotationLambda", {
       functionName: "GAIASecretsRotationLambdaHandler",
       naming: props.naming,
       createParams: false,

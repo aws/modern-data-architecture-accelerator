@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from "@aws-caef/construct"
+import { MdaaConstructProps } from "@aws-mdaa/construct"
 import { IResolvable } from "aws-cdk-lib";
 import { CfnJob, CfnJobProps } from "aws-cdk-lib/aws-glue"
 import { NagSuppressions } from "cdk-nag"
@@ -13,7 +13,7 @@ import { Construct } from "constructs"
 /**
  * Interface representing a compliant Glue Crawler Config
  */
-export interface CaefCfnJobProps extends CaefConstructProps {
+export interface MdaaCfnJobProps extends MdaaConstructProps {
     /**
      * The code that executes a job.
      *
@@ -152,17 +152,17 @@ export interface CaefCfnJobProps extends CaefConstructProps {
  * Enforces the following:
  * * Security Configuration is set
  */
-export class CaefCfnJob extends CfnJob {
+export class MdaaCfnJob extends CfnJob {
 
-    private static setProps ( props: CaefCfnJobProps ): CfnJobProps {
+    private static setProps ( props: MdaaCfnJobProps ): CfnJobProps {
         const overrideProps = {
             name: props.naming.resourceName( props.name )
         }
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
-    constructor( scope: Construct, id: string, props: CaefCfnJobProps ) {
-        super( scope, id, CaefCfnJob.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaCfnJobProps ) {
+        super( scope, id, MdaaCfnJob.setProps( props ) )
         NagSuppressions.addResourceSuppressions(
             this,
             [

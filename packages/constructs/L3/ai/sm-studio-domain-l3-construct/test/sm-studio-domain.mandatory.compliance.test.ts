@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { SagemakerStudioDomainL3Construct, SagemakerStudioDomainL3ConstructProps } from '../lib/sm-studio-domain-l3-construct';
 
 
 
 describe( 'Studio Domain Mandatory Props', () => {
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const stack = testApp.testStack
 
     const constructProps: SagemakerStudioDomainL3ConstructProps = {
@@ -25,7 +25,7 @@ describe( 'Studio Domain Mandatory Props', () => {
         },
         naming: testApp.naming,
 
-        roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+        roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     }
 
     new SagemakerStudioDomainL3Construct( stack, "domain", constructProps );

@@ -3,29 +3,29 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match } from "aws-cdk-lib/assertions";
 import { Template } from "aws-cdk-lib/assertions";
 import { AthenaWorkgroupL3Construct, AthenaWorkgroupL3ConstructProps } from '../lib/athena-workgroup-l3-construct';
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const stack = testApp.testStack
 
-    const dataAdminRoleRef: CaefRoleRef = {
+    const dataAdminRoleRef: MdaaRoleRef = {
         id: "test-data-admin-role",
         arn: "arn:test-partition:iam::test-account:role/S3Access",
     }
 
-    const resultsBucketOnlyRoleRef: CaefRoleRef = {
+    const resultsBucketOnlyRoleRef: MdaaRoleRef = {
         id: "test-read-write-role-id",
         arn: "arn:test-partition:iam::test-account:role/S3Access",
         immutable: true
     }
 
-    const athenaUserRoleRef: CaefRoleRef = {
+    const athenaUserRoleRef: MdaaRoleRef = {
         id: "test-results-bucket-only-role",
         arn: "arn:test-partition:iam::test-account:role/S3Access"
     }
@@ -34,7 +34,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         dataAdminRoles: [ dataAdminRoleRef ],
         athenaUserRoles: [ athenaUserRoleRef, resultsBucketOnlyRoleRef ],
 
-        roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+        roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
         naming: testApp.naming,
     };
 

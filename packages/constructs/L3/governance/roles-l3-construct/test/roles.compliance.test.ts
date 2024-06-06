@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { Match } from "aws-cdk-lib/assertions";
 import { PolicyDocument } from "aws-cdk-lib/aws-iam";
 import { FederationProps, GenerateManagedPolicyWithNameProps, GenerateRoleWithNameProps, RolesL3Construct, RolesL3ConstructProps,BasePersona } from "../lib";
 
 
-describe( 'CAEF Compliance Stack Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Compliance Stack Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const policyDocument = {
         Statement: [
@@ -127,7 +127,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         generatePolicies: generatePolicies,
         naming: testApp.naming,
 
-        roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming )
+        roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming )
     }
 
     new RolesL3Construct( testApp.testStack, 'test-stack', constructProps )
@@ -143,7 +143,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
             "Name": "test-org-test-env-test-domain-test-module-federation2"
         } )
     } )
-    test( 'Generate CAEF Managed Usage Policy', () => {
+    test( 'Generate MDAA Managed Usage Policy', () => {
         template.hasResourceProperties( "AWS::IAM::ManagedPolicy", Match.objectLike( {
             "ManagedPolicyName": "test-org-test-env-test-domain-test-module-data-scientis--aa316df",
             "Roles": [
@@ -282,7 +282,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
             ]
         } ) )
     } )
-    test( 'Role Based on CAEF Usage Profile', () => {
+    test( 'Role Based on MDAA Usage Profile', () => {
         template.hasResourceProperties( "AWS::IAM::ManagedPolicy", Match.objectLike( {
             "ManagedPolicyName": "test-org-test-env-test-domain-test-module-data-admin-ba-69e17cd8",
             "Roles": [
@@ -293,7 +293,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
                 
         } ) )
     } )
-    test( 'Role Based on CAEF Usage Profile, Additional Policies and Suppressions ', () => {
+    test( 'Role Based on MDAA Usage Profile, Additional Policies and Suppressions ', () => {
         template.hasResourceProperties( "AWS::IAM::Role", Match.objectLike( {
             "ManagedPolicyArns": [
                 "arn:test-partition:iam::aws:policy/test-aws-managed-policy"

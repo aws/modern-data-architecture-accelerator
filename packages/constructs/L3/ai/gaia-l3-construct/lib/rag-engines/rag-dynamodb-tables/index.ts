@@ -1,19 +1,19 @@
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
-import {CaefDDBTable} from "@aws-caef/ddb-constructs";
-import {CaefL3ConstructProps} from "@aws-caef/l3-construct";
+import {MdaaDDBTable} from "@aws-mdaa/ddb-constructs";
+import {MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
 import {Shared} from "../../shared/index";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
 
 export interface RagDynamoDBTablesProps
-  extends CaefL3ConstructProps {
+  extends MdaaL3ConstructProps {
   readonly shared: Shared;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 export class RagDynamoDBTables extends Construct {
-  public readonly workspacesTable: CaefDDBTable;
-  public readonly documentsTable: CaefDDBTable;
+  public readonly workspacesTable: MdaaDDBTable;
+  public readonly documentsTable: MdaaDDBTable;
   public readonly workspacesByObjectTypeIndexName: string =
     "by_object_type_idx";
   public readonly documentsByCompountKeyIndexName: string =
@@ -22,7 +22,7 @@ export class RagDynamoDBTables extends Construct {
   constructor(scope: Construct, id: string, props: RagDynamoDBTablesProps) {
     super(scope, id);
 
-    const workspacesTable = new CaefDDBTable(this, "WorkspacesTable", {
+    const workspacesTable = new MdaaDDBTable(this, "WorkspacesTable", {
       partitionKey: {
         name: "workspace_id",
         type: dynamodb.AttributeType.STRING,
@@ -51,7 +51,7 @@ export class RagDynamoDBTables extends Construct {
       },
     });
 
-    const documentsTable = new CaefDDBTable(this, "DocumentsTable", {
+    const documentsTable = new MdaaDDBTable(this, "DocumentsTable", {
       partitionKey: {
         name: "workspace_id",
         type: dynamodb.AttributeType.STRING,

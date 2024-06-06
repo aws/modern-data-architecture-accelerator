@@ -1,7 +1,7 @@
 {
-    "name": "@aws-caef/caef",
+    "name": "@aws-mdaa/mdaa",
     "private": true,
-    "bin": "./packages/cli/bin/caef",
+    "bin": "./packages/cli/bin/mdaa",
     "devDependencies": {
         "@types/jest": "29.5.0",
         "jsii": "5.4.0",

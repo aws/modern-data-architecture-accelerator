@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefKmsKey, ENCRYPT_ACTIONS } from '@aws-caef/kms-constructs';
-import { CaefBucket } from '@aws-caef/s3-constructs';
-import { AuditHelper } from '@aws-caef/s3-audit-helper';
-import { RestrictObjectPrefixToRoles } from '@aws-caef/s3-bucketpolicy-helper';
-import { InventoryHelper } from '@aws-caef/s3-inventory-helper';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaKmsKey, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
+import { AuditHelper } from '@aws-mdaa/s3-audit-helper';
+import { RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import { InventoryHelper } from '@aws-mdaa/s3-inventory-helper';
 import { Database } from '@aws-cdk/aws-glue-alpha';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 
 
 export interface BucketInventoryProps {
@@ -27,7 +27,7 @@ export interface BucketInventoryProps {
     readonly inventoryName: string
 }
 
-export interface AuditL3ConstructProps extends CaefL3ConstructProps {
+export interface AuditL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * List of source accounts from which Audit data is expected. 
      */
@@ -39,7 +39,7 @@ export interface AuditL3ConstructProps extends CaefL3ConstructProps {
     /**
      * List of roles which will be provided readonly access to the audit data
      */
-    readonly readRoleRefs: CaefRoleRef[];
+    readonly readRoleRefs: MdaaRoleRef[];
     /**
      * List of Bucket Inventory definitions which are expected to be written to the bucket. 
      * Used to create the Inventory Glue table with the proper partitions.
@@ -51,7 +51,7 @@ export interface AuditL3ConstructProps extends CaefL3ConstructProps {
     readonly inventoryPrefix: string
 }
 
-export class AuditL3Construct extends CaefL3Construct {
+export class AuditL3Construct extends MdaaL3Construct {
     protected readonly props: AuditL3ConstructProps
 
 
@@ -69,7 +69,7 @@ export class AuditL3Construct extends CaefL3Construct {
         this.createAuditResources( auditKmsKey )
     }
 
-    private createAuditKmsKey (): CaefKmsKey {
+    private createAuditKmsKey (): MdaaKmsKey {
         const serviceEncryptPolicy = new PolicyStatement( {
             effect: Effect.ALLOW,
             // Use of * mirrors what is done in the CDK methods for adding policy helpers.
@@ -82,7 +82,7 @@ export class AuditL3Construct extends CaefL3Construct {
         serviceEncryptPolicy.addServicePrincipal( "s3.amazonaws.com" )
 
         //Create a KMS key specific to audit
-        const auditKmsKey = new CaefKmsKey( this, "kms-cmk", {
+        const auditKmsKey = new MdaaKmsKey( this, "kms-cmk", {
             naming: this.props.naming,
             keyUserRoleIds: this.readRoleIds
         } )
@@ -90,9 +90,9 @@ export class AuditL3Construct extends CaefL3Construct {
         return auditKmsKey
     }
 
-    private createAuditResources ( auditKmsKey: CaefKmsKey ) {
+    private createAuditResources ( auditKmsKey: MdaaKmsKey ) {
 
-        let auditBucket = new CaefBucket( this, "bucket", {
+        let auditBucket = new MdaaBucket( this, "bucket", {
             encryptionKey: auditKmsKey,
             naming: this.props.naming,
             enforceExclusiveKmsKeys: false // Cloudtrail cannot currently create trails if the DENY statements resulting from enforceExclusiveKmsKeys are present in the bucket policy
@@ -146,9 +146,9 @@ export class AuditL3Construct extends CaefL3Construct {
             [
                 { id: 'AwsSolutions-S1', reason: '1. Audit bucket is target of cloudtrail audit logs. 2. Server access logs do not support KMS on targets.' },
                 { id: 'NIST.800.53.R5-S3BucketLoggingEnabled', reason: '1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.' },
-                { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF Data Lake does not use bucket replication.' },
+                { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
                 { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: '1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.' },
-                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF Data Lake does not use bucket replication.' }
+                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
             ],
             true
         );

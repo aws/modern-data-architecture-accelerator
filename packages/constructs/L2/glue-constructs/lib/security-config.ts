@@ -3,22 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from "@aws-caef/construct"
-import { ICaefKmsKey } from '@aws-caef/kms-constructs'
+import { MdaaConstructProps } from "@aws-mdaa/construct"
+import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs'
 import { SecurityConfiguration, SecurityConfigurationProps, CloudWatchEncryptionMode, JobBookmarksEncryptionMode, S3EncryptionMode } from "@aws-cdk/aws-glue-alpha"
 import { Construct } from "constructs"
 
 /**
  * Interface representing a compliant Glue Security Config
  */
-export interface CaefSecurityConfigProps extends CaefConstructProps {
+export interface MdaaSecurityConfigProps extends MdaaConstructProps {
 
     /** The CloudWatch KMS Key */
-    readonly cloudWatchKmsKey: ICaefKmsKey,
+    readonly cloudWatchKmsKey: IMdaaKmsKey,
     /** The Job Bookmark KMS Key */
-    readonly jobBookMarkKmsKey: ICaefKmsKey,
+    readonly jobBookMarkKmsKey: IMdaaKmsKey,
     /** The S3 Output KMS Key */
-    readonly s3OutputKmsKey: ICaefKmsKey
+    readonly s3OutputKmsKey: IMdaaKmsKey
     /**
      * The name of the security configuration.
      */
@@ -33,8 +33,8 @@ export interface CaefSecurityConfigProps extends CaefConstructProps {
  * * Job Bookbark Encryption enabled
  * * S3 Output Encryption enabled
  */
-export class CaefSecurityConfig extends SecurityConfiguration {
-    private static setProps ( props: CaefSecurityConfigProps ): SecurityConfigurationProps {
+export class MdaaSecurityConfig extends SecurityConfiguration {
+    private static setProps ( props: MdaaSecurityConfigProps ): SecurityConfigurationProps {
 
         const overrideProps = {
             securityConfigurationName: props.naming.resourceName( props.securityConfigurationName ),
@@ -54,8 +54,8 @@ export class CaefSecurityConfig extends SecurityConfiguration {
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
-    constructor( scope: Construct, id: string, props: CaefSecurityConfigProps ) {
-        super( scope, id, CaefSecurityConfig.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaSecurityConfigProps ) {
+        super( scope, id, MdaaSecurityConfig.setProps( props ) )
 
     }
 

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
-import { CaefEC2Instance, CaefEC2InstanceProps, CaefEC2SecretKeyPair, CaefEC2SecretKeyPairProps } from "@aws-caef/ec2-constructs";
-import { ICaefResourceNaming } from "@aws-caef/naming";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
+import { MdaaEC2Instance, MdaaEC2InstanceProps, MdaaEC2SecretKeyPair, MdaaEC2SecretKeyPairProps } from "@aws-mdaa/ec2-constructs";
+import { IMdaaResourceNaming } from "@aws-mdaa/naming";
 import { KubectlV27Layer } from "@aws-cdk/lambda-layer-kubectl-v27";
 import { Fn, Size, Stack } from "aws-cdk-lib";
 import { ISecurityGroup, ISubnet, IVpc, Port, InstanceType, InstanceClass, InstanceSize, MachineImage, Subnet, UserData, IInstance } from "aws-cdk-lib/aws-ec2";
@@ -18,8 +18,8 @@ import { NagSuppressions } from "cdk-nag";
 import * as cdk8s from 'cdk8s';
 import { Construct } from "constructs";
 import * as k8s from '../imports/k8s';
-import { CaefKubectlProvider } from "./caef-kubectl-provider";
-import { CaefManagedPolicy, CaefRole, CaefRoleProps } from "@aws-caef/iam-constructs";
+import { MdaaKubectlProvider } from "./mdaa-kubectl-provider";
+import { MdaaManagedPolicy, MdaaRole, MdaaRoleProps } from "@aws-mdaa/iam-constructs";
 
 export interface MgmtInstanceProps {
     readonly instanceType?: InstanceType
@@ -33,7 +33,7 @@ export interface MgmtInstanceProps {
 /**
  * Properties for creating a Compliance EKS cluster
  */
-export interface CaefEKSClusterProps extends CaefConstructProps {
+export interface MdaaEKSClusterProps extends MdaaConstructProps {
     /**
      * If defined, an EC2 instance will be created with connectivity, permissions, and tooling to manage the EKS cluster
      */
@@ -232,11 +232,11 @@ export interface CaefEKSClusterProps extends CaefConstructProps {
 /**
  * A construct for creating a compliant EKS cluster resource.
  */
-export class CaefEKSCluster extends Cluster {
+export class MdaaEKSCluster extends Cluster {
 
     private static KUBECTL_URL = "https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.9/2024-01-04/bin/linux/amd64/kubectl"
 
-    private static setProps ( scope: Construct, props: CaefEKSClusterProps ): ClusterProps {
+    private static setProps ( scope: Construct, props: MdaaEKSClusterProps ): ClusterProps {
 
         const overrideProps = {
             clusterName: props.naming.resourceName( props.clusterName, 255 ),
@@ -264,18 +264,18 @@ export class CaefEKSCluster extends Cluster {
 
     public readonly iamOidcIdentityProvider: OpenIdConnectProvider;
     public readonly efsStorageClassName: string
-    private readonly props: CaefEKSClusterProps
-    public readonly caefKubeCtlProvider: IKubectlProvider
+    private readonly props: MdaaEKSClusterProps
+    public readonly mdaaKubeCtlProvider: IKubectlProvider
     public readonly clusterFargateProfileArn: string
     private podExecutionRolePolicy: ManagedPolicy;
     public readonly mgmtInstance?: IInstance
 
-    constructor( scope: Construct, id: string, props: CaefEKSClusterProps ) {
-        super( scope, id, CaefEKSCluster.setProps( scope, props ) )
+    constructor( scope: Construct, id: string, props: MdaaEKSClusterProps ) {
+        super( scope, id, MdaaEKSCluster.setProps( scope, props ) )
 
         this.props = props
         this.clusterFargateProfileArn = `arn:${ Stack.of( scope ).partition }:eks:${ Stack.of( scope ).region }:${ Stack.of( scope ).account }:fargateprofile/${ props.naming.resourceName( props.clusterName, 255 ) }/*`
-        this.caefKubeCtlProvider = this.defineCaefKubectlProvider()
+        this.mdaaKubeCtlProvider = this.defineMdaaKubectlProvider()
 
         props.adminRoles.map( adminRole => {
             this.awsAuth.addMastersRole( adminRole )
@@ -412,7 +412,7 @@ export class CaefEKSCluster extends Cluster {
             ], true );
         }
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "cluster",
                 resourceId: props.clusterName,
@@ -421,7 +421,7 @@ export class CaefEKSCluster extends Cluster {
             }, ...props
         } ,scope)
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "cluster",
                 resourceId: props.clusterName,
@@ -466,7 +466,7 @@ export class CaefEKSCluster extends Cluster {
             resources: [ "*" ]
         } )
 
-        const mgmtPolicy = new CaefManagedPolicy(this,'cluster-mgmt-policy',{
+        const mgmtPolicy = new MdaaManagedPolicy(this,'cluster-mgmt-policy',{
             naming: props.naming,
             managedPolicyName: "cluster-mgmt",
             statements: [ eksStatment, ssmStatement, ...props.mgmtInstance?.mgmtPolicyStatements || [] ]
@@ -481,33 +481,33 @@ export class CaefEKSCluster extends Cluster {
 
     private createMgmtInstance (mgmtPolicy:ManagedPolicy): IInstance | undefined {
         if(this.props.mgmtInstance){
-            const instanceRoleProps: CaefRoleProps = {
+            const instanceRoleProps: MdaaRoleProps = {
                 roleName: "mgmt-instance",
                 assumedBy: new ServicePrincipal("ec2.amazonaws.com"),
                 naming: this.props.naming,
                 managedPolicies: [mgmtPolicy]
             }
-            const instanceRole = new CaefRole( this, "mgmt-instance-role", instanceRoleProps )
+            const instanceRole = new MdaaRole( this, "mgmt-instance-role", instanceRoleProps )
             this.awsAuth.addMastersRole( instanceRole )
-            const createKeyPairProps: CaefEC2SecretKeyPairProps = {
+            const createKeyPairProps: MdaaEC2SecretKeyPairProps = {
                 name: "mgmt-instance",
                 kmsKey: this.props.kmsKey,
                 naming: this.props.naming,
                 readPrincipals: this.props.adminRoles.map( x => new ArnPrincipal( x.roleArn) ) 
             }
 
-            const keyPair = this.props.mgmtInstance?.keyPairName ? undefined :  new CaefEC2SecretKeyPair( this, `key-pair-mgmt-instance`, createKeyPairProps )
+            const keyPair = this.props.mgmtInstance?.keyPairName ? undefined :  new MdaaEC2SecretKeyPair( this, `key-pair-mgmt-instance`, createKeyPairProps )
             const keyPairName = this.props.mgmtInstance?.keyPairName ?? keyPair?.name
 
             const mgmtUserData: UserData = UserData.forLinux()
             mgmtUserData.addCommands(
-                `mkdir -p /usr/local/bin && cd /usr/local/bin && curl -O ${ CaefEKSCluster.KUBECTL_URL} && chmod +x /usr/local/bin/kubectl && cd ~`,
+                `mkdir -p /usr/local/bin && cd /usr/local/bin && curl -O ${ MdaaEKSCluster.KUBECTL_URL} && chmod +x /usr/local/bin/kubectl && cd ~`,
                 `aws eks update-kubeconfig --region ${ Stack.of( this ).region} --name ${this.clusterName}`,
                 `cp /root/.kube/config /etc/kubeconfig && chmod o+r /etc/kubeconfig`,
                 `echo 'export KUBECONFIG=/etc/kubeconfig' >> /etc/profile.d/kubectl.sh`,
                 ...this.props.mgmtInstance.userDataCommands ?? []
                 )
-            const mgmtInstanceProps: CaefEC2InstanceProps = {
+            const mgmtInstanceProps: MdaaEC2InstanceProps = {
                 instanceName: "mgmt",
                 instanceType: this.props.mgmtInstance.instanceType ?? InstanceType.of(InstanceClass.T3,InstanceSize.MICRO),
                 machineImage: MachineImage.latestAmazonLinux2023(),
@@ -529,7 +529,7 @@ export class CaefEKSCluster extends Cluster {
                 keyName: keyPairName,
                 userData: mgmtUserData
             }
-            const instance  = new CaefEC2Instance(this,"mgmt-instance",mgmtInstanceProps)
+            const instance  = new MdaaEC2Instance(this,"mgmt-instance",mgmtInstanceProps)
             if ( keyPair )
                 instance.node.addDependency( keyPair )
             return instance
@@ -537,8 +537,8 @@ export class CaefEKSCluster extends Cluster {
         return undefined
     }
 
-    private defineCaefKubectlProvider () {
-        const uid = '@aws-caef/CaefKubectlProvider';
+    private defineMdaaKubectlProvider () {
+        const uid = '@aws-mdaa/MdaaKubectlProvider';
 
         // since we can't have the provider connect to multiple networks, and we
         // wanted to avoid resource tear down, we decided for now that we will only
@@ -547,10 +547,10 @@ export class CaefEKSCluster extends Cluster {
             throw new Error( 'Only a single EKS cluster can be defined within a CloudFormation stack' );
         }
 
-        return new CaefKubectlProvider( this.stack, uid, { cluster: this } );
+        return new MdaaKubectlProvider( this.stack, uid, { cluster: this } );
     }
 
-    private createFargatePodExecutionRole ( profileName: string, scope?: Construct, naming?: ICaefResourceNaming ): IRole {
+    private createFargatePodExecutionRole ( profileName: string, scope?: Construct, naming?: IMdaaResourceNaming ): IRole {
 
         const podExecutionRole = new Role( scope ?? this, `fargate-pod-ex-${ profileName }`, {
             roleName: ( naming ?? this.props.naming ).resourceName( profileName, 64 ),

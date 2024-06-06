@@ -68,7 +68,7 @@ dataSources:
         secretArn: "{{resolve:ssm:/sample/sampleLOB/datawarehouse/secret/serviceuserquicksightTestsample}}"
         # Alternatively, the secret values can be referenced using dynamic references in the config.
         # Note that this won't work with secret rotation enabled, as the credential values are only
-        # read from the secret during data source deployment by CAEF.
+        # read from the secret during data source deployment by MDAA.
         #credentialPair:
           #password: "{{resolve:secretsmanager:clusterSecretE349B730-5LYvtBzNWvVx:SecretString:password}}"
           #username: "{{resolve:secretsmanager:clusterSecretE349B730-5LYvtBzNWvVx:SecretString:username}}"

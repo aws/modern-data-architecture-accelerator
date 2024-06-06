@@ -5,12 +5,12 @@
 
 import { AssetDeploymentProps, LifeCycleConfigHelper, LifecycleScriptProps } from "../lib"
 import { Bucket } from "aws-cdk-lib/aws-s3"
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Role } from "aws-cdk-lib/aws-iam";
 
-describe( 'CAEF Shared Tests', () => {
+describe( 'MDAA Shared Tests', () => {
     test( 'Content', () => {
-        const testApp = new CaefTestApp()
+        const testApp = new MdaaTestApp()
         const stack = testApp.testStack
         const assetDeployment: AssetDeploymentProps = {
             scope: stack,

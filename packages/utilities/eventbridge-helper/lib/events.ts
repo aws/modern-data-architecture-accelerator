@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ICaefResourceNaming } from "@aws-caef/naming";
-import { CaefSqsDeadLetterQueue } from "@aws-caef/sqs-constructs";
+import { IMdaaResourceNaming } from "@aws-mdaa/naming";
+import { MdaaSqsDeadLetterQueue } from "@aws-mdaa/sqs-constructs";
 import { EventBus, EventPattern, IRuleTarget, Rule, Schedule } from "aws-cdk-lib/aws-events";
 import { Effect, IRole, ManagedPolicy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { IKey } from "aws-cdk-lib/aws-kms";
@@ -105,7 +105,7 @@ export interface EventRoleAndPolicy { readonly role: IRole, readonly policy: Man
 
 export class EventBridgeHelper {
 
-    public static createGlueMonitoringEventRule ( scope: Construct, naming: ICaefResourceNaming, ruleName: string, description: string, detail: { [ key: string ]: any } ): Rule {
+    public static createGlueMonitoringEventRule ( scope: Construct, naming: IMdaaResourceNaming, ruleName: string, description: string, detail: { [ key: string ]: any } ): Rule {
         const eventPattern = {
             source: [ "aws.glue" ],
             detail: detail
@@ -161,7 +161,7 @@ export class EventBridgeHelper {
 
     public static createEventBridgeRuleForTarget (
         scope: Construct,
-        naming: ICaefResourceNaming,
+        naming: IMdaaResourceNaming,
         target: IRuleTarget,
         eventRuleName: string,
         eventRuleProps: EventBridgeRuleProps ) {
@@ -173,7 +173,7 @@ export class EventBridgeHelper {
 
 
 
-    public static createEventRule ( scope: Construct, naming: ICaefResourceNaming, ruleName: string, ruleProps: EventBridgeRuleProps ): Rule {
+    public static createEventRule ( scope: Construct, naming: IMdaaResourceNaming, ruleName: string, ruleProps: EventBridgeRuleProps ): Rule {
 
         const eventRule = new Rule( scope, `event-rule-${ ruleName }`, {
             enabled: true,
@@ -186,9 +186,9 @@ export class EventBridgeHelper {
         return eventRule
     }
 
-    public static createDlq ( scope: Construct, naming: ICaefResourceNaming, name: string, kmsKey: IKey, role?: IRole ): IQueue {
+    public static createDlq ( scope: Construct, naming: IMdaaResourceNaming, name: string, kmsKey: IKey, role?: IRole ): IQueue {
 
-        const dlq = new CaefSqsDeadLetterQueue( scope, `dlq-${ name }`, {
+        const dlq = new MdaaSqsDeadLetterQueue( scope, `dlq-${ name }`, {
             queueName: `${ name }-dlq`,
             encryptionMasterKey: kmsKey,
             naming: naming

@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefSecurityConfig, CaefSecurityConfigProps } from "../lib";
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaSecurityConfig, MdaaSecurityConfigProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
-    const testContstructProps: CaefSecurityConfigProps = {
+    const testContstructProps: MdaaSecurityConfigProps = {
         naming: testApp.naming,
         securityConfigurationName: "test",
         cloudWatchKmsKey: testKey,
@@ -23,7 +23,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         createParams: false
     }
 
-    new CaefSecurityConfig( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaSecurityConfig( testApp.testStack, "test-construct", testContstructProps )
 
 
     testApp.checkCdkNagCompliance( testApp.testStack )

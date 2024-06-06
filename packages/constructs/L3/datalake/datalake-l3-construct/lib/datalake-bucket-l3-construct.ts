@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefKmsKey, ENCRYPT_ACTIONS, ICaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefLambdaFunction, CaefLambdaRole } from '@aws-caef/lambda-constructs';
-import { ICaefResourceNaming } from '@aws-caef/naming';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-caef/s3-bucketpolicy-helper';
-import { CaefBucket } from '@aws-caef/s3-constructs';
-import { BucketInventory, InventoryHelper } from "@aws-caef/s3-inventory-helper";
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaKmsKey, ENCRYPT_ACTIONS, IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
+import { IMdaaResourceNaming } from '@aws-mdaa/naming';
+import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
+import { BucketInventory, InventoryHelper } from "@aws-mdaa/s3-inventory-helper";
 import { Database } from '@aws-cdk/aws-glue-alpha';
 import { CustomResource, Duration } from 'aws-cdk-lib';
 import { Effect, IRole, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -101,15 +101,15 @@ export interface AccessPolicyProps {
     /**
      * List of role ids which will be granted readonly access to the S3 prefix
      */
-    readonly readRoleRefs?: CaefRoleRef[],
+    readonly readRoleRefs?: MdaaRoleRef[],
     /**
      * List of role ids which will be granted read/write access to the S3 prefix
      */
-    readonly readWriteRoleRefs?: CaefRoleRef[],
+    readonly readWriteRoleRefs?: MdaaRoleRef[],
     /**
      * List of role ids which will be granted superuser access to the S3 prefix
      */
-    readonly readWriteSuperRoleRefs?: CaefRoleRef[],
+    readonly readWriteSuperRoleRefs?: MdaaRoleRef[],
 }
 
 interface AccessPolicyResolved {
@@ -148,14 +148,14 @@ export interface LifecycleConfigurationRuleProps {
     readonly noncurrentVersionsToRetain?: number
 }
 
-export interface DataLakeL3ConstructProps extends CaefL3ConstructProps {
+export interface DataLakeL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * List of bucket defintions for the data lake
      */
     readonly buckets: BucketDefinition[];
 }
 
-export class S3DatalakeBucketL3Construct extends CaefL3Construct {
+export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     protected readonly props: DataLakeL3ConstructProps
 
 
@@ -171,7 +171,7 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
             databaseName: props.naming.resourceName( "util" ).replace( /-/gi, "_" )
         } )
 
-        const dataLakeFolderFunctionRole = new CaefLambdaRole( this.scope, 'folder-function-role', {
+        const dataLakeFolderFunctionRole = new MdaaLambdaRole( this.scope, 'folder-function-role', {
             description: 'CR Role',
             roleName: "folder-cr",
             naming: this.props.naming,
@@ -180,7 +180,7 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
             createOutputs: false
         } )
 
-        const lakeFormationRole = new CaefRole( this.scope, "lake-formation-role", {
+        const lakeFormationRole = new MdaaRole( this.scope, "lake-formation-role", {
             naming: this.props.naming,
             assumedBy: new ServicePrincipal( "lakeformation.amazonaws.com" ),
             roleName: "lake-formation",
@@ -268,15 +268,15 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
     }
 
     private createBucket ( bucketDefinition: BucketDefinition,
-        encryptionKey: ICaefKmsKey,
-        naming: ICaefResourceNaming,
+        encryptionKey: IMdaaKmsKey,
+        naming: IMdaaResourceNaming,
         glueUtilDatabase: Database,
         dataLakeFolderFunctionRole: IRole,
         dataLakeFolderProvider: Provider,
-        lakeFormationRole: CaefRole
+        lakeFormationRole: MdaaRole
     ): IBucket {
 
-        const bucket = new CaefBucket( this.scope, `bucket-${ bucketDefinition.bucketZone }`, {
+        const bucket = new MdaaBucket( this.scope, `bucket-${ bucketDefinition.bucketZone }`, {
             encryptionKey: encryptionKey,
             bucketName: bucketDefinition.bucketZone,
             naming: naming
@@ -285,8 +285,8 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
         NagSuppressions.addResourceSuppressions(
             bucket,
             [
-                { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF Data Lake does not use bucket replication.' },
-                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF Data Lake does not use bucket replication.' }
+                { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
+                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
             ],
             true
         );
@@ -390,7 +390,7 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
         return []
     }
 
-    private addBucketRestrictPolicy ( bucketDefinition: BucketDefinition, bucket: CaefBucket, bucketAllowIds: string[], dataLakeFolderFunctionRole: IRole ) {
+    private addBucketRestrictPolicy ( bucketDefinition: BucketDefinition, bucket: MdaaBucket, bucketAllowIds: string[], dataLakeFolderFunctionRole: IRole ) {
         const bucketRestrictPolicy = new RestrictBucketToRoles( {
             s3Bucket: bucket,
             // De-duplicate our list of Arns.
@@ -446,7 +446,7 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
         lakeFormationRole: IRole ) {
 
         new CfnResource( this.scope, `lf-resource-${ bucketZone }-${ locationName }`, {
-            resourceArn: `${ bucket.bucketArn }/${ CaefBucket.formatS3Prefix( locationProps.prefix ) }`,
+            resourceArn: `${ bucket.bucketArn }/${ MdaaBucket.formatS3Prefix( locationProps.prefix ) }`,
             useServiceLinkedRole: false,
             roleArn: lakeFormationRole.roleArn
         } )
@@ -482,7 +482,7 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
             destinationPrefix = "inventory/"
             bucketInventories.push( { bucketName: destinationBucketName, inventoryName: invName } )
         }
-        const destinationBucket: IBucket = CaefBucket.fromBucketName(
+        const destinationBucket: IBucket = MdaaBucket.fromBucketName(
             this,
             `InvDestinationBucket${ bucketZone }${ invName }`,
             destinationBucketName
@@ -495,13 +495,13 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
             inventoryDefinition.destinationAccount )
     }
 
-    private getDataLakeFolderCrProvider ( folderCrFunctionRole: CaefLambdaRole ): Provider {
+    private getDataLakeFolderCrProvider ( folderCrFunctionRole: MdaaLambdaRole ): Provider {
         if ( this.dataLakeFolderProvider ) {
             return this.dataLakeFolderProvider
         }
         const sourceDir = `${ __dirname }/../src/python/datalake_folder`
         // This Lambda is used as a Custom Resource in order to create the Data Lake Folder
-        const datalakeFolderLambda = new CaefLambdaFunction( this.scope, "folder-cr-function", {
+        const datalakeFolderLambda = new MdaaLambdaFunction( this.scope, "folder-cr-function", {
             functionName: "folder-cr",
             code: Code.fromAsset( sourceDir ),
             handler: "datalake_folder.lambda_handler",
@@ -526,7 +526,7 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
         );
 
         const folderCrProviderFunctionName = this.props.naming.resourceName( "folder-cr-prov", 64 )
-        const folderCrProviderRole = new CaefLambdaRole( this.scope, 'folder-provider-role', {
+        const folderCrProviderRole = new MdaaLambdaRole( this.scope, 'folder-provider-role', {
             description: 'CR Role',
             roleName: 'folder-provider-role',
             naming: this.props.naming,
@@ -566,7 +566,7 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
         return datalakeFolderProvider
     }
 
-    private createDataLakeKmsKey ( keyUserRoles: string[] ): CaefKmsKey {
+    private createDataLakeKmsKey ( keyUserRoles: string[] ): MdaaKmsKey {
         //This statement allows S3 to write inventory data to the encrypted data lake buckets
         const S3ServiceEncryptPolicy = new PolicyStatement( {
             effect: Effect.ALLOW,
@@ -576,7 +576,7 @@ export class S3DatalakeBucketL3Construct extends CaefL3Construct {
         } )
         S3ServiceEncryptPolicy.addServicePrincipal( "s3.amazonaws.com" )
 
-        const kmsKey = new CaefKmsKey( this.scope, "cmk", {
+        const kmsKey = new MdaaKmsKey( this.scope, "cmk", {
             naming: this.props.naming,
             keyUserRoleIds: keyUserRoles
         } )

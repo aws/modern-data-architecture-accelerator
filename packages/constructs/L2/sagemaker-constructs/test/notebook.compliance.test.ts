@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefNoteBook, CaefNoteBookProps } from "../lib";
+import { MdaaNoteBook, MdaaNoteBookProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
 
-    const testContstructProps: CaefNoteBookProps = {
+    const testContstructProps: MdaaNoteBookProps = {
         notebookInstanceId: "test-id",
         naming: testApp.naming,
         instanceType: "ml.t3.medium",
@@ -22,7 +22,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         notebookInstanceName: "test-notebook"
     }
 
-    new CaefNoteBook( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaNoteBook( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

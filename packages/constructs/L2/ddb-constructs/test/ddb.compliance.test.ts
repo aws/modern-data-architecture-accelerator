@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { AttributeType, StreamViewType } from "aws-cdk-lib/aws-dynamodb";
-import { CaefDDBTable, CaefDDBTableProps } from "../lib";
+import { MdaaDDBTable, MdaaDDBTableProps } from "../lib";
 import { Stream } from 'aws-cdk-lib/aws-kinesis';
 
-describe( 'CAEF Construct Mandatory Prop Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Mandatory Prop Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
-    const testContstructProps: CaefDDBTableProps = {
+    const testContstructProps: MdaaDDBTableProps = {
         naming: testApp.naming,
         tableName: "test-table",
         encryptionKey: testKey,
@@ -28,7 +28,7 @@ describe( 'CAEF Construct Mandatory Prop Compliance Tests', () => {
         stream: StreamViewType.KEYS_ONLY
     }
 
-    new CaefDDBTable( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaDDBTable( testApp.testStack, "test-construct", testContstructProps )
 
 
     testApp.checkCdkNagCompliance( testApp.testStack )

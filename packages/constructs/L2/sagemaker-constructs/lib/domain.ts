@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct"
-import { CaefCustomResource, CaefCustomResourceProps } from "@aws-caef/custom-constructs"
-import { CaefBoto3LayerVersion } from "@aws-caef/lambda-constructs"
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct"
+import { MdaaCustomResource, MdaaCustomResourceProps } from "@aws-mdaa/custom-constructs"
+import { MdaaBoto3LayerVersion } from "@aws-mdaa/lambda-constructs"
 import { Duration } from "aws-cdk-lib"
 import { PolicyStatement } from "aws-cdk-lib/aws-iam"
 import { Code, Runtime } from "aws-cdk-lib/aws-lambda"
@@ -17,7 +17,7 @@ const _ = require( 'lodash' );
 /**
  * Properties for creating a Compliance SageMaker Studio Domain
  */
-export interface CaefStudioDomainProps extends CaefConstructProps {
+export interface MdaaStudioDomainProps extends MdaaConstructProps {
     /**
      * The security group id which will be configured on all interfaces for Studio Apps which are connected to the VPC 
      */
@@ -89,7 +89,7 @@ export interface CaefStudioDomainProps extends CaefConstructProps {
  * Additionally, a custom resource is used to ensure that the domain
  * ExecutionRoleIdentityConfig is set to USER_PROFILE_NAME.
  */
-export class CaefStudioDomain extends CfnDomain {
+export class MdaaStudioDomain extends CfnDomain {
 
     private static defaultUserSettings = {
         jupyterServerAppSettings: {
@@ -106,7 +106,7 @@ export class CaefStudioDomain extends CfnDomain {
         }
     }
 
-    private static setProps ( props: CaefStudioDomainProps ): CfnDomainProps {
+    private static setProps ( props: MdaaStudioDomainProps ): CfnDomainProps {
 
         const overrideProps = {
             domainName: props.naming.resourceName( props.domainName ),
@@ -121,8 +121,8 @@ export class CaefStudioDomain extends CfnDomain {
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
-    constructor( scope: Construct, id: string, props: CaefStudioDomainProps ) {
-        super( scope, id, CaefStudioDomain.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaStudioDomainProps ) {
+        super( scope, id, MdaaStudioDomain.setProps( props ) )
 
         function mergeCustomizer ( objValue: any, srcValue: any ): any {
             if ( _.isArray( objValue ) ) {
@@ -131,7 +131,7 @@ export class CaefStudioDomain extends CfnDomain {
         }
 
         //Merge user setting default values with user settings from props, and override with specific compliance-related values
-        const overrideDefaultUserSettings = _.mergeWith( _.mergeWith( CaefCustomResource.pascalCase( CaefStudioDomain.defaultUserSettings ), CaefCustomResource.pascalCase( props.defaultUserSettings ), mergeCustomizer ), {
+        const overrideDefaultUserSettings = _.mergeWith( _.mergeWith( MdaaCustomResource.pascalCase( MdaaStudioDomain.defaultUserSettings ), MdaaCustomResource.pascalCase( props.defaultUserSettings ), mergeCustomizer ), {
             securityGroups: [ props.securityGroupId, ...props.securityGroupIds || [] ]
         }, mergeCustomizer )
 
@@ -149,7 +149,7 @@ export class CaefStudioDomain extends CfnDomain {
             ],
         } ) ]
 
-        const crProps: CaefCustomResourceProps = {
+        const crProps: MdaaCustomResourceProps = {
             resourceType: "StudioDomainUpdate",
             code: Code.fromAsset( `${ __dirname }/../src/lambda/update_domain` ),
             runtime: Runtime.PYTHON_3_12,
@@ -164,27 +164,27 @@ export class CaefStudioDomain extends CfnDomain {
             },
             naming: props.naming,
             pascalCaseProperties: true,
-            handlerLayers: [ new CaefBoto3LayerVersion( this, 'boto3-layer', { naming: props.naming } ) ],
+            handlerLayers: [ new MdaaBoto3LayerVersion( this, 'boto3-layer', { naming: props.naming } ) ],
             handlerTimeout: Duration.seconds( 120 )
         }
 
-        new CaefCustomResource( this, 'update-domain-cr', crProps )
+        new MdaaCustomResource( this, 'update-domain-cr', crProps )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "domain",
                 name: "id",
                 value: this.ref
             }, ...props
         },scope )
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "domain",
                 name: "vpc-id",
                 value: props.vpcId
             }, ...props
         },scope )
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "domain",
                 name: "subnet-ids",

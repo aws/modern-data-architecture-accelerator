@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { LakeFormationAccessControlL3Construct, NamedGrantProps, NamedPrincipalProps, NamedResourceLinkProps, PermissionsConfig, ResourceLinkProps } from '@aws-caef/lakeformation-access-control-l3-construct';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { LakeFormationAccessControlL3Construct, NamedGrantProps, NamedPrincipalProps, NamedResourceLinkProps, PermissionsConfig, ResourceLinkProps } from '@aws-mdaa/lakeformation-access-control-l3-construct';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -28,7 +28,7 @@ export interface PrincipalConfig {
     /**
      * Arn of an IAM principal for the grant.
      */
-    readonly role?: CaefRoleRef
+    readonly role?: MdaaRoleRef
 }
 
 export interface GrantConfig {
@@ -79,7 +79,7 @@ export interface ResourceLinkConfig {
     readonly grantPrincipals?: string[]
 }
 
-export interface LakeFormationAccessControlConfigContents extends CaefBaseConfigContents {
+export interface LakeFormationAccessControlConfigContents extends MdaaBaseConfigContents {
     /**
      * Array of Objects representing the grants
      */
@@ -98,12 +98,12 @@ export interface LakeFormationAccessControlConfigContents extends CaefBaseConfig
     readonly resourceLinks?: { [ key: string ]: ResourceLinkConfig }
 }
 
-export class LakeFormationAccessControlConfigParser extends CaefAppConfigParser<LakeFormationAccessControlConfigContents> {
+export class LakeFormationAccessControlConfigParser extends MdaaAppConfigParser<LakeFormationAccessControlConfigContents> {
 
     public readonly grants: NamedGrantProps;
     public readonly resourceLinks?: NamedResourceLinkProps
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         const resourceLinkPropsEntries = Object.entries( this.configContents.resourceLinks || {} ).map( resourceLinkEntry => {

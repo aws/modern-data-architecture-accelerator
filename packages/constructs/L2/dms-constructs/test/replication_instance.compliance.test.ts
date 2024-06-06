@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefReplicationInstance, CaefReplicationInstanceProps } from "../lib";
+import { MdaaReplicationInstance, MdaaReplicationInstanceProps } from "../lib";
 import { CfnReplicationSubnetGroup } from "aws-cdk-lib/aws-dms";
 import { Key } from "aws-cdk-lib/aws-kms";
 
 
 describe( 'Replication Instance Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
 
     const subnetGroup = new CfnReplicationSubnetGroup(testApp.testStack,'test-subnet-group', {
         replicationSubnetGroupIdentifier: "testing",
@@ -21,14 +21,14 @@ describe( 'Replication Instance Compliance Tests', () => {
         ]
     })
     const testKey = Key.fromKeyArn( testApp.testStack, "testKey", "arn:test-partition:kms:test-region:test-account:key/test-key" )
-    const replicationInstanceProps: CaefReplicationInstanceProps = {
+    const replicationInstanceProps: MdaaReplicationInstanceProps = {
         kmsKey: testKey,
         replicationInstanceClass: "dms.t2.micro",
         naming: testApp.naming,
         replicationSubnetGroupIdentifier: subnetGroup.attrId
     }
 
-    new CaefReplicationInstance(testApp.testStack,'test-rep-isntance',replicationInstanceProps)
+    new MdaaReplicationInstance(testApp.testStack,'test-rep-isntance',replicationInstanceProps)
    
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack );

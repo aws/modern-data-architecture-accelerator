@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefSecurityGroup, CaefSecurityGroupProps, CaefSecurityGroupRuleProps, NagSuppressionProps } from '@aws-caef/ec2-constructs';
-import { CaefEKSCluster, KubernetesCmd, KubernetesCmdProps } from '@aws-caef/eks-constructs';
-import { ICaefResourceNaming } from '@aws-caef/naming';
+import { MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps, NagSuppressionProps } from '@aws-mdaa/ec2-constructs';
+import { MdaaEKSCluster, KubernetesCmd, KubernetesCmdProps } from '@aws-mdaa/eks-constructs';
+import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import { CfnJson } from 'aws-cdk-lib';
 import { ISecurityGroup, ISubnet, IVpc, Protocol, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { DockerImageAsset } from 'aws-cdk-lib/aws-ecr-assets';
@@ -23,12 +23,12 @@ import { NamedNifiRegistryClientProps, NifiClusterOptions,  NifiIdentityAuthoriz
 
 
 export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthorizationOptions, NifiNetworkOptions {
-    readonly eksCluster: CaefEKSCluster
+    readonly eksCluster: MdaaEKSCluster
     readonly clusterName: string
     readonly kmsKey: IKey
     readonly vpc: IVpc
     readonly subnets: ISubnet[]
-    readonly naming: ICaefResourceNaming
+    readonly naming: IMdaaResourceNaming
     readonly region: string
     readonly zkConnectString: string
     readonly nifiHostedZone: IHostedZone
@@ -44,7 +44,7 @@ export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthor
 
 interface CreateEfsPvsProps {
     scope: Construct,
-    naming: ICaefResourceNaming,
+    naming: IMdaaResourceNaming,
     name: string,
     nodeCount: number,
     vpc: IVpc,
@@ -202,7 +202,7 @@ export class NifiCluster extends Construct {
 
     private createNifiSecurityGroup ( vpc: IVpc ) {
 
-        const ingressRules: CaefSecurityGroupRuleProps = {
+        const ingressRules: MdaaSecurityGroupRuleProps = {
             sg: this.props.securityGroupIngressSGs?.map( sgId => {
                 return [ {
                     sgId: sgId,
@@ -242,7 +242,7 @@ export class NifiCluster extends Construct {
         const customEgress: boolean = ( this.props.securityGroupEgressRules?.ipv4 && this.props.securityGroupEgressRules?.ipv4.length > 0 ) ||
             ( this.props.securityGroupEgressRules?.prefixList && this.props.securityGroupEgressRules?.prefixList.length > 0 ) ||
             ( this.props.securityGroupEgressRules?.sg && this.props.securityGroupEgressRules?.sg.length > 0 ) || false
-        const sgProps: CaefSecurityGroupProps = {
+        const sgProps: MdaaSecurityGroupProps = {
             securityGroupName: 'nifi',
             vpc: vpc,
             addSelfReferenceRule: true,
@@ -251,12 +251,12 @@ export class NifiCluster extends Construct {
             ingressRules: ingressRules,
             egressRules: this.props.securityGroupEgressRules
         }
-        return new CaefSecurityGroup( this, 'nifi-sg', sgProps )
+        return new MdaaSecurityGroup( this, 'nifi-sg', sgProps )
 
     }
 
-    public static createEfsSecurityGroup ( name: string, scope: Construct, naming: ICaefResourceNaming, vpc: IVpc, securityGroups?: ISecurityGroup[] ) {
-        const efsSgIngressRules: CaefSecurityGroupRuleProps = {
+    public static createEfsSecurityGroup ( name: string, scope: Construct, naming: IMdaaResourceNaming, vpc: IVpc, securityGroups?: ISecurityGroup[] ) {
+        const efsSgIngressRules: MdaaSecurityGroupRuleProps = {
             sg: securityGroups?.map( sg => {
                 return {
                     sgId: sg.securityGroupId,
@@ -266,7 +266,7 @@ export class NifiCluster extends Construct {
             } )
         }
 
-        const sgProps: CaefSecurityGroupProps = {
+        const sgProps: MdaaSecurityGroupProps = {
             securityGroupName: `${ name }-efs`,
             vpc: vpc,
             addSelfReferenceRule: true,
@@ -274,10 +274,10 @@ export class NifiCluster extends Construct {
             allowAllOutbound: true,
             ingressRules: efsSgIngressRules
         }
-        return new CaefSecurityGroup( scope, `${ name }-efs-sg`, sgProps )
+        return new MdaaSecurityGroup( scope, `${ name }-efs-sg`, sgProps )
 
     }
-    public static createEfsAccessPolicy ( name: string, scope: Construct, naming: ICaefResourceNaming, kmsKey: IKey, efsPvs: [ FileSystem, AccessPoint ][] ): ManagedPolicy {
+    public static createEfsAccessPolicy ( name: string, scope: Construct, naming: IMdaaResourceNaming, kmsKey: IKey, efsPvs: [ FileSystem, AccessPoint ][] ): ManagedPolicy {
         const describeAzStatement = new PolicyStatement( {
             sid: "AllowDescribeAz",
             effect: Effect.ALLOW,
@@ -347,11 +347,11 @@ export class NifiCluster extends Construct {
         NagSuppressions.addResourceSuppressions( efs, [
             {
                 id: 'NIST.800.53.R5-EFSInBackupPlan',
-                reason: 'CAEF does not enforce NIST.800.53.R5-EFSInBackupPlan on EFS volume.',
+                reason: 'MDAA does not enforce NIST.800.53.R5-EFSInBackupPlan on EFS volume.',
             },
             {
                 id: 'HIPAA.Security-EFSInBackupPlan',
-                reason: 'CAEF does not enforce HIPAA.Security-EFSInBackupPlan on EFS volume.',
+                reason: 'MDAA does not enforce HIPAA.Security-EFSInBackupPlan on EFS volume.',
             },
         ] );
 
@@ -374,7 +374,7 @@ export class NifiCluster extends Construct {
         return efsPvs
     }
 
-    public static createSecret ( scope: Construct, id: string, naming: ICaefResourceNaming, secretName: string, kmsKey: IKey ): ISecret {
+    public static createSecret ( scope: Construct, id: string, naming: IMdaaResourceNaming, secretName: string, kmsKey: IKey ): ISecret {
         const secretResourceName = naming.resourceName( secretName, 255 )
         const nifiSensitivePropSecret = new Secret( scope, id, {
             secretName: secretResourceName,
@@ -396,9 +396,9 @@ export class NifiCluster extends Construct {
     public static createExternalSecretsServiceRole (
         scope: Construct,
         roleName: string,
-        naming: ICaefResourceNaming,
+        naming: IMdaaResourceNaming,
         namespaceName: string,
-        eksCluster: CaefEKSCluster,
+        eksCluster: MdaaEKSCluster,
         kmsKey: IKey,
         secrets: ISecret[] ): IRole {
 
@@ -437,7 +437,7 @@ export class NifiCluster extends Construct {
         id: string,
         roleName: string,
         namespaceName: string,
-        eksCluster: CaefEKSCluster,
+        eksCluster: MdaaEKSCluster,
         statements?: PolicyStatement[],
         policyNagSuppressions?: NagSuppressionProps[] ): IRole {
         const serviceRole = new Role( scope, `${ id }-service-role`, {

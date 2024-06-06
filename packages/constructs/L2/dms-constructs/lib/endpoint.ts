@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { CfnEndpoint, CfnEndpointProps } from "aws-cdk-lib/aws-dms";
 import { IKey } from "aws-cdk-lib/aws-kms";
 import { Construct } from "constructs";
@@ -1780,11 +1780,11 @@ export interface PostgreSqlSettingsProperty {
 }
 
 
-export type CaefEndpointType = 'source' | 'target'
+export type MdaaEndpointType = 'source' | 'target'
 
-export type CaefEndpointEngine = `mysql` | `oracle` | `postgres` | `mariadb` | `aurora` | `aurora-postgresql` | `opensearch` | `redshift` | `redshift-serverless` | `s3` | `db2` | `azuredb` | `sybase` | `dynamodb` | `mongodb` | `kinesis` | `kafka` | `elasticsearch` | `docdb` | `sqlserver` | `neptune`;
+export type MdaaEndpointEngine = `mysql` | `oracle` | `postgres` | `mariadb` | `aurora` | `aurora-postgresql` | `opensearch` | `redshift` | `redshift-serverless` | `s3` | `db2` | `azuredb` | `sybase` | `dynamodb` | `mongodb` | `kinesis` | `kafka` | `elasticsearch` | `docdb` | `sqlserver` | `neptune`;
 
-export interface CaefEndpointProps extends CaefConstructProps {
+export interface MdaaEndpointProps extends MdaaConstructProps {
     /**
      * The Amazon Resource Name (ARN) for the certificate.
      *
@@ -1814,7 +1814,7 @@ export interface CaefEndpointProps extends CaefConstructProps {
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dms-endpoint.html#cfn-dms-endpoint-endpointtype
      */
-    readonly endpointType: CaefEndpointType;
+    readonly endpointType: MdaaEndpointType;
     /**
      * The type of engine for the endpoint, depending on the `EndpointType` value.
      *
@@ -1822,7 +1822,7 @@ export interface CaefEndpointProps extends CaefConstructProps {
      *
      * @see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dms-endpoint.html#cfn-dms-endpoint-enginename
      */
-    readonly engineName: CaefEndpointEngine
+    readonly engineName: MdaaEndpointEngine
     /**
      * Additional attributes associated with the connection.
      *
@@ -1991,10 +1991,10 @@ export interface CaefEndpointProps extends CaefConstructProps {
  * Reusable CDK construct for a compliant DMS Endpoint.
  * Specifically, enforces KMS Encryption, and prevents use of plaintext credentials.
  */
-export class CaefEndpoint extends CfnEndpoint {
+export class MdaaEndpoint extends CfnEndpoint {
 
     /** Overrides specific compliance-related properties. */
-    private static setProps ( props: CaefEndpointProps ): CfnEndpointProps {
+    private static setProps ( props: MdaaEndpointProps ): CfnEndpointProps {
         return {
             ...props,
             endpointIdentifier: props.naming.resourceName( props.endpointIdentifier ),
@@ -2027,10 +2027,10 @@ export class CaefEndpoint extends CfnEndpoint {
     }
 
 
-    constructor( scope: Construct, id: string, props: CaefEndpointProps ) {
-        super( scope, id, CaefEndpoint.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaEndpointProps ) {
+        super( scope, id, MdaaEndpoint.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "endpoint",
                 resourceId: props.endpointIdentifier,

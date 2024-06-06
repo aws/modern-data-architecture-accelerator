@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct"
-import { ICaefRole } from '@aws-caef/iam-constructs';
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct"
+import { IMdaaRole } from '@aws-mdaa/iam-constructs';
 import { CfnTag, IResolvable } from "aws-cdk-lib";
 import { CfnServer, CfnServerProps } from "aws-cdk-lib/aws-transfer"
 import { Construct } from "constructs"
 
 /**
- * Props for creating a CAEF Athena Workgroup.
+ * Props for creating a MDAA Athena Workgroup.
  */
-export interface CaefSFTPServerProps extends CaefConstructProps {
+export interface MdaaSFTPServerProps extends MdaaConstructProps {
     /**
      * Specifies the VPC id on which the server will be placed
      */
@@ -66,7 +66,7 @@ export interface CaefSFTPServerProps extends CaefConstructProps {
      *
      * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-transfer-server.html#cfn-transfer-server-loggingrole
      */
-    readonly loggingRole: ICaefRole;
+    readonly loggingRole: IMdaaRole;
     /**
      * Specify a string to display when users connect to a server. This string is displayed before the user authenticates. For example, the following banner displays details about using the system.
      *
@@ -93,12 +93,12 @@ export interface CaefSFTPServerProps extends CaefConstructProps {
  * Reusable CDK construct for a compliant Transfer Family SFTP Server.
  * Specifically, enforces VPC configuration, logging, and security policy
  */
-export class CaefSFTPServer extends CfnServer {
+export class MdaaSFTPServer extends CfnServer {
 
     private static SECURITY_POLICY_NAME = "TransferSecurityPolicy-FIPS-2020-06"
 
     /** Overrides specific compliance-related properties. */
-    private static setProps ( props: CaefSFTPServerProps ): CfnServerProps {
+    private static setProps ( props: MdaaSFTPServerProps ): CfnServerProps {
 
         const overrideProps = {
             endpointType: "VPC",
@@ -109,24 +109,24 @@ export class CaefSFTPServer extends CfnServer {
                 subnetIds: props.subnetIds
             },
             protocols: [ "SFTP" ],
-            securityPolicyName: CaefSFTPServer.SECURITY_POLICY_NAME,
+            securityPolicyName: MdaaSFTPServer.SECURITY_POLICY_NAME,
             loggingRole: props.loggingRole.roleArn
         }
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefSFTPServerProps ) {
-        super( scope, id, CaefSFTPServer.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaSFTPServerProps ) {
+        super( scope, id, MdaaSFTPServer.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             naming: props.naming,
             resourceType: "server",
             name: "arn",
             value: this.attrArn
         },scope )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             naming: props.naming,
             resourceType: "server",
             name: "id",

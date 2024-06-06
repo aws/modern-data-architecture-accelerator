@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { CatalogAccessPolicyProps } from '@aws-caef/glue-catalog-l3-construct';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { CatalogAccessPolicyProps } from '@aws-mdaa/glue-catalog-l3-construct';
 import { Schema } from "ajv";
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 
 
-export interface GlueCatalogConfigContents extends CaefBaseConfigContents {
+export interface GlueCatalogConfigContents extends MdaaBaseConfigContents {
     /**
      * "(Optional) A map of named catalog access policies"
      */
@@ -30,14 +30,14 @@ export interface GlueCatalogConfigContents extends CaefBaseConfigContents {
     readonly producerAccounts?: { [ key: string ]: string }
 }
 
-export class GlueCatalogConfigParser extends CaefAppConfigParser<GlueCatalogConfigContents> {
+export class GlueCatalogConfigParser extends MdaaAppConfigParser<GlueCatalogConfigContents> {
 
     public readonly accessPolicies?: { [ key: string ]: CatalogAccessPolicyProps }
     public readonly consumerAccounts?: { [ key: string ]: string };
     public readonly producerAccounts?: { [ key: string ]: string };
     public readonly kmsKeyConsumerAccounts?: { [ key: string ]: string };
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
 
         this.accessPolicies = this.configContents.accessPolicies

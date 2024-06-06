@@ -7,16 +7,16 @@
                 <mxCell id="Vt560z4J3A8kVG_z0Vwq-2" value="" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;" parent="1" vertex="1">
                     <mxGeometry x="-10" y="330" width="1950" height="1070" as="geometry"/>
                 </mxCell>
-                <mxCell id="70" value="CAEF DataOps Project Module" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
+                <mxCell id="70" value="MDAA DataOps Project Module" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
                     <mxGeometry x="806.14" y="630" width="370" height="180" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="CAEF Roles Module&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
+                <mxCell id="13" value="MDAA Roles Module&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
                     <mxGeometry x="740" y="840" width="550" height="500" as="geometry"/>
                 </mxCell>
-                <mxCell id="19" value="CAEF Athena Workgroup Module&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
+                <mxCell id="19" value="MDAA Athena Workgroup Module&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
                     <mxGeometry x="1320" y="840" width="570" height="500" as="geometry"/>
                 </mxCell>
-                <mxCell id="Vt560z4J3A8kVG_z0Vwq-3" value="CAEF S3 Data Lake Module&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
+                <mxCell id="Vt560z4J3A8kVG_z0Vwq-3" value="MDAA S3 Data Lake Module&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
                     <mxGeometry x="50" y="840" width="650" height="500" as="geometry"/>
                 </mxCell>
                 <mxCell id="Vt560z4J3A8kVG_z0Vwq-4" value="Deployment/Target&lt;br style=&quot;font-size: 20px;&quot;&gt;Account" style="outlineConnect=0;dashed=0;verticalLabelPosition=middle;verticalAlign=middle;align=left;html=1;shape=mxgraph.aws3.cloud_2;fillColor=#F58534;gradientColor=none;labelPosition=right;fontSize=20;" parent="1" vertex="1">
@@ -113,7 +113,7 @@
                 <mxCell id="54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;fontSize=16;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="temhnbDpD8ueiIC_QQ7--3" target="temhnbDpD8ueiIC_QQ7--18" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="72" value="CAEF DataOps Crawler Module" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
+                <mxCell id="72" value="MDAA DataOps Crawler Module" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;strokeColor=#FF8000;strokeWidth=5;" parent="1" vertex="1">
                     <mxGeometry x="220" y="450" width="460" height="180" as="geometry"/>
                 </mxCell>
                 <mxCell id="76" value="Creates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=16;" parent="1" source="73" target="75" edge="1">
@@ -186,7 +186,7 @@
                         <mxPoint x="-50" y="-8" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="94" value="CAEF LakeFormation&lt;br&gt;Settings Module&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;strokeColor=#FF8000;strokeWidth=5;" vertex="1" parent="1">
+                <mxCell id="94" value="MDAA LakeFormation&lt;br&gt;Settings Module&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;strokeColor=#FF8000;strokeWidth=5;" vertex="1" parent="1">
                     <mxGeometry x="1420" y="630" width="370" height="180" as="geometry"/>
                 </mxCell>
                 <mxCell id="98" value="Create&lt;br style=&quot;font-size: 16px;&quot;&gt;Automatically" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=16;" edge="1" parent="1" source="95" target="97">

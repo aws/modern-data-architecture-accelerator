@@ -12,18 +12,18 @@ import * as path from "path";
 import { RagEngines } from "../rag-engines";
 import { Shared } from "../shared";
 import { SageMakerModelEndpoint, SystemConfig } from "../shared/types";
-import {CaefLambdaFunction, CaefLambdaRole} from "@aws-caef/lambda-constructs";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefManagedPolicy, CaefRole} from "@aws-caef/iam-constructs";
+import {MdaaLambdaFunction, MdaaLambdaRole} from "@aws-mdaa/lambda-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaManagedPolicy, MdaaRole} from "@aws-mdaa/iam-constructs";
 import {Effect, PolicyStatement, ServicePrincipal} from "aws-cdk-lib/aws-iam";
 import { NagSuppressions } from "cdk-nag";
-import { CaefLogGroup, CaefLogGroupProps } from "@aws-caef/cloudwatch-constructs";
+import { MdaaLogGroup, MdaaLogGroupProps } from "@aws-mdaa/cloudwatch-constructs";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { CfnWebACL, CfnIPSet, CfnLoggingConfiguration, CfnWebACLAssociation, CfnWebACLProps } from "aws-cdk-lib/aws-wafv2";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 import { ApiGateway } from "aws-cdk-lib/aws-route53-targets";
 
-export interface RestApiProps extends CaefL3ConstructProps {
+export interface RestApiProps extends MdaaL3ConstructProps {
   readonly shared: Shared;
   readonly config: SystemConfig;
   readonly ragEngines?: RagEngines;
@@ -34,10 +34,10 @@ export interface RestApiProps extends CaefL3ConstructProps {
   readonly models: SageMakerModelEndpoint[];
   readonly allowedCidrs?: string[]
   readonly stageName?: string;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class RestApi extends CaefL3Construct {
+export class RestApi extends MdaaL3Construct {
   public readonly api: apigateway.RestApi;
   private readonly props: RestApiProps
   constructor(scope: Construct, id: string, props: RestApiProps) {
@@ -45,7 +45,7 @@ export class RestApi extends CaefL3Construct {
     this.props = props
 
 
-    const apiHandlerRole = new CaefLambdaRole(this, 'ApiHandlerRole', {
+    const apiHandlerRole = new MdaaLambdaRole(this, 'ApiHandlerRole', {
       roleName: 'BackendRestApiHandlerRole',
       logGroupNames: [ this.props.naming.resourceName( "rest-api-handler" ) ],
       naming: props.naming,
@@ -103,8 +103,8 @@ export class RestApi extends CaefL3Construct {
 
     NagSuppressions.addResourceSuppressions(apiHandlerRole, [
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray and Comprehend actions only support wildcard, and bedrock foundation models access controlled by application along with region restriction, other resources managed by stack and not known at deployment time' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
     
     NagSuppressions.addResourceSuppressions(
@@ -165,7 +165,7 @@ export class RestApi extends CaefL3Construct {
     }
     const defaultWaf = new CfnWebACL( this, 'default-waf', defaultWafProps )
 
-    const defaultWafLogGroupProps: CaefLogGroupProps = {
+    const defaultWafLogGroupProps: MdaaLogGroupProps = {
       logGroupName: "genai-admin-default-waf",
       encryptionKey: this.props.encryptionKey,
       // WAF log group destination names must start with aws-waf-logs-
@@ -177,7 +177,7 @@ export class RestApi extends CaefL3Construct {
       createOutputs: false
     }
 
-    const defaultWafLogGroup = new CaefLogGroup( this, "default-waf-log-group", defaultWafLogGroupProps )
+    const defaultWafLogGroup = new MdaaLogGroup( this, "default-waf-log-group", defaultWafLogGroupProps )
 
     new CfnLoggingConfiguration( this, 'default-waf-logging-config', {
       logDestinationConfigs: [ defaultWafLogGroup.logGroupArn ],
@@ -191,7 +191,7 @@ export class RestApi extends CaefL3Construct {
 
   }
   private createChatbotApi () {
-    const accessLogGroupProps: CaefLogGroupProps = {
+    const accessLogGroupProps: MdaaLogGroupProps = {
       logGroupName: "genai-admin-backend-rest-api-access-logs",
       encryptionKey: this.props.encryptionKey,
       logGroupNamePathPrefix: this.props.config.prefix || "",
@@ -201,7 +201,7 @@ export class RestApi extends CaefL3Construct {
       createOutputs: false
     }
 
-    const accessLogGroup = new CaefLogGroup( this, "rest-api-access-log-group", accessLogGroupProps )
+    const accessLogGroup = new MdaaLogGroup( this, "rest-api-access-log-group", accessLogGroupProps )
 
     const cognitoAuthorizer = new apigateway.CognitoUserPoolsAuthorizer( this, "cognito-authorizer", {
       authorizerName: this.props.naming.resourceName(),
@@ -226,12 +226,12 @@ export class RestApi extends CaefL3Construct {
     }
 
     if ( this.props.config.setApiGateWayAccountCloudwatchRole?.valueOf() ) {
-      const cloudwatchRole = new CaefRole( this, 'cloudwatch-role', {
+      const cloudwatchRole = new MdaaRole( this, 'cloudwatch-role', {
         roleName: "genai-admin-backend-rest-api-cloudwatch",
         naming: this.props.naming,
         assumedBy: new ServicePrincipal( "apigateway.amazonaws.com" ),
       } )
-      cloudwatchRole.addManagedPolicy( CaefManagedPolicy.fromAwsManagedPolicyNameWithPartition( this, "service-role/AmazonAPIGatewayPushToCloudWatchLogs" ) )
+      cloudwatchRole.addManagedPolicy( MdaaManagedPolicy.fromAwsManagedPolicyNameWithPartition( this, "service-role/AmazonAPIGatewayPushToCloudWatchLogs" ) )
 
       NagSuppressions.addResourceSuppressions(
         cloudwatchRole,
@@ -250,7 +250,7 @@ export class RestApi extends CaefL3Construct {
 
   private generateRestApiProps (
       cognitoAuthorizer:  apigateway.CognitoUserPoolsAuthorizer,
-      accessLogGroup: CaefLogGroup
+      accessLogGroup: MdaaLogGroup
   ): apigateway.RestApiProps {
     let props: apigateway.RestApiProps  = {
       endpointTypes: [apigateway.EndpointType.REGIONAL],
@@ -316,7 +316,7 @@ export class RestApi extends CaefL3Construct {
     return props
   }
 
-  private addApiHandlerRolePermissions ( apiHandlerRole: CaefRole, apiHandler: CaefLambdaFunction ) {
+  private addApiHandlerRolePermissions ( apiHandlerRole: MdaaRole, apiHandler: MdaaLambdaFunction ) {
     
     this.addApiHandlerRoleRagPermissions(apiHandlerRole,apiHandler)
 
@@ -376,7 +376,7 @@ export class RestApi extends CaefL3Construct {
       }
     }
   }
-  private addApiHandlerRoleRagPermissions ( apiHandlerRole: CaefRole, apiHandler: CaefLambdaFunction ) {
+  private addApiHandlerRoleRagPermissions ( apiHandlerRole: MdaaRole, apiHandler: MdaaLambdaFunction ) {
     if ( this.props.ragEngines?.workspacesTable ) {
       this.props.ragEngines.workspacesTable.grantReadWriteData( apiHandlerRole );
     }
@@ -401,7 +401,7 @@ export class RestApi extends CaefL3Construct {
     }
   }
   
-  private addApiHandlerRoleRagWorkflowPermissions ( apiHandlerRole: CaefRole ) {
+  private addApiHandlerRoleRagWorkflowPermissions ( apiHandlerRole: MdaaRole ) {
     if ( this.props.ragEngines?.fileImportWorkflow ) {
       this.props.ragEngines.fileImportWorkflow.grantStartExecution( apiHandlerRole );
     }
@@ -415,7 +415,7 @@ export class RestApi extends CaefL3Construct {
     }
   }
   
-  private addApiHandlerRoleAuroraRagPermissions ( apiHandlerRole: CaefRole, apiHandler: CaefLambdaFunction ) {
+  private addApiHandlerRoleAuroraRagPermissions ( apiHandlerRole: MdaaRole, apiHandler: MdaaLambdaFunction ) {
     if ( this.props.ragEngines?.auroraPgVector ) {
       this.props.ragEngines.auroraPgVector.database.secret?.grantRead( apiHandlerRole );
       this.props.ragEngines.auroraPgVector.database.connections.allowDefaultPortFrom(
@@ -428,7 +428,7 @@ export class RestApi extends CaefL3Construct {
     }
   }
   
-  private addApiHandlerRoleKendraRagPermissions ( apiHandlerRole: CaefRole ) {
+  private addApiHandlerRoleKendraRagPermissions ( apiHandlerRole: MdaaRole ) {
     if ( this.props.ragEngines?.kendraRetrieval ) {
       this.props.ragEngines.kendraRetrieval.createKendraWorkspaceWorkflow.grantStartExecution(
         apiHandlerRole
@@ -486,7 +486,7 @@ export class RestApi extends CaefL3Construct {
   private createApiHandler ( apiHandlerRole: iam.IRole) {
     let codeAssets = this.props.config?.codeOverwrites?.restApiHandlerCodePath !== undefined ?
         this.props.config.codeOverwrites.restApiHandlerCodePath : path.join( __dirname, "./functions/api-handler" )
-    const apiHandler = new CaefLambdaFunction( this, "ApiHandler", {
+    const apiHandler = new MdaaLambdaFunction( this, "ApiHandler", {
       functionName: "rest-api-handler", naming: this.props.naming, role: apiHandlerRole,
       createParams: false,
       createOutputs: false,

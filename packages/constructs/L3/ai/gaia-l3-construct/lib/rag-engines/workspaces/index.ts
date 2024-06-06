@@ -7,20 +7,20 @@ import { DataImportWorkflows } from "../data-import";
 import { KendraRetrieval } from "../kendra-retrieval";
 import { RagDynamoDBTables } from "../rag-dynamodb-tables";
 import { DeleteWorkspace } from "./delete-workspace";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface WorkkspacesProps extends CaefL3ConstructProps {
+export interface WorkkspacesProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly dataImport: DataImportWorkflows;
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraPgVector?: AuroraPgVector;
   readonly kendraRetrieval?: KendraRetrieval;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class Workspaces extends CaefL3Construct {
+export class Workspaces extends MdaaL3Construct {
   public readonly deleteWorkspaceWorkflow?: sfn.StateMachine;
 
   constructor(scope: Construct, id: string, props: WorkkspacesProps) {

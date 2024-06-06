@@ -3,31 +3,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefDataSyncAgent, CaefDataSyncAgentProps } from "../lib";
+import { MdaaDataSyncAgent, MdaaDataSyncAgentProps } from "../lib";
 
 describe( 'Agent Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
 
 
-    const test1ContstructProps: CaefDataSyncAgentProps = {
+    const test1ContstructProps: MdaaDataSyncAgentProps = {
         naming: testApp.naming,
         activationKey: "ABCD-1234-EFGH-5678-IJKL", //gitleaks:allow
         securityGroupArns: [ "arn:test-partition:ec2:test-region:test-account:security-group/sg-012345abcd6789efg" ],
         subnetArns: [ "arn:test-partition:ec2:test-region:test-account:subnet/subnet-1234abcd" ],
         vpcEndpointId: "vpce-0abcd1234e567890f"
     }
-    new CaefDataSyncAgent( testApp.testStack, "test1-construct", test1ContstructProps )
+    new MdaaDataSyncAgent( testApp.testStack, "test1-construct", test1ContstructProps )
 
-    const test2ContstructProps: CaefDataSyncAgentProps = {
+    const test2ContstructProps: MdaaDataSyncAgentProps = {
         naming: testApp.naming,
         activationKey: "AAAA-1234-EFGH-5678-IJKL", //gitleaks:allow
         securityGroupArns: [ "arn:test-partition:ec2:test-region:test-account:security-group/sg-012345abcd6789efg" ],
         subnetArns: [ "arn:test-partition:ec2:test-region:test-account:subnet/subnet-1234abcd" ],
         vpcEndpointId: "vpce-0abcd1234e567890f"
     }
-    new CaefDataSyncAgent( testApp.testStack, "test2-construct", test2ContstructProps )
+    new MdaaDataSyncAgent( testApp.testStack, "test2-construct", test2ContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack );

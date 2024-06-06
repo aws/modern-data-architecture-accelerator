@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app'
-import { UserProps } from '@aws-caef/sftp-users-l3-construct';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app'
+import { UserProps } from '@aws-mdaa/sftp-users-l3-construct';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -47,18 +47,18 @@ export interface UserConfig {
     accessRoleArn?: string
 }
 
-export interface SftpUserConfigContents extends CaefBaseConfigContents {
+export interface SftpUserConfigContents extends MdaaBaseConfigContents {
     serverId: string
     publicKeys: { [ key: string ]: PublicKeyConfig }
     buckets: { [ key: string ]: BucketConfig }
     users: { [ key: string ]: UserConfig }
 }
 
-export class SftpUserConfigParser extends CaefAppConfigParser<SftpUserConfigContents> {
+export class SftpUserConfigParser extends MdaaAppConfigParser<SftpUserConfigContents> {
 
     public readonly users: UserProps[]
     public readonly serverId: string
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
         this.serverId = this.configContents.serverId
         this.users = Object.entries( this.configContents.users ).map( nameAndconfigUser => {

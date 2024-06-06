@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefQuickSightDataSource, CaefQuickSightDataSourceProps } from "../lib";
+import { MdaaQuickSightDataSource, MdaaQuickSightDataSourceProps } from "../lib";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
     const readerPermissionsDef = {
         actions: [ "quicksight:DescribeDataSource", "quicksight:DescribeDataSourcePermissions", "quicksight:PassDataSource" ],
         principal: "arn:test-partition:quicksight:test-region:test-account:group/testNamespace/testReaderOnlyQSGroup"
@@ -18,7 +18,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         actions: [ "quicksight:DescribeDataSource", "quicksight:DescribeDataSourcePermissions", "quicksight:PassDataSource", "quicksight:UpdateDataSource", "quicksight:DeleteDataSource", "quicksight:UpdateDataSourcePermissions" ],
         principal: "arn:test-partition:quicksight:test-region:test-account:group/testNamespace/testAuthorOnlyQSGroup"
     }
-    const testRedshiftContstructProps: CaefQuickSightDataSourceProps = {
+    const testRedshiftContstructProps: MdaaQuickSightDataSourceProps = {
         naming: testApp.naming,
         awsAccountId: "test-account",
         alternateDataSourceParameters: [ { redshiftParameters: { database: "test", clusterId: "testCluster" } } ],
@@ -30,7 +30,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         credentials: { credentialPair: { password: "{{resolve:secretsmanager:/test/redshift/admin/user:SecretString:password}}", username: "{{resolve:secretsmanager:/test/redshift/admin/user:SecretString:username}}" } },
         vpcConnectionProperties: { vpcConnectionArn: "arn:test-partition:quicksight:test-region:test-account:vpcConnection/test" }
     };
-    const testAthenaContstructProps: CaefQuickSightDataSourceProps = {
+    const testAthenaContstructProps: MdaaQuickSightDataSourceProps = {
         naming: testApp.naming,
         awsAccountId: "test-account",
         alternateDataSourceParameters: [ { athenaParameters: { workGroup: "primary" } } ],
@@ -40,8 +40,8 @@ describe( 'CAEF Construct Compliance Tests', () => {
         permissions: [ authorPermissionsDef ],
         type: "ATHENA"
     };
-    new CaefQuickSightDataSource( testApp.testStack, "test-construct1", testRedshiftContstructProps )
-    new CaefQuickSightDataSource( testApp.testStack, "test-construct2", testAthenaContstructProps )
+    new MdaaQuickSightDataSource( testApp.testStack, "test-construct1", testRedshiftContstructProps )
+    new MdaaQuickSightDataSource( testApp.testStack, "test-construct2", testAthenaContstructProps )
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack );
 

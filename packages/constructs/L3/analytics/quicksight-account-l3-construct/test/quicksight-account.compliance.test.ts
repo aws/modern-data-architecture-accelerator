@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefSecurityGroupRuleProps } from "@aws-caef/ec2-constructs";
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaSecurityGroupRuleProps } from "@aws-mdaa/ec2-constructs";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { Protocol } from "aws-cdk-lib/aws-ec2";
 import { QuickSightAccountL3Construct, QuickSightAccountL3ConstructProps } from "../lib";
 
 describe( 'QS Account Mandatory Tests', () => {
-  const testApp = new CaefTestApp()
-  const testQSSecurityGroup: CaefSecurityGroupRuleProps = {
+  const testApp = new MdaaTestApp()
+  const testQSSecurityGroup: MdaaSecurityGroupRuleProps = {
     sg: [
       {
         sgId: "sg-1234abcd",
@@ -60,7 +60,7 @@ describe( 'QS Account Mandatory Tests', () => {
     },
     naming: testApp.naming,
 
-    roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming )
+    roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming )
   };
 
   new QuickSightAccountL3Construct( testApp.testStack, 'test-stack', constructProps )

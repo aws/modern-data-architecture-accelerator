@@ -6,5 +6,5 @@ The ServiceCatalog CDK L3 construct is used to deploy Service Catalog resources 
 
 ![ServiceCatalog](docs/ServiceCatalog.png)
 
-* **Service Catalog Portfolios** - Portfolios to which products can be added via the CAEF framework.
+* **Service Catalog Portfolios** - Portfolios to which products can be added via the MDAA framework.
 * **Portfolio Principal Association** - Associates IAM Roles to a portfolio

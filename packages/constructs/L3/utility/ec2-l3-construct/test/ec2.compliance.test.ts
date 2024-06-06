@@ -3,25 +3,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BlockDeviceProps, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { BlockDeviceProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { EbsDeviceVolumeType } from "aws-cdk-lib/aws-ec2";
 import { Ec2L3Construct, Ec2L3ConstructProps, InitProps, InstanceProps, SecurityGroupProps } from '../lib/ec2-l3-construct';
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-    const testApp = new CaefTestApp()
+    const testApp = new MdaaTestApp()
     const stack = testApp.testStack
 
-    const testRoleRef: CaefRoleRef = {
+    const testRoleRef: MdaaRoleRef = {
         arn: "arn:test-partition:iam::test-account:role/test-role",
         id: "test-id",
         name: "test-role"
     }
 
-    const ingress: CaefSecurityGroupRuleProps = {
+    const ingress: MdaaSecurityGroupRuleProps = {
         ipv4: [ {
             cidr: "10.0.0.0/28",
             port: 443,
@@ -29,7 +29,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
         } ]
     }
 
-    const egress: CaefSecurityGroupRuleProps = {
+    const egress: MdaaSecurityGroupRuleProps = {
         ipv4: [ {
             cidr: "10.0.0.0/28",
             port: 443,
@@ -159,7 +159,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
 
         naming: testApp.naming,
 
-        roleHelper: new CaefRoleHelper( stack, testApp.naming )
+        roleHelper: new MdaaRoleHelper( stack, testApp.naming )
     }
 
     new Ec2L3Construct( stack, "instances", constructProps );

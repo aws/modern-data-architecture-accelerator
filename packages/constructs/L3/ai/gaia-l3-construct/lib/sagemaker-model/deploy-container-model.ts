@@ -5,7 +5,7 @@ import { Construct } from "constructs";
 import { ContainerImages } from "./container-images";
 import { ImageRepositoryMapping } from "./image-repository-mapping";
 import { SageMakerModelProps, ModelContainerConfig } from "./types";
-import {CaefRole} from "@aws-caef/iam-constructs";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
 import {NagSuppressions} from "cdk-nag";
 
 export function deployContainerModel(
@@ -24,7 +24,7 @@ export function deployContainerModel(
     maxInstanceCount
   } = modelConfig;
 
-  const executionRole = new CaefRole(scope, `SageMakerContainer${modelId}ModelExecutionRole`, {
+  const executionRole = new MdaaRole(scope, `SageMakerContainer${modelId}ModelExecutionRole`, {
     naming: props.naming,
     roleName: `SageMakerContainer${modelId.replace("/", "")}ModelExecutionRole`,
     createParams: false,

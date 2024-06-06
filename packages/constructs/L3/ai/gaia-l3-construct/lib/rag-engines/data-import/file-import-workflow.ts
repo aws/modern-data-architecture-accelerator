@@ -8,17 +8,17 @@ import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
-import { CaefLogGroup } from "@aws-caef/cloudwatch-constructs";
-import { CaefConstructProps } from "@aws-caef/construct";
+import { MdaaLogGroup } from "@aws-mdaa/cloudwatch-constructs";
+import { MdaaConstructProps } from "@aws-mdaa/construct";
 import {NagSuppressions} from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface FileImportWorkflowProps extends CaefConstructProps {
+export interface FileImportWorkflowProps extends MdaaConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly fileImportBatchJob: FileImportBatchJob;
   readonly ragDynamoDBTables: RagDynamoDBTables;
-  encryptionKey: CaefKmsKey
+  encryptionKey: MdaaKmsKey
 }
 
 export class FileImportWorkflow extends Construct {
@@ -109,7 +109,7 @@ export class FileImportWorkflow extends Construct {
         ResultPath: "$.job",
       },
     });
-    const logGroup: logs.LogGroup = new CaefLogGroup( this, `file-import-log-group`, {
+    const logGroup: logs.LogGroup = new MdaaLogGroup( this, `file-import-log-group`, {
       naming: props.naming,
       createParams: false,
       createOutputs: false,
@@ -151,8 +151,8 @@ export class FileImportWorkflow extends Construct {
 
     NagSuppressions.addResourceSuppressions(stateMachine, [
       { id: 'AwsSolutions-IAM5', reason: 'Events handled by upstream dynamodb service, resource unknown at deployment time' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     this.stateMachine = stateMachine;

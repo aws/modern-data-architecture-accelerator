@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { DataScienceTeamL3Construct, DataScienceTeamL3ConstructProps } from '@aws-caef/datascience-team-l3-construct';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { DataScienceTeamL3Construct, DataScienceTeamL3ConstructProps } from '@aws-mdaa/datascience-team-l3-construct';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { DataScienceTeamConfigParser } from './datascience-team-config';
 
 
-export class DataScienceTeamApp extends CaefCdkApp {
+export class DataScienceTeamApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "datascience-team", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
         const appConfig = new DataScienceTeamConfigParser( stack, parserProps )
 

@@ -1,6 +1,6 @@
-import { CaefLogGroup } from "@aws-caef/cloudwatch-constructs";
-import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
-import { CaefLambdaFunction, CaefLambdaRole } from "@aws-caef/lambda-constructs";
+import { MdaaLogGroup } from "@aws-mdaa/cloudwatch-constructs";
+import { MdaaL3Construct, MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
+import { MdaaLambdaFunction, MdaaLambdaRole } from "@aws-mdaa/lambda-constructs";
 import * as cdk from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
@@ -13,25 +13,25 @@ import * as path from "path";
 import { Shared } from "../../shared";
 import { SystemConfig } from "../../shared/types";
 import { RagDynamoDBTables } from "../rag-dynamodb-tables";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
 import {Effect, ServicePrincipal} from "aws-cdk-lib/aws-iam";
 
-export interface CreateAuroraWorkspaceProps extends CaefL3ConstructProps {
+export interface CreateAuroraWorkspaceProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly dbCluster: rds.DatabaseCluster;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class CreateAuroraWorkspace extends CaefL3Construct {
+export class CreateAuroraWorkspace extends MdaaL3Construct {
   public readonly stateMachine: sfn.StateMachine;
 
   constructor(scope: Construct, id: string, props: CreateAuroraWorkspaceProps) {
     super(scope, id, props);
 
-    const createFunctionRole = new CaefLambdaRole(this, 'CreateAuroraWorkspaceFunctionRole', {
+    const createFunctionRole = new MdaaLambdaRole(this, 'CreateAuroraWorkspaceFunctionRole', {
       naming: props.naming,
       createParams: false,
       createOutputs: false,
@@ -52,7 +52,7 @@ export class CreateAuroraWorkspace extends CaefL3Construct {
     const createAuroraWorkspaceCodePath = props.config?.codeOverwrites?.createAuroraWorkspaceCodePath !== undefined ?
         props.config.codeOverwrites.createAuroraWorkspaceCodePath : path.join(__dirname, "./functions/create-workflow/create")
 
-    const createFunction = new CaefLambdaFunction(
+    const createFunction = new MdaaLambdaFunction(
       this,
       "CreateAuroraWorkspaceFunction",
       {
@@ -188,7 +188,7 @@ export class CreateAuroraWorkspace extends CaefL3Construct {
       .next(setReady)
       .next(new sfn.Succeed(this, "Success"));
 
-    const logGroup: LogGroup = new CaefLogGroup( this, `CreateAuroraWorkspace-loggroup`, {
+    const logGroup: LogGroup = new MdaaLogGroup( this, `CreateAuroraWorkspace-loggroup`, {
       naming: props.naming,
       createParams: false,
       createOutputs: false,
@@ -213,8 +213,8 @@ export class CreateAuroraWorkspace extends CaefL3Construct {
     props.encryptionKey.grantEncryptDecrypt(stateMachine.role)
     NagSuppressions.addResourceSuppressions( stateMachine, [
       { id: 'AwsSolutions-IAM5', reason: 'Invoke function restricted to delete workspace lambda.  The lambda arn is not known at deployment time.' },
-      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+      { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true )
     this.stateMachine = stateMachine;
   }

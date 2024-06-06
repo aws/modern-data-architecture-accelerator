@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefBucket } from '@aws-caef/s3-constructs';
-import { AuditHelper } from '@aws-caef/s3-audit-helper';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
+import { AuditHelper } from '@aws-mdaa/s3-audit-helper';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 
@@ -26,11 +26,11 @@ export interface AuditTrailProps {
     readonly includeManagementEvents?: boolean
 }
 
-export interface AuditTrailL3ConstructProps extends CaefL3ConstructProps {
+export interface AuditTrailL3ConstructProps extends MdaaL3ConstructProps {
     readonly trail: AuditTrailProps
 }
 
-export class AuditTrailL3Construct extends CaefL3Construct {
+export class AuditTrailL3Construct extends MdaaL3Construct {
     protected readonly props: AuditTrailL3ConstructProps
 
 
@@ -42,8 +42,8 @@ export class AuditTrailL3Construct extends CaefL3Construct {
 
     private createAuditResources () {
 
-        const auditBucket = CaefBucket.fromBucketName( this, "audit-bucket", this.props.trail.cloudTrailAuditBucketName )
-        const auditKmsKey = CaefKmsKey.fromKeyArn( this, "audit-kms-key", this.props.trail.cloudTrailAuditKmsKeyArn )
+        const auditBucket = MdaaBucket.fromBucketName( this, "audit-bucket", this.props.trail.cloudTrailAuditBucketName )
+        const auditKmsKey = MdaaKmsKey.fromKeyArn( this, "audit-kms-key", this.props.trail.cloudTrailAuditKmsKeyArn )
 
         const auditTrail = AuditHelper.createCloudTrail( this, auditBucket, auditKmsKey, this.props.naming, "s3-audit", this.props.trail.includeManagementEvents )
         NagSuppressions.addResourceSuppressions(

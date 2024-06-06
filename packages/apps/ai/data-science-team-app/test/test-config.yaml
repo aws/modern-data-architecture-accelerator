@@ -15,7 +15,7 @@ team:
 
   # Role which will be used as execution role for team SageMaker resources.
   # Requires an assume role trust for sagemaker.amazonaws.com, with assume role actions
-  # of sts:AssumeRole and sts:SetSourceIdentity. Can be produced using the CAEF roles module with the
+  # of sts:AssumeRole and sts:SetSourceIdentity. Can be produced using the MDAA roles module with the
   # following config:
   # team-execution-role:
   #   trustedPrincipal: service:sagemaker.amazonaws.com

@@ -4,13 +4,13 @@
  */
 
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefTestApp } from "@aws-caef/testing";
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
 import { GlueCatalogL3Construct, GlueCatalogL3ConstructProps, CatalogAccessPolicyProps } from '../lib/glue-catalog-l3-construct';
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
 
   const catalogAccessPolicyProps: CatalogAccessPolicyProps = {
     resources: [ 'test-resource-1' ],
@@ -21,7 +21,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
   const constructProps: GlueCatalogL3ConstructProps = {
 
 
-    roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming ),
     naming: testApp.naming,
     accessPolicies: { [ 'test-access-policy' ]: catalogAccessPolicyProps },
     consumerAccounts: { 'id': 'test1' },

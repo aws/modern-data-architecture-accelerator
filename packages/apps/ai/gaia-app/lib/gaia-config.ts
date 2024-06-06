@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from "@aws-caef/app";
-import { GAIAProps } from "@aws-caef/gaia-l3-construct";
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from "@aws-mdaa/app";
+import { GAIAProps } from "@aws-mdaa/gaia-l3-construct";
 import { Schema } from "ajv";
 import { Stack } from "aws-cdk-lib";
 
 import * as configSchema from './config-schema.json';
 
 
-export interface GAIAConfigContents extends CaefBaseConfigContents {
+export interface GAIAConfigContents extends MdaaBaseConfigContents {
     readonly gaia: GAIAProps
 }
 
-export class GAIAConfigParser extends CaefAppConfigParser<GAIAConfigContents> {
+export class GAIAConfigParser extends MdaaAppConfigParser<GAIAConfigContents> {
 
     public readonly gaia: GAIAProps
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
         this.gaia = this.configContents.gaia
     }

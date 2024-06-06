@@ -1,7 +1,7 @@
 {
-  "name": "@aws-caef/dataops-workflow-l3-construct",
+  "name": "@aws-mdaa/dataops-workflow-l3-construct",
   "version": "0.41.0",
-  "description": "CAEF DataOps Workflow L3 Construct",
+  "description": "MDAA DataOps Workflow L3 Construct",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",
@@ -21,11 +21,11 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/dataops-project-l3-construct": "0.41.0",
-    "@aws-caef/eventbridge-helper": "0.41.0",
-    "@aws-caef/l3-construct": "0.41.0",
-    "@aws-caef/testing": "^0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/dataops-project-l3-construct": "0.41.0",
+    "@aws-mdaa/eventbridge-helper": "0.41.0",
+    "@aws-mdaa/l3-construct": "0.41.0",
+    "@aws-mdaa/testing": "^0.41.0",
     "@types/jest": "27.4.1",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -39,10 +39,10 @@
     "typescript-json-schema": "0.53.0"
   },
   "peerDependencies": {
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/dataops-project-l3-construct": "0.41.0",
-    "@aws-caef/eventbridge-helper": "0.41.0",
-    "@aws-caef/l3-construct": "0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/dataops-project-l3-construct": "0.41.0",
+    "@aws-mdaa/eventbridge-helper": "0.41.0",
+    "@aws-mdaa/l3-construct": "0.41.0",
     "aws-cdk-lib": "2.132.1",
     "constructs": "10.0.96"
   },
@@ -51,15 +51,15 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/construct": "^0.41.0",
-    "@aws-caef/dataops-project-l3-construct": "^0.41.0",
-    "@aws-caef/eventbridge-helper": "^0.41.0",
-    "@aws-caef/iam-constructs": "^0.41.0",
-    "@aws-caef/iam-role-helper": "^0.41.0",
-    "@aws-caef/kms-constructs": "^0.41.0",
-    "@aws-caef/l3-construct": "^0.41.0",
-    "@aws-caef/naming": "^0.41.0",
-    "@aws-caef/sqs-constructs": "^0.41.0",
+    "@aws-mdaa/construct": "^0.41.0",
+    "@aws-mdaa/dataops-project-l3-construct": "^0.41.0",
+    "@aws-mdaa/eventbridge-helper": "^0.41.0",
+    "@aws-mdaa/iam-constructs": "^0.41.0",
+    "@aws-mdaa/iam-role-helper": "^0.41.0",
+    "@aws-mdaa/kms-constructs": "^0.41.0",
+    "@aws-mdaa/l3-construct": "^0.41.0",
+    "@aws-mdaa/naming": "^0.41.0",
+    "@aws-mdaa/sqs-constructs": "^0.41.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
     "constructs": "10.0.96"
@@ -71,15 +71,15 @@
     "versionFormat": "full",
     "targets": {
       "java_disabled": {
-        "package": "software.amazon.awscaef.l3-construct.dataops.workflow",
+        "package": "software.amazon.awsmdaa.l3-construct.dataops.workflow",
         "maven": {
-          "groupId": "software.amazon.awscaef.l3-construct.dataops",
+          "groupId": "software.amazon.awsmdaa.l3-construct.dataops",
           "artifactId": "workflow"
         }
       },
       "python": {
-        "distName": "aws-caef.dataops-workflow-l3-construct",
-        "module": "aws_caef.dataops_workflow_l3_construct"
+        "distName": "aws-mdaa.dataops-workflow-l3-construct",
+        "module": "aws_mdaa.dataops_workflow_l3_construct"
       }
     }
   }

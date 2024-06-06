@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { GlueCrawlerL3Construct, GlueCrawlerL3ConstructProps } from '@aws-caef/dataops-crawler-l3-construct';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { GlueCrawlerL3Construct, GlueCrawlerL3ConstructProps } from '@aws-mdaa/dataops-crawler-l3-construct';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { GlueCrawlerConfigParser } from './dataops-crawler-config';
 
-export class GlueCrawlerCDKApp extends CaefCdkApp {
+export class GlueCrawlerCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "dataops-crawler", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
         const appConfig = new GlueCrawlerConfigParser( stack, parserProps )
         const constructProps: GlueCrawlerL3ConstructProps = {

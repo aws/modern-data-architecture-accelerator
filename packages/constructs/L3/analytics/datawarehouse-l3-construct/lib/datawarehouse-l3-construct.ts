@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefSecurityGroup, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { CaefRole, ICaefRole } from '@aws-caef/iam-constructs';
-import { CaefResolvableRole, CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefKmsKey, DECRYPT_ACTIONS } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { CaefRedshiftCluster, CaefRedshiftClusterParameterGroup } from '@aws-caef/redshift-constructs';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-caef/s3-bucketpolicy-helper';
-import { CaefBucket } from '@aws-caef/s3-constructs';
+import { MdaaSecurityGroup, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { MdaaRole, IMdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaKmsKey, DECRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaRedshiftCluster, MdaaRedshiftClusterParameterGroup } from '@aws-mdaa/redshift-constructs';
+import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { Cluster, ClusterSubnetGroup, ClusterType, NodeType, RotationMultiUserOptions, User, UserProps } from '@aws-cdk/aws-redshift-alpha';
 import { Duration, Fn, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Port, Protocol, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
@@ -99,7 +99,7 @@ export interface DatabaseUsersProps {
   /**
   * List of roles that need redshift secret access
    */
-  readonly secretAccessRoles?: CaefRoleRef[]
+  readonly secretAccessRoles?: MdaaRoleRef[]
 }
 
 export type EventCategories = "configuration" | "management" | "monitoring" | "security" | "pending"
@@ -111,7 +111,7 @@ export interface EventNotificationsProps {
   readonly email?: string[]
 }
 
-export interface DataWarehouseL3ConstructProps extends CaefL3ConstructProps {
+export interface DataWarehouseL3ConstructProps extends MdaaL3ConstructProps {
 
   /**
    * Set the admin user name for the cluster
@@ -128,16 +128,16 @@ export interface DataWarehouseL3ConstructProps extends CaefL3ConstructProps {
   /**
    * List of admin roles which will be provided access to cluster resources (like KMS/Bucket)
    */
-  readonly dataAdminRoleRefs: CaefRoleRef[]
+  readonly dataAdminRoleRefs: MdaaRoleRef[]
   /**
  * List of user roles which will be provided access to cluster resources (like KMS/Bucket)
  */
-  readonly warehouseBucketUserRoleRefs?: CaefRoleRef[]
+  readonly warehouseBucketUserRoleRefs?: MdaaRoleRef[]
   /**
    * List of external roles which will be associated to the redshift cluster
    * If a role requires access to datawarehouse bucket, then role should be added to 'warehouseBucketUserRoles' in application config
    */
-  readonly executionRoleRefs?: CaefRoleRef[]
+  readonly executionRoleRefs?: MdaaRoleRef[]
   /**
    * The ID of the VPC on which the cluster will be deployed.
    */
@@ -212,7 +212,7 @@ export interface DataWarehouseL3ConstructProps extends CaefL3ConstructProps {
 }
 
 //This stack creates all of the resources required for a Data Warehouse
-export class DataWarehouseL3Construct extends CaefL3Construct {
+export class DataWarehouseL3Construct extends MdaaL3Construct {
   protected readonly props: DataWarehouseL3ConstructProps
   public static readonly defaultClusterPort = 54390
   private dataAdminRoleIds: string[]
@@ -231,7 +231,7 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
       this.createWarehouseBucket( warehouseKmsKey, allRoleIds )
     }
     const loggingBucket = this.props.enableAuditLoggingToS3 ? this.createLoggingBucket() : undefined
-    const executionRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.executionRoleRefs || [], "ExecutionRoleArns" ).map( x => CaefRole.fromRoleArn( this, x.refId(), x.arn() ) )
+    const executionRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.executionRoleRefs || [], "ExecutionRoleArns" ).map( x => MdaaRole.fromRoleArn( this, x.refId(), x.arn() ) )
     const cluster = this.createCluster( warehouseKmsKey, executionRoles, loggingBucket )
 
     // Create Redshift scheduled actions - pause and resume cluster - if any were defined in config for this stack
@@ -340,8 +340,8 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
 
 
   //Creates a RedShift cluster
-  private createCluster ( warehouseKmsKey: CaefKmsKey,
-    executionRoles?: ICaefRole[],
+  private createCluster ( warehouseKmsKey: MdaaKmsKey,
+    executionRoles?: IMdaaRole[],
     loggingBucket?: IBucket ): Cluster {
     const vpc = Vpc.fromVpcAttributes( this.scope, `vpc-${ this.props.vpcId }`, {
       vpcId: this.props.vpcId,
@@ -361,13 +361,13 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
       }
     } )
 
-    const securityGroupIngress: CaefSecurityGroupRuleProps = {
+    const securityGroupIngress: MdaaSecurityGroupRuleProps = {
       ipv4: this.props.securityGroupIngress.ipv4?.map( x => { return { cidr: x, port: clusterPort, protocol: Protocol.TCP, description: `Redshift Ingress for IPV4 CIDR ${ x }` } } ),
       sg: this.props.securityGroupIngress.sg?.map( x => { return { sgId: x, port: clusterPort, protocol: Protocol.TCP, description: `Redshift Ingress for SG ${ x }` } } )
     }
 
     //Create security group
-    const securityGroup = new CaefSecurityGroup( this.scope, "warehouse-sg", {
+    const securityGroup = new MdaaSecurityGroup( this.scope, "warehouse-sg", {
       naming: this.props.naming,
       securityGroupName: "warehouse-sg",
       vpc: vpc,
@@ -389,7 +389,7 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
 
     //Inject Workload Management Config into Param Group
     parameters[ 'wlm_json_configuration' ] = JSON.stringify( this.props.workloadManagement )
-    const parameterGroup = new CaefRedshiftClusterParameterGroup( this.scope, "cluster-param-group", {
+    const parameterGroup = new MdaaRedshiftClusterParameterGroup( this.scope, "cluster-param-group", {
       parameters: parameters,
       naming: this.props.naming
     } )
@@ -400,7 +400,7 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
     } : undefined
 
     //Create the cluster
-    const cluster = new CaefRedshiftCluster( this.scope, "cluster", {
+    const cluster = new MdaaRedshiftCluster( this.scope, "cluster", {
       masterUsername: this.props.adminUsername,
       vpc: vpc,
       port: clusterPort,
@@ -440,7 +440,7 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
   }
 
   //This function creates Redshift Users -> Stores & Rotates creds in Secrets Manager -> stores SecretName in SSM
-  private createClusterUsers ( cluster: Cluster, warehouseKmsKey: CaefKmsKey ) {
+  private createClusterUsers ( cluster: Cluster, warehouseKmsKey: MdaaKmsKey ) {
 
     this.props.databaseUsers?.forEach( databaseUser => {
       //Redshift is going to force usernames to lower case. 
@@ -514,7 +514,7 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
   }
 
   //This function creates and assigns ploicies to specified roles for accessing redshift user secrets.     
-  private assignSecretAcessPolicies ( secretAccessRoles: CaefResolvableRole[], warehouseKmsKey: CaefKmsKey, secret: ISecret ) {
+  private assignSecretAcessPolicies ( secretAccessRoles: MdaaResolvableRole[], warehouseKmsKey: MdaaKmsKey, secret: ISecret ) {
 
     const arnPrincipals = secretAccessRoles.map( role => new ArnPrincipal( role.arn() ) )
     const secretAccessStatement = new PolicyStatement( {
@@ -541,7 +541,7 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
   private createFederation ( clusterName: string, federation: FederationProps ): Role {
 
     //Create a role which can be used for accessing redshift
-    const role = new CaefRole( this.scope, `federation-role-${ federation.federationName }`, {
+    const role = new MdaaRole( this.scope, `federation-role-${ federation.federationName }`, {
       assumedBy: new FederatedPrincipal( federation.providerArn, {}, "sts:AssumeRoleWithSAML" ),
       roleName: federation.federationName,
       naming: this.props.naming
@@ -611,9 +611,9 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
     return role
   }
 
-  private createWarehouseKMSKey ( allRoleIds: string[] ): CaefKmsKey {
+  private createWarehouseKMSKey ( allRoleIds: string[] ): MdaaKmsKey {
 
-    const kmsKey = new CaefKmsKey( this.scope, 'warehouse-key', {
+    const kmsKey = new MdaaKmsKey( this.scope, 'warehouse-key', {
       alias: "data-warehouse",
       naming: this.props.naming,
       keyAdminRoleIds: this.dataAdminRoleIds,
@@ -623,10 +623,10 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
     return kmsKey
   }
 
-  private createWarehouseBucket ( warehouseKmsKey: CaefKmsKey, allRoleIds: string[] ): Bucket {
+  private createWarehouseBucket ( warehouseKmsKey: MdaaKmsKey, allRoleIds: string[] ): Bucket {
 
     //This warehouse bucket will be used for data warehouse logging and other S3 offload scenarios
-    let warehouseBucket = new CaefBucket( this.scope, "warehouse-bucket", {
+    let warehouseBucket = new MdaaBucket( this.scope, "warehouse-bucket", {
       encryptionKey: warehouseKmsKey,
       bucketName: 'warehouse',
       naming: this.props.naming,
@@ -635,8 +635,8 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
     NagSuppressions.addResourceSuppressions(
       warehouseBucket,
       [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF Warehouse bucket does not use bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF Warehouse bucket does not use bucket replication.' }
+        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.' },
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.' }
       ],
       true
     );
@@ -667,8 +667,8 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
   }
 
   private createLoggingBucket (): IBucket {
-    //Replicate behaviour of CaefBucket but allow for non-KMS encryption (required by Redshift)
-    const uniqueBucketNamePrefixContext = this.node.tryGetContext( CaefBucket.UNIQUE_NAME_CONTEXT_KEY )
+    //Replicate behaviour of MdaaBucket but allow for non-KMS encryption (required by Redshift)
+    const uniqueBucketNamePrefixContext = this.node.tryGetContext( MdaaBucket.UNIQUE_NAME_CONTEXT_KEY )
 
     const uniqueBucketNamePrefix = uniqueBucketNamePrefixContext ? Boolean( uniqueBucketNamePrefixContext ) : false
 
@@ -693,10 +693,10 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
       [
         { id: 'AwsSolutions-S1', reason: 'Server access logs do not support KMS on targets.' },
         { id: 'NIST.800.53.R5-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets.' },
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF Warehouse bucket does not use bucket replication.' },
+        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.' },
         { id: 'NIST.800.53.R5-S3DefaultEncryptionKMS', reason: 'Redshift audit logging does not support KMS-encrypted buckets' },
         { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF Warehouse bucket does not use bucket replication.' },
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.' },
         { id: 'HIPAA.Security-S3DefaultEncryptionKMS', reason: 'Redshift audit logging does not support KMS-encrypted buckets' }
       ],
       true
@@ -748,7 +748,7 @@ export class DataWarehouseL3Construct extends CaefL3Construct {
       } )
 
       // Create role for redshift scheduler to pause and resume cluster and attach the above managed policy to it.
-      const redshiftSchedulerRole = new CaefRole( this.scope, `scheduler-role`, {
+      const redshiftSchedulerRole = new MdaaRole( this.scope, `scheduler-role`, {
         naming: this.props.naming,
         assumedBy: new ServicePrincipal( "scheduler.redshift.amazonaws.com" ),
         roleName: "scheduler",

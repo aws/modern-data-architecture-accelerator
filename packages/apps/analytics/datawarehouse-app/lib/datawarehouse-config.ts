@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { FederationProps, ScheduledActionProps, DatabaseUsersProps, EventNotificationsProps } from '@aws-caef/datawarehouse-l3-construct';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { FederationProps, ScheduledActionProps, DatabaseUsersProps, EventNotificationsProps } from '@aws-mdaa/datawarehouse-l3-construct';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
-export interface DataWarehouseConfigContents extends CaefBaseConfigContents {
+export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
   /**
    * Set the admin user name for the cluster
    */
@@ -26,16 +26,16 @@ export interface DataWarehouseConfigContents extends CaefBaseConfigContents {
   /**
    * List of admin roles which will be provided access to cluster resources (like KMS/Bucket)
    */
-  dataAdminRoles: CaefRoleRef[]
+  dataAdminRoles: MdaaRoleRef[]
   /**
    * List of user roles which will be provided access to cluster resources (like KMS/Bucket)
    */
-  warehouseBucketUserRoles?: CaefRoleRef[]
+  warehouseBucketUserRoles?: MdaaRoleRef[]
   /**
    * List of external roles which will be associated to the redshift cluster
    * If a role requires access to datawarehouse bucket, then role should be added to 'warehouseBucketUserRoles' in application config
    */
-  executionRoles?: CaefRoleRef[]
+  executionRoles?: MdaaRoleRef[]
   /**
    * The ID of the VPC on which the cluster will be deployed.
    */
@@ -109,14 +109,14 @@ export interface DataWarehouseConfigContents extends CaefBaseConfigContents {
   eventNotifications?: EventNotificationsProps
 }
 
-export class DataWarehouseConfigParser extends CaefAppConfigParser<DataWarehouseConfigContents> {
+export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouseConfigContents> {
   public readonly adminUsername: string
   public readonly adminPasswordRotationDays: number
   public readonly federations: FederationProps[]
   public readonly databaseUsers: DatabaseUsersProps[]
-  public readonly dataAdminRoleRefs: CaefRoleRef[]
-  public readonly warehouseBucketUserRoleRefs?: CaefRoleRef[]
-  public readonly executionRoleRefs?: CaefRoleRef[]
+  public readonly dataAdminRoleRefs: MdaaRoleRef[]
+  public readonly warehouseBucketUserRoleRefs?: MdaaRoleRef[]
+  public readonly executionRoleRefs?: MdaaRoleRef[]
   public readonly vpcId: string
   public readonly clusterPort: number
   public readonly subnetIds: string[]
@@ -134,7 +134,7 @@ export class DataWarehouseConfigParser extends CaefAppConfigParser<DataWarehouse
   public readonly createWarehouseBucket?: boolean
   public readonly automatedSnapshotRetentionDays?: number
   public readonly eventNotifications?: EventNotificationsProps
-  constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+  constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
     super( stack, props, configSchema as Schema )
 
     this.adminUsername = this.configContents.adminUsername

@@ -1,7 +1,7 @@
 {
-  "name": "@aws-caef/dataops-crawler-l3-construct",
+  "name": "@aws-mdaa/dataops-crawler-l3-construct",
   "version": "0.41.0",
-  "description": "CAEF DataOps Crawler L3 Construct",
+  "description": "MDAA DataOps Crawler L3 Construct",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",
@@ -21,9 +21,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/l3-construct": "0.41.0",
-    "@aws-caef/testing": "^0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/l3-construct": "0.41.0",
+    "@aws-mdaa/testing": "^0.41.0",
     "@types/jest": "27.4.1",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -37,12 +37,12 @@
     "typescript-json-schema": "0.53.0"
   },
   "bundledDependencies": [
-    "@aws-caef/s3-bucketpolicy-helper",
-    "@aws-caef/s3-inventory-helper"
+    "@aws-mdaa/s3-bucketpolicy-helper",
+    "@aws-mdaa/s3-inventory-helper"
   ],
   "peerDependencies": {
-    "@aws-caef/construct": "0.41.0",
-    "@aws-caef/l3-construct": "0.41.0",
+    "@aws-mdaa/construct": "0.41.0",
+    "@aws-mdaa/l3-construct": "0.41.0",
     "aws-cdk-lib": "2.132.1",
     "constructs": "10.0.96"
   },
@@ -51,16 +51,16 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-caef/construct": "^0.41.0",
-    "@aws-caef/dataops-project-l3-construct": "^0.41.0",
-    "@aws-caef/eventbridge-helper": "^0.41.0",
-    "@aws-caef/glue-constructs": "^0.41.0",
-    "@aws-caef/iam-role-helper": "^0.41.0",
-    "@aws-caef/l3-construct": "^0.41.0",
-    "@aws-caef/naming": "^0.41.0",
-    "@aws-caef/s3-bucketpolicy-helper": "^0.41.0",
-    "@aws-caef/s3-inventory-helper": "^0.41.0",
-    "@aws-caef/sns-constructs": "^0.41.0",
+    "@aws-mdaa/construct": "^0.41.0",
+    "@aws-mdaa/dataops-project-l3-construct": "^0.41.0",
+    "@aws-mdaa/eventbridge-helper": "^0.41.0",
+    "@aws-mdaa/glue-constructs": "^0.41.0",
+    "@aws-mdaa/iam-role-helper": "^0.41.0",
+    "@aws-mdaa/l3-construct": "^0.41.0",
+    "@aws-mdaa/naming": "^0.41.0",
+    "@aws-mdaa/s3-bucketpolicy-helper": "^0.41.0",
+    "@aws-mdaa/s3-inventory-helper": "^0.41.0",
+    "@aws-mdaa/sns-constructs": "^0.41.0",
     "aws-cdk-lib": "2.132.1",
     "cdk-nag": "2.28.27",
     "constructs": "10.0.96"
@@ -72,15 +72,15 @@
     "versionFormat": "full",
     "targets": {
       "java_disabled": {
-        "package": "software.amazon.awscaef.l3-construct.dataops.crawler",
+        "package": "software.amazon.awsmdaa.l3-construct.dataops.crawler",
         "maven": {
-          "groupId": "software.amazon.awscaef.l3-construct.dataops",
+          "groupId": "software.amazon.awsmdaa.l3-construct.dataops",
           "artifactId": "crawler"
         }
       },
       "python": {
-        "distName": "aws-caef.dataops-crawler-l3-construct",
-        "module": "aws_caef.dataops_crawler_l3_construct"
+        "distName": "aws-mdaa.dataops-crawler-l3-construct",
+        "module": "aws_mdaa.dataops_crawler_l3_construct"
       }
     }
   }

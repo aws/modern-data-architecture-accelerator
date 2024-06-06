@@ -1,5 +1,5 @@
 # Information for looking up network infrastructure information
-# Based on this information, CAEF will create a security group with all required ingress rules and attach to the existing VPC endpoint for datasync service
+# Based on this information, MDAA will create a security group with all required ingress rules and attach to the existing VPC endpoint for datasync service
 vpc:
   # The id of the VPC that DataSync service will use
   vpcId: vpc-009ce5ec1cff75fx6
@@ -22,7 +22,7 @@ agents:
     # The ID of the subnet that will be used for data transfer with DataSync elastic network interfaces/ENIs.
     subnetId: example-subnet
     agentIpAddress: 1.1.1.2
-  # In the example below, the security group resource is deployed outside CAEF. All below information are required.
+  # In the example below, the security group resource is deployed outside MDAA. All below information are required.
   agent3:
     activationKey: XXXXX-YYYYY-XXXXX-YYYYY-XXXXX
     subnetId: "{{resolve:ssm:/path/to/subnet-id-ssm}}"
@@ -58,7 +58,7 @@ locations:
         - agent2
       # Name of Secrets Manager that stores credential of the user with permission to read/write to SMB volume
       # The secret must contain value in the format of {user:<username>,password:<pwd>}
-      # If not specified, CAEF will create an empty secret, into which credentials can be populated after
+      # If not specified, MDAA will create an empty secret, into which credentials can be populated after
       # deployment
       # checkov:skip=CKV_SECRET_6: Base64 High Entropy String
       secretName: some-secret-name
@@ -70,7 +70,7 @@ locations:
       # Optional - the SMB version. Valid values: AUTOMATIC (default) | SMB2 | SMB3
       smbVersion: AUTOMATIC
     smb-loc2:
-      # ARN of the DataSync agent or a dynamic reference to it. Alternatively, use agentNames with referring to the generated DataSync agent name specified in the above `agents` configuration section. Use this only when the agent registration process was done outside CAEF.
+      # ARN of the DataSync agent or a dynamic reference to it. Alternatively, use agentNames with referring to the generated DataSync agent name specified in the above `agents` configuration section. Use this only when the agent registration process was done outside MDAA.
       agentArns:
         - arn:{{partition}}:datasync:{{region}}:{{account}}:agent/existing-agent-id
       secretName: some-secret-name
@@ -95,7 +95,7 @@ locations:
       serverHostname: some-object-storage.endpoint.hostname
       # Name of Secrets Manager that stores credential of the user with permission to read/write to the cloud-based object storage
       # The secret must contain value in the format of {"accessKey":<access_key>","secretKey":"<secret_key>"}
-      # If not specified, CAEF will create an empty secret, into which credentials can be populated after
+      # If not specified, MDAA will create an empty secret, into which credentials can be populated after
       # deployment
       secretName: some-secret-name
       # storage port number, for example: 443
@@ -123,7 +123,7 @@ tasks:
       - filterType: SIMPLE_PATTERN
         value: "/data*|/ingestion*" # Begins with / and only accepts asterisk at the most right position
   mytask2:
-    # In this example, source and destination locations are specified using locations. Use this parameters only for existing locations that have been created outside CAEF. Otherwise, use sourceLocationName and destinationLocationName.
+    # In this example, source and destination locations are specified using locations. Use this parameters only for existing locations that have been created outside MDAA. Otherwise, use sourceLocationName and destinationLocationName.
     sourceLocationArn: "{{resolve:ssm:/path/to/source/location/arn}}"
     destinationLocationArn: "{{resolve:ssm:/path/to/destination/location/arn}}"
     options:

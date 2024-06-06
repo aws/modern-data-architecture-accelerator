@@ -1,8 +1,8 @@
 statements:
 
     # Basic Sagemaker policies should be attached. 
-    # Permissions that are resource specific should be added via CAEF data science module 
-    # or via CAEF Roles/generatePolicies
+    # Permissions that are resource specific should be added via MDAA data science module 
+    # or via MDAA Roles/generatePolicies
     -   Sid: SageMakerLogsAccess
         Effect: Allow
         Action:

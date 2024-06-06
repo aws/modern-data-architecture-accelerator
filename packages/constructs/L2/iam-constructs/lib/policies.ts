@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { Arn, Stack } from "aws-cdk-lib";
 import { IGroup, IManagedPolicy, IRole, IUser, ManagedPolicy, ManagedPolicyProps, PolicyDocument, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
@@ -11,7 +11,7 @@ import { Construct } from "constructs";
 /**
  * Interface definging a compliant IAM ManagedPolicy
  */
-export interface CaefManagedPolicyProps extends CaefConstructProps {
+export interface MdaaManagedPolicyProps extends MdaaConstructProps {
     /**
      * The name of the managed policy. If you specify multiple policies for an entity,
      * specify unique names. For example, if you specify a list of policies for
@@ -85,27 +85,27 @@ export interface CaefManagedPolicyProps extends CaefConstructProps {
 /**
  * Interface representing a compliant ManagedPolicy
  */
-export interface ICaefManagedPolicy extends IManagedPolicy {
+export interface IMdaaManagedPolicy extends IManagedPolicy {
 
 }
 
 /**
  * Construct for creating compliant IAM ManagedPolicys
  */
-export class CaefManagedPolicy extends ManagedPolicy {
+export class MdaaManagedPolicy extends ManagedPolicy {
 
-    private static setProps ( props: CaefManagedPolicyProps ): ManagedPolicyProps {
+    private static setProps ( props: MdaaManagedPolicyProps ): ManagedPolicyProps {
         const overrideProps = {
             managedPolicyName: props.verbatimPolicyName ? props.managedPolicyName : props.naming.resourceName( props.managedPolicyName, 64 )
         }
         return { ...props, ...overrideProps }
     }
-    private props: CaefManagedPolicyProps
-    constructor( scope: Construct, id: string, props: CaefManagedPolicyProps ) {
-        super( scope, id, CaefManagedPolicy.setProps( props ) )
+    private props: MdaaManagedPolicyProps
+    constructor( scope: Construct, id: string, props: MdaaManagedPolicyProps ) {
+        super( scope, id, MdaaManagedPolicy.setProps( props ) )
         this.props = props
         this.checkPolicyLength()
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "managed-policy",
                 resourceId: props.managedPolicyName,
@@ -114,7 +114,7 @@ export class CaefManagedPolicy extends ManagedPolicy {
             }, ...props
         } ,scope)
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "managed-policy",
                 resourceId: props.managedPolicyName,

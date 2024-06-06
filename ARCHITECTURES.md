@@ -1,6 +1,6 @@
 # Architecture and Design
 
-The first step of building an analytics platform with CAEF is to decide on an initial architecture. CAEF is extremely flexible, able to be adapted to most common analytics platform architectures on AWS. These include basic Data Lakes and Data Warehouses, Lake House, and complex Data Mesh architectures. Note that the initial architecture does not need to be the target end-state architecture for the platform, as these architectures often build on eachother, and a CAEF configuration/deployment can be adapted through iteration from one architectural state to another.
+The first step of building an analytics platform with MDAA is to decide on an initial architecture. MDAA is extremely flexible, able to be adapted to most common analytics platform architectures on AWS. These include basic Data Lakes and Data Warehouses, Lake House, and complex Data Mesh architectures. Note that the initial architecture does not need to be the target end-state architecture for the platform, as these architectures often build on eachother, and a MDAA configuration/deployment can be adapted through iteration from one architectural state to another.
 
 ***
 
@@ -12,7 +12,7 @@ The AWS reference architecture for data platforms is the [Modern Data Architectu
 
 At the core of the Modern Data Architecture is a scalable, S3-based data lake. This data lake is wrapped with a unified data governance layer, as well as a dataops layer which facilitates seamless data movement between the core data lake and purpose-built analytics services on the perimeter. The selection of purpose-built analytics service to be implemented in a Modern Data Architecture/Lake House will typically be tailored to the specific use cases to be solved on the platform.
 
-CAEF has the flexibility to support virtually any derivative form of AWS Modern Data Architecture, including the core S3 data lake, the unified governance layer (Glue and LakeFormation), the seamless data movement/dataops layer, as well as a wide variety of purpose built analytical services supporting analytics, discovery, data science and AI/ML.
+MDAA has the flexibility to support virtually any derivative form of AWS Modern Data Architecture, including the core S3 data lake, the unified governance layer (Glue and LakeFormation), the seamless data movement/dataops layer, as well as a wide variety of purpose built analytical services supporting analytics, discovery, data science and AI/ML.
 
 ![Modern Data Architecture](docs/ModernDataArchitecture.png)
 
@@ -22,7 +22,7 @@ CAEF has the flexibility to support virtually any derivative form of AWS Modern 
 
 Data Mesh is a sophisticated, fully-distributed data platform architecture which is intended to provide maximum autonomy to business units in the activities of data product development. Each business participating in the mesh is furnished with its own data mesh node, which is itself typically an implementation of an individual Lake House. Within a data mesh node, each business unit has autonomy to produce data products, which can be exchanged with other nodes/business units via producer/consumer relationships. While the data mesh platform itself is distributed, it is critical for each node in the data mesh to still conform to a robust, unified governance framework in order to facilitate seamless, governed exchange of data between producers and consumers.
 
-CAEF supports configuration and deployment of complex Data Mesh architectures, distributed across arbitrary numbers of business units and AWS accounts. These deployments can occur centrally, from within a single deployment account across a multi-account landscape, or can be entirely distributed, with each data mesh node being deployed by individual business units using their own CAEF configurations. Hybrid models are also supported, using services such as Service Catalog, where a centralized team can define platform component templates (Service Catalog 'Products'), but delegate authority to individual business units for their final configuration and deployment.
+MDAA supports configuration and deployment of complex Data Mesh architectures, distributed across arbitrary numbers of business units and AWS accounts. These deployments can occur centrally, from within a single deployment account across a multi-account landscape, or can be entirely distributed, with each data mesh node being deployed by individual business units using their own MDAA configurations. Hybrid models are also supported, using services such as Service Catalog, where a centralized team can define platform component templates (Service Catalog 'Products'), but delegate authority to individual business units for their final configuration and deployment.
 
 ![Data Mesh](docs/DataMesh.png)
 
@@ -36,7 +36,7 @@ Hub and Spoke is a hybrid model between a fully centralized LakeHouse, and a ful
 
 ## Detailed Architecture
 
-CAEF is designed to be able to implement the following detailed reference architecture (or any derivite/subset of), which is a practical implementation of the AWS Modern Data Architecture (LakeHouse). The key platform functions/capabilties represented are:
+MDAA is designed to be able to implement the following detailed reference architecture (or any derivite/subset of), which is a practical implementation of the AWS Modern Data Architecture (LakeHouse). The key platform functions/capabilties represented are:
 
 * **Data Ingest** - All of the capabilities required to ingest data into the platform, including from structured, unstructured, batch and streaming data sources.
 * **S3 Data Lake/Persistence** - Provides secure, scalable storage at the core of the architecture, able to accomodate data of virtually any volume and variety.
@@ -46,6 +46,6 @@ CAEF is designed to be able to implement the following detailed reference archit
 * **Data Science, AI/ML**- Provides capabilities to support sophisticated exploratory analytis, data science, machine learning, and artifical intelligence.
 * **Visualization**- Provides capabilities to visualize data in support of traditional presentation analytics.
 
-![CAEF Reference Architecture](docs/CAEF-ReferenceArchitecture.png)
+![MDAA Reference Architecture](docs/MDAA-ReferenceArchitecture.png)
 
 ***

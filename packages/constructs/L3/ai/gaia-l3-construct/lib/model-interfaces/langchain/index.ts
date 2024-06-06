@@ -12,33 +12,33 @@ import * as path from "path";
 import {RagEngines} from "../../rag-engines";
 import {Shared} from "../../shared";
 import {SystemConfig} from "../../shared/types";
-import {CaefLambdaFunction, CaefLambdaRole} from "@aws-caef/lambda-constructs";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefRole} from "@aws-caef/iam-constructs";
-import {CaefSqsDeadLetterQueue, CaefSqsQueue} from "@aws-caef/sqs-constructs";
+import {MdaaLambdaFunction, MdaaLambdaRole} from "@aws-mdaa/lambda-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
+import {MdaaSqsDeadLetterQueue, MdaaSqsQueue} from "@aws-mdaa/sqs-constructs";
 import {NagSuppressions} from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-interface LangChainInterfaceProps extends CaefL3ConstructProps {
+interface LangChainInterfaceProps extends MdaaL3ConstructProps {
   readonly shared: Shared;
   readonly config: SystemConfig;
   readonly ragEngines?: RagEngines;
   readonly messagesTopic: sns.Topic;
   readonly sessionsTable: dynamodb.Table;
   readonly byUserIdIndex: string;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class LangChainInterface extends CaefL3Construct {
+export class LangChainInterface extends MdaaL3Construct {
   public readonly ingestionQueue: sqs.Queue;
-  public readonly requestHandler: CaefLambdaFunction;
-  public readonly requestHandlerRole: CaefRole;
+  public readonly requestHandler: MdaaLambdaFunction;
+  public readonly requestHandlerRole: MdaaRole;
   private readonly props: LangChainInterfaceProps
   constructor(scope: Construct, id: string, props: LangChainInterfaceProps) {
     super(scope, id, props);
     this.props = props
 
-    const requestHandlerRole = new CaefLambdaRole(this, 'RequestHandlerRole', {
+    const requestHandlerRole = new MdaaLambdaRole(this, 'RequestHandlerRole', {
       naming: props.naming,
       roleName:  'ModelInterfaceRequestHandlerRole',
       logGroupNames: [this.props.naming.resourceName( "model-interface-request-handler" )],
@@ -50,7 +50,7 @@ export class LangChainInterface extends CaefL3Construct {
 
     this.addRequestHandlerRolePermissions( requestHandlerRole, requestHandler )
 
-    const deadLetterQueue = new CaefSqsDeadLetterQueue(this, "LangchainIngestionDLQ", {
+    const deadLetterQueue = new MdaaSqsDeadLetterQueue(this, "LangchainIngestionDLQ", {
       encryptionMasterKey: props.encryptionKey,
       naming: props.naming,
       createParams: false,
@@ -58,7 +58,7 @@ export class LangChainInterface extends CaefL3Construct {
       queueName: "LangChainIngestionDLQ"
 
     });
-    const queue = new CaefSqsQueue(this, "LangchainIngestionQueue", {
+    const queue = new MdaaSqsQueue(this, "LangchainIngestionQueue", {
       encryptionMasterKey: props.encryptionKey,
       naming: props.naming,
       createParams: false,
@@ -88,8 +88,8 @@ export class LangChainInterface extends CaefL3Construct {
         requestHandlerRole,
         [
           { id: 'AwsSolutions-IAM5', reason: 'X-Ray, Comprehend, & Bedrock actions only support wildcard, s3 bucket bound to stack managed bucket, and DDB index and KMS key deployed and managed by stack' },
-          { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
-          { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by CAEF framework.' },
+          { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+          { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
         ], true);
 
     NagSuppressions.addResourceSuppressions(
@@ -106,7 +106,7 @@ export class LangChainInterface extends CaefL3Construct {
     this.requestHandlerRole = requestHandlerRole
   }
   
-  private addRequestHandlerRolePermissions ( requestHandlerRole: CaefRole, requestHandler: lambda.IFunction ) {
+  private addRequestHandlerRolePermissions ( requestHandlerRole: MdaaRole, requestHandler: lambda.IFunction ) {
 
     requestHandlerRole.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
@@ -136,7 +136,7 @@ export class LangChainInterface extends CaefL3Construct {
       } )
     );
   }
-  private addRequestHandlerRagPermissions ( requestHandlerRole: CaefRole, requestHandler: lambda.IFunction ) {
+  private addRequestHandlerRagPermissions ( requestHandlerRole: MdaaRole, requestHandler: lambda.IFunction ) {
     if ( this.props.ragEngines?.auroraPgVector ) {
       this.props.ragEngines?.auroraPgVector.database.secret?.grantRead(
         requestHandlerRole
@@ -194,7 +194,7 @@ export class LangChainInterface extends CaefL3Construct {
       }
     }
   }
-  private addRequestHandlerRoleBedrockPermissions ( requestHandlerRole: CaefRole, requestHandler: lambda.IFunction ) {
+  private addRequestHandlerRoleBedrockPermissions ( requestHandlerRole: MdaaRole, requestHandler: lambda.IFunction ) {
     if ( this.props.config.bedrock?.enabled ) {
       requestHandlerRole.addToPolicy(
         new iam.PolicyStatement( {
@@ -224,7 +224,7 @@ export class LangChainInterface extends CaefL3Construct {
   private createRequestHandler ( requestHandlerRole : iam.IRole) {
     const langchainInterfaceHandlerCodePath = this.props.config?.codeOverwrites?.langchainInterfaceHandlerCodePath !== undefined ?
         this.props.config.codeOverwrites.langchainInterfaceHandlerCodePath : path.join(__dirname, "./functions/request-handler")
-    return new CaefLambdaFunction(this, "RequestHandler", {
+    return new MdaaLambdaFunction(this, "RequestHandler", {
       functionName: "model-interface-request-handler", naming: this.props.naming, role: requestHandlerRole,
       createParams: false,
       createOutputs: false,

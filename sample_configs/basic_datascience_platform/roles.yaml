@@ -3,7 +3,7 @@ generatePolicies:
     policyDocument:
       Statement:
         # Provides basic SageMaker Studio admin permissions.
-        # Suitable for managing user profiles (except for creation, which should be CAEF-managed).
+        # Suitable for managing user profiles (except for creation, which should be MDAA-managed).
         - Sid: StudioAdminAccess
           Effect: Allow
           Action:

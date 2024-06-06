@@ -8,9 +8,9 @@ AWS Database Migration Service provides functionality to migrate data from sourc
 
 ![DMS](../../../constructs/L3/dataops/dataops-dms-l3-construct/docs/DMS.png)
 
-**DMS Replication Instance** - Provisioned compute which will be used to perform replication tasks. CAEF ensures these are private and encrypted.
+**DMS Replication Instance** - Provisioned compute which will be used to perform replication tasks. MDAA ensures these are private and encrypted.
 
-**DMS Endpoint** - Source and target data sources from/to which data will migrated. CAEF ensures that endpoint credentials are securely managed exclusively through AWS Secrets Manager, or via AWS Role credentials.
+**DMS Endpoint** - Source and target data sources from/to which data will migrated. MDAA ensures that endpoint credentials are securely managed exclusively through AWS Secrets Manager, or via AWS Role credentials.
 
 **DMS Replication Task** - Tasks move data between DMS Endpoints, and are executed using Replication Instance compute.
 

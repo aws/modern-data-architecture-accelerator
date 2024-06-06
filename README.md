@@ -1,11 +1,11 @@
-# Compliant Analytics Environment Framework (CAEF)
+# Modern Data Architecture Accelerator (MDAA)
 
-## CAEF Overview
+## MDAA Overview
 
-The Compliant Analytics Environment Framework (CAEF) is designed to accelerate the implementation of a secure, compliant and fully capable Modern Data Architecture on AWS, allowing organizations of all sizes and sophsitication to quickly focus on driving business outcomes from their data while maintaining high assurance of security compliance. Specifically, organizations are enabled to rapidly solve data-driven problems using both traditional analytics, as well as using contemporary capabilities such as generative AI.
+The Modern Data Architecture Accelerator (MDAA) is designed to accelerate the implementation of a secure, compliant and fully capable Modern Data Architecture on AWS, allowing organizations of all sizes and sophsitication to quickly focus on driving business outcomes from their data while maintaining high assurance of security compliance. Specifically, organizations are enabled to rapidly solve data-driven problems using both traditional analytics, as well as using contemporary capabilities such as generative AI.
 
-CAEF provides rapid, secure deployment of all major elements of a Modern Data Architcture, such as Ingest, Persistence, Governance, DataOps, Consumption, Visual Analytics, Data Science, and AI/ML.
-Additionally, CAEF has been designed for compliance with AWS Solutions, NIST 800-53 Rev5 (US), HIPAA CDK Nag Rulesets, as well as ITSG-33 (Canada) security control requirements. This combination of integral compliance and broad, configuration-driven capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
+MDAA provides rapid, secure deployment of all major elements of a Modern Data Architcture, such as Ingest, Persistence, Governance, DataOps, Consumption, Visual Analytics, Data Science, and AI/ML.
+Additionally, MDAA has been designed for compliance with AWS Solutions, NIST 800-53 Rev5 (US), HIPAA CDK Nag Rulesets, as well as ITSG-33 (Canada) security control requirements. This combination of integral compliance and broad, configuration-driven capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
 
 ## Target Usage
 
@@ -19,25 +19,25 @@ Additionally, CAEF has been designed for compliance with AWS Solutions, NIST 800
 
 ## Logical Design
 
-CAEF is designed as a set of logical architectural layers, each constituted by a set of functional 'modules'. Each module configures and deploys a set of resources which constitute the data analytics environment. Modules may have logical dependencies on eachother, and may also leverage non-CAEF resources deployed within the environment, such as those deployed via Landing Zone Accelerator.
+MDAA is designed as a set of logical architectural layers, each constituted by a set of functional 'modules'. Each module configures and deploys a set of resources which constitute the data analytics environment. Modules may have logical dependencies on eachother, and may also leverage non-MDAA resources deployed within the environment, such as those deployed via Landing Zone Accelerator.
 
-While CAEF can be used to implement a comprehensive, end to end data analytics platform, it ***does not*** result in a closed system. CAEF may be freely integrated with non-CAEF deployed platform elements and analytics capabilites. Any individual layer or module of CAEF can be replaced by a non-CAEF component, and the remaining layers/modules will continue to function (assuming basic functional parity with the replaced CAEF module/layer).
+While MDAA can be used to implement a comprehensive, end to end data analytics platform, it ***does not*** result in a closed system. MDAA may be freely integrated with non-MDAA deployed platform elements and analytics capabilites. Any individual layer or module of MDAA can be replaced by a non-MDAA component, and the remaining layers/modules will continue to function (assuming basic functional parity with the replaced MDAA module/layer).
 
-CAEF is conceptually, architecturally, and technically similar in nature to the Landing Zone Accelerator (LZA), providing similar functionality for analytics platform configuration and deployment as LZA does for general cloud platform configuration and deployment. The logical layers of CAEF are specifically designed to be deployed on top of a general purpose, secure cloud platform such as that deployed by LZA.
+MDAA is conceptually, architecturally, and technically similar in nature to the Landing Zone Accelerator (LZA), providing similar functionality for analytics platform configuration and deployment as LZA does for general cloud platform configuration and deployment. The logical layers of MDAA are specifically designed to be deployed on top of a general purpose, secure cloud platform such as that deployed by LZA.
 
-![Caef Logical Architecture](docs/CAEF-Logical.png)
+![Mdaa Logical Architecture](docs/MDAA-Logical.png)
 
 ***
 
 ## Getting Started
 
-Getting started with CAEF requires the following steps:
+Getting started with MDAA requires the following steps:
 
-1. [Architecture and Design](ARCHITECTURES.md) - A physical platform architecture should be defined either from scratch, or derived from an AWS/CAEF reference design.
-2. [Configuration](CONFIGURATION.md) - One or more CAEF configuration files are authored, along with individual configuration files for each CAEF module.
+1. [Architecture and Design](ARCHITECTURES.md) - A physical platform architecture should be defined either from scratch, or derived from an AWS/MDAA reference design.
+2. [Configuration](CONFIGURATION.md) - One or more MDAA configuration files are authored, along with individual configuration files for each MDAA module.
 3. [(Optional) Customization](CUSTOMIZATION.md) - Optionally, resources and stacks can be customized through code-based escape hatches before deployment.
-4. [Predeployment Preparation](PREDEPLOYMENT.md) - In this step, the CAEF NPM packages are built and published to a private NPM repo.
-5. [Deployment](DEPLOYMENT.md) - Each CAEF configuration file is either manually or automatically deployed (via CD/CD).
+4. [Predeployment Preparation](PREDEPLOYMENT.md) - In this step, the MDAA NPM packages are built and published to a private NPM repo.
+5. [Deployment](DEPLOYMENT.md) - Each MDAA configuration file is either manually or automatically deployed (via CD/CD).
 
 Alternatively, you can jump directly into a set of sample architectures and configurations:
 
@@ -49,7 +49,7 @@ Alternatively, you can jump directly into a set of sample architectures and conf
 
 ## Design Principles
 
-CAEF and its constituent modules each adhere to the following design principles:
+MDAA and its constituent modules each adhere to the following design principles:
 
 ### Security Compliance
 
@@ -82,19 +82,19 @@ CAEF and its constituent modules each adhere to the following design principles:
 
 ## Implementation Design
 
-CAEF is implemented as a set of compliant CDK Constructs and configuration-driven CDK Applications which can be deployed via a unified Deployment/Orchestration layer. Any CAEF module can be directly deployed into AWS accounts, or deployed as Service Catalog Products for self-service deployments.
+MDAA is implemented as a set of compliant CDK Constructs and configuration-driven CDK Applications which can be deployed via a unified Deployment/Orchestration layer. Any MDAA module can be directly deployed into AWS accounts, or deployed as Service Catalog Products for self-service deployments.
 
-* **CAEF Modules (CDK Apps)** - A set of configuration-driven CDK Apps, which leverage the CAEF CDK Constructs in order to define and deploy compliant data analytics environment components as CloudFormation stacks. These apps can be executed directly and independantly using CDK cli, or composed and orchestrated via the CAEF CLI.
+* **MDAA Modules (CDK Apps)** - A set of configuration-driven CDK Apps, which leverage the MDAA CDK Constructs in order to define and deploy compliant data analytics environment components as CloudFormation stacks. These apps can be executed directly and independantly using CDK cli, or composed and orchestrated via the MDAA CLI.
 
-* **CAEF CDK L2 and L3 Constructs** - A set of reusable CDK constructs which are leveraged by the rest of the CAEF codebase, but can also be reused to build additional compliant CDK constructs, stacks, or apps. These constructs are each designed for compliance with AWS Solutions, HIPAA, and NIST 800-53 R5 CDK Nag rulesets. Similar to the CDK codebase CAEF is built on, CAEF constructs are available with binding for multiple langauges, currently including TypeScript/Node.js and Python 3.
+* **MDAA CDK L2 and L3 Constructs** - A set of reusable CDK constructs which are leveraged by the rest of the MDAA codebase, but can also be reused to build additional compliant CDK constructs, stacks, or apps. These constructs are each designed for compliance with AWS Solutions, HIPAA, and NIST 800-53 R5 CDK Nag rulesets. Similar to the CDK codebase MDAA is built on, MDAA constructs are available with binding for multiple langauges, currently including TypeScript/Node.js and Python 3.
 
-* **CAEF CLI (Deployement/Orchestration) App** - A configuration driven CLI application which allows for composition and orchestration of multiple CAEF CDK Apps in order to deploy a compliant end to end data analytics environment. Also ensures that each CAEF CDK application is deployed with the specified configuration into the specified accounts while also accounting for dependencies between modules.
+* **MDAA CLI (Deployement/Orchestration) App** - A configuration driven CLI application which allows for composition and orchestration of multiple MDAA CDK Apps in order to deploy a compliant end to end data analytics environment. Also ensures that each MDAA CDK application is deployed with the specified configuration into the specified accounts while also accounting for dependencies between modules.
 
-![Caef Physical Design](docs/CAEF-Physical_Design.png)
+![Mdaa Physical Design](docs/MDAA-Physical_Design.png)
 
 ***
 
-## Available CAEF Modules (CDK Apps and L3 Constructs)
+## Available MDAA Modules (CDK Apps and L3 Constructs)
 
 ### Governance Modules (CDK Apps and L3 Constructs)
 
@@ -149,9 +149,9 @@ CAEF is implemented as a set of compliant CDK Constructs and configuration-drive
 
 ***
 
-## Available CAEF Reusable CDK L2 Constructs
+## Available MDAA Reusable CDK L2 Constructs
 
-These constructs are specifically designed to be compliant with the AWSSolutions, HIPAA, and NIST 800-53 R5 CDK Nag Rulesets and are used throughout the CAEF codebase. Additionally, these compliant constructs can be directly leveraged to build new constructs outside of the CAEF codebase.
+These constructs are specifically designed to be compliant with the AWSSolutions, HIPAA, and NIST 800-53 R5 CDK Nag Rulesets and are used throughout the MDAA codebase. Additionally, these compliant constructs can be directly leveraged to build new constructs outside of the MDAA codebase.
 
 * [**Athena Workgroup Constructs**](packages/constructs/L2/athena-constructs/README.md)
 * [**EC2 Constructs**](packages/constructs/L2/ec2-constructs/README.md)
@@ -174,29 +174,29 @@ These constructs are specifically designed to be compliant with the AWSSolutions
 
 ***
 
-## Using/Extending CAEF Overview
+## Using/Extending MDAA Overview
 
-CAEF can be used and extended in the following ways:
+MDAA can be used and extended in the following ways:
 
-* Configuration-driven, compliant, end to end Analytics Environments can be configured and deployed using CAEF config files and the CAEF CLI
+* Configuration-driven, compliant, end to end Analytics Environments can be configured and deployed using MDAA config files and the MDAA CLI
   * Organizations with minimal IaC development and support capability or bandwidth
   * Accessible by all roles
     * No code, Yaml configurations
   * Simple to complex configurations and deployments
   * High end to end compliance assurance
 
-* Custom, code-driven end to end Analytics Environments can be authored and deployed using CAEF reusable constructs
+* Custom, code-driven end to end Analytics Environments can be authored and deployed using MDAA reusable constructs
   * Organizations with IaC development and support capability
   * Accessible by Developers and Builders
   * Multi-language support
-  * High compliance assurance for resources deployed via CAEF constructs
+  * High compliance assurance for resources deployed via MDAA constructs
 
-* Custom-developed and deployed data-driven applications/workloads can be configured to leverage CAEF-deployed resources via the standard set of SSM params which are published by all CAEF modules
+* Custom-developed and deployed data-driven applications/workloads can be configured to leverage MDAA-deployed resources via the standard set of SSM params which are published by all MDAA modules
   * Independantly developed in CDK or CFN
-  * Loosely coupled with CAEF via SSM Params
+  * Loosely coupled with MDAA via SSM Params
   * Workload/Application compliance independantly validated
 
-![CAEF Usage and Extension](docs/CAEF-Extending.png)
+![MDAA Usage and Extension](docs/MDAA-Extending.png)
 
 ## Metrics collection
 

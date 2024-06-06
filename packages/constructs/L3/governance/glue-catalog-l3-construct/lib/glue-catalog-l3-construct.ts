@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefCatalogSettings } from '@aws-caef/glue-constructs';
-import { CaefKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-caef/kms-constructs';
-import { CaefLambdaFunction, CaefLambdaRole } from '@aws-caef/lambda-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaCatalogSettings } from '@aws-mdaa/glue-constructs';
+import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
+import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CustomResource, Duration } from 'aws-cdk-lib';
 import { CfnDataCatalog } from 'aws-cdk-lib/aws-athena';
 import { ArnPrincipal, Effect, IPrincipal, PolicyDocument, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -44,7 +44,7 @@ export interface CatalogAccessPolicyProps {
     readonly resources: string[]
 }
 
-export interface GlueCatalogL3ConstructProps extends CaefL3ConstructProps {
+export interface GlueCatalogL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * Map of access policy names to access policy definitions
      */
@@ -64,7 +64,7 @@ export interface GlueCatalogL3ConstructProps extends CaefL3ConstructProps {
 
 }
 
-export class GlueCatalogL3Construct extends CaefL3Construct {
+export class GlueCatalogL3Construct extends MdaaL3Construct {
     protected readonly props: GlueCatalogL3ConstructProps
 
 
@@ -142,7 +142,7 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
         //Use some private helper functions to create the catalog resources
         const catalogKmsKey = this.createCatalogKmsKey( allReadPrincipalArns, allWritePrincipalArns, catalogKmsKeyConsumerAccounts )
 
-        new CaefCatalogSettings( this.scope, "glue-catalog-settings", {
+        new MdaaCatalogSettings( this.scope, "glue-catalog-settings", {
             naming: this.props.naming,
             catalogId: this.account,
             catalogKmsKey: catalogKmsKey
@@ -226,7 +226,7 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
 
     private createCatalogKmsKey ( readPrincipalArns: string[], writePrincipalArns: string[], readAccounts?: string[] ): Key {
         // This catalog KMS key will be used to encrypt all data written by the catalog to the catalog bucket
-        let catalogKmsKey = new CaefKmsKey( this.scope, "kms-cmk", {
+        let catalogKmsKey = new MdaaKmsKey( this.scope, "kms-cmk", {
             description: `KMS Key for ${ this.props.naming.resourceName() }`,
             naming: this.props.naming
         } )
@@ -289,7 +289,7 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
             return this.catalogResourcePolicyProvider
         }
 
-        const catalogCrFunctionRole = new CaefLambdaRole( this.scope, 'catalog-function-role', {
+        const catalogCrFunctionRole = new MdaaLambdaRole( this.scope, 'catalog-function-role', {
             description: 'CR Role',
             roleName: "catalog-cr",
             naming: this.props.naming,
@@ -329,7 +329,7 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
 
         const sourceDir = `${ __dirname }/../src/python/glue_catalog_resource_policy`
         // This Lambda is used as a Custom Resource in order to create the Data Lake Folder
-        const catalogResourcePolicyLambda = new CaefLambdaFunction( this.scope, "catalog-cr-function", {
+        const catalogResourcePolicyLambda = new MdaaLambdaFunction( this.scope, "catalog-cr-function", {
             functionName: "catalog-cr",
             code: Code.fromAsset( sourceDir ),
             handler: "glue_catalog_resource_policy.lambda_handler",
@@ -355,7 +355,7 @@ export class GlueCatalogL3Construct extends CaefL3Construct {
         );
 
         const catalogCrProviderFunctionName = this.props.naming.resourceName( "catalog-cr-prov", 64 )
-        const catalogCrProviderRole = new CaefLambdaRole( this.scope, 'catalog-provider-role', {
+        const catalogCrProviderRole = new MdaaLambdaRole( this.scope, 'catalog-provider-role', {
             description: 'CR Role',
             roleName: 'catalog-provider-role',
             naming: this.props.naming,

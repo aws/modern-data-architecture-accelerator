@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BlockDeviceProps, CaefEC2Instance, CaefEC2InstanceProps, CaefEC2SecretKeyPair, CaefEC2SecretKeyPairProps, CaefSecurityGroup, CaefSecurityGroupProps, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefResolvableRole, CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
+import { BlockDeviceProps, MdaaEC2Instance, MdaaEC2InstanceProps, MdaaEC2SecretKeyPair, MdaaEC2SecretKeyPairProps, MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
 import { ApplyCloudFormationInitOptions, CloudFormationInit, InitConfig, InitPackage, InitServiceRestartHandle, InitCommandWaitDuration, NamedPackageOptions, ConfigSetProps, IMachineImage, Instance, CfnInstance, InstanceType, ISecurityGroup, MachineImageConfig, OperatingSystemType, SecurityGroup, Subnet, UserData, Vpc, InitElement, LocationPackageOptions, InitCommand, InitCommandOptions, InitFile, InitServiceOptions, InitService, InitFileOptions } from "aws-cdk-lib/aws-ec2";
 import { ArnPrincipal, Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { IKey, Key } from "aws-cdk-lib/aws-kms";
@@ -15,7 +15,7 @@ import { Construct } from "constructs";
 import { readFileSync } from 'fs';
 import { NagSuppressions } from 'cdk-nag';
 import { Duration } from 'aws-cdk-lib';
-import { CaefConfigRefValueTransformer } from '@aws-caef/config';
+import { MdaaConfigRefValueTransformer } from '@aws-mdaa/config';
 
 
 export interface NamedSecurityGroupProps {
@@ -31,11 +31,11 @@ export interface SecurityGroupProps {
   /**
    * List of ingress rules to be added to the function SG
    */
-  readonly ingressRules?: CaefSecurityGroupRuleProps
+  readonly ingressRules?: MdaaSecurityGroupRuleProps
   /**
    * List of egress rules to be added to the function SG
    */
-  readonly egressRules?: CaefSecurityGroupRuleProps
+  readonly egressRules?: MdaaSecurityGroupRuleProps
   /**
    * If true, the SG will allow traffic to and from itself
    */
@@ -430,7 +430,7 @@ export interface InstanceProps {
   /**
    * Role used by instance
    */
-  readonly instanceRole: CaefRoleRef,
+  readonly instanceRole: MdaaRoleRef,
   /**
    * Specific key to use.
    */
@@ -499,12 +499,12 @@ export interface InstanceProps {
   readonly existingKeyPairName?: string;
 }
 
-export interface Ec2L3ConstructProps extends CaefL3ConstructProps {
+export interface Ec2L3ConstructProps extends MdaaL3ConstructProps {
   /**
    * Roles which will be provided Admin access to the 
    * KMS key, and KeyPair secrets.
    */
-  readonly adminRoles: CaefRoleRef[]
+  readonly adminRoles: MdaaRoleRef[]
   /**
    * List of  security groups to be created.
    */
@@ -524,7 +524,7 @@ export interface Ec2L3ConstructProps extends CaefL3ConstructProps {
 }
 
 //This stack creates and manages an EC2 instance
-export class Ec2L3Construct extends CaefL3Construct {
+export class Ec2L3Construct extends MdaaL3Construct {
   protected readonly props: Ec2L3ConstructProps
 
   private static osTypeMap: { [ key: string ]: OperatingSystemType } = {
@@ -533,13 +533,13 @@ export class Ec2L3Construct extends CaefL3Construct {
     'unknown': OperatingSystemType.UNKNOWN
   }
 
-  private readonly adminRoles: CaefResolvableRole[]
+  private readonly adminRoles: MdaaResolvableRole[]
   private kmsKey?: Key
 
   initServiceRestartHandle = new InitServiceRestartHandle();
 
-  public readonly keyPairs: { [ key: string ]: CaefEC2SecretKeyPair } = {}
-  public readonly securityGroups: { [ key: string ]: CaefSecurityGroup } = {}
+  public readonly keyPairs: { [ key: string ]: MdaaEC2SecretKeyPair } = {}
+  public readonly securityGroups: { [ key: string ]: MdaaSecurityGroup } = {}
   public readonly instances: { [ key: string ]: Instance } = {}
   public readonly cfnInit: { [ key: string ]: CloudFormationInit } = {}
   constructor( scope: Construct, id: string, props: Ec2L3ConstructProps ) {
@@ -560,13 +560,13 @@ export class Ec2L3Construct extends CaefL3Construct {
       const keyPairName = entry[ 0 ]
       const keyPairProps = entry[ 1 ]
       const kmsKey = keyPairProps.kmsKeyArn ? Key.fromKeyArn( this, `kms-keypair-${ keyPairName }`, keyPairProps.kmsKeyArn ) : this.getKmsKey()
-      const createKeyPairProps: CaefEC2SecretKeyPairProps = {
+      const createKeyPairProps: MdaaEC2SecretKeyPairProps = {
         name: keyPairName,
         kmsKey: kmsKey,
         naming: this.props.naming,
         readPrincipals: this.adminRoles.map( x => new ArnPrincipal( x.arn() ) )
       }
-      this.keyPairs[ keyPairName ] = new CaefEC2SecretKeyPair( this, `key-pair-${ keyPairName }`, createKeyPairProps )
+      this.keyPairs[ keyPairName ] = new MdaaEC2SecretKeyPair( this, `key-pair-${ keyPairName }`, createKeyPairProps )
     } )
   }
 
@@ -791,10 +791,10 @@ export class Ec2L3Construct extends CaefL3Construct {
 
       const resolvedInstanceRole = this.props.roleHelper.resolveRoleRefWithRefId( instanceProps.instanceRole, "instanceRole" )
       const roleArn = resolvedInstanceRole.arn()
-      const instanceRole = CaefRole.fromRoleArn( this, 'role for' + instanceName, roleArn )
+      const instanceRole = MdaaRole.fromRoleArn( this, 'role for' + instanceName, roleArn )
 
       const kmsKey = instanceProps.kmsKeyArn
-        ? CaefKmsKey.fromKeyArn( this, 'key for' + instanceName, instanceProps.kmsKeyArn )
+        ? MdaaKmsKey.fromKeyArn( this, 'key for' + instanceName, instanceProps.kmsKeyArn )
         : this.getKmsKey()
 
       if ( !instanceProps.kmsKeyArn ) {
@@ -839,7 +839,7 @@ export class Ec2L3Construct extends CaefL3Construct {
         }
         : undefined
 
-      const createInstanceProps: CaefEC2InstanceProps = {
+      const createInstanceProps: MdaaEC2InstanceProps = {
         role: instanceRole,
         securityGroup: securityGroup,
         instanceType: instanceType,
@@ -856,7 +856,7 @@ export class Ec2L3Construct extends CaefL3Construct {
         keyName: keyPairName,
         naming: this.props.naming
       }
-      this.instances[ instanceName ] = new CaefEC2Instance( this, instanceName + "instance", createInstanceProps )
+      this.instances[ instanceName ] = new MdaaEC2Instance( this, instanceName + "instance", createInstanceProps )
       NagSuppressions.addResourceSuppressions(
         this.instances[ instanceName ].role,
         [
@@ -885,7 +885,7 @@ export class Ec2L3Construct extends CaefL3Construct {
       ? readFileSync( instanceProps.userDataScriptPath, 'utf8' )
       : undefined
 
-    const transformedUserDataScript = userDataScript ? new CaefConfigRefValueTransformer( this ).transformValue( userDataScript ) : undefined
+    const transformedUserDataScript = userDataScript ? new MdaaConfigRefValueTransformer( this ).transformValue( userDataScript ) : undefined
 
     return {
       getImage: function (): MachineImageConfig {
@@ -952,7 +952,7 @@ export class Ec2L3Construct extends CaefL3Construct {
         ( securityGroupProps.egressRules?.prefixList && securityGroupProps.egressRules?.prefixList.length > 0 ) ||
         ( securityGroupProps.egressRules?.sg && securityGroupProps.egressRules?.sg.length > 0 ) || false
 
-      const securityGroupCreateProps: CaefSecurityGroupProps = {
+      const securityGroupCreateProps: MdaaSecurityGroupProps = {
         securityGroupName: securityGroupName,
         vpc: vpc,
         naming: this.props.naming,
@@ -962,13 +962,13 @@ export class Ec2L3Construct extends CaefL3Construct {
         addSelfReferenceRule: securityGroupProps.addSelfReferenceRule
       }
 
-      const securityGroup = new CaefSecurityGroup( this, securityGroupName, securityGroupCreateProps )
+      const securityGroup = new MdaaSecurityGroup( this, securityGroupName, securityGroupCreateProps )
       this.securityGroups[ securityGroupName ] = securityGroup
     } )
   }
 
   private getKmsKey (): IKey {
-    const kmsKey = this.kmsKey ? this.kmsKey : new CaefKmsKey( this, 'kms-key', {
+    const kmsKey = this.kmsKey ? this.kmsKey : new MdaaKmsKey( this, 'kms-key', {
       naming: this.props.naming,
       keyAdminRoleIds: this.adminRoles.map( x => x.id() ),
       keyUserRoleIds: this.adminRoles.map( x => x.id() )

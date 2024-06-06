@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct";
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct";
 import { IVpc } from "aws-cdk-lib/aws-ec2";
 import { AddCapacityOptions, CloudMapNamespaceOptions, Cluster, ClusterProps, ExecuteCommandLogging } from "aws-cdk-lib/aws-ecs";
 import { IKey } from "aws-cdk-lib/aws-kms";
@@ -15,7 +15,7 @@ import { Construct } from "constructs";
  * Properties for creating a Compliance ECS cluster
  */
 
-export interface CaefECSClusterProps extends CaefConstructProps {
+export interface MdaaECSClusterProps extends MdaaConstructProps {
     /**
      * The name for the cluster.
      */
@@ -56,9 +56,9 @@ export interface CaefECSClusterProps extends CaefConstructProps {
 /**
  * A construct for creating a compliant ECS cluster resource.
  */
-export class CaefECSCluster extends Cluster {
+export class MdaaECSCluster extends Cluster {
 
-    private static setProps ( props: CaefECSClusterProps ): ClusterProps {
+    private static setProps ( props: MdaaECSClusterProps ): ClusterProps {
         const overrideProps = {
             clusterName: props.naming.resourceName( props.clusterName, 255 ),
             containerInsights: true,
@@ -77,10 +77,10 @@ export class CaefECSCluster extends Cluster {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefECSClusterProps ) {
-        super( scope, id, CaefECSCluster.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaECSClusterProps ) {
+        super( scope, id, MdaaECSCluster.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "cluster",
                 resourceId: props.clusterName,

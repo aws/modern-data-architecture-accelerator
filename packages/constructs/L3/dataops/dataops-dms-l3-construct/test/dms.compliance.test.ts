@@ -4,14 +4,14 @@
  */
 
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { DMSL3ConstructProps, DMSL3Construct, ReplicationInstanceProps, EndpointProps, ReplicationTaskProps } from "../lib";
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
 
   const replicationInstanceProps: ReplicationInstanceProps = {
     instanceClass: "test-class",
@@ -61,7 +61,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     projectBucket: "test-project-bucket",
     kmsArn: "arn:test-partition:kms:test-region:test-acct:key/test-key-id",
     naming: testApp.naming,
-    roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming ),
     dms: {
       replicationInstances: {
         testInstance: replicationInstanceProps

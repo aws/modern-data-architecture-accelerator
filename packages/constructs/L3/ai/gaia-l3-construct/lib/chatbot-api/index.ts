@@ -11,27 +11,27 @@ import { SageMakerModelEndpoint, SystemConfig } from "../shared/types";
 import { ChatBotDynamoDBTables } from "./chatbot-dynamodb-tables";
 import { RestApi } from "./rest-api";
 import { WebSocketApi } from "./websocket-api";
-import {CaefBucket} from "@aws-caef/s3-constructs";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefDDBTable} from "@aws-caef/ddb-constructs";
+import {MdaaBucket} from "@aws-mdaa/s3-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaDDBTable} from "@aws-mdaa/ddb-constructs";
 import { NagSuppressions } from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface ChatBotApiProps extends CaefL3ConstructProps {
+export interface ChatBotApiProps extends MdaaL3ConstructProps {
   readonly shared: Shared;
   readonly config: SystemConfig;
   readonly ragEngines?: RagEngines;
   readonly userPool: cognito.IUserPool;
   readonly modelsParameter: ssm.StringParameter;
   readonly models: SageMakerModelEndpoint[];
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class ChatBotApi extends CaefL3Construct {
+export class ChatBotApi extends MdaaL3Construct {
   public readonly restApi: apigateway.RestApi;
   public readonly webSocketApi: apigwv2.WebSocketApi;
   public readonly messagesTopic: sns.Topic;
-  public readonly sessionsTable: CaefDDBTable;
+  public readonly sessionsTable: MdaaDDBTable;
   public readonly byUserIdIndex: string;
   public readonly filesBucket: s3.Bucket;
 
@@ -43,7 +43,7 @@ export class ChatBotApi extends CaefL3Construct {
       kmsKey: props.encryptionKey
     });
 
-    const chatFilesBucket = new CaefBucket(this, "ChatBuckets", {
+    const chatFilesBucket = new MdaaBucket(this, "ChatBuckets", {
       encryptionKey: props.encryptionKey,
       naming: props.naming,
       bucketName:  `${props.naming.props.org}-${props.naming.props.domain}-${props.naming.props.env}-chat-files-bucket`,
@@ -54,8 +54,8 @@ export class ChatBotApi extends CaefL3Construct {
     NagSuppressions.addResourceSuppressions(
       chatFilesBucket,
       [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF does not enforce bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF does not enforce bucket replication.' }
+        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
       ],
       true
     ); 

@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefStudioDomain } from "../lib";
+import { MdaaStudioDomain } from "../lib";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const testContstructProps = {
         naming: testApp.naming,
@@ -32,7 +32,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         domainName: "test-domain"
     }
 
-    new CaefStudioDomain( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaStudioDomain( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

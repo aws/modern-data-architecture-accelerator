@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { IResolvable } from 'aws-cdk-lib';
 import { CfnProject, CfnProjectProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
 /**
- * Properties for creating a compliant Caef Databrew Project
+ * Properties for creating a compliant Mdaa Databrew Project
  */
-export interface CaefDataBrewProjectProps extends CaefConstructProps {
+export interface MdaaDataBrewProjectProps extends MdaaConstructProps {
 
     // The unique name of a project.
     readonly name: string
@@ -29,19 +29,19 @@ export interface CaefDataBrewProjectProps extends CaefConstructProps {
 /**
  * A construct which creates a compliant Databrew Project.
  */
-export class CaefDataBrewProject extends CfnProject {
+export class MdaaDataBrewProject extends CfnProject {
 
-    private static setProps ( props: CaefDataBrewProjectProps ): CfnProjectProps {
+    private static setProps ( props: MdaaDataBrewProjectProps ): CfnProjectProps {
         const overrideProps = {
             name: props.naming.resourceName( props.name, 80 )
         }
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataBrewProjectProps ) {
-        super( scope, id, CaefDataBrewProject.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataBrewProjectProps ) {
+        super( scope, id, MdaaDataBrewProject.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Project",
                 resourceId: props.name,
@@ -49,7 +49,7 @@ export class CaefDataBrewProject extends CfnProject {
                 value: this.name
             }, ...props
         },scope )
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Project",
                 resourceId: props.datasetName,
@@ -57,7 +57,7 @@ export class CaefDataBrewProject extends CfnProject {
                 value: this.datasetName
             }, ...props
         },scope )
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Project",
                 resourceId: props.recipeName,

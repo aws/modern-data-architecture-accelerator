@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParser, CaefAppConfigParserProps, CaefBaseConfigContents } from '@aws-caef/app';
-import { DataSourceProps, DataSourceWithIdAndTypeProps, SharedFoldersProps } from '@aws-caef/quicksight-project-l3-construct';
+import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
+import { DataSourceProps, DataSourceWithIdAndTypeProps, SharedFoldersProps } from '@aws-mdaa/quicksight-project-l3-construct';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
-export interface QuickSightProjectConfigContents extends CaefBaseConfigContents {
+export interface QuickSightProjectConfigContents extends MdaaBaseConfigContents {
     /**
      *(Optional) Details about the Data Sources to be created
     */
@@ -25,11 +25,11 @@ export interface QuickSightProjectConfigContents extends CaefBaseConfigContents 
     sharedFolders?: { [ key: string ]: SharedFoldersProps }
 }
 
-export class QuickSightProjectConfigParser extends CaefAppConfigParser<QuickSightProjectConfigContents> {
+export class QuickSightProjectConfigParser extends MdaaAppConfigParser<QuickSightProjectConfigContents> {
     public readonly principals: { [ key: string ]: string }
     public readonly sharedFolders: { [ key: string ]: SharedFoldersProps }
     public readonly dataSources: DataSourceWithIdAndTypeProps[]
-    constructor( scope: Stack, props: CaefAppConfigParserProps ) {
+    constructor( scope: Stack, props: MdaaAppConfigParserProps ) {
         super( scope, props, configSchema as Schema )
         const dataSourceArr: DataSourceWithIdAndTypeProps[] = []
         Object.entries( this.configContents.dataSources || {} ).forEach( dataSourceIdAndTypeProps => {

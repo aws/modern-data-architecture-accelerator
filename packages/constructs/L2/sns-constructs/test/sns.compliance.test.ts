@@ -3,24 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Match } from "aws-cdk-lib/assertions";
-import { CaefSnsTopic, CaefSnsTopicProps } from "../lib";
+import { MdaaSnsTopic, MdaaSnsTopicProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
-    const testContstructProps: CaefSnsTopicProps = {
+    const testContstructProps: MdaaSnsTopicProps = {
         naming: testApp.naming,
         topicName: "test-sns-topic",
         masterKey: testKey
     }
 
-    new CaefSnsTopic( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaSnsTopic( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

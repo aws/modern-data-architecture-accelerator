@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from "@aws-caef/construct"
-import { CaefCustomResource, CaefCustomResourceProps } from "@aws-caef/custom-constructs"
+import { MdaaConstructProps, MdaaParamAndOutput } from "@aws-mdaa/construct"
+import { MdaaCustomResource, MdaaCustomResourceProps } from "@aws-mdaa/custom-constructs"
 import { Duration, Stack } from "aws-cdk-lib"
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam"
 import { Code, Runtime } from "aws-cdk-lib/aws-lambda"
@@ -16,7 +16,7 @@ export type LifecycleConfigAppType = "JupyterServer" | "KernelGateway"
 /**
  * Properties for creating a Studio Lifecycle Config Contents
  */
-export interface CaefStudioLifecycleConfigProps extends CaefConstructProps {
+export interface MdaaStudioLifecycleConfigProps extends MdaaConstructProps {
     readonly lifecycleConfigName?: string,
     readonly lifecycleConfigContent: string,
     readonly lifecycleConfigAppType: LifecycleConfigAppType
@@ -25,11 +25,11 @@ export interface CaefStudioLifecycleConfigProps extends CaefConstructProps {
 /**
  * A construct for creating a Studio LifecycleConfig
  */
-export class CaefStudioLifecycleConfig extends Construct {
+export class MdaaStudioLifecycleConfig extends Construct {
 
     public readonly arn: string
 
-    constructor( scope: Construct, id: string, props: CaefStudioLifecycleConfigProps ) {
+    constructor( scope: Construct, id: string, props: MdaaStudioLifecycleConfigProps ) {
         super( scope, id )
 
 
@@ -47,7 +47,7 @@ export class CaefStudioLifecycleConfig extends Construct {
             lifecycleConfigAppType: props.lifecycleConfigAppType
         }
 
-        const crProps: CaefCustomResourceProps = {
+        const crProps: MdaaCustomResourceProps = {
             resourceType: "StudioLifecycleConfig",
             code: Code.fromAsset( `${ __dirname }/../src/lambda/lifecycle` ),
             runtime: Runtime.PYTHON_3_12,
@@ -62,11 +62,11 @@ export class CaefStudioLifecycleConfig extends Construct {
             handlerTimeout: Duration.seconds( 120 )
         }
 
-        const cr = new CaefCustomResource( this, 'custom-resource', crProps )
+        const cr = new MdaaCustomResource( this, 'custom-resource', crProps )
 
         this.arn = cr.getAttString( 'StudioLifecycleConfigArn' )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "studioLifecycleConfig",
                 resourceId: props.lifecycleConfigName,

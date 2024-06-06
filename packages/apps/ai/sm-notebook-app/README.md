@@ -6,7 +6,7 @@ The SageMaker Notebook CDK application is used to configure and deploy secure Sa
 
 ## Deployed Resources and Compliance Details
 
-![Caef Sagemaker Notebook](../../../constructs/L3/datascience/sm-notebook-l3-construct/docs/sm-notebook.png)
+![Mdaa Sagemaker Notebook](../../../constructs/L3/ai/sm-notebook-l3-construct/docs/sm-notebook.png)
 
 **KMS CMK** - The KMS CMK which will be used to encrypt data on the storage volume attached to the notebook instance.
 

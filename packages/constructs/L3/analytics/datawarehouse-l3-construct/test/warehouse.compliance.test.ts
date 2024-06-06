@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper, CaefRoleRef } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper, MdaaRoleRef } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match } from "aws-cdk-lib/assertions";
 import { Template } from "aws-cdk-lib/assertions";
 import { DataWarehouseL3Construct, DataWarehouseL3ConstructProps, FederationProps, SecurityGroupIngressProps } from "../lib";
 import { DatabaseUsersProps, ScheduledActionProps } from '../lib/datawarehouse-l3-construct';
 
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
   const stack = testApp.testStack
 
   const securityGroupIngresProps: SecurityGroupIngressProps = {
@@ -21,21 +21,21 @@ describe( 'CAEF Compliance Stack Tests', () => {
     sg: [ "sg-be41a7c3" ]
   }
 
-  const dataAdminRoleRef: CaefRoleRef = {
+  const dataAdminRoleRef: MdaaRoleRef = {
     id: "testdataAdminRole",
     arn: "arn:test-partition:iam::test-account:role/TestAccess"
   }
 
-  const warehouseBucketUserRoleRef: CaefRoleRef = {
+  const warehouseBucketUserRoleRef: MdaaRoleRef = {
     id: "testwarehouseBucketUserRoleRefs",
     arn: "arn:test-partition:iam::test-account:role/Test"
   }
 
-  const executionRoleTeamA: CaefRoleRef = {
+  const executionRoleTeamA: MdaaRoleRef = {
     id: "executionRoleTeamA",
     arn: "arn:test-partition:iam::test-account:role/ex-role-team-a"
   }
-  const executionRoleTeamB: CaefRoleRef = {
+  const executionRoleTeamB: MdaaRoleRef = {
     name: "executionRoleTeamB"
   }
 
@@ -73,7 +73,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     clusterPort: 54390,
     preferredMaintenanceWindow: "ddd:hh24:mi-ddd:hh24:mi",
 
-    roleHelper: new CaefRoleHelper( stack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
     federations: [ federationProps ],
     warehouseBucketUserRoleRefs: [ warehouseBucketUserRoleRef ],

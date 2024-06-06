@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Stack } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import { LakeFormationAccessControlL3Construct, LakeFormationAccessControlL3ConstructProps, NamedGrantProps, NamedPrincipalProps, NamedResourceLinkProps } from "../lib";
 
-describe( 'CAEF Compliance Stack Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Compliance Stack Tests', () => {
+    const testApp = new MdaaTestApp()
 
     const federatedPrincipalProps: NamedPrincipalProps = {
         "federatedUserPrincipalProps": {
@@ -130,7 +130,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
     const constructProps: LakeFormationAccessControlL3ConstructProps = {
         naming: testApp.naming,
 
-        roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming ),
+        roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming ),
         crossAccountStacks: { "test-cross-account": crossAccountStack },
         grants: {
             ...readResourceGrant,

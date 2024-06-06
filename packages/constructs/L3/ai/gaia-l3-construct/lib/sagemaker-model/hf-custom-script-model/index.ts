@@ -11,16 +11,16 @@ import { Construct } from "constructs";
 
 import { ContainerImages } from "../container-images";
 import { ImageRepositoryMapping } from "../image-repository-mapping";
-import {CaefBucket} from "@aws-caef/s3-constructs";
+import {MdaaBucket} from "@aws-mdaa/s3-constructs";
 import {Shared} from "../../shared";
-import {CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefRole} from "@aws-caef/iam-constructs";
-import {CaefLambdaFunction} from "@aws-caef/lambda-constructs";
+import {MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
+import {MdaaLambdaFunction} from "@aws-mdaa/lambda-constructs";
 import {ServicePrincipal} from "aws-cdk-lib/aws-iam";
 import {NagSuppressions} from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface HuggingFaceCustomScriptModelProps extends CaefL3ConstructProps {
+export interface HuggingFaceCustomScriptModelProps extends MdaaL3ConstructProps {
   vpc: ec2.IVpc;
   shared: Shared;
   region: string;
@@ -35,7 +35,7 @@ export interface HuggingFaceCustomScriptModelProps extends CaefL3ConstructProps 
   env?: { [key: string]: string };
   architecture?: lambda.Architecture;
   runtime?: lambda.Runtime;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
 export class HuggingFaceCustomScriptModel extends Construct {
@@ -66,7 +66,7 @@ export class HuggingFaceCustomScriptModel extends Construct {
 
     const huggingFaceBuilderName = 'HuggingFaceCodeBuild'
 
-    const buildBucket = new CaefBucket(this, "HuggingFaceBuildBucket", {
+    const buildBucket = new MdaaBucket(this, "HuggingFaceBuildBucket", {
       encryptionKey: props?.encryptionKey,
       naming: props.naming,
       bucketName: `${props.naming.props.org}-${props.naming.props.domain}-${props.naming.props.env}-HF-model-build-bucket`,
@@ -93,8 +93,8 @@ export class HuggingFaceCustomScriptModel extends Construct {
       });
     }
 
-    // Caef Custom Resource looks up provider role with naming convention custom-<resource-name>-provider-role
-    const codeBuildRole = new CaefRole(this, "CodeBuildRole", {
+    // Mdaa Custom Resource looks up provider role with naming convention custom-<resource-name>-provider-role
+    const codeBuildRole = new MdaaRole(this, "CodeBuildRole", {
       roleName: `custom-${huggingFaceBuilderName}-provider-role`,
       naming: props.naming,
       createParams: false,
@@ -191,7 +191,7 @@ export class HuggingFaceCustomScriptModel extends Construct {
 
     buildBucket.grantReadWrite(codeBuildProject.grantPrincipal);
 
-    const onEventHandlerRole = new CaefRole(this, "OnEventHandlerRole", {
+    const onEventHandlerRole = new MdaaRole(this, "OnEventHandlerRole", {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
       naming: props.naming,
       roleName:  'HfCustomScriptOnEventHandler',
@@ -200,7 +200,7 @@ export class HuggingFaceCustomScriptModel extends Construct {
     });
 
     // custom resource lambda handlers
-    const onEventHandler = new CaefLambdaFunction(this, "HuggingFaceOnEventHandler", {
+    const onEventHandler = new MdaaLambdaFunction(this, "HuggingFaceOnEventHandler", {
       functionName: "HuggingFaceOnEventHandler",
       naming: props.naming,
       createParams: false,
@@ -220,7 +220,7 @@ export class HuggingFaceCustomScriptModel extends Construct {
       })
     );
 
-    const isCompleteHandlerRole = new CaefRole(this, 'IsCompleteHandlerRole', {
+    const isCompleteHandlerRole = new MdaaRole(this, 'IsCompleteHandlerRole', {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
       naming: props.naming,
       createParams: false,
@@ -229,7 +229,7 @@ export class HuggingFaceCustomScriptModel extends Construct {
     })
 
     // custom resource lamdba handlers
-    const isCompleteHandler = new CaefLambdaFunction(this, "IsCompleteHandler", {
+    const isCompleteHandler = new MdaaLambdaFunction(this, "IsCompleteHandler", {
       functionName: "HfCustomIsCompleteHandler",
       naming: props.naming,
       createParams: false,
@@ -249,7 +249,7 @@ export class HuggingFaceCustomScriptModel extends Construct {
       })
     );
 
-    // Caef Custom Resource looks up provider with naming convention custom-<resource-name>-provider
+    // Mdaa Custom Resource looks up provider with naming convention custom-<resource-name>-provider
     const provider = new cr.Provider(this, "Provider", {
       providerFunctionName: `custom-${huggingFaceBuilderName}-provider`,
       onEventHandler: onEventHandler,
@@ -268,7 +268,7 @@ export class HuggingFaceCustomScriptModel extends Construct {
       },
     });
 
-    const executionRole = new CaefRole(this, "SageMakerCustomScriptExecutionRole", {
+    const executionRole = new MdaaRole(this, "SageMakerCustomScriptExecutionRole", {
       naming: props.naming,
       roleName:  "HfCustomScriptExecutionRole",
       createParams: false,

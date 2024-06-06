@@ -7,20 +7,20 @@ import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as kendra from "aws-cdk-lib/aws-kendra";
-import {CaefL3Construct, CaefL3ConstructProps} from "@aws-caef/l3-construct";
-import {CaefBucket} from "@aws-caef/s3-constructs";
-import {CaefRole} from "@aws-caef/iam-constructs";
+import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
+import {MdaaBucket} from "@aws-mdaa/s3-constructs";
+import {MdaaRole} from "@aws-mdaa/iam-constructs";
 import {NagSuppressions} from "cdk-nag";
-import {CaefKmsKey} from "@aws-caef/kms-constructs";
+import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 
-export interface KendraRetrievalProps extends CaefL3ConstructProps {
+export interface KendraRetrievalProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly ragDynamoDBTables: RagDynamoDBTables;
-  encryptionKey: CaefKmsKey;
+  encryptionKey: MdaaKmsKey;
 }
 
-export class KendraRetrieval extends CaefL3Construct {
+export class KendraRetrieval extends MdaaL3Construct {
   public readonly createKendraWorkspaceWorkflow: sfn.StateMachine;
   public readonly kendraIndex?: kendra.CfnIndex;
   public readonly kendraS3DataSource?: kendra.CfnDataSource;
@@ -48,7 +48,7 @@ export class KendraRetrieval extends CaefL3Construct {
       if (customDataSource !== undefined) {
           dataBucket = s3.Bucket.fromBucketName(this, "CustomKedraDataBucket", customDataSource.bucketName)
       } else {
-          dataBucket = new CaefBucket(this, "KendraDataBucket", {
+          dataBucket = new MdaaBucket(this, "KendraDataBucket", {
               encryptionKey: props.encryptionKey,
               naming: props.naming,
               bucketName: `${props.naming.props.org}-${props.naming.props.domain}-${props.naming.props.env}-kendra-default-source-bucket`
@@ -58,13 +58,13 @@ export class KendraRetrieval extends CaefL3Construct {
       NagSuppressions.addResourceSuppressions(
           dataBucket,
           [
-            { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF does not enforce bucket replication.' },
-            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF does not enforce bucket replication.' }
+            { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
+            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
           ],
           true
       );
 
-      const kendraRole = new CaefRole(this, "KendraRole", {
+      const kendraRole = new MdaaRole(this, "KendraRole", {
         naming: props.naming,
         assumedBy: new iam.ServicePrincipal("kendra.amazonaws.com"),
         roleName: 'KendraRole'

@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { ClusterSubnetGroup } from "@aws-cdk/aws-redshift-alpha";
 import { SecurityGroup, Subnet, Vpc } from "aws-cdk-lib/aws-ec2";
 import { Bucket } from "aws-cdk-lib/aws-s3";
-import { CaefRedshiftCluster, CaefRedshiftClusterParameterGroup, CaefRedshiftClusterProps } from "../lib";
+import { MdaaRedshiftCluster, MdaaRedshiftClusterParameterGroup, MdaaRedshiftClusterProps } from "../lib";
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
 
-    const testKey = CaefKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKey = MdaaKmsKey.fromKeyArn( testApp.testStack, "test-key", "arn:test-partition:kms:test-region:test-account:key/test-key" )
     const testVpc = Vpc.fromVpcAttributes( testApp.testStack, "test-vpc", {
         vpcId: "test-vpc-id",
         availabilityZones: [ "test-az" ],
@@ -28,7 +28,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
     } )
     const testSecurityGroup = new SecurityGroup( testApp.testStack, "test-security-group", { vpc: testVpc } )
 
-    const testParameterGroup = new CaefRedshiftClusterParameterGroup( testApp.testStack, "test-param-group", {
+    const testParameterGroup = new MdaaRedshiftClusterParameterGroup( testApp.testStack, "test-param-group", {
         naming: testApp.naming,
         parameters: {
 
@@ -36,7 +36,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
     } )
     const testLoggingBucket = Bucket.fromBucketName( testApp.testStack, "test-logging-bucket", "test-logging-bucket" )
 
-    const testContstructProps: CaefRedshiftClusterProps = {
+    const testContstructProps: MdaaRedshiftClusterProps = {
         naming: testApp.naming,
         clusterName: "test-cluster",
         masterUsername: "admin",
@@ -54,7 +54,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         }
     }
 
-    new CaefRedshiftCluster( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaRedshiftCluster( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

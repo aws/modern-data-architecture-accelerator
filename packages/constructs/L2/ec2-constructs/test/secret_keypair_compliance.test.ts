@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { ArnPrincipal } from 'aws-cdk-lib/aws-iam';
-import { CaefEC2SecretKeyPair, CaefEC2SecretKeyPairProps } from '../lib';
+import { MdaaEC2SecretKeyPair, MdaaEC2SecretKeyPairProps } from '../lib';
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testKmsKey = CaefKmsKey.fromKeyArn( testApp.testStack, 'key for root volume', "arn:test-partition:kms:test-region:test-account:key/test-key" )
+    const testKmsKey = MdaaKmsKey.fromKeyArn( testApp.testStack, 'key for root volume', "arn:test-partition:kms:test-region:test-account:key/test-key" )
 
-    const testContstructProps: CaefEC2SecretKeyPairProps = {
+    const testContstructProps: MdaaEC2SecretKeyPairProps = {
         naming: testApp.naming,
         name: 'test-key-pair',
         kmsKey: testKmsKey,
@@ -23,7 +23,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         ]
     }
 
-    new CaefEC2SecretKeyPair( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaEC2SecretKeyPair( testApp.testStack, "test-construct", testContstructProps )
 
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )

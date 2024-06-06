@@ -21,8 +21,8 @@ sed -i "s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" 
 find ./ -type f -name "package.json" | grep -v node_modules | xargs -n1 -I{} sed -i "s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" {}
 
 # Update peerDependency and devDependency versions in package.json files
-find ./packages -type f -name "package.json" | grep -v node_modules | xargs -n1 -I{} sed -i  "s/@aws-caef\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-caef\1\"\2$NEW_VERSION\"/" {}
-sed -i  "s/@aws-caef\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-caef\1\"\2$NEW_VERSION\"/" ./schemas/package.json
+find ./packages -type f -name "package.json" | grep -v node_modules | xargs -n1 -I{} sed -i  "s/@aws-mdaa\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-mdaa\1\"\2$NEW_VERSION\"/" {}
+sed -i  "s/@aws-mdaa\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-mdaa\1\"\2$NEW_VERSION\"/" ./schemas/package.json
 
 # Update version in .jsii files (in each package)
 find ./ -type f -name ".jsii" | grep -v node_modules | xargs -n1 -I{} sed -i "s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" {}

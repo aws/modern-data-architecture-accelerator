@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps, CaefParamAndOutput } from '@aws-caef/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { IResolvable } from 'aws-cdk-lib';
 import { CfnRuleset, CfnRulesetProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
 /**
- * Properties for creating a Caef Databrew Ruleset
+ * Properties for creating a Mdaa Databrew Ruleset
  */
-export interface CaefDataBrewRulesetProps extends CaefConstructProps {
+export interface MdaaDataBrewRulesetProps extends MdaaConstructProps {
 
     // The name of the ruleset.
     readonly name: string;
@@ -30,19 +30,19 @@ export interface CaefDataBrewRulesetProps extends CaefConstructProps {
 /**
  * A construct which creates a compliant Databrew Ruleset.
  */
-export class CaefDataBrewRuleset extends CfnRuleset {
+export class MdaaDataBrewRuleset extends CfnRuleset {
 
-    private static setProps ( props: CaefDataBrewRulesetProps ): CfnRulesetProps {
+    private static setProps ( props: MdaaDataBrewRulesetProps ): CfnRulesetProps {
         const overrideProps = {
             name: props.naming.resourceName( props.name, 80 )
         }
         return { ...props, ...overrideProps }
     }
 
-    constructor( scope: Construct, id: string, props: CaefDataBrewRulesetProps ) {
-        super( scope, id, CaefDataBrewRuleset.setProps( props ) )
+    constructor( scope: Construct, id: string, props: MdaaDataBrewRulesetProps ) {
+        super( scope, id, MdaaDataBrewRuleset.setProps( props ) )
 
-        new CaefParamAndOutput( this, {
+        new MdaaParamAndOutput( this, {
             ...{
                 resourceType: "Ruleset",
                 resourceId: props.name,

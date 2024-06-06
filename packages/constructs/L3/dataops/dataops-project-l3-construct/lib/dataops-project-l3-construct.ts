@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-caef/ec2-l3-construct';
-import { CaefSecurityConfig } from '@aws-caef/glue-constructs';
-import { CaefRole } from '@aws-caef/iam-constructs';
-import { CaefResolvableRole, CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS, ICaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { GrantProps, LakeFormationAccessControlL3Construct, LakeFormationAccessControlL3ConstructProps, NamedGrantProps, NamedPrincipalProps, NamedResourceLinkProps, PermissionsConfig, PrincipalProps, ResourceLinkProps } from '@aws-caef/lakeformation-access-control-l3-construct';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-caef/s3-bucketpolicy-helper';
-import { CaefBucket } from '@aws-caef/s3-constructs';
-import { CaefSnsTopic, CaefSnsTopicProps } from '@aws-caef/sns-constructs';
+import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-mdaa/ec2-l3-construct';
+import { MdaaSecurityConfig } from '@aws-mdaa/glue-constructs';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { GrantProps, LakeFormationAccessControlL3Construct, LakeFormationAccessControlL3ConstructProps, NamedGrantProps, NamedPrincipalProps, NamedResourceLinkProps, PermissionsConfig, PrincipalProps, ResourceLinkProps } from '@aws-mdaa/lakeformation-access-control-l3-construct';
+import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
+import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
 import { SecurityConfiguration } from '@aws-cdk/aws-glue-alpha';
 import { ArnComponents, Arn, ArnFormat } from 'aws-cdk-lib';
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
@@ -220,7 +220,7 @@ export interface ConnectionProps {
     readonly physicalConnectionRequirements?: ConnectionPhysical
 }
 
-export interface DataOpsProjectL3ConstructProps extends CaefL3ConstructProps {
+export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * The KMS Key to be used to encrypt all Job outputs within the project.
      */
@@ -240,7 +240,7 @@ export interface DataOpsProjectL3ConstructProps extends CaefL3ConstructProps {
     /**
      * The list of execution roles used by project jobs, crawlers, and function resources.
      */
-    readonly projectExecutionRoleRefs: CaefRoleRef[];
+    readonly projectExecutionRoleRefs: MdaaRoleRef[];
     /**
      * Map of database names to database definitions
      */
@@ -248,11 +248,11 @@ export interface DataOpsProjectL3ConstructProps extends CaefL3ConstructProps {
     /**
      * List of data engineer role ids who will interact with project resources
      */
-    readonly dataEngineerRoleRefs: CaefRoleRef[];
+    readonly dataEngineerRoleRefs: MdaaRoleRef[];
     /**
      * List of data admin role ids which will administer project resources
      */
-    readonly dataAdminRoleRefs: CaefRoleRef[];
+    readonly dataAdminRoleRefs: MdaaRoleRef[];
     /**
      * failure notification configuration
      */
@@ -277,27 +277,27 @@ export interface SecurityGroupConfigProps {
     /**
      * List of egress rules to be added to the function SG
      */
-    readonly securityGroupEgressRules?: CaefSecurityGroupRuleProps
+    readonly securityGroupEgressRules?: MdaaSecurityGroupRuleProps
 }
 
 export interface FailureNotificationsProps {
     readonly email?: string[]
 }
 
-export class DataOpsProjectL3Construct extends CaefL3Construct {
+export class DataOpsProjectL3Construct extends MdaaL3Construct {
     protected readonly props: DataOpsProjectL3ConstructProps
 
 
-    private projectExecutionRoles: CaefResolvableRole[]
-    private dataAdminRoles: CaefResolvableRole[]
-    private dataEngineerRoles: CaefResolvableRole[]
+    private projectExecutionRoles: MdaaResolvableRole[]
+    private dataAdminRoles: MdaaResolvableRole[]
+    private dataEngineerRoles: MdaaResolvableRole[]
     private dataAdminRoleIds: string[]
     private s3OutputKmsKey: IKey
 
     constructor( scope: Construct, id: string, props: DataOpsProjectL3ConstructProps ) {
         super( scope, id, props )
         this.props = props
-        this.s3OutputKmsKey = CaefKmsKey.fromKeyArn( this.scope, "s3OutputKmsKey", props.s3OutputKmsKeyArn )
+        this.s3OutputKmsKey = MdaaKmsKey.fromKeyArn( this.scope, "s3OutputKmsKey", props.s3OutputKmsKeyArn )
         this.projectExecutionRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.projectExecutionRoleRefs, "ProjectExRoles" )
         this.dataAdminRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.dataAdminRoleRefs, "DataAdmin" )
         this.dataEngineerRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.dataEngineerRoleRefs, "DataEngineer" )
@@ -338,7 +338,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         if ( this.props.glueCatalogKmsKeyArn ) {
             let i = 0
             const projectExecutionRoles = this.projectExecutionRoles.map( x => {
-                return CaefRole.fromRoleArn( this.scope, `resolve-role-${ i++ }`, x.arn() )
+                return MdaaRole.fromRoleArn( this.scope, `resolve-role-${ i++ }`, x.arn() )
             } )
             const keyAccessPolicy = new ManagedPolicy( this.scope, "catalog-key-access-policy", {
                 managedPolicyName: this.props.naming.resourceName( "catalog-key-access" ),
@@ -353,9 +353,9 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         }
     }
 
-    private createProjectSecurityGroup ( sgName: string, vpcId: string, securityGroupEgressRules?: CaefSecurityGroupRuleProps ): SecurityGroup {
+    private createProjectSecurityGroup ( sgName: string, vpcId: string, securityGroupEgressRules?: MdaaSecurityGroupRuleProps ): SecurityGroup {
         const ec2L3Props: Ec2L3ConstructProps = {
-            ...this.props as CaefL3ConstructProps,
+            ...this.props as MdaaL3ConstructProps,
             adminRoles: [],
             securityGroups: {
                 [ sgName ]: {
@@ -434,9 +434,9 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
 
         } )
     }
-    private createProjectSecurityConfig ( projectKmsKey: ICaefKmsKey, s3OutputKmsKey: IKey ): SecurityConfiguration {
+    private createProjectSecurityConfig ( projectKmsKey: IMdaaKmsKey, s3OutputKmsKey: IKey ): SecurityConfiguration {
         //Create project security Config
-        const projectSecurityConfig = new CaefSecurityConfig( this.scope, `security-config`, {
+        const projectSecurityConfig = new MdaaSecurityConfig( this.scope, `security-config`, {
             cloudWatchKmsKey: projectKmsKey,
             jobBookMarkKmsKey: projectKmsKey,
             s3OutputKmsKey: s3OutputKmsKey,
@@ -457,7 +457,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
             const databaseProps = entry[ 1 ]
 
             const dbResourceName = this.props.naming.resourceName( `${ databaseName }` )
-            const databaseBucket = databaseProps.locationBucketName && databaseProps.locationPrefix ? CaefBucket.fromBucketName( this, `database-bucket-${ databaseName }`, databaseProps.locationBucketName ) : undefined
+            const databaseBucket = databaseProps.locationBucketName && databaseProps.locationPrefix ? MdaaBucket.fromBucketName( this, `database-bucket-${ databaseName }`, databaseProps.locationBucketName ) : undefined
 
             // Create the database
             const database = new CfnDatabase( this.scope, `${ databaseName }-database`, {
@@ -589,7 +589,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
             grants: { ...projectRoleGrantProps, ...lfGrantProps },
             resourceLinks: resourceLinkProps,
             externalDatabaseDependency: database,
-            ...this.props as CaefL3ConstructProps
+            ...this.props as MdaaL3ConstructProps
         }
 
         //Use the LF Account Control construct to create all database grants and resource links
@@ -599,7 +599,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
     }
 
     private determinePrincipalAccount ( principalName: string, principalProps: PrincipalProps ): string | undefined {
-        if ( principalProps.role instanceof CaefResolvableRole ) {
+        if ( principalProps.role instanceof MdaaResolvableRole ) {
             return this.tryParseArn( principalProps.role.arn() )?.account
         } else if ( principalProps.role ) {
             return this.tryParseArn( this.props.roleHelper.resolveRoleRefWithRefId( principalProps.role, principalName ).arn() )?.account
@@ -637,7 +637,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         return lakeFormationGrantProps
     }
 
-    private createProjectKmsKey ( keyUserRoles: IRole[] ): ICaefKmsKey {
+    private createProjectKmsKey ( keyUserRoles: IRole[] ): IMdaaKmsKey {
         //Allow CloudWatch logs to us the project key to encrypt/decrypt log data using this key
         const cloudwatchStatement = new PolicyStatement( {
             sid: "CloudWatchLogsEncryption",
@@ -700,7 +700,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         } )
 
         // Create a KMS Key if we need to make one for the project.
-        const kmsKey = new CaefKmsKey( this.scope, 'ProjectKmsKey', {
+        const kmsKey = new MdaaKmsKey( this.scope, 'ProjectKmsKey', {
             alias: "cmk",
             naming: this.props.naming,
             keyAdminRoleIds: this.dataAdminRoleIds,
@@ -718,7 +718,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
     }
 
     private createProjectDeploymentRole (): IRole {
-        const role = new CaefRole( this.scope, `project-deployment-role`, {
+        const role = new MdaaRole( this.scope, `project-deployment-role`, {
             assumedBy: new ServicePrincipal( "lambda.amazonaws.com" ),
             roleName: "deployment",
             naming: this.props.naming
@@ -729,13 +729,13 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         return role
     }
 
-    private createProjectBucket ( projectKmsKey: IKey, s3OutputKmsKey: IKey, projectDeploymentRole: IRole ): CaefBucket {
+    private createProjectBucket ( projectKmsKey: IKey, s3OutputKmsKey: IKey, projectDeploymentRole: IRole ): MdaaBucket {
         const dataEngineerRoleIds = this.dataEngineerRoles.map( x => x.id() )
         const dataAdminRoleIds = this.dataAdminRoles.map( x => x.id() )
         const projectExecutionRoleIds = this.projectExecutionRoles.map( x => x.id() )
 
         //This project bucket will be used for all project-specific data
-        const projectBucket = new CaefBucket( this.scope, `Bucketproject`, {
+        const projectBucket = new MdaaBucket( this.scope, `Bucketproject`, {
             encryptionKey: projectKmsKey,
             additionalKmsKeyArns: [ s3OutputKmsKey.keyArn ],
             naming: this.props.naming
@@ -744,8 +744,8 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         NagSuppressions.addResourceSuppressions(
             projectBucket,
             [
-                { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF DataOps bucket does not use bucket replication.' },
-                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF DataOps bucket does not use bucket replication.' },
+                { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA DataOps bucket does not use bucket replication.' },
+                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA DataOps bucket does not use bucket replication.' },
             ],
             true
         );
@@ -799,7 +799,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         return projectBucket
     }
 
-    private getAllRoles (): CaefResolvableRole[] {
+    private getAllRoles (): MdaaResolvableRole[] {
         return [ ...new Set( [ ...this.dataAdminRoles, ...this.dataEngineerRoles, ...this.projectExecutionRoles ] ) ]
     }
 
@@ -807,14 +807,14 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         return this.getAllRoles().map( x => x.id() )
     }
 
-    private createSNSTopic ( projectKmsKey: ICaefKmsKey ): CaefSnsTopic {
+    private createSNSTopic ( projectKmsKey: IMdaaKmsKey ): MdaaSnsTopic {
         // create SNS topic
-        const snsProps: CaefSnsTopicProps = {
+        const snsProps: MdaaSnsTopicProps = {
             naming: this.props.naming,
             topicName: "dataops-sns-topic",
             masterKey: projectKmsKey
         }
-        const topic = new CaefSnsTopic( this.scope, "dataops-sns-topic", snsProps )
+        const topic = new MdaaSnsTopic( this.scope, "dataops-sns-topic", snsProps )
         //Allow EventBridge events to be published to the Topic
         const publishPolicyStatement = new PolicyStatement(
             {
@@ -831,7 +831,7 @@ export class DataOpsProjectL3Construct extends CaefL3Construct {
         return topic
     }
 
-    private subscribeSNSTopic ( topic: CaefSnsTopic, failureNotifications?: FailureNotificationsProps ) {
+    private subscribeSNSTopic ( topic: MdaaSnsTopic, failureNotifications?: FailureNotificationsProps ) {
         // subscribe to sns topic if email-ids are present
         failureNotifications?.email?.forEach( email => {
             topic.addSubscription( new EmailSubscription( email.trim() ) );

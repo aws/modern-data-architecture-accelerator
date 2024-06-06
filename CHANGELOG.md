@@ -43,25 +43,25 @@
 
 ### General Changes
 
-* Reorganized DEPLOYMENT documentation to emphasize CAEF local mode (-l) as the preferred approach
-  * Local mode (introduced 0.40) avoids requiring CAEF npm packages to be published to an NPM repo
+* Reorganized DEPLOYMENT documentation to emphasize MDAA local mode (-l) as the preferred approach
+  * Local mode (introduced 0.40) avoids requiring MDAA npm packages to be published to an NPM repo
 * Added functionality to allow referencing of roles by IAM Identity Center/SSO permission set name.
   * Adding 'sso: true' to a role ref will treat the role name as the name of an IAM Identity Center permission set name
   * The role will be resolved by searching for the 'AWSReservedSSO_' role created for that permission set within the account by IAM Identity Center
   * SSO roles will be automatically treated as immutable
-* Fixed issue with "@aws-caef/enableUniqueBucketNames" not account for prefix in max bucket name length
+* Fixed issue with "@aws-mdaa/enableUniqueBucketNames" not account for prefix in max bucket name length
 * Added boto version 1.33.13 to boto lambda layers, and set as default
-* Enhance CAEF CLI to print current (installed) version
+* Enhance MDAA CLI to print current (installed) version
 * Surfaced config schemas in ./schemas under the repo root. All compiled schemas are placed here for convenience, to be used by YAML editors.
-  * Schemas also published as '@aws-caef/schemas' NPM package
+  * Schemas also published as '@aws-mdaa/schemas' NPM package
 * Fixed various NPM Dependency CVEs through overrides
 * Fixed a number of SSM Parameter constructs to be appropriately scoped
-  * The legacy scoping can be retained by setting the "@aws-caef/legacyParamScope" global context value
+  * The legacy scoping can be retained by setting the "@aws-mdaa/legacyParamScope" global context value
 * Bumped CDK to latest version (2.132.1)
 * Bumped CDK NAG to latest version (2.28.27)
 * Bumped JSII to latest version (5.4.0)
-* Added support for higher/sibling directory relative paths to CAEF configs processor ("../< some-path >")
-  * CAEF configs can now reference source code, config files, and assets outside of the config directory/repo itself
+* Added support for higher/sibling directory relative paths to MDAA configs processor ("../< some-path >")
+  * MDAA configs can now reference source code, config files, and assets outside of the config directory/repo itself
 
 ### L2 Construct Changes
 
@@ -72,13 +72,13 @@
 
 ### General Changes
 
-* Added local execution mode for CAEF CLI. This allows direct execution of CAEF from cloned CAEF repo.
-  * No NPM publishing or installation of CAEF packages required.
+* Added local execution mode for MDAA CLI. This allows direct execution of MDAA from cloned MDAA repo.
+  * No NPM publishing or installation of MDAA packages required.
   * All modules will be built and executed from the local source code.
-  * CAEF config must not specify a CAEF version. Whatever is cloned/checked out from the CAEF repo will be used.
+  * MDAA config must not specify a MDAA version. Whatever is cloned/checked out from the MDAA repo will be used.
 * Updated CDK to latest version (2.126.0)
 * Update CDK Nag to latest version (2.27.142)
-* Added "@aws-caef/enableUniqueBucketNames" CDK context feature flag, which, when set to true, results in a unique prefix being automatically added to all S3 bucket names.
+* Added "@aws-mdaa/enableUniqueBucketNames" CDK context feature flag, which, when set to true, results in a unique prefix being automatically added to all S3 bucket names.
   * Unique prefix is based on stack id, so is stable across stack updates
   * Helps ensure global bucket name uniqueness, and protects against predictable bucket names
   * Can be set in global, domain, env, and per module context
@@ -90,7 +90,7 @@
   * Supports endpoint credentials either via Secrets Manager or via AWS Role
 * Added preview DataOps Nifi cluster module running on EKS Fargate
   * Allows deployment of multiple secured Nifi Clusters on a single EKS cluster, along with a preconfigured and integrated Nifi Registry
-  * Allows configuration of Nifi and Registry permissions through CAEF
+  * Allows configuration of Nifi and Registry permissions through MDAA
   * Allows integration of Nifi Auth with SAML IDP such as IAM Identity Center
 * Resolved issue with hardcoded Glue job timeouts in Glue Workflows
 * Added support for EventBridge Rule cron scheduling expressions to DataOps Lambda, Glue Workflow, and StepFunction modules
@@ -174,8 +174,8 @@
 * Modified code-base for portability across multiple (non-commercial) AWS Partitions
   * Partition is dynamically determined by destination region
   * Partition literal value will now be added to all resources, replacing partition references where they exist
-* Modified CAEF L2 S3 Bucket Construct to ensure Bucket Policy is retained upon stack deletion
-* Added '-o' flag to CAEF Cli, which will force each CAEF module to write its effective config to console after effective config is computed
+* Modified MDAA L2 S3 Bucket Construct to ensure Bucket Policy is retained upon stack deletion
+* Added '-o' flag to MDAA Cli, which will force each MDAA module to write its effective config to console after effective config is computed
   * Config contents will have been merged across all config files and config objects
   * All config references will have have been resolved
   * CloudFormation Tokens may still be present in effective config, as these are resolved at deployment time by the CloudFormation Service
@@ -192,7 +192,7 @@
 * Streamlined SageMaker Job permissions in Data Science Team managed policies
 * Resolved bug with Data Science Team Athena WG managed policy name when not using verbatim policy names
 * Created SageMaker Studio (and Data Science Team) LifeCycle Asset functionality
-  * Allows staging of assets co-located with CAEF config to be staged in Domain/Team bucket and copied into SageMaker Studio App containers for inclusion in Lifecycle Configs
+  * Allows staging of assets co-located with MDAA config to be staged in Domain/Team bucket and copied into SageMaker Studio App containers for inclusion in Lifecycle Configs
 * Modified Data Science Team Athena WG to use the team bucket for Athena results (instead of a separate bucket)
 
 ### Data Ops Changes
@@ -212,10 +212,10 @@
 
 ### Documentation Changes
 
-* CAEF now uses mkdocs to produce static HTML documentation pages
-  * This documentation is a direct rendering of the markdown documentation already in the repo, including CAEF overview, sample architectures/configs, detailed module descriptions, compliance information, and configuration options
+* MDAA now uses mkdocs to produce static HTML documentation pages
+  * This documentation is a direct rendering of the markdown documentation already in the repo, including MDAA overview, sample architectures/configs, detailed module descriptions, compliance information, and configuration options
   * Documentation is pre-rendered to HTML, and is navigatable and searchable
-  * Documentation zip package includes documentation for both current and previous CAEF versions (currently back to 0.32)
+  * Documentation zip package includes documentation for both current and previous MDAA versions (currently back to 0.32)
     * Version can be selected from the top bar of the page
     * Latest version is selected by default
   * Can either be hosted on any static webserver, or accessed locally from filesystem
@@ -262,7 +262,7 @@
 
 * Added EventBridge L2/L3 Constructs and App allowing custom EventBuses to be created
 * Modified shared Boto3 layer (under QuickSight Account and LakeFormation Settings) to use zip packaging
-* Re-implemented CAEF Custom Resource Construct in order to avoid IAM race condition in AWSCustomResource
+* Re-implemented MDAA Custom Resource Construct in order to avoid IAM race condition in AWSCustomResource
   * Currently in use by SageMaker Studio Domain/Data Science Team apps
 
 ### DataOps Changes
@@ -302,16 +302,16 @@
 
 ### General Changes
 
-* Optimized installation of NPM packages during CAEF execution, reducing duplication of installs across multiple modules using same versions
+* Optimized installation of NPM packages during MDAA execution, reducing duplication of installs across multiple modules using same versions
 * Added ability to filter for multiple domains/envs/modules via the -d/e/m flags by specifying comma separated values
 * Added ability to specify custom naming and aspect modules per domain/env/module
 * Added ability to reference environment variables within configs using {{env_var:<SOME_ENV_VAR_NAME>}} syntax
-* Cleaned up stdout/logging from CAEF CLI
-* Moved cdk.out directory under the CAEF working direction (default .caef_working/)
-* Added ability for CAEF to use a locally-installed aws-cdk package
+* Cleaned up stdout/logging from MDAA CLI
+* Moved cdk.out directory under the MDAA working direction (default .mdaa_working/)
+* Added ability for MDAA to use a locally-installed aws-cdk package
   * If a local install is available (in the local directory), it will be used.
   * Otherwise a global install will be used
-* Added ability for CAEF modules to generate resources via stacks deployed to multiple accounts in addition to primary deployment account
+* Added ability for MDAA modules to generate resources via stacks deployed to multiple accounts in addition to primary deployment account
   * Used to support cross-account deployments of resources in support of cross account LakeFormation grants
   * Additional accounts must be specified on a per-module basis using 'additional_accounts' config
 
@@ -383,8 +383,8 @@
 * Introduced 'immutable' flag on all config role references. This flag is used in Constructs to determine if a role permissions can be updated or not (IE if it's an SSO role)
 * Modified config transformer to apply transformation to config keys in some situations
   * This allows references to be made in config keys which are used for resource names, etc
-* Moved Service Catalog Product config from module section of caef.yaml into the module/app config itself 
-* Moved Nag Suppressions By Path config from module section of caef.yaml into the module/app config itself 
+* Moved Service Catalog Product config from module section of mdaa.yaml into the module/app config itself 
+* Moved Nag Suppressions By Path config from module section of mdaa.yaml into the module/app config itself 
 * Resolved issue with nested references in config (IE ssm:/{{org}}/some/path)
 
 ### Data Science Changes
@@ -418,7 +418,7 @@
 * Modified Studio Domain construct to set ExecutionRoleIdentityConfig to USER_PROFILE_NAME, improving auditability of user interactions with AWS services from within SageMaker Studio
 * Added ability to add additional Role Trust Policy actions to role definitions in Roles module
 * Added keypair to EC2 Module
-* Modified CAEF repo to use NPM Workspaces
+* Modified MDAA repo to use NPM Workspaces
 * Removed execution role definitions from DataWarehouse module. These should instead be defined in the Roles module, and referenced by DataWarehouse module
 * Added CloudWatch LogGroup L2 Construct
 
@@ -443,7 +443,7 @@
 
 ## 0.25.0
 
-* Added ServiceCatalog integration, allowing any CAEF module to be optionally deployed as a Service Catalog Product instead of directly into account
+* Added ServiceCatalog integration, allowing any MDAA module to be optionally deployed as a Service Catalog Product instead of directly into account
 * Added QuickSight Shared Folders and Permissions module
 * Extended QuickSight Accounts module to create QS Account Sub via Custom Resource
 * Extended QuickSight NameSpaces modules to automatically add Namespace users to predefined groups
@@ -453,9 +453,9 @@
 * Allow IAM roles generated by Roles module to specify Assume Role Trust policy to a specific Arn
 * Allow IAM roles generated by Roles module to specify Assume Role Trust policy conditions
 * Allow existing KMS key to optionally be specified for SageMaker Notebook encryption (otherwise one will continue to be generated)
-* Allow custom_aspects to be specified at all levels of the CAEF config, allowing for custom_aspects to be applied globally, per domain, per env, and per module
-* Refactoring to cleanup boilerplate code for CAEF apps and Constructs
-* Added -u parameter to CAEF CLI to allow specifying the CAEF module version ('caef_version' in config files) on the command line
+* Allow custom_aspects to be specified at all levels of the MDAA config, allowing for custom_aspects to be applied globally, per domain, per env, and per module
+* Refactoring to cleanup boilerplate code for MDAA apps and Constructs
+* Added -u parameter to MDAA CLI to allow specifying the MDAA module version ('mdaa_version' in config files) on the command line
 * Continued improvements to test coverage (now globally over 78% lines covered)
 
 ## 0.24.0
@@ -472,7 +472,7 @@
 * DataOps Project now optionally creates Lake Formation grants for project databases
 * LakeFormation Access now uses newer CfnPrincipalPermissions L1 construct instead of CfnPermissions
 * QuickSight Namespace module now adds namespace users to a number of predefined groups for ease of permissions management
-* Modified CAEF CLI to now use './.caef_working' as a temporary working directory instead of './npm'
+* Modified MDAA CLI to now use './.mdaa_working' as a temporary working directory instead of './npm'
   * Configurable via the -w flag
   * Also added -x flag which will automatically wipe any previously installed packages from this directory
 * Refactored Stacks into L3 Constructs in preparation for Service Catalog Integration
@@ -505,7 +505,7 @@
 ## 0.20.0
 
 * Resolved ConcurrentModificationException when many triggers add to the same workflow
-* 'caef destroy' will now attempt to destroy stacks in reverse order of creation.
+* 'mdaa destroy' will now attempt to destroy stacks in reverse order of creation.
 
 ## 0.19.0
 
@@ -517,10 +517,10 @@
 
 * Modify DataWarehouse to not create secret rotation if rotationDays is 0
   * Note that this triggers a CDK Nag which needs to be suppressed (see below)
-* Add nag_suppressions config to modules in caef.yaml
+* Add nag_suppressions config to modules in mdaa.yaml
   * Suppressions currently supported by path, which should be available in Nag error message
-* Add app_config_data and tag_config_data to caef.yaml, allowing for tags and Caef module/CDK App config object data to be directly specified in CAEF
-* Refactored/Renamed CAEF App Configs to use ConfigParser terminology, in preparation for larger future refactoring
+* Add app_config_data and tag_config_data to mdaa.yaml, allowing for tags and Mdaa module/CDK App config object data to be directly specified in MDAA
+* Refactored/Renamed MDAA App Configs to use ConfigParser terminology, in preparation for larger future refactoring
 * Fixed issue with DataOps Workflow and Scheduled Triggers
 * Refactored and cleaned up code smells from SonarQube
 * Added ability to configure Redshift snapshot retention period
@@ -531,17 +531,17 @@
 
 ## 0.16.0
 
-* Added global/domain/module caef_version configuration param to allow CAEF version to specified at various locations in the CAEF config
-* Removed the CAEF version from the caef_cdk_app tag to reduce CDK diff churn during CAEF upgrades/deployments
+* Added global/domain/module mdaa_version configuration param to allow MDAA version to specified at various locations in the MDAA config
+* Removed the MDAA version from the mdaa_cdk_app tag to reduce CDK diff churn during MDAA upgrades/deployments
 * Fixed issue where CDK Custom Providers (LF, QuickSight, etc) would produce function names > 64 chars
 * Fixed issue where multiple federations in a Data Warehouse config would create a naming conflict
-* Region and Account can now be referenced in CAEF configs as '{{region}}' and '{{account}}'. These will automatically be replaced at Synth time
+* Region and Account can now be referenced in MDAA configs as '{{region}}' and '{{account}}'. These will automatically be replaced at Synth time
 * Improved Dynamic Reference docs
-* Added custom CDK aspects to CAEF configuration. These are dynamically injected at CAEF execution time similar to custom naming implementations.
+* Added custom CDK aspects to MDAA configuration. These are dynamically injected at MDAA execution time similar to custom naming implementations.
 
 ## 0.15.0
 
-* Replace 'Ecosystem' with 'Environment' across CAEF codebase.
+* Replace 'Ecosystem' with 'Environment' across MDAA codebase.
 
 ## 0.14.0
 
@@ -553,9 +553,9 @@
 ## 0.13.0
 
 * Added LF Data Location grants to Data Lake Stack, based on configured Lake Formation Resource Locations. Specified roles will be granted access to create catalog resources in the specified location.
-* Added RedShift user and secret creation to DataWarehouse App/Stack, allowing for non-admin users to be managed by CAEF configuration. A secret will be created containing the credentials for each user, with configurable rotation.
-* Added -h (help) flag to CAEF cli, which will print available cli flags and exit
-* Added -r (role) flag to CAEF cli, which will pass the specified role arn to the -r flag of the underlying CDK command. This allows deployment to be conducted using non-default roles.
+* Added RedShift user and secret creation to DataWarehouse App/Stack, allowing for non-admin users to be managed by MDAA configuration. A secret will be created containing the credentials for each user, with configurable rotation.
+* Added -h (help) flag to MDAA cli, which will print available cli flags and exit
+* Added -r (role) flag to MDAA cli, which will pass the specified role arn to the -r flag of the underlying CDK command. This allows deployment to be conducted using non-default roles.
 
 ## 0.12.0
 
@@ -572,15 +572,15 @@ Dependency cleanup
 
 ### Configuration Changes
 
-* Support for specification of additional context values in caef.yaml at the org, domain, env, or module level.
-* Context values from caef.yaml can be referenced in individual CAEF module/app configs:
+* Support for specification of additional context values in mdaa.yaml at the org, domain, env, or module level.
+* Context values from mdaa.yaml can be referenced in individual MDAA module/app configs:
   * {{org}} - resolves to the org name
   * {{domain}} - resolves to the domain name
   * {{env}} - resolves to the env name
   * {{module_name}} - resolves to the module name
-  * {{context:< some context key >}} - resolves to the additional context value in caef.yaml
-* CFN dynamic references are mostly supported in CAEF module/app configs:
-  * {{resolve:< service >:< some key >}} - is passed through to the CloudFormation template. This allows referencing things like secrets ,etc, in CAEF configs without storing the secrets in the config itself.
+  * {{context:< some context key >}} - resolves to the additional context value in mdaa.yaml
+* CFN dynamic references are mostly supported in MDAA module/app configs:
+  * {{resolve:< service >:< some key >}} - is passed through to the CloudFormation template. This allows referencing things like secrets ,etc, in MDAA configs without storing the secrets in the config itself.
   * Example: {{resolve:ssm:< some ssm path >}}
 * Both context and CFN dynamic references can be referenced inline in config values, and should always be quoted:
   * some-config-key: “{{context:some-context-key}}”
@@ -588,33 +588,33 @@ Dependency cleanup
 
 ### Compliance Changes
 
-* CAEF now automatically applies the HIPAA CDK Nag Ruleset
+* MDAA now automatically applies the HIPAA CDK Nag Ruleset
   * This is in addition to the existing NIST 800-53 R5 and AWS Solution Rulesets
-  * CDK Nag executes automatically as part of any caef synth, diff, deploy command and will halt deployment if security issues are encountered.
-* Fixed CDK Nag Aws-Solutions-L1 (Lambda runtime) for CAEF custom resources
+  * CDK Nag executes automatically as part of any mdaa synth, diff, deploy command and will halt deployment if security issues are encountered.
+* Fixed CDK Nag Aws-Solutions-L1 (Lambda runtime) for MDAA custom resources
 * Pinned CDK Nag to current latest version to prevent unexpected nags due to new rules in the future
 
 ### Functional Changes
 
 * Lake Formation Settings app added to manage LF admins and default permissions for databases/tables
-* Default CAEF tags now added to all resources with org/domain/env/module_name and cdk app/version
+* Default MDAA tags now added to all resources with org/domain/env/module_name and cdk app/version
 
 ### Extensibility Changes
 
-* CAEF config-driven apps were separated from their CDK stacks, allowing for reusability of CAEF stacks in custom applications
+* MDAA config-driven apps were separated from their CDK stacks, allowing for reusability of MDAA stacks in custom applications
   * All stacks are JSII compliant and include Python bindings.
   * Stacks are now in separate packages with a ‘-stack’ suffix
-  * There is now a clear separation between CAEF app config concepts and stacks, which are Props-driven in alignment with the rest of the CDK codebase
+  * There is now a clear separation between MDAA app config concepts and stacks, which are Props-driven in alignment with the rest of the CDK codebase
 
-* Added JSII-produced cross language bindings (currently for Python) for all CAEF reusable constructs and stacks
-  * PIP packages are automatically published to CodeArtifact for prerelease (CAEF Dev) and releases (CAEF Delivery)
-  * Updated README with more info on how to Build On/Extend CAEF
+* Added JSII-produced cross language bindings (currently for Python) for all MDAA reusable constructs and stacks
+  * PIP packages are automatically published to CodeArtifact for prerelease (MDAA Dev) and releases (MDAA Delivery)
+  * Updated README with more info on how to Build On/Extend MDAA
 
 ### Structural Changes
 
-* The CAEF deploy package (formerly @aws-caef/caef-deploy) has been renamed to ‘@aws-caef/cli’
+* The MDAA deploy package (formerly @aws-mdaa/mdaa-deploy) has been renamed to ‘@aws-mdaa/cli’
   * This better aligns with conventions used in similar AWS codebases
-  * You’ll want to uninstall ‘@aws-caef/caef-deploy’, then install ‘@aws-caef/cli’
+  * You’ll want to uninstall ‘@aws-mdaa/mdaa-deploy’, then install ‘@aws-mdaa/cli’
 
-* The repo structure has been slightly reorganized, but CAEF App packages names all remain the same
+* The repo structure has been slightly reorganized, but MDAA App packages names all remain the same
 * More Stack/App refactoring to fix an issue with using cross stack references

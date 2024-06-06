@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { ArnPrincipal } from "aws-cdk-lib/aws-iam";
-import { CaefEventBus, CaefEventBusProps } from "../lib";
+import { MdaaEventBus, MdaaEventBusProps } from "../lib";
 
 
-describe( 'CAEF Construct Compliance Tests', () => {
-    const testApp = new CaefTestApp()
+describe( 'MDAA Construct Compliance Tests', () => {
+    const testApp = new MdaaTestApp()
 
-    const testContstructProps: CaefEventBusProps = {
+    const testContstructProps: MdaaEventBusProps = {
         naming: testApp.naming,
         eventBusName: "test-bus",
         archiveRetention: 100,
         principals: [ new ArnPrincipal( "arn:test-partition:iam::test-account:role/test-role" ) ]
     }
 
-    new CaefEventBus( testApp.testStack, "test-construct", testContstructProps )
+    new MdaaEventBus( testApp.testStack, "test-construct", testContstructProps )
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )
 

@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps } from '@aws-caef/app';
-import { FunctionProps, LayerProps } from '@aws-caef/dataops-lambda-l3-construct';
-import { CaefDataOpsConfigContents, CaefDataOpsConfigParser } from '@aws-caef/dataops-shared';
+import { MdaaAppConfigParserProps } from '@aws-mdaa/app';
+import { FunctionProps, LayerProps } from '@aws-mdaa/dataops-lambda-l3-construct';
+import { MdaaDataOpsConfigContents, MdaaDataOpsConfigParser } from '@aws-mdaa/dataops-shared';
 
 import { Schema } from "ajv";
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
-export interface LambdaFunctionConfigContents extends CaefDataOpsConfigContents {
+export interface LambdaFunctionConfigContents extends MdaaDataOpsConfigContents {
     /**
      * Name of the DataOps Project
      */
@@ -27,12 +27,12 @@ export interface LambdaFunctionConfigContents extends CaefDataOpsConfigContents 
 
 }
 
-export class LambdaFunctionConfigParser extends CaefDataOpsConfigParser<LambdaFunctionConfigContents> {
+export class LambdaFunctionConfigParser extends MdaaDataOpsConfigParser<LambdaFunctionConfigContents> {
 
     public readonly layers?: LayerProps[]
     public readonly functions?: FunctionProps[]
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
         this.layers = this.configContents.layers
         this.functions = this.configContents.functions

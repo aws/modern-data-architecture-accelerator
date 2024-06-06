@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Match, Template } from "aws-cdk-lib/assertions";
 import { Vpc } from "aws-cdk-lib/aws-ec2";
-import { CaefSecurityGroup, CaefSecurityGroupProps, CaefSecurityGroupRuleProps } from '../lib';
+import { MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps } from '../lib';
 
-describe( 'CAEF Construct Compliance Tests', () => {
+describe( 'MDAA Construct Compliance Tests', () => {
 
 
-    const ingressRules: CaefSecurityGroupRuleProps = {
+    const ingressRules: MdaaSecurityGroupRuleProps = {
         ipv4: [
             {
                 cidr: "1.1.1.1/32",
@@ -53,7 +53,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
         ]
     }
 
-    const egressRules: CaefSecurityGroupRuleProps = {
+    const egressRules: MdaaSecurityGroupRuleProps = {
         ipv4: [
             {
                 cidr: "1.1.1.1/32",
@@ -89,13 +89,13 @@ describe( 'CAEF Construct Compliance Tests', () => {
         ]
     }
     describe( 'Test Ingress/Egress', () => {
-        const testApp = new CaefTestApp()
+        const testApp = new MdaaTestApp()
         const testVpc = Vpc.fromVpcAttributes( testApp.testStack, 'VPC', {
             vpcId: 'test-vpc-id',
             availabilityZones: [ 'az1', 'az2' ],
             privateSubnetIds: [ 'subnet1', 'subnet2' ],
         } );
-        const testContstructProps: CaefSecurityGroupProps = {
+        const testContstructProps: MdaaSecurityGroupProps = {
             naming: testApp.naming,
             vpc: testVpc,
             ingressRules: ingressRules,
@@ -103,7 +103,7 @@ describe( 'CAEF Construct Compliance Tests', () => {
             addSelfReferenceRule: false,
             allowAllOutbound: false
         }
-        new CaefSecurityGroup( testApp.testStack, "test-construct1", testContstructProps )
+        new MdaaSecurityGroup( testApp.testStack, "test-construct1", testContstructProps )
         testApp.checkCdkNagCompliance( testApp.testStack )
         const template = Template.fromStack( testApp.testStack )
         // console.log( JSON.stringify( template, undefined, 2 ) )
@@ -244,19 +244,19 @@ describe( 'CAEF Construct Compliance Tests', () => {
     } )
 
     describe( 'Test AllowAllOutput', () => {
-        const testApp = new CaefTestApp()
+        const testApp = new MdaaTestApp()
         const testVpc = Vpc.fromVpcAttributes( testApp.testStack, 'VPC', {
             vpcId: 'test-vpc-id',
             availabilityZones: [ 'az1', 'az2' ],
             privateSubnetIds: [ 'subnet1', 'subnet2' ],
         } );
-        const testContstructProps: CaefSecurityGroupProps = {
+        const testContstructProps: MdaaSecurityGroupProps = {
             naming: testApp.naming,
             vpc: testVpc,
             addSelfReferenceRule: false,
             allowAllOutbound: true
         }
-        new CaefSecurityGroup( testApp.testStack, "test-construct2", testContstructProps )
+        new MdaaSecurityGroup( testApp.testStack, "test-construct2", testContstructProps )
         testApp.checkCdkNagCompliance( testApp.testStack )
         const template = Template.fromStack( testApp.testStack )
         // console.log( JSON.stringify( template, undefined, 2 ) )
@@ -275,19 +275,19 @@ describe( 'CAEF Construct Compliance Tests', () => {
     } )
 
     describe( 'Test Self Ref', () => {
-        const testApp = new CaefTestApp()
+        const testApp = new MdaaTestApp()
         const testVpc = Vpc.fromVpcAttributes( testApp.testStack, 'VPC', {
             vpcId: 'test-vpc-id',
             availabilityZones: [ 'az1', 'az2' ],
             privateSubnetIds: [ 'subnet1', 'subnet2' ],
         } );
-        const testContstructProps: CaefSecurityGroupProps = {
+        const testContstructProps: MdaaSecurityGroupProps = {
             naming: testApp.naming,
             vpc: testVpc,
             addSelfReferenceRule: true,
             allowAllOutbound: false
         }
-        new CaefSecurityGroup( testApp.testStack, "test-construct2", testContstructProps )
+        new MdaaSecurityGroup( testApp.testStack, "test-construct2", testContstructProps )
         testApp.checkCdkNagCompliance( testApp.testStack )
         const template = Template.fromStack( testApp.testStack )
         // console.log( JSON.stringify( template, undefined, 2 ) )

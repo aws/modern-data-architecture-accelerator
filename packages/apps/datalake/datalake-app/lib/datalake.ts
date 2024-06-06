@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { DataLakeL3ConstructProps, S3DatalakeBucketL3Construct } from '@aws-caef/datalake-l3-construct';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { DataLakeL3ConstructProps, S3DatalakeBucketL3Construct } from '@aws-mdaa/datalake-l3-construct';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { DataLakeConfigParser } from './datalake-config';
 
 
-export class DataLakeCDKApp extends CaefCdkApp {
+export class DataLakeCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "datalake", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
         const appConfig = new DataLakeConfigParser( stack, parserProps )
         const constructProps: DataLakeL3ConstructProps = {

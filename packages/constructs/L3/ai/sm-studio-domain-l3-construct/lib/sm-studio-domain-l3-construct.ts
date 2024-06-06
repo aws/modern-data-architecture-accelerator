@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefSecurityGroup, CaefSecurityGroupProps, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { CaefRole, ICaefManagedPolicy } from '@aws-caef/iam-constructs';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS, ICaefKmsKey } from '@aws-caef/kms-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
-import { CaefLambdaRole } from '@aws-caef/lambda-constructs';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-caef/s3-bucketpolicy-helper';
-import { CaefBucket } from '@aws-caef/s3-constructs';
-import { CaefStudioDomain, CaefStudioLifecycleConfig, CaefStudioLifecycleConfigProps, LifecycleConfigAppType } from '@aws-caef/sagemaker-constructs';
-import { AssetDeploymentProps, LifeCycleConfigHelper, LifecycleScriptProps } from '@aws-caef/sm-shared';
+import { MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { MdaaRole, IMdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
+import { MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
+import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
+import { MdaaStudioDomain, MdaaStudioLifecycleConfig, MdaaStudioLifecycleConfigProps, LifecycleConfigAppType } from '@aws-mdaa/sagemaker-constructs';
+import { AssetDeploymentProps, LifeCycleConfigHelper, LifecycleScriptProps } from '@aws-mdaa/sm-shared';
 import { CfnTag } from 'aws-cdk-lib';
 import { ISecurityGroup, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
@@ -78,7 +78,7 @@ export interface DomainProps {
   /**
    * Ids of roles which will be provided administrator access to Studio resources
    */
-  readonly dataAdminRoles?: CaefRoleRef[];
+  readonly dataAdminRoles?: MdaaRoleRef[];
   /**
    * The AuthMode for the domain. Must be either 'SSO' or 'IAM'
    */
@@ -103,18 +103,18 @@ export interface DomainProps {
   /**
    * Security group ingress rules.
   */
-  readonly securityGroupIngress?: CaefSecurityGroupRuleProps;
+  readonly securityGroupIngress?: MdaaSecurityGroupRuleProps;
   /**
   * Security group Egress rules.
   */
-  readonly securityGroupEgress?: CaefSecurityGroupRuleProps;
+  readonly securityGroupEgress?: MdaaSecurityGroupRuleProps;
 
   /**
   * If defined, will be set as the default execution role for the domain. 
   * If undefined, a default execution role will be created with minimal permissions required
   * to launch Studio Apps.
   */
-  readonly defaultExecutionRole?: CaefRoleRef
+  readonly defaultExecutionRole?: MdaaRoleRef
 
   /**
    * If specified, this will be used as the domain bucket.
@@ -180,7 +180,7 @@ export interface UserProfileProps {
    * The role's id will be combined with the userid
    * to grant the user access to launch the user profile.
    */
-  readonly userRole?: CaefRoleRef
+  readonly userRole?: MdaaRoleRef
 }
 
 export interface DomainBucketProps {
@@ -198,20 +198,20 @@ export interface DomainBucketProps {
   * Otherwise, a new role will be created with access to the generated
   * domain bucket.
   */
-  readonly assetDeploymentRole: CaefRoleRef
+  readonly assetDeploymentRole: MdaaRoleRef
 }
 
-export interface SagemakerStudioDomainL3ConstructProps extends CaefL3ConstructProps {
+export interface SagemakerStudioDomainL3ConstructProps extends MdaaL3ConstructProps {
   readonly domain: DomainProps
 }
 
 //This stack creates and manages a SageMaker Studio Domain
-export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
+export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
   protected readonly props: SagemakerStudioDomainL3ConstructProps
 
   public readonly kmsKey: IKey;
   public readonly securityGroup: ISecurityGroup;
-  public readonly domain: CaefStudioDomain;
+  public readonly domain: MdaaStudioDomain;
 
   constructor( scope: Construct, id: string, props: SagemakerStudioDomainL3ConstructProps ) {
     super( scope, id, props )
@@ -222,7 +222,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
       undefined
 
     const defaultExecutionRole = resolvableDefaultExecutionRole ?
-      CaefRole.fromRoleArn( this, "ex-role", resolvableDefaultExecutionRole.arn() ) :
+      MdaaRole.fromRoleArn( this, "ex-role", resolvableDefaultExecutionRole.arn() ) :
       this.createDefaultExecutionRole()
 
     const resolvableDeploymentRole = props.domain.domainBucket ?
@@ -230,7 +230,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
       undefined
 
     const assetDeploymentRole = resolvableDeploymentRole ?
-      CaefRole.fromRoleArn( this, `asset-deployment-role`, resolvableDeploymentRole.arn() ) :
+      MdaaRole.fromRoleArn( this, `asset-deployment-role`, resolvableDeploymentRole.arn() ) :
       this.createAssetDeploymentRole()
 
     this.kmsKey = props.domain.kmsKeyArn ?
@@ -261,7 +261,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
   }
 
   private createAssetDeploymentRole (): IRole {
-    const role = new CaefLambdaRole( this.scope, `asset-deployment-role`, {
+    const role = new MdaaLambdaRole( this.scope, `asset-deployment-role`, {
       roleName: "deployment",
       naming: this.props.naming,
       logGroupNames: [ `*CustomCDK*` ]
@@ -277,7 +277,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
     assetPrefix: string,
     assetDeploymentRole: IRole,
     assetDeploymentMemoryLimitMB?: number
-  ): CaefStudioLifecycleConfig {
+  ): MdaaStudioLifecycleConfig {
 
     const assetDeployment: AssetDeploymentProps = {
       scope: this,
@@ -287,7 +287,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
       memoryLimitMB: assetDeploymentMemoryLimitMB
     }
 
-    const studioLifecycleConfigProps: CaefStudioLifecycleConfigProps = {
+    const studioLifecycleConfigProps: MdaaStudioLifecycleConfigProps = {
       lifecycleConfigName: lifecycleType,
       lifecycleConfigContent: LifeCycleConfigHelper.createLifecycleConfigContents(
         lifecycleConfig,
@@ -297,7 +297,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
       lifecycleConfigAppType: lifecycleType,
       naming: this.props.naming
     }
-    return new CaefStudioLifecycleConfig( this, `lifecycle-config-${ lifecycleType }`, studioLifecycleConfigProps )
+    return new MdaaStudioLifecycleConfig( this, `lifecycle-config-${ lifecycleType }`, studioLifecycleConfigProps )
   }
 
   private createDomain (
@@ -307,7 +307,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
     domainBucket: IBucket,
     assetPrefix: string,
     assetDeploymentRole: IRole,
-    assetDeploymentMemoryLimitMB?: number ): CaefStudioDomain {
+    assetDeploymentMemoryLimitMB?: number ): MdaaStudioDomain {
 
     const jupyterLifecycleConfig = this.props.domain.lifecycleConfigs?.jupyter ?
       this.createStudioLifecycleConfig( this.props.domain.lifecycleConfigs.jupyter, "JupyterServer", domainBucket, assetPrefix, assetDeploymentRole, assetDeploymentMemoryLimitMB )
@@ -361,7 +361,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
       executionRole: defaultExecutionRole
     }
 
-    const domain = new CaefStudioDomain( this, "domain", domainProps )
+    const domain = new MdaaStudioDomain( this, "domain", domainProps )
     if ( jupyterLifecycleConfig ) domain.node.addDependency( jupyterLifecycleConfig )
     if ( kernelLifecycleConfig ) domain.node.addDependency( kernelLifecycleConfig )
     return domain
@@ -371,7 +371,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
   private createDefaultExecutionRole (): Role {
     // Create a default ExecutionRole. This role will be used by users logging into SageMaker Studio
     // in order to initialize their basic environment. This role has no access to data.
-    const defaultExecutionRole = new CaefRole( this, "default-execution-role", {
+    const defaultExecutionRole = new MdaaRole( this, "default-execution-role", {
       assumedBy: new ServicePrincipal( "sagemaker.amazonaws.com" ),
       roleName: "default-execution-role",
       naming: this.props.naming
@@ -384,7 +384,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
     return defaultExecutionRole
   }
 
-  private createBasicExecutionPolicy ( domainId: string, executionRole: IRole, kmsKey: IKey ): ICaefManagedPolicy {
+  private createBasicExecutionPolicy ( domainId: string, executionRole: IRole, kmsKey: IKey ): IMdaaManagedPolicy {
     const basicExecutionPolicy = new ManagedPolicy( this, "basic-execution-policy", {
       managedPolicyName: this.props.naming.resourceName( "basic-execution" ),
       roles: [ executionRole ]
@@ -489,7 +489,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
     return basicExecutionPolicy
   }
   private createDomainEfsKmsKey ( executionRole: IRole, deploymentRole: IRole ): IKey {
-    const efsKmsKey = new CaefKmsKey( this, "efs-key", {
+    const efsKmsKey = new MdaaKmsKey( this, "efs-key", {
       alias: "efs",
       naming: this.props.naming
     } )
@@ -502,7 +502,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
     return efsKmsKey
   }
 
-  private createDomainSecurityGroup ( vpcId: string, subnetIds: string[], securityGroupIngress?: CaefSecurityGroupRuleProps, securityGroupEgress?: CaefSecurityGroupRuleProps ): SecurityGroup {
+  private createDomainSecurityGroup ( vpcId: string, subnetIds: string[], securityGroupIngress?: MdaaSecurityGroupRuleProps, securityGroupEgress?: MdaaSecurityGroupRuleProps ): SecurityGroup {
 
     // Import vpc
     const vpc = Vpc.fromVpcAttributes( this.scope, `vpc`, {
@@ -515,7 +515,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
       ( securityGroupEgress?.prefixList && securityGroupEgress?.prefixList.length > 0 ) ||
       ( securityGroupEgress?.sg && securityGroupEgress?.sg.length > 0 ) || false
 
-    const securityGroupProps: CaefSecurityGroupProps = {
+    const securityGroupProps: MdaaSecurityGroupProps = {
       securityGroupName: this.props.naming.resourceName(),
       vpc: vpc,
       allowAllOutbound: !customEgress,
@@ -526,7 +526,7 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
     }
 
     // Create security group
-    const securityGroup = new CaefSecurityGroup( this.scope, `security-group`, securityGroupProps )
+    const securityGroup = new MdaaSecurityGroup( this.scope, `security-group`, securityGroupProps )
 
     return securityGroup
   }
@@ -568,14 +568,14 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
       } )
     } )
   }
-  private createDomainBucket ( domainKmsKey: ICaefKmsKey, defaultExecutionRole: IRole, notebookSharingPrefix: string, assetPrefix: string, assetDeploymentRole: IRole ): CaefBucket {
+  private createDomainBucket ( domainKmsKey: IMdaaKmsKey, defaultExecutionRole: IRole, notebookSharingPrefix: string, assetPrefix: string, assetDeploymentRole: IRole ): MdaaBucket {
 
     if ( !this.props.domain.dataAdminRoles ) {
       throw new Error( "dataAdminRoles must be defined if creating a Notebook Sharing Bucket" )
     }
     const dataAdminRoleIds = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.domain.dataAdminRoles, "DataAdmin" ).map( x => x.id() )
 
-    const domainBucket = new CaefBucket( this.scope, `Bucketsharing`, {
+    const domainBucket = new MdaaBucket( this.scope, `Bucketsharing`, {
       encryptionKey: domainKmsKey,
       naming: this.props.naming
     } )
@@ -583,8 +583,8 @@ export class SagemakerStudioDomainL3Construct extends CaefL3Construct {
     NagSuppressions.addResourceSuppressions(
       domainBucket,
       [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'CAEF does not use bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'CAEF does not use bucket replication.' }
+        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' }
       ],
       true
     );

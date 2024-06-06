@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefRoleHelper } from "@aws-caef/iam-role-helper";
-import { CaefTestApp } from "@aws-caef/testing";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
 import { Template } from "aws-cdk-lib/assertions";
 import { AgentWithNameProps, DataSyncL3Construct, DataSyncL3ConstructProps, LocationNfsWithNameProps, LocationObjectStorageWithNameProps, LocationS3WithNameProps, LocationsByTypeWithNameProps, LocationSmbWithNameProps, TaskWithNameProps, VpcProps } from "../lib";
 
-describe( 'CAEF Compliance Stack Tests', () => {
+describe( 'MDAA Compliance Stack Tests', () => {
 
-  const testApp = new CaefTestApp()
+  const testApp = new MdaaTestApp()
 
   const testVpc: VpcProps = {
     vpcId: "vpc-0123abcdef4ghi567j8",
@@ -35,7 +35,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
   const testSmbLocation01Props: LocationSmbWithNameProps = {
     locationName: "smb_loc1",
     agentNames: [ "agent01" ],
-    secretName: "/test/caef/secret",
+    secretName: "/test/mdaa/secret",
     serverHostname: "hostname",
     subdirectory: "subdir",
     smbVersion: "SMB2"
@@ -44,7 +44,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
   const testSmbLocation02Props: LocationSmbWithNameProps = {
     locationName: "smb_loc2",
     agentArns: [ "arn:test-partition:datasync:test-region:test-account:agent/agent-063abf853f2a7ebdd" ],
-    secretName: "/test/caef/secret",
+    secretName: "/test/mdaa/secret",
     serverHostname: "hostname2",
     subdirectory: "subdir2"
   }
@@ -173,7 +173,7 @@ describe( 'CAEF Compliance Stack Tests', () => {
   const constructProps: DataSyncL3ConstructProps = {
     naming: testApp.naming,
 
-    roleHelper: new CaefRoleHelper( testApp.testStack, testApp.naming ),
+    roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming ),
     vpc: testVpc,
     agents: [
       testAgent01Props,
@@ -318,10 +318,10 @@ describe( 'CAEF Compliance Stack Tests', () => {
       "AgentArns": [
         "arn:test-partition:datasync:test-region:test-account:agent/agent-063abf853f2a7ebdd"
       ],
-      "Password": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/caef/secret:SecretString:password::}}",
+      "Password": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/mdaa/secret:SecretString:password::}}",
       "ServerHostname": "hostname2",
       "Subdirectory": "subdir2",
-      "User": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/caef/secret:SecretString:user::}}"
+      "User": "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/mdaa/secret:SecretString:user::}}"
     } )
   } )
 

@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefConstructProps } from '@aws-caef/construct';
-import { ICaefKmsKey } from '@aws-caef/kms-constructs';
+import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Domain, EngineVersion, TLSSecurityPolicy, ZoneAwarenessConfig, CapacityConfig, EbsOptions, CustomEndpointOptions, DomainProps } from 'aws-cdk-lib/aws-opensearchservice';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
-import { CaefLogGroup } from '@aws-caef/cloudwatch-constructs'
+import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs'
 
 
 /**
  * Properties for creating a compliant Opensearch Domain
  */
-export interface CaefOpensearchDomainProps extends CaefConstructProps {
+export interface MdaaOpensearchDomainProps extends MdaaConstructProps {
     /** Data Admin role. For Opensearch Dashboard Master User */
     readonly masterUserRoleArn: string;
 
@@ -35,7 +35,7 @@ export interface CaefOpensearchDomainProps extends CaefConstructProps {
      *
      * @default - AWS-managed key, if encryption at rest is enabled
      */
-    readonly encryptionKey: ICaefKmsKey
+    readonly encryptionKey: IMdaaKmsKey
 
     /** The VPC to place the cluster in. */
     readonly vpc: IVpc;
@@ -65,7 +65,7 @@ export interface CaefOpensearchDomainProps extends CaefConstructProps {
     readonly accessPolicies?: PolicyStatement[];
 
     /** Cloudwatch log group */
-    readonly logGroup: CaefLogGroup;
+    readonly logGroup: MdaaLogGroup;
 }
 
 /**
@@ -75,9 +75,9 @@ export interface CaefOpensearchDomainProps extends CaefConstructProps {
  * * SSL must be utilized to connect to the domain.
  * * The domain is VPC connected and not publicly accessible.
  */
-export class CaefOpensearchDomain extends Domain {
+export class MdaaOpensearchDomain extends Domain {
 
-    private static setProps ( props: CaefOpensearchDomainProps ): DomainProps {
+    private static setProps ( props: MdaaOpensearchDomainProps ): DomainProps {
 
         const overrideProps = {
             domainName: props.naming.resourceName( props.opensearchDomainName, 28 ),
@@ -109,9 +109,9 @@ export class CaefOpensearchDomain extends Domain {
         return allProps
     }
 
-    constructor( scope: Construct, id: string, props: CaefOpensearchDomainProps ) {
+    constructor( scope: Construct, id: string, props: MdaaOpensearchDomainProps ) {
 
-        super( scope, id, CaefOpensearchDomain.setProps( props ) )
+        super( scope, id, MdaaOpensearchDomain.setProps( props ) )
 
         this.node.children.forEach( child => {
             if ( child.node.id.includes( "ESLogGroupPolicy" ) ) {

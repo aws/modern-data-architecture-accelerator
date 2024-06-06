@@ -5,13 +5,13 @@
 
 import { CfnJob, CfnRecipe, CfnDataset, CfnProject } from 'aws-cdk-lib/aws-databrew';
 import { IResolvable } from 'aws-cdk-lib';
-import { CaefRoleRef } from '@aws-caef/iam-role-helper';
-import { CaefL3Construct, CaefL3ConstructProps } from "@aws-caef/l3-construct";
-import { CaefDataBrewJob, CaefDataBrewJobProps } from "@aws-caef/databrew-constructs";
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { MdaaL3Construct, MdaaL3ConstructProps } from "@aws-mdaa/l3-construct";
+import { MdaaDataBrewJob, MdaaDataBrewJobProps } from "@aws-mdaa/databrew-constructs";
 import { Construct } from "constructs";
-import { CaefDataBrewDataset, CaefDataBrewRecipe, CaefDataBrewSchedule, CaefDataBrewProject } from "../lib";
+import { MdaaDataBrewDataset, MdaaDataBrewRecipe, MdaaDataBrewSchedule, MdaaDataBrewProject } from "../lib";
 
-export interface DataBrewL3ConstructProps extends CaefL3ConstructProps {
+export interface DataBrewL3ConstructProps extends MdaaL3ConstructProps {
 
   // Name of the Data-Ops project.
   readonly projectName: string
@@ -47,7 +47,7 @@ export interface DataBrewJobProps {
   readonly recipe?: ConfigOptions
 
   // Execution role for the job
-  readonly executionRole: CaefRoleRef
+  readonly executionRole: MdaaRoleRef
 
   // A sample configuration for profile jobs only, which determines the number of rows on which the profile job is run.
   readonly jobSample?: CfnJob.JobSampleProperty | IResolvable
@@ -149,7 +149,7 @@ export interface DatabrewProjectConfig {
 
 
 //This stack creates and manages a SageMaker Studio Domain
-export class DataBrewL3Construct extends CaefL3Construct {
+export class DataBrewL3Construct extends MdaaL3Construct {
   protected readonly props: DataBrewL3ConstructProps
 
 
@@ -186,7 +186,7 @@ export class DataBrewL3Construct extends CaefL3Construct {
     }
   }
 
-  private createJob ( jobName: string, roleName: string, params: DataBrewJobProps ): CaefDataBrewJob {
+  private createJob ( jobName: string, roleName: string, params: DataBrewJobProps ): MdaaDataBrewJob {
 
     // get project Name
     let getProjectName = function () {
@@ -210,7 +210,7 @@ export class DataBrewL3Construct extends CaefL3Construct {
     const props = this.getDataBrewJobProps( jobName, roleName, params, project )
 
     // create databrew job
-    const job = new CaefDataBrewJob( this, jobName, props )
+    const job = new MdaaDataBrewJob( this, jobName, props )
 
     // put dependecy on project if it is project based job
     if ( project ) job.addDependency( project )
@@ -223,16 +223,16 @@ export class DataBrewL3Construct extends CaefL3Construct {
 
   private addDependency ( params: DataBrewJobProps, dependent: CfnJob | CfnProject ) {
     if ( params.dataset?.generated ) {
-      const defaultDataset: CaefDataBrewDataset = this.datasets.get( params.dataset.generated )
+      const defaultDataset: MdaaDataBrewDataset = this.datasets.get( params.dataset.generated )
       dependent.addDependency( defaultDataset )
     }
     if ( params.recipe?.generated ) {
-      const defaultRecipe: CaefDataBrewRecipe = this.recipes.get( params.recipe.generated )
+      const defaultRecipe: MdaaDataBrewRecipe = this.recipes.get( params.recipe.generated )
       dependent.addDependency( defaultRecipe )
     }
   }
 
-  private getDataBrewJobProps ( jobName: string, roleName: string, params: DataBrewJobProps, project?: CfnProject ): CaefDataBrewJobProps {
+  private getDataBrewJobProps ( jobName: string, roleName: string, params: DataBrewJobProps, project?: CfnProject ): MdaaDataBrewJobProps {
 
     // set basic props for the job
     const props = {
@@ -281,7 +281,7 @@ export class DataBrewL3Construct extends CaefL3Construct {
   private getDatasetName ( params: DataBrewJobProps ): string {
     let defaultDatasetName: string = ""
     if ( params.dataset?.generated ) {
-      const defaultDataset: CaefDataBrewDataset = this.datasets.get( params.dataset.generated )
+      const defaultDataset: MdaaDataBrewDataset = this.datasets.get( params.dataset.generated )
       defaultDatasetName = defaultDataset.name
     }
     else if ( params.dataset?.existing ) {
@@ -293,7 +293,7 @@ export class DataBrewL3Construct extends CaefL3Construct {
   private getRecipe ( params: DataBrewJobProps ): CfnJob.RecipeProperty {
     let recipe: CfnJob.RecipeProperty = { name: "", version: "" }
     if ( params.recipe?.generated ) {
-      const defaultRecipe: CaefDataBrewRecipe = this.recipes.get( params.recipe.generated )
+      const defaultRecipe: MdaaDataBrewRecipe = this.recipes.get( params.recipe.generated )
       recipe = { name: defaultRecipe.name, version: "" }
     }
     else if ( params.recipe?.existing ) {
@@ -302,7 +302,7 @@ export class DataBrewL3Construct extends CaefL3Construct {
     return recipe
   }
 
-  private createProject ( params: DatabrewProjectConfig ): CaefDataBrewProject {
+  private createProject ( params: DatabrewProjectConfig ): MdaaDataBrewProject {
     const props = {
       naming: this.props.naming,
       name: params.name,
@@ -311,10 +311,10 @@ export class DataBrewL3Construct extends CaefL3Construct {
       roleArn: params.roleArn,
       sample: params.sample
     }
-    return new CaefDataBrewProject( this, params.name, props )
+    return new MdaaDataBrewProject( this, params.name, props )
   }
 
-  private createDataset ( name: string, params: DatasetProps ): CaefDataBrewDataset {
+  private createDataset ( name: string, params: DatasetProps ): MdaaDataBrewDataset {
     const props = {
       naming: this.props.naming,
       name: name,
@@ -323,11 +323,11 @@ export class DataBrewL3Construct extends CaefL3Construct {
       formatOptions: params.formatOptions,
       pathOptions: params.pathOptions
     }
-    return new CaefDataBrewDataset( this, name, props )
+    return new MdaaDataBrewDataset( this, name, props )
   }
 
 
-  private createRecipe ( name: string, recipeConfig: RecipeProps ): CaefDataBrewRecipe {
+  private createRecipe ( name: string, recipeConfig: RecipeProps ): MdaaDataBrewRecipe {
 
     const toLowerCase = ( str: string ) => str.charAt( 0 ).toLowerCase() + str.slice( 1 );
     const isUpperCase = ( char: string ) => char == char.toUpperCase()
@@ -347,16 +347,16 @@ export class DataBrewL3Construct extends CaefL3Construct {
       description: recipeConfig.description
     }
 
-    return new CaefDataBrewRecipe( this, name, props )
+    return new MdaaDataBrewRecipe( this, name, props )
   }
 
-  private createSchedule ( jobNames: string[], params: ConfigSchedule ): CaefDataBrewSchedule {
+  private createSchedule ( jobNames: string[], params: ConfigSchedule ): MdaaDataBrewSchedule {
     const props = {
       naming: this.props.naming,
       name: params.name,
       cronExpression: params.cronExpression,
       jobNames: jobNames
     }
-    return new CaefDataBrewSchedule( this, params.name, props )
+    return new MdaaDataBrewSchedule( this, params.name, props )
   }
 }

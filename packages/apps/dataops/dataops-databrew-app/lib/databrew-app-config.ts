@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps } from "@aws-caef/app";
+import { MdaaAppConfigParserProps } from "@aws-mdaa/app";
 import { Schema } from "ajv";
 import { Stack } from "aws-cdk-lib";
 import * as configSchema from './config-schema.json';
-import { DataBrewJobProps, DatasetProps, RecipeProps } from '@aws-caef/dataops-databrew-l3-construct';
-import { CaefDataOpsConfigParser, CaefDataOpsConfigContents } from '@aws-caef/dataops-shared';
+import { DataBrewJobProps, DatasetProps, RecipeProps } from '@aws-mdaa/dataops-databrew-l3-construct';
+import { MdaaDataOpsConfigParser, MdaaDataOpsConfigContents } from '@aws-mdaa/dataops-shared';
 
-export interface DataBrewConfigContents extends CaefDataOpsConfigContents {
+export interface DataBrewConfigContents extends MdaaDataOpsConfigContents {
 
 
     // Name of the Data-Ops project.
@@ -32,13 +32,13 @@ export interface DataBrewConfigContents extends CaefDataOpsConfigContents {
     }
 }
 
-export class DataBrewConfigParser extends CaefDataOpsConfigParser<DataBrewConfigContents> {
+export class DataBrewConfigParser extends MdaaDataOpsConfigParser<DataBrewConfigContents> {
 
     public readonly jobs?: Record<string, DataBrewJobProps>
     public readonly recipes?: Record<string, RecipeProps>
     public readonly datasets?: Record<string, DatasetProps>
 
-    constructor( stack: Stack, props: CaefAppConfigParserProps ) {
+    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
         super( stack, props, configSchema as Schema )
         this.jobs = this.configContents.jobs
         this.recipes = this.configContents.recipes

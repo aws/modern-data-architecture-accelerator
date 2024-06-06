@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ICaefResourceNaming, CaefResourceNamingConfig, CaefDefaultResourceNaming } from '@aws-caef/naming'
+import { IMdaaResourceNaming, MdaaResourceNamingConfig, MdaaDefaultResourceNaming } from '@aws-mdaa/naming'
 
-export class CustomNaming implements ICaefResourceNaming {
-    constructor( props: CaefResourceNamingConfig ) {
+export class CustomNaming implements IMdaaResourceNaming {
+    constructor( props: MdaaResourceNamingConfig ) {
         console.log( 'Using CustomNaming' );
     }
-    props: CaefResourceNamingConfig;
-    withModuleName ( moduleName: string ): ICaefResourceNaming {
+    props: MdaaResourceNamingConfig;
+    withModuleName ( moduleName: string ): IMdaaResourceNaming {
         throw new Error( 'Method not implemented.' );
     }
     exportName ( path: string, includeModuleName?: boolean | undefined, lowerCase?: boolean | undefined ): string {
@@ -30,8 +30,8 @@ export class CustomNaming implements ICaefResourceNaming {
     }
 }
 
-export class ExtendedDefaultNaming extends CaefDefaultResourceNaming {
-    constructor( props: CaefResourceNamingConfig ) {
+export class ExtendedDefaultNaming extends MdaaDefaultResourceNaming {
+    constructor( props: MdaaResourceNamingConfig ) {
         super( props )
         console.log( 'Using ExtendedDefaultNaming2' );
     }

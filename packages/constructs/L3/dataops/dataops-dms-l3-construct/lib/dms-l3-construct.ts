@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefEndpoint, CaefEndpointEngine,  CaefEndpointProps, CaefEndpointType, CaefReplicationInstance, CaefReplicationInstanceProps, DocDbSettingsProperty, DynamoDbSettingsProperty, ElasticsearchSettingsProperty, IbmDb2SettingsProperty, KinesisSettingsProperty, MicrosoftSqlServerSettingsProperty, MongoDbSettingsProperty, MySqlSettingsProperty, NeptuneSettingsProperty, OracleSettingsProperty, PostgreSqlSettingsProperty, RedshiftSettingsProperty, S3SettingsProperty, SybaseSettingsProperty } from '@aws-caef/dms-constructs';
-import { CaefSecurityGroup, CaefSecurityGroupProps, CaefSecurityGroupRuleProps } from '@aws-caef/ec2-constructs';
-import { CaefManagedPolicy, CaefRole } from '@aws-caef/iam-constructs';
-import { CaefL3Construct, CaefL3ConstructProps } from '@aws-caef/l3-construct';
+import { MdaaEndpoint, MdaaEndpointEngine,  MdaaEndpointProps, MdaaEndpointType, MdaaReplicationInstance, MdaaReplicationInstanceProps, DocDbSettingsProperty, DynamoDbSettingsProperty, ElasticsearchSettingsProperty, IbmDb2SettingsProperty, KinesisSettingsProperty, MicrosoftSqlServerSettingsProperty, MongoDbSettingsProperty, MySqlSettingsProperty, NeptuneSettingsProperty, OracleSettingsProperty, PostgreSqlSettingsProperty, RedshiftSettingsProperty, S3SettingsProperty, SybaseSettingsProperty } from '@aws-mdaa/dms-constructs';
+import { MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CfnEndpoint, CfnReplicationInstance, CfnReplicationSubnetGroup, CfnReplicationSubnetGroupProps, CfnReplicationTask, CfnReplicationTaskProps } from 'aws-cdk-lib/aws-dms';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -16,8 +16,8 @@ import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 
 export interface EndpointProps {
-    readonly endpointType: CaefEndpointType
-    readonly engineName: CaefEndpointEngine
+    readonly endpointType: MdaaEndpointType
+    readonly engineName: MdaaEndpointEngine
 
     /**
      * Settings in JSON format for the source and target DocumentDB endpoint.
@@ -163,11 +163,11 @@ export interface ReplicationInstanceProps {
     /**
      * List of ingress rules to be added to the function SG
      */
-    readonly ingressRules?: CaefSecurityGroupRuleProps
+    readonly ingressRules?: MdaaSecurityGroupRuleProps
     /**
      * List of egress rules to be added to the function SG
      */
-    readonly egressRules?: CaefSecurityGroupRuleProps
+    readonly egressRules?: MdaaSecurityGroupRuleProps
     /**
      * If true, the SG will allow traffic to and from itself
      */
@@ -286,7 +286,7 @@ export interface DMSProps {
     readonly endpoints?: NamedEndpointProps
     readonly replicationTasks?: NamedReplicationTaskProps
 }
-export interface DMSL3ConstructProps extends CaefL3ConstructProps {
+export interface DMSL3ConstructProps extends MdaaL3ConstructProps {
     // Name of the Data-Ops project.
     readonly projectName: string
     /**
@@ -300,8 +300,8 @@ export interface DMSL3ConstructProps extends CaefL3ConstructProps {
     readonly dms: DMSProps
 }
 
-export class DMSL3Construct extends CaefL3Construct {
-    private static readonly engineToSettingsNameMap: { [ engineName in  CaefEndpointEngine ]:string | undefined} = {
+export class DMSL3Construct extends MdaaL3Construct {
+    private static readonly engineToSettingsNameMap: { [ engineName in  MdaaEndpointEngine ]:string | undefined} = {
         mysql: 'mySqlSettings',
         oracle: 'oracleSettings',
         postgres: 'postgreSqlSettings',
@@ -325,7 +325,7 @@ export class DMSL3Construct extends CaefL3Construct {
         neptune: 'neptuneSettings'
     }
 
-    private static readonly awsServiceEngineNames: CaefEndpointEngine[] = [
+    private static readonly awsServiceEngineNames: MdaaEndpointEngine[] = [
         's3',
         'dynamodb',
         'kinesis',
@@ -377,7 +377,7 @@ export class DMSL3Construct extends CaefL3Construct {
     }
 
     private createDmsRole (): IRole {
-        return new CaefRole( this, 'dms-role', {
+        return new MdaaRole( this, 'dms-role', {
             naming: this.props.naming,
             roleName: 'dms',
             assumedBy: new ServicePrincipal( `dms.${ this.region }.amazonaws.com` )
@@ -419,13 +419,13 @@ export class DMSL3Construct extends CaefL3Construct {
                 }
             })
 
-            const caefEndpointProps: CaefEndpointProps = {
+            const mdaaEndpointProps: MdaaEndpointProps = {
                 ...endpointProps,
                 endpointIdentifier: endpointName,
                 kmsKey: this.projectKms,
                 naming: this.props.naming
             }
-            const endpoint = new CaefEndpoint( this, `endpoint-${ endpointName }`, caefEndpointProps )
+            const endpoint = new MdaaEndpoint( this, `endpoint-${ endpointName }`, mdaaEndpointProps )
             return [ endpointName, endpoint ]
         } ) )
 
@@ -453,7 +453,7 @@ export class DMSL3Construct extends CaefL3Construct {
                 effect: Effect.ALLOW
             } )] : []
 
-            new CaefManagedPolicy( this, 'secrets-access-policy', {
+            new MdaaManagedPolicy( this, 'secrets-access-policy', {
                 managedPolicyName: 'secrets-access',
                 naming: this.props.naming,
                 roles: [ dmsRole ],
@@ -484,7 +484,7 @@ export class DMSL3Construct extends CaefL3Construct {
                 ( instanceProps.egressRules?.prefixList && instanceProps.egressRules?.prefixList.length > 0 ) ||
                 ( instanceProps.egressRules?.sg && instanceProps.egressRules?.sg.length > 0 ) || false
 
-            const securityGroupCreateProps: CaefSecurityGroupProps = {
+            const securityGroupCreateProps: MdaaSecurityGroupProps = {
                 securityGroupName: instanceName,
                 vpc: vpc,
                 naming: this.props.naming,
@@ -494,9 +494,9 @@ export class DMSL3Construct extends CaefL3Construct {
                 addSelfReferenceRule: instanceProps.addSelfReferenceRule
             }
 
-            const securityGroup = new CaefSecurityGroup( this, `security-group-${ instanceName }`, securityGroupCreateProps )
+            const securityGroup = new MdaaSecurityGroup( this, `security-group-${ instanceName }`, securityGroupCreateProps )
 
-            const constructProps: CaefReplicationInstanceProps = {
+            const constructProps: MdaaReplicationInstanceProps = {
                 replicationInstanceIdentifier: instanceName,
                 replicationInstanceClass: instanceProps.instanceClass,
                 kmsKey: this.projectKms,
@@ -504,7 +504,7 @@ export class DMSL3Construct extends CaefL3Construct {
                 naming: this.props.naming,
                 vpcSecurityGroupIds: [ securityGroup.securityGroupId ]
             }
-            const replicationInstance = new CaefReplicationInstance( this, `replication-instance-${ instanceName }`, constructProps )
+            const replicationInstance = new MdaaReplicationInstance( this, `replication-instance-${ instanceName }`, constructProps )
             replicationInstance.addDependency( subnetGroup )
             return [ instanceName, replicationInstance ]
         } ) )

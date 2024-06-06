@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CaefAppConfigParserProps, CaefCdkApp } from '@aws-caef/app';
-import { CaefL3ConstructProps } from '@aws-caef/l3-construct';
-import { SagemakerStudioDomainL3Construct, SagemakerStudioDomainL3ConstructProps } from '@aws-caef/sm-studio-domain-l3-construct';
+import { MdaaAppConfigParserProps, MdaaCdkApp } from '@aws-mdaa/app';
+import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { SagemakerStudioDomainL3Construct, SagemakerStudioDomainL3ConstructProps } from '@aws-mdaa/sm-studio-domain-l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { SageMakerStudioDomainConfigParser } from './sm-studio-domain-config';
 
-export class SageMakerStudioDomainApp extends CaefCdkApp {
+export class SageMakerStudioDomainApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
         super( "sm-studio-domain", props )
     }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: CaefL3ConstructProps, parserProps: CaefAppConfigParserProps ) {
+    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
         const appConfig = new SageMakerStudioDomainConfigParser( stack, parserProps )
         const constructProps: SagemakerStudioDomainL3ConstructProps = {

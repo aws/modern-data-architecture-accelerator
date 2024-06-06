@@ -28,7 +28,7 @@ The EC2 CDK application is used to configure and deploy secure EC2 instances and
 
 * Instances have termination protection enabled and will be retained post stack deletion.
 * Each configured EBS volume will use the module KMS CMK if an existing key is not specified
-* AMI-configured volumes must be accounted for within the config, otherwise AMI deployment with unencrypted volumes will be attempted, but will fail due to additional post-deployment checks conducted by the underlying CAEF EC2 L2 construct
+* AMI-configured volumes must be accounted for within the config, otherwise AMI deployment with unencrypted volumes will be attempted, but will fail due to additional post-deployment checks conducted by the underlying MDAA EC2 L2 construct
 
 ***
 
