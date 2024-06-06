@@ -19,32 +19,30 @@ The SFTP Users CDK application is used to deploy the resources required to provi
 ## Configuration
 
 ```yaml
-# Id of the server to which users will be added.
-serverId: ssm:/sample-org/shared/sftp-server/server/id
+serverId: ssm:/path/to/ssm/server/id
 
-# Public SSH RSA Keys.  These will be used to authenticate against the SFTP server and user
+# User name to Public SSH RSA Keys.  These will be used to authenticate against the SFTP server and user
 publicKeys:
-  - name: test-key1
+  test-key1:
     publicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCr1nEXAMPLEPubKey==
-  - name: test-key22
+  test-key2:
     publicKey: ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAsyyGZsEXAMPLEPubKey==
 
-# The existing home buckets and existing KMS keys.  If these are cross account, assure the KMS key, and S3 bucket are shared with the account this is deployed within.
+# Our existing buckets and existing KMS keys.  If these are cross account, assure the KMS key, and S3 bucket are shared with the account this is deployed within.
 buckets:
-  # This 
-  - name: home-bucket1
+  home-bucket1:
     # Arn or SSM Parameter paths are accepted here
     bucketName: ssm:/path/to/ssm/param/bucket/name
     kmsKeyArn: ssm:/path/to/ssm/param/kms/arn
 
-  - name: home-bucket2
+  home-bucket2:
     # Arn or SSM Parameter paths are accepted here
-    bucketName: some_home_bucket_name
+    bucketName: some-home-bucket-name
     kmsKeyArn: arn:{{partition}}:kms:{{region}}:{{account}}:key/1234abcd-12ab-34cd-56ef-1234567890ab
 
-# The User Mapping to Buckets and Object Prefixes.
+# Our User Mapping to Buckets and Object Prefixes.
 users:
-  - name: test-user-1
+  test-user-1:
     bucket: home-bucket1
     homeDirectory: /incoming
     # Optional existing role ARN or SSM parameter for the role to access the bucket na KMS Key.
@@ -53,7 +51,7 @@ users:
     publicKeys:
       - test-key1
 
-  - name: test-user-2
+  test-user-2:
     bucket: home-bucket2
     homeDirectory: /incoming
     # Optional existing role ARN or SSM parameter for the role to access the bucket na KMS Key.
