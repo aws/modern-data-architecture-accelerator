@@ -52,7 +52,7 @@ export class MdaaDeploy {
 
         if ( !this.localMode && options[ 'clear' ] && this.action != 'dryrun' ) {
             console.log( `Removing all previously installed packages from ${ this.workingDir }/packages` )
-            this.execCmd( `rm -rf ${ this.workingDir }/packages` );
+            this.execCmd( `rm -rf '${ this.workingDir }/packages'` );
         }
 
         this.localPackages = this.localMode ? this.loadLocalPackages() : {}
@@ -94,7 +94,7 @@ export class MdaaDeploy {
 
     private loadLocalPackages () {
         // nosemgrep
-        const workspaceQueryJson = require( 'child_process' ).execSync( `npm query .workspace --prefix ${ __dirname }/../../../` ).toString()
+        const workspaceQueryJson = require( 'child_process' ).execSync( `npm query .workspace --prefix '${ __dirname }/../../../'` ).toString()
         const workspace: any[] = JSON.parse( workspaceQueryJson )
         return Object.fromEntries( workspace.map( pkgInfo => {
             return [ `${ pkgInfo[ 'name' ] }@latest`, path.resolve( `${ __dirname }/../../../${ pkgInfo[ 'location' ] }` ) ]
@@ -299,7 +299,7 @@ export class MdaaDeploy {
             console.log( `In local mode. Running package build for ${ npmPackageNoVersion }.` )
             const buildCmd = `npx lerna run build --scope ${ npmPackageNoVersion }`
             console.log( `Running Lerna Build: \n${ buildCmd }` )
-            this.execCmd( `cd ${ __dirname }/../../;${ buildCmd };cd ${ this.cwd }` );
+            this.execCmd( `cd '${ __dirname }/../../';${ buildCmd };cd '${ this.cwd }'` );
             return prefix
         }
         // nosemgrep
@@ -361,7 +361,7 @@ export class MdaaDeploy {
         console.log( `Running CDK cmd:\n${ cdkCmd }` )
 
         if ( this.action != "dryrun" ) {
-            this.execCmd( `cd ${ modulePath } && ${ cdkCmd }` );
+            this.execCmd( `cd '${ modulePath }' && ${ cdkCmd }` );
         }
     }
 

@@ -1,8 +1,8 @@
 #!/bin/bash
 cwd=`pwd`
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
-cd $parent_path/../
+cd "$parent_path/../"
 npm install --no-save
 npx lerna run build --scope "@aws-mdaa/cli"
-cd $cwd
-$parent_path/../packages/cli/bin/mdaa $@
+cd "$cwd"
+"$parent_path/../packages/cli/bin/mdaa" $@

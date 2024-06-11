@@ -662,7 +662,7 @@
             "additionalProperties": {
                 "$ref": "#/definitions/MdaaDomainConfig"
             },
-            "description": "Objects representing environments to create",
+            "description": "Objects representing domains to create",
             "type": "object"
         },
         "log_suppressions": {

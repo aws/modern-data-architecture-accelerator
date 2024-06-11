@@ -204,7 +204,7 @@ export interface MdaaConfigContents {
      */
     readonly app_configs?: string[]
     /**
-     * Objects representing environments to create
+     * Objects representing domains to create
      */
     readonly domains: { [ name: string ]: MdaaDomainConfig }
     /**
@@ -248,6 +248,7 @@ export class MdaaCliConfig {
 
     private configSchema: JSONSchemaType<MdaaConfigContents> = configSchema as any
 
+    private static readonly VALIDATE_NAME_REGEXP = "^[a-z0-9\\-]+$"
 
     constructor( props: MdaaParserConfig ) {
         this.props = props
@@ -256,7 +257,7 @@ export class MdaaCliConfig {
             throw new Error( "ConfigParser class requires either 'filename' or 'configContents' to be specified" )
         }
 
-        const configValidator: ValidateFunction = avj.compile( this.configSchema )
+        const configShapeValidator: ValidateFunction = avj.compile( this.configSchema )
         if ( this.props.filename ) {
             // nosemgrep
             const configFileContentsString = fs.readFileSync( this.props.filename, { encoding: 'utf8' } )
@@ -266,8 +267,8 @@ export class MdaaCliConfig {
                 const baseDir = path.dirname( this.props.filename.trim() )
                 const relativePathTransformedContents = new MdaaConfigTransformer( new ConfigConfigPathValueTransformer( baseDir ) ).transformConfig( parsedContents )
                 // Confirm our provided file matches our Schema (verification of Data shape)
-                if ( !configValidator( relativePathTransformedContents ) ) {
-                    throw new Error( `${ this.props.filename }' contains shape errors\n: ${ JSON.stringify( configValidator.errors, null, 2 ) }` )
+                if ( !configShapeValidator( relativePathTransformedContents ) ) {
+                    throw new Error( `${ this.props.filename }' contains shape errors\n: ${ JSON.stringify( configShapeValidator.errors, null, 2 ) }` )
                 } else {
                     // Config file is shaped correctly and contains required values!
                     this.contents = relativePathTransformedContents as MdaaConfigContents
@@ -276,17 +277,34 @@ export class MdaaCliConfig {
                 throw Error( `${ this.props.filename }: Structural problem found in the YAML file: ${err} ` )
             }
         } else {
-            if ( !configValidator( this.props.configContents ) ) {
-                throw new Error( `Config contents contains shape errors\n: ${ JSON.stringify( configValidator.errors, null, 2 ) }` )
+            if ( !configShapeValidator( this.props.configContents ) ) {
+                throw new Error( `Config contents contains shape errors\n: ${ JSON.stringify( configShapeValidator.errors, null, 2 ) }` )
             } else {
                 // Config file is shaped correctly and contains required values!
                 this.contents = this.props.configContents as MdaaConfigContents
             }
         }
-
-
-
-
-
+        this.validateConfig()
+    }
+    private validateConfig () {
+        const namePattern = new RegExp(MdaaCliConfig.VALIDATE_NAME_REGEXP)
+        if ( !namePattern.test( this.contents.organization ) ){
+            throw new Error( `Org name ${ this.contents.organization } must match pattern ${ MdaaCliConfig.VALIDATE_NAME_REGEXP}`)
+        }
+        Object.entries(this.contents.domains).forEach(domainEntry => {
+            if(!namePattern.test(domainEntry[0])){
+                throw new Error( `Domain name ${ domainEntry[ 0 ] } must match pattern ${ MdaaCliConfig.VALIDATE_NAME_REGEXP }` )
+            }
+            Object.entries( domainEntry[1].environments ).forEach( envEntry => {
+                if ( !namePattern.test( envEntry[ 0 ] ) ) {
+                    throw new Error( `Env name ${ envEntry[ 0 ] } must match pattern ${ MdaaCliConfig.VALIDATE_NAME_REGEXP }` )
+                }
+                Object.entries( envEntry[ 1 ].modules ).forEach( moduleEntry => {
+                    if ( !namePattern.test( moduleEntry[ 0 ] ) ) {
+                        throw new Error( `Module name ${ moduleEntry[ 0 ] } must match pattern ${ MdaaCliConfig.VALIDATE_NAME_REGEXP }` )
+                    }
+                } )
+            } )
+        })
     }
 }
