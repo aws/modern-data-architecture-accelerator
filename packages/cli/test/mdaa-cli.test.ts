@@ -87,7 +87,7 @@ test( 'CdkCmdTest', () => {
         "mdaa_version": "test_global_version",
         "organization": "sample-org",
         "naming_class": "TestNaming",
-        "naming_module": "test_module",
+        "naming_module": "test-module",
         "context": {
             "global_context_key": "global_context_value",
             "global_override_key": "global_value",
@@ -111,7 +111,7 @@ test( 'CdkCmdTest', () => {
                             "env_context_key": "env_context_value"
                         },
                         "modules": {
-                            "test_module": {
+                            "test-module": {
                                 "mdaa_version": "test_mod_version",
                                 "context": {
                                     "module_context_key": "module_context_value",
@@ -167,7 +167,7 @@ test( 'CdkCmdTest2', () => {
                             "env_context_key": "env_context_value"
                         },
                         "modules": {
-                            "test_module": {
+                            "test-module": {
                                 "mdaa_version": "test_mod_version",
                                 "context": {
                                     "module_context_key": "module_context_value",
@@ -201,7 +201,7 @@ test( 'CdkCmdTest3', () => {
         "mdaa_version": "test_global_version",
         "organization": "sample-org",
         "naming_class": "TestNaming",
-        "naming_module": "test_module",
+        "naming_module": "test-module",
         "custom_aspects": [
             {
                 "aspect_module": "./some_local_module",
@@ -237,7 +237,7 @@ test( 'CdkCmdTest3', () => {
                             "env_context_key": "env_context_value"
                         },
                         "modules": {
-                            "test_module": {
+                            "test-module": {
                                 "mdaa_version": "test_mod_version",
                                 "context": {
                                     "module_context_key": "module_context_value",
@@ -276,14 +276,14 @@ test( 'Pipelines Test', () => {
                 "test": {
                     domainFilter: ["shared"],
                     envFilter: ["dev"],
-                    moduleFilter: ["test_module"]
+                    moduleFilter: ["test-module"]
                 }
             }
         },
         "mdaa_version": "test_global_version",
         "organization": "sample-org",
         "naming_class": "TestNaming",
-        "naming_module": "test_module",
+        "naming_module": "test-module",
         "custom_aspects": [
             {
                 "aspect_module": "./some_local_module",
@@ -319,7 +319,7 @@ test( 'Pipelines Test', () => {
                             "env_context_key": "env_context_value"
                         },
                         "modules": {
-                            "test_module": {
+                            "test-module": {
                                 "mdaa_version": "test_mod_version",
                                 "context": {
                                     "module_context_key": "module_context_value",

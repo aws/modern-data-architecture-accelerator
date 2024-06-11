@@ -95,6 +95,16 @@
             ],
             "type": "object"
         },
+        "EventCategories": {
+            "enum": [
+                "configuration",
+                "management",
+                "monitoring",
+                "pending",
+                "security"
+            ],
+            "type": "string"
+        },
         "EventNotificationsProps": {
             "additionalProperties": false,
             "properties": {
@@ -106,14 +116,7 @@
                 },
                 "eventCategories": {
                     "items": {
-                        "enum": [
-                            "configuration",
-                            "management",
-                            "monitoring",
-                            "pending",
-                            "security"
-                        ],
-                        "type": "string"
+                        "$ref": "#/definitions/EventCategories"
                     },
                     "type": "array"
                 },
