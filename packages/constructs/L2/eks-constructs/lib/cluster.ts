@@ -18,7 +18,7 @@ import { NagSuppressions } from "cdk-nag";
 import * as cdk8s from 'cdk8s';
 import { Construct } from "constructs";
 import * as k8s from '../imports/k8s';
-import { MdaaKubectlProvider } from "./mdaa-kubectl-provider";
+import { CompliantKubectlProvider } from "./mdaa-kubectl-provider";
 import { MdaaManagedPolicy, MdaaRole, MdaaRoleProps } from "@aws-mdaa/iam-constructs";
 
 export interface MgmtInstanceProps {
@@ -275,7 +275,7 @@ export class MdaaEKSCluster extends Cluster {
 
         this.props = props
         this.clusterFargateProfileArn = `arn:${ Stack.of( scope ).partition }:eks:${ Stack.of( scope ).region }:${ Stack.of( scope ).account }:fargateprofile/${ props.naming.resourceName( props.clusterName, 255 ) }/*`
-        this.mdaaKubeCtlProvider = this.defineMdaaKubectlProvider()
+        this.mdaaKubeCtlProvider = this.defineCompliantKubectlProvider()
 
         props.adminRoles.map( adminRole => {
             this.awsAuth.addMastersRole( adminRole )
@@ -541,8 +541,8 @@ export class MdaaEKSCluster extends Cluster {
         return undefined
     }
 
-    private defineMdaaKubectlProvider () {
-        const uid = '@aws-mdaa/MdaaKubectlProvider';
+    private defineCompliantKubectlProvider () {
+        const uid = 'CompliantKubectlProvider';
 
         // since we can't have the provider connect to multiple networks, and we
         // wanted to avoid resource tear down, we decided for now that we will only
@@ -551,7 +551,7 @@ export class MdaaEKSCluster extends Cluster {
             throw new Error( 'Only a single EKS cluster can be defined within a CloudFormation stack' );
         }
 
-        return new MdaaKubectlProvider( this.stack, uid, { cluster: this } );
+        return new CompliantKubectlProvider( this.stack, uid, { cluster: this } );
     }
 
     private createFargatePodExecutionRole ( profileName: string, scope?: Construct, naming?: IMdaaResourceNaming ): IRole {
