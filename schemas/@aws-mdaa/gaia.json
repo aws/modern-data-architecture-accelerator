@@ -674,8 +674,8 @@
         },
         "SupportedAuthTypes": {
             "enum": [
-                "ad",
                 "email_pass",
+                "ad",
                 "existing"
             ],
             "type": "string"

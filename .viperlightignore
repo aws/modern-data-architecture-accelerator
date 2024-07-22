@@ -20,9 +20,10 @@ packages/constructs/L3/ai/datascience-team-l3-construct/lib/datascience-team-l3-
 packages/constructs/L3/ai/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1023 # SageMaker Central Account ID
 packages/constructs/L3/ai/datascience-team-l3-construct/test/team.compliance.test.ts:501 # SageMaker Central Account ID
 packages/constructs/L2/eks-constructs/lib/cluster.ts:382 # Construct ID
-packages/constructs/L2/eks-constructs/lib/cluster.ts:400 # Construct ID
+packages/constructs/L2/eks-constructs/lib/cluster.ts:404 # Construct ID
 packages/constructs/L3/dataops/dataops-nifi-l3-construct/base_conf/nifi/nifi.properties:370 #False positive
 packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/image-repository-mapping.ts # Known SageMaker Public Accounts
 packages/constructs/L3/ai/gaia-l3-construct/lib/models/index.ts # Known SageMaker Public Accounts
 packages/constructs/L3/ai/gaia-l3-construct/lib/shared/index.ts # Known Lambda service account
 packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/hf-custom-script-model/build-script/script.py:63 # runs in deployment once, command string fully controlled by script code and not inputs
+

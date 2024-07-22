@@ -51,6 +51,13 @@
                     "description": "The name of the connection to use to connect to the JDBC target.",
                     "type": "string"
                 },
+                "enableAdditionalMetadata": {
+                    "description": "Specify a value of `RAWTYPES` or `COMMENTS` to enable additional metadata in table responses.\n\n`RAWTYPES` provides the native-level datatype. `COMMENTS` provides comments associated with a column or table in the database.\n\nIf you do not need additional metadata, keep the field empty.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "exclusions": {
                     "description": "A list of glob patterns used to exclude from the crawl.\n\nFor more information, see [Catalog Tables with a Crawler](https://docs.aws.amazon.com/glue/latest/dg/add-crawler.html) .",
                     "items": {

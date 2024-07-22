@@ -393,6 +393,10 @@ export class MdaaEKSCluster extends Cluster {
                 { id: "HIPAA.Security-LambdaConcurrency", reason: "Function is used as Cfn Custom Resource only during deployment time. Concurrency managed via Cfn." },
                 { id: "HIPAA.Security-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn." },
                 { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
+                { id: 'HIPAA.Security-CloudWatchLogGroupEncrypted', reason: 'Loggroup data is always encrypted in CloudWatch Logs'},
+                { id: 'NIST.800.53.R5-CloudWatchLogGroupEncrypted', reason: 'Loggroup data is always encrypted in CloudWatch Logs'},
+                { id: 'AwsSolutions-SF1', reason: 'Function is used as Cfn Custom Resource only during deployment time.'},
+                { id: 'AwsSolutions-SF2', reason: 'Function is used as Cfn Custom Resource only during deployment time.'}
 
             ], true );
         }

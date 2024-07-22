@@ -1314,10 +1314,10 @@
                 "input": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/IResolvable"
+                            "$ref": "#/definitions/CfnDataset.InputProperty"
                         },
                         {
-                            "$ref": "#/definitions/CfnDataset.InputProperty"
+                            "$ref": "#/definitions/IResolvable"
                         }
                     ]
                 },

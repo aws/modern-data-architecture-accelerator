@@ -18,7 +18,7 @@
                 },
                 "masterNodeInstanceType": {
                     "default": "- r5.large.search",
-                    "description": "The hardware configuration of the computer that hosts the dedicated master\nnode, such as `m3.medium.search`. For valid values, see [Supported\nInstance Types]\n(https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html)\nin the Amazon OpenSearch Service Developer Guide.",
+                    "description": "The hardware configuration of the computer that hosts the dedicated master\nnode, such as `m3.medium.search`. For valid values, see [Supported\nInstance Types](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html)\nin the Amazon OpenSearch Service Developer Guide.",
                     "type": "string"
                 },
                 "masterNodes": {
@@ -27,13 +27,13 @@
                     "type": "number"
                 },
                 "multiAzWithStandbyEnabled": {
-                    "default": "- no multi-az with standby",
-                    "description": "Indicates whether Multi-AZ with Standby deployment option is enabled.\nFor more information, see [Multi-AZ with Standby]\n(https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-multiaz.html#managedomains-za-standby)",
+                    "default": "- multi-az with standby if the feature flag `ENABLE_OPENSEARCH_MULTIAZ_WITH_STANDBY`\nis true, no multi-az with standby otherwise",
+                    "description": "Indicates whether Multi-AZ with Standby deployment option is enabled.\nFor more information, see [Multi-AZ with\nStandby](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-multiaz.html#managedomains-za-standby)",
                     "type": "boolean"
                 },
                 "warmInstanceType": {
                     "default": "- ultrawarm1.medium.search",
-                    "description": "The instance type for your UltraWarm node, such as `ultrawarm1.medium.search`.\nFor valid values, see [UltraWarm Storage Limits]\n(https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#limits-ultrawarm)\nin the Amazon OpenSearch Service Developer Guide.",
+                    "description": "The instance type for your UltraWarm node, such as `ultrawarm1.medium.search`.\nFor valid values, see [UltraWarm Storage\nLimits](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#limits-ultrawarm)\nin the Amazon OpenSearch Service Developer Guide.",
                     "type": "string"
                 },
                 "warmNodes": {
@@ -134,7 +134,7 @@
         },
         "EbsOptions": {
             "additionalProperties": false,
-            "description": "The configurations of Amazon Elastic Block Store (Amazon EBS) volumes that\nare attached to data nodes in the Amazon OpenSearch Service domain. For more information, see\n[Amazon EBS]\n(https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html)\nin the Amazon Elastic Compute Cloud Developer Guide.",
+            "description": "The configurations of Amazon Elastic Block Store (Amazon EBS) volumes that\nare attached to data nodes in the Amazon OpenSearch Service domain. For more information, see\n[Amazon EBS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html)\nin the Amazon Elastic Compute Cloud Developer Guide.",
             "properties": {
                 "enabled": {
                     "default": "- true",
@@ -153,7 +153,7 @@
                 },
                 "volumeSize": {
                     "default": 10,
-                    "description": "The size (in GiB) of the EBS volume for each data node. The minimum and\nmaximum size of an EBS volume depends on the EBS volume type and the\ninstance type to which it is attached.  For  valid values, see\n[EBS volume size limits]\n(https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#ebsresource)\nin the Amazon OpenSearch Service Developer Guide.",
+                    "description": "The size (in GiB) of the EBS volume for each data node. The minimum and\nmaximum size of an EBS volume depends on the EBS volume type and the\ninstance type to which it is attached.  For  valid values, see\n[EBS volume size limits](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#ebsresource)\nin the Amazon OpenSearch Service Developer Guide.",
                     "type": "number"
                 },
                 "volumeType": {
@@ -493,7 +493,7 @@
                 },
                 "enabled": {
                     "default": "- false",
-                    "description": "Indicates whether to enable zone awareness for the Amazon OpenSearch Service domain.\nWhen you enable zone awareness, Amazon OpenSearch Service allocates the nodes and replica\nindex shards that belong to a cluster across two Availability Zones (AZs)\nin the same region to prevent data loss and minimize downtime in the event\nof node or data center failure. Don't enable zone awareness if your cluster\nhas no replica index shards or is a single-node cluster. For more information,\nsee [Configuring a Multi-AZ Domain]\n(https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-multiaz.html)\nin the Amazon OpenSearch Service Developer Guide.",
+                    "description": "Indicates whether to enable zone awareness for the Amazon OpenSearch Service domain.\nWhen you enable zone awareness, Amazon OpenSearch Service allocates the nodes and replica\nindex shards that belong to a cluster across two Availability Zones (AZs)\nin the same region to prevent data loss and minimize downtime in the event\nof node or data center failure. Don't enable zone awareness if your cluster\nhas no replica index shards or is a single-node cluster. For more information,\nsee [Configuring a Multi-AZ Domain](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-multiaz.html)\nin the Amazon OpenSearch Service Developer Guide.",
                     "type": "boolean"
                 }
             },
