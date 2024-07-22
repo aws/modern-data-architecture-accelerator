@@ -424,7 +424,11 @@ export class HuggingFaceCustomScriptModel extends Construct {
       { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Used in a custom resource only during deployment.' },
       { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Used in a custom resource only during deployment.' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and its custom resource.' },
-      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and its custom resource.' }
+      { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and its custom resource.' },
+      { id: 'HIPAA.Security-CloudWatchLogGroupEncrypted', reason: 'Loggroup data is always encrypted in CloudWatch Logs'},
+      { id: 'NIST.800.53.R5-CloudWatchLogGroupEncrypted', reason: 'Loggroup data is always encrypted in CloudWatch Logs'},
+      { id: 'AwsSolutions-SF1', reason: 'Function is used as Cfn Custom Resource only during deployment time.'},
+      { id: 'AwsSolutions-SF2', reason: 'Function is used as Cfn Custom Resource only during deployment time.'}
     ], true)
 
     NagSuppressions.addResourceSuppressions(executionRole, [

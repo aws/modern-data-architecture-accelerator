@@ -70,7 +70,7 @@ export interface MdaaQuickSightDataSourceProps extends MdaaConstructProps {
      *
      * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-type
      */
-    readonly type?: string;
+    readonly type: string;
     /**
      * Use this parameter only when you want Amazon QuickSight to use a VPC connection when connecting to your underlying source.
      *

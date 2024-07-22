@@ -95,12 +95,8 @@
                     "description": "\"glueetl\" | \"pythonshell\""
                 },
                 "pythonVersion": {
-                    "description": "\"2\" | \"3\" | undefined",
-                    "enum": [
-                        "2",
-                        "3"
-                    ],
-                    "type": "string"
+                    "$ref": "#/definitions/JobCommandPythonVersion",
+                    "description": "\"2\" | \"3\" | undefined"
                 },
                 "scriptLocation": {
                     "description": "Relative path to Glue script",
@@ -117,6 +113,13 @@
             "enum": [
                 "glueetl",
                 "pythonshell"
+            ],
+            "type": "string"
+        },
+        "JobCommandPythonVersion": {
+            "enum": [
+                "2",
+                "3"
             ],
             "type": "string"
         },
