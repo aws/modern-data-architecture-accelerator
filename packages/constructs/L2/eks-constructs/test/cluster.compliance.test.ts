@@ -10,7 +10,7 @@ import { SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { MdaaEKSCluster, MdaaEKSClusterProps, KubernetesCmd } from '../lib';
 import { KubernetesVersion } from 'aws-cdk-lib/aws-eks';
 import { Role } from 'aws-cdk-lib/aws-iam';
-import { MdaaKubectlProvider } from '../lib/mdaa-kubectl-provider';
+import { CompliantKubectlProvider } from '../lib/mdaa-kubectl-provider';
 import * as cdk8s from 'cdk8s';
 
 describe( 'MDAA Construct Compliance Tests', () => {
@@ -109,9 +109,9 @@ describe( 'MDAA Construct Compliance Tests', () => {
             kubectlRoleArn: "arn:test-partition:iam::test-account:role/test-role"
         } )
         test( 'KubeCtlProvider Methods', () => {
-            expect( () => MdaaKubectlProvider.getOrCreate( testApp.testStack, eksCluster ) ).not.toThrow()
-            expect( () => MdaaKubectlProvider.getOrCreate( testApp.testStack, importedEksCluster ) ).not.toThrow()
-            expect( () => MdaaKubectlProvider.fromKubectlProviderAttributes( testApp.testStack, 'test-kubectl-from-attrs', {
+            expect( () => CompliantKubectlProvider.getOrCreate( testApp.testStack, eksCluster ) ).not.toThrow()
+            expect( () => CompliantKubectlProvider.getOrCreate( testApp.testStack, importedEksCluster ) ).not.toThrow()
+            expect( () => CompliantKubectlProvider.fromKubectlProviderAttributes( testApp.testStack, 'test-kubectl-from-attrs', {
                 functionArn: "test-function-arn",
                 kubectlRoleArn: "arn:test-partition:iam::test-account:role/test-role",
                 handlerRole: Role.fromRoleName( testApp.testStack, "test-handler-role", "test-handler-role" )

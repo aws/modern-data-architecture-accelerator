@@ -17,7 +17,7 @@ import * as path from 'path';
 /**
  * Implementation of Kubectl Lambda
  */
-export class MdaaKubectlProvider extends NestedStack implements IKubectlProvider {
+export class CompliantKubectlProvider extends NestedStack implements IKubectlProvider {
 
   /**
    * Take existing provider or create new based on cluster
@@ -38,7 +38,7 @@ export class MdaaKubectlProvider extends NestedStack implements IKubectlProvider
 
     // if this is an imported cluster and there is no kubectl provider defined, we need to provision a custom resource provider in this stack
     // we will define one per stack for each cluster based on the cluster uniqueid
-    const uid = `${ Names.nodeUniqueId( cluster.node ) }-MdaaKubectlProvider`;
+    const uid = `${ Names.nodeUniqueId( cluster.node ) }-CompliantKubectlProvider`;
     const stack = Stack.of( scope );
     let provider = stack.node.tryFindChild( uid ) as KubectlProvider;
     if ( !provider ) {
