@@ -41,6 +41,7 @@ domains:
               - ./datalake/datalake.yaml
 
           # This module will ensure the Glue Catalog is KMS encrypted.
+          # Comment this out if there are multiple MDAA deployments into an account.
           glue-catalog:
             cdk_app: "@aws-mdaa/glue-catalog"
 
