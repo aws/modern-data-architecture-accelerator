@@ -15,13 +15,13 @@ More predeployment info and procedures are available in [PREDEPLOYMENT](../../PR
 
 2. Edit the `mdaa.yaml` to specify an organization name. This must be a globally unqique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
-3. Edit the `mdaa.yaml` to specify `context:` values specific to your environment.
+3. If required, edit the `mdaa.yaml` to specify `context:` values specific to your environment.
 
 4. Ensure you are authenticated to your target AWS account.
 
-5. Optionally, run `<path_to_mdaa_repo>/bin/mdaa ls` from the directory containing `mdaa.yaml` to understand what stacks will be deployed.
+5. Optionally, run `<path_to_mdaa_repo>/bin/mdaa -l ls` from the directory containing `mdaa.yaml` to understand what stacks will be deployed.
 
-6. Optionally, run `<path_to_mdaa_repo>/bin/mdaa synth` from the directory containing `mdaa.yaml` and review the produced templates.
+6. Optionally, run `<path_to_mdaa_repo>/bin/mdaa -l synth` from the directory containing `mdaa.yaml` and review the produced templates.
 
 7. Run `<path_to_mdaa_repo>/bin/mdaa deploy` from the directory containing `mdaa.yaml`
 
