@@ -73,6 +73,7 @@ export class SftpUserConfigParser extends MdaaAppConfigParser<SftpUserConfigCont
                 homeBucketName: configBucket.bucketName,
                 homeBucketKmsKeyArn: configBucket.kmsKeyArn,
                 homeDirectory: configUser.homeDirectory,
+                accessRoleArn: configUser.accessRoleArn,
                 publicKeys: configUser.publicKeys.map( publicKeyRef => {
                     const configPublicKey = this.configContents.publicKeys[ publicKeyRef ]
                     if ( !configPublicKey ) {
