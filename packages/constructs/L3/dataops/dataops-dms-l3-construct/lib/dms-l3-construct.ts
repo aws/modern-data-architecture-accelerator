@@ -16,9 +16,18 @@ import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 
 export interface EndpointProps {
+    /**
+     * The type of Endpoint ("source" or "target")
+     */
     readonly endpointType: MdaaEndpointType
+    /**
+     * The name of the endpoint engine
+     */
     readonly engineName: MdaaEndpointEngine
-
+    /**
+     * The optional name of the endpoint database. Required for certain endpoint types.
+     */
+    readonly databaseName?: string
     /**
      * Settings in JSON format for the source and target DocumentDB endpoint.
      *
