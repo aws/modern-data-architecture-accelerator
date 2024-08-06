@@ -20,6 +20,21 @@ The Data Ops StepFunction CDK application is used to deploy the resources requir
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          dataops-stepfunction: # Module Name can be customized
+            cdk_app: "@aws-caef/dataops-stepfunction" # Must match module NPM package name
+            app_configs:
+              - ./dataops-stepfunction.yaml # Filename/path can be customized
+```
+
+### Module Config (./dataops-stepfunction.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ### Sample Step Function Config
 
 StepFunctions configs are stored under the ./stepfunctions/ directory, relative to the stepfunction config. Multiple stepfunctions can be defined in a single config file or across multiple files, as long as they have globally unique names.

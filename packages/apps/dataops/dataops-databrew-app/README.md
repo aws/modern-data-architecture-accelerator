@@ -18,6 +18,21 @@ The DataBrew CDK application is used to configure and deploy secure databrew job
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          dataops-databrew: # Module Name can be customized
+            cdk_app: "@aws-caef/dataops-databrew" # Must match module NPM package name
+            app_configs:
+              - ./dataops-databrew.yaml # Filename/path can be customized
+```
+
+### Module Config (./dataops-databrew.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Name of the associated glue data-ops project
 projectName: glue-project

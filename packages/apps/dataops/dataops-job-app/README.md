@@ -19,6 +19,21 @@ The Data Ops Job CDK application is used to deploy the resources required to sup
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          dataops-job: # Module Name can be customized
+            cdk_app: "@aws-caef/dataops-job" # Must match module NPM package name
+            app_configs:
+              - ./dataops-job.yaml # Filename/path can be customized
+```
+
+### Module Config (./dataops-job.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ### Sample Job Config
 
 Job configs can be templated in order to reuse job definitions across multiple jobs for which perhaps only a few parameters change (such as input/output paths). Templates can be stored separate from job configs, or stored together with job configs in the same file.

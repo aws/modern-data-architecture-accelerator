@@ -71,6 +71,21 @@ This process must be completed prior to DataSync deployment using MDAA.
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          datasync: # Module Name can be customized
+            cdk_app: "@aws-caef/datasync" # Must match module NPM package name
+            app_configs:
+              - ./datasync.yaml # Filename/path can be customized
+```
+
+### Module Config (./datasync.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Information for looking up network infrastructure information
 # Based on this information, MDAA will create a security group with all required ingress rules and attach to the existing VPC endpoint for datasync service

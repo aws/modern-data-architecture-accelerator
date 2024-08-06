@@ -20,6 +20,21 @@ The Data Ops Workflow CDK application is used to deploy the resources required t
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          dataops-workflow: # Module Name can be customized
+            cdk_app: "@aws-caef/dataops-workflow" # Must match module NPM package name
+            app_configs:
+              - ./dataops-workflow.yaml # Filename/path can be customized
+```
+
+### Module Config (./dataops-workflow.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ### Sample Workflow Config
 
 Workflow configs are stored under the ./workflows/ directory, relative to the workflow config. Multiple workflows can be defined in a single config file or across multiple files, as long as they have globally unique names.

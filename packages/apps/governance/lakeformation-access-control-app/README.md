@@ -21,6 +21,21 @@ The Lake Formation Access Control CDK application is used to deploy Lakeformatio
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          lakeformation-access-control: # Module Name can be customized
+            cdk_app: "@aws-caef/lakeformation-access-control" # Must match module NPM package name
+            app_configs:
+              - ./lakeformation-access-control.yaml # Filename/path can be customized
+```
+
+### Module Config (./lakeformation-access-control.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Friendly names for federation providers in IAM through which our users and groups federate.
 # The provider Arns will be combined with the user/group names in order to define the grants in LF.

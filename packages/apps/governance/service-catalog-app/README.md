@@ -14,6 +14,21 @@ The ServiceCatalog CDK application is used to deploy Service Catalog resources w
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          service-catalog: # Module Name can be customized
+            cdk_app: "@aws-caef/service-catalog" # Must match module NPM package name
+            app_configs:
+              - ./service-catalog.yaml # Filename/path can be customized
+```
+
+### Module Config (./service-catalog.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # List of portfolios to be created
 portfolios:

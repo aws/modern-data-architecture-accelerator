@@ -26,6 +26,21 @@ The Glue Catalog CDK application is used to configure an account's Glue Catalog 
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          glue-catalog: # Module Name can be customized
+            cdk_app: "@aws-caef/glue-catalog" # Must match module NPM package name
+            app_configs:
+              - ./glue-catalog.yaml # Filename/path can be customized
+```
+
+### Module Config (./glue-catalog.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 The Glue Catalog CDK accepts an optional configuration, which can be used to configure cross account catalog access for data mesh implementations.
 
 These configs can be used to generate cross account catalog access for use in a data mesh or hub/spoke archicture

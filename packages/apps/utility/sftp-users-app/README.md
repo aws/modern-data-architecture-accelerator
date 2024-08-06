@@ -18,6 +18,21 @@ The SFTP Users CDK application is used to deploy the resources required to provi
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          sftp-users: # Module Name can be customized
+            cdk_app: "@aws-caef/sftp-users" # Must match module NPM package name
+            app_configs:
+              - ./sftp-users.yaml # Filename/path can be customized
+```
+
+### Module Config (./sftp-users.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 serverId: ssm:/path/to/ssm/server/id
 

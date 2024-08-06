@@ -51,6 +51,21 @@ The Data Warehouse CDK application is used to configure and deploy resources req
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          datawarehouse: # Module Name can be customized
+            cdk_app: "@aws-caef/datawarehouse" # Must match module NPM package name
+            app_configs:
+              - ./datawarehouse.yaml # Filename/path can be customized
+```
+
+### Module Config (./datawarehouse.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Specify the admin username to be created on the cluster. A secret will
 # be automatically generated containing the admin password.

@@ -28,6 +28,21 @@ The Data Ops Lambda CDK application is used to deploy the resources required to 
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          dataops-lambda: # Module Name can be customized
+            cdk_app: "@aws-caef/dataops-lambda" # Must match module NPM package name
+            app_configs:
+              - ./dataops-lambda.yaml # Filename/path can be customized
+```
+
+### Module Config (./dataops-lambda.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ### Sample Lambda Config
 
 ```yaml

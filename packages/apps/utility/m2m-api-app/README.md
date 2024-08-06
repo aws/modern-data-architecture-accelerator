@@ -14,6 +14,21 @@ The Machine to Machine CDK app is used to deploy a rest API which can be used to
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          m2m-api: # Module Name can be customized
+            cdk_app: "@aws-caef/m2m-api" # Must match module NPM package name
+            app_configs:
+              - ./m2m-api.yaml # Filename/path can be customized
+```
+
+### Module Config (./m2m-api.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ### Sample App Config Contents
 
 ```yaml

@@ -6,7 +6,7 @@ The Roles CDK application is used to deploy IAM roles which can be used within a
 
 ![Roles](../../../constructs/L3/governance/roles-l3-construct/docs/Roles.png)
 
-**IAM Managed Policies** - 
+**IAM Managed Policies** -
   * An IAM 'Customer' Managed Policy will be created for each policy specified in the config.
   
     *Policies which violate CDK Nag rule sets will require explicit suppressions*
@@ -26,6 +26,21 @@ The Roles CDK application is used to deploy IAM roles which can be used within a
 ***
 
 ## Configuration
+
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          roles: # Module Name can be customized
+            cdk_app: "@aws-caef/roles" # Must match module NPM package name
+            app_configs:
+              - ./roles.yaml # Filename/path can be customized
+```
+
+### Module Config (./roles.yaml)
+
+[Config Schema Docs](SCHEMA.md)
 
 ```yaml
 # Used to configure SAML federations

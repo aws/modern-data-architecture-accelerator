@@ -28,6 +28,21 @@ The Athena Workgroup CDK application is used to deploy the resources required to
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          athena-workgroup: # Module Name can be customized
+            cdk_app: "@aws-caef/athena-workgroup" # Must match module NPM package name
+            app_configs:
+              - ./athena-workgroup.yaml # Filename/path can be customized
+```
+
+### Module Config (./athena-workgroup.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Arns for IAM roles which will be provided to the Workgroup's resources (IE results bucket)
 # Roles within the target account may be referenced by id, arn, and/or name.

@@ -21,6 +21,21 @@ The SFTP Server CDK application is used to deploy the resources for an SFTP Tran
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          sftp-server: # Module Name can be customized
+            cdk_app: "@aws-caef/sftp-server" # Must match module NPM package name
+            app_configs:
+              - ./sftp-server.yaml # Filename/path can be customized
+```
+
+### Module Config (./sftp-server.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 server:
   # CIDR Addresses from which the SFTP server will be accessible on port 22

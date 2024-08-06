@@ -14,6 +14,21 @@ This EventBridge CDK application is used to configure deploy EventBridge resourc
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          eventbridge: # Module Name can be customized
+            cdk_app: "@aws-caef/eventbridge" # Must match module NPM package name
+            app_configs:
+              - ./eventbridge.yaml # Filename/path can be customized
+```
+
+### Module Config (./eventbridge.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # List of event buses to be created
 eventBuses:

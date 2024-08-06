@@ -31,6 +31,21 @@ The Opensearch CDK application is used to deploy resources required for a secure
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          opensearch: # Module Name can be customized
+            cdk_app: "@aws-caef/opensearch" # Must match module NPM package name
+            app_configs:
+              - ./opensearch.yaml # Filename/path can be customized
+```
+
+### Module Config (./opensearch.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Create Opensearch service linked role using below command before proceeding to deploy your first Opensearch domain
 # This needs to be done once per account before creating the first opensearch domain in the account.
