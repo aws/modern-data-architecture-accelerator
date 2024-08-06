@@ -116,6 +116,8 @@ root_folder2
 
 ## Sample MDAA CLI Configuration
 
+[Config Schema Docs](./packages/cli/SCHEMA.md)
+
 ```yaml
 # All resources will be deployed to the default region specified in the environment or AWS configurations.
 # Can optional specify a specific AWS Region Name.

@@ -49,8 +49,23 @@ The GAIA L3 Construct is used to deploy sub L3 constructs and resources which su
   * **X-Origin-Virify** - This secret is used by the rest api handler lambda to verify that only a specific origin with the know if the origin header secret can communicate with the backend.  The secret header is rotated every 30 days by default
   * **API Keys** - If provided as configuration, 3rd Party LLM API keys are stored as secrets and used by the model interface lambdas.  The keys are never logged.
 
-
 ## Configuration
+
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          gaia: # Module Name can be customized
+            cdk_app: "@aws-caef/gaia" # Must match module NPM package name
+            app_configs:
+              - ./gaia.yaml # Filename/path can be customized
+```
+
+### Module Config (./gaia.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 
 gaia:

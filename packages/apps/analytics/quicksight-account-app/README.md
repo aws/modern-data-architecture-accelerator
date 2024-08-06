@@ -25,6 +25,21 @@ The QuickSight Account CDK application is used to configure and deploy resources
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          quicksight-account: # Module Name can be customized
+            cdk_app: "@aws-caef/quicksight-account" # Must match module NPM package name
+            app_configs:
+              - ./quicksight-account.yaml # Filename/path can be customized
+```
+
+### Module Config (./quicksight-account.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 account:
   edition: "ENTERPRISE" #Can take 'STANDARD'|'ENTERPRISE'|'ENTERPRISE_AND_Q'

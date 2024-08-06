@@ -1,10 +1,10 @@
 # DataZone
+
 The DataZone CDK application is used to configure and deploy DataZone Domains and associated resources such as environment blueprints.
 
 ***
 
 ## Deployed Resources and Compliance Details
-
 
 ![datazone](../../../constructs/L3/governance/datazone-l3-construct/docs/DataZone.png)
 
@@ -14,7 +14,7 @@ The DataZone CDK application is used to configure and deploy DataZone Domains an
 
 * **Domain Execution Role** - An IAM Role used by DataZone. This role is specific to the domain.
 
-* **Domain Provisioning Role** - An IAM Role specific to the domain deployed only when at least one blueprint is enabled. This role is used and shared among all the enabled blueprints. 
+* **Domain Provisioning Role** - An IAM Role specific to the domain deployed only when at least one blueprint is enabled. This role is used and shared among all the enabled blueprints.
 
 * **Data Lake Blueprint** - Data Lake Blueprint (id: DefaultDataLake) specific to each domain.
 
@@ -25,6 +25,21 @@ The DataZone CDK application is used to configure and deploy DataZone Domains an
 * **Data Warehouse Manage Access Role** - An IAM Role use by the Data Warehouse blueprint and it's specific to each domain.
 
 ## Configuration
+
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          datazone: # Module Name can be customized
+            cdk_app: "@aws-caef/datazone" # Must match module NPM package name
+            app_configs:
+              - ./datazone.yaml # Filename/path can be customized
+```
+
+### Module Config (./datazone.yaml)
+
+[Config Schema Docs](SCHEMA.md)
 
 ```yaml
 # List of domains to create

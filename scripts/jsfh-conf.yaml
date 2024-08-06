@@ -1,0 +1,4 @@
+show_toc: false
+examples_as_yaml: true
+show_breadcrumbs: true
+template_name: md

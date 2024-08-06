@@ -32,6 +32,21 @@ The SageMaker Notebook CDK application is used to configure and deploy secure Sa
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          sm-notebook: # Module Name can be customized
+            cdk_app: "@aws-caef/sm-notebook" # Must match module NPM package name
+            app_configs:
+              - ./sm-notebook.yaml # Filename/path can be customized
+```
+
+### Module Config (./sm-notebook.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Lifecycle configurations to be created and used by notebooks
 lifecycleConfigs:

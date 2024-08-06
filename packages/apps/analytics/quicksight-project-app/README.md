@@ -36,6 +36,21 @@ The QuickSight Project CDK application is used to configure and deploy:
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          quicksight-project: # Module Name can be customized
+            cdk_app: "@aws-caef/quicksight-project" # Must match module NPM package name
+            app_configs:
+              - ./quicksight-project.yaml # Filename/path can be customized
+```
+
+### Module Config (./quicksight-project.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # The set of QS principals which can be referenced in folder and data source permissions.
 # Note that each principal arn references a QuickSight user or group, 

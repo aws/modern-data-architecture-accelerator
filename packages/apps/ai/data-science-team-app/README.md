@@ -36,6 +36,21 @@ The Data Science Team CDK App is used to deploy stacks and resources which suppo
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          datascience-team: # Module Name can be customized
+            cdk_app: "@aws-caef/datascience-team" # Must match module NPM package name
+            app_configs:
+              - ./datascience-team.yaml # Filename/path can be customized
+```
+
+### Module Config (./datascience-team.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 team:
   # List of roles which will be provided admin access to the team resources

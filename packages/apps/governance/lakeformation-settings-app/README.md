@@ -18,6 +18,21 @@ The LakeFormation Settings CDK application is used to configure an account's Lak
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          lakeformation-settings: # Module Name can be customized
+            cdk_app: "@aws-caef/lakeformation-settings" # Must match module NPM package name
+            app_configs:
+              - ./lakeformation-settings.yaml # Filename/path can be customized
+```
+
+### Module Config (./lakeformation-settings.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # The list of Lake Formation Admin role references.
 lakeFormationAdminRoles:

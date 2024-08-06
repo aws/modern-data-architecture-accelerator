@@ -28,6 +28,21 @@ The QuickSight Namespace CDK application is used to configure and deploy followi
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          quicksight-namespace: # Module Name can be customized
+            cdk_app: "@aws-caef/quicksight-namespace" # Must match module NPM package name
+            app_configs:
+              - ./quicksight-namespace.yaml # Filename/path can be customized
+```
+
+### Module Config (./quicksight-namespace.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Used to configure SAML federations
 federations:

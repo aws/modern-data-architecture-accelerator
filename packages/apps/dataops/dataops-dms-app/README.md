@@ -18,6 +18,21 @@ AWS Database Migration Service provides functionality to migrate data from sourc
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          dataops-dms: # Module Name can be customized
+            cdk_app: "@aws-caef/dataops-dms" # Must match module NPM package name
+            app_configs:
+              - ./dataops-dms.yaml # Filename/path can be customized
+```
+
+### Module Config (./dataops-dms.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Name of the DataOps Project 
 projectName: test-project

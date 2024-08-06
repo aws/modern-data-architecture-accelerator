@@ -35,6 +35,21 @@ The Data Ops Nifi CDK App is used to deploy the resources required to orchestrat
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          dataops-nifi: # Module Name can be customized
+            cdk_app: "@aws-caef/dataops-nifi" # Must match module NPM package name
+            app_configs:
+              - ./dataops-nifi.yaml # Filename/path can be customized
+```
+
+### Module Config (./dataops-nifi.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ### Sample Nifi Config
 
 ```yaml

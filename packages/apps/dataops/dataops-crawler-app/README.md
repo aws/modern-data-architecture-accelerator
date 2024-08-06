@@ -17,6 +17,21 @@ The Data Ops Crawler CDK application is used to deploy the resources required to
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          dataops-crawler: # Module Name can be customized
+            cdk_app: "@aws-caef/dataops-crawler" # Must match module NPM package name
+            app_configs:
+              - ./dataops-crawler.yaml # Filename/path can be customized
+```
+
+### Module Config (./dataops-crawler.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ### Sample Crawler Config
 
 ```yaml

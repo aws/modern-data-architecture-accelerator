@@ -36,6 +36,21 @@ The SageMaker Studio Domain CDK application is used to configure and deploy a se
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          sm-studio-domain: # Module Name can be customized
+            cdk_app: "@aws-caef/sm-studio-domain" # Must match module NPM package name
+            app_configs:
+              - ./sm-studio-domain.yaml # Filename/path can be customized
+```
+
+### Module Config (./sm-studio-domain.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 domain:
   # The domain Authentication mode (one of "IAM" or "SSO")

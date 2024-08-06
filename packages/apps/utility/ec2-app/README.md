@@ -34,6 +34,21 @@ The EC2 CDK application is used to configure and deploy secure EC2 instances and
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          ec2: # Module Name can be customized
+            cdk_app: "@aws-caef/ec2" # Must match module NPM package name
+            app_configs:
+              - ./ec2.yaml # Filename/path can be customized
+```
+
+### Module Config (./ec2.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 
 # List of roles which will be granted access to the KMS key

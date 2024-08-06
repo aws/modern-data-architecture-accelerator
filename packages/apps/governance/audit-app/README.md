@@ -22,6 +22,21 @@ This Audit CDK application is used to configure deploy the resources required to
 
 ## Configuration
 
+### MDAA Config
+
+Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
+
+```yaml
+          audit: # Module Name can be customized
+            cdk_app: "@aws-caef/audit" # Must match module NPM package name
+            app_configs:
+              - ./audit.yaml # Filename/path can be customized
+```
+
+### Module Config (./audit.yaml)
+
+[Config Schema Docs](SCHEMA.md)
+
 ```yaml
 # Roles which will be provided read access to the audit logs via bucket policy.
 # Roles within the target account may be referenced by id, arn, and/or name.
