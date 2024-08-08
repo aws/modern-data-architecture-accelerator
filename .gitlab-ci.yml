@@ -68,6 +68,8 @@ feature_merge_build:
     exclude:
       - "**/node_modules/**"
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/git_secrets.sh
     - ./scripts/npm_install.sh
@@ -152,6 +154,8 @@ feature_version:
     exclude:
       - "**/node_modules/**"
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/version_prerelease.sh
     - ./scripts/npm_install.sh
@@ -274,6 +278,8 @@ feature_publish_npm:
     - feature_package
     - feature_test
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/publish_npm.sh $CAEF_CODEARTIFACT_PRERELEASE_NPM_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
@@ -298,6 +304,8 @@ feature_publish_pip:
     - feature_package
     - feature_test
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/publish_pip.sh $CAEF_CODEARTIFACT_PRERELEASE_PIP_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT
 
@@ -330,6 +338,8 @@ prerelease_version:
       - "**/node_modules/**"
   stage: build
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/git_secrets.sh
     - ./scripts/version_prerelease.sh
@@ -538,6 +548,8 @@ prerelease_publish_npm:
   dependencies:
     - prerelease_package
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/publish_npm.sh $CAEF_CODEARTIFACT_PRERELEASE_NPM_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT prerelease
 
@@ -565,6 +577,8 @@ prerelease_publish_pip:
   dependencies:
     - prerelease_package
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/publish_pip.sh $CAEF_CODEARTIFACT_PRERELEASE_PIP_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT
 
@@ -605,6 +619,8 @@ prerelease_publish_s3:
   dependencies:
     - prerelease_package
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/publish_s3.sh $CAEF_PRERELEASE_PACKAGE_BUCKET
 
@@ -640,6 +656,8 @@ release_version_package:
       - "**/node_modules/**"
   allow_failure: false
   needs: []
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/git_secrets.sh
     - ./scripts/npm_install.sh
@@ -707,6 +725,8 @@ release_publish_npm_prerelease:
     - release_version_package
     - prerelease_analyze
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
   script:
     - ./scripts/publish_npm.sh $CAEF_CODEARTIFACT_PRERELEASE_NPM_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT latest
 
@@ -748,6 +768,8 @@ release_publish_npm:
     - release_version_package
     - prerelease_analyze
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
   script:
     - ./scripts/publish_npm.sh $CAEF_CODEARTIFACT_RELEASE_NPM_REPO $CAEF_CODEARTIFACT_RELEASE_DOMAIN $CAEF_CODEARTIFACT_RELEASE_ACCOUNT latest
 
@@ -789,6 +811,8 @@ release_publish_pip:
     - release_version_package
     - prerelease_analyze
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
   script:
     - ./scripts/publish_pip.sh $CAEF_CODEARTIFACT_RELEASE_NPM_REPO $CAEF_CODEARTIFACT_RELEASE_DOMAIN $CAEF_CODEARTIFACT_RELEASE_ACCOUNT
 
@@ -830,6 +854,8 @@ release_publish_s3:
     - release_version_package
     - prerelease_analyze
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
   script:
     - ./scripts/publish_s3.sh $CAEF_RELEASE_PACKAGE_BUCKET
 
@@ -910,6 +936,8 @@ prerelease_push_git:
     - release_publish_npm
     - release_publish_npm_prerelease
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/push_git_prerelease.sh
 
@@ -953,5 +981,7 @@ release_push_git:
     - release_publish_npm
     - release_publish_npm_prerelease
   allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
   script:
     - ./scripts/push_git_release.sh
