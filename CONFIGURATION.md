@@ -161,6 +161,20 @@ custom_aspects:
 # each MDAA CDK App is npm installed.
 mdaa_version: ">=0.15.0"
 
+# (Optional) - Env templates can be defined for use across domains/envs. 
+env_templates:
+  example_global_env_template:
+    # These modules and configs will be deployed for each environment referencing this config.
+    modules:
+      roles:
+        cdk_app: "@aws-mdaa/roles"
+        app_configs:
+          - ./roles.yaml
+      datalake:
+        cdk_app: "@aws-mdaa/datalake"
+        app_configs:
+          - ./datalake.yaml
+
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names. This allows for multiple MDAA deployments into the same account
 # for separate purposes (such as a centralized data lake account hosting separate lines of business.)
@@ -296,6 +310,56 @@ domains:
               portfolio_arn: some_portfilio_arn
             app_configs:
               - ./datascience_domain/sm-notebook.yaml
+
+  # Exmple of a domain which uses globally templated environments
+  globally-templated-domain1: 
+    environments:
+      # Example of envs that uses a global environment template
+      dev:
+        account: dev_acct_num
+        template: example_global_env_template
+      test:
+        account: test_acct_num
+        template: example_global_env_template
+
+
+  # Exmple of a second domain which uses globally templated environments
+  globally-templated-domain2: 
+    environments:
+      # Example of an env that uses a global environment template
+      dev:
+        account: default
+        template: example_global_env_template
+        modules:
+          # This env will deploy this module in addition to those defined in the template
+          additional-module:
+            cdk_app: "@aws-mdaa/dataops-job"
+            app_configs:
+              - ./dataops/dataops-job.yaml
+
+  # This domain uses a domain-specific template for its environments
+  templated-domain:
+    # Env templates can also be defined per domain.
+    env_templates:
+      example_domain_env_template:
+        modules:
+          roles:
+            cdk_app: "@aws-mdaa/roles"
+            app_configs:
+              - ./roles.yaml
+          datalake:
+            cdk_app: "@aws-mdaa/datalake"
+            app_configs:
+              - ./datalake.yaml
+    environments:
+      # Example of envs that use a domain-specific environment template
+      dev:
+        account: default
+        template: example_domain_env_template
+      test:
+        account: default
+        template: example_domain_env_template
+
 
 # Optional - Configs for MDAA Devops resources to be deployed when using the '-p' MDAA CLI flag
 devops:

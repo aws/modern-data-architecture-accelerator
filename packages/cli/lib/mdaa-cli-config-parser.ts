@@ -72,13 +72,18 @@ export interface MdaaModuleConfig {
 
 export interface MdaaEnvironmentConfig {
     /**
+     * If specified, the referenced environment template will be used as the basis for this environment config.
+     * Template values can be overridden with specific values in this config.
+     */
+    readonly template?: string
+    /**
      * Target account for deployment
      */
     readonly account?: string
     /**
      * Arn or SSM Import (prefix with ssm:) of the environment provider
      */
-    readonly modules: { [ moduleName: string ]: MdaaModuleConfig }
+    readonly modules?: { [ moduleName: string ]: MdaaModuleConfig }
     /**
      * Additional CDK Context key/value pairs
      */
@@ -164,6 +169,10 @@ export interface MdaaDomainConfig {
      * Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.
      */
     readonly custom_naming?: MdaaCustomNaming
+    /**
+     * Templates for environments which can be referenced throughout the config.
+     */
+    readonly env_templates?: { [ name: string ]: MdaaEnvironmentConfig }
 }
 
 export interface MdaaConfigContents {
@@ -232,6 +241,11 @@ export interface MdaaConfigContents {
      * Configurations used when deploying MDAA DevOps resources
      */
     readonly devops?: DevOpsConfigContents
+
+    /**
+     * Templates for environments which can be referenced throughout the config.
+     */
+    readonly env_templates?: {[name:string]:MdaaEnvironmentConfig}
 }
 
 export interface MdaaParserConfig {
@@ -299,12 +313,26 @@ export class MdaaCliConfig {
                 if ( !namePattern.test( envEntry[ 0 ] ) ) {
                     throw new Error( `Env name ${ envEntry[ 0 ] } must match pattern ${ MdaaCliConfig.VALIDATE_NAME_REGEXP }` )
                 }
-                Object.entries( envEntry[ 1 ].modules ).forEach( moduleEntry => {
+                Object.entries( envEntry[ 1 ].modules || {} ).forEach( moduleEntry => {
+                    if ( !namePattern.test( moduleEntry[ 0 ] ) ) {
+                        throw new Error( `Module name ${ moduleEntry[ 0 ] } must match pattern ${ MdaaCliConfig.VALIDATE_NAME_REGEXP }` )
+                    }
+                } )
+            } )
+            Object.entries( domainEntry[ 1 ].env_templates || {} ).forEach( envTemplateEntry => {
+                Object.entries( envTemplateEntry[ 1 ].modules || {} ).forEach( moduleEntry => {
                     if ( !namePattern.test( moduleEntry[ 0 ] ) ) {
                         throw new Error( `Module name ${ moduleEntry[ 0 ] } must match pattern ${ MdaaCliConfig.VALIDATE_NAME_REGEXP }` )
                     }
                 } )
             } )
         })
+        Object.entries( this.contents.env_templates || {} ).forEach( envTemplateEntry => {
+            Object.entries( envTemplateEntry[ 1 ].modules || {} ).forEach( moduleEntry => {
+                if ( !namePattern.test( moduleEntry[ 0 ] ) ) {
+                    throw new Error( `Module name ${ moduleEntry[ 0 ] } must match pattern ${ MdaaCliConfig.VALIDATE_NAME_REGEXP }` )
+                }
+            } )
+        } )
     }
 }

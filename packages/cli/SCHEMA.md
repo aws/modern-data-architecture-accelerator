@@ -14,6 +14,7 @@
 | - [custom_aspects](#custom_aspects )     | No      | array           | No         | -                                     | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
 | - [devops](#devops )                     | No      | object          | No         | In #/definitions/DevOpsConfigContents | Configurations used when deploying MDAA DevOps resources                                                                                                                                                     |
 | + [domains](#domains )                   | No      | object          | No         | -                                     | Objects representing domains to create                                                                                                                                                                       |
+| - [env_templates](#env_templates )       | No      | object          | No         | -                                     | Templates for environments which can be referenced throughout the config.                                                                                                                                    |
 | - [log_suppressions](#log_suppressions ) | No      | boolean         | No         | -                                     | A string representing the target region                                                                                                                                                                      |
 | - [mdaa_version](#mdaa_version )         | No      | string          | No         | -                                     | Override the MDAA version                                                                                                                                                                                    |
 | - [naming_class](#naming_class )         | No      | string          | No         | -                                     | The MDAA Naming Class to be utilized from the Naming Module                                                                                                                                                  |
@@ -1180,6 +1181,7 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 | - [context](#domains_additionalProperties_context )                 | No      | object          | No         | -                                 | Additional CDK Context key/value pairs                                                                                                                                                                       |
 | - [custom_aspects](#domains_additionalProperties_custom_aspects )   | No      | array           | No         | -                                 | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
 | - [custom_naming](#domains_additionalProperties_custom_naming )     | No      | object          | No         | In #/definitions/MdaaCustomNaming | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
+| - [env_templates](#domains_additionalProperties_env_templates )     | No      | object          | No         | -                                 | Templates for environments which can be referenced throughout the config.                                                                                                                                    |
 | + [environments](#domains_additionalProperties_environments )       | No      | object          | No         | -                                 | Arn or SSM Import (prefix with ssm:) of the environment provider                                                                                                                                             |
 | - [mdaa_version](#domains_additionalProperties_mdaa_version )       | No      | string          | No         | -                                 | Override the MDAA version                                                                                                                                                                                    |
 | - [tag_config_data](#domains_additionalProperties_tag_config_data ) | No      | object          | No         | -                                 | Tagging data which will be passed directly to apps                                                                                                                                                           |
@@ -1340,21 +1342,21 @@ with later configuration files taking precendence over earlier configurations.
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-#### <a name="domains_additionalProperties_environments"></a>6.1.6. Property `root > domains > additionalProperties > environments`
+#### <a name="domains_additionalProperties_env_templates"></a>6.1.6. Property `root > domains > additionalProperties > env_templates`
 
-|                           |                                                                                                                                                     |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                            |
-| **Required**              | Yes                                                                                                                                                 |
-| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties "Each additional property must conform to the following schema") |
+|                           |                                                                                                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                             |
+| **Required**              | No                                                                                                                                                   |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_env_templates_additionalProperties "Each additional property must conform to the following schema") |
 
-**Description:** Arn or SSM Import (prefix with ssm:) of the environment provider
+**Description:** Templates for environments which can be referenced throughout the config.
 
-| Property                                                               | Pattern | Type   | Deprecated | Definition                             | Title/Description |
-| ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------- | ----------------- |
-| - [](#domains_additionalProperties_environments_additionalProperties ) | No      | object | No         | In #/definitions/MdaaEnvironmentConfig | -                 |
+| Property                                                                | Pattern | Type   | Deprecated | Definition                             | Title/Description |
+| ----------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------- | ----------------- |
+| - [](#domains_additionalProperties_env_templates_additionalProperties ) | No      | object | No         | In #/definitions/MdaaEnvironmentConfig | -                 |
 
-##### <a name="domains_additionalProperties_environments_additionalProperties"></a>6.1.6.1. Property `root > domains > additionalProperties > environments > MdaaEnvironmentConfig`
+##### <a name="domains_additionalProperties_env_templates_additionalProperties"></a>6.1.6.1. Property `root > domains > additionalProperties > env_templates > MdaaEnvironmentConfig`
 
 |                           |                                                         |
 | ------------------------- | ------------------------------------------------------- |
@@ -1363,21 +1365,22 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
 | **Defined in**            | #/definitions/MdaaEnvironmentConfig                     |
 
-| Property                                                                                              | Pattern | Type            | Deprecated | Definition                                                            | Title/Description                                                                                                                                                                                            |
-| ----------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [account](#domains_additionalProperties_environments_additionalProperties_account )                 | No      | string          | No         | -                                                                     | Target account for deployment                                                                                                                                                                                |
-| - [app_config_data](#domains_additionalProperties_environments_additionalProperties_app_config_data ) | No      | object          | No         | -                                                                     | Config data which will be passed directly to apps                                                                                                                                                            |
-| - [app_configs](#domains_additionalProperties_environments_additionalProperties_app_configs )         | No      | array of string | No         | -                                                                     | A list of paths to MDAA app configuration files.<br />Configurations will be compiled together in the order they appear,<br />with later configuration files taking precendence over earlier configurations. |
-| - [context](#domains_additionalProperties_environments_additionalProperties_context )                 | No      | object          | No         | -                                                                     | Additional CDK Context key/value pairs                                                                                                                                                                       |
-| - [custom_aspects](#domains_additionalProperties_environments_additionalProperties_custom_aspects )   | No      | array           | No         | -                                                                     | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
-| - [custom_naming](#domains_additionalProperties_environments_additionalProperties_custom_naming )     | No      | object          | No         | Same as [custom_naming](#domains_additionalProperties_custom_naming ) | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
-| - [mdaa_version](#domains_additionalProperties_environments_additionalProperties_mdaa_version )       | No      | string          | No         | -                                                                     | Override the MDAA version                                                                                                                                                                                    |
-| + [modules](#domains_additionalProperties_environments_additionalProperties_modules )                 | No      | object          | No         | -                                                                     | Arn or SSM Import (prefix with ssm:) of the environment provider                                                                                                                                             |
-| - [tag_config_data](#domains_additionalProperties_environments_additionalProperties_tag_config_data ) | No      | object          | No         | -                                                                     | Tagging data which will be passed directly to apps                                                                                                                                                           |
-| - [tag_configs](#domains_additionalProperties_environments_additionalProperties_tag_configs )         | No      | array of string | No         | -                                                                     | A list of paths to tag configuration files.<br />Configurations will be compiled together in the order they appear,<br />with later configuration files taking precendence over earlier configurations.      |
-| - [use_bootstrap](#domains_additionalProperties_environments_additionalProperties_use_bootstrap )     | No      | boolean         | No         | -                                                                     | If true (default), will use the MDAA bootstrap env                                                                                                                                                           |
+| Property                                                                                               | Pattern | Type            | Deprecated | Definition                                                            | Title/Description                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [account](#domains_additionalProperties_env_templates_additionalProperties_account )                 | No      | string          | No         | -                                                                     | Target account for deployment                                                                                                                                                                                |
+| - [app_config_data](#domains_additionalProperties_env_templates_additionalProperties_app_config_data ) | No      | object          | No         | -                                                                     | Config data which will be passed directly to apps                                                                                                                                                            |
+| - [app_configs](#domains_additionalProperties_env_templates_additionalProperties_app_configs )         | No      | array of string | No         | -                                                                     | A list of paths to MDAA app configuration files.<br />Configurations will be compiled together in the order they appear,<br />with later configuration files taking precendence over earlier configurations. |
+| - [context](#domains_additionalProperties_env_templates_additionalProperties_context )                 | No      | object          | No         | -                                                                     | Additional CDK Context key/value pairs                                                                                                                                                                       |
+| - [custom_aspects](#domains_additionalProperties_env_templates_additionalProperties_custom_aspects )   | No      | array           | No         | -                                                                     | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
+| - [custom_naming](#domains_additionalProperties_env_templates_additionalProperties_custom_naming )     | No      | object          | No         | Same as [custom_naming](#domains_additionalProperties_custom_naming ) | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
+| - [mdaa_version](#domains_additionalProperties_env_templates_additionalProperties_mdaa_version )       | No      | string          | No         | -                                                                     | Override the MDAA version                                                                                                                                                                                    |
+| - [modules](#domains_additionalProperties_env_templates_additionalProperties_modules )                 | No      | object          | No         | -                                                                     | Arn or SSM Import (prefix with ssm:) of the environment provider                                                                                                                                             |
+| - [tag_config_data](#domains_additionalProperties_env_templates_additionalProperties_tag_config_data ) | No      | object          | No         | -                                                                     | Tagging data which will be passed directly to apps                                                                                                                                                           |
+| - [tag_configs](#domains_additionalProperties_env_templates_additionalProperties_tag_configs )         | No      | array of string | No         | -                                                                     | A list of paths to tag configuration files.<br />Configurations will be compiled together in the order they appear,<br />with later configuration files taking precendence over earlier configurations.      |
+| - [template](#domains_additionalProperties_env_templates_additionalProperties_template )               | No      | string          | No         | -                                                                     | If specified, the referenced environment template will be used as the basis for this environment config.<br />Template values can be overridden with specific values in this config.                         |
+| - [use_bootstrap](#domains_additionalProperties_env_templates_additionalProperties_use_bootstrap )     | No      | boolean         | No         | -                                                                     | If true (default), will use the MDAA bootstrap env                                                                                                                                                           |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_account"></a>6.1.6.1.1. Property `root > domains > additionalProperties > environments > additionalProperties > account`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_account"></a>6.1.6.1.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > account`
 
 |              |          |
 | ------------ | -------- |
@@ -1386,21 +1389,21 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** Target account for deployment
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_app_config_data"></a>6.1.6.1.2. Property `root > domains > additionalProperties > environments > additionalProperties > app_config_data`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_app_config_data"></a>6.1.6.1.2. Property `root > domains > additionalProperties > env_templates > additionalProperties > app_config_data`
 
-|                           |                                                                                                                                                                                          |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                                                 |
-| **Required**              | No                                                                                                                                                                                       |
-| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties_app_config_data_additionalProperties "Each additional property must conform to the following schema") |
+|                           |                                                                                                                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                                  |
+| **Required**              | No                                                                                                                                                                                        |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_env_templates_additionalProperties_app_config_data_additionalProperties "Each additional property must conform to the following schema") |
 
 **Description:** Config data which will be passed directly to apps
 
-| Property                                                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#domains_additionalProperties_environments_additionalProperties_app_config_data_additionalProperties ) | No      | object | No         | -          | -                 |
+| Property                                                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#domains_additionalProperties_env_templates_additionalProperties_app_config_data_additionalProperties ) | No      | object | No         | -          | -                 |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_app_config_data_additionalProperties"></a>6.1.6.1.2.1. Property `root > domains > additionalProperties > environments > additionalProperties > app_config_data > additionalProperties`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_app_config_data_additionalProperties"></a>6.1.6.1.2.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > app_config_data > additionalProperties`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1408,7 +1411,7 @@ with later configuration files taking precendence over earlier configurations.
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_app_configs"></a>6.1.6.1.3. Property `root > domains > additionalProperties > environments > additionalProperties > app_configs`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_app_configs"></a>6.1.6.1.3. Property `root > domains > additionalProperties > env_templates > additionalProperties > app_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1427,32 +1430,32 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                        | Description |
-| ------------------------------------------------------------------------------------------------------ | ----------- |
-| [app_configs items](#domains_additionalProperties_environments_additionalProperties_app_configs_items) | -           |
+| Each item of this array must be                                                                         | Description |
+| ------------------------------------------------------------------------------------------------------- | ----------- |
+| [app_configs items](#domains_additionalProperties_env_templates_additionalProperties_app_configs_items) | -           |
 
-###### <a name="autogenerated_heading_24"></a>6.1.6.1.3.1. root > domains > additionalProperties > environments > additionalProperties > app_configs > app_configs items
+###### <a name="autogenerated_heading_24"></a>6.1.6.1.3.1. root > domains > additionalProperties > env_templates > additionalProperties > app_configs > app_configs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_context"></a>6.1.6.1.4. Property `root > domains > additionalProperties > environments > additionalProperties > context`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_context"></a>6.1.6.1.4. Property `root > domains > additionalProperties > env_templates > additionalProperties > context`
 
-|                           |                                                                                                                                                                                  |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                                         |
-| **Required**              | No                                                                                                                                                                               |
-| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties_context_additionalProperties "Each additional property must conform to the following schema") |
+|                           |                                                                                                                                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                          |
+| **Required**              | No                                                                                                                                                                                |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_env_templates_additionalProperties_context_additionalProperties "Each additional property must conform to the following schema") |
 
 **Description:** Additional CDK Context key/value pairs
 
-| Property                                                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#domains_additionalProperties_environments_additionalProperties_context_additionalProperties ) | No      | object | No         | -          | -                 |
+| Property                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#domains_additionalProperties_env_templates_additionalProperties_context_additionalProperties ) | No      | object | No         | -          | -                 |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_context_additionalProperties"></a>6.1.6.1.4.1. Property `root > domains > additionalProperties > environments > additionalProperties > context > additionalProperties`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_context_additionalProperties"></a>6.1.6.1.4.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > context > additionalProperties`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1460,7 +1463,7 @@ with later configuration files taking precendence over earlier configurations.
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_custom_aspects"></a>6.1.6.1.5. Property `root > domains > additionalProperties > environments > additionalProperties > custom_aspects`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_custom_aspects"></a>6.1.6.1.5. Property `root > domains > additionalProperties > env_templates > additionalProperties > custom_aspects`
 
 |              |         |
 | ------------ | ------- |
@@ -1477,11 +1480,11 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                          | Description |
-| -------------------------------------------------------------------------------------------------------- | ----------- |
-| [MdaaCustomAspect](#domains_additionalProperties_environments_additionalProperties_custom_aspects_items) | -           |
+| Each item of this array must be                                                                           | Description |
+| --------------------------------------------------------------------------------------------------------- | ----------- |
+| [MdaaCustomAspect](#domains_additionalProperties_env_templates_additionalProperties_custom_aspects_items) | -           |
 
-###### <a name="autogenerated_heading_25"></a>6.1.6.1.5.1. root > domains > additionalProperties > environments > additionalProperties > custom_aspects > MdaaCustomAspect
+###### <a name="autogenerated_heading_25"></a>6.1.6.1.5.1. root > domains > additionalProperties > env_templates > additionalProperties > custom_aspects > MdaaCustomAspect
 
 |                           |                                                         |
 | ------------------------- | ------------------------------------------------------- |
@@ -1490,7 +1493,7 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
 | **Same definition as**    | [custom_aspects_items](#custom_aspects_items)           |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_custom_naming"></a>6.1.6.1.6. Property `root > domains > additionalProperties > environments > additionalProperties > custom_naming`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_custom_naming"></a>6.1.6.1.6. Property `root > domains > additionalProperties > env_templates > additionalProperties > custom_naming`
 
 |                           |                                                              |
 | ------------------------- | ------------------------------------------------------------ |
@@ -1501,7 +1504,7 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_mdaa_version"></a>6.1.6.1.7. Property `root > domains > additionalProperties > environments > additionalProperties > mdaa_version`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_mdaa_version"></a>6.1.6.1.7. Property `root > domains > additionalProperties > env_templates > additionalProperties > mdaa_version`
 
 |              |          |
 | ------------ | -------- |
@@ -1510,21 +1513,21 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** Override the MDAA version
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules"></a>6.1.6.1.8. Property `root > domains > additionalProperties > environments > additionalProperties > modules`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules"></a>6.1.6.1.8. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules`
 
-|                           |                                                                                                                                                                                  |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                                         |
-| **Required**              | Yes                                                                                                                                                                              |
-| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties "Each additional property must conform to the following schema") |
+|                           |                                                                                                                                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                          |
+| **Required**              | No                                                                                                                                                                                |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties "Each additional property must conform to the following schema") |
 
 **Description:** Arn or SSM Import (prefix with ssm:) of the environment provider
 
-| Property                                                                                            | Pattern | Type   | Deprecated | Definition                        | Title/Description |
-| --------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------- | ----------------- |
-| - [](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties ) | No      | object | No         | In #/definitions/MdaaModuleConfig | -                 |
+| Property                                                                                             | Pattern | Type   | Deprecated | Definition                        | Title/Description |
+| ---------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------- | ----------------- |
+| - [](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties ) | No      | object | No         | In #/definitions/MdaaModuleConfig | -                 |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties"></a>6.1.6.1.8.1. Property `root > domains > additionalProperties > environments > additionalProperties > modules > MdaaModuleConfig`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties"></a>6.1.6.1.8.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > MdaaModuleConfig`
 
 |                           |                                                         |
 | ------------------------- | ------------------------------------------------------- |
@@ -1533,22 +1536,22 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
 | **Defined in**            | #/definitions/MdaaModuleConfig                          |
 
-| Property                                                                                                                                   | Pattern | Type            | Deprecated | Definition                                                            | Title/Description                                                                                                                                                                                            |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [additional_accounts](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_additional_accounts ) | No      | array of string | No         | -                                                                     | A list of additional accounts into which the module may deploy resources.                                                                                                                                    |
-| - [additional_context](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_additional_context )   | No      | object          | No         | -                                                                     | Additional CDK Context key/value pairs                                                                                                                                                                       |
-| - [app_config_data](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_app_config_data )         | No      | object          | No         | -                                                                     | Config data which will be passed directly to apps                                                                                                                                                            |
-| - [app_configs](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_app_configs )                 | No      | array of string | No         | -                                                                     | A list of paths to MDAA app configuration files.<br />Configurations will be compiled together in the order they appear,<br />with later configuration files taking precendence over earlier configurations. |
-| + [cdk_app](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_cdk_app )                         | No      | string          | No         | -                                                                     | The MDAA CDK Module/App to be deployed                                                                                                                                                                       |
-| - [context](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_context )                         | No      | object          | No         | -                                                                     | Additional CDK Context key/value pairs                                                                                                                                                                       |
-| - [custom_aspects](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_custom_aspects )           | No      | array           | No         | -                                                                     | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
-| - [custom_naming](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_custom_naming )             | No      | object          | No         | Same as [custom_naming](#domains_additionalProperties_custom_naming ) | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
-| - [mdaa_version](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_mdaa_version )               | No      | string          | No         | -                                                                     | Override the MDAA version                                                                                                                                                                                    |
-| - [tag_config_data](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_tag_config_data )         | No      | object          | No         | -                                                                     | Tagging data which will be passed directly to apps                                                                                                                                                           |
-| - [tag_configs](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_tag_configs )                 | No      | array of string | No         | -                                                                     | A list of paths to tag configuration files.<br />Configurations will be compiled together in the order they appear,<br />with later configuration files taking precendence over earlier configurations.      |
-| - [use_bootstrap](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_use_bootstrap )             | No      | boolean         | No         | -                                                                     | If true (default), will use the MDAA bootstrap env                                                                                                                                                           |
+| Property                                                                                                                                    | Pattern | Type            | Deprecated | Definition                                                            | Title/Description                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [additional_accounts](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_accounts ) | No      | array of string | No         | -                                                                     | A list of additional accounts into which the module may deploy resources.                                                                                                                                    |
+| - [additional_context](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_context )   | No      | object          | No         | -                                                                     | Additional CDK Context key/value pairs                                                                                                                                                                       |
+| - [app_config_data](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_config_data )         | No      | object          | No         | -                                                                     | Config data which will be passed directly to apps                                                                                                                                                            |
+| - [app_configs](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_configs )                 | No      | array of string | No         | -                                                                     | A list of paths to MDAA app configuration files.<br />Configurations will be compiled together in the order they appear,<br />with later configuration files taking precendence over earlier configurations. |
+| + [cdk_app](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_cdk_app )                         | No      | string          | No         | -                                                                     | The MDAA CDK Module/App to be deployed                                                                                                                                                                       |
+| - [context](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_context )                         | No      | object          | No         | -                                                                     | Additional CDK Context key/value pairs                                                                                                                                                                       |
+| - [custom_aspects](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_custom_aspects )           | No      | array           | No         | -                                                                     | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
+| - [custom_naming](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_custom_naming )             | No      | object          | No         | Same as [custom_naming](#domains_additionalProperties_custom_naming ) | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                            |
+| - [mdaa_version](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_mdaa_version )               | No      | string          | No         | -                                                                     | Override the MDAA version                                                                                                                                                                                    |
+| - [tag_config_data](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_tag_config_data )         | No      | object          | No         | -                                                                     | Tagging data which will be passed directly to apps                                                                                                                                                           |
+| - [tag_configs](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_tag_configs )                 | No      | array of string | No         | -                                                                     | A list of paths to tag configuration files.<br />Configurations will be compiled together in the order they appear,<br />with later configuration files taking precendence over earlier configurations.      |
+| - [use_bootstrap](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_use_bootstrap )             | No      | boolean         | No         | -                                                                     | If true (default), will use the MDAA bootstrap env                                                                                                                                                           |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_additional_accounts"></a>6.1.6.1.8.1.1. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > additional_accounts`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_accounts"></a>6.1.6.1.8.1.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > additional_accounts`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1565,53 +1568,53 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                                                     | Description |
-| --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [additional_accounts items](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_additional_accounts_items) | -           |
+| Each item of this array must be                                                                                                                      | Description |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [additional_accounts items](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_accounts_items) | -           |
 
-###### <a name="autogenerated_heading_26"></a>6.1.6.1.8.1.1.1. root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > additional_accounts > additional_accounts items
+###### <a name="autogenerated_heading_26"></a>6.1.6.1.8.1.1.1. root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > additional_accounts > additional_accounts items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_additional_context"></a>6.1.6.1.8.1.2. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > additional_context`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_context"></a>6.1.6.1.8.1.2. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > additional_context`
 
-|                           |                                                                                                                                                                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Type**                  | `object`                                                                                                                                                                                                                 |
-| **Required**              | No                                                                                                                                                                                                                       |
-| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_additional_context_additionalProperties "Each additional property must conform to the following schema") |
+|                           |                                                                                                                                                                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                                                                  |
+| **Required**              | No                                                                                                                                                                                                                        |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_context_additionalProperties "Each additional property must conform to the following schema") |
 
 **Description:** Additional CDK Context key/value pairs
 
-| Property                                                                                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_additional_context_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                                                                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_context_additionalProperties ) | No      | string | No         | -          | -                 |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_additional_context_additionalProperties"></a>6.1.6.1.8.1.2.1. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > additional_context > additionalProperties`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_context_additionalProperties"></a>6.1.6.1.8.1.2.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > additional_context > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_app_config_data"></a>6.1.6.1.8.1.3. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > app_config_data`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_config_data"></a>6.1.6.1.8.1.3. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > app_config_data`
 
-|                           |                                                                                                                                                                                                                       |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                                                                              |
-| **Required**              | No                                                                                                                                                                                                                    |
-| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_app_config_data_additionalProperties "Each additional property must conform to the following schema") |
+|                           |                                                                                                                                                                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                                                               |
+| **Required**              | No                                                                                                                                                                                                                     |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_config_data_additionalProperties "Each additional property must conform to the following schema") |
 
 **Description:** Config data which will be passed directly to apps
 
-| Property                                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_app_config_data_additionalProperties ) | No      | object | No         | -          | -                 |
+| Property                                                                                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_config_data_additionalProperties ) | No      | object | No         | -          | -                 |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_app_config_data_additionalProperties"></a>6.1.6.1.8.1.3.1. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > app_config_data > additionalProperties`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_config_data_additionalProperties"></a>6.1.6.1.8.1.3.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > app_config_data > additionalProperties`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1619,7 +1622,7 @@ with later configuration files taking precendence over earlier configurations.
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_app_configs"></a>6.1.6.1.8.1.4. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > app_configs`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_configs"></a>6.1.6.1.8.1.4. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > app_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1638,18 +1641,18 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                                     | Description |
-| ----------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [app_configs items](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_app_configs_items) | -           |
+| Each item of this array must be                                                                                                      | Description |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| [app_configs items](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_configs_items) | -           |
 
-###### <a name="autogenerated_heading_27"></a>6.1.6.1.8.1.4.1. root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > app_configs > app_configs items
+###### <a name="autogenerated_heading_27"></a>6.1.6.1.8.1.4.1. root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > app_configs > app_configs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_cdk_app"></a>6.1.6.1.8.1.5. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > cdk_app`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_cdk_app"></a>6.1.6.1.8.1.5. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > cdk_app`
 
 |              |          |
 | ------------ | -------- |
@@ -1658,21 +1661,21 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** The MDAA CDK Module/App to be deployed
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_context"></a>6.1.6.1.8.1.6. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > context`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_context"></a>6.1.6.1.8.1.6. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > context`
 
-|                           |                                                                                                                                                                                                               |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                                                                      |
-| **Required**              | No                                                                                                                                                                                                            |
-| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_context_additionalProperties "Each additional property must conform to the following schema") |
+|                           |                                                                                                                                                                                                                |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                                                       |
+| **Required**              | No                                                                                                                                                                                                             |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_context_additionalProperties "Each additional property must conform to the following schema") |
 
 **Description:** Additional CDK Context key/value pairs
 
-| Property                                                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_context_additionalProperties ) | No      | object | No         | -          | -                 |
+| Property                                                                                                                          | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_context_additionalProperties ) | No      | object | No         | -          | -                 |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_context_additionalProperties"></a>6.1.6.1.8.1.6.1. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > context > additionalProperties`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_context_additionalProperties"></a>6.1.6.1.8.1.6.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > context > additionalProperties`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1680,7 +1683,7 @@ with later configuration files taking precendence over earlier configurations.
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_custom_aspects"></a>6.1.6.1.8.1.7. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > custom_aspects`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_custom_aspects"></a>6.1.6.1.8.1.7. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > custom_aspects`
 
 |              |         |
 | ------------ | ------- |
@@ -1697,11 +1700,11 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                                       | Description |
-| ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [MdaaCustomAspect](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_custom_aspects_items) | -           |
+| Each item of this array must be                                                                                                        | Description |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| [MdaaCustomAspect](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_custom_aspects_items) | -           |
 
-###### <a name="autogenerated_heading_28"></a>6.1.6.1.8.1.7.1. root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > custom_aspects > MdaaCustomAspect
+###### <a name="autogenerated_heading_28"></a>6.1.6.1.8.1.7.1. root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > custom_aspects > MdaaCustomAspect
 
 |                           |                                                         |
 | ------------------------- | ------------------------------------------------------- |
@@ -1710,7 +1713,7 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
 | **Same definition as**    | [custom_aspects_items](#custom_aspects_items)           |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_custom_naming"></a>6.1.6.1.8.1.8. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > custom_naming`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_custom_naming"></a>6.1.6.1.8.1.8. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > custom_naming`
 
 |                           |                                                              |
 | ------------------------- | ------------------------------------------------------------ |
@@ -1721,7 +1724,7 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_mdaa_version"></a>6.1.6.1.8.1.9. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > mdaa_version`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_mdaa_version"></a>6.1.6.1.8.1.9. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > mdaa_version`
 
 |              |          |
 | ------------ | -------- |
@@ -1730,28 +1733,28 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** Override the MDAA version
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_tag_config_data"></a>6.1.6.1.8.1.10. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > tag_config_data`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_tag_config_data"></a>6.1.6.1.8.1.10. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > tag_config_data`
 
-|                           |                                                                                                                                                                                                                       |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                                                                              |
-| **Required**              | No                                                                                                                                                                                                                    |
-| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_tag_config_data_additionalProperties "Each additional property must conform to the following schema") |
+|                           |                                                                                                                                                                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                                                               |
+| **Required**              | No                                                                                                                                                                                                                     |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_tag_config_data_additionalProperties "Each additional property must conform to the following schema") |
 
 **Description:** Tagging data which will be passed directly to apps
 
-| Property                                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_tag_config_data_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                                                                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_tag_config_data_additionalProperties ) | No      | string | No         | -          | -                 |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_tag_config_data_additionalProperties"></a>6.1.6.1.8.1.10.1. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > tag_config_data > additionalProperties`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_tag_config_data_additionalProperties"></a>6.1.6.1.8.1.10.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > tag_config_data > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_tag_configs"></a>6.1.6.1.8.1.11. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > tag_configs`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_tag_configs"></a>6.1.6.1.8.1.11. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > tag_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1770,18 +1773,18 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                                                     | Description |
-| ----------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [tag_configs items](#domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_tag_configs_items) | -           |
+| Each item of this array must be                                                                                                      | Description |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| [tag_configs items](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_tag_configs_items) | -           |
 
-###### <a name="autogenerated_heading_29"></a>6.1.6.1.8.1.11.1. root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > tag_configs > tag_configs items
+###### <a name="autogenerated_heading_29"></a>6.1.6.1.8.1.11.1. root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > tag_configs > tag_configs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_modules_additionalProperties_use_bootstrap"></a>6.1.6.1.8.1.12. Property `root > domains > additionalProperties > environments > additionalProperties > modules > additionalProperties > use_bootstrap`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_use_bootstrap"></a>6.1.6.1.8.1.12. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > use_bootstrap`
 
 |              |           |
 | ------------ | --------- |
@@ -1790,28 +1793,28 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** If true (default), will use the MDAA bootstrap env
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_tag_config_data"></a>6.1.6.1.9. Property `root > domains > additionalProperties > environments > additionalProperties > tag_config_data`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_config_data"></a>6.1.6.1.9. Property `root > domains > additionalProperties > env_templates > additionalProperties > tag_config_data`
 
-|                           |                                                                                                                                                                                          |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Type**                  | `object`                                                                                                                                                                                 |
-| **Required**              | No                                                                                                                                                                                       |
-| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties_tag_config_data_additionalProperties "Each additional property must conform to the following schema") |
+|                           |                                                                                                                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                                                                  |
+| **Required**              | No                                                                                                                                                                                        |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_env_templates_additionalProperties_tag_config_data_additionalProperties "Each additional property must conform to the following schema") |
 
 **Description:** Tagging data which will be passed directly to apps
 
-| Property                                                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#domains_additionalProperties_environments_additionalProperties_tag_config_data_additionalProperties ) | No      | string | No         | -          | -                 |
+| Property                                                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#domains_additionalProperties_env_templates_additionalProperties_tag_config_data_additionalProperties ) | No      | string | No         | -          | -                 |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_tag_config_data_additionalProperties"></a>6.1.6.1.9.1. Property `root > domains > additionalProperties > environments > additionalProperties > tag_config_data > additionalProperties`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_config_data_additionalProperties"></a>6.1.6.1.9.1. Property `root > domains > additionalProperties > env_templates > additionalProperties > tag_config_data > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_tag_configs"></a>6.1.6.1.10. Property `root > domains > additionalProperties > environments > additionalProperties > tag_configs`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_tag_configs"></a>6.1.6.1.10. Property `root > domains > additionalProperties > env_templates > additionalProperties > tag_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1830,18 +1833,28 @@ with later configuration files taking precendence over earlier configurations.
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                                        | Description |
-| ------------------------------------------------------------------------------------------------------ | ----------- |
-| [tag_configs items](#domains_additionalProperties_environments_additionalProperties_tag_configs_items) | -           |
+| Each item of this array must be                                                                         | Description |
+| ------------------------------------------------------------------------------------------------------- | ----------- |
+| [tag_configs items](#domains_additionalProperties_env_templates_additionalProperties_tag_configs_items) | -           |
 
-###### <a name="autogenerated_heading_30"></a>6.1.6.1.10.1. root > domains > additionalProperties > environments > additionalProperties > tag_configs > tag_configs items
+###### <a name="autogenerated_heading_30"></a>6.1.6.1.10.1. root > domains > additionalProperties > env_templates > additionalProperties > tag_configs > tag_configs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_environments_additionalProperties_use_bootstrap"></a>6.1.6.1.11. Property `root > domains > additionalProperties > environments > additionalProperties > use_bootstrap`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_template"></a>6.1.6.1.11. Property `root > domains > additionalProperties > env_templates > additionalProperties > template`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** If specified, the referenced environment template will be used as the basis for this environment config.
+Template values can be overridden with specific values in this config.
+
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_use_bootstrap"></a>6.1.6.1.12. Property `root > domains > additionalProperties > env_templates > additionalProperties > use_bootstrap`
 
 |              |           |
 | ------------ | --------- |
@@ -1850,7 +1863,30 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** If true (default), will use the MDAA bootstrap env
 
-#### <a name="domains_additionalProperties_mdaa_version"></a>6.1.7. Property `root > domains > additionalProperties > mdaa_version`
+#### <a name="domains_additionalProperties_environments"></a>6.1.7. Property `root > domains > additionalProperties > environments`
+
+|                           |                                                                                                                                                     |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                                            |
+| **Required**              | Yes                                                                                                                                                 |
+| **Additional properties** | [[Should-conform]](#domains_additionalProperties_environments_additionalProperties "Each additional property must conform to the following schema") |
+
+**Description:** Arn or SSM Import (prefix with ssm:) of the environment provider
+
+| Property                                                               | Pattern | Type   | Deprecated | Definition                                                                                                                                   | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| - [](#domains_additionalProperties_environments_additionalProperties ) | No      | object | No         | Same as [domains_additionalProperties_env_templates_additionalProperties](#domains_additionalProperties_env_templates_additionalProperties ) | -                 |
+
+##### <a name="domains_additionalProperties_environments_additionalProperties"></a>6.1.7.1. Property `root > domains > additionalProperties > environments > MdaaEnvironmentConfig`
+
+|                           |                                                                                                                                     |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                            |
+| **Required**              | No                                                                                                                                  |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.")                                                                             |
+| **Same definition as**    | [domains_additionalProperties_env_templates_additionalProperties](#domains_additionalProperties_env_templates_additionalProperties) |
+
+#### <a name="domains_additionalProperties_mdaa_version"></a>6.1.8. Property `root > domains > additionalProperties > mdaa_version`
 
 |              |          |
 | ------------ | -------- |
@@ -1859,7 +1895,7 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** Override the MDAA version
 
-#### <a name="domains_additionalProperties_tag_config_data"></a>6.1.8. Property `root > domains > additionalProperties > tag_config_data`
+#### <a name="domains_additionalProperties_tag_config_data"></a>6.1.9. Property `root > domains > additionalProperties > tag_config_data`
 
 |                           |                                                                                                                                                        |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1873,14 +1909,14 @@ with later configuration files taking precendence over earlier configurations.
 | ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#domains_additionalProperties_tag_config_data_additionalProperties ) | No      | string | No         | -          | -                 |
 
-##### <a name="domains_additionalProperties_tag_config_data_additionalProperties"></a>6.1.8.1. Property `root > domains > additionalProperties > tag_config_data > additionalProperties`
+##### <a name="domains_additionalProperties_tag_config_data_additionalProperties"></a>6.1.9.1. Property `root > domains > additionalProperties > tag_config_data > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="domains_additionalProperties_tag_configs"></a>6.1.9. Property `root > domains > additionalProperties > tag_configs`
+#### <a name="domains_additionalProperties_tag_configs"></a>6.1.10. Property `root > domains > additionalProperties > tag_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1903,14 +1939,37 @@ with later configuration files taking precendence over earlier configurations.
 | -------------------------------------------------------------------- | ----------- |
 | [tag_configs items](#domains_additionalProperties_tag_configs_items) | -           |
 
-##### <a name="autogenerated_heading_31"></a>6.1.9.1. root > domains > additionalProperties > tag_configs > tag_configs items
+##### <a name="autogenerated_heading_31"></a>6.1.10.1. root > domains > additionalProperties > tag_configs > tag_configs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="log_suppressions"></a>7. Property `root > log_suppressions`
+## <a name="env_templates"></a>7. Property `root > env_templates`
+
+|                           |                                                                                                                         |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                |
+| **Required**              | No                                                                                                                      |
+| **Additional properties** | [[Should-conform]](#env_templates_additionalProperties "Each additional property must conform to the following schema") |
+
+**Description:** Templates for environments which can be referenced throughout the config.
+
+| Property                                   | Pattern | Type   | Deprecated | Definition                                                                                                                                   | Title/Description |
+| ------------------------------------------ | ------- | ------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| - [](#env_templates_additionalProperties ) | No      | object | No         | Same as [domains_additionalProperties_env_templates_additionalProperties](#domains_additionalProperties_env_templates_additionalProperties ) | -                 |
+
+### <a name="env_templates_additionalProperties"></a>7.1. Property `root > env_templates > MdaaEnvironmentConfig`
+
+|                           |                                                                                                                                     |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                                            |
+| **Required**              | No                                                                                                                                  |
+| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.")                                                                             |
+| **Same definition as**    | [domains_additionalProperties_env_templates_additionalProperties](#domains_additionalProperties_env_templates_additionalProperties) |
+
+## <a name="log_suppressions"></a>8. Property `root > log_suppressions`
 
 |              |           |
 | ------------ | --------- |
@@ -1919,7 +1978,7 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** A string representing the target region
 
-## <a name="mdaa_version"></a>8. Property `root > mdaa_version`
+## <a name="mdaa_version"></a>9. Property `root > mdaa_version`
 
 |              |          |
 | ------------ | -------- |
@@ -1928,7 +1987,7 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** Override the MDAA version
 
-## <a name="naming_class"></a>9. Property `root > naming_class`
+## <a name="naming_class"></a>10. Property `root > naming_class`
 
 |              |          |
 | ------------ | -------- |
@@ -1937,7 +1996,7 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** The MDAA Naming Class to be utilized from the Naming Module
 
-## <a name="naming_module"></a>10. Property `root > naming_module`
+## <a name="naming_module"></a>11. Property `root > naming_module`
 
 |              |          |
 | ------------ | -------- |
@@ -1946,7 +2005,7 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** The MDAA Naming Module to be utilized
 
-## <a name="naming_props"></a>11. Property `root > naming_props`
+## <a name="naming_props"></a>12. Property `root > naming_props`
 
 |                           |                                                                                                                        |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -1960,7 +2019,7 @@ with later configuration files taking precendence over earlier configurations.
 | ----------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#naming_props_additionalProperties ) | No      | object | No         | -          | -                 |
 
-### <a name="naming_props_additionalProperties"></a>11.1. Property `root > naming_props > additionalProperties`
+### <a name="naming_props_additionalProperties"></a>12.1. Property `root > naming_props > additionalProperties`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -1968,7 +2027,7 @@ with later configuration files taking precendence over earlier configurations.
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-## <a name="organization"></a>12. Property `root > organization`
+## <a name="organization"></a>13. Property `root > organization`
 
 |              |          |
 | ------------ | -------- |
@@ -1977,7 +2036,7 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** A string representing the target region
 
-## <a name="region"></a>13. Property `root > region`
+## <a name="region"></a>14. Property `root > region`
 
 |              |          |
 | ------------ | -------- |
@@ -1986,7 +2045,7 @@ with later configuration files taking precendence over earlier configurations.
 
 **Description:** A string representing the target region
 
-## <a name="tag_config_data"></a>14. Property `root > tag_config_data`
+## <a name="tag_config_data"></a>15. Property `root > tag_config_data`
 
 |                           |                                                                                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -2000,14 +2059,14 @@ with later configuration files taking precendence over earlier configurations.
 | -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#tag_config_data_additionalProperties ) | No      | string | No         | -          | -                 |
 
-### <a name="tag_config_data_additionalProperties"></a>14.1. Property `root > tag_config_data > additionalProperties`
+### <a name="tag_config_data_additionalProperties"></a>15.1. Property `root > tag_config_data > additionalProperties`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="tag_configs"></a>15. Property `root > tag_configs`
+## <a name="tag_configs"></a>16. Property `root > tag_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2030,7 +2089,7 @@ with later configuration files taking precendence over earlier configurations.
 | --------------------------------------- | ----------- |
 | [tag_configs items](#tag_configs_items) | -           |
 
-### <a name="autogenerated_heading_32"></a>15.1. root > tag_configs > tag_configs items
+### <a name="autogenerated_heading_32"></a>16.1. root > tag_configs > tag_configs items
 
 |              |          |
 | ------------ | -------- |
@@ -2038,4 +2097,4 @@ with later configuration files taking precendence over earlier configurations.
 | **Required** | No       |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-06 at 14:58:13 -0400
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-07 at 11:14:32 -0400

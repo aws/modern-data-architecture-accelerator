@@ -234,7 +234,7 @@ export class RolesL3Construct extends MdaaL3Construct {
                     return PolicyStatement.fromJson( statement )
                 })
                 // Create MDAA Managed Policy
-                const mdaaPolicy = new MdaaManagedPolicy( this.scope, `mdaa-managed-policy-${name}`,{
+                const mdaaPolicy = new MdaaManagedPolicy( this.scope, `caef-managed-policy-${name}`,{
                     naming: this.props.naming,
                     managedPolicyName: name,
                     document: new PolicyDocument({
