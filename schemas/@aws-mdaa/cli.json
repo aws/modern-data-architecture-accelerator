@@ -205,6 +205,13 @@
                     "$ref": "#/definitions/MdaaCustomNaming",
                     "description": "Permission policy boundary arns. Will be applied to all Roles using a CDK aspect."
                 },
+                "env_templates": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaEnvironmentConfig"
+                    },
+                    "description": "Templates for environments which can be referenced throughout the config.",
+                    "type": "object"
+                },
                 "environments": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaEnvironmentConfig"
@@ -296,14 +303,15 @@
                     },
                     "type": "array"
                 },
+                "template": {
+                    "description": "If specified, the referenced environment template will be used as the basis for this environment config.\nTemplate values can be overridden with specific values in this config.",
+                    "type": "string"
+                },
                 "use_bootstrap": {
                     "description": "If true (default), will use the MDAA bootstrap env",
                     "type": "boolean"
                 }
             },
-            "required": [
-                "modules"
-            ],
             "type": "object"
         },
         "MdaaModuleConfig": {
@@ -663,6 +671,13 @@
                 "$ref": "#/definitions/MdaaDomainConfig"
             },
             "description": "Objects representing domains to create",
+            "type": "object"
+        },
+        "env_templates": {
+            "additionalProperties": {
+                "$ref": "#/definitions/MdaaEnvironmentConfig"
+            },
+            "description": "Templates for environments which can be referenced throughout the config.",
             "type": "object"
         },
         "log_suppressions": {

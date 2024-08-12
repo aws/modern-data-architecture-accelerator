@@ -110,7 +110,8 @@ export class MdaaDeploy {
             appConfigFiles: this.config.contents.app_configs || [],
             effectiveMdaaVersion: this.config.contents.mdaa_version || this.mdaaVersion,
             customAspects: this.config.contents.custom_aspects || [],
-            customNaming: this.config.contents.naming_module && this.config.contents.naming_class ? { naming_module: this.config.contents.naming_module, naming_class: this.config.contents.naming_class, naming_props: this.config.contents.naming_props } : undefined
+            customNaming: this.config.contents.naming_module && this.config.contents.naming_class ? { naming_module: this.config.contents.naming_module, naming_class: this.config.contents.naming_class, naming_props: this.config.contents.naming_props } : undefined,
+            envTemplates: this.config.contents.env_templates || {}
         }
         this.deployDomains( globalEffectiveConfig )
         if ( this.devopsMode ) {
@@ -158,14 +159,25 @@ export class MdaaDeploy {
         }
         Object.keys( domain.environments ).filter( envName => this.devopsMode || this.envFilter == undefined || this.envFilter?.includes( envName ) ).forEach( envName => {
             const env = domain.environments[ envName ]
-            const envEffectiveConfig: EnvEffectiveConfig = this.computeEnvEffectiveConfig( envName, env, domainEffectiveConfig )
-            this.deployEnv( env, envEffectiveConfig )
+            if ( env.template && ( !domainEffectiveConfig.envTemplates || !domainEffectiveConfig.envTemplates[ env.template ] ) ) {
+                throw new Error( `Environment "${envName}" references invalid template name: ${env.template}.` )
+            }
+            const template = env.template && domainEffectiveConfig.envTemplates ? domainEffectiveConfig.envTemplates[ env.template ] : {}
+
+            let _ = require( 'lodash' );
+            const envMergedConfig = _.mergeWith( template, env )
+            const envEffectiveConfig: EnvEffectiveConfig = this.computeEnvEffectiveConfig( envName, envMergedConfig, domainEffectiveConfig )
+            this.deployEnv( envMergedConfig, envEffectiveConfig )
         } )
     }
 
     private deployEnv (
         env: MdaaEnvironmentConfig,
         envEffectiveConfig: EnvEffectiveConfig ) {
+
+        if(!env.modules) {
+            throw new Error(`Cannot deploy environment "${envEffectiveConfig.envName}" with no modules.`)
+        }
 
         if ( this.moduleFilter && !this.devopsMode ) {
             console.log( `Filtering for module ${ this.moduleFilter }` )
@@ -475,6 +487,7 @@ export class MdaaDeploy {
                 ...globalEffectiveConfig.effectiveTagConfig,
                 ...domain.tag_config_data || {}
             },
+            envTemplates: {...globalEffectiveConfig.envTemplates,...domain.env_templates},
             tagConfigFiles: [ ...globalEffectiveConfig.tagConfigFiles, ...domain.tag_configs || [] ],
             appConfigFiles: [ ...globalEffectiveConfig.appConfigFiles, ...domain.app_configs || [] ],
             domainName: domainName,
@@ -574,6 +587,7 @@ interface EffectiveConfig {
     effectiveMdaaVersion?: string
     customAspects: MdaaCustomAspect[]
     customNaming?: MdaaCustomNaming
+    envTemplates?: { [ key: string ]: MdaaEnvironmentConfig }
 }
 
 interface DomainEffectiveConfig extends EffectiveConfig {

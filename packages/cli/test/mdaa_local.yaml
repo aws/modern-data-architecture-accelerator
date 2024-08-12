@@ -25,6 +25,31 @@ custom_aspects:
       prop2:
         prop2prop1: propvalue2
 
+# Env templates can be defined for use across domains/envs
+env_templates:
+  example_global_env_template:
+    modules:
+      roles:
+        cdk_app: "@aws-mdaa/roles"
+        app_configs:
+          - ./roles.yaml
+      datalake:
+        cdk_app: "@aws-mdaa/datalake"
+        app_configs:
+          - ./datalake.yaml
+      athena-workgroup:
+        cdk_app: "@aws-mdaa/athena-workgroup"
+        app_configs:
+          - ./athena-workgroup.yaml
+      dataops-project-test:
+        cdk_app: "@aws-mdaa/dataops-project"
+        app_configs:
+          - ./dataops/dataops-project.yaml
+      dataops-crawler-test:
+        cdk_app: "@aws-mdaa/dataops-crawler"
+        app_configs:
+          - ./dataops/dataops-crawler.yaml
+
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names. This allows for multiple MDAA deployments into the same account
 # for separate purposes (such as a centralized data lake account hosting separate lines of business.)
@@ -35,7 +60,6 @@ domains:
       - tags.yaml
     environments:
       dev:
-        
         account: default
         # One or more tag files containing tags which will be applied to all deployed resources for this env
         tag_configs:
@@ -60,10 +84,34 @@ domains:
             app_configs:
               - ./datawarehouse.yaml
 
-  instance1: # Example of a specific domain name.
+  domain1: # Example of a specific domain name.
     environments:
+      # Example of an env that uses a global environment template
+      dev:
+        account: dev_acct_num
+        template: example_global_env_template
+      test:
+        account: test_acct_num
+        template: example_global_env_template
+
+
+  domain2:
+    environments:
+      # Example of an env that uses a global environment template
       dev:
         account: default
+        template: example_global_env_template
+        modules:
+          # This env will deploy this module in addition to those defined in the template
+          additional-module:
+            cdk_app: "@aws-mdaa/dataops-job"
+            app_configs:
+              - ./dataops/dataops-job.yaml
+
+  domain3:
+    # Env templates can also be defined per domain.
+    env_templates:
+      example_domain_env_template:
         modules:
           roles:
             cdk_app: "@aws-mdaa/roles"
@@ -73,36 +121,11 @@ domains:
             cdk_app: "@aws-mdaa/datalake"
             app_configs:
               - ./datalake.yaml
-          athena-workgroup:
-            cdk_app: "@aws-mdaa/athena-workgroup"
-            app_configs:
-              - ./athena-workgroup.yaml
-          dataops-project-test:
-            cdk_app: "@aws-mdaa/dataops-project"
-            app_configs:
-              - ./dataops/dataops-project.yaml
-          dataops-crawler-test:
-            cdk_app: "@aws-mdaa/dataops-crawler"
-            app_configs:
-              - ./dataops/dataops-crawler.yaml
-  instance2:
     environments:
+      # Example of an env that uses an environment template
       dev:
         account: default
-        modules:
-          roles:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
-              - ./roles.yaml
-          datalake:
-            cdk_app: "@aws-mdaa/datalake"
-            app_configs:
-              - ./datalake.yaml
-          athena-workgroup:
-            cdk_app: "@aws-mdaa/athena-workgroup"
-            app_configs:
-              - ./athena-workgroup.yaml
-          # test_dataops:
-          #   cdk_app: "@aws-mdaa/dataops-project"
-          #   app_configs:
-          #     - ./dataops-project.yaml
+        template: example_domain_env_template
+      test:
+        account: default
+        template: example_domain_env_template

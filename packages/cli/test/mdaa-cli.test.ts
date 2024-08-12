@@ -354,3 +354,65 @@ test( 'Config File Test', () => {
     mdaa.deploy()
 } );
 
+test( 'EnvTemplateTest', () => {
+    const options = {
+        dryrun: "true",
+        action: "dryrun",
+        npm_debug: "true",
+        working_dir: "test/test_working",
+        tag: "testtag"
+    }
+
+    const configContents = {
+        "organization": "sample-org",
+        "env_templates": {
+            "test_global_template": {
+                "modules": {
+                    "test-module": {
+                        "mdaa_version": "test_mod_version",
+                        "cdk_app": "@aws-mdaa/test",
+                        "app_configs": [
+                            "./test.yaml"
+                        ]
+                    }
+                }
+            }
+        },
+        "domains": {
+            "domain1": {
+                "env_templates": {
+                    "test_domain_template": {
+                        "modules": {
+                            "test-module": {
+                                "mdaa_version": "test_mod_version",
+                                "cdk_app": "@aws-mdaa/test",
+                                "app_configs": [
+                                    "./test.yaml"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "environments": {
+                    "dev-global": {
+                        "template": "test_global_template",
+                        "modules": {
+                            "test-module2": {
+                                "cdk_app": "@aws-mdaa/test",
+                                "app_configs": [
+                                    "./test2.yaml"
+                                ]
+                            }
+                        }
+                    },
+                    "dev-domain": {
+                        "template": "test_domain_template"
+                    }
+                }
+            }
+        }
+    }
+
+    const mdaa = new MdaaDeploy( options, [ "test-extra-cdk-param" ], configContents )
+    mdaa.deploy()
+} );
