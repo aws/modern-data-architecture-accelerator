@@ -614,4 +614,4 @@ This is useful when policy names need to be portable across accounts (such as fo
 **Description:** The upper limit (cutoff) for the amount of bytes a single query in a workgroup is allowed to scan.
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-06 at 12:56:23 -0400
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-16 at 13:40:40 -0400

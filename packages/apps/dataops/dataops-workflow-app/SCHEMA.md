@@ -1069,4 +1069,4 @@ If not specified, default event bus will be used.
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-06 at 12:57:44 -0400
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-16 at 13:40:35 -0400

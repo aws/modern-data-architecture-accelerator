@@ -1693,4 +1693,4 @@ Only either sourceLocationName or sourceLocationArn can be specified, not both.
 MDAA will create a VPC Endpoint for DataSync service forn this VPC ID that will be used for communication between the agent and task
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-06 at 12:58:02 -0400
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-16 at 13:40:51 -0400

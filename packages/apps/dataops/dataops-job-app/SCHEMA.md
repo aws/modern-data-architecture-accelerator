@@ -843,4 +843,4 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 | **Same definition as**    | [jobs_additionalProperties](#jobs_additionalProperties) |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-06 at 12:56:53 -0400
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-16 at 13:40:39 -0400
