@@ -1,91 +1,24 @@
 # Schema Docs
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-| Property                                                             | Pattern | Type            | Deprecated | Definition                                       | Title/Description                                                                                                                                    |
-| -------------------------------------------------------------------- | ------- | --------------- | ---------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [inventories](#inventories )                                       | No      | array           | No         | -                                                | The list of expected inventories                                                                                                                     |
-| - [inventoryPrefix](#inventoryPrefix )                               | No      | string          | No         | -                                                | Specifies the S3 prefix where inventory data will be accepted on the audit bucket                                                                    |
-| - [nag_suppressions](#nag_suppressions )                             | No      | object          | No         | In #/definitions/MdaaNagSuppressions             | Nag suppressions                                                                                                                                     |
-| - [readRoles](#readRoles )                                           | No      | array           | No         | -                                                | List of refs to roles which will be provided read access to the audit logs                                                                           |
-| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object          | No         | In #/definitions/MdaaServiceCatalogProductConfig | Service Catalog Config<br />If specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment |
-| - [sourceAccounts](#sourceAccounts )                                 | No      | array of string | No         | -                                                | List of source accounts from which audit logs will be accepted                                                                                       |
-| - [sourceRegions](#sourceRegions )                                   | No      | array of string | No         | -                                                | List of source regions from which audit logs will be accepted                                                                                        |
+| Property                                                             | Pattern | Type   | Deprecated | Definition                                       | Title/Description                                                                                                                                    |
+| -------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [nag_suppressions](#nag_suppressions )                             | No      | object | No         | In #/definitions/MdaaNagSuppressions             | Nag suppressions                                                                                                                                     |
+| - [service_catalog_product_config](#service_catalog_product_config ) | No      | object | No         | In #/definitions/MdaaServiceCatalogProductConfig | Service Catalog Config<br />If specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment |
 
-## <a name="inventories"></a>1. Property `root > inventories`
+## <a name="nag_suppressions"></a>1. Property `root > nag_suppressions`
 
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** The list of expected inventories
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be            | Description |
-| ------------------------------------------ | ----------- |
-| [BucketInventoryProps](#inventories_items) | -           |
-
-### <a name="autogenerated_heading_2"></a>1.1. root > inventories > BucketInventoryProps
-
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
-| **Defined in**            | #/definitions/BucketInventoryProps                      |
-
-| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description                    |
-| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------ |
-| + [bucketName](#inventories_items_bucketName )       | No      | string | No         | -          | Name of the bucket being inventoried |
-| + [inventoryName](#inventories_items_inventoryName ) | No      | string | No         | -          | Name of the inventory configuration  |
-
-#### <a name="inventories_items_bucketName"></a>1.1.1. Property `root > inventories > inventories items > bucketName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-**Description:** Name of the bucket being inventoried
-
-#### <a name="inventories_items_inventoryName"></a>1.1.2. Property `root > inventories > inventories items > inventoryName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | Yes      |
-
-**Description:** Name of the inventory configuration
-
-## <a name="inventoryPrefix"></a>2. Property `root > inventoryPrefix`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Specifies the S3 prefix where inventory data will be accepted on the audit bucket
-
-## <a name="nag_suppressions"></a>3. Property `root > nag_suppressions`
-
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
-| **Defined in**            | #/definitions/MdaaNagSuppressions                       |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/definitions/MdaaNagSuppressions                                         |
 
 **Description:** Nag suppressions
 
@@ -93,7 +26,7 @@
 | --------------------------------------- | ------- | ----- | ---------- | ---------- | ----------------- |
 | + [by_path](#nag_suppressions_by_path ) | No      | array | No         | -          | -                 |
 
-### <a name="nag_suppressions_by_path"></a>3.1. Property `root > nag_suppressions > by_path`
+### <a name="nag_suppressions_by_path"></a>1.1. Property `root > nag_suppressions > by_path`
 
 |              |         |
 | ------------ | ------- |
@@ -112,28 +45,28 @@
 | ----------------------------------------------------------- | ----------- |
 | [MdaaNagSuppressionByPath](#nag_suppressions_by_path_items) | -           |
 
-#### <a name="autogenerated_heading_3"></a>3.1.1. root > nag_suppressions > by_path > MdaaNagSuppressionByPath
+#### <a name="autogenerated_heading_2"></a>1.1.1. root > nag_suppressions > by_path > MdaaNagSuppressionByPath
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
-| **Defined in**            | #/definitions/MdaaNagSuppressionByPath                  |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/definitions/MdaaNagSuppressionByPath                                    |
 
 | Property                                                        | Pattern | Type            | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | + [path](#nag_suppressions_by_path_items_path )                 | No      | string          | No         | -          | -                 |
 | + [suppressions](#nag_suppressions_by_path_items_suppressions ) | No      | array of object | No         | -          | -                 |
 
-##### <a name="nag_suppressions_by_path_items_path"></a>3.1.1.1. Property `root > nag_suppressions > by_path > by_path items > path`
+##### <a name="nag_suppressions_by_path_items_path"></a>1.1.1.1. Property `root > nag_suppressions > by_path > by_path items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-##### <a name="nag_suppressions_by_path_items_suppressions"></a>3.1.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions`
+##### <a name="nag_suppressions_by_path_items_suppressions"></a>1.1.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -152,136 +85,41 @@
 | ------------------------------------------------------------------------ | ----------- |
 | [suppressions items](#nag_suppressions_by_path_items_suppressions_items) | -           |
 
-###### <a name="autogenerated_heading_4"></a>3.1.1.2.1. root > nag_suppressions > by_path > by_path items > suppressions > suppressions items
+###### <a name="autogenerated_heading_3"></a>1.1.1.2.1. root > nag_suppressions > by_path > by_path items > suppressions > suppressions items
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
 | Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | + [id](#nag_suppressions_by_path_items_suppressions_items_id )         | No      | string | No         | -          | -                 |
 | + [reason](#nag_suppressions_by_path_items_suppressions_items_reason ) | No      | string | No         | -          | -                 |
 
-###### <a name="nag_suppressions_by_path_items_suppressions_items_id"></a>3.1.1.2.1.1. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > id`
+###### <a name="nag_suppressions_by_path_items_suppressions_items_id"></a>1.1.1.2.1.1. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > id`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="nag_suppressions_by_path_items_suppressions_items_reason"></a>3.1.1.2.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > reason`
+###### <a name="nag_suppressions_by_path_items_suppressions_items_reason"></a>1.1.1.2.1.2. Property `root > nag_suppressions > by_path > by_path items > suppressions > suppressions items > reason`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-## <a name="readRoles"></a>4. Property `root > readRoles`
+## <a name="service_catalog_product_config"></a>2. Property `root > service_catalog_product_config`
 
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** List of refs to roles which will be provided read access to the audit logs
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be | Description                                                                  |
-| ------------------------------- | ---------------------------------------------------------------------------- |
-| [MdaaRoleRef](#readRoles_items) | A reference to an IAM role. Roles can be referenced by name, arn, and/or id. |
-
-### <a name="autogenerated_heading_5"></a>4.1. root > readRoles > MdaaRoleRef
-
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
-| **Defined in**            | #/definitions/MdaaRoleRef                               |
-
-**Description:** A reference to an IAM role. Roles can be referenced by name, arn, and/or id.
-
-| Property                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                             |
-| ------------------------------------------ | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------- |
-| - [arn](#readRoles_items_arn )             | No      | string  | No         | -          | Reference role by arn                                                                         |
-| - [id](#readRoles_items_id )               | No      | string  | No         | -          | Reference role by id                                                                          |
-| - [immutable](#readRoles_items_immutable ) | No      | boolean | No         | -          | Indicates whether the role should be considered immutable (defaults false)                    |
-| - [name](#readRoles_items_name )           | No      | string  | No         | -          | Reference role by name                                                                        |
-| - [refId](#readRoles_items_refId )         | No      | string  | No         | -          | A string which uniquely identifies the MdaaRoleRef within a scope.                            |
-| - [sso](#readRoles_items_sso )             | No      | boolean | No         | -          | If true, role name will be resolved to an SSO auto-generated role. Also implies immutability. |
-
-#### <a name="readRoles_items_arn"></a>4.1.1. Property `root > readRoles > readRoles items > arn`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Reference role by arn
-
-#### <a name="readRoles_items_id"></a>4.1.2. Property `root > readRoles > readRoles items > id`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Reference role by id
-
-#### <a name="readRoles_items_immutable"></a>4.1.3. Property `root > readRoles > readRoles items > immutable`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Indicates whether the role should be considered immutable (defaults false)
-
-#### <a name="readRoles_items_name"></a>4.1.4. Property `root > readRoles > readRoles items > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Reference role by name
-
-#### <a name="readRoles_items_refId"></a>4.1.5. Property `root > readRoles > readRoles items > refId`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** A string which uniquely identifies the MdaaRoleRef within a scope.
-
-#### <a name="readRoles_items_sso"></a>4.1.6. Property `root > readRoles > readRoles items > sso`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.
-
-## <a name="service_catalog_product_config"></a>5. Property `root > service_catalog_product_config`
-
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
-| **Defined in**            | #/definitions/MdaaServiceCatalogProductConfig           |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/definitions/MdaaServiceCatalogProductConfig                             |
 
 **Description:** Service Catalog Config
 If specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment
@@ -294,28 +132,28 @@ If specified, the configured module will be deployed as a Service Catalog produc
 | - [parameters](#service_catalog_product_config_parameters )             | No      | object | No         | -          | -                 |
 | + [portfolio_arn](#service_catalog_product_config_portfolio_arn )       | No      | string | No         | -          | -                 |
 
-### <a name="service_catalog_product_config_launch_role_name"></a>5.1. Property `root > service_catalog_product_config > launch_role_name`
+### <a name="service_catalog_product_config_launch_role_name"></a>2.1. Property `root > service_catalog_product_config > launch_role_name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="service_catalog_product_config_name"></a>5.2. Property `root > service_catalog_product_config > name`
+### <a name="service_catalog_product_config_name"></a>2.2. Property `root > service_catalog_product_config > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-### <a name="service_catalog_product_config_owner"></a>5.3. Property `root > service_catalog_product_config > owner`
+### <a name="service_catalog_product_config_owner"></a>2.3. Property `root > service_catalog_product_config > owner`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-### <a name="service_catalog_product_config_parameters"></a>5.4. Property `root > service_catalog_product_config > parameters`
+### <a name="service_catalog_product_config_parameters"></a>2.4. Property `root > service_catalog_product_config > parameters`
 
 |                           |                                                                                                                                                     |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -327,42 +165,42 @@ If specified, the configured module will be deployed as a Service Catalog produc
 | ---------------------------------------------------------------------- | ------- | ------ | ---------- | -------------------------------------------------- | ----------------- |
 | - [](#service_catalog_product_config_parameters_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogParameterConfig | -                 |
 
-#### <a name="service_catalog_product_config_parameters_additionalProperties"></a>5.4.1. Property `root > service_catalog_product_config > parameters > MdaaServiceCatalogParameterConfig`
+#### <a name="service_catalog_product_config_parameters_additionalProperties"></a>2.4.1. Property `root > service_catalog_product_config > parameters > MdaaServiceCatalogParameterConfig`
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
-| **Defined in**            | #/definitions/MdaaServiceCatalogParameterConfig         |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/definitions/MdaaServiceCatalogParameterConfig                           |
 
 | Property                                                                                      | Pattern | Type   | Deprecated | Definition                                          | Title/Description |
 | --------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------------------------------------------- | ----------------- |
 | - [constraints](#service_catalog_product_config_parameters_additionalProperties_constraints ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintConfig | -                 |
 | + [props](#service_catalog_product_config_parameters_additionalProperties_props )             | No      | object | No         | In #/definitions/CfnParameterProps                  | -                 |
 
-##### <a name="service_catalog_product_config_parameters_additionalProperties_constraints"></a>5.4.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints`
+##### <a name="service_catalog_product_config_parameters_additionalProperties_constraints"></a>2.4.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints`
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
-| **Defined in**            | #/definitions/MdaaServiceCatalogConstraintConfig        |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/definitions/MdaaServiceCatalogConstraintConfig                          |
 
 | Property                                                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_description ) | No      | string | No         | -          | -                 |
 | + [rules](#service_catalog_product_config_parameters_additionalProperties_constraints_rules )             | No      | object | No         | -          | -                 |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_description"></a>5.4.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > description`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_description"></a>2.4.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules"></a>5.4.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules"></a>2.4.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules`
 
 |                           |                                                                                                                                                                                            |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -374,21 +212,21 @@ If specified, the configured module will be deployed as a Service Catalog produc
 | ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------- | ----------------- |
 | - [](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties ) | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleConfig | -                 |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties"></a>5.4.1.1.2.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > MdaaServiceCatalogConstraintRuleConfig`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties"></a>2.4.1.1.2.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > MdaaServiceCatalogConstraintRuleConfig`
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | No                                                      |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
-| **Defined in**            | #/definitions/MdaaServiceCatalogConstraintRuleConfig    |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/definitions/MdaaServiceCatalogConstraintRuleConfig                      |
 
 | Property                                                                                                                           | Pattern | Type   | Deprecated | Definition                                                         | Title/Description |
 | ---------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ------------------------------------------------------------------ | ----------------- |
 | + [assertions](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions ) | No      | array  | No         | -                                                                  | -                 |
 | + [condition](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition )   | No      | object | No         | In #/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig | -                 |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions"></a>5.4.1.1.2.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions"></a>2.4.1.1.2.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions`
 
 |              |         |
 | ------------ | ------- |
@@ -407,35 +245,35 @@ If specified, the configured module will be deployed as a Service Catalog produc
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | [MdaaServiceCatalogConstraintRuleAssertionConfig](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items) | -           |
 
-###### <a name="autogenerated_heading_6"></a>5.4.1.1.2.1.1.1. root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > MdaaServiceCatalogConstraintRuleAssertionConfig
+###### <a name="autogenerated_heading_4"></a>2.4.1.1.2.1.1.1. root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > MdaaServiceCatalogConstraintRuleAssertionConfig
 
-|                           |                                                               |
-| ------------------------- | ------------------------------------------------------------- |
-| **Type**                  | `object`                                                      |
-| **Required**              | No                                                            |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.")       |
-| **Defined in**            | #/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | No                                                                        |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig             |
 
 | Property                                                                                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | + [assert](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert )           | No      | string | No         | -          | -                 |
 | + [description](#service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description ) | No      | string | No         | -          | -                 |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert"></a>5.4.1.1.2.1.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > assert`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_assert"></a>2.4.1.1.2.1.1.1.1. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > assert`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description"></a>5.4.1.1.2.1.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > description`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_assertions_items_description"></a>2.4.1.1.2.1.1.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > assertions > assertions items > description`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition"></a>5.4.1.1.2.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > condition`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_constraints_rules_additionalProperties_condition"></a>2.4.1.1.2.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > constraints > rules > additionalProperties > condition`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -444,14 +282,14 @@ If specified, the configured module will be deployed as a Service Catalog produc
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 | **Defined in**            | #/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig           |
 
-##### <a name="service_catalog_product_config_parameters_additionalProperties_props"></a>5.4.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > props`
+##### <a name="service_catalog_product_config_parameters_additionalProperties_props"></a>2.4.1.2. Property `root > service_catalog_product_config > parameters > additionalProperties > props`
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| **Type**                  | `object`                                                |
-| **Required**              | Yes                                                     |
-| **Additional properties** | [[Not allowed]](# "Additional Properties not allowed.") |
-| **Defined in**            | #/definitions/CfnParameterProps                         |
+|                           |                                                                           |
+| ------------------------- | ------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                  |
+| **Required**              | Yes                                                                       |
+| **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
+| **Defined in**            | #/definitions/CfnParameterProps                                           |
 
 | Property                                                                                                                | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                         |
 | ----------------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -467,7 +305,7 @@ If specified, the configured module will be deployed as a Service Catalog produc
 | - [noEcho](#service_catalog_product_config_parameters_additionalProperties_props_noEcho )                               | No      | boolean         | No         | -          | Whether to mask the parameter value when anyone makes a call that describes the stack.<br />If you set the value to \`\`true\`\`, the parameter value is masked with asterisks (\`\`*****\`\`).                                                                           |
 | - [type](#service_catalog_product_config_parameters_additionalProperties_props_type )                                   | No      | string          | No         | -          | The data type for the parameter (DataType).                                                                                                                                                                                                                               |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_allowedPattern"></a>5.4.1.2.1. Property `root > service_catalog_product_config > parameters > additionalProperties > props > allowedPattern`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_allowedPattern"></a>2.4.1.2.1. Property `root > service_catalog_product_config > parameters > additionalProperties > props > allowedPattern`
 
 |              |                                                         |
 | ------------ | ------------------------------------------------------- |
@@ -477,7 +315,7 @@ If specified, the configured module will be deployed as a Service Catalog produc
 
 **Description:** A regular expression that represents the patterns to allow for String types.
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_allowedValues"></a>5.4.1.2.2. Property `root > service_catalog_product_config > parameters > additionalProperties > props > allowedValues`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_allowedValues"></a>2.4.1.2.2. Property `root > service_catalog_product_config > parameters > additionalProperties > props > allowedValues`
 
 |              |                                                       |
 | ------------ | ----------------------------------------------------- |
@@ -499,14 +337,14 @@ If specified, the configured module will be deployed as a Service Catalog produc
 | ---------------------------------------------------------------------------------------------------------------- | ----------- |
 | [allowedValues items](#service_catalog_product_config_parameters_additionalProperties_props_allowedValues_items) | -           |
 
-###### <a name="autogenerated_heading_7"></a>5.4.1.2.2.1. root > service_catalog_product_config > parameters > additionalProperties > props > allowedValues > allowedValues items
+###### <a name="autogenerated_heading_5"></a>2.4.1.2.2.1. root > service_catalog_product_config > parameters > additionalProperties > props > allowedValues > allowedValues items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_constraintDescription"></a>5.4.1.2.3. Property `root > service_catalog_product_config > parameters > additionalProperties > props > constraintDescription`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_constraintDescription"></a>2.4.1.2.3. Property `root > service_catalog_product_config > parameters > additionalProperties > props > constraintDescription`
 
 |              |                                                                                        |
 | ------------ | -------------------------------------------------------------------------------------- |
@@ -519,7 +357,7 @@ For example, without a constraint description, a parameter that has an allowed
 pattern of [A-Za-z0-9]+ displays the following error message when the user specifies
 an invalid value:
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_default"></a>5.4.1.2.4. Property `root > service_catalog_product_config > parameters > additionalProperties > props > default`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_default"></a>2.4.1.2.4. Property `root > service_catalog_product_config > parameters > additionalProperties > props > default`
 
 |                           |                                                                           |
 | ------------------------- | ------------------------------------------------------------------------- |
@@ -532,7 +370,7 @@ an invalid value:
 when a stack is created. If you define constraints for the parameter, you must specify
 a value that adheres to those constraints.
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_description"></a>5.4.1.2.5. Property `root > service_catalog_product_config > parameters > additionalProperties > props > description`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_description"></a>2.4.1.2.5. Property `root > service_catalog_product_config > parameters > additionalProperties > props > description`
 
 |              |                                         |
 | ------------ | --------------------------------------- |
@@ -542,7 +380,7 @@ a value that adheres to those constraints.
 
 **Description:** A string of up to 4000 characters that describes the parameter.
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_maxLength"></a>5.4.1.2.6. Property `root > service_catalog_product_config > parameters > additionalProperties > props > maxLength`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_maxLength"></a>2.4.1.2.6. Property `root > service_catalog_product_config > parameters > additionalProperties > props > maxLength`
 
 |              |             |
 | ------------ | ----------- |
@@ -552,7 +390,7 @@ a value that adheres to those constraints.
 
 **Description:** An integer value that determines the largest number of characters you want to allow for String types.
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_maxValue"></a>5.4.1.2.7. Property `root > service_catalog_product_config > parameters > additionalProperties > props > maxValue`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_maxValue"></a>2.4.1.2.7. Property `root > service_catalog_product_config > parameters > additionalProperties > props > maxValue`
 
 |              |             |
 | ------------ | ----------- |
@@ -562,7 +400,7 @@ a value that adheres to those constraints.
 
 **Description:** A numeric value that determines the largest numeric value you want to allow for Number types.
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_minLength"></a>5.4.1.2.8. Property `root > service_catalog_product_config > parameters > additionalProperties > props > minLength`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_minLength"></a>2.4.1.2.8. Property `root > service_catalog_product_config > parameters > additionalProperties > props > minLength`
 
 |              |             |
 | ------------ | ----------- |
@@ -572,7 +410,7 @@ a value that adheres to those constraints.
 
 **Description:** An integer value that determines the smallest number of characters you want to allow for String types.
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_minValue"></a>5.4.1.2.9. Property `root > service_catalog_product_config > parameters > additionalProperties > props > minValue`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_minValue"></a>2.4.1.2.9. Property `root > service_catalog_product_config > parameters > additionalProperties > props > minValue`
 
 |              |             |
 | ------------ | ----------- |
@@ -582,7 +420,7 @@ a value that adheres to those constraints.
 
 **Description:** A numeric value that determines the smallest numeric value you want to allow for Number types.
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_noEcho"></a>5.4.1.2.10. Property `root > service_catalog_product_config > parameters > additionalProperties > props > noEcho`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_noEcho"></a>2.4.1.2.10. Property `root > service_catalog_product_config > parameters > additionalProperties > props > noEcho`
 
 |              |                                        |
 | ------------ | -------------------------------------- |
@@ -593,7 +431,7 @@ a value that adheres to those constraints.
 **Description:** Whether to mask the parameter value when anyone makes a call that describes the stack.
 If you set the value to ``true``, the parameter value is masked with asterisks (``*****``).
 
-###### <a name="service_catalog_product_config_parameters_additionalProperties_props_type"></a>5.4.1.2.11. Property `root > service_catalog_product_config > parameters > additionalProperties > props > type`
+###### <a name="service_catalog_product_config_parameters_additionalProperties_props_type"></a>2.4.1.2.11. Property `root > service_catalog_product_config > parameters > additionalProperties > props > type`
 
 |              |            |
 | ------------ | ---------- |
@@ -603,68 +441,12 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 
 **Description:** The data type for the parameter (DataType).
 
-### <a name="service_catalog_product_config_portfolio_arn"></a>5.5. Property `root > service_catalog_product_config > portfolio_arn`
+### <a name="service_catalog_product_config_portfolio_arn"></a>2.5. Property `root > service_catalog_product_config > portfolio_arn`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | Yes      |
 
-## <a name="sourceAccounts"></a>6. Property `root > sourceAccounts`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
-
-**Description:** List of source accounts from which audit logs will be accepted
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be               | Description |
-| --------------------------------------------- | ----------- |
-| [sourceAccounts items](#sourceAccounts_items) | -           |
-
-### <a name="autogenerated_heading_8"></a>6.1. root > sourceAccounts > sourceAccounts items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-## <a name="sourceRegions"></a>7. Property `root > sourceRegions`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
-
-**Description:** List of source regions from which audit logs will be accepted
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be             | Description |
-| ------------------------------------------- | ----------- |
-| [sourceRegions items](#sourceRegions_items) | -           |
-
-### <a name="autogenerated_heading_9"></a>7.1. root > sourceRegions > sourceRegions items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-16 at 13:40:46 -0400
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2024-08-16 at 13:40:39 -0400
