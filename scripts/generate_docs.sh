@@ -12,6 +12,13 @@ export PUBLISHED_VERSION="${CURRENT_MAJOR}.${CURRENT_MINOR}"
 # Ensure target/docs exists but is empty
 rm -rf target/docs*;mkdir -p target/docs/
 
+# Generate Config Schema Docs
+# Generate CLI Schema Doc
+#generate-schema-doc --config-file ../../scripts/jsfh-conf.yaml lib/config-schema.json SCHEMA.md
+# Generate Module Schema Docs
+#generate-schema-doc --config-file ../../../../scripts/jsfh-conf.yaml lib/config-schema.json SCHEMA.md
+
+
 # Generate TypeDocs
 npx typedoc --out target/docs/typedocs/
 

@@ -11,7 +11,7 @@
   "version": "0.41.0",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json QuickSightNamespaceConfigContents --include 'lib/*.ts' --include '../../../../node_modules/@types/**/*.ts' --include 'lib/config-schema.json' > lib/config-schema.json && generate-schema-doc --config-file ../../../../scripts/jsfh-conf.yaml lib/config-schema.json SCHEMA.md && cp lib/config-schema.json ../../../../schemas/${npm_package_name}.json",
+    "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json QuickSightNamespaceConfigContents --include 'lib/*.ts' --include '../../../../node_modules/@types/**/*.ts' --include 'lib/config-schema.json' > lib/config-schema.json  && cp lib/config-schema.json ../../../../schemas/${npm_package_name}.json",
     "watch": "tsc -w",
     "test": "jest --passWithNoTests --coverage",
     "cdk": "cdk"
