@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.42.0
+
+### General Changes
+
+* Renamed 'CAEF' to 'MDAA' (Modern Data Architecture Accelerator)
+  * This is mostly a cosmetic change within the code
+    * Only cosmetic changes will be made to deployed resources, including Tag names
+    * Legacy 'caef_' tag names can be maintained using `"@aws-mdaa/legacyCaefTags": true` context flag
+  * A `./bin/caef` symlink points to the renamed MDAA CLI (`./bin/mdaa`)
+  * MDAA CLI will now look for an `mdaa.yaml` or a `caef.yaml`
+* Added capability for MDAA environment templates to be used across multiple environments, dramatically reducing the amount of configuraiton content required per environment
+  * Named environment templates are defined under `env_templates` either at the global or domain levels
+    * Environment templates defined at the global level may be used across all environments within the config
+    * Environment templates defined within a domain may only be used within the domain
+  * Environment templates can define all values for an environment and can be referenced by multiple environments by name using the `template` environment property
+    * Config scalar values defined in the template can be overridden within the specific environment
+    * Config objects and lists, such as module lists, will be concatenated between template and environment configs
+* Added capability for MDAA to create its own Pipelines
+  * Added `devops` global config section to `mdaa.yaml`
+  * Multiple pipelines can be configured, each deploying their own domains/envs/modules from the config
+  * A single module may be deployed only by a maximum of one pipeline
+  * Currently expects CodeCommit to be source repo for both MDAA Configs and MDAA Source Code
+  * Support for other repos will be added in next release
+* Added MDAA Module package names and `mdaa.yaml` module config snippets into all module READMEs
+* Added generated MDAA Module config schema docs to all module READMEs
+  * Future release will improve schema documentation quality
+* Addressed a number of new NPM vulnerabilities and security nags
+* Fixed bug with MDAA CLI not allowing spaces in path containing the CAEF codebase in local mode
+* Updated CDK version to 2.147.0 globally
+* Updated sample config Deployment guides to use local mode flag (-l)
+* Fixed bug with "@aws-caef/legaceParamScope" context flag
+* Added support for appending arbirary CDK params to MDAA CLI which will be passed to CDK CLI directly
+
+### Data Science/AI/ML Changes
+
+* GAIA - Switched FalconLite container to PyTorch 0.9.3
+* GAIA - Updated GAIA Documentation
+
+### DataOps Changes
+
+* Exposed `databaseName` into DMS Endpoint Config
+
+### Utility Changes
+
+* Fixed an issue with `accessRoleArn` in Sftp Users config
+
 ## 0.41.0
 
 ### Governance Changes
