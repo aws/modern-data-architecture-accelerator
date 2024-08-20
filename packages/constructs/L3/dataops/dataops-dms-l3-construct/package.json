@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/dataops-dms-l3-construct",
-  "version": "0.41.0",
+  "version": "0.42.0",
   "description": "MDAA DMS L3 Construct",
   "license": "Apache-2.0",
   "author": {
@@ -21,13 +21,13 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/cloudwatch-constructs": "0.41.0",
-    "@aws-mdaa/construct": "0.41.0",
-    "@aws-mdaa/dms-constructs": "0.41.0",
-    "@aws-mdaa/ec2-constructs": "0.41.0",
-    "@aws-mdaa/kms-constructs": "0.41.0",
-    "@aws-mdaa/l3-construct": "0.41.0",
-    "@aws-mdaa/testing": "^0.41.0",
+    "@aws-mdaa/cloudwatch-constructs": "0.42.0",
+    "@aws-mdaa/construct": "0.42.0",
+    "@aws-mdaa/dms-constructs": "0.42.0",
+    "@aws-mdaa/ec2-constructs": "0.42.0",
+    "@aws-mdaa/kms-constructs": "0.42.0",
+    "@aws-mdaa/l3-construct": "0.42.0",
+    "@aws-mdaa/testing": "^0.42.0",
     "@types/jest": "^27.4.1",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -41,12 +41,12 @@
     "typescript-json-schema": "^0.63.0"
   },
   "peerDependencies": {
-    "@aws-mdaa/cloudwatch-constructs": "^0.41.0",
-    "@aws-mdaa/construct": "^0.41.0",
-    "@aws-mdaa/dms-constructs": "^0.41.0",
-    "@aws-mdaa/ec2-constructs": "^0.41.0",
-    "@aws-mdaa/kms-constructs": "^0.41.0",
-    "@aws-mdaa/l3-construct": "^0.41.0",
+    "@aws-mdaa/cloudwatch-constructs": "^0.42.0",
+    "@aws-mdaa/construct": "^0.42.0",
+    "@aws-mdaa/dms-constructs": "^0.42.0",
+    "@aws-mdaa/ec2-constructs": "^0.42.0",
+    "@aws-mdaa/kms-constructs": "^0.42.0",
+    "@aws-mdaa/l3-construct": "^0.42.0",
     "aws-cdk-lib": "2.147.0",
     "constructs": "10.0.96"
   },
@@ -55,13 +55,13 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-mdaa/cloudwatch-constructs": "^0.41.0",
-    "@aws-mdaa/construct": "^0.41.0",
-    "@aws-mdaa/dms-constructs": "^0.41.0",
-    "@aws-mdaa/ec2-constructs": "^0.41.0",
-    "@aws-mdaa/kms-constructs": "^0.41.0",
-    "@aws-mdaa/l3-construct": "^0.41.0",
-    "@aws-mdaa/naming": "^0.41.0",
+    "@aws-mdaa/cloudwatch-constructs": "^0.42.0",
+    "@aws-mdaa/construct": "^0.42.0",
+    "@aws-mdaa/dms-constructs": "^0.42.0",
+    "@aws-mdaa/ec2-constructs": "^0.42.0",
+    "@aws-mdaa/kms-constructs": "^0.42.0",
+    "@aws-mdaa/l3-construct": "^0.42.0",
+    "@aws-mdaa/naming": "^0.42.0",
     "aws-cdk-lib": "2.147.0",
     "cdk-nag": "2.28.27",
     "constructs": "10.0.96"
