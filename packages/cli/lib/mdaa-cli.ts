@@ -167,7 +167,7 @@ export class MdaaDeploy {
             const template = env.template && domainEffectiveConfig.envTemplates ? domainEffectiveConfig.envTemplates[ env.template ] : {}
             // nosemgrep
             let _ = require( 'lodash' );
-            const envMergedConfig = _.mergeWith( template, env )
+            const envMergedConfig = _.mergeWith( env, template )
             const envEffectiveConfig: EnvEffectiveConfig = this.computeEnvEffectiveConfig( envName, envMergedConfig, domainEffectiveConfig )
             this.deployEnv( envMergedConfig, envEffectiveConfig )
         } )
