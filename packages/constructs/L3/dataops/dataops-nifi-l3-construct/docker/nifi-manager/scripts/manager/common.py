@@ -12,7 +12,7 @@ logger.setLevel(logging.INFO)
 min_update_time = os.environ.get('NIFI_UPDATE_MIN_TIME', 10)
 
 def load_manager_config(manager_config_filename):
-    with open(manager_config_filename) as manager_config_file:
+    with open(manager_config_filename, encoding="utf-8") as manager_config_file:
         manager_config = json.load(
             manager_config_file)
     return manager_config

@@ -50,32 +50,29 @@ def handle_create(folderId, folderName, folderPermissions, parentFolderArn):
 
 
 def create_quicksight_folder(folderId, folderName, folderPermissions, parentFolderArn):
-    try:
-        if parentFolderArn is None:
-            response = quicksight_client.create_folder(
-                AwsAccountId=ACCOUNT_ID,
-                FolderId=folderId,
-                Name=folderName,
-                FolderType='SHARED',
-                Permissions=folderPermissions
-            )
-        else:
-            response = quicksight_client.create_folder(
-                AwsAccountId=ACCOUNT_ID,
-                FolderId=folderId,
-                Name=folderName,
-                ParentFolderArn=parentFolderArn,
-                FolderType='SHARED',
-                Permissions=folderPermissions
-            )
-        if response['Status'] == 200:
-            return response['Arn']
-        else:
-            logger.error(f"Folder Creation Failed for {folderId}")
-            return response['Status']
-    except Exception as e:
-        logger.error(
-            f"Could not execute create_folder command, Exception {str(e)} occured")
+    if parentFolderArn is None:
+        response = quicksight_client.create_folder(
+            AwsAccountId=ACCOUNT_ID,
+            FolderId=folderId,
+            Name=folderName,
+            FolderType='SHARED',
+            Permissions=folderPermissions
+        )
+    else:
+        response = quicksight_client.create_folder(
+            AwsAccountId=ACCOUNT_ID,
+            FolderId=folderId,
+            Name=folderName,
+            ParentFolderArn=parentFolderArn,
+            FolderType='SHARED',
+            Permissions=folderPermissions
+        )
+    if response['Status'] == 200:
+        return response['Arn']
+    else:
+        logger.error(f"Folder Creation Failed for {folderId}")
+        return response['Status']
+
 
 
 def handle_update(folderId, folderPermissions):
@@ -93,20 +90,17 @@ def handle_update(folderId, folderPermissions):
 
 def update_quicksight_folder_permissions(folderId, folderPermissions):
     logger.info("Folder Permissions update instead of create")
-    try:
-        response = quicksight_client.update_folder_permissions(
-            AwsAccountId=ACCOUNT_ID,
-            FolderId=folderId,
-            GrantPermissions=folderPermissions
-        )
-        if response['Status'] == 200:
-            return response['Arn']
-        else:
-            logger.error(f"Folder Permissions Update Failed for {folderId}")
-            return response['Status']
-    except Exception as e:
-        logger.error(
-            f"Could not execute update_folder_permissions command, Exception {str(e)} occured")
+    response = quicksight_client.update_folder_permissions(
+        AwsAccountId=ACCOUNT_ID,
+        FolderId=folderId,
+        GrantPermissions=folderPermissions
+    )
+    if response['Status'] == 200:
+        return response['Arn']
+    else:
+        logger.error(f"Folder Permissions Update Failed for {folderId}")
+        return response['Status']
+
 
 
 def handle_delete(folderId):
@@ -123,16 +117,13 @@ def handle_delete(folderId):
 
 def delete_quicksight_folder(folderId):
     logger.info("Folder Permissions update instead of create")
-    try:
-        response = quicksight_client.delete_folder(
-            AwsAccountId=ACCOUNT_ID,
-            FolderId=folderId
-        )
-        if response['Status'] == 200:
-            return response['Arn']
-        else:
-            logger.error(f"Folder Deletion Failed for {folderId}")
-            return response['Status']
-    except Exception as e:
-        logger.error(
-            f"Could not execute delete_folder command, Exception {str(e)} occured")
+    response = quicksight_client.delete_folder(
+        AwsAccountId=ACCOUNT_ID,
+        FolderId=folderId
+    )
+    if response['Status'] == 200:
+        return response['Arn']
+    else:
+        logger.error(f"Folder Deletion Failed for {folderId}")
+        return response['Status']
+

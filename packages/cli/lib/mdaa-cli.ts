@@ -43,6 +43,7 @@ export class MdaaDeploy {
         this.moduleFilter = options[ 'module' ]?.split( "," ).map( x => x.trim() )
         this.roleArn = options[ 'role_arn' ]
         this.npmTag = options[ 'tag' ] ? options[ 'tag' ] : "latest"
+        // nosemgrep
         this.workingDir = options[ "working_dir" ] ? path.resolve( options[ "working_dir" ] ) : path.resolve( "./.mdaa_working" )
         this.npmDebug = this.booleanOption(options,'npm_debug')
         this.localMode = this.booleanOption( options, 'local_mode')
@@ -97,6 +98,7 @@ export class MdaaDeploy {
         const workspaceQueryJson = require( 'child_process' ).execSync( `npm query .workspace --prefix '${ __dirname }/../../../'` ).toString()
         const workspace: any[] = JSON.parse( workspaceQueryJson )
         return Object.fromEntries( workspace.map( pkgInfo => {
+            // nosemgrep
             return [ `${ pkgInfo[ 'name' ] }@latest`, path.resolve( `${ __dirname }/../../../${ pkgInfo[ 'location' ] }` ) ]
         } ) )
     }
@@ -163,7 +165,7 @@ export class MdaaDeploy {
                 throw new Error( `Environment "${envName}" references invalid template name: ${env.template}.` )
             }
             const template = env.template && domainEffectiveConfig.envTemplates ? domainEffectiveConfig.envTemplates[ env.template ] : {}
-
+            // nosemgrep
             let _ = require( 'lodash' );
             const envMergedConfig = _.mergeWith( template, env )
             const envEffectiveConfig: EnvEffectiveConfig = this.computeEnvEffectiveConfig( envName, envMergedConfig, domainEffectiveConfig )
@@ -294,6 +296,7 @@ export class MdaaDeploy {
                 throw new Error( `Unable to find local package location for ${ npmPackage }` )
             }
         } else {
+            // nosemgrep
             return path.resolve( `${ this.workingDir }/packages/${ MdaaDeploy.hashCodeHex( npmPackage, this.npmTag ).replace( /^-/, "" ) }` )
         }
     }

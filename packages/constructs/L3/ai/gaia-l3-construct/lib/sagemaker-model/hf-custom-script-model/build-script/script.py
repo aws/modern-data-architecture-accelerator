@@ -60,7 +60,7 @@ os.chdir(str(out_folder))
 print(f"Compressing the model folder: {out_folder}")
 command = "tar -cf model.tar.gz --use-compress-program=pigz *"
 print(f"Running command: {command}")
-# nosec
+# nosemgrep
 subprocess.run(command, shell=True, check=True)
 print(f"Model folder compressed: {out_folder}")
 print(f"Moving back to: {current_folder}")

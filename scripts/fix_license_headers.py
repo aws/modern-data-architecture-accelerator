@@ -7,7 +7,7 @@ import re
 
 script_dir = os.path.dirname(__file__)
 
-with open(f"{script_dir}/license_header.txt") as f:
+with open(f"{script_dir}/license_header.txt", encoding="utf-8") as f:
     license_header_contents = ''.join(f.readlines())
 
 license_header_regex = re.compile(re.escape(license_header_contents))
@@ -36,7 +36,7 @@ def add_license(contents):
 def detect_license_header(path):
     print(f"\n\nProcessing {path}:")
     # nosemgrep
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         contents = ''.join(f.readlines())
     if re.search(license_header_regex, contents):
         print("Found license")
@@ -47,10 +47,8 @@ def detect_license_header(path):
 
     if fixed_contents is not None:
         print(f"Writing updated contents to {path}")
-        f = open(path, "w")
-        f.write(fixed_contents)
-        f.close()
-
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(fixed_contents)
 
 for extension in ['ts', 'js']:
     for path in [path for path in Path('./packages').rglob(f'lib/*.{extension}')

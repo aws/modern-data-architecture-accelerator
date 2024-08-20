@@ -7,14 +7,12 @@ import os
 import inspect
 
 vulnerabilities = {}
-if len(sys.argv)-1 < 1:
-    sys.exit("Supply Directory to Scan")
-dir = sys.argv[1]
+dir = './reports'
 for file in os.listdir(dir):
     if file.endswith(".json"):
         report = file.rstrip(".json")
         print(f'Checking {report} for discovered vulnerabilities ...')
-        with open(os.path.join(dir, file)) as f:
+        with open(os.path.join(dir, file), encoding="utf-8") as f:
             data = json.load(f)
             for v in data.get('vulnerabilities', []):
                 if v['severity'] not in ['Critical', 'High']:

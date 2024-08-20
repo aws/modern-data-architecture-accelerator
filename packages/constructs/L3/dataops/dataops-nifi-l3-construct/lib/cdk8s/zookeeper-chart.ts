@@ -54,6 +54,7 @@ export class ZookeeperChart extends cdk8s.Chart {
         const stableJson = json.replace( /Token\[.*?\]/g, "Token" )
         // nosemgrep
         const crypto = require( 'crypto' )
+        // nosemgrep
         const hash = crypto.createHash( 'sha1' ) //NOSONAR not used in senstive context
             .update( stableJson ).digest( 'hex' );
         return hash

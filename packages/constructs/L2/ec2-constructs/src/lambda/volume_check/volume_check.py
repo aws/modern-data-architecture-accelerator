@@ -34,11 +34,8 @@ def handle_create(event, context):
 
     logger.info(f"Checking Ec2 volumes for instance {instance_id}")
 
-    try:
-        instance_response = ec2.describe_instances(InstanceIds=[instance_id])
-    except Exception as e:
-        logger.error(f"Unable to describe instance {instance_id}: {e}")
-        raise e
+    instance_response = ec2.describe_instances(InstanceIds=[instance_id])
+
 
     volume_ids_devices = {}
     for reservation in instance_response['Reservations']:

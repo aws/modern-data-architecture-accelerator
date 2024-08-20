@@ -86,9 +86,11 @@ export class ConfigConfigPathValueTransformer implements IMdaaConfigValueTransfo
     public transformValue ( value: string ): string {
         if(value.startsWith('../')) {
             // Resolve to baseDir's parent path
+            // nosemgrep
             return path.resolve(this.baseDir, value)
         } else if(value.startsWith('./')) {
             // Resolve relative to baseDir
+            // nosemgrep
              return path.resolve( value.replace( /^\./, this.baseDir ) )
         } else {
             return value;

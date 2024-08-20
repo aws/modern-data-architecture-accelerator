@@ -35,23 +35,25 @@ lcov_path = list(Path(_src_path).rglob("lcov.info"))
 
 # Create merged lcov supplemented relative path file.
 os.makedirs(os.path.dirname(merged_output_file), exist_ok=True)
-with open(merged_output_file, 'w') as outfile:
+with open(merged_output_file, 'w', encoding="utf-8") as outfile:
     for lcov_loc in lcov_path:
         _path = lcov_loc._str.split('/coverage/', 1)[0]
         replace_text = "SF:"+_path+"/lib/"
 
         # Test if pattern exists in any of the file  // could be removed
         # nosemgrep
-        for i, line in enumerate(open(lcov_loc)):
-            for match in re.finditer(pattern_text, line):
-                print('Found on line %s: %s' % (i+1, match.group()))
+        with open(lcov_loc, encoding="utf-8") as f:
+            for i, line in enumerate(f):
+                for match in re.finditer(pattern_text, line):
+                    print('Found on line %s: %s' % (i+1, match.group()))
+
 
         # call replace function
         replacetext(lcov_loc, pattern_text, replace_text)
 
         # check if lcov file is empty
         if os.stat(lcov_loc._str).st_size != 0:
-            with open(lcov_loc._str) as infile:
+            with open(lcov_loc._str, encoding="utf-8") as infile:
                 outfile.write(infile.read())
             outfile.write("\n")
 outfile.close()

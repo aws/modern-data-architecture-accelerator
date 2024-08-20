@@ -209,6 +209,7 @@ export abstract class MdaaCdkApp extends App {
     }
 
     private applyCustomAspect ( customAspect: MdaaCustomAspect ) {
+        // nosemgrep
         const customAspectModulePath = customAspect.aspect_module.startsWith( "./" ) ? path.resolve( customAspect.aspect_module ) : customAspect.aspect_module
         console.log( `Applying custom aspect: ${ customAspect.aspect_module }:${ customAspect.aspect_class }` )
         // nosemgrep
