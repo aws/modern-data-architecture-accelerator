@@ -773,7 +773,7 @@ release_publish_npm_prerelease:
     - prerelease_analyze
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - ./scripts/publish_npm.sh $CAEF_CODEARTIFACT_PRERELEASE_NPM_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT latest
 
