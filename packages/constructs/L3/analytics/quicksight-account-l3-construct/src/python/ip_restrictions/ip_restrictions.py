@@ -42,18 +42,15 @@ def handle_create_update(event, context):
 
 
 def handle_delete(event, context):
-    try:
-        account_id = event['PhysicalResourceId']
-        logger.info(
-            f"Disabling IP Address Restrictions on account {account_id}")
-        response = quicksight_client.update_ip_restriction(
-            AwsAccountId=account_id,
-            Enabled=False
-        )
-        return {
-            "Status": "SUCCESS",
-            "PhysicalResourceId": response['AwsAccountId']
-        }
-    except Exception as e:
-        logger.error(f"Failed to disable ip restrictions: {e}")
-        raise e
+    account_id = event['PhysicalResourceId']
+    logger.info(
+        f"Disabling IP Address Restrictions on account {account_id}")
+    response = quicksight_client.update_ip_restriction(
+        AwsAccountId=account_id,
+        Enabled=False
+    )
+    return {
+        "Status": "SUCCESS",
+        "PhysicalResourceId": response['AwsAccountId']
+    }
+

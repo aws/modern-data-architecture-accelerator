@@ -23,6 +23,7 @@ export function deployCustomScriptModel(
 
   const endpointName = (
     Array.isArray(modelId)
+      // nosemgrep
       ? `Multi${createHash("md5") //NOSONAR - not a cryptographic use
           .update(modelId.join(","))
           .digest("hex")

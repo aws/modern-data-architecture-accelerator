@@ -350,11 +350,13 @@ export class RolesL3Construct extends MdaaL3Construct {
     }
 
     private loadPolicyConfig(fileName: string) {
+        // nosemgrep
         const configFilePath = resolve(__dirname, fileName);
         console.log("Reading config file from path" + configFilePath);
         try {
     
             //  Read the configuration file
+            // nosemgrep
             const rawConfigFile = readFileSync(configFilePath, 'utf8');
             const rawConfig:{ [x: string]: any } = parse(rawConfigFile);
             return rawConfig

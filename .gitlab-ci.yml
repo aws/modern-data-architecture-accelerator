@@ -75,6 +75,27 @@ feature_merge_build:
     - ./scripts/npm_install.sh
     - ./scripts/build.sh
 
+feature_merge_codeguru:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  stage: build
+  image:
+    name: public.ecr.aws/l6c8c5q3/codegurusecurity-actions-public:latest
+    entrypoint: [""]
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  before_script:
+    - cp ~/.aws/.awscredentialvendor/* ~/.aws
+  script:
+    - python /usr/app/codeguru/command.py --source_path "." --aws_region "us-east-1" --scan_name $CI_COMMIT_REF_SLUG --fail_on_severity Medium --analysis_type All --output_file_format "sast"
+    - cat codeguru-security-results.sast.json
+  only:
+    - merge_requests
+  artifacts:
+    reports:
+      sast: codeguru-security-results.sast.json
+
 feature_merge_test:
   tags:
     - arch:amd64
@@ -380,6 +401,32 @@ prerelease_build:
   allow_failure: false
   script:
     - ./scripts/build.sh
+
+prerelease_codeguru:
+  stage: build
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    refs:
+      - main
+  except:
+    refs:
+      - tags
+  image:
+    name: public.ecr.aws/l6c8c5q3/codegurusecurity-actions-public:latest
+    entrypoint: [""]
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  before_script:
+    - cp ~/.aws/.awscredentialvendor/* ~/.aws
+  script:
+    - python /usr/app/codeguru/command.py --source_path "." --aws_region "us-east-1" --scan_name $CI_COMMIT_REF_SLUG --fail_on_severity Medium --analysis_type All --output_file_format "sast"
+    - cat codeguru-security-results.sast.json
+  allow_failure: false
+  artifacts:
+    reports:
+      sast: codeguru-security-results.sast.json
 
 prerelease_test:
   tags:

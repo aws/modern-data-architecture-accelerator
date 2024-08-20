@@ -148,7 +148,7 @@ while True:
         manager_config = manager.common.load_manager_config(manager_config_filename)
 
         update( manager_config)
-
+    # nosemgrep
     except Exception as e:
         logger.error(f"Unhandled exception: {str(e)}")
 

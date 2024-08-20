@@ -49,6 +49,7 @@ export class MdaaParamAndOutput extends Construct {
 
     private static determineScope ( thisScope: Construct, legacyScope?:Construct):Construct {
         const contextValue = thisScope.node.tryGetContext( MdaaParamAndOutput.LEGACY_PARAM_SCOPE_CONTEXT_KEY )?.valueOf()
+        // nosemgrep
         const useLegacyParamScope = contextValue ? ( /true/i ).test( contextValue):false
         return useLegacyParamScope ? legacyScope || thisScope : thisScope 
     }

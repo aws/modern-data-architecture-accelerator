@@ -38,33 +38,29 @@ def handle_create_update(event, context):
         raise Exception(
             "Unable to parse domainSettingsForUpdate from event.")
     logger.info(f"Updating Domain {domainId}")
-    try:
-        update_response = sagemaker_client.update_domain(
-            DomainId=domainId,
-            DefaultUserSettings=defaultUserSettings,
-            DomainSettingsForUpdate=domainSettingsForUpdate
+
+    update_response = sagemaker_client.update_domain(
+        DomainId=domainId,
+        DefaultUserSettings=defaultUserSettings,
+        DomainSettingsForUpdate=domainSettingsForUpdate
+    )
+
+    num_attempts = 0
+    while num_attempts <= 5:
+        describe_response = sagemaker_client.describe_domain(
+            DomainId=domainId
         )
+        update_status = describe_response.get('Status')
+        logger.info(f"Update Status: {update_status}")
+        if update_status == "Update_Failed":
+            raise Exception(describe_response.get('FailureReason'))
+        elif update_status == "InService":
+            return {
+                "Status": "SUCCESS",
+                "PhysicalResourceId": domainId
+            }
+        # nosemgrep
+        time.sleep(10)
+        num_attempts = num_attempts + 1
 
-        num_attempts = 0
-        while num_attempts <= 5:
-            describe_response = sagemaker_client.describe_domain(
-                DomainId=domainId
-            )
-            update_status = describe_response.get('Status')
-            logger.info(f"Update Status: {update_status}")
-            if update_status == "Update_Failed":
-                raise Exception(describe_response.get('FailureReason'))
-            elif update_status == "InService":
-                return {
-                    "Status": "SUCCESS",
-                    "PhysicalResourceId": domainId
-                }
-            # nosemgrep
-            time.sleep(10)
-            num_attempts = num_attempts + 1
-
-        raise Exception("Timed out waiting for domain to update")
-
-    except Exception as e:
-        logger.error(f"Failed to update domain: {e}")
-        raise e
+    raise Exception("Timed out waiting for domain to update")

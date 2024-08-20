@@ -160,15 +160,13 @@ if not clustered:
 while True:
     starttime = time.time()
 
-    try:
-        manager_config = replace_root_id(
-            manager.common.load_manager_config(manager_config_filename))
-        if not clustered:
-            update(manager_config)
-        else:
-            cluster_update(manager_config)
-    except Exception as e:
-        logger.error(f"Unhandled exception: {str(e)}")
+    manager_config = replace_root_id(
+        manager.common.load_manager_config(manager_config_filename))
+    if not clustered:
+        update(manager_config)
+    else:
+        cluster_update(manager_config)
+
 
     elapsed = time.time() - starttime
     logger.info(f"Update loop took {elapsed} seconds")

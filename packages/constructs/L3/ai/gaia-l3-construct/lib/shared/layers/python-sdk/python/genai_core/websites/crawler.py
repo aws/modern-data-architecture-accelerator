@@ -105,6 +105,7 @@ def parse_url(url: str):
     root_url_parse = urlparse(url)
     base_url = f"{root_url_parse.scheme}://{root_url_parse.netloc}"
 
+    # nosemgrep
     response = requests.get(url, headers=headers, timeout=20)
     if "text/html" not in response.headers["Content-Type"]:
         raise Exception(

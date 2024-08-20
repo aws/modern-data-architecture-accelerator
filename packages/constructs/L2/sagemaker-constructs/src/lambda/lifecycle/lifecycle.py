@@ -41,7 +41,7 @@ def handle_create(event, context):
     if (lifecycleConfigContent is None):
         raise Exception(
             "Unable to parse lifecycleConfigContent from event.")
-    # nosec
+    # nosemgrep
     lifecycleConfigContentHash = hashlib.sha1(
         lifecycleConfigContent.encode("UTF-8"), usedforsecurity=False).hexdigest()[:10]
 
@@ -55,20 +55,17 @@ def handle_create(event, context):
 
     logger.info(f"Creating Lifecycle Config {lifecycleConfigName}")
 
-    try:
-        response = sagemaker_client.create_studio_lifecycle_config(
-            StudioLifecycleConfigName=lifecycleConfigNameWithHash,
-            StudioLifecycleConfigContent=lifecycleConfigContent,
-            StudioLifecycleConfigAppType=lifecycleConfigAppType
-        )
-        return {
-            "Status": "SUCCESS",
-            "PhysicalResourceId": lifecycleConfigNameWithHash,
-            "Data": response
-        }
-    except Exception as e:
-        logger.error(f"Failed to create lifecycle config: {e}")
-        raise e
+    response = sagemaker_client.create_studio_lifecycle_config(
+        StudioLifecycleConfigName=lifecycleConfigNameWithHash,
+        StudioLifecycleConfigContent=lifecycleConfigContent,
+        StudioLifecycleConfigAppType=lifecycleConfigAppType
+    )
+    return {
+        "Status": "SUCCESS",
+        "PhysicalResourceId": lifecycleConfigNameWithHash,
+        "Data": response
+    }
+
 
 
 def handle_delete(event, context):

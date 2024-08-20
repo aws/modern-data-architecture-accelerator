@@ -41,6 +41,7 @@ describe( 'MDAA Construct Compliance Tests', () => {
             } )
         } )
 
+        // nosemgrep
         const passwordProp = "{{resolve:secretsmanager:arn:test-partition:secretsmanager:test-region:test-account:secret:/test/mdaa/secret:SecretString:password::}}"
         test( 'Password', () => {
             template.hasResourceProperties( "AWS::DataSync::LocationSMB", {

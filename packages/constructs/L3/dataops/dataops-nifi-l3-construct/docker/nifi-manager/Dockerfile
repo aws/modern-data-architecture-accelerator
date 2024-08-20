@@ -1,3 +1,4 @@
+#checkov:skip=CKV_DOCKER_2: HEALTHCHECK not required
 FROM apache/nifi-toolkit:1.23.2
 
 USER root

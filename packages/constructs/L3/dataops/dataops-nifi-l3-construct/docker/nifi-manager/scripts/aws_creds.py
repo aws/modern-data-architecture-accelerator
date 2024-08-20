@@ -16,7 +16,7 @@ def write_creds(session_creds):
     creds_profile.append(f"aws_secret_access_key={session_creds.secret_key}")
     creds_profile.append(f"aws_session_token={session_creds.token}")
     # Writing to file
-    with open(f"{Path.home()}/.aws/credentials", "w") as credentials_file:
+    with open(f"{Path.home()}/.aws/credentials", "w", encoding="utf-8") as credentials_file:
         credentials_file.write('\n'.join(creds_profile))
     logger.info(f"Updated credentials file.")
 

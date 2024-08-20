@@ -24,11 +24,8 @@ def get_secret(secret_name):
         region_name="ca-central-1"
     )
 
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name)
-    except ClientError as e:
-        raise e
+    get_secret_value_response = client.get_secret_value(
+        SecretId=secret_name)
 
     # Decrypt secret with the KMS key
     if "SecretString" in get_secret_value_response:
