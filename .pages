@@ -7,6 +7,7 @@ nav:
                   - Predeployment Preparation: PREDEPLOYMENT.md
                   - DEPLOYMENT.md
         - Sample Architectures and Configurations: sample_configs
+        - Sample DataOps Blueprints: sample_blueprints
         - packages
         - Development:
                   - CONTRIBUTING.md
