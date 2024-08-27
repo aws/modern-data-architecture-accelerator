@@ -17,18 +17,6 @@ Additionally, MDAA has been designed for compliance with AWS Solutions, NIST 800
 
 ***
 
-## Logical Design
-
-MDAA is designed as a set of logical architectural layers, each constituted by a set of functional 'modules'. Each module configures and deploys a set of resources which constitute the data analytics environment. Modules may have logical dependencies on eachother, and may also leverage non-MDAA resources deployed within the environment, such as those deployed via Landing Zone Accelerator.
-
-While MDAA can be used to implement a comprehensive, end to end data analytics platform, it ***does not*** result in a closed system. MDAA may be freely integrated with non-MDAA deployed platform elements and analytics capabilites. Any individual layer or module of MDAA can be replaced by a non-MDAA component, and the remaining layers/modules will continue to function (assuming basic functional parity with the replaced MDAA module/layer).
-
-MDAA is conceptually, architecturally, and technically similar in nature to the Landing Zone Accelerator (LZA), providing similar functionality for analytics platform configuration and deployment as LZA does for general cloud platform configuration and deployment. The logical layers of MDAA are specifically designed to be deployed on top of a general purpose, secure cloud platform such as that deployed by LZA.
-
-![Mdaa Logical Architecture](docs/MDAA-Logical.png)
-
-***
-
 ## Getting Started
 
 Getting started with MDAA requires the following steps:
@@ -39,12 +27,34 @@ Getting started with MDAA requires the following steps:
 4. [Predeployment Preparation](PREDEPLOYMENT.md) - In this step, the MDAA NPM packages are built and published to a private NPM repo.
 5. [Deployment](DEPLOYMENT.md) - Each MDAA configuration file is either manually or automatically deployed (via CD/CD).
 
-Alternatively, you can jump directly into a set of sample architectures and configurations:
+### Sample Architectures
+
+Alternatively, you can jump directly into a set of sample architectures and configurations. Note that these sample configurations can be used as a starting point for much more sophisticated architectures.
 
 * [Basic DataLake](sample_configs/basic_datalake/README.md) - A basic S3 Data Lake
-* [Data Warehouse](sample_configs/datawarehouse/README.md) - A standalone Redshift Data Warehouse
+* [Fine-grained Access Control DataLake](sample_configs/lakeformation_datalake/README.md) - An S3 Data Lake with fine-grained access control using LakeFormation
+* [Data Warehouse](sample_configs/basic_datawarehouse/README.md) - A standalone Redshift Data Warehouse
 * [Lakehouse](sample_configs/lakehouse/README.md) - A full LakeHouse implementation, with Data Lake, Data Ops Layers (using NYC taxi data), and a Redshift data warehouse
+* [Data Science Platform](sample_configs/basic_datascience_platform/README.md) - A standalone SageMaker Studio Data Science Platform
+* [GenAI Platform](sample_configs/basic_gaia/README.md) - A standalone GAIA GenAI Platform
 
+### Sample DataOps Blueprints
+
+Additionally, once your Modern Data Architecture is deployed, you can use these sample Data Operations blueprints, including MDAA configs and DataOps code, to start solving your data-driven problems.
+
+* [Basic Crawler](sample_blueprints/basic_dataops_crawler/README.md) - A basic crawler blueprint
+  
+***
+
+## Logical Design
+
+MDAA is designed as a set of logical architectural layers, each constituted by a set of functional 'modules'. Each module configures and deploys a set of resources which constitute the data analytics environment. Modules may have logical dependencies on eachother, and may also leverage non-MDAA resources deployed within the environment, such as those deployed via Landing Zone Accelerator.
+
+While MDAA can be used to implement a comprehensive, end to end data analytics platform, it ***does not*** result in a closed system. MDAA may be freely integrated with non-MDAA deployed platform elements and analytics capabilites. Any individual layer or module of MDAA can be replaced by a non-MDAA component, and the remaining layers/modules will continue to function (assuming basic functional parity with the replaced MDAA module/layer).
+
+MDAA is conceptually, architecturally, and technically similar in nature to the Landing Zone Accelerator (LZA), providing similar functionality for analytics platform configuration and deployment as LZA does for general cloud platform configuration and deployment. The logical layers of MDAA are specifically designed to be deployed on top of a general purpose, secure cloud platform such as that deployed by LZA.
+
+![Mdaa Logical Architecture](docs/MDAA-Logical.png)
 ***
 
 ## Design Principles
