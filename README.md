@@ -43,6 +43,7 @@ Alternatively, you can jump directly into a set of sample architectures and conf
 Additionally, once your Modern Data Architecture is deployed, you can use these sample Data Operations blueprints, including MDAA configs and DataOps code, to start solving your data-driven problems.
 
 * [Basic Crawler](sample_blueprints/basic_dataops_crawler/README.md) - A basic crawler blueprint
+* [Event-Driven CSV to Parquet Lambda](sample_blueprints/lambda_csv_parquet/README.md) - A blueprint for transforming small-medium CSV files into Parquet as they are uploaded into a datalake.
   
 ***
 

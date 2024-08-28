@@ -1,0 +1,10 @@
+# The list of roles which will be generated
+generateRoles:
+  lambda-etl:
+    trustedPrincipal: service:lambda.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    awsManagedPolicies:
+      - service-role/AWSLambdaBasicExecutionRole
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for usage"
