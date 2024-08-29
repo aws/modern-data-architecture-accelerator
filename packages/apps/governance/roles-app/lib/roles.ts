@@ -18,11 +18,8 @@ export class GenerateRolesCDKApp extends MdaaCdkApp {
 
         const appConfig = new RolesConfigParser( stack, parserProps )
         const constructProps: RolesL3ConstructProps = {
-            ...{
-                generatePolicies: appConfig.generatePolicies,
-                generateRoles: appConfig.generateRoles,
-                federations: appConfig.federations
-            }, ...l3ConstructProps
+            ...appConfig, 
+            ...l3ConstructProps
         }
         new RolesL3Construct( stack, "construct", constructProps )
         return [ stack ]
