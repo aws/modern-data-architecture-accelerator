@@ -1,3 +1,6 @@
+# Optional - If true (default), a set of MDAA managed policies will be created for use in predefined personas.
+createPersonaManagedPolicies: true
+
 # Used to configure SAML federations
 federations:
   example-federation: # Should be descriptive and unique

@@ -43,6 +43,9 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 [Config Schema Docs](SCHEMA.md)
 
 ```yaml
+# Optional - If true (default), a set of MDAA managed policies will be created for use in predefined personas.
+createPersonaManagedPolicies: true
+
 # Used to configure SAML federations
 federations:
   existing-federation: # Should be descriptive and unique
