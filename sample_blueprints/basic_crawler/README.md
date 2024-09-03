@@ -13,7 +13,7 @@ This blueprint may be suitable when:
 
 ## Usage Instructions
 
-The following instructions assume you have already deployed your Data Lake (possibly using MDAA). If already using MDAA, you can merge these sample blueprint configs into your existing `mdaa.yaml`.
+The following instructions assume you have already deployed your Data Lake (possibly using MDAA). Note: Additional configuration may be required if LakeFormation is in use on the data lake. These instructions assume the blueprint will be deployed independantly of any exising MDAA deployment. Alternatively, these blueprint configs can be merged into an existing MDAA deployment.
 
 1. Deploy sample configurations into the specified directory structure (or obtain from the MDAA repo under `sample_blueprints/basic_crawler`).
 
@@ -31,7 +31,7 @@ The following instructions assume you have already deployed your Data Lake (poss
 
 8. Run `<path_to_mdaa_repo>/bin/mdaa -l deploy` from the directory containing `mdaa.yaml` to deploy all modules.
 
-9. Before running the crawler, you will need to provide the generated `glue-etl` role with access to your datalake bucket.
+9. Before running the crawler, you will need to provide the generated `glue-etl` role with access to your datalake bucket. Additionally, to test the crawler, you can load data from `./sample_data` into the datalake.
 
 Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](../../DEPLOYMENT.md).
 

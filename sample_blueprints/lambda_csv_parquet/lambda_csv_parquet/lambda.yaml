@@ -5,7 +5,7 @@ projectName: project
 # List of Lambda layers to create
 layers:
   - layerName: aws-wrangler
-    src: ./src/lambda/aws_wrangler_layer/layer.zip
+    src: ./src/lambda/aws_wrangler_layer/awswrangler-layer-3.9.1-py3.12.zip
     description: "AWS Wrangler"
 
 # List of functions definitions

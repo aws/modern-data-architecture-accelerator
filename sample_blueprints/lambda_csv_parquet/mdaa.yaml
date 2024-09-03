@@ -10,13 +10,13 @@ tag_configs:
 
 # TODO: Set an appropriate, unique organization name, likely matching the org name used in other MDAA configs.
 # Failure to do so may resulting in global naming conflicts.
-organization: test-lambda-blueprint #<unique-org-name>
+organization: <unique-org-name>
 
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names.
 domains:
-  # TODO: Set an appropriate project name. This project name should be unique within the organzation.
-  <your-project-name>:
+  # TODO: Set an appropriate domain name. This domain name should be unique within the organzation.
+  <your domain name>:
     # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
     environments:
       # The environment name will be incorporated into resource name by the default naming implementation.
