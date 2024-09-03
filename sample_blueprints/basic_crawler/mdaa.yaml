@@ -27,15 +27,15 @@ domains:
         #TODO: Set context values appropriate to your env
         context:
           # The arn of a role which will be provided admin privileges to dataops resources
-          data_admin_role_arn : <your-data-admin-role-arn>
+          data_admin_role_arn : <your-data-admin-role-arn> #TODO
           # The name of the datalake S3 bucket where the data to be crawled is stored
-          datalake_bucket_name: <your-datalake-bucket-name>
+          datalake_bucket_name: <your-datalake-bucket-name> #TODO
           # The prefix on the datalake S3 bucket where the data to be crawled is stored
-          datalake_bucket_prefix: <your/path/to/data>
+          datalake_bucket_prefix: <your/path/to/data> #TODO
           # The arn of the KMS key used to encrypt the datalake bucket
-          datalake_kms_arn: <your-datalake-kms-key-arn>
+          datalake_kms_arn: <your-datalake-kms-key-arn> #TODO
           # The arn of the KMS key used to encrypt the Glue Catalog
-          glue_catalog_kms_arn: <your-datalake-kms-key-arn>
+          glue_catalog_kms_arn: <your-datalake-kms-key-arn> #TODO
         # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
         # specifies a deployment configuration file if required.
         modules:
