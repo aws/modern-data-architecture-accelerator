@@ -27,11 +27,11 @@ The following instructions assume you have already deployed your Data Lake (poss
 
 6. Ensure you are authenticated to your target AWS account.
 
-7. Optionally, run `<path_to_mdaa_repo>/bin/mdaa -l ls` from the directory containing `mdaa.yaml` to understand what stacks will be deployed.
+7. Optionally, run `<path_to_mdaa_repo>/bin/mdaa ls` from the directory containing `mdaa.yaml` to understand what stacks will be deployed.
 
-8. Optionally, run `<path_to_mdaa_repo>/bin/mdaa -l synth` from the directory containing `mdaa.yaml` and review the produced templates.
+8. Optionally, run `<path_to_mdaa_repo>/bin/mdaa synth` from the directory containing `mdaa.yaml` and review the produced templates.
 
-9. Run `<path_to_mdaa_repo>/bin/mdaa -l deploy` from the directory containing `mdaa.yaml` to deploy all modules.
+9. Run `<path_to_mdaa_repo>/bin/mdaa deploy` from the directory containing `mdaa.yaml` to deploy all modules.
 
 10. Before loading csv files, you will need to provide the generated `lambda-etl` role with access to your datalake bucket(s). Additionally, the source bucket must have EventBridge integration enabled.
 

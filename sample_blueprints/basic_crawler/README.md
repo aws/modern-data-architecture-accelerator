@@ -25,11 +25,11 @@ The following instructions assume you have already deployed your Data Lake (poss
 
 5. Ensure you are authenticated to your target AWS account.
 
-6. Optionally, run `<path_to_mdaa_repo>/bin/mdaa -l ls` from the directory containing `mdaa.yaml` to understand what stacks will be deployed.
+6. Optionally, run `<path_to_mdaa_repo>/bin/mdaa ls` from the directory containing `mdaa.yaml` to understand what stacks will be deployed.
 
-7. Optionally, run `<path_to_mdaa_repo>/bin/mdaa -l synth` from the directory containing `mdaa.yaml` and review the produced templates.
+7. Optionally, run `<path_to_mdaa_repo>/bin/mdaa synth` from the directory containing `mdaa.yaml` and review the produced templates.
 
-8. Run `<path_to_mdaa_repo>/bin/mdaa -l deploy` from the directory containing `mdaa.yaml` to deploy all modules.
+8. Run `<path_to_mdaa_repo>/bin/mdaa deploy` from the directory containing `mdaa.yaml` to deploy all modules.
 
 9. Before running the crawler, you will need to provide the generated `glue-etl` role with access to your datalake bucket. Additionally, to test the crawler, you can load data from `./sample_data` into the datalake.
 

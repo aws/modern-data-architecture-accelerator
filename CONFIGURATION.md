@@ -159,6 +159,7 @@ custom_aspects:
 # This should be the NPM package version in standard npm version constraint syntax, 
 # and will be appended to the MDAA NPM Package name when
 # each MDAA CDK App is npm installed.
+# Note: any specification of MDAA package version will result in the affected package(s) being installed from NPM instead of being executed from local codebase.
 mdaa_version: ">=0.15.0"
 
 # (Optional) - Env templates can be defined for use across domains/envs. 
@@ -199,6 +200,7 @@ domains:
         # This should be the NPM package version in standard npm version constraint syntax, 
         # and will be appended to the MDAA NPM Package name when
         # each MDAA CDK App is npm installed.
+        # Note: any specification of MDAA package version will result in the affected package(s) being installed from NPM instead of being executed from local codebase.
         mdaa_version: ">=0.15.0"
         # The target deployment account can be specified per environment.
         # If 'default' or not specified, the account configured in the environment will be assumed.
@@ -217,6 +219,7 @@ domains:
             # This should be the NPM package version in standard npm version constraint syntax, 
             # and will be appended to the MDAA NPM Package name when
             # each MDAA CDK App is npm installed.
+            # Note: any specification of MDAA package version will result in the affected package(s) being installed from NPM instead of being executed from local codebase.
             mdaa_version: ">=0.15.0"
             # The CDK App to be executed. An NPM install will be run using this
             # value as the package name--so the package is expected to be available either via 
@@ -229,6 +232,7 @@ domains:
             # Each module's npm packages will be installed and
             # executed in an isolated location to avoid conflicts between modules.
             # This approach overrides any mdaa_version config at the global, domain, env, or module level.
+            # Note: any specification of MDAA package version will result in the affected package(s) being installed from NPM instead of being executed from local codebase.
             cdk_app: "@aws-mdaa/athena-workgroup@>=0.15.0"
             # One or more config files can be specified and will be merged before being fed to the CDK application. 
             # Later-specified config file contents will override earlier-specified configs.
