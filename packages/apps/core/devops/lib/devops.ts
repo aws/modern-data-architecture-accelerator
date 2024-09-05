@@ -495,7 +495,7 @@ export class MdaaPipeline extends Pipeline {
     }
 
     private createMdaaCommand ( mdaaAction: string ): string {
-        const mdaaCmd = [ `./mdaa/bin/mdaa -l ${ mdaaAction }` ]
+        const mdaaCmd = [ `./mdaa/bin/mdaa ${ mdaaAction }` ]
         if ( this.props.domainFilter ) {
             mdaaCmd.push( `-d ${ this.props.domainFilter.join( "," ) }` )
         }

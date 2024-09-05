@@ -2,7 +2,12 @@
 cwd=`pwd`
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_path/../"
-npm install --no-save
-npx lerna run build --scope "@aws-mdaa/cli"
+echo ""
+echo "Running NPM Install for MDAA Repo"
+npm install --no-save --quiet > /dev/null
+echo ""
+echo "Building MDAA CLI"
+echo ""
+npx lerna run build --scope "@aws-mdaa/cli" --loglevel warn > /dev/null
 cd "$cwd"
 "$parent_path/../packages/cli/bin/mdaa" $@

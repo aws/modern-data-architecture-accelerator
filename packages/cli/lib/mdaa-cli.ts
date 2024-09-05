@@ -8,7 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { MdaaCliConfig, MdaaDomainConfig, MdaaEnvironmentConfig, MdaaModuleConfig } from './mdaa-cli-config-parser';
 
-export interface DeployStageMap { [ key: string ]: { moduleConfig: ModuleEffectiveConfig, modulePath: string }[] }
+export interface DeployStageMap { [ key: string ]: { moduleConfig: ModuleEffectiveConfig, modulePath: string, localModule: boolean }[] }
 
 export class MdaaDeploy {
     private readonly config: MdaaCliConfig
@@ -17,22 +17,21 @@ export class MdaaDeploy {
     private readonly domainFilter?: string[]
     private readonly envFilter?: string[]
     private readonly moduleFilter?: string[]
-    private readonly npmTag: string
+    private readonly npmTag?: string
     private readonly roleArn?: string
     private readonly workingDir: string
     private readonly mdaaVersion?: string
     private readonly npmDebug: boolean;
     private readonly updateCache: { [ prefix: string ]: boolean } = {};
-    private readonly localMode?: boolean
     private readonly devopsMode?: boolean
     private static readonly DEFAULT_DEPLOY_STAGE = "1"
     private readonly localPackages: { [ packageName: string ]: string }
     private readonly cdkPushdown?: string[]
     private readonly cdkVerbose?: boolean
 
-
     constructor( options: { [ key: string ]: string }, cdkPushdown?: string[], configContents?: { [ key: string ]: any } ) {
         this.action = options[ 'action' ]
+        /* istanbul ignore next */
         if ( !this.action ) {
             throw new Error( "MDAA action must be specified on command line: mdaa <action>" )
         }
@@ -42,24 +41,27 @@ export class MdaaDeploy {
         this.envFilter = options[ 'env' ]?.split( "," ).map( x => x.trim() )
         this.moduleFilter = options[ 'module' ]?.split( "," ).map( x => x.trim() )
         this.roleArn = options[ 'role_arn' ]
-        this.npmTag = options[ 'tag' ] ? options[ 'tag' ] : "latest"
+        this.npmTag = options[ 'tag' ]
         // nosemgrep
         this.workingDir = options[ "working_dir" ] ? path.resolve( options[ "working_dir" ] ) : path.resolve( "./.mdaa_working" )
         this.npmDebug = this.booleanOption(options,'npm_debug')
-        this.localMode = this.booleanOption( options, 'local_mode')
+
         this.devopsMode = this.booleanOption( options, 'devops' )
         this.cdkPushdown = cdkPushdown
         this.cdkVerbose = this.booleanOption( options,'cdk_verbose' )
 
-        if ( !this.localMode && options[ 'clear' ] && this.action != 'dryrun' ) {
+        if ( options['local_mode']) {
+            console.log ("Use of -l flag no longer necessary. Execution mode is automatically determined.")
+        }
+
+        /* istanbul ignore next */
+        if ( options[ 'clear' ] && this.action != 'dryrun' ) {
             console.log( `Removing all previously installed packages from ${ this.workingDir }/packages` )
             this.execCmd( `rm -rf '${ this.workingDir }/packages'` );
         }
 
-        this.localPackages = this.localMode ? this.loadLocalPackages() : {}
-        if ( this.localMode ) {
-            console.log( "Running MDAA in local mode." )
-        }
+        this.localPackages = this.loadLocalPackages() 
+
         if ( this.devopsMode ) {
             console.log( "Running MDAA in devops mode." )
         }
@@ -72,7 +74,6 @@ export class MdaaDeploy {
     }
 
     private loadConfig ( configFileName: string, configContents: {[key:string]:any} | undefined ): MdaaCliConfig {
-        
         if ( configContents ) {
             return new MdaaCliConfig( { configContents: configContents } )
         } else {
@@ -97,10 +98,17 @@ export class MdaaDeploy {
         // nosemgrep
         const workspaceQueryJson = require( 'child_process' ).execSync( `npm query .workspace --prefix '${ __dirname }/../../../'` ).toString()
         const workspace: any[] = JSON.parse( workspaceQueryJson )
-        return Object.fromEntries( workspace.map( pkgInfo => {
+        const localPackages =  Object.fromEntries( workspace.filter( pkgInfo => {
+            return pkgInfo[ 'location' ].startsWith("packages/apps/")
+        }).map( pkgInfo => {
             // nosemgrep
-            return [ `${ pkgInfo[ 'name' ] }@latest`, path.resolve( `${ __dirname }/../../../${ pkgInfo[ 'location' ] }` ) ]
+            return [ `${ pkgInfo[ 'name' ] }`, path.resolve( `${ __dirname }/../../../${ pkgInfo[ 'location' ] }` ) ]
         } ) )
+        /* istanbul ignore next */
+        if ( Object.entries( localPackages ).length  > 0) {
+            console.log(`Loaded ${Object.entries(localPackages).length} MDAA modules from local codebase.`)
+        }
+        return localPackages
     }
 
     public deploy () {
@@ -131,12 +139,13 @@ export class MdaaDeploy {
             domainName: 'multi-domains',
             effectiveAppConfig: this.config.contents.devops || {}
         }
-        this.deployModule( devopsModuleConfig, this.installPackageToPrefix( '@aws-mdaa/devops@latest' ) )
+        const [ modulePath, localModule ] = this.prepPackage('devops', '@aws-mdaa/devops' )
+        this.deployModule( devopsModuleConfig, modulePath, localModule )
     }
 
     private deployDomains ( globalEffectiveConfig: EffectiveConfig ) {
         if ( this.domainFilter  && !this.devopsMode) {
-            console.log( `Filtering for domain ${ this.domainFilter }` )
+            console.log( `Filtering for domain(s) ${ this.domainFilter }` )
         }
 
         Object.keys( this.config.contents.domains ).filter( domainName => this.devopsMode || this.domainFilter == undefined || this.domainFilter?.includes( domainName ) ).forEach( domainName => {
@@ -153,11 +162,11 @@ export class MdaaDeploy {
         domainEffectiveConfig: DomainEffectiveConfig ) {
         if(!this.devopsMode){
             console.log( `-----------------------------------------------------------` )
-            console.log( `Running ${ this.action} for Domain ${ domainEffectiveConfig.domainName }` )
+            console.log( `Domain ${ domainEffectiveConfig.domainName }: Running ${ this.action}` )
             console.log( `-----------------------------------------------------------` )
         }
         if ( this.envFilter && !this.devopsMode ) {
-            console.log( `Filtering for env ${ this.envFilter }` )
+            console.log( `Domain ${ domainEffectiveConfig.domainName }: Filtering for env ${ this.envFilter }` )
         }
         Object.keys( domain.environments ).filter( envName => this.devopsMode || this.envFilter == undefined || this.envFilter?.includes( envName ) ).forEach( envName => {
             const env = domain.environments[ envName ]
@@ -182,7 +191,7 @@ export class MdaaDeploy {
         }
 
         if ( this.moduleFilter && !this.devopsMode ) {
-            console.log( `Filtering for module ${ this.moduleFilter }` )
+            console.log( `Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName}: Filtering for module ${ this.moduleFilter }` )
         }
         if ( envEffectiveConfig.useBootstrap ) {
             const bootstrapModule: MdaaModuleConfig = {
@@ -212,7 +221,7 @@ export class MdaaDeploy {
                 ( pipelineConfig.moduleFilter == undefined || pipelineConfig.moduleFilter?.includes( moduleEffectiveConfig.moduleName ) )
         }).map(entry => entry[0])
         if(pipelines.length == 1) {
-            console.log( `${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName} will be deployed via pipeline ${pipelines[0]}` )
+            console.log( `Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName} will be deployed via pipeline ${pipelines[0]}` )
         } else if(pipelines.length > 1) {
             throw new Error( `Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName} matches multiple pipeline filters: ${pipelines}`)
         } else {
@@ -222,48 +231,53 @@ export class MdaaDeploy {
 
     private deployEnvModules ( envEffectiveConfig: EnvEffectiveConfig, moduleEffectiveConfigs: ModuleEffectiveConfig[] ) {
         console.log( `-----------------------------------------------------------` )
-        console.log( `Installing Packages and Computing Stages for Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }` )
+        console.log( `Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }: Prepping Modules and Computing Stages` )
         console.log( `-----------------------------------------------------------` )
         const envDeployStages: DeployStageMap = this.computeEnvDeployStages( moduleEffectiveConfigs )
         if ( !this.devopsMode ) {
             console.log( `-----------------------------------------------------------` )
-            console.log( `Running ${ this.action} for Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }` )
+            console.log( `Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }: Running ${ this.action}` )
             console.log( `-----------------------------------------------------------` )
         }
         const orderedStages = this.action == "destroy" ? Object.keys( envDeployStages ).sort( ( a, b ) => ( +a - +b ) ).reverse() : Object.keys( envDeployStages ).sort( ( a, b ) => ( +a - +b ) )
         orderedStages.forEach( stage => {
-            console.log( `Running MDAA stage ${ stage } for ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName }` )
+            console.log( `Env ${ envEffectiveConfig.domainName }/${ envEffectiveConfig.envName } Running MDAA stage ${ stage }` )
             const stageApps = envDeployStages[ stage ]
             stageApps.forEach( module => {
-                this.deployModule( module.moduleConfig, module.modulePath )
+                this.deployModule( module.moduleConfig, module.modulePath, module.localModule )
             } )
         } )
     }
 
-    private computeEnvDeployStages ( moduleConfigs: ModuleEffectiveConfig[] ): DeployStageMap {
+    private computeEnvDeployStages ( moduleEffectiveConfigs: ModuleEffectiveConfig[] ): DeployStageMap {
         const deployStages: DeployStageMap = {}
 
-        moduleConfigs.filter( moduleConfig => this.devopsMode|| this.moduleFilter == undefined || this.moduleFilter?.includes( moduleConfig.moduleName ) ).forEach( moduleConfig => {
-            console.log( `Installing packages for ${ moduleConfig.moduleName }` )
+        moduleEffectiveConfigs.filter( moduleEffectiveConfig => this.devopsMode|| this.moduleFilter == undefined || this.moduleFilter?.includes( moduleEffectiveConfig.moduleName ) ).forEach( moduleEffectiveConfig => {
+            const logPrefix = `${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }`
+            
+            const effectivePackageVersion = moduleEffectiveConfig.effectiveMdaaVersion || this.npmTag
 
-            const moduleCdkAppNpmPackage = moduleConfig.cdkApp.replace( /^@/, "" ).includes( '@' ) ?
-                moduleConfig.cdkApp : `${ moduleConfig.cdkApp }@${ moduleConfig.effectiveMdaaVersion || this.npmTag }`
+            const initialCdkAppNpmPackage = effectivePackageVersion ? `${ moduleEffectiveConfig.cdkApp }@${ effectivePackageVersion }` : moduleEffectiveConfig.cdkApp
 
-            const modulePath = this.installPackageToPrefix( moduleCdkAppNpmPackage.replace(/caef/,"mdaa") )
+            const finalModuleCdkAppNpmPackage = moduleEffectiveConfig.cdkApp.replace( /^@/, "" ).includes( '@' ) ?
+                moduleEffectiveConfig.cdkApp : initialCdkAppNpmPackage
+                
+            console.log( `Module ${ logPrefix}: Prepping packages` )
+            const [ modulePath, localModule ] = this.prepPackage( logPrefix, finalModuleCdkAppNpmPackage.replace(/caef/,"mdaa") )
 
-            const customNamingModulePath = moduleConfig.customNaming && moduleConfig.customNaming.naming_module.startsWith( "@" ) ?
-                this.installPackageToPrefix( moduleConfig.customNaming.naming_module ) : moduleConfig.customNaming?.naming_module
+            const customNamingModulePath = moduleEffectiveConfig.customNaming && moduleEffectiveConfig.customNaming.naming_module.startsWith( "@" ) ?
+                this.prepPackage( logPrefix, moduleEffectiveConfig.customNaming.naming_module ) : moduleEffectiveConfig.customNaming?.naming_module
 
             const installedCustomNamingModule: MdaaCustomNaming | undefined = customNamingModulePath ? {
                 naming_module: `${ customNamingModulePath }`,
-                naming_class: moduleConfig.customNaming?.naming_class || '',
-                naming_props: moduleConfig.customNaming?.naming_props
+                naming_class: moduleEffectiveConfig.customNaming?.naming_class || '',
+                naming_props: moduleEffectiveConfig.customNaming?.naming_props
 
             } : undefined
 
-            const installedCustomAspects: MdaaCustomAspect[] = moduleConfig.customAspects?.map( customAspect => {
-                const customAspectPath = customAspect.aspect_module.startsWith( "@" ) ?
-                    this.installPackageToPrefix( customAspect.aspect_module ) : customAspect.aspect_module
+            const installedCustomAspects: MdaaCustomAspect[] = moduleEffectiveConfig.customAspects?.map( customAspect => {
+                const [customAspectPath, _localModule] = customAspect.aspect_module.startsWith( "@" ) ?
+                    this.prepPackage( logPrefix, customAspect.aspect_module ) : [customAspect.aspect_module, true]
                 return {
                     aspect_module: customAspectPath,
                     aspect_class: customAspect.aspect_class,
@@ -272,109 +286,112 @@ export class MdaaDeploy {
             } )
 
             const installedModuleConfig: ModuleEffectiveConfig = {
-                ...moduleConfig,
+                ...moduleEffectiveConfig,
                 customAspects: installedCustomAspects,
                 customNaming: installedCustomNamingModule
             }
 
             const deployStage = this.computeModuleDeployStage( installedModuleConfig, modulePath )
             if ( deployStages[ deployStage ] ) {
-                deployStages[ deployStage ].push( { moduleConfig: installedModuleConfig, modulePath } )
+                deployStages[ deployStage ].push( { moduleConfig: installedModuleConfig, modulePath, localModule } )
             } else {
-                deployStages[ deployStage ] = [ { moduleConfig: installedModuleConfig, modulePath } ]
+                deployStages[ deployStage ] = [ { moduleConfig: installedModuleConfig, modulePath, localModule } ]
             }
 
         } )
         return deployStages
     }
 
-    private resolvePackagePrefix ( npmPackage: string ): string {
-        if ( this.localMode ) {
-            if ( this.localPackages.hasOwnProperty( npmPackage ) ) {
-                return this.localPackages[ npmPackage ]
-            } else {
-                throw new Error( `Unable to find local package location for ${ npmPackage }` )
-            }
+    private prepLocalPackage ( logPrefix:string,npmPackage: string, npmPackageNoVersion: string ) :string {
+        const prefix = this.localPackages[ npmPackage ]
+        /* istanbul ignore next */
+        if ( this.action == "dryrun" ) {
+            console.log( `Module ${ logPrefix}: Skipping package build. In dry run mode.` )
         } else {
-            // nosemgrep
-            return path.resolve( `${ this.workingDir }/packages/${ MdaaDeploy.hashCodeHex( npmPackage, this.npmTag ).replace( /^-/, "" ) }` )
+            console.log( `Module ${ logPrefix}: Package ${ npmPackageNoVersion } found in local codebase. Running build.` )
+            const buildCmd = `npx lerna run build --scope ${ npmPackageNoVersion } --loglevel warn`
+            // console.log( `Running Lerna Build: ${ buildCmd }` )
+            this.execCmd( `cd '${ __dirname }/../../';${ buildCmd } > /dev/null;cd '${ this.cwd }'` );
         }
+        return prefix
     }
 
-    private installPackageToPrefix ( npmPackage: string ): string {
-
-        const prefix = this.resolvePackagePrefix( npmPackage )
-        const npmPackageNoVersion = npmPackage.replace( /(?<!^)@.*/, "" )
-
+    private installPackage ( logPrefix:string, npmPackage: string, npmPackageNoVersion: string ) : string {
+        const prefix = path.resolve( `${ this.workingDir }/packages/${ MdaaDeploy.hashCodeHex( npmPackage, this.npmTag || "latest" ).replace( /^-/, "" ) }` )
+        console.log( `Module ${ logPrefix}: Prepping NPM Package ${npmPackage}`)
+        /* istanbul ignore next */
         if ( this.action == "dryrun" ) {
-            console.log( `Skipping package installation. In dry run mode.` )
-            return prefix
-        }
-        if ( this.localMode ) {
-            console.log( `In local mode. Running package build for ${ npmPackageNoVersion }.` )
-            const buildCmd = `npx lerna run build --scope ${ npmPackageNoVersion }`
-            console.log( `Running Lerna Build: \n${ buildCmd }` )
-            this.execCmd( `cd '${ __dirname }/../../';${ buildCmd };cd '${ this.cwd }'` );
+            console.log( `Module ${ logPrefix}: Skipping package installation. In dry run mode.` )
             return prefix
         }
         // nosemgrep
-        if ( !fs.existsSync( prefix ) ) {
-            console.log( `Installing ${ npmPackage } to ${ prefix }` )
+        /* istanbul ignore next */
+        if ( !fs.existsSync( `${prefix}/package.json` ) ) {
+            console.log( `Module ${ logPrefix}: Installing ${npmPackage} to ${ prefix }.` )
             //Install the module CDK App NPM package
-            const npmInstallCmd = `npm install ${ this.npmDebug ? "-d" : "" } --no-fund --tag '${ this.npmTag }' --prefix '${ prefix }' '${ npmPackage }'`
-            console.log( `Running NPM Install Cmd: \n${ npmInstallCmd }` )
+            const npmInstallCmd = `npm install --no-fund --tag '${ this.npmTag }' --prefix '${ prefix }' '${ npmPackage }' ${ this.npmDebug ? "-d" : " > /dev/null" }`
+            // console.log( `Running NPM Install Cmd: ${ npmInstallCmd }` )
             this.execCmd( `mkdir -p '${ prefix }' && ${ npmInstallCmd }` );
         } else {
-            console.log( `Install prefix ${ prefix } already exists. Attempting update instead.` )
+            console.log( `Module ${ logPrefix}: Install prefix ${ prefix } already exists. Attempting update instead.` )
             if ( !this.updateCache[ prefix ] ) {
-                const npmUpdateCmd = `npm update --no-fund --tag '${ this.npmTag }' --prefix '${ prefix }'`
-                console.log( `Running NPM Update Cmd: \n${ npmUpdateCmd }` )
+                const npmUpdateCmd = `npm update --no-fund --tag '${ this.npmTag }' --prefix '${ prefix }' ${ this.npmDebug ? "-d" : " > /dev/null" }`
+                // console.log( `Running NPM Update Cmd: ${ npmUpdateCmd }` )
                 this.execCmd( npmUpdateCmd );
                 this.updateCache[ prefix ] = true
             } else {
-                console.log( "Skipping update. Already updated this prefix." )
+                console.log( `Module ${ logPrefix}: Skipping update. Already updated this prefix.` )
             }
         }
         return `${ prefix }/node_modules/${ npmPackageNoVersion }`
     }
 
+    private prepPackage (logPrefix:string, npmPackage: string ): [string, boolean] {
+        const npmPackageNoVersion = npmPackage.replace( /(?<!^)@.*/, "" )
+        if (this.localPackages.hasOwnProperty( npmPackage ) ) {
+            return [ this.prepLocalPackage(logPrefix,npmPackage,npmPackageNoVersion), true]
+        } else {
+            return [ this.installPackage(logPrefix,npmPackage,npmPackageNoVersion), false]
+        }
+    }
+
     private computeModuleDeployStage (
-        moduleConfig: ModuleEffectiveConfig,
+        moduleEffectiveConfig: ModuleEffectiveConfig,
         modulePath: string
     ): string {
         const moduleMdaaDeployConfigFile = `${ modulePath }/mdaa.config.json`
-        console.log( `Attempting to read module config from ${ moduleMdaaDeployConfigFile }` )
         // nosemgrep
         if ( fs.existsSync( moduleMdaaDeployConfigFile ) ) {
             // nosemgrep
             const moduleMdaaDeployConfig = require( moduleMdaaDeployConfigFile )
             if ( moduleMdaaDeployConfig.hasOwnProperty( 'DEPLOY_STAGE' ) ) {
                 const deployStage = moduleMdaaDeployConfig[ 'DEPLOY_STAGE' ]
-                console.log( `Set deploy stage for ${ moduleConfig.moduleName } ${ deployStage } by mdaa.config.json` )
+                console.log( `Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }: Set deploy stage to ${ deployStage } by mdaa.config.json` )
                 return deployStage
             }
         }
-        console.log( `Set deploy stage for ${ moduleConfig.moduleName } to ${ MdaaDeploy.DEFAULT_DEPLOY_STAGE } by default` )
+        console.log( `Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }: Set deploy stage to ${ MdaaDeploy.DEFAULT_DEPLOY_STAGE } by default` )
         return MdaaDeploy.DEFAULT_DEPLOY_STAGE
     }
 
 
-    private deployModule ( moduleEffectiveConfig: ModuleEffectiveConfig, modulePath: string ) {
+    private deployModule ( moduleEffectiveConfig: ModuleEffectiveConfig, modulePath: string, localModule: boolean ) {
         if ( !this.devopsMode ) {
             console.log( `\n-----------------------------------------------------------` )
-            console.log( `Running ${this.action} for Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }` )
+            console.log( `Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }: Running ${this.action}` )
             console.log( `-----------------------------------------------------------` )
         }
+        /* istanbul ignore next */
         if ( this.action != "dryrun" ) {
             const packageJsonPath = `${ modulePath }/package.json`
             // nosemgrep
             const pjson = require( packageJsonPath );
-            console.log( `Running CDK App ${ moduleEffectiveConfig.cdkApp } Version: ${ pjson.version }` );
+            console.log( `Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }: Running CDK App ${ moduleEffectiveConfig.cdkApp } Version: ${ pjson.version }` );
         }
 
-        const cdkCmd = this.createCdkCommand( moduleEffectiveConfig, modulePath )
-        console.log( `Running CDK cmd:\n${ cdkCmd }` )
-
+        const cdkCmd = this.createCdkCommand( moduleEffectiveConfig,modulePath,localModule )
+        console.log( `Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }: Running CDK cmd:\n${ cdkCmd }` )
+        /* istanbul ignore next */
         if ( this.action != "dryrun" ) {
             this.execCmd( `cd '${ modulePath }' && ${ cdkCmd }` );
         }
@@ -382,7 +399,8 @@ export class MdaaDeploy {
 
     private createCdkCommand (
         moduleEffectiveConfig: ModuleEffectiveConfig,
-        modulePath: string
+        modulePath: string,
+        localModule: boolean
     ): string {
 
         const action = this.action == 'deploy' ? `${ this.action } --all` : this.action
@@ -390,9 +408,11 @@ export class MdaaDeploy {
         const cdkEnv: string[] = this.createCdkCommandEnv( moduleEffectiveConfig )
         const cdkCmd: string[] = []
         cdkCmd.push( `npx ${ this.npmDebug ? "-d" : "" } cdk ${ action } ${this.cdkVerbose ? "-v": ""} --require-approval never` )
-        if ( !this.localMode ) {
+        
+        if ( !localModule ) {
             cdkCmd.push( `-a 'npx ${ this.npmDebug ? "-d" : "" } ${ modulePath }/'` )
         }
+
         cdkCmd.push( `-o '${ this.workingDir }/cdk.out'` )
         cdkCmd.push( `-c 'org=${ this.config.contents.organization }'` )
         cdkCmd.push( `-c 'env=${ moduleEffectiveConfig.envName }'` )
@@ -421,7 +441,7 @@ export class MdaaDeploy {
         cdkCmd.push( ...this.generateContextCdkParams( moduleEffectiveConfig ) )
 
         if ( this.cdkPushdown ) {
-            console.log( `CDK Pushdown Options: ${ JSON.stringify( this.cdkPushdown, undefined, 2 ) }` )
+            console.log( `Module ${ moduleEffectiveConfig.domainName }/${ moduleEffectiveConfig.envName }/${ moduleEffectiveConfig.moduleName }: CDK Pushdown Options: ${ JSON.stringify( this.cdkPushdown, undefined, 2 ) }` )
             cdkCmd.push( ...this.cdkPushdown )
 
         }
@@ -447,9 +467,11 @@ export class MdaaDeploy {
 
     private createCdkCommandEnv ( moduleEffectiveConfig: ModuleEffectiveConfig ): string[] {
         const cdkEnv: string[] = []
+        /* istanbul ignore next */
         if ( this.config.contents.region && this.config.contents.region.toLowerCase() != "default" ) {
             cdkEnv.push( `export CDK_DEPLOY_REGION=${ this.config.contents.region }` )
         }
+        /* istanbul ignore next */
         if ( moduleEffectiveConfig.deployAccount && moduleEffectiveConfig.deployAccount.toLowerCase() != "default" ) {
             cdkEnv.push( `export CDK_DEPLOY_ACCOUNT=${ moduleEffectiveConfig.deployAccount }` )
         }
@@ -563,11 +585,10 @@ export class MdaaDeploy {
         }
     }
 
+    /* istanbul ignore next */
     private execCmd ( cmd: string ) {
-        console.log( "-----------------" )
         // nosemgrep
         require( 'child_process' ).execSync( cmd, { stdio: 'inherit' } )
-        console.log( "-----------------\n" )
     }
 
     protected static hashCodeHex ( ...strings: string[] ) {
