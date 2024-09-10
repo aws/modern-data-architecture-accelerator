@@ -1,0 +1,46 @@
+# The name of the dataops project this crawler will be created within.
+# The dataops project name is the MDAA module name for the project.
+projectName: project
+
+templates:
+  # An example job template. Can be referenced from other jobs. Will not itself be deployed.
+  glue-csv-parquet-template:
+    # (required) Command definition for the glue job
+    command:
+      name: "glueetl"
+      pythonVersion: "3"
+    # (required) Description of the Glue Job
+    description: Template to create a Job that transforms CSVs into Parquet
+    defaultArguments:
+      --job-bookmark-option: job-bookmark-disable
+      --raw_bucket: "{{context:datalake_src_bucket_name}}"
+      --raw_bucket_prefix: "{{context:datalake_src_prefix}}"
+      --transformed_bucket: "{{context:datalake_dest_bucket_name}}"
+      --transformed_bucket_prefix: "{{context:datalake_dest_prefix}}"
+      --enable-glue-datacatalog: "True"
+      --region_name: "{{region}}"
+    # (optional) maximum concurrent runs.  See: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html#aws-glue-api-jobs-job-ExecutionProperty
+    executionProperty:
+      maxConcurrentRuns: 1
+    # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
+    glueVersion: "4.0"
+    maxRetries: 0
+    # (optional) Number of minutes to wait before sending a job run delay notification.
+    notificationProperty:
+      notifyDelayAfter: 1
+    # (optional) Number of workers to provision
+    #numberOfWorkers: 1
+    # (optional) Number of minutes to wait before considering the job timed out
+    timeout: 60
+    # (optional) Worker type to use.  Any of: "Standard" | "G.1X" | "G.2X"
+    # Use maxCapacity or WorkerType.  Not both.
+    # workerType: "G.1X"
+    executionRoleArn: generated-role-arn:glue-etl
+
+jobs:
+  glue_csv_parquet:
+    template: "glue-csv-parquet-template" # Reference a job template.
+    command:
+      scriptLocation: ./src/glue/glue_csv_parquet/glue_csv_parquet.py
+    allocatedCapacity: 2
+    description: Job for Transform CSVs into Parquet
