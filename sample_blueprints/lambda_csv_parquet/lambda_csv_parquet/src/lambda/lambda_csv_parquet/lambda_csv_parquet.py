@@ -5,11 +5,11 @@ import os
 
 dest_bucket_name = os.environ.get("DEST_BUCKET_NAME")
 if dest_bucket_name is None:
-    raise "Destination bucket name must be set as environment variable 'DEST_BUCKET_NAME'"
+    raise Exception("Destination bucket name must be set as environment variable 'DEST_BUCKET_NAME'")
 
 dest_prefix = os.environ.get("DEST_PREFIX")
 if dest_prefix is None:
-    raise "Destination prefix must be set as environment variable 'DEST_PREFIX'"
+    raise Exception("Destination prefix must be set as environment variable 'DEST_PREFIX'")
 
 def lambda_handler(event,context):
     print(json.dumps(event,indent=2))
