@@ -2,7 +2,7 @@
 set -e
 git checkout "$CI_COMMIT_REF_NAME"
 
-PUBLISHED_VERSION=`jq -r .version < lerna.json `
+PUBLISHED_VERSION=$(jq -r .version < lerna.json )
 
 #Add tag and commit
 git commit -a -m "Version $PUBLISHED_VERSION"

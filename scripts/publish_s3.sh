@@ -2,7 +2,7 @@
 set -e
 PACKAGE_BUCKET=$1
 
-export PUBLISHED_VERSION=`jq -r .version < lerna.json `
+export PUBLISHED_VERSION=$(jq -r .version < lerna.json )
 
 #Zip all built packages and publish to S3
 zip -jr target/caef-packages-$PUBLISHED_VERSION.zip target/package-build/*

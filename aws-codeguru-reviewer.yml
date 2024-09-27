@@ -2,3 +2,4 @@ version: 1.0
 
 excludeFiles:
   - 'scripts/*.py'
+  - '*.sh'
