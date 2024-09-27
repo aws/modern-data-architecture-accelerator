@@ -4,9 +4,9 @@ rm package-lock.json
 echo "Running release versioning script."
 
 #Increment version using lerna
-export CURRENT_VERSION=`jq -r .version < lerna.json `
+export CURRENT_VERSION=$(jq -r .version < lerna.json )
 npx lerna version $VERSION_BUMP_LEVEL --no-git-tag-version --no-push --force-publish -y || true
-export NEW_VERSION=`jq -r .version < lerna.json `
+export NEW_VERSION=$(jq -r .version < lerna.json)
 
 echo "Updating version from $CURRENT_VERSION -> $NEW_VERSION"
 

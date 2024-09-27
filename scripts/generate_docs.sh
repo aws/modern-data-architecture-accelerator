@@ -2,9 +2,9 @@
 set -e
 DOCS_BRANCH=$1
 
-export CURRENT_VERSION=`jq -r .version < lerna.json`
-export CURRENT_MAJOR=`cut -d'.' -f1 <<<"$CURRENT_VERSION"`
-export CURRENT_MINOR=`cut -d'.' -f2 <<<"$CURRENT_VERSION"`
+export CURRENT_VERSION=$(jq -r .version < lerna.json)
+export CURRENT_MAJOR=$(cut -d'.' -f1 <<<"$CURRENT_VERSION")
+export CURRENT_MINOR=$(cut -d'.' -f2 <<<"$CURRENT_VERSION")
 
 #Publish docs without the patch version
 export PUBLISHED_VERSION="${CURRENT_MAJOR}.${CURRENT_MINOR}"

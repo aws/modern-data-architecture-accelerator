@@ -4,10 +4,10 @@ echo "Running prerelease versioning script."
 
 # Base prerelease version off of current minor version, setting
 # patch version to current epoch
-export CURRENT_VERSION=`jq -r .version < lerna.json `
-export EPOCH=`date +%Y%m%d%H%M%S`
-export CURRENT_MAJOR=`cut -d'.' -f1 <<<"$CURRENT_VERSION"`
-export CURRENT_MINOR=`cut -d'.' -f2 <<<"$CURRENT_VERSION"`
+export CURRENT_VERSION=$(jq -r .version < lerna.json )
+export EPOCH=$(date +%Y%m%d%H%M%S)
+export CURRENT_MAJOR=$(cut -d'.' -f1 <<<"$CURRENT_VERSION")
+export CURRENT_MINOR=$(cut -d'.' -f2 <<<"$CURRENT_VERSION")
 export NEW_VERSION="${CURRENT_MAJOR}.${CURRENT_MINOR}.${EPOCH}"
 
 echo "Updating version from $CURRENT_VERSION -> $NEW_VERSION"
