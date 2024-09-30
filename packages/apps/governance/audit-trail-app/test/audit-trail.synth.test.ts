@@ -10,7 +10,7 @@ test( 'SynthTest', () => {
         env: "test-env",
         domain: "test-domain",
         module_name: "test-module",
-        app_configs: "./test/test-config.yaml"
+        module_configs: "./test/test-config.yaml"
     }
     const app = new AuditTrailCDKApp( { context: context } )
     app.generateStack()

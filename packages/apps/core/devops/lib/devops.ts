@@ -68,11 +68,9 @@ export class DevOpsConfigParser extends MdaaAppConfigParser<DevOpsConfigContents
 
 }
 
-
-
 export class MdaaDevopsCDKApp extends MdaaCdkApp {
     constructor( props?: AppProps ) {
-        super( "devops", { ...props, ...{ useBootstrap: false } } )
+        super( { ...props, ...{ useBootstrap: false } }, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
         const appConfig = new DevOpsConfigParser( stack, parserProps )

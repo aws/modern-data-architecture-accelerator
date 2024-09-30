@@ -29,33 +29,33 @@ domains:
         modules:
           # This module will create all of the roles required for the datalake, as well as dataops layers running on top
           roles: # The module name (ie 'roles') will be incorporated into resource name by the default naming implementation.
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./roles.yaml
 
           # This module will deploy the S3 data lake buckets.
           # Coarse grained access may be granted directly to S3 for certain roles.
           datalake:
-            cdk_app: "@aws-mdaa/datalake"
-            app_configs:
+            module_path: "@aws-mdaa/datalake"
+            module_configs:
               - ./datalake/datalake.yaml
 
           # This module will ensure the Glue Catalog is KMS encrypted.
           glue-catalog:
-            cdk_app: "@aws-mdaa/glue-catalog"
+            module_path: "@aws-mdaa/glue-catalog"
 
           # This module will ensure that LakeFormation is configured to not
           # automatically generate IAMAllowedPrincipal grants on new databases and tables.
           lakeformation-settings:
-            cdk_app: "@aws-mdaa/lakeformation-settings"
-            app_configs:
+            module_path: "@aws-mdaa/lakeformation-settings"
+            module_configs:
               - ./datalake/lakeformation-settings.yaml
 
           # This module will create an Athena Workgroup which can be used to query
           # the data lake.
           athena:
-            cdk_app: "@aws-mdaa/athena-workgroup"
-            app_configs:
+            module_path: "@aws-mdaa/athena-workgroup"
+            module_configs:
               - ./datalake/athena.yaml
 
   # The named of the domain. In this case, we are building a 'dataops' domain.
@@ -73,12 +73,12 @@ domains:
           # This module will create DataOps Project resources which can be shared
           # across multiple
           example-project:
-            cdk_app: "@aws-mdaa/dataops-project"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-project"
+            module_configs:
               - ./dataops/project.yaml
           example-crawler:
-            cdk_app: "@aws-mdaa/dataops-crawler"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-crawler"
+            module_configs:
               - ./dataops/crawler.yaml
 
   datascience:
@@ -94,12 +94,12 @@ domains:
         modules:
           # A roles module deployment will be used to generate IAM roles
           roles:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./roles.yaml
           # A Data Science Team module will deploy the resources required for the
           # data science platform.
           example-team:
-            cdk_app: "@aws-mdaa/datascience-team"
-            app_configs:
+            module_path: "@aws-mdaa/datascience-team"
+            module_configs:
               - ./datascience/datascience-team.yaml

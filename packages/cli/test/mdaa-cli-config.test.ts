@@ -99,7 +99,7 @@ test( 'BadModuleNameTest', () => {
                     "test-good-env": {
                         modules: {
                             "test_bad_module": {
-                                cdk_app: "test"
+                                module_path: "test"
                             }
                         }
                     }
@@ -120,7 +120,38 @@ test( 'GoodModuleNameTest', () => {
                     "test-good-env": {
                         modules: {
                             "test-good-module": {
-                                cdk_app: "test"
+                                module_path: "test"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    expect( () => new MdaaCliConfig( { configContents: configContents } ) ).not.toThrow()
+} );
+
+
+test( 'TerraformModuleTest', () => {
+
+    const configContents: MdaaConfigContents = {
+        organization: "test-good-org",
+        domains: {
+            "test-good-domain": {
+                environments: {
+                    "test-good-env": {
+                        modules: {
+                            "test-tf-mdaa-module": {
+                                module_type: "tf",
+                                module_path: "aws-mdaa/test"
+                            },
+                            "test-tf-3p-mdaa-module": {
+                                module_type: "tf",
+                                mdaa_compliant: true
+                            },
+                            "test-tf-3p-module": {
+                                module_type: "tf",
+                                mdaa_compliant: false
                             }
                         }
                     }

@@ -12,7 +12,7 @@ import { DataScienceTeamConfigParser } from './datascience-team-config';
 
 export class DataScienceTeamApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "datascience-team", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

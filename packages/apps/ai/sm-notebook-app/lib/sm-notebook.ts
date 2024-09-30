@@ -11,7 +11,7 @@ import { SagemakerNotebookL3ConstructProps, SagemakerNotebookL3Construct } from 
 
 export class SageMakerNotebookApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "sm-notebook", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
         const appConfig = new SageMakerNotebookConfigParser( stack, parserProps )

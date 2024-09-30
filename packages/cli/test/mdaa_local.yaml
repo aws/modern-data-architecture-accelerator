@@ -30,23 +30,23 @@ env_templates:
   example_global_env_template:
     modules:
       roles:
-        cdk_app: "@aws-mdaa/roles"
+        module_path: "@aws-mdaa/roles"
         app_configs:
           - ./roles.yaml
       datalake:
-        cdk_app: "@aws-mdaa/datalake"
+        module_path: "@aws-mdaa/datalake"
         app_configs:
           - ./datalake.yaml
       athena-workgroup:
-        cdk_app: "@aws-mdaa/athena-workgroup"
+        module_path: "@aws-mdaa/athena-workgroup"
         app_configs:
           - ./athena-workgroup.yaml
       dataops-project-test:
-        cdk_app: "@aws-mdaa/dataops-project"
+        module_path: "@aws-mdaa/dataops-project"
         app_configs:
           - ./dataops/dataops-project.yaml
       dataops-crawler-test:
-        cdk_app: "@aws-mdaa/dataops-crawler"
+        module_path: "@aws-mdaa/dataops-crawler"
         app_configs:
           - ./dataops/dataops-crawler.yaml
 
@@ -67,20 +67,20 @@ domains:
         modules:
           audit:
             
-            cdk_app: "@aws-mdaa/audit"
+            module_path: "@aws-mdaa/audit"
             # One or more tag files containing tags which will be applied to all deployed resources for this env
             tag_configs:
               - tags.yaml
             app_configs:
               - ./audit.yaml
           audit-trail:
-            cdk_app: "@aws-mdaa/audit-trail"
+            module_path: "@aws-mdaa/audit-trail"
             app_configs:
               - ./audit-trail.yaml
           glue-catalog:
-            cdk_app: "@aws-mdaa/glue-catalog"
+            module_path: "@aws-mdaa/glue-catalog"
           datawarehouse:
-            cdk_app: "@aws-mdaa/datawarehouse"
+            module_path: "@aws-mdaa/datawarehouse"
             app_configs:
               - ./datawarehouse.yaml
 
@@ -104,7 +104,7 @@ domains:
         modules:
           # This env will deploy this module in addition to those defined in the template
           additional-module:
-            cdk_app: "@aws-mdaa/dataops-job"
+            module_path: "@aws-mdaa/dataops-job"
             app_configs:
               - ./dataops/dataops-job.yaml
 
@@ -114,11 +114,11 @@ domains:
       example_domain_env_template:
         modules:
           roles:
-            cdk_app: "@aws-mdaa/roles"
+            module_path: "@aws-mdaa/roles"
             app_configs:
               - ./roles.yaml
           datalake:
-            cdk_app: "@aws-mdaa/datalake"
+            module_path: "@aws-mdaa/datalake"
             app_configs:
               - ./datalake.yaml
     environments:

@@ -13,7 +13,7 @@ import { MdaaServiceCatalogProductConfigParser } from './service-catalog-config'
 
 export class ServiceCatalogCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "service-catalog", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

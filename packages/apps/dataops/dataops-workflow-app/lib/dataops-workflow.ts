@@ -12,7 +12,7 @@ import { GlueWorkflowConfigParser } from './dataops-workflow-config';
 
 export class GlueWorkflowCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "dataops-workflow", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

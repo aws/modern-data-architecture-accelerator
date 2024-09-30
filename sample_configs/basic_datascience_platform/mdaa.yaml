@@ -36,12 +36,12 @@ domains:
         modules:
           # A roles module deployment will be used to generate IAM roles
           roles:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./roles.yaml
           # A Data Science Team module will deploy the resources required for the
           # data science platform.
           example-team:
-            cdk_app: "@aws-mdaa/datascience-team"
-            app_configs:
+            module_path: "@aws-mdaa/datascience-team"
+            module_configs:
               - ./datascience/datascience-team.yaml

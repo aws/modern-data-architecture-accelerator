@@ -113,11 +113,20 @@ export class MdaaConfigSSMValueTransformer implements IMdaaConfigValueTransforme
     }
 }
 
-export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransformer {
-    protected readonly scope: Construct
+export interface MdaaConfigRefValueTransformerProps {
+    readonly org: string,
+    readonly domain: string,
+    readonly env: string,
+    readonly module_name: string,
+    readonly scope?: Construct
+    readonly context?: {[key:string]:any}
+}
 
-    constructor( scope: Construct ) {
-        this.scope = scope
+export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransformer {
+    protected props: MdaaConfigRefValueTransformerProps
+
+    constructor( props: MdaaConfigRefValueTransformerProps ) {
+        this.props = props
     }
 
     public transformValue ( value: string ): string | number {
@@ -134,13 +143,13 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
     protected parseRef ( value: string, refMatch: string[] ): string | number {
 
         const refMap: { [ refInner: string ]: string | undefined } = {
-            org: this.scope.node.tryGetContext( "org" ),
-            env: this.scope.node.tryGetContext( "env" ),
-            domain: this.scope.node.tryGetContext( "domain" ),
-            module_name: this.scope.node.tryGetContext( "module_name" ),
-            partition: Stack.of( this.scope ).partition,
-            region: Stack.of( this.scope ).region,
-            account: Stack.of( this.scope ).account
+            org: this.props.org,
+            env: this.props.env,
+            domain: this.props.domain,
+            module_name: this.props.module_name,
+            partition: this.props.scope ? Stack.of( this.props.scope ).partition :undefined,
+            region: this.props.scope ? Stack.of( this.props.scope ).region : undefined,
+            account: this.props.scope ? Stack.of( this.props.scope ).account : undefined,
         }
 
 
@@ -159,7 +168,10 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
                 resolvedValue = process.env[ envVar ]
             } else if ( refInner.startsWith( "resolve:ssm:" ) ) {
                 const ssmPath = refInner.replace( /^resolve:ssm:/, "" )
-                resolvedValue = StringParameter.valueForStringParameter( Stack.of( this.scope ), ssmPath )
+                if ( !this.props.scope ) {
+                    throw new Error( "Unable to resolve ssm param outside of a Construct" )
+                }
+                resolvedValue =  StringParameter.valueForStringParameter( Stack.of( this.props.scope ), ssmPath )
             }
 
             toReturn = resolvedValue ? toReturn.replace( `{{${ ref }}}`, resolvedValue ) : toReturn
@@ -168,8 +180,12 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
     }
 
     private parseContext ( refInner: string ): any {
+
         const refInnerContext = refInner.replace( /^context:/, "" )
-        const contextValue = this.scope.node.tryGetContext( refInnerContext )
+        const scopeContextValue = this.props.scope?.node.tryGetContext(refInnerContext) 
+        const scopeInnerContextValue = this.props.context ? this.props.context[ refInnerContext ] : undefined
+        const contextValue = scopeContextValue ? scopeContextValue : scopeInnerContextValue
+
         if ( !contextValue ) {
             throw new Error( `Failed to resolve context: ${ refInnerContext }` )
         }
@@ -184,13 +200,16 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
     }
 }
 
-export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransformer {
+export interface MdaaConfigParamRefValueTransformerProps extends MdaaConfigRefValueTransformerProps {
+    readonly serviceCatalogConfig?: MdaaServiceCatalogProductConfig
+}
 
+export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransformer {
     private readonly serviceCatalogConfig?: MdaaServiceCatalogProductConfig
 
-    constructor( scope: Construct, serviceCatalogConfig?: MdaaServiceCatalogProductConfig ) {
-        super( scope )
-        this.serviceCatalogConfig = serviceCatalogConfig
+    constructor( props: MdaaConfigParamRefValueTransformerProps  ) {
+        super( props )
+        this.serviceCatalogConfig = props.serviceCatalogConfig
     }
 
     protected override parseRef ( value: string, refMatch: string[] ): string | number {
@@ -209,7 +228,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
         refMatch.forEach( ref => {
             let resolvedValue: string | undefined
             const refInner = this.transformValue( ref ).toString()
-            if ( refInner.startsWith( "param:" ) && this.scope instanceof Stack ) {
+            if ( refInner.startsWith( "param:" ) && this.props.scope instanceof Stack ) {
                 resolvedValue = this.createParam( refInner ).toString()
             }
 
@@ -233,7 +252,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
             if ( strippedValue.length === 0 ) {
                 const refInner = this.transformValue( refMatch[ 0 ] )
                 if ( typeof refInner === 'string' ) {
-                    if ( refInner.startsWith( "param:" ) && this.scope instanceof Stack ) {
+                    if ( refInner.startsWith( "param:" ) && this.props.scope instanceof Stack ) {
                         return this.createParam( refInner )
                     }
                 }
@@ -248,7 +267,10 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
      * @returns Value of CfnParameter
      */
     private createParam ( refInner: string ): string | number {
-        const stack = Stack.of( this.scope )
+        if ( !this.props.scope ) {
+            throw new Error("Unable to create parameters outside of a Construct")
+        }
+        const stack = Stack.of( this.props.scope ) 
         const paramBase = refInner.replace( /^param:/, "" )
         const paramName = paramBase.replace( /^string:/, "" ).replace( /^number:/, "" ).replace( /^list:/, "" )
         const paramProps = this.getParamProps( paramName )
@@ -279,30 +301,36 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
     }
 
     private createParamUsingProps ( paramName: string, paramType: string, paramProps: CfnParameterProps ) {
+        if(!this.props.scope){
+            throw new Error("Unable to create params outside of a Contstruct")
+        }
         if ( this.isNumberType( paramType ) ) {
-            return new CfnParameter( this.scope, paramName, paramProps ).valueAsNumber
+            return new CfnParameter( this.props.scope, paramName, paramProps ).valueAsNumber
         } else if ( this.isStringType( paramType ) ) {
-            return new CfnParameter( this.scope, paramName, paramProps ).valueAsString
+            return new CfnParameter( this.props.scope, paramName, paramProps ).valueAsString
         } else if ( this.isListType( paramType ) ) {
-            return new CfnParameter( this.scope, paramName, paramProps ).valueAsList.join( ',' )
+            return new CfnParameter( this.props.scope, paramName, paramProps ).valueAsList.join( ',' )
         } else {
             throw new Error( `Invalid parameter type passed to paramProps: "${ paramType }". Type must be one of ['String', 'Number', 'CommaDelimitedList']` )
         }
     }
 
     private createParamUsingTypeLabels ( paramBase: string, paramName: string, paramProps: CfnParameterProps | undefined ) {
+        if ( !this.props.scope ) {
+            throw new Error( "Unable to create params outside of a Contstruct" )
+        }
         if ( paramBase.startsWith( "string:" ) ) {
             const typedProps = { ...paramProps, type: "String" }
-            return new CfnParameter( this.scope, paramName, typedProps ).valueAsString
+            return new CfnParameter( this.props.scope, paramName, typedProps ).valueAsString
         } else if ( paramBase.startsWith( "number" ) ) {
             const typedProps = { ...paramProps, type: "Number" }
-            return new CfnParameter( this.scope, paramName, typedProps ).valueAsNumber
+            return new CfnParameter( this.props.scope, paramName, typedProps ).valueAsNumber
         } else if ( paramBase.startsWith( "list" ) ) {
             const typedProps = { ...paramProps, type: "CommaDelimitedList" }
-            return new CfnParameter( this.scope, paramName, typedProps ).valueAsList.join( ',' )
+            return new CfnParameter( this.props.scope, paramName, typedProps ).valueAsList.join( ',' )
         }
         // If no type is specified in paramProps, then assume that the parameter is a string
-        return new CfnParameter( this.scope, paramName, paramProps ).valueAsString
+        return new CfnParameter( this.props.scope, paramName, paramProps ).valueAsString
     }
 
     /**

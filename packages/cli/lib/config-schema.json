@@ -177,18 +177,6 @@
         "MdaaDomainConfig": {
             "additionalProperties": false,
             "properties": {
-                "app_config_data": {
-                    "additionalProperties": {},
-                    "description": "Config data which will be passed directly to apps",
-                    "type": "object"
-                },
-                "app_configs": {
-                    "description": "A list of paths to MDAA app configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
                 "context": {
                     "additionalProperties": {},
                     "description": "Additional CDK Context key/value pairs",
@@ -236,6 +224,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "terraform": {
+                    "$ref": "#/definitions/TerraformConfig",
+                    "description": "Config properties for TF modules"
                 }
             },
             "required": [
@@ -249,18 +241,6 @@
                 "account": {
                     "description": "Target account for deployment",
                     "type": "string"
-                },
-                "app_config_data": {
-                    "additionalProperties": {},
-                    "description": "Config data which will be passed directly to apps",
-                    "type": "object"
-                },
-                "app_configs": {
-                    "description": "A list of paths to MDAA app configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
                 },
                 "context": {
                     "additionalProperties": {},
@@ -307,6 +287,10 @@
                     "description": "If specified, the referenced environment template will be used as the basis for this environment config.\nTemplate values can be overridden with specific values in this config.",
                     "type": "string"
                 },
+                "terraform": {
+                    "$ref": "#/definitions/TerraformConfig",
+                    "description": "Config properties for TF modules"
+                },
                 "use_bootstrap": {
                     "description": "If true (default), will use the MDAA bootstrap env",
                     "type": "boolean"
@@ -328,23 +312,19 @@
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Additional CDK Context key/value pairs",
                     "type": "object"
                 },
                 "app_config_data": {
                     "additionalProperties": {},
-                    "description": "Config data which will be passed directly to apps",
                     "type": "object"
                 },
                 "app_configs": {
-                    "description": "A list of paths to MDAA app configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "cdk_app": {
-                    "description": "The MDAA CDK Module/App to be deployed",
                     "type": "string"
                 },
                 "context": {
@@ -363,15 +343,43 @@
                     "$ref": "#/definitions/MdaaCustomNaming",
                     "description": "Permission policy boundary arns. Will be applied to all Roles using a CDK aspect."
                 },
+                "mdaa_compliant": {
+                    "description": "If true, MDAA will expect the module to implement MDAA_compliant behaviours",
+                    "type": "boolean"
+                },
                 "mdaa_version": {
                     "description": "Override the MDAA version",
+                    "type": "string"
+                },
+                "module_config_data": {
+                    "additionalProperties": {},
+                    "description": "Config data which will be passed directly to modules",
+                    "type": "object"
+                },
+                "module_configs": {
+                    "description": "A list of paths to MDAA module configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "module_path": {
+                    "description": "The the path to the module. If an npm package is specified, MDAA will attempt to locate the package in its local repo (in local mode) or install via NPM",
+                    "type": "string"
+                },
+                "module_type": {
+                    "description": "The type of module.",
+                    "enum": [
+                        "cdk",
+                        "tf"
+                    ],
                     "type": "string"
                 },
                 "tag_config_data": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Tagging data which will be passed directly to apps",
+                    "description": "Tagging data which will be passed directly to modules",
                     "type": "object"
                 },
                 "tag_configs": {
@@ -381,14 +389,15 @@
                     },
                     "type": "array"
                 },
+                "terraform": {
+                    "$ref": "#/definitions/TerraformConfig",
+                    "description": "Config properties for TF modules"
+                },
                 "use_bootstrap": {
                     "description": "If true (default), will use the MDAA bootstrap env",
                     "type": "boolean"
                 }
             },
-            "required": [
-                "cdk_app"
-            ],
             "type": "object"
         },
         "MdaaNagSuppressionByPath": {
@@ -618,6 +627,16 @@
             },
             "type": "object"
         },
+        "TerraformConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "override": {
+                    "additionalProperties": {},
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
         "ValidateStageCommands": {
             "additionalProperties": false,
             "properties": {
@@ -638,18 +657,6 @@
         }
     },
     "properties": {
-        "app_config_data": {
-            "additionalProperties": {},
-            "description": "Config data which will be passed directly to apps",
-            "type": "object"
-        },
-        "app_configs": {
-            "description": "A list of paths to MDAA app configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
-            "items": {
-                "type": "string"
-            },
-            "type": "array"
-        },
         "context": {
             "additionalProperties": {},
             "description": "Additional CDK Context key/value pairs",
@@ -722,6 +729,10 @@
                 "type": "string"
             },
             "type": "array"
+        },
+        "terraform": {
+            "$ref": "#/definitions/TerraformConfig",
+            "description": "Config properties for TF modules"
         }
     },
     "required": [

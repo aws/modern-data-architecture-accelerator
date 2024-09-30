@@ -12,7 +12,7 @@ import { AuditConfigParser } from './audit-config';
 
 export class AuditCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "audit", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

@@ -11,7 +11,7 @@ test( 'SynthTest', () => {
         env: "test-env",
         domain: "test-domain",
         module_name: "test-module",
-        app_configs: "./test/test-config.yaml",
+        module_configs: "./test/test-config.yaml",
         additional_accounts: "12312412"
     }
     const app = new DataOpsProjectCDKApp( { context: context } )

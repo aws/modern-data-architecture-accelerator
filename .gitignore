@@ -1,3 +1,4 @@
+terraform.tfstate
 tempfile
 codescan*
 .viperlightrc
@@ -32,3 +33,4 @@ __pycache__
 .nx
 test-template.json
 .idea
+.terraform*

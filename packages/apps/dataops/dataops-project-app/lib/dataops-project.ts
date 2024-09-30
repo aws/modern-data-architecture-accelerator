@@ -12,7 +12,7 @@ import { DataOpsProjectConfigParser } from './dataops-project-config';
 
 export class DataOpsProjectCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "dataops-project", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 
