@@ -13,7 +13,7 @@ import { NifiL3Construct, NifiL3ConstructProps } from '@aws-mdaa/dataops-nifi-l3
 
 export class NifiClusterCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "dataops-nifi", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

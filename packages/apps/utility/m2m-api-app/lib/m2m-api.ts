@@ -12,7 +12,7 @@ import { M2MApiConfigParser } from './m2m-api-config';
 
 export class M2MApiCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "ingestion-app", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

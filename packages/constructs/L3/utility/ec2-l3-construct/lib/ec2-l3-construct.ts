@@ -15,7 +15,7 @@ import { Construct } from "constructs";
 import { readFileSync } from 'fs';
 import { NagSuppressions } from 'cdk-nag';
 import { Duration } from 'aws-cdk-lib';
-import { MdaaConfigRefValueTransformer } from '@aws-mdaa/config';
+import { MdaaConfigRefValueTransformer, MdaaConfigRefValueTransformerProps } from '@aws-mdaa/config';
 
 
 export interface NamedSecurityGroupProps {
@@ -885,7 +885,14 @@ export class Ec2L3Construct extends MdaaL3Construct {
       ? readFileSync( instanceProps.userDataScriptPath, 'utf8' )
       : undefined
 
-    const transformedUserDataScript = userDataScript ? new MdaaConfigRefValueTransformer( this ).transformValue( userDataScript ) : undefined
+    const configRefValueTranformerProps: MdaaConfigRefValueTransformerProps = {
+      org: this.node.tryGetContext( 'org' ),
+      domain: this.node.tryGetContext( 'domain' ),
+      env: this.node.tryGetContext( 'env' ),
+      module_name: this.node.tryGetContext( 'module_name' ),
+      scope: this
+    }
+    const transformedUserDataScript = userDataScript ? new MdaaConfigRefValueTransformer( configRefValueTranformerProps ).transformValue( userDataScript ) : undefined
 
     return {
       getImage: function (): MachineImageConfig {

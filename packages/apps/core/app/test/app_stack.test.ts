@@ -8,7 +8,7 @@ import { MdaaCdkApp } from "../lib";
 
 class TestMdaaCdkApp extends MdaaCdkApp {
     constructor( appProps: AppProps ) {
-        super( "testApp", appProps )
+        super( appProps )
     }
     protected subGenerateResources ( stack: Stack ) {
         const testStack = stack
@@ -26,8 +26,8 @@ const context = {
 const extraContext = {
     nag_suppressions: '{"by_path":[{"path":"/sample-org-dev-shared-datawarehouse/cluster/Secret/Resource","suppressions":[{"id":"AwsSolutions-SMG4","reason":"Examplesuppression"}]}]}',
     tag_config_data: "{}",
-    app_config_data: "{}",
-    app_configs: "./test/test_config1.yaml,./test/test_config2.yaml",
+    module_config_data: "{}",
+    module_configs: "./test/test_config1.yaml,./test/test_config2.yaml",
     tag_configs: "./test/tag_config.yaml",
     custom_aspects: '[{"aspect_module":"./test/custom_aspect","aspect_class":"SampleCustomAspect","aspect_props":{"prop1":"propvalue1","prop2":{"prop2prop1":"propvalue2"}}}]'
 }

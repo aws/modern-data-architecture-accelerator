@@ -13,7 +13,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
 export class MdaaBootstrapCDKApp extends MdaaCdkApp {
     constructor( props?: AppProps ) {
-        super( "bootstrap", { ...props, ...{ useBootstrap: false } } )
+        super( { ...props, ...{ useBootstrap: false } }, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
 
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps ) {

@@ -11,7 +11,7 @@ import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 
 export class EC2InstanceApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "ec2-instance", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

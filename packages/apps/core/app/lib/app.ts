@@ -26,6 +26,11 @@ export interface MdaaAppProps extends AppProps {
     readonly useBootstrap?: boolean
 }
 
+export interface MdaaPackageNameVersion {
+    readonly name: string
+    readonly version: string
+}
+
 /**
  * Base class for MDAA CDK Apps. Provides consistent app behaviours in 
  * configuration parsing, stack generation, resource naming, 
@@ -49,10 +54,10 @@ export abstract class MdaaCdkApp extends App {
     private readonly additionalAccountStacks: { [ AccountRecovery: string ]: Stack; };
     /**
      * Constructor does most of the app initialization, reading inputs from CDK context, parsing App config files, configuring resource naming, and configuring CDK Nag.
-     * @param app_name - Name of the application
+     * @param module_name - Name of the application
      * @param props - CDK AppProps (default empty). Not typically required if running using the CDK cli, but useful for direct instantiation.
      */
-    constructor( app_name: string, props: MdaaAppProps ) {
+    constructor( props: MdaaAppProps, packageNameVersion?:MdaaPackageNameVersion ) {
         super( props )
 
         this.node.setContext( "aws-cdk:enableDiffNoFail", true )
@@ -67,21 +72,26 @@ export abstract class MdaaCdkApp extends App {
         this.env = this.node.tryGetContext( "env" ).toLowerCase()
         this.domain = this.node.tryGetContext( "domain" ).toLowerCase()
         this.moduleName = this.node.tryGetContext( 'module_name' ).toLowerCase()
+    
+        const packageName = packageNameVersion?.name.replace("@aws-mdaa/","") ?? "unknown"
+        const packageVersion = packageNameVersion?.version ?? "unknown"
+
+        console.log( `Running MDAA Module ${ packageName } Version: ${ packageVersion }` );
         if(this.node.tryGetContext("@aws-mdaa/legacyCaefTags")) {
             this.tags = {
                 caef_org: this.org,
                 caef_env: this.env,
                 caef_domain: this.domain,
-                caef_module_name: this.moduleName,
-                caef_cdk_app: app_name
+                caef_cdk_app: packageName,
+                caef_module_name: this.moduleName
             }
         } else {
             this.tags = {
                 mdaa_org: this.org,
                 mdaa_env: this.env,
                 mdaa_domain: this.domain,
-                mdaa_module_name: this.moduleName,
-                mdaa_cdk_app: app_name
+                mdaa_cdk_app: packageVersion,
+                mdaa_module_name: this.moduleName
             }
         }
 
@@ -94,11 +104,6 @@ export abstract class MdaaCdkApp extends App {
         const namingClass: string = this.node.tryGetContext( 'naming_class' )
         this.naming = this.configNamingModule( namingModule, namingClass )
         const logSuppressions: boolean = this.node.tryGetContext( 'log_suppressions' ) == undefined ? false : ( /true/i ).test( this.node.tryGetContext( 'log_suppressions' ) )
-        
-        // nosemgrep
-        const pjson = require( "../package.json" )
-        const packageVersion = pjson.version.replace( /\.\d*$/, ".x" )
-        console.log( `Running MDAA CDK App ${ app_name } Version: ${ packageVersion }` );
 
         Aspects.of( this ).add( new AwsSolutionsChecks( { verbose: true, logIgnores: logSuppressions } ) )
         Aspects.of( this ).add( new NIST80053R5Checks( { verbose: true, logIgnores: logSuppressions } ) )
@@ -106,7 +111,7 @@ export abstract class MdaaCdkApp extends App {
 
         this.applyCustomAspects()
 
-        this.appConfigRaw = { ...this.loadConfigFromFiles( this.node.tryGetContext( 'app_configs' )?.split( "," ) || [] ), ...this.loadAppConfigDataFromContext(), ...props.appConfigRaw }
+        this.appConfigRaw = { ...this.loadConfigFromFiles( this.node.tryGetContext( 'module_configs' )?.split( "," ) || [] ), ...this.loadAppConfigDataFromContext(), ...props.appConfigRaw }
         this.tags = { ...this.loadTagConfigFromFiles(), ...this.loadTagConfigDataFromContext(), ...this.tags }
 
         this.deployAccount = process.env.CDK_DEPLOY_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT
@@ -131,6 +136,15 @@ export abstract class MdaaCdkApp extends App {
         
     }
 
+    protected static parsePackageJson(pjsonPath: any): MdaaPackageNameVersion {
+        // nosemgrep
+        const pjson = require( pjsonPath )
+        return {
+            name: pjson.name,
+            version :pjson.version.replace( /\.\d*$/, ".x" )
+        }
+    }
+
     private loadTagConfigDataFromContext (): { [ key: string ]: string } {
         const tagConfigDataFromContextString: string = this.node.tryGetContext( 'tag_config_data' )
         if ( tagConfigDataFromContextString ) {
@@ -141,7 +155,7 @@ export abstract class MdaaCdkApp extends App {
     }
 
     private loadAppConfigDataFromContext (): { [ key: string ]: any } {
-        const appConfigDataFromContextString: string = this.node.tryGetContext( 'app_config_data' )
+        const appConfigDataFromContextString: string = this.node.tryGetContext( 'module_config_data' )
         if ( appConfigDataFromContextString ) {
             return JSON.parse( appConfigDataFromContextString )
         }

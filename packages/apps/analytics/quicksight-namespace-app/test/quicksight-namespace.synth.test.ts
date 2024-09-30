@@ -11,7 +11,7 @@ test( 'SynthTest LOB1', () => {
         env: "test-env",
         domain: "test-domain",
         module_name: "test-module",
-        app_configs: "./test/test-config-lob1.yaml"
+        module_configs: "./test/test-config-lob1.yaml"
     }
     const app = new QuickSightNamespaceCDKApp( { context: context } )
     app.generateStack()

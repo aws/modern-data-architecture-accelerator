@@ -13,7 +13,7 @@ import { QuickSightNamespaceConfigParser } from './quicksight-namespace-config';
 
 export class QuickSightNamespaceCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "quicksight-namespace", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

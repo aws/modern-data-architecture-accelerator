@@ -12,7 +12,7 @@ import { DataZoneL3Construct, DataZoneL3ConstructProps } from '@aws-mdaa/datazon
 
 export class DataZoneCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "datazone", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {

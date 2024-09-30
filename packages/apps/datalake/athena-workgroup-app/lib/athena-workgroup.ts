@@ -11,7 +11,7 @@ import { AthenaWorkgroupConfigParser } from './athena-workgroup-config';
 
 export class AthenaWorkgroupCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "athena-workgroup", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
 
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {

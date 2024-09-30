@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConfigParamRefValueTransformer, MdaaConfigRefValueTransformer, MdaaConfigSSMValueTransformer, MdaaConfigTransformer, MdaaNagSuppressions, MdaaServiceCatalogProductConfig, IMdaaConfigTransformer, IMdaaConfigValueTransformer } from "@aws-mdaa/config";
+import { MdaaConfigParamRefValueTransformer, MdaaConfigRefValueTransformer, MdaaConfigSSMValueTransformer, MdaaConfigTransformer, MdaaNagSuppressions, MdaaServiceCatalogProductConfig, IMdaaConfigTransformer, IMdaaConfigValueTransformer, MdaaConfigRefValueTransformerProps, MdaaConfigParamRefValueTransformerProps } from "@aws-mdaa/config";
 import { IMdaaResourceNaming } from "@aws-mdaa/naming";
 import Ajv, { Schema } from "ajv";
 import { Stack } from "aws-cdk-lib"
@@ -61,16 +61,29 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
             transformedConfig = transformer.transformConfig( transformedConfig )
         } )
 
+
         const generatedRoleResolvedConfig = new MdaaConfigTransformer( new MdaaGeneratedRoleConfigValueTransformer( this.props.naming ) ).transformConfig( transformedConfig )
         const ssmToRefResolvedConfigContents = new MdaaConfigTransformer( new MdaaConfigSSMValueTransformer() ).transformConfig( generatedRoleResolvedConfig )
-        const configRefValueTranformer = new MdaaConfigRefValueTransformer( this.stack )
+        
+        const configRefValueTranformerProps: MdaaConfigRefValueTransformerProps = {
+            org: this.stack.node.tryGetContext('org'),
+            domain: this.stack.node.tryGetContext( 'domain' ),
+            env: this.stack.node.tryGetContext( 'env' ),
+            module_name: this.stack.node.tryGetContext( 'module_name' ),
+            scope: this.stack
+        }
+        const configRefValueTranformer = new MdaaConfigRefValueTransformer( configRefValueTranformerProps )
         const resolvedRefsConfigContents = new MdaaConfigTransformer( configRefValueTranformer, configRefValueTranformer ).transformConfig( ssmToRefResolvedConfigContents )
 
         const baseConfigContents = ( resolvedRefsConfigContents as MdaaBaseConfigContents )
         this.serviceCatalogConfig = baseConfigContents.service_catalog_product_config
         this.nagSuppressions = baseConfigContents.nag_suppressions
 
-        const paramTransformer = new MdaaConfigParamRefValueTransformer( this.stack, this.serviceCatalogConfig )
+        const paramTransformerProps: MdaaConfigParamRefValueTransformerProps = {
+            ...configRefValueTranformerProps,
+            serviceCatalogConfig: this.serviceCatalogConfig
+        }
+        const paramTransformer = new MdaaConfigParamRefValueTransformer( paramTransformerProps  )
         const resolvedParamsConfigContents = new MdaaConfigTransformer( paramTransformer, paramTransformer ).transformConfig( resolvedRefsConfigContents )
         this.configContents = resolvedParamsConfigContents as T
 

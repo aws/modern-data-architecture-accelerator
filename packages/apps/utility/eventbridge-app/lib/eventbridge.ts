@@ -12,7 +12,7 @@ import { EventBridgeConfigParser } from './eventbridge-config';
 
 export class EventBridgeCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "eventbridge", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

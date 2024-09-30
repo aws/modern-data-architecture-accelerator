@@ -11,7 +11,7 @@ import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 
 export class QuickSightProjectCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "quicksight-project", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
         const appConfig = new QuickSightProjectConfigParser( stack, parserProps )

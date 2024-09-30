@@ -12,7 +12,7 @@ import { LakeFormationSettingsConfigParser } from './lakeformation-settings-conf
 
 export class LakeFormationSettingsCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "lakeformation-settings", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

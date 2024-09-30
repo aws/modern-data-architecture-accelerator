@@ -11,7 +11,7 @@ import { GlueJobConfigParser } from './dataops-job-config';
 
 export class GlueJobCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "dataops-job", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

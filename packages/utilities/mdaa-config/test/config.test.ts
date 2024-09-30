@@ -6,7 +6,7 @@
 import { App, Stack } from "aws-cdk-lib"
 // nosemgrep
 import path = require( "path" )
-import { MdaaConfigRefValueTransformer, MdaaConfigSSMValueTransformer, MdaaConfigTransformer, ConfigConfigPathValueTransformer, MdaaServiceCatalogProductConfig, IMdaaConfigValueTransformer, MdaaConfigParamRefValueTransformer } from "../lib"
+import { MdaaConfigRefValueTransformer, MdaaConfigSSMValueTransformer, MdaaConfigTransformer, ConfigConfigPathValueTransformer, MdaaServiceCatalogProductConfig, IMdaaConfigValueTransformer, MdaaConfigParamRefValueTransformer, MdaaConfigRefValueTransformerProps, MdaaConfigParamRefValueTransformerProps } from "../lib"
 import * as console from "console";
 
 class TestKeyTransformer implements IMdaaConfigValueTransformer {
@@ -115,6 +115,14 @@ describe( 'Test MdaaConfigRefValueTransformer', () => {
     const testApp = new App( { context: context } )
     const testStack = new Stack( testApp, "testStack" )
 
+    const transformerProps: MdaaConfigRefValueTransformerProps = {
+        org: "testorg",
+        domain: "testdomain",
+        env: "testenv",
+        module_name: "testmodule",
+        scope: testStack
+    }
+
     const serviceCatalogConfig: MdaaServiceCatalogProductConfig = {
         portfolio_arn: "dummy-portfolio-arn",
         owner: "owner",
@@ -145,118 +153,125 @@ describe( 'Test MdaaConfigRefValueTransformer', () => {
         }
     }
     test( 'Nested', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "testing{{resolve:ssm:/{{org}}/{{domain}}/{{env}}/{{module_name}}}}testing" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "testing{{resolve:ssm:/{{org}}/{{domain}}/{{env}}/{{module_name}}}}testing" )
         expect( transformedValue ).toMatch( /testing\${Token\[TOKEN.\d+\]}testing/ )
     } )
     test( 'MultiRef', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "multi-{{org}}-{{domain}}-{{env}}" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "multi-{{org}}-{{domain}}-{{env}}" )
         expect( transformedValue ).toBe( "multi-testorg-testdomain-testenv" )
     } )
     test( 'No Ref', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "noref" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "noref" )
         expect( transformedValue ).toBe( "noref" )
     } )
 
     test( 'Env Var', () => {
         process.env[ 'TEST_VAR' ] = "testval"
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "{{env_var:TEST_VAR}}" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "{{env_var:TEST_VAR}}" )
         expect( transformedValue ).toBe( "testval" )
     } )
 
     test( 'MissingContext', () => {
-        expect( () => new MdaaConfigRefValueTransformer( testStack ).transformValue( "{{context:missing}}" ) ).toThrow()
+        expect( () => new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "{{context:missing}}" ) ).toThrow()
     } )
 
     test( 'Context Obj', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "{{context:test_context_obj}}" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "{{context:test_context_obj}}" )
         console.log( transformedValue )
     } )
 
     test( 'Context List', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "{{context:test_context_list}}" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "{{context:test_context_list}}" )
         console.log( transformedValue )
     } )
 
     test( 'Resolve ssm ref', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "testing{{resolve:ssm:/test/param/path}}testing" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "testing{{resolve:ssm:/test/param/path}}testing" )
         expect( transformedValue ).toMatch( /testing\${Token\[TOKEN.\d+\]}testing/ )
     } )
     test( 'Resolve ssm non ref', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "testing{{resolve:nonssm}}testing" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "testing{{resolve:nonssm}}testing" )
         expect( transformedValue ).toBe( "testing{{resolve:nonssm}}testing" )
     } )
     test( 'Context', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "testing{{context:test_context_name}}testing" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "testing{{context:test_context_name}}testing" )
         expect( transformedValue ).toBe( "testingtest_context_valuetesting" )
     } )
     test( 'ContextOrg', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "testing{{context:org}}testing" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "testing{{context:org}}testing" )
         expect( transformedValue ).toBe( "testingtestorgtesting" )
     } )
     test( 'OrgRef', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "{{org}}" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "{{org}}" )
         expect( transformedValue ).toBe( "testorg" )
     } )
     test( 'Param', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack ).transformValue( "{{param:paramname}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( transformerProps ).transformValue( "{{param:paramname}}" )
         expect( transformedValue ).toMatch( /\${Token\[TOKEN.\d+\]}/ )
     } )
+
+    const paramTransformerProps: MdaaConfigParamRefValueTransformerProps = {
+        ...transformerProps,
+        serviceCatalogConfig: serviceCatalogConfig
+    }
+
     test( 'ParamNotInServiceCatalogConfig', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack, serviceCatalogConfig ).transformValue( "{{param:parameter_not_in_sc_config}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( paramTransformerProps ).transformValue( "{{param:parameter_not_in_sc_config}}" )
         expect( transformedValue ).toMatch( /\${Token\[TOKEN.\d+\]}/ )
     } )
     test( 'StringParamInServiceCatalogConfig', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack, serviceCatalogConfig ).transformValue( "{{param:string_param}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( paramTransformerProps ).transformValue( "{{param:string_param}}" )
         expect( transformedValue ).toMatch( /\${Token\[TOKEN.\d+\]}/ )
     } )
+
     test( 'NumberParamInServiceCatalogConfig', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack, serviceCatalogConfig ).transformValue( "{{param:number_param}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( paramTransformerProps ).transformValue( "{{param:number_param}}" )
         expect( typeof transformedValue ).toBe( 'number' )
     } )
     test( 'ListParamInServiceCatalogConfig', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack, serviceCatalogConfig ).transformValue( "{{param:list_param}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( paramTransformerProps ).transformValue( "{{param:list_param}}" )
         expect( transformedValue ).toMatch( /\#{Token\[TOKEN.\d+\]}/ )
     } )
     test( 'StringParamAnnotation', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack ).transformValue( "{{param:string:string_param}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( transformerProps ).transformValue( "{{param:string:string_param}}" )
         expect( transformedValue ).toMatch( /\${Token\[TOKEN.\d+\]}/ )
     } )
     test( 'NumberParamAnnotation', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack ).transformValue( "{{param:number:number_param}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( transformerProps ).transformValue( "{{param:number:number_param}}" )
         expect( typeof transformedValue ).toBe( 'number' )
     } )
     test( 'ListParamAnnotation', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack ).transformValue( "{{param:list:list_param}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( transformerProps ).transformValue( "{{param:list:list_param}}" )
         expect( transformedValue ).toMatch( /\#{Token\[TOKEN.\d+\]}/ )
     } )
     test( 'PrefixedNumberParam', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack ).transformValue( "testing{{param:number:number_param}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( transformerProps ).transformValue( "testing{{param:number:number_param}}" )
         expect( transformedValue ).toMatch( /^testing-\d+(\.\d+)?(e\+\d+)?$/ )
     } )
     test( 'PrefixedListParam', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack ).transformValue( "testing{{param:list:list_param}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( transformerProps ).transformValue( "testing{{param:list:list_param}}" )
         expect( transformedValue ).toMatch( /testing\#{Token\[TOKEN.\d+\]}/ )
     } )
     test( 'NestedResolutionWithinNumberParam', () => {
-        const transformedValue = new MdaaConfigParamRefValueTransformer( testStack ).transformValue( "{{param:number:{{org}}_param}}" )
+        const transformedValue = new MdaaConfigParamRefValueTransformer( transformerProps ).transformValue( "{{param:number:{{org}}_param}}" )
         expect( typeof transformedValue ).toBe( 'number' )
     } )
 
     test( 'Partition', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "{{partition}}" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "{{partition}}" )
         expect( transformedValue ).toMatch( /\${Token\[AWS.Partition.\d+\]}/ )
     } )
     test( 'Region', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "{{region}}" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "{{region}}" )
         expect( transformedValue ).toMatch( /\${Token\[AWS.Region.\d+\]}/ )
     } )
 
     test( 'Account', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "{{account}}" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "{{account}}" )
         expect( transformedValue ).toMatch( /\${Token\[AWS.AccountId.\d+\]}/ )
     } )
     test( 'Module Name', () => {
-        const transformedValue = new MdaaConfigRefValueTransformer( testStack ).transformValue( "{{module_name}}" )
+        const transformedValue = new MdaaConfigRefValueTransformer( transformerProps ).transformValue( "{{module_name}}" )
         expect( transformedValue ).toBe( "testmodule" )
     } )
 

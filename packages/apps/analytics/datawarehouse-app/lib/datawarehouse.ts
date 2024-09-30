@@ -11,7 +11,7 @@ import { DataWarehouseConfigParser } from './datawarehouse-config';
 
 export class DataWarehouseCDKApp extends MdaaCdkApp {
   constructor( props: AppProps = {} ) {
-    super( "datawarehouse", props )
+    super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
   }
   protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
 

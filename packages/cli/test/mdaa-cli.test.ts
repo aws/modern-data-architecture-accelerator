@@ -10,8 +10,8 @@ import * as fs from 'fs';
 test( 'Default Config File Test', () => {
     fs.copyFileSync( './test/mdaa.yaml', './mdaa.yaml' )
     const options = {
-        dryrun: "true",
-        action: "dryrun"
+        testing: "true",
+        action: "synth"
     }
     expect( () => {
         const mdaa = new MdaaDeploy( options )
@@ -24,8 +24,8 @@ test( 'Default Config File Test', () => {
 test( 'Default CAEF Config File Test', () => {
     fs.copyFileSync( './test/mdaa.yaml', './caef.yaml' )
     const options = {
-        dryrun: "true",
-        action: "dryrun"
+        testing: "true",
+        action: "synth"
     }
     expect( () => {
         const mdaa = new MdaaDeploy( options )
@@ -37,8 +37,8 @@ test( 'Default CAEF Config File Test', () => {
 
 test( 'Missing Default CAEF Config File Test', () => {
     const options = {
-        dryrun: "true",
-        action: "dryrun"
+        testing: "true",
+        action: "synth"
     }
     expect( () => {
         const mdaa = new MdaaDeploy( options )
@@ -48,8 +48,8 @@ test( 'Missing Default CAEF Config File Test', () => {
 
 test( 'Missing Config File Test', () => {
     const options = {
-        dryrun: "true",
-        action: "dryrun",
+        testing: "true",
+        action: "synth",
         npm_debug: "true",
         working_dir: "test/test_working",
         tag: "testtag",
@@ -63,8 +63,8 @@ test( 'Missing Config File Test', () => {
 
 test( 'LocalMode', () => {
     const options = {
-        dryrun: "true",
-        action: "dryrun",
+        testing: "true",
+        action: "synth",
         npm_debug: "true",
         working_dir: "test/test_working",
         config: "./test/mdaa_local.yaml",
@@ -76,8 +76,8 @@ test( 'LocalMode', () => {
 
 test( 'CdkCmdTest', () => {
     const options = {
-        dryrun: "true",
-        action: "dryrun",
+        testing: "true",
+        action: "synth",
         npm_debug: "true",
         working_dir: "test/test_working",
         tag: "testtag"
@@ -117,8 +117,8 @@ test( 'CdkCmdTest', () => {
                                     "module_context_key": "module_context_value",
                                     "global_override_key": "module_value"
                                 },
-                                "cdk_app": "@aws-mdaa/test",
-                                "app_configs": [
+                                "module_path": "@aws-mdaa/test",
+                                "module_configs": [
                                     "./test.yaml"
                                 ]
                             }
@@ -129,14 +129,14 @@ test( 'CdkCmdTest', () => {
         }
     }
 
-    const mdaa = new MdaaDeploy( options, ["test-extra-cdk-param"],configContents )
+    const mdaa = new MdaaDeploy( options, [ "test-extra-cdk-param" ], configContents )
     mdaa.deploy()
 } );
 
 test( 'CdkCmdTest2', () => {
     const options = {
-        dryrun: "true",
-        action: "dryrun",
+        testing: "true",
+        action: "synth",
         clear: "true",
         role_arn: "test_role_arn"
     }
@@ -173,8 +173,8 @@ test( 'CdkCmdTest2', () => {
                                     "module_context_key": "module_context_value",
                                     "global_override_key": "module_value"
                                 },
-                                "cdk_app": "@aws-mdaa/test",
-                                "app_configs": [
+                                "module_path": "@aws-mdaa/test",
+                                "module_configs": [
                                     "./test.yaml"
                                 ]
                             }
@@ -185,14 +185,14 @@ test( 'CdkCmdTest2', () => {
         }
     }
 
-    const mdaa = new MdaaDeploy( options, undefined,configContents )
+    const mdaa = new MdaaDeploy( options, undefined, configContents )
     mdaa.deploy()
 } );
 
 test( 'CdkCmdTest3', () => {
     const options = {
-        dryrun: "true",
-        action: "dryrun",
+        testing: "true",
+        action: "synth",
         working_dir: "test/test_working",
         tag: "testtag"
     }
@@ -243,8 +243,8 @@ test( 'CdkCmdTest3', () => {
                                     "module_context_key": "module_context_value",
                                     "global_override_key": "module_value"
                                 },
-                                "cdk_app": "@aws-mdaa/test",
-                                "app_configs": [
+                                "module_path": "@aws-mdaa/test",
+                                "module_configs": [
                                     "./test.yaml"
                                 ]
                             }
@@ -255,14 +255,14 @@ test( 'CdkCmdTest3', () => {
         }
     }
 
-    const mdaa = new MdaaDeploy( options,undefined, configContents )
+    const mdaa = new MdaaDeploy( options, undefined, configContents )
     mdaa.deploy()
 } );
 
 test( 'Pipelines Test', () => {
     const options = {
-        dryrun: "true",
-        action: "dryrun",
+        testing: "true",
+        action: "synth",
         working_dir: "test/test_working",
         tag: "testtag",
         devops: "true"
@@ -274,9 +274,9 @@ test( 'Pipelines Test', () => {
             configsCodeCommitRepo: "test-config-repo",
             pipelines: {
                 "test": {
-                    domainFilter: ["shared"],
-                    envFilter: ["dev"],
-                    moduleFilter: ["test-module"]
+                    domainFilter: [ "shared" ],
+                    envFilter: [ "dev" ],
+                    moduleFilter: [ "test-module" ]
                 }
             }
         },
@@ -325,8 +325,8 @@ test( 'Pipelines Test', () => {
                                     "module_context_key": "module_context_value",
                                     "global_override_key": "module_value"
                                 },
-                                "cdk_app": "@aws-mdaa/test",
-                                "app_configs": [
+                                "module_path": "@aws-mdaa/test",
+                                "module_configs": [
                                     "./test.yaml"
                                 ]
                             }
@@ -343,8 +343,8 @@ test( 'Pipelines Test', () => {
 
 test( 'Config File Test', () => {
     const options = {
-        dryrun: "true",
-        action: "dryrun",
+        testing: "true",
+        action: "synth",
         npm_debug: "true",
         working_dir: "test/test_working",
         tag: "testtag",
@@ -356,8 +356,8 @@ test( 'Config File Test', () => {
 
 test( 'EnvTemplateTest', () => {
     const options = {
-        dryrun: "true",
-        action: "dryrun",
+        testing: "true",
+        action: "synth",
         npm_debug: "true",
         working_dir: "test/test_working",
         tag: "testtag"
@@ -370,8 +370,8 @@ test( 'EnvTemplateTest', () => {
                 "modules": {
                     "test-module": {
                         "mdaa_version": "test_mod_version",
-                        "cdk_app": "@aws-mdaa/test",
-                        "app_configs": [
+                        "module_path": "@aws-mdaa/test",
+                        "module_configs": [
                             "./test.yaml"
                         ]
                     }
@@ -385,8 +385,8 @@ test( 'EnvTemplateTest', () => {
                         "modules": {
                             "test-module": {
                                 "mdaa_version": "test_mod_version",
-                                "cdk_app": "@aws-mdaa/test",
-                                "app_configs": [
+                                "module_path": "@aws-mdaa/test",
+                                "module_configs": [
                                     "./test.yaml"
                                 ]
                             }
@@ -398,8 +398,8 @@ test( 'EnvTemplateTest', () => {
                         "template": "test_global_template",
                         "modules": {
                             "test-module2": {
-                                "cdk_app": "@aws-mdaa/test",
-                                "app_configs": [
+                                "module_path": "@aws-mdaa/test",
+                                "module_configs": [
                                     "./test2.yaml"
                                 ]
                             }
@@ -416,3 +416,72 @@ test( 'EnvTemplateTest', () => {
     const mdaa = new MdaaDeploy( options, [ "test-extra-cdk-param" ], configContents )
     mdaa.deploy()
 } );
+
+describe( "Terraform", () => {
+
+    const options = {
+        testing: "true",
+        npm_debug: "true",
+        working_dir: "test/test_working",
+        tag: "testtag"
+    }
+
+    const configContents = {
+        "organization": "sample-org",
+        "domains": {
+            "test-tf": {
+                "environments": {
+                    "dev": {
+                        "modules": {
+                            "test-tf-mdaa": {
+                                "terraform": {
+                                    // "override": {
+                                    //     "terraform": {
+                                    //         "backend": {"s3": {"bucket": "test-bucket",
+                                    //         "lock_table": "test-table"}}
+                                    //     }
+                                    // }
+                                },
+                                "module_path": "aws-mdaa/datalake",
+                                "module_type": "tf"
+                            },
+                            "test-tf-3p-mdaa": {
+                                "mdaa_compliant": true,
+                                "module_path": "../../../terraform/aws-mdaa/datalake",
+                                "module_type": "tf"
+                            },
+                            "test-tf-3p": {
+                                "module_path": "../../../terraform/aws-mdaa/datalake",
+                                "module_type": "tf"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    test( 'TfTestValidate', () => {
+        const cmdOptions = {
+            ...options,
+            action: 'validate'
+        }
+        const mdaa = new MdaaDeploy( cmdOptions, undefined, configContents )
+        mdaa.deploy()
+    } );
+    test( 'TfTestPlan', () => {
+        const cmdOptions = {
+            ...options,
+            action: 'plan'
+        }
+        const mdaa = new MdaaDeploy( cmdOptions, undefined, configContents )
+        mdaa.deploy()
+    } );
+    test( 'TfTestApply', () => {
+        const cmdOptions = {
+            ...options,
+            action: 'apply'
+        }
+        const mdaa = new MdaaDeploy( cmdOptions, undefined, configContents )
+        mdaa.deploy()
+    } );
+} )

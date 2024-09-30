@@ -36,10 +36,10 @@ domains:
         # specifies a deployment configuration file if required.
         modules:
           roles:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./roles.yaml
           datawarehouse:
-            cdk_app: "@aws-mdaa/datawarehouse"
-            app_configs:
+            module_path: "@aws-mdaa/datawarehouse"
+            module_configs:
               - ./datawarehouse/datawarehouse.yaml

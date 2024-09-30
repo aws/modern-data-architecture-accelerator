@@ -11,7 +11,7 @@ import { QuickSightAccountConfigParser } from './quicksight-account-config';
 
 export class QuickSightAccountCDKApp extends MdaaCdkApp {
     constructor( props: AppProps = {} ) {
-        super( "quicksight-account", props )
+        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
     }
     protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
         const appConfig = new QuickSightAccountConfigParser( stack, parserProps )

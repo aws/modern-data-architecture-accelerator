@@ -71,6 +71,6 @@ domains:
         modules:
           # An AI module that will deploy a GenAI accelerator set of backend pieces
           gaia-app:
-            cdk_app: "@aws-mdaa/gaia"
-            app_configs:
+            module_path: "@aws-mdaa/gaia"
+            module_configs:
               - ./config/app.yaml
