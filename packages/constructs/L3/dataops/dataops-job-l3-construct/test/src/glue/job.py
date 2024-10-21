@@ -8,6 +8,10 @@ from awsglue.context import GlueContext
 from awsglue.dynamicframe import DynamicFrame
 from awsglue.job import Job
 
+# Invoke functions from other modules to avoid duplication of code
+from core import job_metadata
+job_metadata()
+
 glueContext = GlueContext(SparkContext.getOrCreate())
 spark = glueContext.spark_session
 

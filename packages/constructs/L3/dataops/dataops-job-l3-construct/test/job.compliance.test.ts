@@ -21,7 +21,8 @@ describe( 'MDAA Compliance Stack Tests', () => {
   const testJobProps: JobConfig = {
     executionRoleArn: "arn:test-partition:iam:test-region:test-account:role/some-execution-role",
     command: jobCommand,
-    description: "test job"
+    description: "test job",
+    additionalScripts: ["./test/src/glue/utils/core.py"]
   }
 
   const constructProps: GlueJobL3ConstructProps = {
@@ -99,6 +100,31 @@ describe( 'MDAA Compliance Stack Tests', () => {
       },
       "Name": "test-org-test-env-test-domain-test-module-testjob-monitor",
       "State": "ENABLED"
+    } )
+  } )
+  test( 'Additional Python Scripts', ()=>{
+    template.hasResourceProperties( "AWS::Glue::Job", {
+      "DefaultArguments": {
+              "--extra-py-files": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "s3://some-project-bucket-name/deployment/libs/testJob/",
+                    {
+                      "Fn::Select": [
+                        0,
+                        {
+                          "Fn::GetAtt": [
+                            "jobdeploymenttestJobadditionalscriptCustomResource2C7973A9",
+                            "SourceObjectKeys"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                ]
+              }
+            }
     } )
   } )
 } )
