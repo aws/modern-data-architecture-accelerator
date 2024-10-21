@@ -223,7 +223,7 @@ export class RolesL3Construct extends MdaaL3Construct {
         const personaToMdaaPolicyMap: { [ key: string ]: string[] } = {}
         const personaConfig = this.loadPolicyConfig("../policy-statements/persona-map.yaml") as PersonaConfigProps
         const mdaaPolicySet = new Set<string>()
-        Object.entries(personaConfig.personas).map( ([ basePersona, personaProps]) => {
+        Object.entries(personaConfig.personas).forEach( ([ basePersona, personaProps]) => {
             personaProps.forEach( policyConfigFile => {
                 mdaaPolicySet.add(policyConfigFile)
                 if ( this.getFileName(policyConfigFile) ) {

@@ -389,7 +389,7 @@ export class NifiL3Construct extends MdaaL3Construct {
             return [ nifiClusterName, { cluster: nifiCluster, options: nifiClusterOptions } ]
         } ) )
 
-        Object.entries( nifiClusters ).map( nifiClusterEntry => {
+        Object.entries( nifiClusters ).forEach( nifiClusterEntry => {
             const nifiClusterName = nifiClusterEntry[ 0 ]
             const nifiCluster = nifiClusterEntry[ 1 ]
             nifiCluster.cluster.node.addDependency( addClusterProps.zkK8sChart )

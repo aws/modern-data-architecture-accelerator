@@ -173,7 +173,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
                  * ex. '/main/script1.py' , '/util/script2.py' , '/util/script3.py' will create 2 zip files representing 'main' and 'utils'
                  *  */ 
                 const directoryToScript: { [ scriptPath: string] : string[]} = {}
-                jobConfig.additionalScripts.map(scriptLocation => {
+                jobConfig.additionalScripts.forEach(scriptLocation => {
                     const scriptPath = path.dirname( scriptLocation.trim())
                     if( scriptPath in directoryToScript ) {
                         directoryToScript[scriptPath].push( `!${path.basename(scriptLocation.trim())}` )

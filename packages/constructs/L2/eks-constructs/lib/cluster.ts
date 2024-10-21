@@ -277,7 +277,7 @@ export class MdaaEKSCluster extends Cluster {
         this.clusterFargateProfileArn = `arn:${ Stack.of( scope ).partition }:eks:${ Stack.of( scope ).region }:${ Stack.of( scope ).account }:fargateprofile/${ props.naming.resourceName( props.clusterName, 255 ) }/*`
         this.mdaaKubeCtlProvider = this.defineCompliantKubectlProvider()
 
-        props.adminRoles.map( adminRole => {
+        props.adminRoles.forEach( adminRole => {
             this.awsAuth.addMastersRole( adminRole )
         } )
         const stackId = Fn.select( 0, Fn.split( "-", Fn.select( 2, Fn.split( "/", Stack.of( scope ).stackId ) ) ) )

@@ -357,7 +357,7 @@ export class DMSL3Construct extends MdaaL3Construct {
     }
 
     private createReplicationTasks ( replicationInstances: { [ name: string ]: CfnReplicationInstance; }, endpoints: { [ name: string ]: CfnEndpoint; } ) {
-        Object.entries(this.props.dms.replicationTasks || {}).map(([taskName,taskProps]) => {
+        Object.entries(this.props.dms.replicationTasks || {}).forEach(([taskName,taskProps]) => {
             
             const replicationInstanceArn = taskProps.replicationInstance ? replicationInstances[taskProps.replicationInstance]?.ref : undefined
             if(!replicationInstanceArn) {
