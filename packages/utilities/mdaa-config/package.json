@@ -30,12 +30,12 @@
     "typescript-json-schema": "0.63.0"
   },
   "overrides": {
-    "aws-cdk-lib": "2.147.0",
+    "aws-cdk-lib": "2.164.1",
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
     "@aws-mdaa/naming": "^0.42.0",
-    "aws-cdk-lib": "2.147.0",
+    "aws-cdk-lib": "2.164.1",
     "constructs": "10.0.96",
     "xregexp": "5.1.1"
   },
