@@ -547,7 +547,7 @@ export class MdaaDeploy {
             cdkCmd.push( `-a 'npx ${ this.npmDebug ? "-d" : "" } ${ moduleEffectiveConfig.modulePath }/'` )
         }
 
-        cdkCmd.push( `-o '${ this.workingDir }/cdk.out'` )
+        cdkCmd.push( `-o '${ this.workingDir }/cdk.out/${this.config.contents.organization}/${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName}'` )
         cdkCmd.push( `-c 'org=${ this.config.contents.organization }'` )
         cdkCmd.push( `-c 'env=${ moduleEffectiveConfig.envName }'` )
         cdkCmd.push( `-c 'module_name=${ moduleEffectiveConfig.moduleName }'` )
