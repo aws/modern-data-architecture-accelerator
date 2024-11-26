@@ -1,0 +1,153 @@
+# (required) Name of the Data Ops Project this Job will run within. 
+# Resources provided by the Project, such as security configuration, encryption keys, 
+# temporary S3 buckets, and execution roles will automatically be wired into the Job config.
+# Other resources provided by the project can be optionally referenced 
+# by the Job config using a "project:" prefix on the config value.
+projectName: dataops-project
+templates:
+  # An example job template. Can be referenced from other jobs. Will not itself be deployed.
+  GlueJobTemplate:
+    # (required) the role used to execute the job
+    executionRoleArn: generated-role-arn:glue-etl
+    # (required) Command definition for the glue job
+    command:
+      # (required) Either of "glueetl" | "pythonshell"
+      name: "glueetl"
+      # (optional) Python version.  Either "2" or "3"
+      pythonVersion: "3"
+    # (required) Description of the Glue Job
+    description: Template of a Glue ETL Transforamtion Job
+    # (optional) List of connections for the glue job to use.  Reference back to the connection name in the 'connections:' section of the project.yaml
+    connections:
+      - project:connections/connectionVpcWithProjectSG
+    # (optional) key: value pairs for the glue job to use.  see: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html
+    defaultArguments:
+      --job-bookmark-option: job-bookmark-enable
+    executionProperty:
+      maxConcurrentRuns: 1
+    # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
+    glueVersion: "4.0"
+    # (optional) Maximum retries.  see: MaxRetries section:
+    maxRetries: 1
+    # (optional) Number of minutes to wait before considering the job timed out
+    timeout: 60
+    # (optional) Worker type to use.  Any of: "Standard" | "G.1X" | "G.2X"
+    # Use maxCapacity or WorkerType.  Not both.
+    workerType: "G.2X"
+
+  RedshiftLoadJobTemplate:
+    # (required) the role used to execute the job
+    executionRoleArn: generated-role-arn:glue-etl
+    # (required) Command definition for the glue job
+    command:
+      # (required) Either of "glueetl" | "pythonshell"
+      name: "glueetl"
+      # (optional) Python version.  Either "2" or "3"
+      pythonVersion: "3"
+    # (required) Description of the Glue Job
+    description: Template of Redshift load job.
+    # (optional) List of connections for the glue job to use.  Reference back to the connection name in the 'connections:' section of the project.yaml
+    connections:
+      - project:connections/connectionVpcWithProjectSG
+    # (optional) key: value pairs for the glue job to use.  see: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html
+    defaultArguments:
+      --job-bookmark-option: job-bookmark-enable
+    # (optional) maximum concurrent runs.  See: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html#aws-glue-api-jobs-job-ExecutionProperty
+    executionProperty:
+      maxConcurrentRuns: 1
+    # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
+    glueVersion: "3.0"
+    # (optional) Maximum capacity.  See: MaxCapcity Section: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html
+    # Use maxCapacity or WorkerType.  Not both.
+    #maxCapacity: 1
+    # (optional) Maximum retries.  see: MaxRetries section:
+    maxRetries: 0
+    # (optional) Number of minutes to wait before sending a job run delay notification.
+    notificationProperty:
+      notifyDelayAfter: 1
+    # (optional) Number of workers to provision
+    #numberOfWorkers: 1
+    # (optional) Number of minutes to wait before considering the job timed out
+    timeout: 60
+    # (optional) Worker type to use.  Any of: "Standard" | "G.1X" | "G.2X"
+    # Use maxCapacity or WorkerType.  Not both.
+    workerType: Standard
+
+jobs:
+  # Job definitions below
+  curate-dataset-a: # Job Name
+    template: "GlueJobTemplate" # Reference a job template.
+    defaultArguments:
+      --raw_database: project:databaseName/<your-glue-catalog-database-name-for-raw-datasets>
+      --raw_table: <raw-table-a>
+      --curated_s3_bucket: "{{resolve:ssm:/{{org}}/{{domain}}/ssm_path/to/s3/bucket/name}}"
+      --curated_folder: <your-s3-directory-prefix-containing-curated-datasets>
+      --curated_database: project:databaseName/<your-glue-catalog-database-name-for-curated-datasets>
+    command:
+      scriptLocation: ./src/glue-jobs/curate-dataset-a.py
+    allocatedCapacity: 3
+    description: Glue job to read raw source file and create transformed and curated datasets.
+
+  curate-dataset-b: # Job Name
+    template: "GlueJobTemplate" # Reference a job template.
+    defaultArguments:
+      --raw_database: project:databaseName/<your-glue-catalog-database-name-for-raw-datasets>
+      --raw_table: <raw-table-b>
+      --curated_s3_bucket: "{{resolve:ssm:/{{org}}/{{domain}}/ssm_path/to/s3/bucket/name}}"
+      --curated_folder: <your-s3-directory-prefix-containing-curated-datasets>
+      --curated_database: project:databaseName/<your-glue-catalog-database-name-for-curated-datasets>
+    command:
+      scriptLocation: ./src/glue-jobs/curate-dataset-b.py
+    allocatedCapacity: 3
+    description: Glue job to read raw source file and create transformed and curated datasets.
+
+  fact-table-1-load:
+    template: "RedshiftLoadJobTemplate"
+    defaultArguments:
+      --redshift_secret: "<your-redshift-secret-name?"
+      --redshift_database: <your-redhisft-dwh-database-name>
+      --redshift_schema: <your-redshift-dwh-schema-name>
+      --redshift_table: fact_table_1
+      --catalog_database: project:databaseName/<your-glue-catalog-database-name-for-curated-datasets>
+      --catalog_table: fact_table_1
+      --role_iam: "{{resolve:ssm:/{{org}}/{{domain}}/<ssm_path/to/generated-role/redshift-execution-role/arn>}}"
+      --redshift_tmp_dir: "s3://{{resolve:ssm:/{{org}}/{{domain}}/dataops-project/bucket/name}}/temp/"
+      --truncate_before_load: "false"
+    command:
+      scriptLocation: ./src/glue-jobs/generic-redshift-load.py
+    allocatedCapacity: 2
+    description: Glue job to read curated file and load into Redshift table.
+
+  dim-table-1-load:
+    template: "RedshiftLoadJobTemplate"
+    defaultArguments:
+      --redshift_secret: "<your-redshift-secret-name>"
+      --redshift_database: <your-redhisft-dwh-database-name>
+      --redshift_schema: <your-redshift-dwh-schema-name>
+      --redshift_table: dim_table_1
+      --catalog_database: project:databaseName/<your-glue-catalog-database-name-for-curated-datasets>
+      --catalog_table: dim_table_1
+      --role_iam: "{{resolve:ssm:/{{org}}/{{domain}}/<ssm_path/to/generated-role/redshift-execution-role/arn>}}"
+      --redshift_tmp_dir: "s3://{{resolve:ssm:/{{org}}/{{domain}}/dataops-project/bucket/name}}/temp/"
+      --truncate_before_load: "true"
+    command:
+      scriptLocation: ./src/glue-jobs/generic-redshift-load.py
+    allocatedCapacity: 2
+    description: Glue job to read curated file and load into Redshift table.
+
+  dim-table-2-load:
+    template: "RedshiftLoadJobTemplate"
+    defaultArguments:
+      --redshift_secret: "<your-redshift-secret-name>"
+      --redshift_database: <your-redhisft-dwh-database-name>
+      --redshift_schema: <your-redshift-dwh-schema-name>
+      --redshift_table: dim_table_2
+      --catalog_database: project:databaseName/<your-glue-catalog-database-name-for-curated-datasets>
+      --catalog_table: dim_table_2
+      --role_iam: "{{resolve:ssm:/{{org}}/{{domain}}/generated-role/redshift-execution-role/arn}}"
+      --redshift_tmp_dir: "s3://{{resolve:ssm:/{{org}}/{{domain}}/dataops-project/bucket/name}}/temp/"
+      --truncate_before_load: "true"
+    command:
+      scriptLocation: ./src/glue-jobs/generic-redshift-load.py
+    allocatedCapacity: 2
+    description: Glue job to read curated file and load into Redshift table.

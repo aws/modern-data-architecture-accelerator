@@ -1,0 +1,86 @@
+
+# (Required) Name of the Data Ops Project
+# Name the the project the resources of which will be used by this workflow.
+# Other resources within the project can be referenced in the workflow config using
+# the "project:" prefix on the config value.
+projectName: dataops-project-name
+# List of workflow definitions as produced by 'aws glue get-workflow --name <name> --include-graph'
+workflowDefinitions:
+    # The rawWorkflowDef can be specified directly, or can be Json/Yaml representation of the output of the
+    # 'aws glue get-workflow --name <name> --include-graph' command. This allows workflows to be created in the Glue
+    # interface, exported, and pasted directly into this config. The parts of the command output which are not required
+    # will be ignored.
+  - rawWorkflowDef:
+      Workflow:
+        Name: curate-my-application-data-wf
+        DefaultRunProperties: {}
+        Graph:
+          Nodes:
+          - Type: TRIGGER
+            Name: EveryNight2AMTrigger
+            TriggerDetails:
+              Trigger:
+                Name: EveryNight2AMTrigger
+                WorkflowName: curate-my-application-data-wf
+                Type: SCHEDULED
+                State: ACTIVATED
+                Schedule: cron(0 7 * * ? *)
+                Actions:
+                  - CrawlerName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/crawler/name/crawler-a}}"
+          - Type: TRIGGER
+            Name: RawCrawlerSuccess
+            TriggerDetails:
+              Trigger:
+                Name: RawCrawlerSuccess
+                WorkflowName: curate-my-application-data-wf
+                Type: CONDITIONAL
+                State: ACTIVATED
+                Actions:
+                  - JobName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/job/name/curate-dataset-a}}"
+                  - JobName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/job/name/curate-dataset-b}}"
+                Predicate:
+                  Logical: ANY
+                  Conditions:
+                  - LogicalOperator: EQUALS
+                    CrawlerName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/crawler/name/crawler-a}}"
+                    CrawlState: SUCCEEDED
+          - Type: TRIGGER
+            Name: CurateConnectCTRSuccess
+            TriggerDetails:
+              Trigger:
+                Name: CurateConnectCTRSuccess
+                WorkflowName: curate-my-application-data-wf
+                Type: CONDITIONAL
+                State: ACTIVATED
+                Actions:
+                  - JobName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/job/name/fact-table-1-load}}"
+                  - JobName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/job/name/dim-table-1-load}}"
+                  - JobName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/job/name/dim-table-2-load}}"
+                Predicate:
+                  Logical: AND
+                  Conditions:
+                  - LogicalOperator: EQUALS
+                    JobName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/job/name/curate-dataset-a}}"
+                    State: SUCCEEDED
+                  - LogicalOperator: EQUALS
+                    JobName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/job/name/curate-dataset-b}}"
+                    State: SUCCEEDED  
+
+  - rawWorkflowDef:
+      Workflow:
+        Name: crawl-my-application-data-raw-wf
+        DefaultRunProperties: {}
+        Graph:
+          Nodes:
+            - Type: TRIGGER
+              Name: EveryDay930AMTrigger
+              TriggerDetails:
+                Trigger:
+                  Name: EveryDay930AMTrigger
+                  WorkflowName: crawl-my-application-data-raw-wf
+                  Type: SCHEDULED
+                  Schedule: "cron(30 14 * * ? *)"
+                  State: ACTIVATED
+                  Actions:
+                    - CrawlerName: "{{resolve:ssm:/{{org}}/{{domain}}/dataops-project-name/crawler/name/crawler-a}}"
+
