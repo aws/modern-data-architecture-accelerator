@@ -1,4 +1,4 @@
-# Basic Data Science Platform
+# Basic Data Science/AI/ML Platform
 
 This is a sample basic Data Science Platform architecture which can be implemented using MDAA. This platform is centered around the Data Science Team concept. Each team is provided with their own SageMaker Studio Domain, team-specific Athena Workgroup, and KMS-encrypted S3-based 'mini data lake'--which is used to store all team-specific data and files, as well as act as scratch-space for their data science activities.
 
