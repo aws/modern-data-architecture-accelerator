@@ -187,9 +187,8 @@ export interface LambdaFunctionL3ConstructProps extends MdaaL3ConstructProps {
 
 export class LambdaFunctionL3Construct extends MdaaL3Construct {
     protected readonly props: LambdaFunctionL3ConstructProps
-
-
     private readonly projectKmsKey: IKey;
+    public readonly functionsMap: { [name: string]: Function } = {};
 
     constructor( scope: Construct, id: string, props: LambdaFunctionL3ConstructProps ) {
         super( scope, id, props )
@@ -203,7 +202,8 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
 
         // Build our functions!
         this.props.functions?.forEach( functionProps => {
-            this.createFunctionFromProps( functionProps, generatedLayers )
+            const generatedFunction = this.createFunctionFromProps( functionProps, generatedLayers )
+            this.functionsMap[ functionProps.functionName ] = generatedFunction
         } )
 
         //Remove unneeded inline policies which CDK automatically adds to execution role
@@ -369,5 +369,4 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
         } )
 
     }
-
 }

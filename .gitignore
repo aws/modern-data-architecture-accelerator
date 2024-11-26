@@ -34,3 +34,4 @@ __pycache__
 test-template.json
 .idea
 .terraform*
+**/*.drawio.bkp
