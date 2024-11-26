@@ -44,12 +44,8 @@ module "mdaa_datalake" {
 
   # TODO: Point to the MDAA Terraform Git Repo  
   # If using Git SSH, be sure to use the git::ssh://<url> syntax. Otherwise TF might download the module, but checkov will fail to.
-  source        = "<your-git-url>///datalake"
+  source        = "<your-git-url>//modules/datalake"
   force_destroy = var.force_destroy
-  region        = var.region
-  org          = var.org
-  env          = var.env
-  domain       = var.domain
   module_name = var.module_name
   bucket_definitions = {
     # RAW BUCKET
@@ -110,11 +106,7 @@ module "example_workgroup" {
   
   # TODO: Point to the MDAA Terraform Git Repo  
   # If using Git SSH, be sure to use the git::ssh://<url> syntax. Otherwise TF might download the module, but checkov will fail to.
-  source        = "<your-git-url>////athena-workgroup"
-  region = var.region
-  org          = var.org
-  env          = var.env
-  domain       = var.domain
+  source        = "<your-git-url>//modules/athena-workgroup"
   module_name = var.module_name
   base_name                      = "data-engineer"
   force_destroy                  = var.force_destroy

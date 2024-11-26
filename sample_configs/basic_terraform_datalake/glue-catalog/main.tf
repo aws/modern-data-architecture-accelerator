@@ -38,10 +38,6 @@ module "glue-catalog" {
 
   # TODO: Point to the MDAA Terraform Git Repo
   # If using Git SSH, be sure to use the git::ssh://<url> syntax. Otherwise TF might download the module, but checkov will fail to.
-  source        = "<your-git-url>//glue-catalog-setting"
-  region        = var.region
-  org          = var.org
-  env          = var.env
-  domain       = var.domain
+  source        = "<your-git-url>//modules/glue-catalog-setting"
   module_name = var.module_name
 }

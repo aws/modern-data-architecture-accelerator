@@ -5,7 +5,7 @@
 The Modern Data Architecture Accelerator (MDAA) is designed to accelerate the implementation of a secure, compliant and fully capable Modern Data Architecture on AWS, allowing organizations of all sizes and sophsitication to quickly focus on driving business outcomes from their data while maintaining high assurance of security compliance. Specifically, organizations are enabled to rapidly solve data-driven problems using both traditional analytics, as well as using contemporary capabilities such as generative AI.
 
 MDAA provides rapid, secure deployment of all major elements of a Modern Data Architcture, such as Ingest, Persistence, Governance, DataOps, Consumption, Visual Analytics, Data Science, and AI/ML.
-Additionally, MDAA has been designed for compliance with AWS Solutions, NIST 800-53 Rev5 (US), HIPAA CDK Nag Rulesets, as well as ITSG-33 (Canada) security control requirements. This combination of integral compliance and broad, configuration-driven capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
+Additionally, MDAA has been designed for compliance with AWS Solutions, NIST 800-53 Rev5 (US), HIPAA CDK Nag Rulesets, as well as ITSG-33 (Canada) security control requirements. Terraform modules are compliant with standard Checkov security policies. This combination of integral compliance and broad, configuration-driven capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
 
 ## Target Usage
 
@@ -31,7 +31,8 @@ Getting started with MDAA requires the following steps:
 
 Alternatively, you can jump directly into a set of sample architectures and configurations. Note that these sample configurations can be used as a starting point for much more sophisticated architectures.
 
-* [Basic DataLake](sample_configs/basic_datalake/README.md) - A basic S3 Data Lake
+* [Basic DataLake with Glue](sample_configs/basic_datalake/README.md) - A basic S3 Data Lake with Glue database and crawler
+* [Basic Terraform DataLake](sample_configs/basic_terraform_datalake/README.md) - A basic S3 Data Lake built with the MDAA Terraform module
 * [Fine-grained Access Control DataLake](sample_configs/lakeformation_datalake/README.md) - An S3 Data Lake with fine-grained access control using LakeFormation
 * [Data Warehouse](sample_configs/basic_datawarehouse/README.md) - A standalone Redshift Data Warehouse
 * [Lakehouse](sample_configs/lakehouse/README.md) - A full LakeHouse implementation, with Data Lake, Data Ops Layers (using NYC taxi data), and a Redshift data warehouse
@@ -44,7 +45,8 @@ Additionally, once your Modern Data Architecture is deployed, you can use these 
 
 * [Basic Crawler](sample_blueprints/basic_dataops_crawler/README.md) - A basic crawler blueprint
 * [Event-Driven CSV to Parquet Lambda](sample_blueprints/lambda_csv_parquet/README.md) - A blueprint for transforming small-medium CSV files into Parquet as they are uploaded into a datalake.
-  
+* [Schedule-Driven CSV to Parquet Glue](sample_blueprints/glue_csv_parquet/README.md) - A blueprint for transforming larger CSV files into Parquet on a scheduled basis using Glue ETL.
+
 ***
 
 ## Logical Design
@@ -68,12 +70,14 @@ MDAA and its constituent modules each adhere to the following design principles:
 * Compliance with NIST 800-53 Rev 5 [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
 * Compliance with HIPAA [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
 * Compliance with ITSG-33 PBMM Security Control Requirements
+* (Terraform) Compliance with Checkov standard policies.
 * Ubiquitous encryption at rest and in transit
 * Least-priviledged permissions
+* Separation of Duties
 
 ### Governance
 
-* Leverage CDK--and thus CloudFormation--as the single agent of deployment and change within the target AWS accounts
+* Leverage Infrastructure as Code (CDK/CloudFormation, Terraform)--as the single agent of deployment and change within the target AWS accounts
 * Optional governed, secure self-service deployments via Service Catalog
 * Consistent but customizable naming convention across all deployed resources
 * Consistent tagging of all generated resources
@@ -81,8 +85,9 @@ MDAA and its constituent modules each adhere to the following design principles:
 ### Accessibility, Flexibility and Extensibility
 
 * Flexible, YAML configuration-driven deployments (CDK Apps) with implicit application of security controls in code
+* Ability to orchestrate architectures with both Terraform and CDK-based modules
 * Optional publishing of Service Catalog products for end-user self-service of compliant infrastructure
-* Reusable CDK L2 and L3 Constructs for consistent application of security controls across modules
+* Reusable CDK L2 and L3 Constructs, and Terraform Modules for consistent application of security controls across modules
 * Extensibility through multi-language support using the same approach as CDK itself (via JSII)
   * TypeScript/Node.js
   * Python 3.x
@@ -91,17 +96,19 @@ MDAA and its constituent modules each adhere to the following design principles:
 
 ***
 
-## Implementation Design
+## MDAA Components
 
-MDAA is implemented as a set of compliant CDK Constructs and configuration-driven CDK Applications which can be deployed via a unified Deployment/Orchestration layer. Any MDAA module can be directly deployed into AWS accounts, or deployed as Service Catalog Products for self-service deployments.
+MDAA is implemented as a set of compliant modules which can be deployed via a unified Deployment/Orchestration layer. 
 
-* **MDAA Modules (CDK Apps)** - A set of configuration-driven CDK Apps, which leverage the MDAA CDK Constructs in order to define and deploy compliant data analytics environment components as CloudFormation stacks. These apps can be executed directly and independantly using CDK cli, or composed and orchestrated via the MDAA CLI.
+* **MDAA CDK Modules** - A set of configuration-driven CDK Apps, which leverage the MDAA CDK Constructs in order to define and deploy compliant data analytics environment components as CloudFormation stacks. These apps can be executed directly and independantly using CDK cli, or composed and orchestrated via the MDAA CLI.
+
+* **MDAA Terraform Modules (Preview)** - A set of standardized Terraform modules which adhere to security control requirements. These apps can be executed directly and independantly using Terraform cli, or composed and orchestrated via the MDAA CLI. Note that Terraform integration is currently in preview, and not all MDAA functionality is available.
 
 * **MDAA CDK L2 and L3 Constructs** - A set of reusable CDK constructs which are leveraged by the rest of the MDAA codebase, but can also be reused to build additional compliant CDK constructs, stacks, or apps. These constructs are each designed for compliance with AWS Solutions, HIPAA, and NIST 800-53 R5 CDK Nag rulesets. Similar to the CDK codebase MDAA is built on, MDAA constructs are available with binding for multiple langauges, currently including TypeScript/Node.js and Python 3.
 
-* **MDAA CLI (Deployement/Orchestration) App** - A configuration driven CLI application which allows for composition and orchestration of multiple MDAA CDK Apps in order to deploy a compliant end to end data analytics environment. Also ensures that each MDAA CDK application is deployed with the specified configuration into the specified accounts while also accounting for dependencies between modules.
+* **MDAA CLI (Deployement/Orchestration) App** - A configuration driven CLI application which allows for composition and orchestration of multiple MDAA Modules (CDK and Terraform) in order to deploy a compliant end to end data analytics environment. Also ensures that each MDAA Module is deployed with the specified configuration into the specified accounts while also accounting for dependencies between modules.
 
-![Mdaa Physical Design](docs/MDAA-Physical_Design.png)
+![Mdaa Design](docs/MDAA-Physical_Design.png)
 
 ***
 
@@ -185,6 +192,21 @@ These constructs are specifically designed to be compliant with the AWSSolutions
 
 ***
 
+## Available MDAA Reusable Terraform Modules (Preview)
+
+These modules are specifically designed to be compliant with standard Checkov rules. Each Terraform module will have Checkov applied at plan/deploy time. Note that these modules are managed in a separate MDAA Terraform Git Repo.
+
+* Athena Workgroups
+* S3 Datalake
+* Data Science Team
+* Glue Catalog Settings
+* DataOps Glue Crawlers
+* DataOps Glue Jobs
+* DataOps Glue Workflow
+* DataOps Projecs
+
+*** 
+
 ## Using/Extending MDAA Overview
 
 MDAA can be used and extended in the following ways:
@@ -203,7 +225,7 @@ MDAA can be used and extended in the following ways:
   * High compliance assurance for resources deployed via MDAA constructs
 
 * Custom-developed and deployed data-driven applications/workloads can be configured to leverage MDAA-deployed resources via the standard set of SSM params which are published by all MDAA modules
-  * Independantly developed in CDK or CFN
+  * Independantly developed in Terraform, CDK or CFN
   * Loosely coupled with MDAA via SSM Params
   * Workload/Application compliance independantly validated
 
