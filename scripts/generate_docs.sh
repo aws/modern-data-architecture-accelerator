@@ -22,7 +22,7 @@ find ./packages/apps/ -name config-schema.json -execdir generate-schema-doc --co
 npx typedoc --out target/docs/typedocs/
 
 # Copy all markdown and doc png images to target/docs dir (mkdocs needs everything in one spot)
-rsync -zarvm --exclude="*node_modules*" --exclude="*coverage*" --include="*/" --include="*.md" --include="*.png" --include="*.css" --include=".pages" --include="*.yaml" --exclude="*" . target/docs/
+rsync -zarvm --exclude="*node_modules*" --exclude="*coverage*" --include="*/" --include="*.md" --include="*.png" --include="*.css" --include=".pages" --include="*.yaml" --include="*.tf" --exclude="*" . target/docs/
 
 # Setup a remote which will be used to push docs to the separate CAEF Docs repo (using mike/mkdocs)
 git remote add docs_publish "https://gitlab-ci-token:$CI_GROUP_TOKEN@$CI_SERVER_HOST/$CAEF_DOCS_PROJECT_PATH.git/"
