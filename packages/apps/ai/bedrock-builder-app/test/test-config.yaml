@@ -1,0 +1,28 @@
+# List of admin roles which will be provided access to agent resources (like KMS/Bucket)
+dataAdminRoles:
+  - name: "Admin"
+
+bedrockAgentExecutionRole: 
+    id: generated-role-id:agent-execution-role
+
+# Bedrock Agent Configuration
+agents:
+  test-agent: 
+    agentAliasName: "test-alias"
+    foundationModel: "anthropic.claude-3-sonnet-20240229-v1:0"
+    
+    # (Optional parameters)
+    description: "This is a Test Agent"
+    # Specifies whether to automatically update the DRAFT version of the agent after making changes to the agent
+    autoPrepare: true                     # Default: false
+    # Instructions that tell the agent what it should do and how it should interact with users
+    instruction: |
+      You are a helpful assistant
+      You are allow to use associated Knowledge base to answer the questions
+      Provide responses in markdown format. Provide source citations used in your response
+    # The number of seconds for which Amazon Bedrock keeps information about a user's conversation with the agent
+    idleSessionTtlInSeconds: 400
+    # Configuration information for a guardrail that you use with the Converse operation
+    guardrailConfiguration:
+      guardrailIdentifier: "arn:aws:bedrock:{{region}}:{{account}}:guardrail/<guardrail-id>"
+      guardrailVersion: "1"

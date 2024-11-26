@@ -27,4 +27,4 @@ packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/image-repository
 packages/constructs/L3/ai/gaia-l3-construct/lib/models/index.ts # Known SageMaker Public Accounts
 packages/constructs/L3/ai/gaia-l3-construct/lib/shared/index.ts # Known Lambda service account
 packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/hf-custom-script-model/build-script/script.py:63 # runs in deployment once, command string fully controlled by script code and not inputs
-
+packages/constructs/L3/ai/bedrock-agent-l3-construct/test/lambda/test-layer.zip # Empty test file
