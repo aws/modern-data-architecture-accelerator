@@ -339,6 +339,13 @@ export class MdaaDeploy {
             throw new Error( "module_path must be specified if module_type is 'tf'" )
         }
 
+        try {
+            this.execCmd("which checkov")
+        } catch (error) {
+            console.log("Cannot locate checkov on path. Terraform modules cannot deploy. Check Python/Pip installation.")
+            process.exit(1)
+        }
+
         const modulePath = path.resolve( moduleConfig.modulePath )
 
         console.log( `Module ${ moduleConfig.domainName }/${ moduleConfig.envName }/${ moduleConfig.moduleName }: Resolved path to: ${ modulePath }` )

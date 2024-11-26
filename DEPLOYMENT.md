@@ -62,49 +62,49 @@ Specify a < cdk action >, which MDAA CLI will run against every configured modul
 <path_to_cloned_repo>/bin/mdaa <cdk action>
 ```
 
-To CDK list all stacks:
+To list (Terraform validate) all stacks:
 
 ```bash
 <path_to_cloned_repo>/bin/mdaa list
 ```
 
-To CDK synth all stacks:
+To synth (Terraform validate) all stacks:
 
 ```bash
 <path_to_cloned_repo>/bin/mdaa synth
 ```
 
-To CDK diff all stacks:
+To diff (Terraform plan) all stacks:
 
 ```bash
 <path_to_cloned_repo>/bin/mdaa diff
 ```
 
-To CDK deploy all stacks:
+To deploy (Terraform deploy) all stacks:
 
 ```bash
 <path_to_cloned_repo>/bin/mdaa deploy
 ```
 
-To CDK deploy only env=dev modules/stacks:
+To deploy only env=dev modules/stacks:
 
 ```bash
 <path_to_cloned_repo>/bin/mdaa deploy -e dev
 ```
 
-To CDK deploy only domain1 and domain2 modules/stacks:
+To deploy only domain1 and domain2 modules/stacks:
 
 ```bash
 <path_to_cloned_repo>/bin/mdaa deploy -d domain1,domain2
 ```
 
-To CDK deploy only the test_roles_module and test_datalake_module modules/stacks:
+To deploy only the test_roles_module and test_datalake_module modules/stacks:
 
 ```bash
 <path_to_cloned_repo>/bin/mdaa deploy -m test_roles_module,test_datalake_module
 ```
 
-Any CLI params not recognized by MDAA CLI will be pushed down to the CDK CLI. In this examle, `--no-rollback` will be pushed down to CDK:
+Any CLI params not recognized by MDAA CLI will be pushed down to the CDK/Terraform CLI. In this examle, `--no-rollback` will be pushed down to CDK:
 
 ```bash
 <path_to_cloned_repo>/bin/mdaa deploy --no-rollback
