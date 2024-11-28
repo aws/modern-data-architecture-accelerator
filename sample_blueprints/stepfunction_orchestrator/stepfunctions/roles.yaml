@@ -1,0 +1,18 @@
+generateRoles:
+  stepfunction: # Execution Role used by Step Function to invoke Glue Crawler and Glue Jobs, read from S3 buckets
+    trustedPrincipal: service:states.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    awsManagedPolicies:
+      - service-role/AWSLambdaRole
+      - service-role/AmazonSNSFullAccess
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueServiceRole approved for usage"
+
+  lambda-etl:
+    trustedPrincipal: service:lambda.amazonaws.com
+    awsManagedPolicies:
+      - service-role/AWSLambdaBasicExecutionRole
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for usage"

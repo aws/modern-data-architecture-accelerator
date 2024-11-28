@@ -1,0 +1,14 @@
+# Arns for IAM roles which will be provided to the projects's resources (IE bucket)
+dataAdminRoles:
+  # This is an arn which will be resolved first to a role ID for inclusion in the bucket policy.
+  # Note that this resolution will require iam:GetRole against this role arn for the role executing CDK.
+  - arn: "{{context:data_admin_role_arn}}"
+
+# List of roles which will be used to execute dataops processes using project resources
+projectExecutionRoles:
+  - id: generated-role-id:stepfunction
+  - id: generated-role-id:lambda-etl
+
+s3OutputKmsKeyArn: "{{context:datalake_kms_arn}}"
+glueCatalogKmsKeyArn: "{{context:glue_catalog_kms_arn}}"
+
