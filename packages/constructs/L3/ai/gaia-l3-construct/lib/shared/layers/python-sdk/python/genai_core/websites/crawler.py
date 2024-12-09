@@ -14,6 +14,7 @@ PROCESSING_BUCKET_NAME = os.environ["PROCESSING_BUCKET_NAME"]
 s3 = boto3.resource("s3")
 
 
+
 def crawl_urls(
     workspace: dict,
     document: dict,
@@ -105,7 +106,6 @@ def parse_url(url: str):
     root_url_parse = urlparse(url)
     base_url = f"{root_url_parse.scheme}://{root_url_parse.netloc}"
 
-    # nosemgrep
     response = requests.get(url, headers=headers, timeout=20)
     if "text/html" not in response.headers["Content-Type"]:
         raise Exception(
@@ -137,7 +137,6 @@ def parse_url(url: str):
     external_links = list(set(external_links))
 
     return content, local_links, external_links
-
 
 def _store_content_on_s3(
     workspace_id: str, document_id: str, document_sub_id: str, path: str, content: str

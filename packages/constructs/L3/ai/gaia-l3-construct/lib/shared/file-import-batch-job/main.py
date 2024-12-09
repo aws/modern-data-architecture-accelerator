@@ -1,4 +1,5 @@
 import os
+import json
 import boto3
 import genai_core.types
 import genai_core.chunks
@@ -43,21 +44,63 @@ def main():
                 Bucket=INPUT_BUCKET_NAME, Key=INPUT_OBJECT_KEY
             )
             content = object["Body"].read().decode("utf-8")
+            if (
+                INPUT_BUCKET_NAME != PROCESSING_BUCKET_NAME
+                and INPUT_OBJECT_KEY != PROCESSING_OBJECT_KEY
+            ):
+                s3_client.put_object(
+                    Bucket=PROCESSING_BUCKET_NAME, Key=PROCESSING_OBJECT_KEY, Body=content
+                )
+
+            add_chunks(workspace, document, content)
+        elif extension == ".json" and "frequently-asked-questions" in INPUT_OBJECT_KEY:
+            object = s3_client.get_object(
+                Bucket=INPUT_BUCKET_NAME, Key=INPUT_OBJECT_KEY
+            )
+            content = object["Body"].read().decode("utf-8")
+            content = json.loads(content)
+            existing_faq_map = genai_core.documents.get_redirection_text_documents_map(WORKSPACE_ID)
+            for key, value in content.items():
+                question = key
+                response = value
+                existing_id = existing_faq_map.get(question.lower())
+                if not existing_id:
+                    result = genai_core.documents.create_document(
+                        workspace_id=WORKSPACE_ID,
+                        document_type="qna",
+                        document_sub_type="redirection",
+                        title=question,
+                        content=question,
+                        content_complement=response,
+                    )
+                else:
+                    result = genai_core.documents.create_document(
+                        workspace_id=WORKSPACE_ID,
+                        document_type="qna",
+                        document_sub_type="redirection",
+                        title=question,
+                        content=question,
+                        content_complement=response,
+                        document_id=existing_id
+                    )
+                genai_core.documents.set_status(
+                    result.get('workspace_id'), result.get("document_id"), "processed"
+                )
         else:
             loader = S3FileLoader(INPUT_BUCKET_NAME, INPUT_OBJECT_KEY)
             print(f"loader: {loader}")
             docs = loader.load()
             content = docs[0].page_content
 
-        if (
-            INPUT_BUCKET_NAME != PROCESSING_BUCKET_NAME
-            and INPUT_OBJECT_KEY != PROCESSING_OBJECT_KEY
-        ):
-            s3_client.put_object(
-                Bucket=PROCESSING_BUCKET_NAME, Key=PROCESSING_OBJECT_KEY, Body=content
-            )
+            if (
+                INPUT_BUCKET_NAME != PROCESSING_BUCKET_NAME
+                and INPUT_OBJECT_KEY != PROCESSING_OBJECT_KEY
+            ):
+                s3_client.put_object(
+                    Bucket=PROCESSING_BUCKET_NAME, Key=PROCESSING_OBJECT_KEY, Body=content
+                )
 
-        add_chunks(workspace, document, content)
+            add_chunks(workspace, document, content)
     except Exception as error:
         genai_core.documents.set_status(WORKSPACE_ID, DOCUMENT_ID, "error")
         print(error)

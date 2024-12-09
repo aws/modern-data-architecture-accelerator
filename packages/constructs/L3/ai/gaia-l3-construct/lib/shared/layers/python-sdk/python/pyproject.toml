@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "genai_core"
+authors = [
+    {name = "Amr Ahmed"},
+    {name = "Christian Boin"},
+]
+version = "0.0.1"
+description = "Core utils for GenAI Accelerator (GAIA)."
+readme = "README.md"
+requires-python = ">=3.11"
+dynamic = ["dependencies"]
+
+[project.urls]
+Documentation = "README.md"
+
+# [tool.setuptools.dynamic]
+# dependencies = {file = ["../layers/requirements.txt"]}
+
+[project.optional-dependencies]
+# these dependencies are required for development,
+# not for running the package.
+dev = [
+    # lint
+    "black",
+    "click",
+    "isort",
+    # test
+    "pytest",
+    "pytest-cov",
+    "pytest-env"
+    # docs
+    # "mkdocs",
+    # "mkdocs-material",
+    # "mike",
+    # "mkdocstrings-python"
+]
+package = [
+    "build",
+    "twine"
+]
+
+[tool.setuptools.packages.find]
+exclude = ["app", "junit"]
+
+[tool.pytest.ini_options]
+log_cli_level="INFO"
+log_cli=1

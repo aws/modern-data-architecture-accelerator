@@ -1,7 +1,6 @@
 
-
 _CONDENSE_QUESTION_PROMPT_WIH_ALL = """You are an AI assistant bot called {bot_name}.
-Given the following instructions, an example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, an example of question and how you should answer, conversation and a follow up input, rephrase the follow up input to be a standalone question, written using the same language as the follow up input.
 
 Instructions: {instructions}
 
@@ -17,7 +16,7 @@ Standalone question:"""
 _LLAMA_CONDENSE_QUESTION_PROMPT_WITH_ALL = """<<SYS>>
 You are an AI assistant bot called {bot_name}.
 
-Given the following instructions, an example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, an example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 You do not repeat yourself. You avoid bulleted list or emojis.
 
 Instructions: {instructions}
@@ -37,7 +36,7 @@ Standalone question:[/INST]"""
 _MISTRAL_CONDENSE_QUESTION_PROMPT_WITH_ALL = """<s>[INST]
 You are an AI assistant bot called {bot_name}.
 
-Given the following instructions, an example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, an example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 You do not repeat yourself. You avoid bulleted list or emojis.
 
 Instructions: {instructions}
@@ -52,7 +51,7 @@ Chat History:
 [INST] {question} [/INST]"""
 
 _CONDENSE_QUESTION_PROMPT_INSTRUCTIONS_AND_EXAMPLES = """
-Given the following instructions, example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 
 Instructions: {instructions}
 
@@ -65,7 +64,7 @@ Follow Up Input: {question}
 Standalone question:"""
 
 _LLAMA_CONDENSE_QUESTION_PROMPT_INSTRUCTIONS_AND_EXAMPLES = """<<SYS>>
-Given the following instructions, example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 
 Instructions: {instructions}
 
@@ -80,7 +79,7 @@ Follow Up Input: {question}
 Standalone question:[/INST]"""
 
 _MISTRAL_CONDENSE_QUESTION_PROMPT_INSTRUCTIONS_AND_EXAMPLES = """<s>[INST]
-Given the following instructions, example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, example of question and how you should answer, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 
 Instructions: {instructions}
 
@@ -97,7 +96,7 @@ Chat History:
 [INST] {question} [/INST]"""
 
 _CONDENSE_QUESTION_PROMPT_WITH_INSTRUCTIONS_AND_NAME = """You are an AI assistant bot called {bot_name}.
-Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 
 Instructions: {instructions}
 
@@ -109,7 +108,7 @@ Standalone question:"""
 _LLAMA_CONDENSE_QUESTION_PROMPT_WITH_INSTRUCTIONS_AND_NAME = """<<SYS>>
 You are an AI assistant bot called {bot_name}.
 
-Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 You do not repeat yourself. You avoid bulleted list or emojis.
 
 Instructions: {instructions}
@@ -125,7 +124,7 @@ Standalone question:[/INST]"""
 _MISTRAL_CONDENSE_QUESTION_PROMPT_WITH_INSTRUCTIONS_AND_NAME = """<s>[INST]
 You are an AI assistant bot called {bot_name}.
 
-Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 You do not repeat yourself. You avoid bulleted list or emojis.
 
 Instructions: {instructions}
@@ -141,7 +140,7 @@ Chat History:
 
 
 _CONDENSE_QUESTION_PROMPT_WITH_ONLY_INSTRUCTIONS = """
-Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 
 Instructions: {instructions}
 
@@ -151,7 +150,7 @@ Follow Up Input: {question}
 Standalone question:"""
 
 _LLAMA_CONDENSE_QUESTION_PROMPT_WITH_ONLY_INSTRUCTIONS = """<<SYS>>
-Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 You do not repeat yourself. You avoid bulleted list or emojis.
 
 Instructions: {instructions}
@@ -164,7 +163,7 @@ Follow Up Input: {question}
 Standalone question:[/INST]"""
 
 _MISTRAL_CONDENSE_QUESTION_PROMPT_WITH_ONLY_INSTRUCTIONS = """<s>[INST]
-Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+Given the following instructions, conversation and a follow up question, rephrase the follow up question to be a standalone question, written using the same language as the follow up input.
 You do not repeat yourself. You avoid bulleted list or emojis.
 
 Instructions: {instructions}

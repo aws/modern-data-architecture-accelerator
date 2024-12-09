@@ -2,6 +2,8 @@ import os
 from aws_lambda_powertools.utilities import parameters
 
 X_ORIGIN_VERIFY_SECRET_ARN = os.environ.get("X_ORIGIN_VERIFY_SECRET_ARN")
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "*")
+CORS_MAX_AGE = int(os.environ.get("CORS_MAX_AGE", 0))
 API_KEYS_SECRETS_ARN = os.environ.get("API_KEYS_SECRETS_ARN")
 CONFIG_PARAMETER_NAME = os.environ.get("CONFIG_PARAMETER_NAME")
 MODELS_PARAMETER_NAME = os.environ.get("MODELS_PARAMETER_NAME")
@@ -28,7 +30,6 @@ def get_config():
     )
 
     return config
-
 
 def get_sagemaker_models():
     return parameters.get_parameter(MODELS_PARAMETER_NAME, transform="json", max_age=30)

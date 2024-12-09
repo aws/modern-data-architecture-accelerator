@@ -15,6 +15,7 @@ import {RagDynamoDBTables} from "../rag-dynamodb-tables";
 import {CreateAuroraWorkspace} from "./create-aurora-workspace";
 import {NagSuppressions} from "cdk-nag";
 import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
+import {MdaaSecurityGroup} from "@aws-mdaa/ec2-constructs";
 
 export interface AuroraPgVectorProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
@@ -50,6 +51,13 @@ export class AuroraPgVector extends MdaaL3Construct {
       }
     ], true)
 
+  const dbSecurityGroup = props.config?.rag?.engines?.aurora?.createSeparateSecurityGroup ? new MdaaSecurityGroup(this, "auroraPgVectorSecurityGroup", {
+        securityGroupName: "aurora-pgvector-sg",
+        naming: props.naming,
+        vpc: props.shared.vpc,
+        allowAllOutbound: false
+    }) : props.shared.dataSecurityGroup;
+
     const databaseProps: MdaaRdsServerlessClusterProps = {
       naming: props.naming,
       createParams: false,
@@ -65,7 +73,11 @@ export class AuroraPgVector extends MdaaL3Construct {
       vpcSubnets: {subnets:props.shared.dataSubnets},
       port: 15530,
       adminPasswordRotationDays: 60,
-      securityGroups: [props.shared.dataSecurityGroup]
+      securityGroups: [dbSecurityGroup],
+      scaling: {
+        minCapacity: props.config.rag?.engines.aurora?.minCapacity || rds.AuroraCapacityUnit.ACU_1,
+        maxCapacity: props.config.rag?.engines.aurora?.maxCapacity || rds.AuroraCapacityUnit.ACU_2
+      }
     }
 
     const dbCluster = new MdaaRdsServerlessCluster( this, "aurora-postgres-pgvector", databaseProps )

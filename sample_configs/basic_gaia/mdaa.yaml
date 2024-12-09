@@ -7,70 +7,58 @@ tag_configs:
   - ./tags.yaml
 
 ## Pre-Deployment Instructions
-
-# TODO: Set an appropriate, unique organization name
-# Failure to do so may resulting in global naming conflicts.
-organization: <unique org name>
+organization: <add-org>
 
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names.
 domains:
   # The named of the domain. In this case, we are building a 'shared' domain.
-  shared:
+  gaia-simple:
     # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
     environments:
+      
       # The environment name will be incorporated into resource name by the default naming implementation.
       dev:
         # The target deployment account can be specified per environment.
         # If 'default' or not specified, the account configured in the environment will be assumed.
         account: default
-        # TODO: fill in context for environment
-        context:
-          # REQUIRED context: Prefix, VPC details, App and Data Security Groups leveraged in GAIA components accordingly
-          prefix: <prefix-id>
-          # existing VPC Id
-          vpcId: <vpc-id>
-          # The Security Group used by the App Subnet components of GAIA such as the backend handler and ingestion flows
-          appSecurityGroupId: <app-sg-id>
-          # Subnet 1 where App components are deployed
-          appSubnet1: <app-subnet-1>
-          appSubnet2: <app-subnet-2>
-          dataSecurityGroupId: <data-sg-id>
-          dataSubnet1: <data-subnet-1>
-          dataSubnet2: <data-subnet-2>
-          # Accepted values: existing, ad, email_pass, to provision cognito resources and how or use already existing resources
-          authType: "email_pass"
-          # Whether to skip the deployment of WAF in front of the API Gateway.  By default, WAF is deployed but in environments using Firewall Manager, we give the user the option to opt out of deploying WAF
-          skipApiGatewayDefaultWaf: false
-          # OPTIONAL context (DELETE WHAT IS NOT NEEDED BELOW THIS POINT, AND DELETE FROM mdaa.yaml)
-          # The main domain name for the UI to be provisioned as a redirect url for OAuth flow in cases where AD integration is configured
-          mainDomain: <main-domain>
-          # required if integrating with AD and provisioning Cognito Resources (AuthType: ad), must be globally unique or will fail the deployment
-          cognitoDomain: <cognito-domain>
-          # ONLY if AD and Provisioned Cognito Resources: The ssm path to the SAML Metadata. GAIA module expects this as the parameter path and NOT cloudformation resolve syntax
-          idpSamlMetadataUrlOrFileParamPath: <saml-metadata-ssm-path>
-          # ONLY if AD and Provisioned Cognito Resources: The ssm path to the email claim key. GAIA module expects this as the parameter path and NOT cloudformation resolve syntax
-          idpSamlEmailClaimParamPath: <saml-email-claim-ssm-path>
-          # whether to enable Bedrock or not
-          bedrockEnabled: true
-          # which region to invoke the bedrock service
-          bedrockRegion: us-east-1
-          # kms key used for encrypting the existing Kendra S3 Data Source
-          # NOTE IF KMS KEY PROVIDED: bucket name is expected to be in SSM parameter and mdaa.yaml SSM resolve updated
-          existingKendraS3DataSourceKmsId: <kms-id>
-          # full custom domain name for RestApi endpoint.  The A Record is expected to be created and not provisioned by GAIA (Not including https://)
-          restApiDomainName: <rest-api-domain>
-          # The Route53 Hosted Zone name that houses the API A Records (Not including https://)
-          hostedZoneName: <hosted-zone-name>
-          # full custom domain name for WebSocket endpoint.  The A Record is created by GAIA and not expected to be created beforehand (Not including https://)
-          socketApiDomainName: <socket-api-domain>
-          # A boolean to set up cloudwatch logs role for api access
-          setApiGateWayAccountCloudwatchRole: <setup-api-access-logs-role>
-        # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
+        context: {}
+        # The list of modules which will be deployed. A module points to a specific CAEF CDK App, and
         # specifies a deployment configuration file if required.
         modules:
           # An AI module that will deploy a GenAI accelerator set of backend pieces
-          gaia-app:
-            module_path: "@aws-mdaa/gaia"
-            module_configs:
+          backend:
+            cdk_app: "@aws-mdaa/gaia"
+            app_configs:
+              - ./config/app.yaml
+
+      # The environment name will be incorporated into resource name by the default naming implementation.
+      test:
+        # The target deployment account can be specified per environment.
+        # If 'default' or not specified, the account configured in the environment will be assumed.
+        account: default
+        context: {}
+        # The list of modules which will be deployed. A module points to a specific CAEF CDK App, and
+        # specifies a deployment configuration file if required.
+        modules:
+          # An AI module that will deploy a GenAI accelerator set of backend pieces
+          backend:
+            cdk_app: "@aws-mdaa/gaia"
+            app_configs:
+              - ./config/app.yaml
+
+ 
+      # The environment name will be incorporated into resource name by the default naming implementation.
+      prod:
+        # The target deployment account can be specified per environment.
+        # If 'default' or not specified, the account configured in the environment will be assumed.
+        account: default
+        context: {}
+        # The list of modules which will be deployed. A module points to a specific CAEF CDK App, and
+        # specifies a deployment configuration file if required.
+        modules:
+          # An AI module that will deploy a GenAI accelerator set of backend pieces
+          backend:
+            cdk_app: "@aws-mdaa/gaia"
+            app_configs:
               - ./config/app.yaml

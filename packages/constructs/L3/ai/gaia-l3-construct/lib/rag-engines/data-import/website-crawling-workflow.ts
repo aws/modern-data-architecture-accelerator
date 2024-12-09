@@ -7,7 +7,6 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as rds from "aws-cdk-lib/aws-rds";
 import * as s3 from "aws-cdk-lib/aws-s3";
-import * as sagemaker from "aws-cdk-lib/aws-sagemaker";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
 import { NagSuppressions } from "cdk-nag";
@@ -16,10 +15,9 @@ import * as path from "path";
 import { Shared } from "../../shared";
 import { SystemConfig } from "../../shared/types";
 import { RagDynamoDBTables } from "../rag-dynamodb-tables";
-import { MdaaLambdaFunction } from "@aws-mdaa/lambda-constructs";
-import { MdaaRole } from "@aws-mdaa/iam-constructs";
+import {MdaaLambdaFunction, MdaaLambdaRole} from "@aws-mdaa/lambda-constructs";
 import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
-import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
+import {Effect, ManagedPolicy, PolicyStatement} from "aws-cdk-lib/aws-iam";
 
 export interface WebsiteCrawlingWorkflowProps extends MdaaConstructProps {
   readonly config: SystemConfig;
@@ -27,7 +25,6 @@ export interface WebsiteCrawlingWorkflowProps extends MdaaConstructProps {
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraDatabase?: rds.DatabaseCluster;
   readonly processingBucket: s3.Bucket;
-  readonly sageMakerRagModelsEndpoint?: sagemaker.CfnEndpoint;
   encryptionKey: MdaaKmsKey;
 }
 
@@ -49,15 +46,15 @@ export class WebsiteCrawlingWorkflow extends Construct {
       queueName: "WebsiteParserFunctionDLQ"
     } );
 
-    const websitParserRole = new MdaaRole( this, "WebsiteParserFunctionRole", {
+    const websiteParserRole = new MdaaLambdaRole( this, "WebsiteParserFunctionRole", {
       naming: props.naming,
       roleName:  "WebsiteParserFunctionRole",
+      logGroupNames: [ props.naming.resourceName( "websiteparserfunction" )],
       createParams: false,
       createOutputs: false,
-      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
     })
 
-    websitParserRole.addToPolicy(new PolicyStatement({
+    websiteParserRole.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
       actions: [
         'ec2:CreateNetworkInterface',
@@ -66,6 +63,12 @@ export class WebsiteCrawlingWorkflow extends Construct {
       ],
       resources: ['*']
     }));
+
+    websiteParserRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName(
+        "AWSLambdaExecute"
+      )
+    )
 
     const websiteParserCodePath = props.config?.codeOverwrites?.websiteParserCodePath !== undefined ?
         props.config.codeOverwrites.websiteParserCodePath :
@@ -94,7 +97,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
         ],
         timeout: cdk.Duration.minutes(15),
         naming: props.naming,
-        role: websitParserRole,
+        role: websiteParserRole,
         createParams: false,
         createOutputs: false,
         environment: {
@@ -112,8 +115,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
             props.ragDynamoDBTables.documentsTable.tableName ?? "",
           DOCUMENTS_BY_COMPOUND_KEY_INDEX_NAME:
             props.ragDynamoDBTables.documentsByCompountKeyIndexName ?? "",
-          SAGEMAKER_RAG_MODELS_ENDPOINT:
-            props.sageMakerRagModelsEndpoint?.attrEndpointName ?? ""
+          SAGEMAKER_RAG_MODELS_ENDPOINT: ""
         }
       }
     );
@@ -123,35 +125,27 @@ export class WebsiteCrawlingWorkflow extends Construct {
       { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function will be throttled by upstream services.' },
     ], true );
 
-    props.shared.configParameter.grantRead(websitParserRole);
-    props.shared.apiKeysSecret.grantRead(websitParserRole);
-    props.encryptionKey.grantEncryptDecrypt(websitParserRole);
-    props.processingBucket.grantReadWrite(websitParserRole);
+    props.shared.configParameter.grantRead(websiteParserRole);
+    props.shared.apiKeysSecret.grantRead(websiteParserRole);
+    props.encryptionKey.grantEncryptDecrypt(websiteParserRole);
+    props.processingBucket.grantReadWrite(websiteParserRole);
     props.ragDynamoDBTables.workspacesTable.grantReadWriteData(
-        websitParserRole
+        websiteParserRole
     );
     props.ragDynamoDBTables.documentsTable.grantReadWriteData(
-        websitParserRole
+        websiteParserRole
     );
 
     if (props.auroraDatabase) {
-      props.auroraDatabase.secret?.grantRead(websitParserRole);
+      props.auroraDatabase.secret?.grantRead(websiteParserRole);
       props.auroraDatabase.connections.allowDefaultPortFrom(
         websiteParserFunction
       );
     }
 
-    if (props.sageMakerRagModelsEndpoint) {
-      websitParserRole.addToPolicy(
-        new iam.PolicyStatement({
-          actions: ["sagemaker:InvokeEndpoint"],
-          resources: [props.sageMakerRagModelsEndpoint.ref],
-        })
-      );
-    }
 
     if (props.config.bedrock?.enabled) {
-      websitParserRole.addToPolicy(
+      websiteParserRole.addToPolicy(
         new iam.PolicyStatement({
           actions: [
             "bedrock:InvokeModel",
@@ -167,7 +161,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
       );
 
       if (props.config.bedrock?.roleArn) {
-        websitParserRole.addToPolicy(
+        websiteParserRole.addToPolicy(
           new iam.PolicyStatement({
             actions: ["sts:AssumeRole"],
             resources: [props.config.bedrock.roleArn],
@@ -287,7 +281,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
       })
     );
 
-    NagSuppressions.addResourceSuppressions( websitParserRole, [
+    NagSuppressions.addResourceSuppressions( websiteParserRole, [
       {
         id: 'AwsSolutions-IAM4',
         reason: 'Managed policies are restrictive, logs group resource unknown at deployment and only used during deployment',

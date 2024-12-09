@@ -1,5 +1,6 @@
 import os
 import boto3
+from botocore.config import Config
 import genai_core.workspaces
 import genai_core.types
 import unicodedata
@@ -9,7 +10,8 @@ MAX_FILE_SIZE = 100 * 1000 * 1000  # 100Mb
 
 
 def generate_presigned_post(workspace_id: str, file_name: str, expiration=3600):
-    s3_client = boto3.client("s3")
+    config = Config(signature_version='s3v4')
+    s3_client = boto3.client("s3", config=config)
 
     file_name = unicodedata.normalize("NFC", file_name)
     workspace = genai_core.workspaces.get_workspace(workspace_id)

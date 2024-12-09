@@ -3,6 +3,7 @@ import genai_core.parameters
 import genai_core.cross_encoder
 from typing import List
 from pydantic import BaseModel
+from enum import Enum
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.event_handler.api_gateway import Router
 
@@ -11,9 +12,17 @@ router = Router()
 logger = Logger()
 
 
+class CrossEncoderModelProvider(str, Enum):
+    sagemaker = "sagemaker"
+
+
+class CrossEncoderModel(str, Enum):
+    ms_marco_l12_v2 = "cross-encoder/ms-marco-MiniLM-L-12-v2"
+
+
 class CrossEncodersRequest(BaseModel):
-    provider: str
-    model: str
+    provider: CrossEncoderModelProvider
+    model: CrossEncoderModel
     input: str
     passages: List[str]
 

@@ -44,9 +44,8 @@ export class Shared extends Construct {
     super(scope, id);
 
     const powerToolsLayerVersion = "46";
-
     this.defaultEnvironmentVariables = {
-      POWERTOOLS_DEV: "true",
+      POWERTOOLS_DEV: props.config.powertoolsDevLogging === undefined ? "true" : props.config.powertoolsDevLogging,
       LOG_LEVEL: "INFO",
       POWERTOOLS_LOGGER_LOG_EVENT: "true",
       POWERTOOLS_SERVICE_NAME: "chatbot",

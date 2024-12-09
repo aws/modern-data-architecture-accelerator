@@ -9,11 +9,12 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import * as aws_ecr_assets from "aws-cdk-lib/aws-ecr-assets";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as rds from "aws-cdk-lib/aws-rds";
-import * as sagemaker from "aws-cdk-lib/aws-sagemaker";
 import {MdaaRole} from "@aws-mdaa/iam-constructs";
 import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
 import {NagSuppressions} from "cdk-nag";
 import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
+import * as path from "node:path";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
 
 export interface FileImportBatchJobProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
@@ -22,7 +23,6 @@ export interface FileImportBatchJobProps extends MdaaL3ConstructProps {
   readonly processingBucket: s3.Bucket;
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraDatabase?: rds.DatabaseCluster;
-  readonly sageMakerRagModelsEndpoint?: sagemaker.CfnEndpoint;
   encryptionKey: MdaaKmsKey
 }
 
@@ -32,19 +32,28 @@ export class FileImportBatchJob extends MdaaL3Construct {
 
   constructor(scope: Construct, id: string, props: FileImportBatchJobProps) {
     super(scope, id, props);
-
+    
+    const launchTemplate = new ec2.LaunchTemplate(
+      this,
+      "LaunchTemplate",
+      {
+        requireImdsv2: true
+      }
+    );
     const computeEnvironment = new batch.ManagedEc2EcsComputeEnvironment(
       this,
       "ManagedEc2EcsComputeEnvironment",
       {
         vpc: props.shared.vpc,
         vpcSubnets: { subnets: props.shared.appSubnets, },
-        allocationStrategy: batch.AllocationStrategy.BEST_FIT,
+        allocationStrategy: batch.AllocationStrategy.BEST_FIT_PROGRESSIVE,
+        instanceTypes: [new ec2.InstanceType("c5.xlarge")],
         maxvCpus: 4,
-        minvCpus: 4,
+        minvCpus: 0,
         replaceComputeEnvironment: true,
         updateTimeout: cdk.Duration.minutes(30),
         updateToLatestImageVersion: true,
+        launchTemplate: launchTemplate
       }
     );
 
@@ -61,7 +70,7 @@ export class FileImportBatchJob extends MdaaL3Construct {
     const fileImportJobRole = new MdaaRole(this, "FileImportJobRole", {
       naming: props.naming,
       roleName:  "FileImportJobRole",
-      createParams: false,
+      createParams: true,
       createOutputs: false,
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
       managedPolicies: [
@@ -71,20 +80,43 @@ export class FileImportBatchJob extends MdaaL3Construct {
       ]
     });
 
+    let dockerFileDirectory = `${ __dirname }/../../shared`
+    let dockerFileName = "file-import-dockerfile"
+
+    if (props.config.codeOverwrites?.fileImportBatchJobDockerFilePath) {
+        dockerFileDirectory = path.dirname(props.config.codeOverwrites.fileImportBatchJobDockerFilePath)
+        dockerFileName = path.basename(props.config.codeOverwrites.fileImportBatchJobDockerFilePath)
+    }
+
     const imageAsset = new aws_ecr_assets.DockerImageAsset( this, 'file-import-image', {
-      directory: `${ __dirname }/../../shared`,
-      file: "file-import-dockerfile",
+      directory: dockerFileDirectory,
+      file: dockerFileName,
       platform: aws_ecr_assets.Platform.LINUX_AMD64,
     } )
+    
+    const linuxParameters = new batch.LinuxParameters(this, "FileImportLinuxParams", {});
+    linuxParameters.addTmpfs(
+      {
+        size: cdk.Size.gibibytes(10),
+        containerPath: "/tmp",
+        mountOptions: [batch.TmpfsMountOption.RW]
+      }
+    );
 
     const fileImportContainer = new batch.EcsEc2ContainerDefinition(
       this,
       "FileImportContainer",
       {
-        cpu: 1,
-        memory: cdk.Size.mebibytes(1024),
+        cpu: 2,
+        memory: cdk.Size.mebibytes(2048),
         image: ecs.ContainerImage.fromDockerImageAsset( imageAsset ),
         jobRole: fileImportJobRole,
+        // allow access to /tmp  via in-memory mount
+        // as required by this file-import flow
+        // while still maintaining readonly file system
+        linuxParameters: linuxParameters,
+        readonlyRootFilesystem: true,
+        user: "worker",
         environment: {
           AWS_DEFAULT_REGION: cdk.Stack.of(this).region,
           CONFIG_PARAMETER_NAME: props.shared.configParameter.parameterName,
@@ -100,8 +132,7 @@ export class FileImportBatchJob extends MdaaL3Construct {
             props.ragDynamoDBTables.documentsTable.tableName ?? "",
           DOCUMENTS_BY_COMPOUND_KEY_INDEX_NAME:
             props.ragDynamoDBTables.documentsByCompountKeyIndexName ?? "",
-          SAGEMAKER_RAG_MODELS_ENDPOINT:
-            props.sageMakerRagModelsEndpoint?.attrEndpointName ?? ""
+          SAGEMAKER_RAG_MODELS_ENDPOINT: ""
         },
       }
     );
@@ -126,15 +157,6 @@ export class FileImportBatchJob extends MdaaL3Construct {
     if (props.auroraDatabase) {
       props.auroraDatabase.secret?.grantRead(fileImportJobRole);
       props.auroraDatabase.connections.allowDefaultPortFrom(computeEnvironment);
-    }
-
-    if (props.sageMakerRagModelsEndpoint) {
-      fileImportJobRole.addToPolicy(
-        new iam.PolicyStatement({
-          actions: ["sagemaker:InvokeEndpoint"],
-          resources: [props.sageMakerRagModelsEndpoint.ref],
-        })
-      );
     }
 
     if (props.config.bedrock?.enabled) {

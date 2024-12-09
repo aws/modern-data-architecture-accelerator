@@ -16,8 +16,11 @@ class AuroraConnection(object):
         )
         database_secrets = json.loads(secret_response["SecretString"])
         self.autocommit = autocommit
-
-        self.dbhost = database_secrets["host"]
+        # by default, load host from specified.
+        # allows overriding (for port-forwards)
+        self.dbhost = os.environ.get("AURORA_DB_HOST", None)
+        if not self.dbhost:
+            self.dbhost = database_secrets["host"]
         self.dbport = database_secrets["port"]
         self.dbuser = database_secrets["username"]
         self.dbpass = database_secrets["password"]

@@ -210,7 +210,9 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
                 username: props.masterUsername,
                 /** The KMS key with which the generated master/admin password will be encrypted in Secrets Manager */
                 encryptionKey: props.encryptionKey
-            }
+            },
+            serverlessV2MaxCapacity: props.scaling?.maxCapacity || 2,
+            serverlessV2MinCapacity: props.scaling?.minCapacity || 0.5,
         }
         const allProps = { ...props, ...overrideProps }
         return allProps

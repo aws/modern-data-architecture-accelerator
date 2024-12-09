@@ -1,6 +1,7 @@
 import genai_core.parameters
 import genai_core.kendra
 from pydantic import BaseModel
+from uuid import UUID
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.event_handler.api_gateway import Router
 
@@ -10,7 +11,7 @@ logger = Logger()
 
 
 class KendraDataSynchRequest(BaseModel):
-    workspaceId: str
+    workspaceId: UUID
 
 
 @router.get("/rag/engines/kendra/indexes")
@@ -27,7 +28,7 @@ def kendra_data_sync():
     data: dict = router.current_event.json_body
     request = KendraDataSynchRequest(**data)
 
-    genai_core.kendra.start_kendra_data_sync(workspace_id=request.workspaceId)
+    genai_core.kendra.start_kendra_data_sync(workspace_id=str(request.workspaceId))
 
     return {"ok": True, "data": True}
 
@@ -35,7 +36,7 @@ def kendra_data_sync():
 @router.get("/rag/engines/kendra/data-sync/<workspace_id>")
 @tracer.capture_method
 def kendra_is_syncing(workspace_id: str):
-    result = genai_core.kendra.kendra_is_syncing(workspace_id=workspace_id)
+    result = genai_core.kendra.kendra_is_syncing(workspace_id=str(workspace_id))
 
     return {"ok": True, "data": result}
 
@@ -46,4 +47,4 @@ def kendra_ddb_sync():
     data: dict = router.current_event.json_body
     request = KendraDataSynchRequest(**data)
 
-    genai_core.kendra.update_dynamodb_documents_table(workspace_id=request.workspaceId)
+    genai_core.kendra.update_dynamodb_documents_table(workspace_id=str(request.workspaceId))

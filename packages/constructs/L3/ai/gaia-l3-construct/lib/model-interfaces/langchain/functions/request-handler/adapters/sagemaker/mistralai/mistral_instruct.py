@@ -15,7 +15,7 @@ class MistralInstructContentHandler(LLMContentHandler):
     def transform_input(self, prompt, model_kwargs) -> bytes:
         input_str = json.dumps(
             {
-                "inputs": prompt,
+                "inputs": f"<s>[INST]{prompt}[/INST]",
                 "parameters": {
                     "do_sample": True,
                     "max_new_tokens": model_kwargs.get("max_new_tokens", 512),

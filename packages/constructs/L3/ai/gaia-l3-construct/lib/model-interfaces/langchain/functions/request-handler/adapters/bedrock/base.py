@@ -1,359 +1,278 @@
-import json
-import warnings
-from abc import ABC
-from typing import Any, Dict, Iterator, List, Mapping, Optional
+import os
+import genai_core.clients
+from aws_lambda_powertools import Logger
+from typing import Any, List
+from adapters.base import ModelAdapter
+from genai_core.registry import registry
+from langchain_core.messages import BaseMessage
+from langchain_core.messages.ai import AIMessage
+from langchain_core.messages.human import HumanMessage
+from langchain_aws import ChatBedrockConverse
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.prompts.prompt import PromptTemplate
+from adapters.shared.prompts.system_prompts import (
+    prompts,
+    locale,
+)  # Import prompts and language
 
-from langchain.callbacks.manager import CallbackManagerForLLMRun
-from langchain.llms.base import LLM
-from langchain.llms.utils import enforce_stop_tokens
-from langchain.pydantic_v1 import BaseModel, Extra, root_validator
-from langchain.schema.output import GenerationChunk
-from langchain.utilities.anthropic import (
-    get_num_tokens_anthropic,
-    get_token_ids_anthropic,
-)
+logger = Logger()
 
-
-class LLMInputOutputAdapter:
-    """Adapter class to prepare the inputs from Langchain to a format
-    that LLM model expects.
-
-    It also provides helper function to extract
-    the generated text from the model response."""
-
-    @classmethod
-    def prepare_input(
-        cls, provider: str, prompt: str, model_kwargs: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        input_body = {**model_kwargs}
-        if provider == "anthropic":
-            input_body["messages"] = [{"role": "user", "content": prompt}]
-        elif provider == "meta":
-            input_body["prompt"] = prompt
-        elif provider == "mistral":
-            input_body["prompt"] = prompt
-
-        if provider == "anthropic" and "max_tokens" not in input_body:
-            input_body["max_tokens"] = 256
-
-        return input_body
-
-    @classmethod
-    def prepare_output(cls, provider: str, response: Any) -> str:
-        response_body = json.loads(response.get("body").read())
-        if provider == "anthropic":
-            return response_body.get("content")[0]["text"]
-        elif provider == "meta":
-            return response_body.get("generation")
-        elif provider == "mistral":
-            return response_body.get("outputs")[0]["text"]
-        else:
-            raise Exception(f"provider {provider} not supported")
-
-    @classmethod
-    def prepare_output_stream(
-        cls, provider: str, response: Any, stop: Optional[List[str]] = None
-    ) -> Iterator[GenerationChunk]:
-        stream = response.get("body")
-
-        if not stream:
-            return
-
-        if provider not in ["anthropic", "meta", "mistral"]:
-            raise ValueError(
-                f"Unknown streaming response output key for provider: {provider}"
-            )
-
-        for event in stream:
-            chunk = event.get("chunk")
-            if chunk:
-                chunk_obj = json.loads(chunk.get("bytes").decode())
-
-                if provider == "anthropic":
-                    if chunk_obj.get("type") == "content_block_delta":
-                        yield GenerationChunk(
-                            text=chunk_obj.get("delta", {}).get("text", "")
-                        )
-                elif provider == "mistral":
-                    yield GenerationChunk(
-                        text=chunk_obj.get("outputs", [{}])[0].get("text", "")
-                    )
-                elif provider == "meta":
-                    yield GenerationChunk(text=chunk_obj["generation"])
-
-                else:
-                    raise ValueError(
-                        f"Unknown streaming response output key for provider: {provider}"
-                    )
+# Setting programmatic log level
+# logger.setLevel("DEBUG")
 
 
-class BedrockBase(BaseModel, ABC):
-    """Base class for Bedrock models."""
-
-    client: Any  #: :meta private:
-
-    region_name: Optional[str] = None
-    """The aws region e.g., `us-west-2`. Fallsback to AWS_DEFAULT_REGION env variable
-    or region specified in ~/.aws/config in case it is not provided here.
-    """
-
-    credentials_profile_name: Optional[str] = None
-    """The name of the profile in the ~/.aws/credentials or ~/.aws/config files, which
-    has either access keys or role information specified.
-    If not specified, the default credential profile or, if on an EC2 instance,
-    credentials from IMDS will be used.
-    See: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
-    """
-
-    model_id: str
-    """Id of the model to call, e.g., amazon.titan-text-express-v1, this is
-    equivalent to the modelId property in the list-foundation-models api"""
-
-    model_kwargs: Optional[Dict] = None
-    """Keyword arguments to pass to the model."""
-
-    endpoint_url: Optional[str] = None
-    """Needed if you don't want to default to us-east-1 endpoint"""
-
-    streaming: bool = False
-    """Whether to stream the results."""
-
-    provider_stop_sequence_key_name_map: Mapping[str, str] = {
-        "anthropic": "stop_sequences",
-    }
-
-    @root_validator()
-    def validate_environment(cls, values: Dict) -> Dict:
-        """Validate that AWS credentials to and python package exists in environment."""
-
-        # Skip creating new client if passed in constructor
-        if values["client"] is not None:
-            return values
-
-        try:
-            import boto3
-
-            if values["credentials_profile_name"] is not None:
-                session = boto3.Session(profile_name=values["credentials_profile_name"])
-            else:
-                # use default credentials
-                session = boto3.Session()
-
-            client_params = {}
-            if values["region_name"]:
-                client_params["region_name"] = values["region_name"]
-            if values["endpoint_url"]:
-                client_params["endpoint_url"] = values["endpoint_url"]
-
-            values["client"] = session.client("bedrock-runtime", **client_params)
-
-        except ImportError:
-            raise ModuleNotFoundError(
-                "Could not import boto3 python package. "
-                "Please install it with `pip install boto3`."
-            )
-        except Exception as e:
-            raise ValueError(
-                "Could not load credentials to authenticate with AWS client. "
-                "Please check that credentials in the specified "
-                "profile name are valid."
-            ) from e
-
-        return values
-
-    @property
-    def _identifying_params(self) -> Mapping[str, Any]:
-        """Get the identifying parameters."""
-        _model_kwargs = self.model_kwargs or {}
+def get_guardrails() -> dict:
+    if "BEDROCK_GUARDRAILS_ID" in os.environ:
+        logger.debug("Guardrails ID found in environment variables.")
         return {
-            **{"model_kwargs": _model_kwargs},
+            "guardrailIdentifier": os.environ["BEDROCK_GUARDRAILS_ID"],
+            "guardrailVersion": os.environ.get("BEDROCK_GUARDRAILS_VERSION", "DRAFT"),
         }
-
-    def _get_provider(self) -> str:
-        return self.model_id.split(".")[0]
-
-    @property
-    def _model_is_anthropic(self) -> bool:
-        return self._get_provider() == "anthropic"
-
-    def _prepare_input_and_invoke(
-        self,
-        prompt: str,
-        stop: Optional[List[str]] = None,
-        run_manager: Optional[CallbackManagerForLLMRun] = None,
-        **kwargs: Any,
-    ) -> str:
-        _model_kwargs = self.model_kwargs or {}
-
-        provider = self._get_provider()
-        params = {**_model_kwargs, **kwargs}
-        input_body = LLMInputOutputAdapter.prepare_input(provider, prompt, params)
-        body = json.dumps(input_body)
-        accept = "application/json"
-        contentType = "application/json"
-        try:
-            response = self.client.invoke_model(
-                body=body, modelId=self.model_id, accept=accept, contentType=contentType
-            )
-            text = LLMInputOutputAdapter.prepare_output(provider, response)
-
-        except Exception as e:
-            raise ValueError(f"Error raised by bedrock service: {e}")
-
-        if stop is not None:
-            text = enforce_stop_tokens(text, stop)
-
-        return text
-
-    def _prepare_input_and_invoke_stream(
-        self,
-        prompt: str,
-        stop: Optional[List[str]] = None,
-        run_manager: Optional[CallbackManagerForLLMRun] = None,
-        **kwargs: Any,
-    ) -> Iterator[GenerationChunk]:
-        _model_kwargs = self.model_kwargs or {}
-        provider = self._get_provider()
-
-        if stop:
-            if provider not in self.provider_stop_sequence_key_name_map:
-                raise ValueError(
-                    f"Stop sequence key name for {provider} is not supported."
-                )
-
-            # stop sequence from _generate() overrides
-            # stop sequences in the class attribute
-            _model_kwargs[self.provider_stop_sequence_key_name_map.get(provider)] = stop
-
-        if provider == "cohere":
-            _model_kwargs["stream"] = True
-
-        params = {**_model_kwargs, **kwargs}
-        input_body = LLMInputOutputAdapter.prepare_input(provider, prompt, params)
-        body = json.dumps(input_body)
-        try:
-            response = self.client.invoke_model_with_response_stream(
-                body=body,
-                modelId=self.model_id,
-                accept="application/json",
-                contentType="application/json",
-            )
-        except Exception as e:
-            raise ValueError(f"Error raised by bedrock service: {e}")
-
-        for chunk in LLMInputOutputAdapter.prepare_output_stream(
-            provider, response, stop
-        ):
-            yield chunk
-            if run_manager is not None:
-                run_manager.on_llm_new_token(chunk.text, chunk=chunk)
+    logger.debug("No guardrails ID found.")
+    return {}
 
 
-class Bedrock(LLM, BedrockBase):
-    """Bedrock LLM for implementing features not yet supported by Langchain Bedrock LLM.
+class BedrockChatAdapter(ModelAdapter):
+    def __init__(self, model_id, *args, **kwargs):
+        self.model_id = model_id
+        logger.info(f"Initializing BedrockChatAdapter with model_id: {model_id}")
+        super().__init__(*args, **kwargs)
 
-    To authenticate, the AWS client uses the following methods to
-    automatically load credentials:
-    https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
-
-    If a specific credential profile should be used, you must pass
-    the name of the profile from the ~/.aws/credentials file that is to be used.
-
-    Make sure the credentials / roles used have the required policies to
-    access the Bedrock service.
-    """
-
-    """
-    Example:
-        .. code-block:: python
-
-            from bedrock_langchain.bedrock_llm import BedrockLLM
-
-            llm = BedrockLLM(
-                credentials_profile_name="default",
-                model_id="amazon.titan-text-express-v1",
-                streaming=True
-            )
-
-    """
-
-    @property
-    def _llm_type(self) -> str:
-        """Return type of llm."""
-        return "amazon_bedrock"
-
-    class Config:
-        """Configuration for this pydantic object."""
-
-        extra = Extra.forbid
-
-    def _stream(
-        self,
-        prompt: str,
-        stop: Optional[List[str]] = None,
-        run_manager: Optional[CallbackManagerForLLMRun] = None,
-        **kwargs: Any,
-    ) -> Iterator[GenerationChunk]:
-        """Call out to Bedrock service with streaming.
-
-        Args:
-            prompt (str): The prompt to pass into the model
-            stop (Optional[List[str]], optional): Stop sequences. These will
-                override any stop sequences in the `model_kwargs` attribute.
-                Defaults to None.
-            run_manager (Optional[CallbackManagerForLLMRun], optional): Callback
-                run managers used to process the output. Defaults to None.
-
-        Returns:
-            Iterator[GenerationChunk]: Generator that yields the streamed responses.
-
-        Yields:
-            Iterator[GenerationChunk]: Responses from the model.
-        """
-        return self._prepare_input_and_invoke_stream(
-            prompt=prompt, stop=stop, run_manager=run_manager, **kwargs
+    def get_qa_prompt(self):
+        # Fetch the QA prompt based on the current language
+        qa_system_prompt = prompts[locale]["qa_prompt"]
+        # Append the context placeholder if needed
+        qa_system_prompt_with_context = qa_system_prompt + "\n\n{context}"
+        logger.info(
+            f"Generating QA prompt template with: {qa_system_prompt_with_context}"
         )
 
-    def _call(
-        self,
-        prompt: str,
-        stop: Optional[List[str]] = None,
-        run_manager: Optional[CallbackManagerForLLMRun] = None,
-        **kwargs: Any,
-    ) -> str:
-        """Call out to Bedrock service model.
+        # Create the ChatPromptTemplate
+        chat_prompt_template = ChatPromptTemplate.from_messages(
+            [
+                ("system", qa_system_prompt_with_context),
+                MessagesPlaceholder("chat_history"),
+                ("human", "{input}"),
+            ]
+        )
 
-        Args:
-            prompt: The prompt to pass into the model.
-            stop: Optional list of stop words to use when generating.
+        # Trace the ChatPromptTemplate by logging its content
+        logger.debug(f"ChatPromptTemplate messages: {chat_prompt_template.messages}")
 
-        Returns:
-            The string generated by the model.
+        return chat_prompt_template
 
-        Example:
-            .. code-block:: python
+    def get_prompt(self):
+        # Fetch the conversation prompt based on the current language
+        conversation_prompt = prompts[locale]["conversation_prompt"]
+        logger.info("Generating general conversation prompt template.")
+        chat_prompt_template = ChatPromptTemplate.from_messages(
+            [
+                ("system", conversation_prompt),
+                MessagesPlaceholder(variable_name="chat_history"),
+                ("human", "{input}"),
+            ]
+        )
+        # Trace the ChatPromptTemplate by logging its content
+        logger.debug(f"ChatPromptTemplate messages: {chat_prompt_template.messages}")
+        return chat_prompt_template
 
-                response = llm("Tell me a joke.")
-        """
+    def get_condense_question_prompt(self):
+        # Fetch the prompt based on the current language
+        condense_question_prompt = prompts[locale]["condense_question_prompt"]
+        logger.info("Generating condense question prompt template.")
+        chat_prompt_template = ChatPromptTemplate.from_messages(
+            [
+                ("system", condense_question_prompt),
+                MessagesPlaceholder("chat_history"),
+                ("human", "{input}"),
+            ]
+        )
+        # Trace the ChatPromptTemplate by logging its content
+        logger.debug(f"ChatPromptTemplate messages: {chat_prompt_template.messages}")
+        return chat_prompt_template
 
-        if self.streaming:
-            completion = ""
-            for chunk in self._stream(
-                prompt=prompt, stop=stop, run_manager=run_manager, **kwargs
-            ):
-                completion += chunk.text
-            return completion
+    def get_llm(self, model_kwargs={}, extra={}):
+        bedrock = genai_core.clients.get_bedrock_client()
+        params = {}
 
-        return self._prepare_input_and_invoke(prompt=prompt, stop=stop, **kwargs)
+        # Collect temperature, topP, and maxTokens if available
+        temperature = model_kwargs.get("temperature")
+        top_p = model_kwargs.get("topP")
+        max_tokens = model_kwargs.get("maxTokens")
 
-    def get_num_tokens(self, text: str) -> int:
-        if self._model_is_anthropic:
-            return get_num_tokens_anthropic(text)
-        else:
-            return super().get_num_tokens(text)
+        if temperature is not None:
+            params["temperature"] = temperature
+        if top_p:
+            params["top_p"] = top_p
+        if max_tokens:
+            params["max_tokens"] = max_tokens
 
-    def get_token_ids(self, text: str) -> List[int]:
-        if self._model_is_anthropic:
-            return get_token_ids_anthropic(text)
-        else:
-            return super().get_token_ids(text)
+        # Fetch guardrails if any
+        guardrails = get_guardrails()
+        if len(guardrails.keys()) > 0:
+            params["guardrails"] = guardrails
+
+        # Log all parameters in a single log entry, including full guardrails
+        logger.info(
+            f"Creating LLM chain for model {self.model_id}",
+            model_kwargs=model_kwargs,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
+            guardrails=guardrails,
+        )
+
+        # Return ChatBedrockConverse instance with the collected params
+        return ChatBedrockConverse(
+            client=bedrock,
+            model_id=self.model_id,
+            disable_streaming=model_kwargs.get("streaming", False) == False
+            or self.disable_streaming,
+            callbacks=[self.callback_handler],
+            **params,
+            **extra,
+        )
+
+
+class BedrockChatNoStreamingAdapter(BedrockChatAdapter):
+    """Some models do not support system streaming using the converse API"""
+
+    def __init__(self, *args, **kwargs):
+        logger.info(
+            "Initializing BedrockChatNoStreamingAdapter with disabled streaming."
+        )
+        super().__init__(disable_streaming=True, *args, **kwargs)
+
+
+class BedrockChatNoSystemPromptAdapter(BedrockChatAdapter):
+    """Some models do not support system and message history in the conversation API"""
+
+    def get_prompt(self):
+        # Fetch the conversation prompt and translated
+        # words based on the current language
+        conversation_prompt = prompts[locale]["conversation_prompt"]
+        question_word = prompts[locale]["question_word"]
+        assistant_word = prompts[locale]["assistant_word"]
+        logger.info("Generating no-system-prompt template for conversation.")
+
+        # Combine conversation prompt, chat history, and input into the template
+        template = f"""{conversation_prompt}
+
+{{chat_history}}
+
+{question_word}: {{input}}
+
+{assistant_word}:"""
+
+        # Create the PromptTemplateWithHistory instance
+        prompt_template = PromptTemplateWithHistory(
+            input_variables=["input", "chat_history"], template=template
+        )
+
+        # Log the content of PromptTemplateWithHistory before returning
+        logger.debug(f"PromptTemplateWithHistory template: {prompt_template.template}")
+
+        return prompt_template
+
+    def get_condense_question_prompt(self):
+        # Fetch the prompt and translated words based on the current language
+        condense_question_prompt = prompts[locale]["condense_question_prompt"]
+        logger.debug(f"condense_question_prompt: {condense_question_prompt}")
+
+        follow_up_input_word = prompts[locale]["follow_up_input_word"]
+        logger.debug(f"follow_up_input_word: {follow_up_input_word}")
+
+        standalone_question_word = prompts[locale]["standalone_question_word"]
+        logger.debug(f"standalone_question_word: {standalone_question_word}")
+
+        chat_history_word = prompts[locale]["chat_history_word"]
+        logger.debug(f"chat_history_word: {chat_history_word}")
+
+        logger.debug("Generating no-system-prompt template for condensing question.")
+
+        # Combine the prompt with placeholders
+        template = f"""{condense_question_prompt}
+{chat_history_word}: {{chat_history}}
+{follow_up_input_word}: {{input}}
+{standalone_question_word}:"""
+        # Log the content of template
+        logger.debug(f"get_condense_question_prompt: Template content: {template}")
+        # Create the PromptTemplateWithHistory instance
+        prompt_template = PromptTemplateWithHistory(
+            input_variables=["input", "chat_history"], template=template
+        )
+
+        # Log the content of PromptTemplateWithHistory before returning
+        logger.debug(f"PromptTemplateWithHistory template: {prompt_template.template}")
+
+        return prompt_template
+
+    def get_qa_prompt(self):
+        # Fetch the QA prompt and translated words based on the current language
+        qa_system_prompt = prompts[locale]["qa_prompt"]
+        question_word = prompts[locale]["question_word"]
+        helpful_answer_word = prompts[locale]["helpful_answer_word"]
+        logger.info("Generating no-system-prompt QA template.")
+
+        # Append the context placeholder if needed
+
+        # Combine the prompt with placeholders
+        template = f"""{qa_system_prompt}
+
+{{context}}
+
+{question_word}: {{input}}
+{helpful_answer_word}:"""
+
+        # Create the PromptTemplateWithHistory instance
+        prompt_template = PromptTemplateWithHistory(
+            input_variables=["input", "context"], template=template
+        )
+
+        # Log the content of PromptTemplateWithHistory before returning
+        logger.debug(f"PromptTemplateWithHistory template: {prompt_template.template}")
+
+        return prompt_template
+
+
+class BedrockChatNoStreamingNoSystemPromptAdapter(BedrockChatNoSystemPromptAdapter):
+    """Some models do not support system streaming using the converse API"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(disable_streaming=True, *args, **kwargs)
+
+
+# Register the adapters
+registry.register(r"^bedrock.ai21.jamba*", BedrockChatAdapter)
+registry.register(r"^bedrock.ai21.j2*", BedrockChatNoStreamingNoSystemPromptAdapter)
+registry.register(
+    r"^bedrock\.cohere\.command-(text|light-text).*", BedrockChatNoSystemPromptAdapter
+)
+registry.register(r"^bedrock\.cohere\.command-r.*", BedrockChatAdapter)
+registry.register(r"^bedrock.anthropic.claude*", BedrockChatAdapter)
+registry.register(r"^bedrock.meta.llama*", BedrockChatAdapter)
+registry.register(r"^bedrock.mistral.mistral-large*", BedrockChatAdapter)
+registry.register(r"^bedrock.mistral.mistral-small*", BedrockChatAdapter)
+registry.register(r"^bedrock.mistral.mistral-7b-*", BedrockChatNoSystemPromptAdapter)
+registry.register(r"^bedrock.mistral.mixtral-*", BedrockChatNoSystemPromptAdapter)
+registry.register(r"^bedrock.amazon.titan-t*", BedrockChatNoSystemPromptAdapter)
+
+
+class PromptTemplateWithHistory(PromptTemplate):
+    def format(self, **kwargs: Any) -> str:
+        chat_history = kwargs["chat_history"]
+        if isinstance(chat_history, List):
+            # RunnableWithMessageHistory is provided a list of BaseMessage as a history
+            # Since this model does not support history, we format the common prompt to
+            # list the history
+            chat_history_str = ""
+            for message in chat_history:
+                if isinstance(message, BaseMessage):
+                    prefix = ""
+                    if isinstance(message, AIMessage):
+                        prefix = "AI: "
+                    elif isinstance(message, HumanMessage):
+                        prefix = "Human: "
+                    chat_history_str += prefix + message.content + "\n"
+            kwargs["chat_history"] = chat_history_str
+        return super().format(**kwargs)

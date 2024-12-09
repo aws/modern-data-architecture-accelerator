@@ -76,6 +76,7 @@ export interface CodeOverwritesProps {
   readonly createAuroraWorkspaceCodePath?: string
   readonly dataImportUploadHandlerCodePath?: string
   readonly websiteParserCodePath?: string
+  readonly fileImportBatchJobDockerFilePath?: string
   readonly deleteWorkspaceHandlerCodePath?: string
   readonly webSocketConnectionHandlerCodePath?: string
   readonly webSocketAuthorizerFunctionCodePath?: string
@@ -115,7 +116,9 @@ export interface LlmsProps {
 }
 
 export interface AuroraEngineProps {
-
+  readonly createSeparateSecurityGroup?: boolean;
+  readonly minCapacity?: number;
+  readonly maxCapacity?: number;
 }
 
 
@@ -146,10 +149,22 @@ export interface SagemakerRagProps {
   readonly initialInstanceCount?: number
 }
 
+export interface ExternalKnowledgeBaseProps {
+  readonly name: string;
+  readonly kbId: string;
+  readonly region?: SupportedRegion;
+  readonly roleArn?: string;
+}
+
+export interface KnowledgeBaseProps {
+  readonly external?: ExternalKnowledgeBaseProps[];
+}
+
 export interface EngineProps {
   readonly sagemaker?: SagemakerRagProps
   readonly aurora?: AuroraEngineProps;
   readonly kendra?: KendraEngineProps ;
+  readonly knowledgeBase?: KnowledgeBaseProps;
 }
 
 export interface ModelProps {
@@ -177,6 +192,12 @@ export interface BackendApisProps {
   readonly socketApiDomainName: string;
 }
 
+export interface ConcurrencyProps {
+  readonly modelInterfaceConcurrentLambdas?: number;
+  readonly restApiConcurrentLambdas?: number;
+  readonly websocketConcurrentLambdas?: number;
+}
+
 export interface SystemConfig {
   readonly prefix: string
   readonly mainDomain?: string
@@ -186,6 +207,8 @@ export interface SystemConfig {
   readonly llms: LlmsProps
   readonly rag?: RagProps
   readonly api?: BackendApisProps
+  readonly concurrency?: ConcurrencyProps
+  readonly powertoolsDevLogging?: "true" | "false"
   readonly setApiGateWayAccountCloudwatchRole?: boolean
   readonly skipApiGatewayDefaultWaf?: boolean
   readonly codeOverwrites?: CodeOverwritesProps

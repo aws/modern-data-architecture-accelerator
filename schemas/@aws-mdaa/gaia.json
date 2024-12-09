@@ -4,6 +4,17 @@
     "definitions": {
         "AuroraEngineProps": {
             "additionalProperties": false,
+            "properties": {
+                "createSeparateSecurityGroup": {
+                    "type": "boolean"
+                },
+                "maxCapacity": {
+                    "type": "number"
+                },
+                "minCapacity": {
+                    "type": "number"
+                }
+            },
             "type": "object"
         },
         "AuthProps": {
@@ -156,6 +167,9 @@
                 "deleteWorkspaceHandlerCodePath": {
                     "type": "string"
                 },
+                "fileImportBatchJobDockerFilePath": {
+                    "type": "string"
+                },
                 "genAiCoreLayerCodePath": {
                     "type": "string"
                 },
@@ -189,6 +203,21 @@
             },
             "type": "object"
         },
+        "ConcurrencyProps": {
+            "additionalProperties": false,
+            "properties": {
+                "modelInterfaceConcurrentLambdas": {
+                    "type": "number"
+                },
+                "restApiConcurrentLambdas": {
+                    "type": "number"
+                },
+                "websocketConcurrentLambdas": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
         "CrossEncoderModelProps": {
             "additionalProperties": false,
             "properties": {
@@ -217,10 +246,65 @@
                 "kendra": {
                     "$ref": "#/definitions/KendraEngineProps"
                 },
+                "knowledgeBase": {
+                    "$ref": "#/definitions/KnowledgeBaseProps"
+                },
                 "sagemaker": {
                     "$ref": "#/definitions/SagemakerRagProps"
                 }
             },
+            "type": "object"
+        },
+        "ExternalKnowledgeBaseProps": {
+            "additionalProperties": false,
+            "properties": {
+                "kbId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "region": {
+                    "enum": [
+                        "af-south-1",
+                        "ap-east-1",
+                        "ap-northeast-1",
+                        "ap-northeast-2",
+                        "ap-northeast-3",
+                        "ap-south-1",
+                        "ap-south-2",
+                        "ap-southeast-1",
+                        "ap-southeast-2",
+                        "ap-southeast-3",
+                        "ap-southeast-4",
+                        "ca-central-1",
+                        "eu-central-1",
+                        "eu-central-2",
+                        "eu-north-1",
+                        "eu-south-1",
+                        "eu-south-2",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3",
+                        "il-central-1",
+                        "me-central-1",
+                        "me-south-1",
+                        "sa-east-1",
+                        "us-east-1",
+                        "us-east-2",
+                        "us-west-1",
+                        "us-west-2"
+                    ],
+                    "type": "string"
+                },
+                "roleArn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "kbId",
+                "name"
+            ],
             "type": "object"
         },
         "GAIAProps": {
@@ -238,6 +322,9 @@
                 "codeOverwrites": {
                     "$ref": "#/definitions/CodeOverwritesProps"
                 },
+                "concurrency": {
+                    "$ref": "#/definitions/ConcurrencyProps"
+                },
                 "dataAdminRoles": {
                     "description": "List of admin roles which will be provided access to team resources (like KMS/Bucket)",
                     "items": {
@@ -249,6 +336,13 @@
                     "$ref": "#/definitions/LlmsProps"
                 },
                 "mainDomain": {
+                    "type": "string"
+                },
+                "powertoolsDevLogging": {
+                    "enum": [
+                        "false",
+                        "true"
+                    ],
                     "type": "string"
                 },
                 "prefix": {
@@ -373,6 +467,18 @@
                 "includedDirectories",
                 "kmsKeyArn"
             ],
+            "type": "object"
+        },
+        "KnowledgeBaseProps": {
+            "additionalProperties": false,
+            "properties": {
+                "external": {
+                    "items": {
+                        "$ref": "#/definitions/ExternalKnowledgeBaseProps"
+                    },
+                    "type": "array"
+                }
+            },
             "type": "object"
         },
         "LlmsProps": {

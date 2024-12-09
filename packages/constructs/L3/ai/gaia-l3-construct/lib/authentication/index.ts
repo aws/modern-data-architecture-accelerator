@@ -69,7 +69,7 @@ export class Authentication extends Construct {
             metadataType: cognito.UserPoolIdentityProviderSamlMetadataType.URL,
             metadataContent: adProviderMetaDataContent,
           },
-          name: props.naming.resourceName("EnterpriseAD",32),
+          name: "EnterpriseAD",
           idpSignout: true,
           userPool,
           attributeMapping: {
@@ -167,28 +167,30 @@ export class Authentication extends Construct {
       value: userPool.userPoolId,
     });
 
-    if (props.config.auth?.existingPoolId === undefined) {
-      new ssm.StringParameter(this, 'UserPoolIdSSMParam', {
-        parameterName: props.naming.ssmPath('auth/cognito/user/pool/id'),
-        stringValue: userPool.userPoolId
-      });
-    }
+
+    new ssm.StringParameter(this, 'UserPoolIdSSMParam', {
+      parameterName: props.naming.ssmPath('auth/cognito/user/pool/id'),
+      stringValue: userPool.userPoolId
+    });
 
     new cdk.CfnOutput(this, "UserPoolWebClientId", {
       value: userPoolClient.userPoolClientId,
     });
 
-    if (props.config.auth?.existingPoolClientId === undefined) {
-      new ssm.StringParameter(this, 'UserPoolWebClientIdSSMParam', {
-        parameterName: props.naming.ssmPath('auth/cognito/user/pool/client/id'),
-        stringValue: userPoolClient.userPoolClientId
-      });
-    }
+    new ssm.StringParameter(this, 'UserPoolWebClientIdSSMParam', {
+      parameterName: props.naming.ssmPath('auth/cognito/user/pool/client/id'),
+      stringValue: userPoolClient.userPoolClientId
+    });
 
 
     new ssm.StringParameter(this, 'IdentityPoolIdSSMParam', {
       parameterName: props.naming.ssmPath('auth/cognito/identity/pool/id'),
       stringValue: identityPool.identityPoolId
+    });
+
+    new ssm.StringParameter(this, 'UserPoolDomainSSMParam', {
+      parameterName: props.naming.ssmPath('auth/cognito/user/pool/domain'),
+      stringValue: userPoolDomain.domainName
     });
 
     new cdk.CfnOutput(this, "UserPoolLink", {

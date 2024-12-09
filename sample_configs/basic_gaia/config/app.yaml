@@ -1,45 +1,46 @@
 gaia:
   dataAdminRoles: []
-  prefix: "{{context:prefix}}"
+  prefix: "{{org}}-{{domain}}-{{env}}"
   bedrock:
-    enabled: "{{context:bedrockEnabled}}"
-    region: "{{context:bedrockRegion}}"
+    enabled: true
+    region: ca-central-1
   llms:
-    # A list of Sagemaker Hosted llms (Cost Implication)
-    # accepted values: [Mistral7b_Instruct2, FalconLite, Llama2_13b_Chat]
     sagemaker: []
   rag:
     engines:
-      aurora: {}
-    # A list of Embedding models, for basic GAIA we opt for Bedrock based Titan Embed
-    embeddingsModels: [{
-        "provider": "bedrock",
-        "name": "amazon.titan-embed-text-v1",
-        "dimensions": 1536,
-        "default": true
+      sagemaker:
+        instanceType: ml.inf1.xlarge
+      aurora:
+        minCapacity: 0.5
+        maxCapacity: 4
+      knowledgeBase: {}
+    embeddingsModels: [
+      {
+        provider: "bedrock",
+        name: "amazon.titan-embed-text-v2:0",
+        dimensions: 1024,
+        isDefault: true
       }
     ]
-    # A list of Cross Encoding models, only one model supported out of the box
-    crossEncoderModels: [{
-      "provider": "sagemaker",
-      "name": "cross-encoder/ms-marco-MiniLM-L-12-v2",
-      "default": true
-    }]
+    crossEncoderModels: []
+  # this block must not be enabled on first deployment of
+  # the system.
+  #   concurrency:
+  #     modelInterfaceConcurrentLambdas: 10
+  #     restApiConcurrentLambdas: 5
+  #     websocketConcurrentLambdas: 2
   auth:
-    authType: "{{context:authType}}"
-  api:
-    restApiDomainName: "{{context:restApiDomainName}}"
-    hostedZoneName: "{{context:hostedZoneName}}"
-    socketApiDomainName: "{{context:socketApiDomainName}}"
-  setApiGateWayAccountCloudwatchRole: "{{context:setApiGateWayAccountCloudwatchRole}}"
-  skipApiGatewayDefaultWaf: "{{context:skipApiGatewayDefaultWaf}}"
+    authType: email_pass
+    cognitoDomain: "{{org}}-{{domain}}-{{env}}"
+  setApiGateWayAccountCloudwatchRole: true
+  skipApiGatewayDefaultWaf: true
   vpc:
-    vpcId: "{{context:vpcId}}"
-    appSecurityGroupId: "{{context:appSecurityGroupId}}"
+    vpcId: "{{resolve:ssm:/path/to/vpc-id}}"
+    appSecurityGroupId: "{{resolve:ssm:/path/to/app-sg/id}}"
     appSubnets:
-      - "{{context:appSubnet1}}"
-      - "{{context:appSubnet2}}"
-    dataSecurityGroupId: "{{context:dataSecurityGroupId}}"
+      - "{{resolve:ssm:/path/to/app-subnet-1}}"
+      - "{{resolve:ssm:/path/to/app-subnet-2}}"
+    dataSecurityGroupId: "{{resolve:ssm:/path/to/data-sg/id}}"
     dataSubnets:
-      - "{{context:dataSubnet1}}"
-      - "{{context:dataSubnet2}}"
+      - "{{resolve:ssm:/path/to/data-subnet-1}}"
+      - "{{resolve:ssm:/path/to/data-subnet-2}}"

@@ -3,6 +3,7 @@ import genai_core.workspaces
 import genai_core.aurora.delete
 import genai_core.opensearch.delete
 import genai_core.kendra.delete
+import genai_core.bedrock_kb.delete
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -22,5 +23,7 @@ def lambda_handler(event, context: LambdaContext):
         genai_core.opensearch.delete.delete_open_search_workspace(workspace)
     elif workspace["engine"] == "kendra":
         genai_core.kendra.delete.delete_kendra_workspace(workspace)
+    elif workspace["engine"] == "bedrock_kb":
+        genai_core.bedrock_kb.delete.delete_bedrock_kb_workspace(workspace)
     else:
         raise genai_core.types.CommonError("Workspace engine not supported")

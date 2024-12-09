@@ -28,7 +28,7 @@ def add_chunks(
     embeddings_model_name = workspace["embeddings_model_name"]
     document_id = document["document_id"]
     document_type = document["document_type"]
-    document_sub_type = document["document_sub_type"]
+    document_sub_type = document.get("document_sub_type", None)
     path = path if path else document["path"]
     title = document["title"]
 
@@ -102,6 +102,9 @@ def split_content(workspace: dict, content: str):
 
     raise genai_core.types.CommonError("Chunking strategy not supported")
 
+
+def delete_chunks(workspace_id: str, document_id: str):
+    genai_core.aurora.chunks.clean_chunks_aurora(workspace_id, document_id)
 
 def store_chunks_on_s3(
     workspace_id: str,
