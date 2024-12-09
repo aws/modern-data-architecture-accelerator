@@ -107,6 +107,22 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
    * Configuration of cluster and scheduled action event notifications
    */
   eventNotifications?: EventNotificationsProps
+  /**
+   * database name for the db to be created. defaults to "default_db"
+   */
+  dbName?: string
+  /**
+   * SnapshotIdentifier id, if restoring the cluster from snapshot
+   * Optional - only provide this if restoring from snapshot
+   */
+  snapshotIdentifier?: string
+  /**
+   * ownerAccount Refers to snapshot owner account. Applicable if restoring the cluster from snapshot and snapshot belongs to another account
+   * Optional - By default, snapshots are searched within current account
+   */
+  snapshotOwnerAccount?: number
+
+  readonly redshiftManageMasterPassword?: boolean
 }
 
 export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouseConfigContents> {
@@ -134,6 +150,11 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
   public readonly createWarehouseBucket?: boolean
   public readonly automatedSnapshotRetentionDays?: number
   public readonly eventNotifications?: EventNotificationsProps
+  public readonly dbName?: string
+  public readonly snapshotIdentifier?: string
+  public readonly snapshotOwnerAccount?: number
+  public readonly redshiftManageMasterPassword?: boolean
+
   constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
     super( stack, props, configSchema as Schema )
 
@@ -160,6 +181,10 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
     this.createWarehouseBucket = this.configContents.createWarehouseBucket
     this.automatedSnapshotRetentionDays = this.configContents.automatedSnapshotRetentionDays
     this.eventNotifications = this.configContents.eventNotifications
+    this.dbName = this.configContents.dbName
+    this.snapshotIdentifier = this.configContents.snapshotIdentifier
+    this.snapshotOwnerAccount = this.configContents.snapshotOwnerAccount
+    this.redshiftManageMasterPassword = this.configContents.redshiftManageMasterPassword
   }
 
 }

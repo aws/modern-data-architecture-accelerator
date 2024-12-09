@@ -93,13 +93,28 @@ export interface DatabaseUsersProps {
    */
   readonly dbName: string,
   /**
+   * Characters to exclude in the password
+   */
+  readonly excludeCharacters?: string,
+  /**
    * Number of days between secret rotation
    */
-  readonly secretRotationDays: number
+    readonly secretRotationDays: number
   /**
   * List of roles that need redshift secret access
    */
   readonly secretAccessRoles?: MdaaRoleRef[]
+}
+
+export interface SnapshotProps {
+  /**
+   * The snapshot identifier
+   */
+  readonly snapshotIdentifier?: string,
+  /**
+   * The snapshot owner account
+   */
+  readonly ownerAccount?: number
 }
 
 export type EventCategories = "configuration" | "management" | "monitoring" | "security" | "pending"
@@ -209,12 +224,32 @@ export interface DataWarehouseL3ConstructProps extends MdaaL3ConstructProps {
    * Event notification configuration
    */
   readonly eventNotifications?: EventNotificationsProps
+  /**
+   * Allow redshift service to manage the admin password (recommended)
+   */
+  readonly redshiftManageMasterPassword?: boolean
+  /**
+   *  databaseName for the db to be created. defaults to "default_db"
+   */
+  readonly dbName?: string
+  /**
+   * SnapshotIdentifier id, if restoring the cluster from snapshot
+   * Optional - only provide this if restoring from snapshot
+   */
+  readonly snapshotIdentifier?: string
+  /**
+   * ownerAccount Refers to snapshot owner account. Applicable if restoring the cluster from snapshot and snapshot belongs to another account
+   * Optional - By default, snapshots are searched within current account
+   */
+  readonly snapshotOwnerAccount?: number
 }
+
 
 //This stack creates all of the resources required for a Data Warehouse
 export class DataWarehouseL3Construct extends MdaaL3Construct {
   protected readonly props: DataWarehouseL3ConstructProps
   public static readonly defaultClusterPort = 54390
+
   private dataAdminRoleIds: string[]
   private bucketUserRoleIds: string[]
   constructor( scope: Construct, id: string, props: DataWarehouseL3ConstructProps ) {
@@ -248,7 +283,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
   private createClusterEventNotifications ( clusterName: string, scheduledActions: CfnScheduledAction[], eventNotifications: EventNotificationsProps ) {
 
     const topic = new Topic( this.scope, "cluster-events-sns-topic", {
-      topicName: this.props.naming.resourceName( "cluster-events" )
+      topicName: this.props.naming.resourceName( "cluster-events" ),
     } )
     const enforceSslStatement = new PolicyStatement( {
       sid: "EnforceSSL",
@@ -399,6 +434,17 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       loggingKeyPrefix: "logging/"
     } : undefined
 
+    const dbName = this.props.dbName || "default_db"
+    // if snapshotIdentifier is provided, add to the cluster props
+    // if snapshotOwnerAccount is provided add it to cluster props
+    let snapshotProps: { snapshotIdentifier?: string, ownerAccount?: number } = {}
+    if ( this.props.snapshotIdentifier ) {
+      snapshotProps.snapshotIdentifier = this.props.snapshotIdentifier
+    }
+    if ( this.props.snapshotOwnerAccount ) {
+      snapshotProps.ownerAccount = this.props.snapshotOwnerAccount
+    }
+
     //Create the cluster
     const cluster = new MdaaRedshiftCluster( this.scope, "cluster", {
       masterUsername: this.props.adminUsername,
@@ -416,8 +462,12 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       loggingProperties: loggingProperties,
       naming: this.props.naming,
       adminPasswordRotationDays: this.props.adminPasswordRotationDays,
-      automatedSnapshotRetentionDays: this.props.automatedSnapshotRetentionDays
-    } );
+      automatedSnapshotRetentionDays: this.props.automatedSnapshotRetentionDays,
+      defaultDatabaseName: dbName,
+      ...snapshotProps,
+      redshiftManageMasterPassword: this.props.redshiftManageMasterPassword
+    })
+
 
     //Roles to grant SAML federated users access to the warehouse
     //Establishes trust with SAML identity providers
@@ -454,14 +504,15 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
         databaseName: databaseUser.dbName,
         username: username,
         adminUser: cluster.secret,
-        encryptionKey: warehouseKmsKey
+        encryptionKey: warehouseKmsKey,
+        excludeCharacters: databaseUser.excludeCharacters,
       }
       const user = new User( this.scope, "redshiftdbserviceuser-" + username, userProps )
 
       new StringParameter( user, "ssmsecret" + username, {
         parameterName: this.props.naming.ssmPath( `datawarehouse/secret/${ username }`, false ),
         stringValue: user.secret.secretName
-      } )
+      } ) // This causes param collision with two warehouses in the same domain
 
       //Redshift DatabaseSecret construct does not currently set the masterarn on the secret string, 
       //which is required by the multi user rotation function
@@ -778,7 +829,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
         const targetAction = action.targetAction == "pauseCluster" ? pauseClusterAction : resumeClusterAction
         // Create Redshift Scheduled Action
         return new CfnScheduledAction( this.scope, `scheduled-action-${ action.name }`, {
-          scheduledActionName: this.props.naming.resourceName( action.name ),
+          scheduledActionName: this.props.naming.resourceName( action.name,55 ),
           enable: action.enable,
           targetAction: targetAction,
           schedule: action.schedule,

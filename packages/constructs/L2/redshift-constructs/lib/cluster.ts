@@ -13,6 +13,7 @@ import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 import { MdaaRedshiftClusterParameterGroup } from './parameter-group';
+import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
 
 /**
  * Properties for creating a compliant Redshift Cluster
@@ -22,7 +23,7 @@ export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
     readonly securityGroup: SecurityGroup
 
     /** The number of days between automatic admin/master password rotation. */
-    readonly adminPasswordRotationDays: number
+    readonly adminPasswordRotationDays?: number
     /**
      * An optional identifier for the cluster
      *
@@ -130,6 +131,19 @@ export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
      * @default - 1 
      */
     readonly automatedSnapshotRetentionDays?: number
+    /**
+     * SnapshotIdentifier id, if restoring the cluster from snapshot
+     * Optional - only provide this if restoring from snapshot
+     */    
+    readonly snapshotIdentifier?: string
+    /**
+     * ownerAccount Refers to snapshot owner account. Applicable if restoring the cluster from snapshot and snapshot belongs to another account
+     * Optional - By default, snapshots are searched within current account
+     */
+    readonly ownerAccount?: number
+
+
+    readonly redshiftManageMasterPassword?: boolean
 }
 
 /**
@@ -158,6 +172,9 @@ export class MdaaRedshiftCluster extends Cluster {
         const allProps = { ...props, ...overrideProps }
         return allProps
     }
+
+    public readonly secret?: ISecret
+
     constructor( scope: Construct, id: string, props: MdaaRedshiftClusterProps ) {
         super( scope, id, MdaaRedshiftCluster.setProps( props ) )
         NagSuppressions.addResourceSuppressions( this, [
@@ -166,14 +183,35 @@ export class MdaaRedshiftCluster extends Cluster {
                 reason: 'Some cluster properties will reference intrinsic functions.'
             }
         ] );
-        if ( props.adminPasswordRotationDays > 0 ) {
-            this.addRotationSingleUser( Duration.days( props.adminPasswordRotationDays ) )
-        }
+
 
         const cfnCluster = this.node.defaultChild as CfnCluster;
         cfnCluster.addOverride( 'Properties.EnhancedVpcRouting', true )
         if ( props.automatedSnapshotRetentionDays && props.automatedSnapshotRetentionDays >= 0 ) {
             cfnCluster.addOverride( 'Properties.AutomatedSnapshotRetentionPeriod', props.automatedSnapshotRetentionDays )
+        }
+        // If restoring from snapshot admin password should be managed by Redshift 
+        if ( props.snapshotIdentifier ) {
+            cfnCluster.addOverride('Properties.SnapshotIdentifier', props.snapshotIdentifier)
+            cfnCluster.addDeletionOverride('Properties.MasterUserPassword')
+            cfnCluster.addPropertyOverride('ManageMasterPassword', true)
+        }
+        if ( props.ownerAccount ) {
+            cfnCluster.addOverride('Properties.OwnerAccount', props.ownerAccount)
+        }
+
+        if(props.redshiftManageMasterPassword) {
+            // Find and delete the existing admin secret created by the L2 construct
+            this.node.tryRemoveChild('Secret')
+            cfnCluster.addPropertyOverride('ManageMasterPassword', true);
+            cfnCluster.addPropertyDeletionOverride('MasterUserPassword');
+            cfnCluster.addPropertyOverride('MasterPasswordSecretKmsKeyId', props.encryptionKey.keyArn);
+            this.secret = Secret.fromSecretCompleteArn(this,'redshift-manage-secret-import', cfnCluster.attrMasterPasswordSecretArn )
+            cfnCluster.addPropertyOverride('MasterUsername', props.masterUsername);
+        } else {
+            if ( props.adminPasswordRotationDays && props.adminPasswordRotationDays > 0 ) {
+                this.addRotationSingleUser( Duration.days( props.adminPasswordRotationDays ) )
+            }
         }
 
         if ( this.secret ) {

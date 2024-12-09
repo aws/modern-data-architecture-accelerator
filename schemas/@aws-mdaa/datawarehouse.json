@@ -72,6 +72,10 @@
                     "description": "The DB to which the user will be added",
                     "type": "string"
                 },
+                "excludeCharacters": {
+                    "description": "Characters to exclude in the password",
+                    "type": "string"
+                },
                 "secretAccessRoles": {
                     "description": "List of roles that need redshift secret access",
                     "items": {
@@ -411,6 +415,10 @@
             },
             "type": "array"
         },
+        "dbName": {
+            "description": "database name for the db to be created. defaults to \"default_db\"",
+            "type": "string"
+        },
         "enableAuditLoggingToS3": {
             "description": "If enabled, cluster audit logging will be written to an S3 bucket created for this purpose.\nNote that Redshift supports audit logging only to SSE-S3 encrypted buckets, so this audit bucket\nwill not be created with SSE-KMS or use a customer master key.",
             "type": "boolean"
@@ -458,6 +466,9 @@
             "description": "The preferred maintenance window for the cluster\nExample: 'Sun:23:45-Mon:00:15'",
             "type": "string"
         },
+        "redshiftManageMasterPassword": {
+            "type": "boolean"
+        },
         "scheduledActions": {
             "description": "List of scheduled actions (pause,resume) which can be applied to the cluster",
             "items": {
@@ -487,6 +498,14 @@
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
             "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+        },
+        "snapshotIdentifier": {
+            "description": "SnapshotIdentifier id, if restoring the cluster from snapshot\nOptional - only provide this if restoring from snapshot",
+            "type": "string"
+        },
+        "snapshotOwnerAccount": {
+            "description": "ownerAccount Refers to snapshot owner account. Applicable if restoring the cluster from snapshot and snapshot belongs to another account\nOptional - By default, snapshots are searched within current account",
+            "type": "number"
         },
         "subnetIds": {
             "description": "The ID of the subnets on which the cluster will be deployed.",
