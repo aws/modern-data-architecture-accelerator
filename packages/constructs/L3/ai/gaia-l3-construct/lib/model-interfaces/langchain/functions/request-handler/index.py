@@ -1,23 +1,25 @@
 import os
-import boto3
 import json
 import uuid
 from datetime import datetime
 from genai_core.registry import registry
-from aws_lambda_powertools import Logger, Tracer
+from aws_lambda_powertools import Logger, Tracer, Metrics
 from aws_lambda_powertools.utilities import parameters
 from aws_lambda_powertools.utilities.batch import BatchProcessor, EventType
 from aws_lambda_powertools.utilities.batch.exceptions import BatchProcessingError
 from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
 from aws_lambda_powertools.utilities.typing import LambdaContext
+
 # DO NO DELETE: The import of adapters is what registers models that can be used based on config
 import adapters
+from adapters.agent.agent import invoke_agent_flow
 from genai_core.utils.websocket import send_to_client
-from genai_core.types import ChatbotAction
+from genai_core.types import ChatbotAction, ChatbotMode
 
 processor = BatchProcessor(event_type=EventType.SQS)
 tracer = Tracer()
 logger = Logger()
+metrics = Metrics()
 
 AWS_REGION = os.environ["AWS_REGION"]
 API_KEYS_SECRETS_ARN = os.environ["API_KEYS_SECRETS_ARN"]
@@ -25,8 +27,19 @@ API_KEYS_SECRETS_ARN = os.environ["API_KEYS_SECRETS_ARN"]
 sequence_number = 0
 
 
-def on_llm_new_token(connection_id, user_id, session_id, self, token, run_id, *args, **kwargs):
-    if token is None or len(token) == 0:
+def on_llm_new_token(
+    connection_id, user_id, session_id, reply_to, self, token, run_id, chunk, parent_run_id, *args, **kwargs
+):
+    if isinstance(token, list):
+        # When using the newer Chat objects from Langchain.
+        # Token is not a string
+        text = ""
+        for t in token:
+            if "text" in t:
+                text = text + t.get("text")
+    else:
+        text = token
+    if text is None or len(text) == 0:
         return
     global sequence_number
     sequence_number += 1
@@ -44,12 +57,12 @@ def on_llm_new_token(connection_id, user_id, session_id, self, token, run_id, *a
                 "token": {
                     "runId": run_id,
                     "sequenceNumber": sequence_number,
-                    "value": token,
+                    "value": text,
                 },
             },
-        }
+        },
+        topic_arn=reply_to,
     )
-
 
 def handle_heartbeat(record):
     user_id = record["userId"]
@@ -72,36 +85,41 @@ def handle_run(record):
     connection_id = record["connectionId"]
     user_id = record["userId"]
     data = record["data"]
-    provider = data["provider"]
-    model_id = data["modelName"]
     mode = data["mode"]
     prompt = data["text"]
-    workspace_id = data.get("workspaceId", None)
+
     session_id = data.get("sessionId")
+    reply_to = data.get("replyTo", None)
 
     if not session_id:
         session_id = str(uuid.uuid4())
 
-    adapter = registry.get_adapter(f"{provider}.{model_id}")
+    if mode == ChatbotMode.AGENT.value:
+        agent_id = data.get("agentId", None)
+        alias_id = data.get("agentAliasId", None)
+        response = invoke_agent_flow(agent_id, alias_id, session_id, user_id, prompt)
+    else:
+        workspace_id = data.get("workspaceId", None)
+        provider = data.get("provider", "")
+        model_id = data.get("modelName", "")
+        adapter = registry.get_adapter(f"{provider}.{model_id}")
 
-    adapter.on_llm_new_token = lambda *args, **kwargs: on_llm_new_token(
-        connection_id, user_id, session_id, *args, **kwargs
-    )
+        adapter.on_llm_new_token = lambda *args, **kwargs: on_llm_new_token(
+            connection_id, user_id, session_id, reply_to, *args, **kwargs
+        )
 
-    model = adapter(
-        model_id=model_id,
-        mode=mode,
-        session_id=session_id,
-        user_id=user_id,
-        model_kwargs=data.get("modelKwargs", {}),
-    )
+        model = adapter(
+            model_id=model_id,
+            mode=mode,
+            session_id=session_id,
+            user_id=user_id,
+            model_kwargs=data.get("modelKwargs", {}),
+        )
 
-    response = model.run(
-        prompt=prompt,
-        workspace_id=workspace_id,
-    )
-
-    logger.info(response)
+        response = model.run(
+            prompt=prompt,
+            workspace_id=workspace_id,
+        )
 
     send_to_client(
         {
@@ -111,7 +129,8 @@ def handle_run(record):
             "timestamp": str(int(round(datetime.now().timestamp()))),
             "userId": user_id,
             "data": response,
-        }
+        },
+        topic_arn=reply_to,
     )
 
 
@@ -139,6 +158,7 @@ def handle_failed_records(records):
         user_id = detail["userId"]
         data = detail.get("data", {})
         session_id = data.get("sessionId", "")
+        reply_to = data.get("replyTo", None)
 
         send_to_client(
             {
@@ -153,13 +173,16 @@ def handle_failed_records(records):
                     "content": str(error),
                     "type": "text",
                 },
-            }
+            },
+            topic_arn=reply_to,
         )
 
 
-@logger.inject_lambda_context(log_event=True)
+@logger.inject_lambda_context(log_event=False)
 @tracer.capture_lambda_handler
+@metrics.log_metrics
 def handler(event, context: LambdaContext):
+    logger.info(f"received event: {json.dumps(event)}")
     batch = event["Records"]
 
     api_keys = parameters.get_secret(API_KEYS_SECRETS_ARN, transform="json")

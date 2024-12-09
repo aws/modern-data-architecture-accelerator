@@ -142,34 +142,34 @@ gaia:
   # GAIA is catered around a quick admin chat playground that is focused on RAG over chat, but GenAI cases are vast
   # so adopters can optionally choose to override any of the lambdas or code and if not provided falls back to default sample code
   codeOverwrites:
-  # The Rest API Handler Lambda Code
-  restApiHandlerCodePath: '../../some/relative/path'
-  # Zip file of the requirements libraries installed with pip to be shared as a lambda layer.
-  commonLibsLayerCodeZipPath: '../../some/relative/path'
-  # The core library code shared over several lambdas from the stack.  Clients and lower level service functionality is placed here.
-  genAiCoreLayerCodePath: '../../some/relative/path'
-  # The setup function for Aurora PgVector store.  This is only applicable if Aurora is enabled for RAG.  Useful for very specific metadata setup.
-  pgVectorDbSetupCodePath: '../../some/relative/path'
-  # The function that handles setting up a workspace.  This entails some Vector store operations depending on RAG engine along with DynamoDB read/writes
-  createAuroraWorkspaceCodePath: '../../some/relative/path'
-  # The function that consumes the SQS Data Ingestion Queue events and triggers the step functions for the respective ingestion workflow.  To customize data ingestion orchestration flows, this would be a good part to override.
-  dataImportUploadHandlerCodePath: '../../some/relative/path'
-  # The function in charge or handling website crawling including sitemap and maintaining a priority tree in cases where follow link is enabled.  To handle more complex website crawling use cases, this is a good starting point.
-  websiteParserCodePath: '../../some/relative/path'
-  # The function in charge or handling transactions to delete workspaces.  By default this cleans up entries in Vector stores and DynamoDB workspaces and documents tables.  If further complex use cases or steps are needed, this is a good entry point.
-  deleteWorkspaceHandlerCodePath: '../../some/relative/path'
-  # The function in charge of checking connections in the DynamoDB and resolves finding the connection or setting up a new one.  For advanced connection logic, this is a good entry point.
-  webSocketConnectionHandlerCodePath: '../../some/relative/path'
-  # The custom authorizer function that verifies the tokens of incoming requests for interactions with LLM interfaces.  By default the token is expected in the query parameters and only Authentication is performed.  For further customizations like Authorization, this is a good entry point.
-  webSocketAuthorizerFunctionCodePath: '../../some/relative/path'
-  # After the Authorizer and Connection handlers, this function is in charge of orchestrating which session, connection and model interface the message will go to and submits it to the correct SQS queue accordingly.  For advanced and more interface handling, this is a good entry point.
-  webSocketIncomingMessageHandlerCodePath: '../../some/relative/path'
-  # After responses are generated from the model interfaces, an event is entered in the outgoing messages SQS Queue.  For customized handling of outgoing messages that get sent to the client and advanced vetting of responses, this is a good starting point.
-  webSocketOutgoingMessageHandlerCodePath: '../../some/relative/path'
-  # Out of the box a chat with RAG is supported.  To customize and build other LLM base chains and potentially agent workflows in unison with the core lib code, these are good starting points.
-  langchainInterfaceHandlerCodePath: '../../some/relative/path'
-  # When using RAG engines on Sagemaker, GAIA leverages a sample custom hugging face using AutoClasses, to override this RAG logic you can provide a code path with this config 
-  ragEnginesInferenceCodePath: '../../some/relative/path'
+    # The Rest API Handler Lambda Code
+    restApiHandlerCodePath: '../../some/relative/path'
+    # Zip file of the requirements libraries installed with pip to be shared as a lambda layer.
+    commonLibsLayerCodeZipPath: '../../some/relative/path'
+    # The core library code shared over several lambdas from the stack.  Clients and lower level service functionality is placed here.
+    genAiCoreLayerCodePath: '../../some/relative/path'
+    # The setup function for Aurora PgVector store.  This is only applicable if Aurora is enabled for RAG.  Useful for very specific metadata setup.
+    pgVectorDbSetupCodePath: '../../some/relative/path'
+    # The function that handles setting up a workspace.  This entails some Vector store operations depending on RAG engine along with DynamoDB read/writes
+    createAuroraWorkspaceCodePath: '../../some/relative/path'
+    # The function that consumes the SQS Data Ingestion Queue events and triggers the step functions for the respective ingestion workflow.  To customize data ingestion orchestration flows, this would be a good part to override.
+    dataImportUploadHandlerCodePath: '../../some/relative/path'
+    # The function in charge or handling website crawling including sitemap and maintaining a priority tree in cases where follow link is enabled.  To handle more complex website crawling use cases, this is a good starting point.
+    websiteParserCodePath: '../../some/relative/path'
+    # The function in charge or handling transactions to delete workspaces.  By default this cleans up entries in Vector stores and DynamoDB workspaces and documents tables.  If further complex use cases or steps are needed, this is a good entry point.
+    deleteWorkspaceHandlerCodePath: '../../some/relative/path'
+    # The function in charge of checking connections in the DynamoDB and resolves finding the connection or setting up a new one.  For advanced connection logic, this is a good entry point.
+    webSocketConnectionHandlerCodePath: '../../some/relative/path'
+    # The custom authorizer function that verifies the tokens of incoming requests for interactions with LLM interfaces.  By default the token is expected in the query parameters and only Authentication is performed.  For further customizations like Authorization, this is a good entry point.
+    webSocketAuthorizerFunctionCodePath: '../../some/relative/path'
+    # After the Authorizer and Connection handlers, this function is in charge of orchestrating which session, connection and model interface the message will go to and submits it to the correct SQS queue accordingly.  For advanced and more interface handling, this is a good entry point.
+    webSocketIncomingMessageHandlerCodePath: '../../some/relative/path'
+    # After responses are generated from the model interfaces, an event is entered in the outgoing messages SQS Queue.  For customized handling of outgoing messages that get sent to the client and advanced vetting of responses, this is a good starting point.
+    webSocketOutgoingMessageHandlerCodePath: '../../some/relative/path'
+    # Out of the box a chat with RAG is supported.  To customize and build other LLM base chains and potentially agent workflows in unison with the core lib code, these are good starting points.
+    langchainInterfaceHandlerCodePath: '../../some/relative/path'
+    # When using RAG engines on Sagemaker, GAIA leverages a sample custom hugging face using AutoClasses, to override this RAG logic you can provide a code path with this config 
+    ragEnginesInferenceCodePath: '../../some/relative/path'
   # Optionally you may configure custom DNS for the backend gateway endpoints
   api:
     # Rest Api subdomain

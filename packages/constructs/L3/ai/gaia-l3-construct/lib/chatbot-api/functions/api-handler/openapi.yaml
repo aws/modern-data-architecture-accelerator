@@ -1,0 +1,1619 @@
+openapi: "3.0.1"
+info:
+  title: "Gaia Rest API"
+  version: "2024-04-29T15:19:59Z"
+servers:
+- url: "{server}/{basePath}"
+  variables:
+    server:
+      default: "<server-domain-url>"
+    basePath:
+      default: "api/v1"
+paths:
+  /health:
+    get:
+      summary: Check service health
+      tags:
+        - Health Check
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+
+  /models:
+    get:
+      summary: List available models
+      tags:
+        - Models
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Model'
+  /flows:
+    get:
+      summary: List available AI Flows
+      tags:
+        - Flows
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      enum:
+                        - chain
+                        - efa_chain 
+  /rag/engines:
+    get:
+      summary: Get available RAG engines
+      tags:
+        - RAG
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RagEngine'
+  /cross-encoders:
+    post:
+      summary: Rank a list of passages based on their relevance to a given input text using a cross-encoder model.
+      tags:
+        - Cross-Encoders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrossEncodersRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/CrossEncodersResponse'
+                  - $ref: '#/components/schemas/Error'
+                
+
+  /cross-encoders/models:
+    get:
+      summary: Get available cross-encoder models
+      tags:
+        - Cross-Encoders
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CrossEncodersModel'
+
+  /workspaces:
+    get:
+      summary: List all available workspaces
+      tags:
+        - Workspaces
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkspaceModel'
+    put:
+      summary: Create a new workspace
+      tags:
+        - Workspaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkspaceRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/CreateWorkspaceResponse'
+                  - $ref: '#/components/schemas/Error'
+
+  
+  /workspaces/{workspaceId}:
+    get:
+      summary: Get a specific workspace
+      tags:
+        - Workspaces
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/WorkspaceModel'
+    delete:
+      summary: Delete a specific workspace
+      tags:
+        - Workspaces
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  /workspaces/{workspaceId}/prompt-template:
+    get:
+      summary: Get the prompt template for a workspace
+      tags:
+        - Workspaces      
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspacePromptTemplateItem'
+
+    put:
+      summary: Set the prompt template for a workspace
+      tags:
+        - Workspaces
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/AddPromptTemplateToWorkspaceRequest'
+                - $ref: '#/components/schemas/Error'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/AddPromptTemplateToWorkspaceResponse'
+                  - $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete the prompt template for a workspace
+      tags:
+        - Workspaces
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteWorkspacePromptTemplateResponse'
+
+  /workspaces/{workspace_id}/documents/file-upload:
+    post:
+      summary: Upload a file
+      tags:
+        - Workspace Documents
+      parameters:
+        - name: workspace_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileUploadRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      ok:
+                        type: boolean
+                      data:
+                        $ref: '#/components/schemas/FileUploadResponse'
+                  - $ref: '#/components/schemas/Error'
+
+  /workspaces/{workspace_id}/documents/{document_type}:
+    get:
+      summary: Get documents of a specific type
+      tags:
+        - Workspace Documents
+      parameters:
+        - name: workspace_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: document_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [text, qna, website]
+        - name: lastDocumentId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/DocumentList'
+
+    post:
+      summary: Add a new document of a specific type
+      tags:
+        - Workspace Documents
+      parameters:
+        - name: workspace_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: document_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [text, qna, website]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/TextDocumentRequest'
+                - $ref: '#/components/schemas/QnADocumentRequest'
+                - $ref: '#/components/schemas/WebsiteDocumentRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      ok:
+                        type: boolean
+                      data:
+                        $ref: '#/components/schemas/DocumentCreateResponse'
+                  - $ref: '#/components/schemas/Error'
+
+  /workspaces/{workspace_id}/documents/dataset/sync:
+    post:
+      summary: Trigger CKAN dataset sync
+      tags:
+        - Workspace Documents
+      parameters:
+        - name: workspace_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiSyncRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      ok:
+                        type: boolean
+                      data:
+                        $ref: '#/components/schemas/ApiSyncResponse'
+                  - $ref: '#/components/schemas/Error'
+
+  /workspaces/{workspace_id}/documents/dataset/sync/status:
+    get:
+      summary: Get status of CKAN dataset sync
+      tags:
+        - Workspace Documents
+      parameters:
+        - name: workspace_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/ApiSyncStatus'
+
+  /embeddings/models:
+    get:
+      summary: Get available embeddings models
+      tags:
+        - Embeddings
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/EmbeddingModel'
+
+  /embeddings:
+    post:
+      summary: Generate embeddings for input text
+      tags:
+        - Embeddings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmbeddingsRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      ok:
+                        type: boolean
+                      data:
+                        $ref: '#/components/schemas/Embeddings'
+                  - $ref: '#/components/schemas/Error'
+                  
+  /rag/engines/kendra/indexes:
+    get:
+      summary: Get available Kendra indexes
+      tags:
+        - RAG
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/KendraIndexResponse'
+
+  /rag/engines/kendra/data-sync:
+    post:
+      summary: Start data sync for a workspace
+      tags:
+        - RAG
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KendraDataSyncRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      ok:
+                        type: boolean
+                      data:
+                        type: boolean
+                  - $ref: '#/components/schemas/Error'
+
+  /rag/engines/kendra/data-sync/{workspace_id}:
+    get:
+      summary: Check if data sync is in progress for a workspace
+      tags:
+        - RAG
+      parameters:
+        - name: workspace_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: boolean
+
+  /rag/engines/kendra/ddb-sync:
+    post:
+      summary: Update DynamoDB documents table for a workspace
+      tags:
+        - RAG      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KendraDataSyncRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      ok:
+                        type: boolean
+                      data:
+                        type: boolean
+                  - $ref: '#/components/schemas/Error'
+
+  /rag/engines/knowledge-base:
+    get:
+      summary: Get available AWS Bedrock knowledge bases
+      tags:
+        - RAG
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/KnowledgeBasesResponse'
+
+  /rag/engines/knowledge-base/{kb_id}/details:
+    get:
+      summary: Get knowledge base details
+      tags:
+        - RAG
+      parameters:
+        - name: kb_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/KnowledgeBaseDetailsResponse'
+
+  /rag/engines/knowledge-base/{kb_id}/datasource/{data_source_id}/ingestion:
+    get:
+      summary: Get ingestion jobs for knowledge base data source starting from most recent
+      tags:
+        - RAG
+      parameters:
+        - name: kb_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: data_source_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/IngestionJobsResponse'
+
+  /rag/engines/knowledge-base/datasource/ingestion:
+    post:
+      summary: Start or Stop an ingestion job on a knowledge base datasource
+      tags:
+        - RAG
+        - Ingestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseDataSourceIngestionRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      ok:
+                        type: boolean
+                      data:
+                        "$ref": "#/components/schemas/IngestionJob"
+
+                  - $ref: '#/components/schemas/Error'
+
+  /semantic-search:
+    post:
+      summary: Perform semantic search
+      tags:
+        - Semantic Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SemanticSearchRequest'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SemanticSearchResponse'
+                  - $ref: '#/components/schemas/Error'
+
+  /sessions:
+    get:
+      summary: List user sessions
+      tags:
+        - Sessions
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                    $ref: '#/components/schemas/SessionListItem'
+                  - $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete all user sessions
+      tags:
+        - Sessions
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DeleteSessionResponse'
+                  - $ref: '#/components/schemas/Error'
+
+  /sessions/{sessionId}:
+    get:
+      summary: Get a specific session
+      tags:
+        - Sessions
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+    delete:
+      summary: Delete a specific session
+      tags:
+        - Sessions
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSessionResponse'
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: "apiKey"
+      name: "Authorization"
+      in: "header"
+      x-amazon-apigateway-authtype: "cognito_user_pools"
+  schemas:
+    HealthCheckResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+    Model:
+      type: object
+      properties:
+        provider:
+          type: string
+        name:
+          type: string
+        streaming:
+          type: boolean
+        inputModalities:
+          type: array
+          items:
+            type: string
+            enum: [TEXT, EMBEDDING]
+        outputModalities:
+          type: array
+          items:
+            type: string
+            enum: [TEXT, EMBEDDING]
+        interface:
+          type: string
+          enum: [langchain]
+        ragSupported:
+          type: boolean
+    
+    RagEngine:
+      type: object
+      properties:
+        id:
+          type: string
+          enum: [aurora, opensearch, kendra]
+        name:
+          type: string
+        enabled:
+          type: boolean
+
+    CrossEncodersRequest:
+      type: object
+      properties:
+        provider:
+          type: string
+        model:
+          type: string
+        input:
+          type: string
+        passages:
+          type: array
+          items:
+            type: string
+      required:
+        - provider
+        - model
+        - input
+        - passages
+
+    CrossEncodersResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        data:
+          type: array
+          items:
+            type: number
+    
+    CrossEncodersModel:
+      type: object
+      properties:
+        provider:
+          type: string
+        name:
+          type: string
+        isDefault:
+          type: boolean
+
+    WorkspaceModel:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        engine:
+          type: string
+          enum: [aurora, opensearch, kendra]
+        status:
+          type: string
+          enum: [submitted, ready, error]
+        languages:
+          type: array
+          items:
+            type: string
+        embeddingsModelProvider:
+          type: string
+        embeddingsModelName:
+          type: string
+        embeddingsModelDimensions:
+          type: integer
+        crossEncoderModelProvider:
+          type: string
+        crossEncoderModelName:
+          type: string
+        metric:
+          type: string
+        index:
+          type: boolean
+        hybridSearch:
+          type: boolean
+        chunkingStrategy:
+          type: string
+        chunkSize:
+          type: integer
+        chunkOverlap:
+          type: integer
+        vectors:
+          type: integer
+        documents:
+          type: integer
+        sizeInBytes:
+          type: integer
+        kendraIndexId:
+          type: string
+          nullable: true
+        kendraIndexExternal:
+          type: string
+          nullable: true
+        kendraUseAllData:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    
+    GenericCreateWorkspaceRequest:
+      type: object
+      required:
+        - kind
+      properties:
+        kind:
+          type: string
+          enum: [aurora, opensearch, kendra]
+
+    CreateWorkspaceAuroraRequest:
+      allOf:
+        - $ref: '#/components/schemas/GenericCreateWorkspaceRequest'
+        - type: object
+          required:
+            - name
+            - embeddingsModelProvider
+            - embeddingsModelName
+            - crossEncoderModelProvider
+            - crossEncoderModelName
+            - languages
+            - metric
+            - index
+            - hybridSearch
+            - chunking_strategy
+            - chunkSize
+            - chunkOverlap
+          properties:
+            name:
+              type: string
+            embeddingsModelProvider:
+              type: string
+            embeddingsModelName:
+              type: string
+            crossEncoderModelProvider:
+              type: string
+            crossEncoderModelName:
+              type: string
+            languages:
+              type: array
+              items:
+                type: string
+            metric:
+              type: string
+            index:
+              type: boolean
+            hybridSearch:
+              type: boolean
+            chunking_strategy:
+              type: string
+            chunkSize:
+              type: integer
+            chunkOverlap:
+              type: integer
+
+    CreateWorkspaceOpenSearchRequest:
+      allOf:
+        - $ref: '#/components/schemas/GenericCreateWorkspaceRequest'
+        - type: object
+          required:
+            - name
+            - embeddingsModelProvider
+            - embeddingsModelName
+            - crossEncoderModelProvider
+            - crossEncoderModelName
+            - languages
+            - hybridSearch
+            - chunking_strategy
+            - chunkSize
+            - chunkOverlap
+          properties:
+            name:
+              type: string
+            embeddingsModelProvider:
+              type: string
+            embeddingsModelName:
+              type: string
+            crossEncoderModelProvider:
+              type: string
+            crossEncoderModelName:
+              type: string
+            languages:
+              type: array
+              items:
+                type: string
+            hybridSearch:
+              type: boolean
+            chunking_strategy:
+              type: string
+            chunkSize:
+              type: integer
+            chunkOverlap:
+              type: integer
+
+    CreateWorkspaceKendraRequest:
+      allOf:
+        - $ref: '#/components/schemas/GenericCreateWorkspaceRequest'
+        - type: object
+          required:
+            - name
+            - kendraIndexId
+            - useAllData
+          properties:
+            name:
+              type: string
+            kendraIndexId:
+              type: string
+            useAllData:
+              type: boolean
+
+    CreateWorkspaceRequest:
+      oneOf:
+        - $ref: '#/components/schemas/CreateWorkspaceAuroraRequest'
+        - $ref: '#/components/schemas/CreateWorkspaceOpenSearchRequest'
+        - $ref: '#/components/schemas/CreateWorkspaceKendraRequest'
+
+    CreateWorkspaceResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        data:
+          type: object
+          properties:
+            workspace_id:
+              type: string
+
+    AddPromptTemplateToWorkspaceRequest:
+      type: object
+      required:
+        - botName
+        - instructions
+        - examples
+      properties:
+        botName:
+          type: string
+        instructions:
+          type: string
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/PromptExample'
+
+    AddPromptTemplateToWorkspaceResponse:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        botName:
+          type: string
+        instructions:
+          type: string
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/PromptExample'
+
+    DeleteWorkspacePromptTemplateResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+
+    WorkspacePromptTemplateItem:
+      type: object
+      properties:
+        botName:
+          type: string
+        instructions:
+          type: string
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/PromptExample'
+
+    PromptExample:
+      type: object
+      properties:
+        question:
+          type: string
+        answer:
+          type: string
+
+    FileUploadRequest:
+      type: object
+      properties:
+        fileName:
+          type: string
+      required:
+        - fileName
+
+    FileUploadResponse:
+      type: object
+      properties:
+        url:
+          type: string
+        fields:
+          type: object
+
+    TextDocumentRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+      required:
+        - title
+        - content
+
+    QnADocumentRequest:
+      type: object
+      properties:
+        question:
+          type: string
+        answer:
+          type: string
+      required:
+        - question
+        - answer
+
+    WebsiteDocumentRequest:
+      type: object
+      properties:
+        address:
+          type: string
+        followLinks:
+          type: boolean
+        sitemap:
+          type: boolean
+        limit:
+          type: integer
+      required:
+        - address
+        - followLinks
+        - sitemap
+        - limit
+
+    DocumentList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        lastDocumentId:
+          type: string
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [text, website, qna]
+        subType:
+          type: string
+        status:
+          type: string
+          enum: [submitted, processed, error]
+        title:
+          type: string
+        path:
+          type: string
+        sizeInBytes:
+          type: integer
+        vectors:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    DocumentCreateResponse:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        documentId:
+          type: string
+
+    ApiSyncRequest:
+      type: object
+      properties:
+        fullSync:
+          type: boolean
+      required:
+        - fullSync
+
+    ApiSyncResponse:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+
+    ApiSyncStatus:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        status:
+          type: string
+        totalDatasets:
+          type: integer
+        processedDatasets:
+          type: integer
+
+
+    KnowledgeBase:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        external:
+          type: boolean
+
+    KnowledgeBasesResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/KnowledgeBase'
+
+
+    KnowledgeBaseDataSource:
+      type: object
+      properties:
+        dataSourceId:
+          type: string
+        description:
+          type: string
+        knowledgeBaseId:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [AVAILABLE, DELETING, DELETE_UNSUCCESSFUL]
+        updatedAt:
+          type: string
+          format: date-time
+
+
+    KnowledgeBaseDetailsResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [CREATING, ACTIVE, DELETING, UPDATING, FAILED, DELETE_UNSUCCESSFUL]
+        createdAt:
+          type: string
+          format: date-time
+        updateAt:
+          type: string
+          format: date-time
+        dataSources:
+          type: array
+          items:
+            $ref: '#/components/schemas/KnowledgeBaseDataSource'
+
+    IngestionJobStatistics:
+      type: object
+      properties:
+        numberOfDocumentsDeleted:
+          type: integer
+        numberOfDocumentsFailed:
+          type: integer
+        numberOfDocumentsScanned:
+          type: integer
+        numberOfMetadataDocumentsModified:
+          type: integer
+        numberOfMetadataDocumentsScanned:
+          type: integer
+        numberOfModifiedDocumentsIndexed:
+          type: integer
+        numberOfNewDocumentsIndexed:
+          type: integer
+
+    IngestionJob:
+      type: object
+      properties:
+        dataSourceId:
+          type: string
+        description:
+          type: string
+        ingestionJobId:
+          type: string
+        knowledgeBaseId:
+          type: string
+        statistics:
+          $ref: '#/components/schemas/IngestionJobStatistics'
+        status:
+          type: string
+          enum: [STARTING, IN_PROGRESS, COMPLETE, FAILED, STOPPING, STOPPED]
+        startedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    KnowledgeBaseDataSourceIngestionRequest:
+      type: object
+      properties:
+        kb_id:
+          type: string
+        data_source_id:
+          type: string
+        ingestion_job_id:
+          type: string
+        action:
+          type: string
+          enum: [start, stop]
+      required: [
+        kb_id, data_source_id, action
+      ]
+
+    IngestionJobsResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/IngestionJob'
+
+    EmbeddingModel:
+      type: object
+      properties:
+        provider:
+          type: string
+        name:
+          type: string
+        dimensions:
+          type: integer
+        isDefault:
+          type: boolean
+
+    EmbeddingsRequest:
+      type: object
+      properties:
+        provider:
+          type: string
+        model:
+          type: string
+        input:
+          type: array
+          items:
+            type: string
+      required:
+        - provider
+        - model
+        - input
+    
+    Embeddings:
+      type: object
+      properties:
+        embeddings: 
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+
+    KendraIndexResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id: 
+            type: string
+          name: 
+            type: string
+          external: 
+            type: boolean
+
+    KendraDataSyncRequest:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+      required:
+        - workspaceId
+
+    SemanticSearchRequest:
+      type: object
+      required:
+        - workspaceId
+        - query
+      properties:
+        workspaceId:
+          type: string
+        query:
+          type: string
+
+    SemanticSearchResponse:
+      type: object
+      required:
+        - workspaceId
+        - engine
+        - items
+      properties:
+        workspaceId:
+          type: string
+        engine:
+          type: string
+        queryLanguage:
+          type: string
+        supportedLanguages:
+          type: array
+          items:
+            type: string
+        detectedLanguages:
+          type: array
+          items:
+            type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SemanticSearchItem'
+        vectorSearchMetric:
+          type: string
+        vectorSearchItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/SemanticSearchItem'
+        keywordSearchItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/SemanticSearchItem'
+
+    SemanticSearchItem:
+      type: object
+      properties:
+        sources:
+          type: array
+          items:
+            type: string
+        chunkId:
+          type: string
+        workspaceId:
+          type: string
+        documentId:
+          type: string
+        documentSubId:
+          type: string
+        documentType:
+          type: string
+        documentSubType:
+          type: string
+        path:
+          type: string
+        language:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        contentComplement:
+          type: string
+        vectorSearchScore:
+          type: number
+        keywordSearchScore:
+          type: number
+        score:
+          type: number
+    SessionListItem:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+
+    SessionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionHistoryItem'
+
+    SessionHistoryItem:
+      type: object
+      properties:
+        type:
+          type: string
+        content:
+          type: string
+        metadata:
+          type: object
+
+    DeleteSessionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        deleted:
+          type: boolean
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: boolean
+        message:
+          type: array
+          items:
+            type: string
+
+    CreatePublicClientRequest:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        name:
+          type: string
+        mainDomain:
+          type: string
+        rejectMessage:
+          type: string
+        modelId:
+          type: string
+        provider:
+          type: string
+        modelTemperature:
+          type: number
+        modelTopP:
+          type: number
+        modelMaxTokens:
+          type: integer
+    UpdatePublicClientRequest:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        clientId:
+          type: string
+        name:
+          type: string
+        mainDomain:
+          type: string
+        rejectMessage:
+          type: string
+        modelId:
+          type: string
+        provider:
+          type: string
+        modelTemperature:
+          type: number
+        modelTopP:
+          type: number
+        modelMaxTokens:
+          type: integer
+
+    PublicClientResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/PublicClientRecord'
+
+    PublicClientRecord:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        clientId:
+          type: string
+        name:
+          type: string
+        mainDomain:
+          type: string
+        rejectMessage:
+          type: string
+        modelId:
+          type: string
+        provider:
+          type: string
+        modelTemperature:
+          type: number
+        modelTopP:
+          type: number
+        modelMaxTokens:
+          type: integer

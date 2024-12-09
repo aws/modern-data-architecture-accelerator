@@ -141,9 +141,9 @@ export class Models extends MdaaL3Construct {
           env: {
             HF_TOKEN: props.config.llms?.huggingFaceApiToken || "",
             SM_NUM_GPUS: JSON.stringify(1),
-            MAX_BATCH_PREFILL_TOKENS: JSON.stringify(8191),
-            MAX_INPUT_LENGTH: JSON.stringify(8191),
-            MAX_TOTAL_TOKENS: JSON.stringify(8192),
+            MAX_BATCH_PREFILL_TOKENS: JSON.stringify(16000),
+            MAX_INPUT_LENGTH: JSON.stringify(16000),
+            MAX_TOTAL_TOKENS: JSON.stringify(24000),
             MAX_CONCURRENT_REQUESTS: JSON.stringify(4),
           },
         },

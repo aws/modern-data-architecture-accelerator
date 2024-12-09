@@ -21,6 +21,12 @@ class CrossEncoderModel(BaseModel):
     default: Optional[bool] = None
 
 
+class Agent(BaseModel):
+    id: str
+    alias_id: str
+    name: str
+
+
 class Workspace(BaseModel):
     id: str
     name: str
@@ -36,6 +42,7 @@ class Provider(Enum):
     BEDROCK = "bedrock"
     OPENAI = "openai"
     SAGEMAKER = "sagemaker"
+    AMAZON = "amazon"
 
 
 class Modality(Enum):
@@ -66,7 +73,7 @@ class Direction(Enum):
 
 class ChatbotMode(Enum):
     CHAIN = "chain"
-
+    AGENT = "agent"
 
 class ChatbotAction(Enum):
     HEARTBEAT = "heartbeat"
@@ -78,3 +85,29 @@ class ChatbotAction(Enum):
 class ChatbotMessageType(Enum):
     Human = "human"
     AI = "ai"
+
+class Task(Enum):
+    STORE = "store"
+    RETRIEVE = "retrieve"
+    SEARCH_QUERY = "search_query"
+    SEARCH_DOCUMENT = "search_document"
+
+
+class EmbeddingModelProviderLabels(str, Enum):
+    sagemaker = "sagemaker"
+    bedrock = "bedrock"
+
+
+class EmbeddingModelLabels(str, Enum):
+    titan = "amazon.titan-embed-text-v2:0"
+    in_float = "intfloat/multilingual-e5-large"
+
+
+class CrossEncodersProviderLabels(str, Enum):
+    sagemaker = "sagemaker"
+    none = ""
+
+
+class CrossEncodersModelLabels(str, Enum):
+    ms_marco = "cross-encoder/ms-marco-MiniLM-L-12-v2"
+    none = ""

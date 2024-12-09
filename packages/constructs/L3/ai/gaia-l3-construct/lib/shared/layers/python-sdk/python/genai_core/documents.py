@@ -2,6 +2,7 @@ import os
 import json
 import uuid
 import boto3
+from boto3.dynamodb.conditions import Key, Attr
 import genai_core.types
 import genai_core.chunks
 import genai_core.websites
@@ -35,20 +36,34 @@ workspaces_table = dynamodb.Table(WORKSPACES_TABLE_NAME)
 
 
 def list_documents(
-    workspace_id: str,
-    document_type: str,
-    last_document_id: str = None,
-    page_size: int = 100,
+        workspace_id: str,
+        document_type: str,
+        last_document_id: str = None,
+        page_size: int = 500,
+        document_sub_type: str = None,
 ):
     workspace = genai_core.workspaces.get_workspace(workspace_id)
     if not workspace:
         raise genai_core.types.CommonError("Workspace not found")
 
     scan_index_forward = True
-    if document_type == "text" or document_type == "qna" or document_type == "kendra_doc":
+    if document_type == "text" or document_type == "qna" or document_type == "kendra_doc" or document_type == "dataset":
         scan_index_forward = False
 
-    if last_document_id:
+    if document_type in ["dataset", "text", "qna"]:
+        response = documents_table.query(
+            KeyConditionExpression=Key('workspace_id').eq(workspace_id),
+            FilterExpression=Attr('document_type').eq(document_type),
+        )
+        items = response["Items"]
+        last_evaluated_key = response.get("LastEvaluatedKey", {})
+        last_document_id = last_evaluated_key.get("document_id", None)
+
+        return {
+            "items": items,
+            "last_document_id": last_document_id,
+        }
+    elif last_document_id:
         last_document = get_document(workspace_id, last_document_id)
         if not last_document:
             raise genai_core.types.CommonError("Last document not found")
@@ -92,7 +107,7 @@ def list_documents(
 
 
 def set_document_vectors(
-    workspace_id: str, document_id: str, vectors: int, replace: bool
+        workspace_id: str, document_id: str, vectors: int, replace: bool
 ):
     timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
@@ -129,6 +144,28 @@ def set_document_vectors(
     print(response)
 
     return response
+
+
+def get_redirection_text_documents_map(workspace_id: str):
+    response = documents_table.scan(
+        FilterExpression="workspace_id = :workspace_id AND document_type = :document_type AND document_sub_type = :document_sub_type",
+        ExpressionAttributeValues={
+            ":workspace_id": workspace_id,
+            ":document_type": "text",
+            ":document_sub_type": "redirection",
+        },
+    )
+    items = response.get("Items", [])
+    return {item["title"].lower(): item["document_id"] for item in items}
+
+
+def get_dataset_documents_set(workspace_id: str):
+    response = documents_table.query(
+        KeyConditionExpression=Key('workspace_id').eq(workspace_id),
+        FilterExpression=Attr('document_type').eq('dataset'),
+    )
+    items = response.get("Items", [])
+    return set(item["document_id"] for item in items)
 
 
 def set_sub_documents(workspace_id: str, document_id: str, sub_documents: int):
@@ -168,7 +205,7 @@ def get_document_content(workspace_id: str, document_id: str):
 
     content_complement = None
     if genai_core.utils.files.file_exists(
-        PROCESSING_BUCKET_NAME, content_complement_key
+            PROCESSING_BUCKET_NAME, content_complement_key
     ):
         response = s3.Object(PROCESSING_BUCKET_NAME, content_complement_key).get()
         content_complement = response["Body"].read().decode("utf-8")
@@ -194,17 +231,63 @@ def set_status(workspace_id: str, document_id: str, status: str):
     return response
 
 
+def increment_dataset_processed(workspace_id: str):
+    timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+    workspaces_table.update_item(
+        Key={"workspace_id": workspace_id, "object_type": WORKSPACE_OBJECT_TYPE},
+        UpdateExpression="ADD documents :documentsIncrementValue SET updated_at=:timestampValue",
+        ExpressionAttributeValues={
+            ":documentsIncrementValue": 1,
+            ":timestampValue": timestamp,
+        },
+        ReturnValues="UPDATED_NEW",
+    )
+
+
+def trigger_ckan_sync(workspace_id: str, full_sync: bool):
+    add_api_processing_record(workspace_id)
+    response = sfn_client.start_execution(
+        stateMachineArn=WEBSITE_CRAWLING_WORKFLOW_ARN,
+        input=json.dumps(
+            {
+                "workspace_id": workspace_id,
+                "document_id": "api-processing-records",
+                "bucket_name": "",
+                "object_key": "" if not full_sync else "full_sync",
+                "done": False,
+            }
+        ),
+    )
+    return response
+
+
+def add_api_processing_record(workspace_id: str):
+    document = {
+        "workspace_id": workspace_id,
+        "document_id": "api-processing-records",
+        "title": "CKAN processing records",
+        "total_datasets": 0,
+        "processed_datasets": 0,
+        "status": "submitted",
+        "created_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        "updated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    }
+
+    return documents_table.put_item(Item=document)
+
+
 def create_document(
-    workspace_id: str,
-    document_type: str,
-    document_sub_type: Optional[str] = None,
-    title: Optional[str] = None,
-    path: Optional[str] = None,
-    size_in_bytes: int = 0,
-    sub_documents: int = 0,
-    content: Optional[str] = None,
-    content_complement: Optional[str] = None,
-    **kwargs,
+        workspace_id: str,
+        document_type: str,
+        document_sub_type: Optional[str] = None,
+        title: Optional[str] = None,
+        path: Optional[str] = None,
+        size_in_bytes: int = 0,
+        sub_documents: int = 0,
+        content: Optional[str] = None,
+        content_complement: Optional[str] = None,
+        **kwargs,
 ):
     timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     workspace = genai_core.workspaces.get_workspace(workspace_id)
@@ -254,31 +337,65 @@ def create_document(
 
         document = response["Attributes"]
     else:
-        documents_diff = 1
         provided_document_id = kwargs.get('document_id')
+        documents_diff = 1 if not provided_document_id else 0
         document_id = str(uuid.uuid4()) if not provided_document_id else provided_document_id
+        source_api = kwargs.get('source_api')
+        last_modified = kwargs.get('last_modified')
+        if document_type == "dataset":
+            document = {
+                "format_version": 1,
+                "workspace_id": workspace_id,
+                "document_id": document_id,
+                "document_type": document_type,
+                "source": source_api,
+                "status": "submitted",
+                "title": title,
+                "path": path,
+                "size_in_bytes": size_in_bytes,
+                "vectors": 0,
+                "errors": [],
+                "created_at": timestamp,
+                "updated_at": last_modified,
+            }
+        elif document_sub_type == "redirection":
+            document = {
+                "format_version": 1,
+                "workspace_id": workspace_id,
+                "document_id": document_id,
+                "document_type": document_type,
+                "document_sub_type": document_sub_type,
+                "status": "submitted",
+                "title": title,
+                "path": path,
+                "size_in_bytes": size_in_bytes,
+                "vectors": 0,
+                "errors": [],
+                "created_at": timestamp,
+                "updated_at": timestamp,
+            }
+        else:
+            compound_sort_key = f"{document_type}/{timestamp}"
+            if document_type in ["file", "website"]:
+                compound_sort_key = f"{document_type}/{path}"
 
-        compound_sort_key = f"{document_type}/{timestamp}"
-        if document_type in ["file", "website"]:
-            compound_sort_key = f"{document_type}/{path}"
-
-        document = {
-            "format_version": 1,
-            "workspace_id": workspace_id,
-            "document_id": document_id,
-            "document_type": document_type,
-            "document_sub_type": document_sub_type,
-            "sub_documents": sub_documents,
-            "compound_sort_key": compound_sort_key,
-            "status": "submitted",
-            "title": title,
-            "path": path,
-            "size_in_bytes": size_in_bytes,
-            "vectors": 0,
-            "errors": [],
-            "created_at": timestamp,
-            "updated_at": timestamp,
-        }
+            document = {
+                "format_version": 1,
+                "workspace_id": workspace_id,
+                "document_id": document_id,
+                "document_type": document_type,
+                "document_sub_type": document_sub_type,
+                "sub_documents": sub_documents,
+                "compound_sort_key": compound_sort_key,
+                "status": "submitted",
+                "title": title,
+                "path": path,
+                "size_in_bytes": size_in_bytes,
+                "vectors": 0,
+                "errors": [],
+                "created_at": timestamp,
+                "updated_at": timestamp,
+            }
 
         response = documents_table.put_item(Item=document)
         print(response)
@@ -327,10 +444,10 @@ def create_document(
 
 
 def _process_document_kendra(
-    workspace: dict,
-    document: dict,
-    content: Optional[str] = None,
-    content_complement: Optional[str] = None,
+        workspace: dict,
+        document: dict,
+        content: Optional[str] = None,
+        content_complement: Optional[str] = None,
 ):
     workspace_id = workspace["workspace_id"]
     document_id = document["document_id"]
@@ -371,16 +488,60 @@ def _process_document_kendra(
     set_status(workspace_id, document_id, "processed")
 
 
+def update_document_content(
+        workspace_id: str,
+        document: dict,
+        title: Optional[str] = None,
+        content: Optional[str] = None,
+        content_complement: Optional[str] = None,
+):
+    document_type = document.get("document_type")
+    if document_type not in ["text", "qna"]:
+        raise genai_core.types.CommonError(
+            f"Document type {document_type} does not support content update."
+        )
+    input_title = document.get('title') if not title else title
+    input_content = document.get('content') if not content else content
+    input_content_complement = document.get('content_complement') if not content_complement \
+        else content_complement
+    document_sub_type = document.get('document_sub_type')
+
+    return create_document(
+        workspace_id=workspace_id,
+        document_type=document_type,
+        document_sub_type=document_sub_type,
+        title=input_title,
+        content=input_title,
+        content_complement=input_content_complement,
+        document_id=document.get('document_id')
+    )
+
+
+def delete_document(workspace_id: str, document_id: str):
+    document = get_document(workspace_id, document_id)
+    if not document:
+        return None
+
+    genai_core.chunks.delete_chunks(workspace_id, document_id)
+
+    response = documents_table.delete_item(
+        Key={"workspace_id": workspace_id, "document_id": document_id}
+    )
+
+    return response
+
+
 def _process_document(
-    workspace: dict,
-    document: dict,
-    content: Optional[str] = None,
-    content_complement: Optional[str] = None,
-    **kwargs,
+        workspace: dict,
+        document: dict,
+        content: Optional[str] = None,
+        content_complement: Optional[str] = None,
+        **kwargs,
 ):
     workspace_id = workspace["workspace_id"]
     document_id = document["document_id"]
     document_type = document["document_type"]
+    document_sub_type = document.get("document_sub_type")
 
     if document_type == "text":
         object_key = f"{workspace_id}/{document_id}/content.txt"
@@ -414,80 +575,107 @@ def _process_document(
         )
 
         set_status(workspace_id, document_id, "processed")
+    elif document_type == "dataset":
+        genai_core.chunks.add_chunks(
+            workspace=workspace,
+            document=document,
+            document_sub_id=None,
+            chunks=[content],
+            chunk_complements=None,
+            replace=True,
+        )
+
+        set_status(workspace_id, document_id, "processed")
     elif document_type == "website":
         document_sub_type = document["document_sub_type"]
-        path = document["path"]
-        urls_to_crawl = [path]
+        if document_sub_type == "dq-faq":
+            response = sfn_client.start_execution(
+                stateMachineArn=WEBSITE_CRAWLING_WORKFLOW_ARN,
+                input=json.dumps(
+                    {
+                        "workspace_id": workspace_id,
+                        "document_id": document_id,
+                        "bucket_name": "",
+                        "object_key": "dq-faq",
+                        "done": False,
+                    },
+                    cls=genai_core.utils.json.CustomEncoder,
+                ),
+            )
+            print(response)
+        else:
+            path = document["path"]
+            urls_to_crawl = [path]
 
-        crawler_properties = kwargs["crawler_properties"]
-        follow_links = crawler_properties["follow_links"]
-        limit = crawler_properties["limit"]
+            crawler_properties = kwargs["crawler_properties"]
+            follow_links = crawler_properties["follow_links"]
+            limit = crawler_properties["limit"]
 
-        if document_sub_type == "sitemap":
-            follow_links = False
+            if document_sub_type == "sitemap":
+                follow_links = False
 
-            try:
-                urls_to_crawl = genai_core.websites.extract_urls_from_sitemap(path)
+                try:
+                    urls_to_crawl = genai_core.websites.extract_urls_from_sitemap(path)
 
-                if len(urls_to_crawl) == 0:
+                    if len(urls_to_crawl) == 0:
+                        set_status(workspace_id, document_id, "error")
+                        raise genai_core.types.CommonError("No urls found in sitemap")
+                except Exception as e:
+                    print(e)
                     set_status(workspace_id, document_id, "error")
-                    raise genai_core.types.CommonError("No urls found in sitemap")
-            except Exception as e:
-                print(e)
-                set_status(workspace_id, document_id, "error")
-                raise genai_core.types.CommonError("Error extracting urls from sitemap")
+                    raise genai_core.types.CommonError("Error extracting urls from sitemap")
 
-        iteration = 1
-        crawler_job_id = str(uuid.uuid4())
-        iteration_object_key = (
-            f"{workspace_id}/{document_id}/crawler/{crawler_job_id}/{iteration}.json"
-        )
-        priority_queue = [{"url": url, "priority": 1} for url in set(urls_to_crawl)]
-        s3_client.put_object(
-            Body=json.dumps(
-                {
-                    "iteration": iteration,
-                    "crawler_job_id": crawler_job_id,
-                    "workspace_id": workspace_id,
-                    "document_id": document_id,
-                    "workspace": workspace,
-                    "document": document,
-                    "priority_queue": priority_queue,
-                    "processed_urls": [],
-                    "follow_links": follow_links,
-                    "limit": limit,
-                    "done": False,
-                },
-                cls=genai_core.utils.json.CustomEncoder,
-            ),
-            Bucket=PROCESSING_BUCKET_NAME,
-            Key=iteration_object_key,
-            ContentType="application/json",
-        )
+            iteration = 1
+            crawler_job_id = str(uuid.uuid4())
+            iteration_object_key = (
+                f"{workspace_id}/{document_id}/crawler/{crawler_job_id}/{iteration}.json"
+            )
+            priority_queue = [{"url": url, "priority": 1} for url in set(urls_to_crawl)]
+            s3_client.put_object(
+                Body=json.dumps(
+                    {
+                        "iteration": iteration,
+                        "crawler_job_id": crawler_job_id,
+                        "workspace_id": workspace_id,
+                        "document_id": document_id,
+                        "workspace": workspace,
+                        "document": document,
+                        "priority_queue": priority_queue,
+                        "processed_urls": [],
+                        "follow_links": follow_links,
+                        "limit": limit,
+                        "done": False,
+                    },
+                    cls=genai_core.utils.json.CustomEncoder,
+                ),
+                Bucket=PROCESSING_BUCKET_NAME,
+                Key=iteration_object_key,
+                ContentType="application/json",
+            )
 
-        response = sfn_client.start_execution(
-            stateMachineArn=WEBSITE_CRAWLING_WORKFLOW_ARN,
-            input=json.dumps(
-                {
-                    "workspace_id": workspace_id,
-                    "document_id": document_id,
-                    "bucket_name": PROCESSING_BUCKET_NAME,
-                    "object_key": iteration_object_key,
-                    "done": False,
-                },
-                cls=genai_core.utils.json.CustomEncoder,
-            ),
-        )
+            response = sfn_client.start_execution(
+                stateMachineArn=WEBSITE_CRAWLING_WORKFLOW_ARN,
+                input=json.dumps(
+                    {
+                        "workspace_id": workspace_id,
+                        "document_id": document_id,
+                        "bucket_name": PROCESSING_BUCKET_NAME,
+                        "object_key": iteration_object_key,
+                        "done": False,
+                    },
+                    cls=genai_core.utils.json.CustomEncoder,
+                ),
+            )
 
-        print(response)
+            print(response)
 
 
 def _upload_document_content(
-    workspace_id: str,
-    document_id: str,
-    document_type: str,
-    content: Optional[str] = None,
-    content_complement: Optional[str] = None,
+        workspace_id: str,
+        document_id: str,
+        document_type: str,
+        content: Optional[str] = None,
+        content_complement: Optional[str] = None,
 ):
     if document_type == "text":
         s3.Object(

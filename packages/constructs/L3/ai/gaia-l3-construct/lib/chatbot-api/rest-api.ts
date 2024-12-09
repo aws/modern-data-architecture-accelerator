@@ -15,7 +15,7 @@ import { SageMakerModelEndpoint, SystemConfig } from "../shared/types";
 import {MdaaLambdaFunction, MdaaLambdaRole} from "@aws-mdaa/lambda-constructs";
 import {MdaaL3Construct, MdaaL3ConstructProps} from "@aws-mdaa/l3-construct";
 import {MdaaManagedPolicy, MdaaRole} from "@aws-mdaa/iam-constructs";
-import {Effect, PolicyStatement, ServicePrincipal} from "aws-cdk-lib/aws-iam";
+import {Effect, ManagedPolicy, PolicyStatement, ServicePrincipal} from "aws-cdk-lib/aws-iam";
 import { NagSuppressions } from "cdk-nag";
 import { MdaaLogGroup, MdaaLogGroupProps } from "@aws-mdaa/cloudwatch-constructs";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
@@ -28,6 +28,7 @@ export interface RestApiProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly ragEngines?: RagEngines;
   readonly userPool: cognito.IUserPool;
+  readonly userPoolClient: cognito.IUserPoolClient;
   readonly sessionsTable: dynamodb.Table;
   readonly byUserIdIndex: string;
   readonly modelsParameter: ssm.StringParameter;
@@ -49,7 +50,7 @@ export class RestApi extends MdaaL3Construct {
       roleName: 'BackendRestApiHandlerRole',
       logGroupNames: [ this.props.naming.resourceName( "rest-api-handler" ) ],
       naming: props.naming,
-      createParams: false,
+      createParams: true,
       createOutputs: false
     })
 
@@ -102,6 +103,7 @@ export class RestApi extends MdaaL3Construct {
     );
 
     NagSuppressions.addResourceSuppressions(apiHandlerRole, [
+      { id: 'AwsSolutions-IAM4', reason: 'Standard Lambda Execution Managed Policy' },
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray and Comprehend actions only support wildcard, and bedrock foundation models access controlled by application along with region restriction, other resources managed by stack and not known at deployment time' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
@@ -256,8 +258,7 @@ export class RestApi extends MdaaL3Construct {
       endpointTypes: [apigateway.EndpointType.REGIONAL],
       cloudWatchRole: false, //Created below
       defaultCorsPreflightOptions: {
-
-        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowOrigins: this.props.config?.mainDomain ? [this.props.config.mainDomain] : apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
         allowHeaders: ["Content-Type", "Authorization", "X-Amz-Date"],
         maxAge: cdk.Duration.minutes(10),
@@ -317,7 +318,12 @@ export class RestApi extends MdaaL3Construct {
   }
 
   private addApiHandlerRolePermissions ( apiHandlerRole: MdaaRole, apiHandler: MdaaLambdaFunction ) {
-    
+    apiHandlerRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName(
+        "AWSLambdaExecute"
+      )
+    )
+
     this.addApiHandlerRoleRagPermissions(apiHandlerRole,apiHandler)
 
     for ( const model of this.props.models ) {
@@ -349,22 +355,52 @@ export class RestApi extends MdaaL3Construct {
     this.props.ragEngines?.processingBucket.grantReadWrite( apiHandlerRole );
 
     if ( this.props.config.bedrock?.enabled ) {
-      apiHandlerRole.addToPolicy(
-        new iam.PolicyStatement( {
-          actions: [
-            "bedrock:ListFoundationModels",
-            "bedrock:ListCustomModels",
-            "bedrock:InvokeModel",
-            "bedrock:InvokeModelWithResponseStream",
-          ],
-          resources: [ "*" ],
-          conditions: {
-            StringEquals: {
-              "aws:RequestedRegion": this.props.config.bedrock.region
+      if (this.props.config.rag?.engines?.knowledgeBase) {
+
+        apiHandlerRole.addToPolicy(
+          new iam.PolicyStatement( {
+            actions: [
+              "bedrock:ListFoundationModels",
+              "bedrock:ListCustomModels",
+              "bedrock:InvokeModelWithResponseStream",
+              "bedrock:ListAgents",
+              "bedrock:ListAgentAliases",
+              "bedrock:ListKnowledgeBases",
+              "bedrock:GetKnowledgeBase",
+              "bedrock:ListDataSources",
+              "bedrock:GetDataSource",
+              "bedrock:StartIngestionJob",
+              "bedrock:StopIngestionJob",
+              "bedrock:ListIngestionJobs",
+            ],
+            resources: [ "*" ],
+            conditions: {
+              StringEquals: {
+                "aws:RequestedRegion": this.props.config.bedrock.region
+              }
             }
-          }
-        } )
-      );
+          } )
+        );
+      } else {
+        apiHandlerRole.addToPolicy(
+          new iam.PolicyStatement( {
+            actions: [
+              "bedrock:ListFoundationModels",
+              "bedrock:ListCustomModels",
+              "bedrock:InvokeModel",
+              "bedrock:InvokeModelWithResponseStream",
+              "bedrock:ListAgents",
+              "bedrock:ListAgentAliases",
+            ],
+            resources: [ "*" ],
+            conditions: {
+              StringEquals: {
+                "aws:RequestedRegion": this.props.config.bedrock.region
+              }
+            }
+          } )
+        );
+      }
 
       if ( this.props.config.bedrock?.roleArn ) {
         apiHandlerRole.addToPolicy(
@@ -388,17 +424,9 @@ export class RestApi extends MdaaL3Construct {
     this.addApiHandlerRoleAuroraRagPermissions(apiHandlerRole,apiHandler)
 
     this.addApiHandlerRoleKendraRagPermissions(apiHandlerRole)
-
+    this.addApiHandlerRoleBedrockRagPermissions(apiHandlerRole)
     this.addApiHandlerRoleRagWorkflowPermissions(apiHandlerRole)
 
-    if ( this.props.ragEngines?.sageMakerRagModelsEndpoint !== undefined ) {
-      apiHandlerRole.addToPolicy(
-        new iam.PolicyStatement( {
-          actions: [ "sagemaker:InvokeEndpoint" ],
-          resources: [ this.props.ragEngines.sageMakerRagModelsEndpoint.ref ],
-        } )
-      );
-    }
   }
   
   private addApiHandlerRoleRagWorkflowPermissions ( apiHandlerRole: MdaaRole ) {
@@ -425,6 +453,41 @@ export class RestApi extends MdaaL3Construct {
       this.props.ragEngines.auroraPgVector.createAuroraWorkspaceWorkflow.grantStartExecution(
         apiHandlerRole
       );
+    }
+  }
+
+  private addApiHandlerRoleBedrockRagPermissions (apiHandlerRole: MdaaRole) {
+    if (this.props.config.rag?.engines?.knowledgeBase?.external) {
+      for (const item of this.props.config.rag.engines.knowledgeBase.external || []) {
+        if (item.roleArn) {
+          apiHandlerRole.addToPolicy(
+            new iam.PolicyStatement({
+              actions: ["sts:AssumeRole"],
+              resources: [item.roleArn],
+            })
+          );
+        } else {
+          apiHandlerRole.addToPolicy(
+            new iam.PolicyStatement({
+              actions: [
+                  "bedrock:GetKnowledgeBase",
+                  "bedrock:ListDataSources",
+                  "bedrock:GetDataSource",
+                  "bedrock:StartIngestionJob",
+                  "bedrock:StopIngestionJob",
+                  "bedrock:ListIngestionJobs",
+              ],
+              resources: [
+                `arn:${cdk.Aws.PARTITION}:bedrock:${
+                  item.region ?? cdk.Aws.REGION
+                }:${cdk.Aws.ACCOUNT_ID}:knowledge-base/${
+                  item.kbId
+                }`,
+              ],
+            })
+          );
+        }
+      }
     }
   }
   
@@ -488,7 +551,7 @@ export class RestApi extends MdaaL3Construct {
         this.props.config.codeOverwrites.restApiHandlerCodePath : path.join( __dirname, "./functions/api-handler" )
     const apiHandler = new MdaaLambdaFunction( this, "ApiHandler", {
       functionName: "rest-api-handler", naming: this.props.naming, role: apiHandlerRole,
-      createParams: false,
+      createParams: true,
       createOutputs: false,
       code: lambda.Code.fromAsset(codeAssets),
       handler: "index.handler",
@@ -508,6 +571,17 @@ export class RestApi extends MdaaL3Construct {
       environment: this.createApiHandlerEnvironment()
     } );
 
+    if (this.props.config?.concurrency?.restApiConcurrentLambdas !== undefined) {
+      const version = apiHandler.currentVersion
+
+      new lambda.Alias( this, "ApiHandlerAlias", {
+        aliasName: "live",
+        version,
+        provisionedConcurrentExecutions: this.props.config?.concurrency?.restApiConcurrentLambdas || 1,
+      } )
+    }
+
+
     NagSuppressions.addResourceSuppressions(
       apiHandler,
       [
@@ -524,8 +598,13 @@ export class RestApi extends MdaaL3Construct {
   private createApiHandlerEnvironment() {
     return {
       ...this.props.shared.defaultEnvironmentVariables,
+      POWERTOOLS_METRICS_NAMESPACE: 'chatbot-admin-restapi',
       CONFIG_PARAMETER_NAME: this.props.shared.configParameter.parameterName,
       MODELS_PARAMETER_NAME: this.props.modelsParameter.parameterName,
+      COGNITO_USER_POOL_ID:  this.props.userPool.userPoolId,
+      COGNITO_APP_CLIENT_ID:  this.props.userPoolClient.userPoolClientId,
+      COGNITO_REGION: cdk.Aws.REGION,
+      CORS_ALLOWED_ORIGINS: this.props.config?.mainDomain || "*",
       X_ORIGIN_VERIFY_SECRET_ARN: this.props.shared.xOriginVerifySecret.secretArn,
       API_KEYS_SECRETS_ARN: this.props.shared.apiKeysSecret.secretArn,
       SESSIONS_TABLE_NAME: this.props.sessionsTable.tableName,
@@ -542,8 +621,7 @@ export class RestApi extends MdaaL3Construct {
       DOCUMENTS_TABLE_NAME: this.props.ragEngines?.documentsTable.tableName ?? "",
       DOCUMENTS_BY_COMPOUND_KEY_INDEX_NAME:
         this.props.ragEngines?.documentsByCompountKeyIndexName ?? "",
-      SAGEMAKER_RAG_MODELS_ENDPOINT:
-        this.props.ragEngines?.sageMakerRagModelsEndpoint?.attrEndpointName ?? "",
+      SAGEMAKER_RAG_MODELS_ENDPOINT: "",
       DELETE_WORKSPACE_WORKFLOW_ARN:
         this.props.ragEngines?.deleteWorkspaceWorkflow?.stateMachineArn ?? "",
       CREATE_AURORA_WORKSPACE_WORKFLOW_ARN:

@@ -4,6 +4,7 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import { MdaaDDBTable } from "@aws-mdaa/ddb-constructs";
 import { MdaaConstructProps } from "@aws-mdaa/construct";
 import { IKey } from "aws-cdk-lib/aws-kms";
+import * as ssm from "aws-cdk-lib/aws-ssm";
 
 export interface ChatBotDynamoDBTablesProps extends MdaaConstructProps {
   readonly kmsKey: IKey
@@ -36,6 +37,12 @@ export class ChatBotDynamoDBTables extends Construct {
     sessionsTable.addGlobalSecondaryIndex({
       indexName: this.byUserIdIndex,
       partitionKey: { name: "UserId", type: dynamodb.AttributeType.STRING },
+    });
+
+
+    new ssm.StringParameter(this, 'UserPoolDomainSSMParam', {
+      parameterName: props.naming.ssmPath('table/sessions/name'),
+      stringValue: sessionsTable.tableName
     });
 
     this.sessionsTable = sessionsTable;

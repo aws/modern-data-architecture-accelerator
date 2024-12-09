@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Build the Docker image
+docker build -t bundler .
+
+
+docker run --name bundler-container bundler
+
+docker cp bundler-container:/app/common_layer.zip .
+
+docker rm -f bundler-container
+
+# Check if the .zip file was created
+if [ -f "common_layer.zip" ]; then
+    echo "common_layer.zip file created successfully!"
+else
+    echo "Error: common_layer.zip file not found."
+    exit 1
+fi

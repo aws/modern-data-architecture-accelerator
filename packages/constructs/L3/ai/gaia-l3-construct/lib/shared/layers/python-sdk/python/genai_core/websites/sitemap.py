@@ -4,7 +4,6 @@ import gzip
 import os
 
 def extract_urls_from_sitemap(sitemap_url: str):
-    # nosemgrep
     response = requests.get(sitemap_url, timeout=20)
     sitemap = response.content
 

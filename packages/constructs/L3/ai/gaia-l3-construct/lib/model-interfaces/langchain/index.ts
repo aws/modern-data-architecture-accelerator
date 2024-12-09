@@ -1,7 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as iam from "aws-cdk-lib/aws-iam";
-import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
+import {Effect, ManagedPolicy, PolicyStatement} from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 import {CfnEndpoint} from "aws-cdk-lib/aws-sagemaker";
@@ -42,11 +42,17 @@ export class LangChainInterface extends MdaaL3Construct {
       naming: props.naming,
       roleName:  'ModelInterfaceRequestHandlerRole',
       logGroupNames: [this.props.naming.resourceName( "model-interface-request-handler" )],
-      createParams: false,
+      createParams: true,
       createOutputs: false
     })
 
-    const requestHandler = this.createRequestHandler( requestHandlerRole )
+    requestHandlerRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName(
+        "AWSLambdaExecute"
+      )
+    )
+
+    const requestHandler  = this.createRequestHandler( requestHandlerRole )
 
     this.addRequestHandlerRolePermissions( requestHandlerRole, requestHandler )
 
@@ -87,6 +93,7 @@ export class LangChainInterface extends MdaaL3Construct {
     NagSuppressions.addResourceSuppressions(
         requestHandlerRole,
         [
+          { id: 'AwsSolutions-IAM4', reason: 'Standard Lambda Execution Managed Policy' },
           { id: 'AwsSolutions-IAM5', reason: 'X-Ray, Comprehend, & Bedrock actions only support wildcard, s3 bucket bound to stack managed bucket, and DDB index and KMS key deployed and managed by stack' },
           { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
           { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
@@ -149,14 +156,6 @@ export class LangChainInterface extends MdaaL3Construct {
     if ( this.props.ragEngines ) {
       this.props.ragEngines.workspacesTable.grantReadWriteData( requestHandlerRole );
       this.props.ragEngines.documentsTable.grantReadWriteData( requestHandlerRole );
-      if ( this.props.ragEngines?.sageMakerRagModelsEndpoint !== undefined  ) {
-        requestHandlerRole.addToPolicy(
-            new iam.PolicyStatement( {
-              actions: [ "sagemaker:InvokeEndpoint" ],
-              resources: [ this.props.ragEngines.sageMakerRagModelsEndpoint.ref ],
-            } )
-        );
-      }
     }
 
     if ( this.props.ragEngines?.kendraRetrieval ) {
@@ -201,6 +200,7 @@ export class LangChainInterface extends MdaaL3Construct {
           actions: [
             "bedrock:InvokeModel",
             "bedrock:InvokeModelWithResponseStream",
+            "bedrock:InvokeAgent"
           ],
           resources: [ "*" ],
           conditions: {
@@ -219,14 +219,50 @@ export class LangChainInterface extends MdaaL3Construct {
           } )
         );
       }
+
+      if (this.props.config.rag?.engines.knowledgeBase) {
+        requestHandler.addToRolePolicy(
+          new iam.PolicyStatement({
+            actions: ["bedrock:Retrieve"],
+            resources: [
+              `arn:${cdk.Aws.PARTITION}:bedrock:${
+                this.props.config.bedrock.region
+              }:${cdk.Aws.ACCOUNT_ID}:knowledge-base/*`,
+            ],
+          })
+        );
+
+        for (const item of this.props.config.rag.engines.knowledgeBase.external ||
+          []) {
+          if (item.roleArn) {
+            requestHandler.addToRolePolicy(
+              new iam.PolicyStatement({
+                actions: ["sts:AssumeRole"],
+                resources: [item.roleArn],
+              })
+            );
+          } else {
+            requestHandler.addToRolePolicy(
+              new iam.PolicyStatement({
+                actions: ["bedrock:Retrieve"],
+                resources: [
+                  `arn:${cdk.Aws.PARTITION}:bedrock:${
+                    item.region ?? cdk.Aws.REGION
+                  }:${cdk.Aws.ACCOUNT_ID}:knowledge-base/${item.kbId}`,
+                ],
+              })
+            );
+          }
+        }
+      }
     }
   }
   private createRequestHandler ( requestHandlerRole : iam.IRole) {
     const langchainInterfaceHandlerCodePath = this.props.config?.codeOverwrites?.langchainInterfaceHandlerCodePath !== undefined ?
         this.props.config.codeOverwrites.langchainInterfaceHandlerCodePath : path.join(__dirname, "./functions/request-handler")
-    return new MdaaLambdaFunction(this, "RequestHandler", {
+    const requestHandler = new MdaaLambdaFunction(this, "RequestHandler", {
       functionName: "model-interface-request-handler", naming: this.props.naming, role: requestHandlerRole,
-      createParams: false,
+      createParams: true,
       createOutputs: false,
       vpc: this.props.shared.vpc,
       vpcSubnets: {subnets: this.props.shared.appSubnets},
@@ -235,7 +271,7 @@ export class LangChainInterface extends MdaaL3Construct {
       runtime: this.props.shared.pythonRuntime,
       architecture: this.props.shared.lambdaArchitecture,
       tracing: lambda.Tracing.ACTIVE,
-      timeout: cdk.Duration.minutes(15),
+      timeout: cdk.Duration.minutes(2),
       memorySize: 1024,
       layers: [
         this.props.shared.powerToolsLayer,
@@ -244,10 +280,23 @@ export class LangChainInterface extends MdaaL3Construct {
       ],
       environment: this.createRequestHandlerEnv()
     })
+
+    if (this.props.config?.concurrency?.restApiConcurrentLambdas !== undefined) {
+      const version = requestHandler.currentVersion
+
+      new lambda.Alias( this, "ApiHandlerAlias", {
+        aliasName: "live",
+        version,
+        provisionedConcurrentExecutions: this.props.config?.concurrency?.restApiConcurrentLambdas || 1,
+      } )
+    }
+
+    return requestHandler
   }
   private createRequestHandlerEnv (): { [ key: string ]: string; } | undefined {
     return {
       ...this.props.shared.defaultEnvironmentVariables,
+      POWERTOOLS_METRICS_NAMESPACE: 'chatbot-model-interface',
       CONFIG_PARAMETER_NAME: this.props.shared.configParameter.parameterName,
       SESSIONS_TABLE_NAME: this.props.sessionsTable.tableName,
       SESSIONS_BY_USER_ID_INDEX_NAME: this.props.byUserIdIndex,
@@ -262,8 +311,7 @@ export class LangChainInterface extends MdaaL3Construct {
         this.props.ragEngines?.documentsByCompountKeyIndexName ?? "",
       AURORA_DB_SECRET_ID: this.props.ragEngines?.auroraPgVector?.database?.secret
         ?.secretArn as string,
-      SAGEMAKER_RAG_MODELS_ENDPOINT:
-        this.props.ragEngines?.sageMakerRagModelsEndpoint?.attrEndpointName ?? "",
+      SAGEMAKER_RAG_MODELS_ENDPOINT: "",
       DEFAULT_KENDRA_INDEX_ID:
         this.props.ragEngines?.kendraRetrieval?.kendraIndex?.attrId ?? "",
       DEFAULT_KENDRA_INDEX_NAME:

@@ -1,5 +1,6 @@
 import genai_core.semantic_search
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from uuid import UUID
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.event_handler.api_gateway import Router
 
@@ -9,8 +10,8 @@ logger = Logger()
 
 
 class SemanticSearchRequest(BaseModel):
-    workspaceId: str
-    query: str
+    workspaceId: UUID
+    query: str = Field(max_length=1000)
 
 
 @router.post("/semantic-search")
@@ -25,7 +26,7 @@ def semantic_search():
         )
 
     result = genai_core.semantic_search.semantic_search(
-        workspace_id=request.workspaceId,
+        workspace_id=str(request.workspaceId),
         query=request.query,
         limit=25,
         full_response=True,

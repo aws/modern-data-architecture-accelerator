@@ -29,6 +29,7 @@ import * as route53 from "aws-cdk-lib/aws-route53";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import { ApiGatewayv2DomainProperties } from "aws-cdk-lib/aws-route53-targets";
 import * as ssm from "aws-cdk-lib/aws-ssm";
+import {Duration} from "aws-cdk-lib";
 
 interface WebSocketApiProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
@@ -50,17 +51,16 @@ export class WebSocketApi extends MdaaL3Construct {
     const messagesTopic = new MdaaSnsTopic(this, "WeSocketMessagesTopic", {
         masterKey: props.encryptionKey,
         naming: props.naming,
-        createParams: false,
+        createParams: true,
         createOutputs: false,
         topicName: "WeSocketMessagesTopic"
-
     });
 
     const connectionsTable = new MdaaDDBTable(this, "ConnectionsTable", {
         encryptionKey: props.encryptionKey,
         naming: props.naming,
         tableName: props.naming.resourceName("Connections"),
-        createParams: false,
+        createParams: true,
         createOutputs: false,
         partitionKey: {
         name: "connectionId",
@@ -225,7 +225,6 @@ export class WebSocketApi extends MdaaL3Construct {
     const outgoingMessageHandlerFunction = this.createOutgoingMessageHandlerFunction(
       outgoingMessageHandlerFunctionRole,
       connectionsTable,
-      props.shared.appSecurityGroup,
       stage
     )
     
@@ -310,7 +309,6 @@ export class WebSocketApi extends MdaaL3Construct {
   private createOutgoingMessageHandlerFunction (
     outgoingMessageHandlerFunctionRole: MdaaRole,
     connectionsTable: dynamodb.ITable,
-    apiSecurityGroup: ec2.ISecurityGroup,
     stage: apigwv2.WebSocketStage
   ) {
     const outgoingMessageHandlerCodePath = this.props.config?.codeOverwrites?.webSocketOutgoingMessageHandlerCodePath !== undefined ?
@@ -326,24 +324,25 @@ export class WebSocketApi extends MdaaL3Construct {
         createOutputs: false,
         role: outgoingMessageHandlerFunctionRole,
         code: lambda.Code.fromAsset(outgoingMessageHandlerCodePath),
-        vpc: this.props.shared.vpc,
-        securityGroups: [ apiSecurityGroup ],
-        vpcSubnets: { subnets: this.props.shared.appSubnets },
         handler: "index.handler",
         runtime: this.props.shared.pythonRuntime,
         architecture: this.props.shared.lambdaArchitecture,
+        timeout: Duration.seconds(6),
         tracing: lambda.Tracing.ACTIVE,
         layers: [ this.props.shared.powerToolsLayer ],
         environment: {
           ...this.props.shared.defaultEnvironmentVariables,
           WEBSOCKET_API_ENDPOINT: stage.callbackUrl,
           CONNECTIONS_TABLE_NAME: connectionsTable.tableName,
-        }
+        },
+        reservedConcurrentExecutions:  this.props.config?.concurrency?.websocketConcurrentLambdas || 1,
       }
     );
     NagSuppressions.addResourceSuppressions(
       outgoingMessageHandlerFunction,
       [
+        { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.' },
+        { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.' },
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
         { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
@@ -378,13 +377,15 @@ export class WebSocketApi extends MdaaL3Construct {
         handler: "index.handler",
         runtime: this.props.shared.pythonRuntime,
         architecture: this.props.shared.lambdaArchitecture,
+        timeout: Duration.seconds(6),
         tracing: lambda.Tracing.ACTIVE,
         layers: [ this.props.shared.powerToolsLayer ],
         environment: {
           ...this.props.shared.defaultEnvironmentVariables,
           MESSAGES_TOPIC_ARN: messagesTopic.topicArn,
           WEBSOCKET_API_ENDPOINT: stage.callbackUrl,
-        }
+        },
+        reservedConcurrentExecutions:  this.props.config?.concurrency?.websocketConcurrentLambdas || 1,
       }
     );
     NagSuppressions.addResourceSuppressions(
@@ -417,11 +418,13 @@ export class WebSocketApi extends MdaaL3Construct {
       handler: "index.handler",
       runtime: this.props.shared.pythonRuntime,
       architecture: this.props.shared.lambdaArchitecture,
+      timeout: Duration.seconds(6),
       tracing: lambda.Tracing.ACTIVE,
       layers: [ this.props.shared.powerToolsLayer ],
       environment: {
         ...this.props.shared.defaultEnvironmentVariables,
-      }
+      },
+      reservedConcurrentExecutions:  this.props.config?.concurrency?.websocketConcurrentLambdas || 1,
     } );
     NagSuppressions.addResourceSuppressions(
       authorizerFunction,
@@ -493,12 +496,14 @@ export class WebSocketApi extends MdaaL3Construct {
         handler: "index.handler",
         runtime: this.props.shared.pythonRuntime,
         architecture: this.props.shared.lambdaArchitecture,
+        timeout: Duration.seconds(6),
         tracing: lambda.Tracing.ACTIVE,
         layers: [ this.props.shared.powerToolsLayer ],
         environment: {
           ...this.props.shared.defaultEnvironmentVariables,
           CONNECTIONS_TABLE_NAME: connectionsTable.tableName,
-        }
+        },
+        reservedConcurrentExecutions:  this.props.config?.concurrency?.websocketConcurrentLambdas || 1,
       }
     );
     NagSuppressions.addResourceSuppressions(

@@ -15,7 +15,7 @@ import { SystemConfig } from "../../shared/types";
 import { RagDynamoDBTables } from "../rag-dynamodb-tables";
 import {MdaaKmsKey} from "@aws-mdaa/kms-constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
-import {Effect, ServicePrincipal} from "aws-cdk-lib/aws-iam";
+import {Effect, ManagedPolicy, ServicePrincipal} from "aws-cdk-lib/aws-iam";
 
 export interface CreateAuroraWorkspaceProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
@@ -48,6 +48,12 @@ export class CreateAuroraWorkspace extends MdaaL3Construct {
       ],
       resources: ['*']
     }))
+
+    createFunctionRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName(
+        "AWSLambdaExecute"
+      )
+    )
 
     const createAuroraWorkspaceCodePath = props.config?.codeOverwrites?.createAuroraWorkspaceCodePath !== undefined ?
         props.config.codeOverwrites.createAuroraWorkspaceCodePath : path.join(__dirname, "./functions/create-workflow/create")
@@ -104,6 +110,7 @@ export class CreateAuroraWorkspace extends MdaaL3Construct {
     props.ragDynamoDBTables.workspacesTable.grantReadWriteData(createFunctionRole);
 
     NagSuppressions.addResourceSuppressions( createFunctionRole, [
+      { id: 'AwsSolutions-IAM4', reason: 'Standard Lambda Execution Managed Policy' },
       {
         id: 'AwsSolutions-IAM5',
         reason: 'DDB index names not known at deployment time. KMS Permissions are appropriately scoped.'

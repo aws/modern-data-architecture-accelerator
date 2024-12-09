@@ -48,7 +48,7 @@ export class GAIAL3Construct extends MdaaL3Construct {
 
     const stackEncryptionKey = new MdaaKmsKey(this, 'StackEncryptionKey', {
       naming: props.naming,
-      createParams: false,
+      createParams: true,
       createOutputs: false,
     })
 
@@ -104,6 +104,7 @@ export class GAIAL3Construct extends MdaaL3Construct {
         config: props.gaia,
         ragEngines: ragEngines,
         userPool: authentication.userPool,
+        userPoolClient: authentication.userPoolClient,
         modelsParameter: models.modelsParameter,
         models: models.models,
     });

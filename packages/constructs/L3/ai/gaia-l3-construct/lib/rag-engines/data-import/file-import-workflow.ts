@@ -145,6 +145,7 @@ export class FileImportWorkflow extends Construct {
         actions: ["batch:SubmitJob"],
         resources: [
           props.fileImportBatchJob.jobQueue.jobQueueArn,
+          props.fileImportBatchJob.fileImportJob.jobDefinitionArn
         ],
       })
     );

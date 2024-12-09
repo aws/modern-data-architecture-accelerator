@@ -1,6 +1,8 @@
 import re
 from typing import Optional, List
-
+from enum import Enum
+from pydantic import Field
+from uuid import UUID
 from genai_core.types import PromptExample
 import genai_core.kendra
 import genai_core.parameters
@@ -16,6 +18,29 @@ logger = Logger()
 name_regex = re.compile(r"^[\w+_-]+$")
 
 
+class WorkspaceKind(str, Enum):
+    aurora = "aurora"
+    kendra = "kendra"
+    knowledge_base = "knowledgeBase"
+
+
+class SearchMetric(str, Enum):
+    cosine = "cosine"
+    inner = "inner"
+    l2 = "l2"
+
+
+class SupportedWorkspaceLanguages(str, Enum):
+    en = "english"
+    fr = "french"
+    # TODO: add additional languages here
+    es = "spanish"
+
+
+class ChunkStrategy(str, Enum):
+    recursive = "recursive"
+
+
 class AddPromptTemplateToWorkspaceRequest(BaseModel):
     botName: Optional[str]
     instructions: str
@@ -23,51 +48,43 @@ class AddPromptTemplateToWorkspaceRequest(BaseModel):
 
 
 class AddPromptTemplateToWorkspaceResponse(BaseModel):
-    workspaceId: str
+    workspaceId: UUID
     botName: Optional[str]
     instructions: str
     examples: List[PromptExample]
 
 
 class GenericCreateWorkspaceRequest(BaseModel):
-    kind: str
+    kind: WorkspaceKind
 
 
 class CreateWorkspaceAuroraRequest(BaseModel):
-    kind: str
+    kind: WorkspaceKind = WorkspaceKind.aurora
     name: str
-    embeddingsModelProvider: str
-    embeddingsModelName: str
-    crossEncoderModelProvider: str
-    crossEncoderModelName: str
-    languages: list[str]
-    metric: str
+    embeddingsModelProvider: genai_core.types.EmbeddingModelProviderLabels
+    embeddingsModelName: genai_core.types.EmbeddingModelLabels
+    crossEncoderModelProvider: Optional[genai_core.types.CrossEncodersProviderLabels]
+    crossEncoderModelName: Optional[genai_core.types.CrossEncodersModelLabels]
+    languages: list[SupportedWorkspaceLanguages]
+    metric: SearchMetric
     index: bool
     hybridSearch: bool
-    chunking_strategy: str
-    chunkSize: int
-    chunkOverlap: int
-
-
-class CreateWorkspaceOpenSearchRequest(BaseModel):
-    kind: str
-    name: str
-    embeddingsModelProvider: str
-    embeddingsModelName: str
-    crossEncoderModelProvider: str
-    crossEncoderModelName: str
-    languages: list[str]
-    hybridSearch: bool
-    chunking_strategy: str
-    chunkSize: int
-    chunkOverlap: int
+    chunking_strategy: ChunkStrategy
+    chunkSize: int = Field(..., ge=1, le=2048)
+    chunkOverlap: int = Field(..., ge=0, le=2048)
 
 
 class CreateWorkspaceKendraRequest(BaseModel):
-    kind: str
+    kind: WorkspaceKind = WorkspaceKind.kendra
     name: str
     kendraIndexId: str
     useAllData: bool
+
+
+class CreateWorkspaceKnowledgeBaseRequest(BaseModel):
+    kind: WorkspaceKind = WorkspaceKind.knowledge_base
+    name: str
+    knowledgeBaseId: str
 
 
 @router.get("/workspaces")
@@ -106,7 +123,8 @@ def add_workspace_prompt_template(workspace_id: str):
     data: dict = router.current_event.json_body
     prompt_template_request = AddPromptTemplateToWorkspaceRequest(**data)
     ret_value: AddPromptTemplateToWorkspaceResponse = genai_core.workspaces.set_workspace_prompt_template(
-        workspace_id, prompt_template_request.botName, prompt_template_request.instructions, prompt_template_request.examples
+        workspace_id, prompt_template_request.botName, prompt_template_request.instructions,
+        prompt_template_request.examples
     )
 
     return {"ok": True, "data": ret_value}
@@ -141,12 +159,12 @@ def create_workspace():
     if generic_request.kind == "aurora":
         request = CreateWorkspaceAuroraRequest(**data)
         ret_value = _create_workspace_aurora(request, config)
-    elif generic_request.kind == "opensearch":
-        request = CreateWorkspaceOpenSearchRequest(**data)
-        ret_value = _create_workspace_open_search(request, config)
     elif generic_request.kind == "kendra":
         request = CreateWorkspaceKendraRequest(**data)
         ret_value = _create_workspace_kendra(request, config)
+    elif generic_request.kind == "knowledgeBase":
+        request = CreateWorkspaceKnowledgeBaseRequest(**data)
+        ret_value = _create_workspace_knowledge_base(request, config)
     else:
         raise genai_core.types.CommonError("Invalid engine")
 
@@ -178,9 +196,6 @@ def _create_workspace_aurora(request: CreateWorkspaceAuroraRequest, config: dict
 
     if embeddings_model is None:
         raise genai_core.types.CommonError("Embeddings model not found")
-
-    if cross_encoder_model is None:
-        raise genai_core.types.CommonError("Cross encoder model not found")
 
     embeddings_model_dimensions = embeddings_model["dimensions"]
 
@@ -225,75 +240,6 @@ def _create_workspace_aurora(request: CreateWorkspaceAuroraRequest, config: dict
     )
 
 
-def _create_workspace_open_search(
-        request: CreateWorkspaceOpenSearchRequest, config: dict
-):
-    workspace_name = request.name.strip()
-    embedding_models = config["rag"]["embeddingsModels"]
-    cross_encoder_models = config["rag"]["crossEncoderModels"]
-
-    embeddings_model = None
-    cross_encoder_model = None
-    for model in embedding_models:
-        if (
-                model["provider"] == request.embeddingsModelProvider
-                and model["name"] == request.embeddingsModelName
-        ):
-            embeddings_model = model
-            break
-
-    for model in cross_encoder_models:
-        if (
-                model["provider"] == request.crossEncoderModelProvider
-                and model["name"] == request.crossEncoderModelName
-        ):
-            cross_encoder_model = model
-            break
-
-    if embeddings_model is None:
-        raise genai_core.types.CommonError("Embeddings model not found")
-
-    if cross_encoder_model is None:
-        raise genai_core.types.CommonError("Cross encoder model not found")
-
-    embeddings_model_dimensions = embeddings_model["dimensions"]
-
-    workspace_name_match = name_regex.match(workspace_name)
-    workspace_name_is_match = bool(workspace_name_match)
-    if (
-            len(workspace_name) == 0
-            or len(workspace_name) > 100
-            or not workspace_name_is_match
-    ):
-        raise genai_core.types.CommonError("Invalid workspace name")
-
-    if len(request.languages) == 0 or len(request.languages) > 3:
-        raise genai_core.types.CommonError("Invalid languages")
-
-    if request.chunking_strategy not in ["recursive"]:
-        raise genai_core.types.CommonError("Invalid chunking strategy")
-
-    if request.chunkSize < 100 or request.chunkSize > 10000:
-        raise genai_core.types.CommonError("Invalid chunk size")
-
-    if request.chunkOverlap < 0 or request.chunkOverlap >= request.chunkSize:
-        raise genai_core.types.CommonError("Invalid chunk overlap")
-
-    return genai_core.workspaces.create_workspace_open_search(
-        workspace_name=workspace_name,
-        embeddings_model_provider=request.embeddingsModelProvider,
-        embeddings_model_name=request.embeddingsModelName,
-        embeddings_model_dimensions=embeddings_model_dimensions,
-        cross_encoder_model_provider=request.crossEncoderModelProvider,
-        cross_encoder_model_name=request.crossEncoderModelName,
-        languages=request.languages,
-        hybrid_search=request.hybridSearch,
-        chunking_strategy=request.chunking_strategy,
-        chunk_size=request.chunkSize,
-        chunk_overlap=request.chunkOverlap,
-    )
-
-
 def _create_workspace_kendra(request: CreateWorkspaceKendraRequest, config: dict):
     workspace_name = request.name.strip()
     kendra_indexes = genai_core.kendra.get_kendra_indexes()
@@ -320,6 +266,33 @@ def _create_workspace_kendra(request: CreateWorkspaceKendraRequest, config: dict
         workspace_name=workspace_name,
         kendra_index=kendra_index,
         use_all_data=request.useAllData,
+    )
+
+def _create_workspace_knowledge_base(request: CreateWorkspaceKnowledgeBaseRequest, config: dict):
+    workspace_name = request.name.strip()
+    knowledge_bases = [kb for kb in genai_core.bedrock_kb.list_bedrock_kbs()]
+
+    workspace_name_match = name_regex.match(workspace_name)
+    workspace_name_is_match = bool(workspace_name_match)
+    if (
+            len(workspace_name) == 0
+            or len(workspace_name) > 100
+            or not workspace_name_is_match
+    ):
+        raise genai_core.types.CommonError("Invalid workspace name")
+
+    knowledge_base = None
+    for current in knowledge_bases:
+        if current.get('id') == request.knowledgeBaseId:
+            knowledge_base = current
+            break
+
+    if knowledge_base is None:
+        raise genai_core.types.CommonError("Knowledge base not found")
+
+    return genai_core.workspaces.create_workspace_bedrock_kb(
+        workspace_name=workspace_name,
+        knowledge_base=knowledge_base,
     )
 
 
@@ -349,6 +322,8 @@ def _convert_workspace(workspace: dict):
         "kendraIndexId": workspace.get("kendra_index_id"),
         "kendraIndexExternal": kendra_index_external,
         "kendraUseAllData": workspace.get("kendra_use_all_data", kendra_index_external),
+        "knowledgeBaseId": workspace.get("knowledge_base_id"),
+        "knowledgeBaseExternal": workspace.get("knowledge_base_external", False),
         "createdAt": workspace.get("created_at"),
         "updatedAt": workspace.get("updated_at"),
     }

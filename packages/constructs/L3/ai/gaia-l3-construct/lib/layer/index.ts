@@ -1,6 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import { Construct } from "constructs";
+import {Construct} from "constructs";
 
 interface LayerProps {
   runtime: lambda.Runtime;
@@ -19,13 +19,11 @@ export class Layer extends Construct {
 
     const code = lambda.Code.fromAsset(`${path}/common_layer.zip`)
 
-    const layer = new lambda.LayerVersion(this, "Layer", {
+    this.layer = new lambda.LayerVersion(this, "Layer", {
       code: code,
       compatibleRuntimes: [runtime],
       compatibleArchitectures: [architecture],
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
-
-    this.layer = layer;
   }
 }

@@ -151,8 +151,8 @@ def create_workspace_aurora(
         embeddings_model_provider: str,
         embeddings_model_name: str,
         embeddings_model_dimensions: int,
-        cross_encoder_model_provider: str,
-        cross_encoder_model_name: str,
+        cross_encoder_model_provider: Optional[str],
+        cross_encoder_model_name: Optional[str],
         languages: list[str],
         metric: str,
         has_index: bool,
@@ -331,6 +331,38 @@ def create_workspace_kendra(
     }
 
 
+def create_workspace_bedrock_kb(
+    workspace_name: str, knowledge_base: dict, hybrid_search: bool
+):
+    workspace_id = str(uuid.uuid4())
+    timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    knowledge_base_id = knowledge_base["id"]
+    external = knowledge_base["external"]
+
+    item = {
+        "workspace_id": workspace_id,
+        "object_type": WORKSPACE_OBJECT_TYPE,
+        "format_version": 1,
+        "name": workspace_name,
+        "engine": "bedrock_kb",
+        "status": "submitted",
+        "knowledge_base_id": knowledge_base_id,
+        "knowledge_base_external": external,
+        "hybrid_search": hybrid_search,
+        "documents": 0,
+        "vectors": 0,
+        "size_in_bytes": 0,
+        "created_at": timestamp,
+        "updated_at": timestamp,
+    }
+
+    response = table.put_item(Item=item)
+    print(response)
+
+    return {
+        "id": workspace_id,
+    }
+
 def delete_workspace(workspace_id: str):
     response = table.get_item(
         Key={"workspace_id": workspace_id, "object_type": WORKSPACE_OBJECT_TYPE}
@@ -354,3 +386,5 @@ def delete_workspace(workspace_id: str):
     )
 
     print(response)
+
+    return item

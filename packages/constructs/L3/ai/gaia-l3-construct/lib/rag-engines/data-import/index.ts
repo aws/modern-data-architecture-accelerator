@@ -11,7 +11,6 @@ import {KendraRetrieval} from "../kendra-retrieval";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as sagemaker from "aws-cdk-lib/aws-sagemaker";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as s3Notifications from "aws-cdk-lib/aws-s3-notifications";
 import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
@@ -31,7 +30,6 @@ export interface DataImportProps extends MdaaL3ConstructProps {
   readonly auroraDatabase?: rds.DatabaseCluster;
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly kendraRetrieval?: KendraRetrieval;
-  readonly sageMakerRagModelsEndpoint?: sagemaker.CfnEndpoint;
   readonly workspacesTable: dynamodb.Table;
   readonly documentsTable: dynamodb.Table;
   readonly workspacesByObjectTypeIndexName: string;
@@ -150,7 +148,6 @@ export class DataImportWorkflows extends MdaaL3Construct {
         processingBucket,
         auroraDatabase: props.auroraDatabase,
         ragDynamoDBTables: props.ragDynamoDBTables,
-        sageMakerRagModelsEndpoint: props.sageMakerRagModelsEndpoint
       }
     );
 
@@ -178,7 +175,6 @@ export class DataImportWorkflows extends MdaaL3Construct {
         processingBucket,
         auroraDatabase: props.auroraDatabase,
         ragDynamoDBTables: props.ragDynamoDBTables,
-        sageMakerRagModelsEndpoint: props.sageMakerRagModelsEndpoint,
       }
     );
 
@@ -242,8 +238,7 @@ export class DataImportWorkflows extends MdaaL3Construct {
         DOCUMENTS_TABLE_NAME: props.documentsTable.tableName ?? "",
         DOCUMENTS_BY_COMPOUND_KEY_INDEX_NAME:
           props.documentsByCompountKeyIndexName ?? "",
-        SAGEMAKER_RAG_MODELS_ENDPOINT:
-          props.sageMakerRagModelsEndpoint?.attrEndpointName ?? "",
+        SAGEMAKER_RAG_MODELS_ENDPOINT: "",
         FILE_IMPORT_WORKFLOW_ARN:
           fileImportWorkflow?.stateMachine.stateMachineArn ?? "",
         DEFAULT_KENDRA_S3_DATA_SOURCE_BUCKET_NAME:

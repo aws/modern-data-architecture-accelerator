@@ -40,7 +40,15 @@ describe( 'MDAA Compliance Stack Tests', () => {
                     }
                 ],
             },
+            skipApiGatewayDefaultWaf: false,
+            setApiGateWayAccountCloudwatchRole: true,
+            api:{
+                restApiDomainName: "rest-api-domain",
+                hostedZoneName: "test",
+                socketApiDomainName: "socket-api-domain"
+            },
             bedrock: {
+                roleArn: 'arn:bedrockRole',
                 enabled: true,
                 region: SupportedRegion.US_EAST_1
             },
@@ -48,20 +56,36 @@ describe( 'MDAA Compliance Stack Tests', () => {
                 engines: {
                     aurora: {},
                     kendra: {
-                        createIndex: true
+                        createIndex: true,
+                        external: [
+                            {
+                                kendraId: "index-id",
+                                name: "index-name",
+                                roleArn: "arn:role-arn",
+                            },
+                            {
+                                kendraId: "index-id",
+                                name: "index-name",
+                                region: SupportedRegion.CA_CENTRAL_1,
+                            }
+                        ]
                     },
+                    knowledgeBase: {
+                        external: [
+                            {
+                                kbId: "kb-id",
+                                name: "kb-test",
+                                roleArn: "arn:role-arn",
+                            },
+                                                        {
+                                kbId: "kb-id-2",
+                                name: "kb-test-2",
+                                region: SupportedRegion.CA_CENTRAL_1,
+                            }
+                        ]
+                    }
                 },
                 embeddingsModels: [
-                    {
-                        provider: "sagemaker",
-                        name: "intfloat/multilingual-e5-large",
-                        dimensions: 1024,
-                    },
-                    {
-                        provider: "sagemaker",
-                        name: "sentence-transformers/all-MiniLM-L6-v2",
-                        dimensions: 384
-                    },
                     {
                         provider: "bedrock",
                         name: "amazon.titan-embed-text-v1",
@@ -73,16 +97,13 @@ describe( 'MDAA Compliance Stack Tests', () => {
                         "name": "text-embedding-ada-002",
                         "dimensions": 1536
                     }
-
                 ],
-                crossEncoderModels: [
-                    {
-                        provider: "sagemaker",
-                        name: "cross-encoder/ms-marco-MiniLM-L-12-v2",
-                        isDefault: true
-                    }
-
-                ]
+                crossEncoderModels: []
+            },
+            concurrency:  {
+                restApiConcurrentLambdas: 2,
+                modelInterfaceConcurrentLambdas: 2,
+                websocketConcurrentLambdas: 2
             },
             vpc: {
                 vpcId: "XXXXXXXX",

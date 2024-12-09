@@ -5,7 +5,6 @@ export * from "./types";
 import * as sagemaker from "aws-cdk-lib/aws-sagemaker";
 import { Construct } from "constructs";
 import { deployContainerModel } from "./deploy-container-model";
-import { deployCustomScriptModel } from "./deploy-custom-script-model";
 import { deployPackageModel } from "./deploy-package-model";
 import { DeploymentType, SageMakerModelProps } from "./types";
 
@@ -24,9 +23,6 @@ export class SageMakerModel extends MdaaL3Construct {
       this.endpoint = endpoint;
     } else if (model.type == DeploymentType.ModelPackage) {
       const { endpoint } = deployPackageModel(this, props, model);
-      this.endpoint = endpoint;
-    } else if (model.type == DeploymentType.CustomInferenceScript) {
-      const { endpoint } = deployCustomScriptModel(this, props, model);
       this.endpoint = endpoint;
     } else {
       throw new Error( `Unknown model type`)
