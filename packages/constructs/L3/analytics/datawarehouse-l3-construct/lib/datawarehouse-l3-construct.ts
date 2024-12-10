@@ -514,6 +514,11 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
         stringValue: user.secret.secretName
       } ) // This causes param collision with two warehouses in the same domain
 
+      new StringParameter( user, "ssmsecretarn" + username, {
+        parameterName: this.props.naming.ssmPath( `datawarehouse/secretarn/${ username }`, false ),
+        stringValue: user.secret.secretArn
+      } ) // This causes param collision with two warehouses in the same domain
+
       //Redshift DatabaseSecret construct does not currently set the masterarn on the secret string, 
       //which is required by the multi user rotation function
       const cfnUserSecret = user.secret.node.defaultChild as CfnSecret
