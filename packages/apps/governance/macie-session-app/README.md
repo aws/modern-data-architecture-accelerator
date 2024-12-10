@@ -16,8 +16,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           macie-session: # Module Name can be customized
-            cdk_app: "@aws-caef/macie-session" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/macie-session" # Must match module NPM package name
+            module_configs:
               - ./macie-session.yaml # Filename/path can be customized
 ```
 

@@ -32,8 +32,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           datazone: # Module Name can be customized
-            cdk_app: "@aws-caef/datazone" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/datazone" # Must match module NPM package name
+            module_configs:
               - ./datazone.yaml # Filename/path can be customized
 ```
 

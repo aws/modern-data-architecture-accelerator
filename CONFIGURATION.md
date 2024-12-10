@@ -172,12 +172,12 @@ env_templates:
     # These modules and configs will be deployed for each environment referencing this config.
     modules:
       roles:
-        cdk_app: "@aws-mdaa/roles"
-        app_configs:
+        module_path: "@aws-mdaa/roles"
+        module_configs:
           - ./roles.yaml
       datalake:
-        cdk_app: "@aws-mdaa/datalake"
-        app_configs:
+        module_path: "@aws-mdaa/datalake"
+        module_configs:
           - ./datalake.yaml
 
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
@@ -228,7 +228,7 @@ domains:
             # The CDK App to be executed. An NPM install will be run using this
             # value as the package name--so the package is expected to be available either via 
             # public or private NPM repo. 
-            cdk_app: "@aws-mdaa/glue-catalog"
+            module_path: "@aws-mdaa/glue-catalog"
 
           test_datalake_athena_workgroup:
             # The CDK App can be specified with standard npm version constraint syntax 
@@ -237,16 +237,16 @@ domains:
             # executed in an isolated location to avoid conflicts between modules.
             # This approach overrides any mdaa_version config at the global, domain, env, or module level.
             # Note: any specification of MDAA package version will result in the affected package(s) being installed from NPM instead of being executed from local codebase.
-            cdk_app: "@aws-mdaa/athena-workgroup@>=0.15.0"
+            module_path: "@aws-mdaa/athena-workgroup@>=0.15.0"
             # One or more config files can be specified and will be merged before being fed to the CDK application. 
             # Later-specified config file contents will override earlier-specified configs.
-            app_configs:
+            module_configs:
               - ./shared/athena-workgroup.yaml
             # App config data can also be directly specified in the mdaa.yaml
             # Config data specified in the mdaa.yaml will supercede the contents of the 
             # individual module config files where conflicts occur. Otherwise,
             # all config data will be merged before being parsed by the module/CDK App.
-            app_config_data:
+            module_config_data:
               some_config_key: some_config_value
             tag_configs: # Additional tag configs can be specified at the module level
               - module_tags.yaml
@@ -263,9 +263,9 @@ domains:
         account: default
         modules:
           test_datalake_roles:
-            app_config_data:
+            module_config_data:
               # CDK Nag suppressions can be specified by resource path at the module level.
-              # These can be added to here in app_config_data, or directly in module config files.
+              # These can be added to here in module_config_data, or directly in module config files.
               # Note that certain modules also have resource-specific suppression configs.
               nag_suppressions:
                 by_path:
@@ -273,20 +273,20 @@ domains:
                     suppressions:
                       - id: AwsSolutions-SMG4
                         reason: Example suppression
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./datalake_domain/roles.yaml
 
           test_datalake_buckets:
-            cdk_app: "@aws-mdaa/datalake"
+            module_path: "@aws-mdaa/datalake"
             context:
               anycontext: anyvalue
-            app_configs:
+            module_configs:
               - ./datalake_domain/datalake.yaml
 
           # an example of a module which may deploy resource to additional accounts
           test_datalake_access:
-            cdk_app: "@aws-mdaa/lakeformation-access-control"
+            module_path: "@aws-mdaa/lakeformation-access-control"
             # Each additional account must be listed here
             # If the module attempts to add resources to an account not listed here, then
             # an exception will be thrown.
@@ -296,7 +296,7 @@ domains:
             # and resources may be orphaned.
             additional_accounts:
               - "1232412412"
-            app_configs:
+            module_configs:
               - ./datalake_domain/lakeformation-access-control.yaml
 
   datascience_domain:
@@ -305,18 +305,18 @@ domains:
         account: default
         modules:
           service-catalog:
-            cdk_app: "@aws-mdaa/service-catalog"
-            app_configs:
+            module_path: "@aws-mdaa/service-catalog"
+            module_configs:
               - ./datascience_domain/service-catalog.yaml
           notebook:
-            cdk_app: "@aws-mdaa/sm-notebook"
+            module_path: "@aws-mdaa/sm-notebook"
             # This module will be deployed as a service catalog product in the specified portfolio
             # instead of directly to the account.
             service_catalog_product_config:
               name: Example Notebook Product
               owner: Test Owner
               portfolio_arn: some_portfilio_arn
-            app_configs:
+            module_configs:
               - ./datascience_domain/sm-notebook.yaml
 
   # Exmple of a domain which uses globally templated environments
@@ -341,8 +341,8 @@ domains:
         modules:
           # This env will deploy this module in addition to those defined in the template
           additional-module:
-            cdk_app: "@aws-mdaa/dataops-job"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-job"
+            module_configs:
               - ./dataops/dataops-job.yaml
 
   # This domain uses a domain-specific template for its environments
@@ -352,12 +352,12 @@ domains:
       example_domain_env_template:
         modules:
           roles:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./roles.yaml
           datalake:
-            cdk_app: "@aws-mdaa/datalake"
-            app_configs:
+            module_path: "@aws-mdaa/datalake"
+            module_configs:
               - ./datalake.yaml
     environments:
       # Example of envs that use a domain-specific environment template
@@ -525,16 +525,16 @@ domains:
       dev:
         modules:
           test_datalake:
-            cdk_app: "@aws-mdaa/datalake"
-            app_configs:
+            module_path: "@aws-mdaa/datalake"
+            module_configs:
               - ./shared/datalake.yaml
   domain2:
     environments:
       dev:
         modules:
           test_datalake:
-            cdk_app: "@aws-mdaa/datalake"
-            app_configs:
+            module_path: "@aws-mdaa/datalake"
+            module_configs:
               - ./shared/datalake.yaml
 ```
 
@@ -558,8 +558,8 @@ domains:
       dev:
         modules:
           roles1:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./domain1/roles1.yaml
               - ./shared/roles_base.yaml
   domain2:
@@ -567,8 +567,8 @@ domains:
       dev:
         modules:
           roles2:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./domain2/roles2.yaml
               - ./shared/roles_base.yaml
 ```

@@ -1,5 +1,70 @@
 # Changelog
 
+## 0.43.0
+
+### General Changes
+
+* MDAA CLI will now automatically attempt to find MDAA module packages in locally cloned source code when running from within a cloned repo
+  * Use of the `-l` flag is no longer necessary
+  * When running the CLI from an NPM package, MDAA packages will also be installed and executed from NPM
+  * Any specification of a package version on the `cdk_app`/`module_path` mdaa.yaml module config parameter will trigger package installation from NPM, even when running CLI from source code. For example:
+    * `cdk_app: "@aws-caef/audit@<npm_version>"`
+    * `cdk_app: "@aws-caef/audit@latest"`
+    * `module_path: "@aws-caef/audit@<npm_version>"`
+    * `module_path: "@aws-caef/audit@latest"`
+* (Preview) - Added Terraform support to MDAA CLI. This allows MDAA to orchestrate Terraform modules in addition to the existing CDK-based MDAA Modules.
+  * Requires Terraform CLI to be on the PATH, as well as Pip (for installing Checkov)
+  * Orchestrated Terraform Modules will automatically be scanned by standard Checkov policies
+  * Deprecated `cdk_app` module configuration parameter in mdaa.yaml, replaced with `module_path`
+  * Deprecated `app_configs` module configuration parameter in mdaa.yaml, replaced with `module_configs`
+  * Deprecated `app_config_data` module configuration parameter in mdaa.yaml, replaced with `module_config_data`
+  * Added various Terraform-based implementations of common MDAA modules, managed in a separate Git repo
+* Modified MDAA CLI to write cdk.out to separate paths per module
+  * This resolves a conflict where concurrent MDAA CLI executions would collide
+* Adjusted automatically created resource tags to accurately capture MDAA CDK app name
+  * Backwards compatability can be maintained for specific modules by setting the context value `@aws-mdaa/legacyCdkAppTags` to true
+  * This context value is used only on resources (such as Ec2 Launch Templates) where changing tag values results in resource recreation
+* Bumped to latest CDK Lib version (1.164.1)
+* Removed use of variant package dependency versions
+
+### Data Lake Changes
+
+* (Preview) Added Terraform implementation of Glue Catalog Settings module (in separate MDAA Terraform Repo)
+* (Preview) Added Terraform implementation of S3 Datalake module (in separate MDAA Terraform Repo)
+* (Preview) Added Terraform implementation of Athena module (in separate MDAA Terraform Repo)
+
+### Data Science/AI/ML Changes
+
+* (Preview) Added Bedrock Builder module, with initial support for Bedrock Agents
+* GAIA
+  * Changed to cheaper default instance type for SageMaker endpoints 
+  * Added ability to invoke Bedrock Agents
+  * Added support for interacting with Bedrock Knowledge Bases
+  * Assorted bug fixes and security enhancements
+  * Refactor Bedrock adapter to be based on Converse API
+  * Added additional code override configurations
+* (Preview) Added Terraform implementation of Data Science Team module (in separate MDAA Terraform Repo)
+
+### DataOps Changes
+
+* Added sample DataOps Blueprints under `./sample_blueprints` 
+  * These are sample DataOps module configurations which can be added to existing MDAA deployments for common DataOps tasks such as:
+    * Basic Glue Crawler
+    * Glue ETL Workflow from S3 into Redshift
+    * Cron-Schedued Glue ETL job to transform CSV into Parquet
+    * EventBridger-triggered Lambda ETL function to transform small CSV into Parquet
+    * DataOps orchestration via Step Functions
+* (Preview) Added Terraform implementation of Glue Crawler module (in separate MDAA Terraform Repo)
+* (Preview) Added Terraform implementation of Glue ETL module (in separate MDAA Terraform Repo)
+* (Preview) Added Terraform implementation of Glue Project module (in separate MDAA Terraform Repo)
+* (Preview) Added Terraform implementation of Glue Workflow module (in separate MDAA Terraform Repo)
+
+### Analytics Changes
+
+* DataWarehouse - Added ability for Redshift clusters to be created from an existing Snapshot
+* DataWarehouse - Added config param `redshiftManageMasterPassword` to push Admin credentials management into Redshift service
+
+
 ## 0.42.0
 
 ### General Changes

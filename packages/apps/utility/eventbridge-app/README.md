@@ -20,8 +20,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           eventbridge: # Module Name can be customized
-            cdk_app: "@aws-caef/eventbridge" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/eventbridge" # Must match module NPM package name
+            module_configs:
               - ./eventbridge.yaml # Filename/path can be customized
 ```
 

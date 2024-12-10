@@ -27,8 +27,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           lakeformation-access-control: # Module Name can be customized
-            cdk_app: "@aws-caef/lakeformation-access-control" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/lakeformation-access-control" # Must match module NPM package name
+            module_configs:
               - ./lakeformation-access-control.yaml # Filename/path can be customized
 ```
 

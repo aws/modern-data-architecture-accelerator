@@ -18,8 +18,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           audit-trail: # Module Name can be customized
-            cdk_app: "@aws-caef/audit-trail" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/audit-trail" # Must match module NPM package name
+            module_configs:
               - ./audit-trail.yaml # Filename/path can be customized
 ```
 

@@ -24,8 +24,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           lakeformation-settings: # Module Name can be customized
-            cdk_app: "@aws-caef/lakeformation-settings" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/lakeformation-settings" # Must match module NPM package name
+            module_configs:
               - ./lakeformation-settings.yaml # Filename/path can be customized
 ```
 

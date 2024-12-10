@@ -28,8 +28,8 @@ domains:
         modules:
           # An AI module that will deploy a GenAI accelerator set of backend pieces
           backend:
-            cdk_app: "@aws-mdaa/gaia"
-            app_configs:
+            module_path: "@aws-mdaa/gaia"
+            module_configs:
               - ./config/app.yaml
 
       # The environment name will be incorporated into resource name by the default naming implementation.
@@ -43,8 +43,8 @@ domains:
         modules:
           # An AI module that will deploy a GenAI accelerator set of backend pieces
           backend:
-            cdk_app: "@aws-mdaa/gaia"
-            app_configs:
+            module_path: "@aws-mdaa/gaia"
+            module_configs:
               - ./config/app.yaml
 
  
@@ -59,6 +59,6 @@ domains:
         modules:
           # An AI module that will deploy a GenAI accelerator set of backend pieces
           backend:
-            cdk_app: "@aws-mdaa/gaia"
-            app_configs:
+            module_path: "@aws-mdaa/gaia"
+            module_configs:
               - ./config/app.yaml

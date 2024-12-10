@@ -20,7 +20,7 @@ import { MdaaConfigRefValueTransformer, MdaaConfigRefValueTransformerProps } fro
 
 export interface NamedSecurityGroupProps {
   /** @jsii ignore */
-  readonly [ name: string ]: SecurityGroupProps
+  readonly [name: string]: SecurityGroupProps
 }
 
 export interface SecurityGroupProps {
@@ -46,12 +46,12 @@ export interface KeyPairProps {
 }
 export interface NamedKeyPairProps {
   /** @jsii ignore */
-  readonly [ name: string ]: KeyPairProps
+  readonly [name: string]: KeyPairProps
 }
 
 export interface NamedInitProps {
   /** @jsii ignore */
-  readonly [ name: string ]: InitProps
+  readonly [name: string]: InitProps
 }
 
 export interface InitProps {
@@ -68,7 +68,7 @@ export interface InitProps {
 
 export interface NamedConfigSetsProps {
   /** @jsii ignore */
-  readonly [ name: string ]: ConfigSetsProps
+  readonly [name: string]: ConfigSetsProps
 }
 
 export interface ConfigSetsProps {
@@ -77,7 +77,7 @@ export interface ConfigSetsProps {
 
 export interface NamedConfigProps {
   /** @jsii ignore */
-  readonly [ name: string ]: ConfigProps
+  readonly [name: string]: ConfigProps
 }
 
 export interface ConfigProps {
@@ -125,7 +125,7 @@ export interface NamedPackageProps {
     * key could be any string, and is just a reference, not used for package itself.
     */
   /** @jsii ignore */
-  readonly [ name: string ]: PackageProps
+  readonly [name: string]: PackageProps
 }
 
 export interface PackageProps {
@@ -161,7 +161,7 @@ export interface PackageProps {
 
 export interface NamedGroupProps {
   /** @jsii ignore */
-  readonly [ name: string ]: GroupProps
+  readonly [name: string]: GroupProps
 }
 
 export interface GroupProps {
@@ -176,7 +176,7 @@ export interface GroupProps {
 
 export interface NamedUserProps {
   /** @jsii ignore */
-  readonly [ name: string ]: UserProps
+  readonly [name: string]: UserProps
 }
 
 export interface UserProps {
@@ -201,7 +201,7 @@ export interface NamedSourceProps {
    * Key is the directory where sources file needs to be stored.
    */
   /** @jsii ignore */
-  readonly [ name: string ]: SourceProps
+  readonly [name: string]: SourceProps
 }
 
 export interface SourceProps {
@@ -216,7 +216,7 @@ export interface NamedFileProps {
    * Key is the directory where sources file needs to be stored.
    */
   /** @jsii ignore */
-  readonly [ name: string ]: FileProps
+  readonly [name: string]: FileProps
 }
 
 export interface FileProps {
@@ -236,7 +236,7 @@ export interface NamedCommandProps {
    * Commands are executed in lexicographical order of their key names.
    */
   /** @jsii ignore */
-  readonly [ name: string ]: CommandProps
+  readonly [name: string]: CommandProps
 }
 
 export interface CommandProps {
@@ -294,7 +294,7 @@ export interface CommandProps {
 
 export interface NamedEnvProps {
   /** @jsii ignore */
-  readonly [ name: string ]: string
+  readonly [name: string]: string
 }
 
 export interface NamedServiceProps {
@@ -305,7 +305,7 @@ export interface NamedServiceProps {
    * https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-service?view=powershell-7.3
    */
   /** @jsii ignore */
-  readonly [ name: string ]: ServiceProps
+  readonly [name: string]: ServiceProps
 }
 
 export interface ServiceProps {
@@ -401,7 +401,7 @@ export interface InitOptionsProps {
 
 export interface NamedInstanceProps {
   /** @jsii ignore */
-  readonly [ name: string ]: InstanceProps
+  readonly [name: string]: InstanceProps
 }
 
 export interface InstanceProps {
@@ -527,7 +527,7 @@ export interface Ec2L3ConstructProps extends MdaaL3ConstructProps {
 export class Ec2L3Construct extends MdaaL3Construct {
   protected readonly props: Ec2L3ConstructProps
 
-  private static osTypeMap: { [ key: string ]: OperatingSystemType } = {
+  private static osTypeMap: { [key: string]: OperatingSystemType } = {
     'linux': OperatingSystemType.LINUX,
     'windows': OperatingSystemType.WINDOWS,
     'unknown': OperatingSystemType.UNKNOWN
@@ -538,87 +538,86 @@ export class Ec2L3Construct extends MdaaL3Construct {
 
   initServiceRestartHandle = new InitServiceRestartHandle();
 
-  public readonly keyPairs: { [ key: string ]: MdaaEC2SecretKeyPair } = {}
-  public readonly securityGroups: { [ key: string ]: MdaaSecurityGroup } = {}
-  public readonly instances: { [ key: string ]: Instance } = {}
-  public readonly cfnInit: { [ key: string ]: CloudFormationInit } = {}
-  constructor( scope: Construct, id: string, props: Ec2L3ConstructProps ) {
-    super( scope, id, props )
+  public readonly keyPairs: { [key: string]: MdaaEC2SecretKeyPair } = {}
+  public readonly securityGroups: { [key: string]: MdaaSecurityGroup } = {}
+  public readonly instances: { [key: string]: Instance } = {}
+  public readonly cfnInit: { [key: string]: CloudFormationInit } = {}
+  constructor(scope: Construct, id: string, props: Ec2L3ConstructProps) {
+    super(scope, id, props)
     this.props = props
 
-    this.adminRoles = props.roleHelper.resolveRoleRefsWithOrdinals( props.adminRoles, "admin" )
+    this.adminRoles = props.roleHelper.resolveRoleRefsWithOrdinals(props.adminRoles, "admin")
 
-    this.createKeyPairs( props.keyPairs || {} )
-    this.createSecurityGroups( props.securityGroups || {} )
-    this.cfnInit = this.createInit( props.cfnInit || {} )
-    this.createInstances( props.instances || {} )
-
+    this.createKeyPairs(props.keyPairs || {})
+    this.createSecurityGroups(props.securityGroups || {})
+    this.cfnInit = this.createInit(props.cfnInit || {})
+    this.createInstances(props.instances || {})
   }
 
-  private createKeyPairs ( namedKeyPairProps: NamedKeyPairProps ) {
-    Object.entries( namedKeyPairProps ).forEach( entry => {
-      const keyPairName = entry[ 0 ]
-      const keyPairProps = entry[ 1 ]
-      const kmsKey = keyPairProps.kmsKeyArn ? Key.fromKeyArn( this, `kms-keypair-${ keyPairName }`, keyPairProps.kmsKeyArn ) : this.getKmsKey()
+  private createKeyPairs(namedKeyPairProps: NamedKeyPairProps) {
+    Object.entries(namedKeyPairProps).forEach(entry => {
+      const keyPairName = entry[0]
+      const keyPairProps = entry[1]
+      const kmsKey = keyPairProps.kmsKeyArn ? Key.fromKeyArn(this, `kms-keypair-${keyPairName}`, keyPairProps.kmsKeyArn) : this.getKmsKey()
       const createKeyPairProps: MdaaEC2SecretKeyPairProps = {
         name: keyPairName,
         kmsKey: kmsKey,
         naming: this.props.naming,
-        readPrincipals: this.adminRoles.map( x => new ArnPrincipal( x.arn() ) )
+        readPrincipals: this.adminRoles.map(x => new ArnPrincipal(x.arn()))
       }
-      this.keyPairs[ keyPairName ] = new MdaaEC2SecretKeyPair( this, `key-pair-${ keyPairName }`, createKeyPairProps )
-    } )
+      this.keyPairs[keyPairName] = new MdaaEC2SecretKeyPair(this, `key-pair-${keyPairName}`, createKeyPairProps)
+    })
   }
 
 
-  private createConfigSet ( namedConfigSetsProps: NamedConfigSetsProps ) {
+  private createConfigSet(namedConfigSetsProps: NamedConfigSetsProps) {
     /** @jsii ignore */
-    const configSetMap: { [ name: string ]: string[] } = {}
-    Object.entries( namedConfigSetsProps ).forEach( entry => {
+    const configSetMap: { [name: string]: string[] } = {}
+    Object.entries(namedConfigSetsProps).forEach(entry => {
 
-      const configSetName = entry[ 0 ]
-      const configSetProps = entry[ 1 ]
-      configSetMap[ configSetName ] = configSetProps.configs
-    } )
+      const configSetName = entry[0]
+      const configSetProps = entry[1]
+      configSetMap[configSetName] = configSetProps.configs
+    })
     return configSetMap
   }
 
 
-  private createConfig ( namedConfigProps: NamedConfigProps ) {
+  private createConfig(namedConfigProps: NamedConfigProps) {
     /** @jsii ignore */
-    const configMap: { [ name: string ]: InitConfig } = {}
-    Object.entries( namedConfigProps ).forEach( entry => {
+    const configMap: { [name: string]: InitConfig } = {}
+    Object.entries(namedConfigProps).forEach(entry => {
 
-      const configName = entry[ 0 ]
-      const configProps = entry[ 1 ]
+      const configName = entry[0]
+      const configProps = entry[1]
       const configList: InitElement[] = []
-      if ( configProps.packages ) {
-        configList.push( ...this.createPackages( configProps.packages ) )
+      if (configProps.packages) {
+        configList.push(...this.createPackages(configProps.packages))
       }
-      if ( configProps.commands ) {
-        configList.push( ...this.createCommands( configProps.commands ) )
+      if (configProps.commands) {
+        configList.push(...this.createCommands(configProps.commands))
       }
-      if ( configProps.files ) {
-        configList.push( ...this.createFiles( configProps.files ) )
+      if (configProps.files) {
+        configList.push(...this.createFiles(configProps.files))
       }
-      if ( configProps.services ) {
-        configList.push( ...this.createServices( configProps.services ) )
+      if (configProps.services) {
+        configList.push(...this.createServices(configProps.services))
       }
-      configMap[ configName ] = new InitConfig( configList )
-    } )
+      configMap[configName] = new InitConfig(configList)
+    })
     return configMap
   }
 
-  private createPackages ( namedPackageProps: NamedPackageProps ) {
+  private createPackages(namedPackageProps: NamedPackageProps) {
     const packageList: InitElement[] = []
-    Object.entries( namedPackageProps ).forEach( entry => {
+    Object.entries(namedPackageProps).forEach(entry => {
 
-      const packageProps = entry[ 1 ]
+      const packageProps = entry[1]
 
       const namedPackageOptions: NamedPackageOptions = packageProps.restartRequired
         ?
         {
-          serviceRestartHandles: [ this.initServiceRestartHandle ],
+          serviceRestartHandles: [this.initServiceRestartHandle],
           version: packageProps.packageVersions,
         }
         : {
@@ -627,57 +626,57 @@ export class Ec2L3Construct extends MdaaL3Construct {
       const locationPackageOptions: LocationPackageOptions = packageProps.restartRequired
         ?
         {
-          serviceRestartHandles: [ this.initServiceRestartHandle ],
+          serviceRestartHandles: [this.initServiceRestartHandle],
           key: packageProps.key
         }
         : {
           key: packageProps.key
         }
-      if ( packageProps.packageManager == 'yum' ) {
-        packageList.push( InitPackage.yum( packageProps.packageName!, namedPackageOptions ) )
+      if (packageProps.packageManager == 'yum') {
+        packageList.push(InitPackage.yum(packageProps.packageName!, namedPackageOptions))
       }
-      if ( packageProps.packageManager == 'apt' ) {
-        packageList.push( InitPackage.apt( packageProps.packageName!, namedPackageOptions ) )
+      if (packageProps.packageManager == 'apt') {
+        packageList.push(InitPackage.apt(packageProps.packageName!, namedPackageOptions))
       }
-      if ( packageProps.packageManager == 'python' ) {
-        packageList.push( InitPackage.python( packageProps.packageName!, namedPackageOptions ) )
+      if (packageProps.packageManager == 'python') {
+        packageList.push(InitPackage.python(packageProps.packageName!, namedPackageOptions))
       }
-      if ( packageProps.packageManager == 'rubyGem' ) {
-        packageList.push( InitPackage.rubyGem( packageProps.packageName!, namedPackageOptions ) )
+      if (packageProps.packageManager == 'rubyGem') {
+        packageList.push(InitPackage.rubyGem(packageProps.packageName!, namedPackageOptions))
       }
-      if ( packageProps.packageManager == 'msi' ) {
-        packageList.push( InitPackage.msi( packageProps.packageLocation!, locationPackageOptions ) )
+      if (packageProps.packageManager == 'msi') {
+        packageList.push(InitPackage.msi(packageProps.packageLocation!, locationPackageOptions))
       }
-      if ( packageProps.packageManager == 'rpm' ) {
-        packageList.push( InitPackage.rpm( packageProps.packageLocation!, locationPackageOptions ) )
+      if (packageProps.packageManager == 'rpm') {
+        packageList.push(InitPackage.rpm(packageProps.packageLocation!, locationPackageOptions))
       }
-    } )
+    })
     return packageList
   }
 
 
-  private toWaitOrNotToWait ( duration?: Duration, waitForever?: boolean, waitNone?: boolean ) {
-    if ( duration )
-      return InitCommandWaitDuration.of( duration )
-    if ( waitForever )
+  private toWaitOrNotToWait(duration?: Duration, waitForever?: boolean, waitNone?: boolean) {
+    if (duration)
+      return InitCommandWaitDuration.of(duration)
+    if (waitForever)
       return InitCommandWaitDuration.forever()
-    if ( waitNone )
+    if (waitNone)
       return InitCommandWaitDuration.none()
     else {
       return undefined
     }
   }
 
-  private createCommands ( namedCommandProps: NamedCommandProps ) {
+  private createCommands(namedCommandProps: NamedCommandProps) {
     const commandList: InitElement[] = []
-    Object.entries( namedCommandProps ).forEach( entry => {
-      const commandKey = entry[ 0 ]
-      const commandProps = entry[ 1 ]
+    Object.entries(namedCommandProps).forEach(entry => {
+      const commandKey = entry[0]
+      const commandProps = entry[1]
       const duration = commandProps.waitAfterCompletion
-        ? Duration.minutes( commandProps.waitAfterCompletion )
+        ? Duration.minutes(commandProps.waitAfterCompletion)
         : undefined
 
-      const waitAfterCompletion = this.toWaitOrNotToWait( duration, commandProps.waitForever, commandProps.waitNone )
+      const waitAfterCompletion = this.toWaitOrNotToWait(duration, commandProps.waitForever, commandProps.waitNone)
 
       const commandOptions: InitCommandOptions =
       {
@@ -687,28 +686,28 @@ export class Ec2L3Construct extends MdaaL3Construct {
         key: commandKey,
         serviceRestartHandles: commandProps.restartRequired
           ?
-          [ this.initServiceRestartHandle ]
+          [this.initServiceRestartHandle]
           : undefined,
         testCmd: commandProps.testCommand,
         waitAfterCompletion: waitAfterCompletion,
       }
 
-      if ( commandProps.shellCommand ) {
-        commandList.push( InitCommand.shellCommand( commandProps.shellCommand, commandOptions ) )
+      if (commandProps.shellCommand) {
+        commandList.push(InitCommand.shellCommand(commandProps.shellCommand, commandOptions))
       }
-      if ( commandProps.argvs ) {
-        commandList.push( InitCommand.argvCommand( commandProps.argvs, commandOptions ) )
+      if (commandProps.argvs) {
+        commandList.push(InitCommand.argvCommand(commandProps.argvs, commandOptions))
       }
-    } )
+    })
     return commandList
   }
 
 
-  private createFiles ( namedFileProps: NamedFileProps ) {
+  private createFiles(namedFileProps: NamedFileProps) {
     const fileList: InitElement[] = []
-    Object.entries( namedFileProps ).forEach( entry => {
-      const fileName = entry[ 0 ]
-      const fileProps = entry[ 1 ]
+    Object.entries(namedFileProps).forEach(entry => {
+      const fileName = entry[0]
+      const fileProps = entry[1]
 
       const initFileOptions: InitFileOptions =
       {
@@ -718,7 +717,7 @@ export class Ec2L3Construct extends MdaaL3Construct {
         //   owner: fileProps,
         serviceRestartHandles: fileProps.restartRequired
           ?
-          [ this.initServiceRestartHandle ]
+          [this.initServiceRestartHandle]
           : undefined,
       }
 
@@ -726,17 +725,17 @@ export class Ec2L3Construct extends MdaaL3Construct {
       // fromAsset creates a construct to store file in s3 with id `${targetFileName}Asset`. 
       // Thus if more than one instance using the same target file name in stack, it will cause name collision.
       //Open Issue: https://github.com/aws/aws-cdk/issues/16891
-      fileList.push( InitFile.fromFileInline( fileName, fileProps.filePath, initFileOptions ) )
-    } )
+      fileList.push(InitFile.fromFileInline(fileName, fileProps.filePath, initFileOptions))
+    })
     return fileList;
   }
 
 
-  private createServices ( namedServiceProps: NamedServiceProps ) {
+  private createServices(namedServiceProps: NamedServiceProps) {
     const serviceList: InitElement[] = []
-    Object.entries( namedServiceProps ).forEach( entry => {
-      const serviceName = entry[ 0 ]
-      const serviceProps = entry[ 1 ]
+    Object.entries(namedServiceProps).forEach(entry => {
+      const serviceName = entry[0]
+      const serviceProps = entry[1]
 
       const serviceInitOptions: InitServiceOptions =
       {
@@ -747,84 +746,84 @@ export class Ec2L3Construct extends MdaaL3Construct {
           this.initServiceRestartHandle
           : undefined,
       }
-      if ( serviceProps.enabled ) {
-        serviceList.push( InitService.enable( serviceName, serviceInitOptions ) )
+      if (serviceProps.enabled) {
+        serviceList.push(InitService.enable(serviceName, serviceInitOptions))
       }
-      if ( serviceProps.disabled ) {
-        serviceList.push( InitService.disable( serviceName ) )
+      if (serviceProps.disabled) {
+        serviceList.push(InitService.disable(serviceName))
       }
-    } )
+    })
     return serviceList
   }
 
-  private createInit ( namedInitProps: NamedInitProps ) {
+  private createInit(namedInitProps: NamedInitProps) {
     /** @jsii ignore */
-    const initMap: { [ name: string ]: CloudFormationInit } = {}
-    Object.entries( namedInitProps ).forEach( entry => {
+    const initMap: { [name: string]: CloudFormationInit } = {}
+    Object.entries(namedInitProps).forEach(entry => {
 
-      const initName = entry[ 0 ]
-      const initProps = entry[ 1 ]
-
-
-      const configMap = this.createConfig( initProps.configs )
+      const initName = entry[0]
+      const initProps = entry[1]
 
 
-      const configSetMap = this.createConfigSet( initProps.configSets )
+      const configMap = this.createConfig(initProps.configs)
+
+
+      const configSetMap = this.createConfigSet(initProps.configSets)
 
       const cfnconfigSets: ConfigSetProps = {
         configSets: configSetMap,
         configs: configMap
       }
 
-      const cfnInit = CloudFormationInit.fromConfigSets( cfnconfigSets )
+      const cfnInit = CloudFormationInit.fromConfigSets(cfnconfigSets)
 
-      initMap[ initName ] = cfnInit
-    } )
+      initMap[initName] = cfnInit
+    })
     return initMap
   }
 
-  private createInstances ( namedInstanceProps: NamedInstanceProps ) {
-    Object.entries( namedInstanceProps ).forEach( entry => {
+  private createInstances(namedInstanceProps: NamedInstanceProps) {
+    Object.entries(namedInstanceProps).forEach(entry => {
 
-      const instanceName = entry[ 0 ]
-      const instanceProps = entry[ 1 ]
+      const instanceName = entry[0]
+      const instanceProps = entry[1]
 
-      const resolvedInstanceRole = this.props.roleHelper.resolveRoleRefWithRefId( instanceProps.instanceRole, "instanceRole" )
+      const resolvedInstanceRole = this.props.roleHelper.resolveRoleRefWithRefId(instanceProps.instanceRole, "instanceRole")
       const roleArn = resolvedInstanceRole.arn()
-      const instanceRole = MdaaRole.fromRoleArn( this, 'role for' + instanceName, roleArn )
+      const instanceRole = MdaaRole.fromRoleArn(this, 'role for' + instanceName, roleArn)
 
       const kmsKey = instanceProps.kmsKeyArn
-        ? MdaaKmsKey.fromKeyArn( this, 'key for' + instanceName, instanceProps.kmsKeyArn )
+        ? MdaaKmsKey.fromKeyArn(this, 'key for' + instanceName, instanceProps.kmsKeyArn)
         : this.getKmsKey()
 
-      if ( !instanceProps.kmsKeyArn ) {
-        this.addRoleToKmsKey( roleArn )
+      if (!instanceProps.kmsKeyArn) {
+        this.addRoleToKmsKey(roleArn)
       }
 
-      const machineImage: IMachineImage = this.getMachineImage( instanceProps )
+      const machineImage: IMachineImage = this.getMachineImage(instanceProps)
 
-      const vpc = Vpc.fromVpcAttributes( this, 'vpc of' + instanceName, {
-        availabilityZones: [ "dummy" ],
+      const vpc = Vpc.fromVpcAttributes(this, 'vpc of' + instanceName, {
+        availabilityZones: ["dummy"],
         vpcId: instanceProps.vpcId,
-      } );
+      });
 
-      const instanceType = new InstanceType( instanceProps.instanceType )
-      const instanceSubnet = Subnet.fromSubnetAttributes( this, 'Subnet for' + instanceName, {
+      const instanceType = new InstanceType(instanceProps.instanceType)
+      const instanceSubnet = Subnet.fromSubnetAttributes(this, 'Subnet for' + instanceName, {
         subnetId: instanceProps.subnetId,
         availabilityZone: instanceProps.availabilityZone
-      } );
+      });
 
-      const securityGroup = this.getInstanceSecurityGroup( instanceName, instanceProps )
+      const securityGroup = this.getInstanceSecurityGroup(instanceName, instanceProps)
 
-      const keyPairName = this.getInstanceKeyPairName( instanceProps )
+      const keyPairName = this.getInstanceKeyPairName(instanceProps)
 
 
       const cfnInitNew = instanceProps.initName
-        ? this.cfnInit[ instanceProps.initName ]
+        ? this.cfnInit[instanceProps.initName]
         : undefined
 
       const initDuration = instanceProps.initOptions?.timeout
-        ? Duration.minutes( instanceProps.initOptions.timeout )
+        ? Duration.minutes(instanceProps.initOptions.timeout)
         : undefined
 
       const initOptions: ApplyCloudFormationInitOptions | undefined = instanceProps.initOptions
@@ -856,9 +855,9 @@ export class Ec2L3Construct extends MdaaL3Construct {
         keyName: keyPairName,
         naming: this.props.naming
       }
-      this.instances[ instanceName ] = new MdaaEC2Instance( this, instanceName + "instance", createInstanceProps )
+      this.instances[instanceName] = new MdaaEC2Instance(this, instanceName + "instance", createInstanceProps)
       NagSuppressions.addResourceSuppressions(
-        this.instances[ instanceName ].role,
+        this.instances[instanceName].role,
         [
           { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Adding cfn init adds inline policy to instance role to describe stack' },
           { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Adding cfn init adds inline policy to instance role to describe stack' },
@@ -866,8 +865,8 @@ export class Ec2L3Construct extends MdaaL3Construct {
         ],
         true
       );
-      const cfnInstance = this.instances[ instanceName ].node.defaultChild as CfnInstance;
-      if ( instanceProps.signalCount || instanceProps.creationTimeOut ) {
+      const cfnInstance = this.instances[instanceName].node.defaultChild as CfnInstance;
+      if (instanceProps.signalCount || instanceProps.creationTimeOut) {
         cfnInstance.cfnOptions.creationPolicy = {
           resourceSignal: {
             count: instanceProps.signalCount,
@@ -875,30 +874,30 @@ export class Ec2L3Construct extends MdaaL3Construct {
           }
         };
       }
-    } )
+    })
   }
 
-  private getMachineImage ( instanceProps: InstanceProps ): IMachineImage {
-    const osType = Ec2L3Construct.osTypeMap[ instanceProps.osType ]
+  private getMachineImage(instanceProps: InstanceProps): IMachineImage {
+    const osType = Ec2L3Construct.osTypeMap[instanceProps.osType]
 
     const userDataScript = instanceProps.userDataScriptPath
-      ? readFileSync( instanceProps.userDataScriptPath, 'utf8' )
+      ? readFileSync(instanceProps.userDataScriptPath, 'utf8')
       : undefined
 
     const configRefValueTranformerProps: MdaaConfigRefValueTransformerProps = {
-      org: this.node.tryGetContext( 'org' ),
-      domain: this.node.tryGetContext( 'domain' ),
-      env: this.node.tryGetContext( 'env' ),
-      module_name: this.node.tryGetContext( 'module_name' ),
+      org: this.node.tryGetContext('org'),
+      domain: this.node.tryGetContext('domain'),
+      env: this.node.tryGetContext('env'),
+      module_name: this.node.tryGetContext('module_name'),
       scope: this
     }
-    const transformedUserDataScript = userDataScript ? new MdaaConfigRefValueTransformer( configRefValueTranformerProps ).transformValue( userDataScript ) : undefined
+    const transformedUserDataScript = userDataScript ? new MdaaConfigRefValueTransformer(configRefValueTranformerProps).transformValue(userDataScript) : undefined
 
     return {
       getImage: function (): MachineImageConfig {
-        const userData: UserData = UserData.forOperatingSystem( osType )
-        if ( transformedUserDataScript ) {
-          userData.addCommands( transformedUserDataScript.toString() )
+        const userData: UserData = UserData.forOperatingSystem(osType)
+        if (transformedUserDataScript) {
+          userData.addCommands(transformedUserDataScript.toString())
         }
         const imageConfig: MachineImageConfig = {
           imageId: instanceProps.amiId,
@@ -910,54 +909,54 @@ export class Ec2L3Construct extends MdaaL3Construct {
     }
   }
 
-  private getInstanceKeyPairName ( instanceProps: InstanceProps ): string | undefined {
+  private getInstanceKeyPairName(instanceProps: InstanceProps): string | undefined {
 
-    if ( instanceProps.keyPairName && instanceProps.existingKeyPairName ) {
-      throw new Error( "At most one of keyPairName or existingKeyPairName must be specified" )
-    } else if ( instanceProps.keyPairName ) {
-      const keyPairName = this.keyPairs[ instanceProps.keyPairName ].name
-      if ( !keyPairName ) {
-        throw new Error( `Non-existent key pair name specified: ${ instanceProps.keyPairName }` )
+    if (instanceProps.keyPairName && instanceProps.existingKeyPairName) {
+      throw new Error("At most one of keyPairName or existingKeyPairName must be specified")
+    } else if (instanceProps.keyPairName) {
+      const keyPairName = this.keyPairs[instanceProps.keyPairName].name
+      if (!keyPairName) {
+        throw new Error(`Non-existent key pair name specified: ${instanceProps.keyPairName}`)
       }
       return keyPairName
-    } else if ( instanceProps.existingKeyPairName ) {
+    } else if (instanceProps.existingKeyPairName) {
       return instanceProps.existingKeyPairName
     }
     return undefined
 
   }
 
-  private getInstanceSecurityGroup ( instanceName: string, instanceProps: InstanceProps ): ISecurityGroup {
+  private getInstanceSecurityGroup(instanceName: string, instanceProps: InstanceProps): ISecurityGroup {
 
-    if ( ( !instanceProps.securityGroup && !instanceProps.securityGroupId ) || ( instanceProps.securityGroup && instanceProps.securityGroupId ) ) {
-      throw new Error( "Exactly one of securityGroup or securityGroupId must be specified" )
+    if ((!instanceProps.securityGroup && !instanceProps.securityGroupId) || (instanceProps.securityGroup && instanceProps.securityGroupId)) {
+      throw new Error("Exactly one of securityGroup or securityGroupId must be specified")
     } else {
-      if ( instanceProps.securityGroup ) {
-        const sg = this.securityGroups[ instanceProps.securityGroup ]
-        if ( !sg ) {
-          throw new Error( `Security Group ${ instanceProps.securityGroup } is not known to this module.` )
+      if (instanceProps.securityGroup) {
+        const sg = this.securityGroups[instanceProps.securityGroup]
+        if (!sg) {
+          throw new Error(`Security Group ${instanceProps.securityGroup} is not known to this module.`)
         }
         return sg
       } else {
-        return SecurityGroup.fromSecurityGroupId( this, 'SG for' + instanceName, instanceProps.securityGroupId || "" )
+        return SecurityGroup.fromSecurityGroupId(this, 'SG for' + instanceName, instanceProps.securityGroupId || "")
       }
     }
   }
 
-  private createSecurityGroups ( securityGroups: NamedSecurityGroupProps ) {
-    Object.entries( securityGroups ).forEach( entry => {
+  private createSecurityGroups(securityGroups: NamedSecurityGroupProps) {
+    Object.entries(securityGroups).forEach(entry => {
 
-      const securityGroupName = entry[ 0 ]
-      const securityGroupProps = entry[ 1 ]
+      const securityGroupName = entry[0]
+      const securityGroupProps = entry[1]
 
-      const vpc = Vpc.fromVpcAttributes( this, 'vpc of' + securityGroupName, {
-        availabilityZones: [ "dummy" ],
+      const vpc = Vpc.fromVpcAttributes(this, 'vpc of' + securityGroupName, {
+        availabilityZones: ["dummy"],
         vpcId: securityGroupProps.vpcId,
-      } );
+      });
 
-      const customEgress: boolean = ( securityGroupProps.egressRules?.ipv4 && securityGroupProps.egressRules?.ipv4.length > 0 ) ||
-        ( securityGroupProps.egressRules?.prefixList && securityGroupProps.egressRules?.prefixList.length > 0 ) ||
-        ( securityGroupProps.egressRules?.sg && securityGroupProps.egressRules?.sg.length > 0 ) || false
+      const customEgress: boolean = (securityGroupProps.egressRules?.ipv4 && securityGroupProps.egressRules?.ipv4.length > 0) ||
+        (securityGroupProps.egressRules?.prefixList && securityGroupProps.egressRules?.prefixList.length > 0) ||
+        (securityGroupProps.egressRules?.sg && securityGroupProps.egressRules?.sg.length > 0) || false
 
       const securityGroupCreateProps: MdaaSecurityGroupProps = {
         securityGroupName: securityGroupName,
@@ -969,27 +968,27 @@ export class Ec2L3Construct extends MdaaL3Construct {
         addSelfReferenceRule: securityGroupProps.addSelfReferenceRule
       }
 
-      const securityGroup = new MdaaSecurityGroup( this, securityGroupName, securityGroupCreateProps )
-      this.securityGroups[ securityGroupName ] = securityGroup
-    } )
+      const securityGroup = new MdaaSecurityGroup(this, securityGroupName, securityGroupCreateProps)
+      this.securityGroups[securityGroupName] = securityGroup
+    })
   }
 
-  private getKmsKey (): IKey {
-    const kmsKey = this.kmsKey ? this.kmsKey : new MdaaKmsKey( this, 'kms-key', {
+  private getKmsKey(): IKey {
+    const kmsKey = this.kmsKey ? this.kmsKey : new MdaaKmsKey(this, 'kms-key', {
       naming: this.props.naming,
-      keyAdminRoleIds: this.adminRoles.map( x => x.id() ),
-      keyUserRoleIds: this.adminRoles.map( x => x.id() )
-    } )
+      keyAdminRoleIds: this.adminRoles.map(x => x.id()),
+      keyUserRoleIds: this.adminRoles.map(x => x.id())
+    })
     this.kmsKey = kmsKey
     return kmsKey
   }
 
-  private addRoleToKmsKey ( roleArn: string ) {
+  private addRoleToKmsKey(roleArn: string) {
     // Allow execution role to use the key
-    const kmsEncryptDecryptPolicy = new PolicyStatement( {
+    const kmsEncryptDecryptPolicy = new PolicyStatement({
       effect: Effect.ALLOW,
       // Use of * mirrors what is done in the CDK methods for adding policy helpers.
-      resources: [ '*' ],
+      resources: ['*'],
       actions: [
         ...DECRYPT_ACTIONS,
         ...ENCRYPT_ACTIONS,
@@ -998,8 +997,8 @@ export class Ec2L3Construct extends MdaaL3Construct {
         "kms:DescribeKey",
         "kms:ListAliases"
       ]
-    } )
-    kmsEncryptDecryptPolicy.addArnPrincipal( roleArn )
-    this.getKmsKey().addToResourcePolicy( kmsEncryptDecryptPolicy )
+    })
+    kmsEncryptDecryptPolicy.addArnPrincipal(roleArn)
+    this.getKmsKey().addToResourcePolicy(kmsEncryptDecryptPolicy)
   }
 }
