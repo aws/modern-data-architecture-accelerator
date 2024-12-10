@@ -31,23 +31,23 @@ env_templates:
     modules:
       roles:
         module_path: "@aws-mdaa/roles"
-        app_configs:
+        module_configs:
           - ./roles.yaml
       datalake:
         module_path: "@aws-mdaa/datalake"
-        app_configs:
+        module_configs:
           - ./datalake.yaml
       athena-workgroup:
         module_path: "@aws-mdaa/athena-workgroup"
-        app_configs:
+        module_configs:
           - ./athena-workgroup.yaml
       dataops-project-test:
         module_path: "@aws-mdaa/dataops-project"
-        app_configs:
+        module_configs:
           - ./dataops/dataops-project.yaml
       dataops-crawler-test:
         module_path: "@aws-mdaa/dataops-crawler"
-        app_configs:
+        module_configs:
           - ./dataops/dataops-crawler.yaml
 
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
@@ -72,17 +72,17 @@ domains:
             # One or more tag files containing tags which will be applied to all deployed resources for this env
             tag_configs:
               - tags.yaml
-            app_configs:
+            module_configs:
               - ./audit.yaml
           audit-trail:
             module_path: "@aws-mdaa/audit-trail@test_spec_version"
-            app_configs:
+            module_configs:
               - ./audit-trail.yaml
           glue-catalog:
             module_path: "@aws-mdaa/glue-catalog"
           datawarehouse:
             module_path: "@aws-mdaa/datawarehouse"
-            app_configs:
+            module_configs:
               - ./datawarehouse.yaml
 
   domain1: # Example of a specific domain name.
@@ -106,7 +106,7 @@ domains:
           # This env will deploy this module in addition to those defined in the template
           additional-module:
             module_path: "@aws-mdaa/dataops-job"
-            app_configs:
+            module_configs:
               - ./dataops/dataops-job.yaml
 
   domain3:
@@ -116,11 +116,11 @@ domains:
         modules:
           roles:
             module_path: "@aws-mdaa/roles"
-            app_configs:
+            module_configs:
               - ./roles.yaml
           datalake:
             module_path: "@aws-mdaa/datalake"
-            app_configs:
+            module_configs:
               - ./datalake.yaml
     environments:
       # Example of envs that use a domain-specific environment template

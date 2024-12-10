@@ -1382,8 +1382,8 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 | - [additional_accounts](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_accounts ) | No      | array of string  | No         | -                                                                     | A list of additional accounts into which the module may deploy resources.                                                                                                                                       |
 | - [additional_context](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_additional_context )   | No      | object           | No         | -                                                                     | -                                                                                                                                                                                                               |
 | - [app_config_data](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_config_data )         | No      | object           | No         | -                                                                     | -                                                                                                                                                                                                               |
-| - [app_configs](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_configs )                 | No      | array of string  | No         | -                                                                     | -                                                                                                                                                                                                               |
-| - [cdk_app](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_cdk_app )                         | No      | string           | No         | -                                                                     | -                                                                                                                                                                                                               |
+| - [module_configs](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_module_configs )                 | No      | array of string  | No         | -                                                                     | -                                                                                                                                                                                                               |
+| - [module_path](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_module_path )                         | No      | string           | No         | -                                                                     | -                                                                                                                                                                                                               |
 | - [context](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_context )                         | No      | object           | No         | -                                                                     | Additional CDK Context key/value pairs                                                                                                                                                                          |
 | - [custom_aspects](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_custom_aspects )           | No      | array            | No         | -                                                                     | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                               |
 | - [custom_naming](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_custom_naming )             | No      | object           | No         | Same as [custom_naming](#domains_additionalProperties_custom_naming ) | Permission policy boundary arns. Will be applied to all Roles using a CDK aspect.                                                                                                                               |
@@ -1464,7 +1464,7 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 | **Required**              | No                                                                        |
 | **Additional properties** | [[Any type: allowed]](# "Additional Properties of any type are allowed.") |
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_configs"></a>4.1.4.1.6.1.4. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > app_configs`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_module_configs"></a>4.1.4.1.6.1.4. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > module_configs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1481,16 +1481,16 @@ If you set the value to ``true``, the parameter value is masked with asterisks (
 
 | Each item of this array must be                                                                                                      | Description |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
-| [app_configs items](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_app_configs_items) | -           |
+| [module_configs items](#domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_module_configs_items) | -           |
 
-###### <a name="autogenerated_heading_24"></a>4.1.4.1.6.1.4.1. root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > app_configs > app_configs items
+###### <a name="autogenerated_heading_24"></a>4.1.4.1.6.1.4.1. root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > module_configs > module_configs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_cdk_app"></a>4.1.4.1.6.1.5. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > cdk_app`
+###### <a name="domains_additionalProperties_env_templates_additionalProperties_modules_additionalProperties_module_path"></a>4.1.4.1.6.1.5. Property `root > domains > additionalProperties > env_templates > additionalProperties > modules > additionalProperties > module_path`
 
 |              |          |
 | ------------ | -------- |

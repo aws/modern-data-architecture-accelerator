@@ -232,7 +232,7 @@ export abstract class MdaaCdkApp extends App {
         Aspects.of( this ).add( aspect )
     }
 
-    public generateStack () {
+    public generateStack () : Stack {
 
         if ( this.baseConfigParser.serviceCatalogConfig ) {
             const productStack = this.createEmptyProductStack( this.stack )
@@ -262,6 +262,7 @@ export abstract class MdaaCdkApp extends App {
             this.subGenerateResources( this.stack, this.createL3ConstructProps( this.stack ), this.getConfigParserProps() )
         }
         this.addTagsAndSuppressions()
+        return this.stack
     }
 
     /**

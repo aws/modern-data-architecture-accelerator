@@ -47,24 +47,24 @@ domains:
         modules:
           # This module will create all of the roles required for the Step Function
           roles:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./stepfunctions/roles.yaml
           # This module will create DataOps Project resources which can be shared
           # across multiple DataOps modules
           project:
-            cdk_app: "@aws-mdaa/dataops-project"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-project"
+            module_configs:
               - ./stepfunctions/project.yaml
           # This module will few dummy lambda functions that will be orchestrated by Step Function
           lambda:
-            cdk_app: "@aws-mdaa/dataops-lambda"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-lambda"
+            module_configs:
               - ./stepfunctions/lambda.yaml
           # This module will create the Step Function to orchestrate few Lambda Functions
           stepfunction:
-            cdk_app: "@aws-mdaa/dataops-stepfunction"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-stepfunction"
+            module_configs:
               - ./stepfunctions/stepfunction.yaml
 
 

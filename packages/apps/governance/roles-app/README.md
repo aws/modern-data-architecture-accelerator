@@ -33,8 +33,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           roles: # Module Name can be customized
-            cdk_app: "@aws-caef/roles" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/roles" # Must match module NPM package name
+            module_configs:
               - ./roles.yaml # Filename/path can be customized
 ```
 

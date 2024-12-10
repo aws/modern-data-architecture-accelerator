@@ -45,25 +45,25 @@ domains:
         modules:
           # This module will create all of the roles required for the GLUE ETL Job
           roles:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./glue_csv_parquet/roles.yaml
           # This module will create DataOps Project resources which can be shared
           # across multiple DataOps modules
           project:
-            cdk_app: "@aws-mdaa/dataops-project"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-project"
+            module_configs:
               - ./glue_csv_parquet/project.yaml
           # This module will create the csv to parquet GLUE ETL Job
           jobs:
-            cdk_app: "@aws-mdaa/dataops-job"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-job"
+            module_configs:
               - ./glue_csv_parquet/jobs.yaml
           # This module will create an AWS Glue Workflow which will schedule the csv to parquet GLUE ETL Job
           workflow:
-             cdk_app: "@aws-caef/dataops-workflow"
+             module_path: "@aws-caef/dataops-workflow"
              tag_configs:
                - ./tags.yaml
-             app_configs:
+             module_configs:
                - ./glue_csv_parquet/workflow.yaml
 

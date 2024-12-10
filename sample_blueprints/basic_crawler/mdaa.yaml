@@ -41,16 +41,16 @@ domains:
         modules:
           # This module will create all of the roles required for the crawler, a
           roles:
-            cdk_app: "@aws-mdaa/roles"
-            app_configs:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
               - ./basic_crawler/roles.yaml
           # This module will create DataOps Project resources which can be shared
           # across multiple DataOps modules
           project:
-            cdk_app: "@aws-mdaa/dataops-project"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-project"
+            module_configs:
               - ./basic_crawler/project.yaml
           crawler:
-            cdk_app: "@aws-mdaa/dataops-crawler"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-crawler"
+            module_configs:
               - ./basic_crawler/crawler.yaml

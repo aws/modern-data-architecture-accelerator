@@ -158,11 +158,11 @@ To execute MDAA Modules/CDK apps using the CDK CLI:
 4. Run the following CDK commands with the required context:
 
 ```bash
-cdk synth -c org=<organization> -c env=<dev|test|prod> -c domain=<domain name> -c app_configs=<app_config_paths> -c tag_configs=<tag_config_paths> -c module_name=<module_name>
+cdk synth -c org=<organization> -c env=<dev|test|prod> -c domain=<domain name> -c module_configs=<app_config_paths> -c tag_configs=<tag_config_paths> -c module_name=<module_name>
 ```
 
 ```bash
-cdk synth -c org="sample-org" -c env="dev" -c domain="mdaa1" -c app_configs="warehouse.yaml" -c tag_configs="tags.yaml"  -c module_name="testing"
+cdk synth -c org="sample-org" -c env="dev" -c domain="mdaa1" -c module_configs="warehouse.yaml" -c tag_configs="tags.yaml"  -c module_name="testing"
 ```
 
 ### Required Context
@@ -177,6 +177,6 @@ The following context values are required for all modules. Note that additional 
 
 * **module_name** - Name of the MDAA module (allows multiple deployments of the same CDK app within same org/domain/env)
 
-* **app_configs** - Comma separated list of paths to one or more app config files (see Configuration). Multiple config files will be merged, with later-listed config files taking precedence over earlier-listed config files.
+* **module_configs** - Comma separated list of paths to one or more app config files (see Configuration). Multiple config files will be merged, with later-listed config files taking precedence over earlier-listed config files.
 
 * **tag_configs** - Comma separated list of paths to one or more tag config files (see Configuration). Multiple config files will be merged, with later-listed config files taking precedence over earlier-listed config files.

@@ -103,5 +103,5 @@ would require either a 'lerna run build' at the root of the MDAA repo, or 'npm r
 #### Example CDK Command Invoking a MDAA App
 
 ```bash
-cdk synth --require-approval never -c org="<org>" -c env="<env>" -c domain="<domain>" -c app_configs="<path/to/config/file>" -c tag_configs="<path/to/tag_config/file>"  -c module_name="<module_name>" --all
+cdk synth --require-approval never -c org="<org>" -c env="<env>" -c domain="<domain>" -c module_configs="<path/to/config/file>" -c tag_configs="<path/to/tag_config/file>"  -c module_name="<module_name>" --all
 ```

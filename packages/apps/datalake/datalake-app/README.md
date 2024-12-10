@@ -40,8 +40,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           datalake: # Module Name can be customized
-            cdk_app: "@aws-caef/datalake" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/datalake" # Must match module NPM package name
+            module_configs:
               - ./datalake.yaml # Filename/path can be customized
 ```
 

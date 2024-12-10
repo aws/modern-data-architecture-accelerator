@@ -60,8 +60,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           dataops-project: # Module Name can be customized
-            cdk_app: "@aws-caef/dataops-project" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/dataops-project" # Must match module NPM package name
+            module_configs:
               - ./dataops-project.yaml # Filename/path can be customized
 ```
 

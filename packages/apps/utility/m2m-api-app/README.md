@@ -20,8 +20,8 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           m2m-api: # Module Name can be customized
-            cdk_app: "@aws-caef/m2m-api" # Must match module NPM package name
-            app_configs:
+            module_path: "@aws-caef/m2m-api" # Must match module NPM package name
+            module_configs:
               - ./m2m-api.yaml # Filename/path can be customized
 ```
 
