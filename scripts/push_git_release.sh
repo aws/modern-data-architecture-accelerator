@@ -19,6 +19,6 @@ git tag -a $PUBLISHED_VERSION -m "Version $PUBLISHED_VERSION"
 git remote add release_publish $CAEF_DELIVERY_CODE_COMMIT_REPO
 git fetch release_publish
 git pull release_publish main -Xours
-git push release_publish
-git push release_publish --tags
+git push release_publish --force
+git push release_publish --tags --force
 
