@@ -60,7 +60,7 @@ export class MdaaEventBus extends EventBus implements IMdaaEventBus {
 
         if ( props.principals && props.principals.length > 0 ) {
             const policyStatement = new PolicyStatement( {
-                sid: 'allow_put_events',
+                sid: `${props.eventBusName}-put-events`.substring(0, 60),
                 principals: props.principals,
                 actions: [ 'events:PutEvents' ],
                 effect: Effect.ALLOW,
