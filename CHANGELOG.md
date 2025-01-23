@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.44.0
+
+### General Changes
+
+* Fixed bug with eventbridge app for conflicting eventbus policy statement ids
+
 ## 0.43.0
 
 ### General Changes
