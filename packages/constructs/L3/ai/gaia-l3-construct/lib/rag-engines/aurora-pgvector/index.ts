@@ -122,8 +122,8 @@ export class AuroraPgVector extends MdaaL3Construct {
               })
           ],
           vpc: props.shared.vpc,
-          subnet: {subnets:props.shared.appSubnets},
-          securityGroup: props.shared.appSecurityGroup,
+          subnet: {subnets:props.shared.dataSubnets},
+          securityGroup: dbSecurityGroup,
           naming: props.naming,
           createParams: false,
           createOutputs: false,

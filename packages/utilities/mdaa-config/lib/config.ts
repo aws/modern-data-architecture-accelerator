@@ -171,7 +171,10 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
                 if ( !this.props.scope ) {
                     throw new Error( "Unable to resolve ssm param outside of a Construct" )
                 }
-                resolvedValue =  StringParameter.valueForStringParameter( Stack.of( this.props.scope ), ssmPath )
+
+                resolvedValue =  this.props.scope?.node.tryGetContext("@mdaaLookupSSMValues")  ? 
+                    StringParameter.valueFromLookup(Stack.of(this.props.scope),ssmPath) : 
+                    StringParameter.valueForStringParameter( Stack.of( this.props.scope ), ssmPath )
             }
 
             toReturn = resolvedValue ? toReturn.replace( `{{${ ref }}}`, resolvedValue ) : toReturn
