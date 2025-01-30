@@ -26,6 +26,7 @@ def lambda_handler(event, context: LambdaContext):
     dbpass = database_secrets["password"]
 
     if request_type == "Create" or request_type == "Update":
+        
         dbconn = psycopg2.connect(
             host=dbhost, user=dbuser, password=dbpass, port=dbport, connect_timeout=10
         )

@@ -4,8 +4,8 @@
 
 The Modern Data Architecture Accelerator (MDAA) is designed to accelerate the implementation of a secure, compliant and fully capable Modern Data Architecture on AWS, allowing organizations of all sizes and sophsitication to quickly focus on driving business outcomes from their data while maintaining high assurance of security compliance. Specifically, organizations are enabled to rapidly solve data-driven problems using both traditional analytics, as well as using contemporary capabilities such as generative AI.
 
-MDAA provides rapid, secure deployment of all major elements of a Modern Data Architcture, such as Ingest, Persistence, Governance, DataOps, Consumption, Visual Analytics, Data Science, and AI/ML.
-Additionally, MDAA has been designed for compliance with AWS Solutions, NIST 800-53 Rev5 (US), HIPAA CDK Nag Rulesets, as well as ITSG-33 (Canada) security control requirements. Terraform modules are compliant with standard Checkov security policies. This combination of integral compliance and broad, configuration-driven capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
+MDAA provides rapid deployment of all major elements of a Modern Data Architcture, such as Ingest, Persistence, Governance, DataOps, Consumption, Visual Analytics, Data Science, and AI/ML.
+Additionally, MDAA has been designed to enable compliance with AWS Solutions, NIST 800-53 Rev5 (US), HIPAA CDK Nag Rulesets, as well as ITSG-33 (Canada) security control requirements. Terraform modules are compliant with standard Checkov security policies. This combination of integral compliance and broad, configuration-driven capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
 
 ## Target Usage
 
@@ -62,18 +62,33 @@ MDAA is conceptually, architecturally, and technically similar in nature to the 
 
 ## Design Principles
 
-MDAA and its constituent modules each adhere to the following design principles:
+### MDAA Compliance
 
-### Security Compliance
+MDAA accelerates compliance with common standards such as FedRAMP Moderate, CCCS Medium, and HIPAA. This compliance is enabled by design within the MDAA codebase through adherence to AWS Solutions best practices, NIST 800-53 Rev 5, and HIPAA-specific security controls. These security controls are validated through global application of corresponding CDK Nag rulesets during MDAA execution. Any non-compliance with these controls will halt MDAA deployment progress, and must be explicitely suppressed. All evaluated compliance rules, findings, and explicit suppressions are published in a report for review prior to deployment. 
 
+![MDAA Compliance](docs/MDAA-Compliance.png)
+
+#### Integral Compliance
+
+The following security controls are integral to the MDAA design:
+
+* Ubiquitous encryption at rest and in transit within all MDAA Compliant Constructs
+* Least-priviledge in generated permissions within all MDAA Compliant Constructs
+* Separation of Duties in generated roles and permissions within all MDAA Compliant Constructs
 * Compliance with AWS Solutions [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
 * Compliance with NIST 800-53 Rev 5 [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
 * Compliance with HIPAA [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
 * Compliance with ITSG-33 PBMM Security Control Requirements
 * (Terraform) Compliance with Checkov standard policies.
-* Ubiquitous encryption at rest and in transit
-* Least-priviledged permissions
-* Separation of Duties
+
+#### Compliance Recommendations
+
+In addition to the integral security controls, the following additional controls are recommended:
+
+* MDAA should be deployed to production via a governed and robust DevSecOps pipeline
+* There should be a separation of duties within the DevSecOps pipeline, with separate roles employed for MDAA configuration, review, and final deployment
+* MDAA CDK/CloudFormation Diffs should be manually reviewed prior to final deployment
+* MDAA CDK Nag reports should be manually reviewd prior to final deployment
 
 ### Governance
 
