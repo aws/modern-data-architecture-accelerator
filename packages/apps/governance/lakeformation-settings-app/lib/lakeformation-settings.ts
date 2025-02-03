@@ -18,10 +18,8 @@ export class LakeFormationSettingsCDKApp extends MdaaCdkApp {
 
         const appConfig = new LakeFormationSettingsConfigParser( stack, parserProps )
         const constructProps: LakeFormationSettingsL3ConstructProps = {
-            ...{
-                lakeFormationAdminRoleRefs: appConfig.lakeFormationAdminRoles,
-                iamAllowedPrincipalsDefault: appConfig.iamAllowedPrincipalsDefault
-            }, ...l3ConstructProps
+            ...appConfig, 
+            ...l3ConstructProps
         }
         new LakeFormationSettingsL3Construct( stack, "construct", constructProps );
         return [ stack ]

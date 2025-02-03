@@ -10,3 +10,16 @@ lakeFormationAdminRoles:
 # If false (default), all permissions must be managed exclusively within
 # LakeFormation.
 iamAllowedPrincipalsDefault: true
+
+# If specified, Lakeformation will be integrated with IAM identity center
+iamIdentityCenter:
+  # The IAM Identity Center instance ID
+  instanceId: ssoins-test-instance-id
+  # (Optional) - Accounts, Orgs, Organizational Units with which to share LakeFormation services via IAM Identity Center
+  shares:
+    # Example of an account to be shared with
+    - "test-account"
+    # Example of an Org Id to be shared with
+    - "arn:aws:organizations::test-account:organization/test-org-id"
+    # Example of an OU to be shared with
+    - "arn:aws:organizations::test-account:ou/test-org-id/test-ou-id"

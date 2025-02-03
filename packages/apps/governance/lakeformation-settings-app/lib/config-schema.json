@@ -65,6 +65,24 @@
             },
             "type": "object"
         },
+        "IdentityCenterConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "instanceId": {
+                    "type": "string"
+                },
+                "shares": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "instanceId"
+            ],
+            "type": "object"
+        },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
             "properties": {
@@ -247,9 +265,17 @@
         }
     },
     "properties": {
+        "createCdkLFAdmin": {
+            "description": "If true (default false), then CDK Exec Role will be automatically added as a LF Admin",
+            "type": "boolean"
+        },
         "iamAllowedPrincipalsDefault": {
             "description": "If true, sets IAM_ALLOW_PRINCIPALS by default on all new databases/tables",
             "type": "boolean"
+        },
+        "iamIdentityCenter": {
+            "$ref": "#/definitions/IdentityCenterConfig",
+            "description": "If provided, will configure LakeFormation and IAMIdentityCenter integration"
         },
         "lakeFormationAdminRoles": {
             "description": "An array of role references to Lake Formation admin roles",
