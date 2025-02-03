@@ -21,7 +21,10 @@ describe( 'MDAA Compliance Stack Tests', () => {
 
   const constructProps: LakeFormationSettingsL3ConstructProps = {
     lakeFormationAdminRoleRefs: [ lakeFormationAccessControlConfigParser ],
-
+    iamIdentityCenter: {
+      instanceId: "test-sso-instance",
+      shares: ["test-account"]
+    },
 
     roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
     naming: testApp.naming,
@@ -32,7 +35,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
   testApp.checkCdkNagCompliance( testApp.testStack )
   const template = Template.fromStack( testApp.testStack )
 
-  // console.log( JSON.stringify( template, undefined, 2 ) )
+  console.log( JSON.stringify( template, undefined, 2 ) )
 
   test( 'LakeFormationSettings', () => {
     template.hasResourceProperties( "Custom::lakeformation-settings", {
@@ -69,4 +72,15 @@ describe( 'MDAA Compliance Stack Tests', () => {
       }
     } )
   } )
+  test( 'IdcIntegration', () => {
+    template.hasResourceProperties( "Custom::lakeformation-idc-configs", {
+      "instanceArn": "arn:test-partition:sso:::instance/test-sso-instance",
+            "shareRecipients": [
+              {
+                "DataLakePrincipalIdentifier": "test-account"
+              }
+            ]
+    } )
+  } )
+
 } )

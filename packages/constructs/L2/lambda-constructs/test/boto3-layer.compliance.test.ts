@@ -13,7 +13,7 @@ describe( 'MDAA Construct Compliance Tests', () => {
 
     const testContstructProps: MdaaBoto3LayerVersionProps = {
         naming: testApp.naming,
-        boto3Version: "1.33.13"
+        boto3Version: "1.36.11"
     }
 
     new MdaaBoto3LayerVersion( testApp.testStack, "test-construct", testContstructProps )
@@ -23,7 +23,7 @@ describe( 'MDAA Construct Compliance Tests', () => {
     // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
     test( 'LayerName', () => {
         template.hasResourceProperties( "AWS::Lambda::LayerVersion", {
-            "LayerName": testApp.naming.resourceName( `boto3-1_33_13` )
+            "LayerName": testApp.naming.resourceName( `boto3-1_36_11` )
         } )
     } )
 
