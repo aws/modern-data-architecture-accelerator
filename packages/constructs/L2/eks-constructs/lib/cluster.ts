@@ -374,6 +374,7 @@ export class MdaaEKSCluster extends Cluster {
         if ( this.kubectlLambdaRole ) {
             NagSuppressions.addResourceSuppressions( this.kubectlLambdaRole, [
                 { id: "AwsSolutions-IAM4", reason: "AWSLambdaBasicExecutionRole, AWSLambdaVPCAccessExecutionRole are least privilege." },
+                { id: "AwsSolutions-IAM5", reason: "S3 CDK Asset names not known at deployment time" },
                 { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Permissions are specific to custom resource requirements." },
                 { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Permissions are specific to custom resource requirements." },
             ], true );
