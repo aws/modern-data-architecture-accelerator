@@ -21,11 +21,14 @@ THIRD-PARTY-NOTICE.md # Content is verbatim third-party Licenses
 packages/constructs/L3/ai/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1006 # SageMaker Central Account ID
 packages/constructs/L3/ai/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1023 # SageMaker Central Account ID
 packages/constructs/L3/ai/datascience-team-l3-construct/test/team.compliance.test.ts:501 # SageMaker Central Account ID
-packages/constructs/L2/eks-constructs/lib/cluster.ts:382 # Construct ID
-packages/constructs/L2/eks-constructs/lib/cluster.ts:404 # Construct ID
+packages/constructs/L2/eks-constructs/lib/cluster.ts:383 # Construct ID
+packages/constructs/L2/eks-constructs/lib/cluster.ts:405 # Construct ID
 packages/constructs/L3/dataops/dataops-nifi-l3-construct/base_conf/nifi/nifi.properties:370 #False positive
 packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/image-repository-mapping.ts # Known SageMaker Public Accounts
 packages/constructs/L3/ai/gaia-l3-construct/lib/models/index.ts # Known SageMaker Public Accounts
 packages/constructs/L3/ai/gaia-l3-construct/lib/shared/index.ts # Known Lambda service account
 packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/hf-custom-script-model/build-script/script.py:63 # runs in deployment once, command string fully controlled by script code and not inputs
 packages/constructs/L3/ai/bedrock-agent-l3-construct/test/lambda/test-layer.zip # Empty test file
+packages/constructs/L3/dataops/dataops-nifi-l3-construct/src/helm/aws-privateca-issuer-v1.2.5.zip # EKS Helm chart
+packages/constructs/L3/dataops/dataops-nifi-l3-construct/src/helm/cert-manager-v1.13.0.zip # EKS Helm chart
+packages/constructs/L3/dataops/dataops-nifi-l3-construct/src/helm/external-secrets-0.9.5.zip # EKS Helm chart
