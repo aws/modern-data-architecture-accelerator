@@ -2,19 +2,14 @@
 # The dataops project name is the MDAA module name for the project.
 projectName: project
 
-# List of Lambda layers to create
-layers:
-  - layerName: aws-wrangler
-    src: ./src/lambda/aws_wrangler_layer/awswrangler-layer-3.9.1-py3.12.zip
-    description: "AWS Wrangler"
-
 # List of functions definitions
 functions:
   # Required function parameters
   - functionName: lambda_csv_parquet # Function name. Must be unique within the config.
 
-    generatedLayerNames:
-      - "aws-wrangler"
+    layers:
+      # See https://aws-sdk-pandas.readthedocs.io/en/latest/install.html#aws-lambda-layer
+      - "arn:aws:lambda:{{region}}:336392948345:layer:AWSSDKPandas-Python313:1"
 
     # (Optional) Fuction Description
     description: Transforms CSVs into Parquet
@@ -26,7 +21,7 @@ functions:
     handler: lambda_csv_parquet.lambda_handler
 
     # The runtime for the function source code.
-    runtime: python3.12
+    runtime: python3.13
 
     # The role with which the Lambda function will be executed
     roleArn: generated-role-arn:lambda-etl

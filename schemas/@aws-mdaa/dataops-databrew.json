@@ -481,6 +481,10 @@
                     "description": "The Amazon S3 bucket name.",
                     "type": "string"
                 },
+                "bucketOwner": {
+                    "description": "The AWS account ID of the bucket owner.",
+                    "type": "string"
+                },
                 "key": {
                     "description": "The unique name of the object in the bucket.",
                     "type": "string"

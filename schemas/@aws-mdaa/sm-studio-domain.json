@@ -29,7 +29,7 @@
         },
         "CfnDomain.CustomImageProperty": {
             "additionalProperties": false,
-            "description": "A custom SageMaker image.\n\nFor more information, see [Bring your own SageMaker image](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-byoi.html) .",
+            "description": "A custom SageMaker AI image.\n\nFor more information, see [Bring your own SageMaker AI image](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-byoi.html) .",
             "properties": {
                 "appImageConfigName": {
                     "description": "The name of the AppImageConfig.",
@@ -98,7 +98,7 @@
                             "type": "array"
                         }
                     ],
-                    "description": "A list of custom SageMaker images that are configured to run as a KernelGateway app."
+                    "description": "A list of custom SageMaker AI images that are configured to run as a KernelGateway app."
                 },
                 "defaultResourceSpec": {
                     "anyOf": [
@@ -109,7 +109,7 @@
                             "$ref": "#/definitions/CfnDomain.ResourceSpecProperty"
                         }
                     ],
-                    "description": "The default instance type and the Amazon Resource Name (ARN) of the default SageMaker image used by the KernelGateway app.\n\n> The Amazon SageMaker Studio UI does not use the default instance type value set here. The default instance type set here is used when Apps are created using the AWS CLI or AWS CloudFormation and the instance type parameter value is not passed."
+                    "description": "The default instance type and the Amazon Resource Name (ARN) of the default SageMaker AI image used by the KernelGateway app.\n\n> The Amazon SageMaker AI Studio UI does not use the default instance type value set here. The default instance type set here is used when Apps are created using the AWS CLI or AWS CloudFormation and the instance type parameter value is not passed."
                 },
                 "lifecycleConfigArns": {
                     "description": "The Amazon Resource Name (ARN) of the Lifecycle Configurations attached to the the user profile or domain.\n\n> To remove a Lifecycle Config, you must set `LifecycleConfigArns` to an empty list.",
@@ -144,7 +144,7 @@
                             "type": "array"
                         }
                     ],
-                    "description": "A list of custom SageMaker images that are configured to run as a RSession app."
+                    "description": "A list of custom SageMaker AI images that are configured to run as a RSession app."
                 },
                 "defaultResourceSpec": {
                     "anyOf": [
@@ -177,7 +177,7 @@
         },
         "CfnDomain.ResourceSpecProperty": {
             "additionalProperties": false,
-            "description": "Specifies the ARN's of a SageMaker image and SageMaker image version, and the instance type that the version runs on.",
+            "description": "Specifies the ARN's of a SageMaker AI image and SageMaker AI image version, and the instance type that the version runs on.\n\n> When both `SageMakerImageVersionArn` and `SageMakerImageArn` are passed, `SageMakerImageVersionArn` is used. Any updates to `SageMakerImageArn` will not take effect if `SageMakerImageVersionArn` already exists in the `ResourceSpec` because `SageMakerImageVersionArn` always takes precedence. To clear the value set for `SageMakerImageVersionArn` , pass `None` as the value.",
             "properties": {
                 "instanceType": {
                     "description": "The instance type that the image version runs on.\n\n> *JupyterServer apps* only support the `system` value.\n>\n> For *KernelGateway apps* , the `system` value is translated to `ml.t3.medium` . KernelGateway apps also support all other values for available instance types.",
@@ -188,11 +188,11 @@
                     "type": "string"
                 },
                 "sageMakerImageArn": {
-                    "description": "The ARN of the SageMaker image that the image version belongs to.",
+                    "description": "The ARN of the SageMaker AI image that the image version belongs to.",
                     "type": "string"
                 },
                 "sageMakerImageVersionArn": {
-                    "description": "The ARN of the image version created on the instance.",
+                    "description": "The ARN of the image version created on the instance.\n\nTo clear the value set for `SageMakerImageVersionArn` , pass `None` as the value.",
                     "type": "string"
                 }
             },

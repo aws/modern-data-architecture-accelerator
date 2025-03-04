@@ -248,7 +248,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
         } );
 
         const postAuthLogFn = new MdaaLambdaFunction( this, 'postAuthLogFn', {
-            runtime: Runtime.NODEJS_20_X,
+            runtime: Runtime.NODEJS_22_X,
             handler: 'index.handler',
             functionName: "log-auth-event",
             role: cognitoAuthLogFunctionRole,
@@ -325,7 +325,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
 
         // creates lambda function to generate presigned URL
         const s3UrlGenLambda = new MdaaLambdaFunction( this, 's3-url-gen-lambda', {
-            runtime: Runtime.PYTHON_3_12,
+            runtime: Runtime.PYTHON_3_13,
             handler: 's3_url.handler',
             functionName: "signed-s3-url-gen",
             role: integrationLambdaRole,

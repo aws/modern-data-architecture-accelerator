@@ -443,8 +443,9 @@ export class MdaaDeploy {
 
         console.log( `Module ${ logPrefix }: Package ${ npmPackageNoVersion } found in local codebase. Running build.` )
         const buildCmd = `npx lerna run build --scope ${ npmPackageNoVersion } --loglevel warn`
-        // console.log( `Running Lerna Build: ${ buildCmd }` )
-        this.execCmd( `cd '${ __dirname }/../../';${ buildCmd } > /dev/null;cd '${ this.cwd }'` );
+        const fullBuildCmd = `cd '${ __dirname }/../../../';${ buildCmd } > /dev/null;cd '${ this.cwd }'`
+        // console.debug( `Running Lerna Build: ${ fullBuildCmd }` )
+        this.execCmd( fullBuildCmd );
 
         return prefix
     }
@@ -607,7 +608,7 @@ export class MdaaDeploy {
     }
 
     private createCdkCommandEnv ( moduleEffectiveConfig: ModuleEffectiveConfig ): string[] {
-        const cdkEnv: string[] = []
+        const cdkEnv: string[] = ["export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1"]
         /* istanbul ignore next */
         if ( this.config.contents.region && this.config.contents.region.toLowerCase() != "default" ) {
             cdkEnv.push( `export CDK_DEPLOY_REGION=${ this.config.contents.region }` )

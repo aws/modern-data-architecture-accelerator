@@ -26,7 +26,7 @@ functions:
     handler: lambda_csv_parquet.lambda_handler
 
     # The runtime for the function source code.
-    runtime: python3.12
+    runtime: python3.13
 
     # The role with which the Lambda function will be executed
     roleArn: generated-role-arn:lambda-etl

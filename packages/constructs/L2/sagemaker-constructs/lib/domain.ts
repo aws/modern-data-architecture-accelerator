@@ -152,7 +152,7 @@ export class MdaaStudioDomain extends CfnDomain {
         const crProps: MdaaCustomResourceProps = {
             resourceType: "StudioDomainUpdate",
             code: Code.fromAsset( `${ __dirname }/../src/lambda/update_domain` ),
-            runtime: Runtime.PYTHON_3_12,
+            runtime: Runtime.PYTHON_3_13,
             handler: "update_domain.lambda_handler",
             handlerRolePolicyStatements: updateDomainStatements,
             handlerProps: {

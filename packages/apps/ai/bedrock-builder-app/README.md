@@ -72,7 +72,7 @@ lambdaFunctions:
       description: "This is lambda function for Bedrock Agent Action group: test-agent/test-action-group"
       srcDir: ./lambda/src
       handler: test_function.lambda_handler
-      runtime: python3.12
+      runtime: python3.13
       roleArn: generated-role-arn:agent-lambda-role  # OR provide SSM parameter like "ssm:/path/to/agent-lambda-role/arn"
       layerArns:
         # Provide an existing lambda layer

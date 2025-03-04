@@ -24,7 +24,7 @@ describe( 'MDAA Construct Compliance Tests', () => {
         resourceType: "testing",
         handlerRolePolicyStatements: [ policyStatement ],
         code: Code.fromAsset( "./test/src/lambda/test" ),
-        runtime: Runtime.PYTHON_3_12,
+        runtime: Runtime.PYTHON_3_13,
         handler: "test.lambda_handler",
         handlerProps: {
             testProp: "testValue"
@@ -55,7 +55,7 @@ describe( 'MDAA Construct Compliance Tests', () => {
             },
             "FunctionName": "test-org-test-env-test-domain-test-module-testing-handler",
             "Handler": "test.lambda_handler",
-            "Runtime": "python3.12"
+            "Runtime": "python3.13"
         } )
     } )
 
