@@ -3,14 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+
 import { MdaaTestApp } from "@aws-mdaa/testing";
+
 import { Template } from "aws-cdk-lib/assertions";
 import { Construct } from "constructs";
 import { MdaaL3Construct, MdaaL3ConstructProps } from "../lib";
-// nosemgrep
-import path = require( "path" );
+
 import { Stack } from "aws-cdk-lib";
+import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
 
 interface TestL3ConstructProps extends MdaaL3ConstructProps {
 
@@ -28,8 +29,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
 
     const constructProps: TestL3ConstructProps = {
         naming: testApp.naming,
-
-        roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming, path.dirname( require.resolve( "@aws-mdaa/iam-role-helper/package.json" ) ) ),
+        roleHelper: new MdaaRoleHelper( testApp.testStack, testApp.naming ),
         crossAccountStacks: { '1231241242': new Stack( testApp, 'testing-cross-account' ) }
     }
 

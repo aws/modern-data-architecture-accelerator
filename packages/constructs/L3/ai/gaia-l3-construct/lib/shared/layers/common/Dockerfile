@@ -1,7 +1,7 @@
 FROM amazonlinux:2023
 
 # Install necessary packages
-RUN yum install -y python3.12 python3.12-pip zip
+RUN yum install -y python3.13 python3.13-pip zip
 
 # Set the working directory
 WORKDIR /app

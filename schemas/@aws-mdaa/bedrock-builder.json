@@ -10,7 +10,7 @@
                     "type": "string"
                 },
                 "payload": {
-                    "description": "The JSON or YAML-formatted payload defining the OpenAPI schema for the action group.\n\nFor more information, see [Action group OpenAPI schemas](https://docs.aws.amazon.com/bedrock/latest/userguide/agents-api-schema.html) .",
+                    "description": "The JSON or YAML-formatted payload defining the OpenAPI schema for the action group.",
                     "type": "string"
                 },
                 "s3": {
@@ -22,7 +22,7 @@
                             "$ref": "#/definitions/CfnAgent.S3IdentifierProperty"
                         }
                     ],
-                    "description": "Contains details about the S3 object containing the OpenAPI schema for the action group.\n\nFor more information, see [Action group OpenAPI schemas](https://docs.aws.amazon.com/bedrock/latest/userguide/agents-api-schema.html) ."
+                    "description": "Contains details about the S3 object containing the OpenAPI schema for the action group."
                 }
             },
             "type": "object"
@@ -124,7 +124,7 @@
             "description": "Contains details about the Lambda function containing the business logic that is carried out upon invoking the action or the custom control method for handling the information elicited from the user.",
             "properties": {
                 "customControl": {
-                    "description": "To return the action group invocation results directly in the `InvokeAgent` response, specify `RETURN_CONTROL` .",
+                    "description": "To return the action group invocation results directly in the `InvokeInlineAgent` response, specify `RETURN_CONTROL` .",
                     "type": "string"
                 },
                 "lambda": {
@@ -179,6 +179,10 @@
                         }
                     ],
                     "description": "The parameters that the agent elicits from the user to fulfill the function."
+                },
+                "requireConfirmation": {
+                    "description": "Contains information if user confirmation is required to invoke the function.",
+                    "type": "string"
                 }
             },
             "required": [
@@ -188,7 +192,7 @@
         },
         "CfnAgent.FunctionSchemaProperty": {
             "additionalProperties": false,
-            "description": "Defines functions that each define parameters that the agent needs to invoke from the user.\n\nEach function represents an action in an action group.\n\nThis data type is used in the following API operations:\n\n- [CreateAgentActionGroup request](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_CreateAgentActionGroup.html#API_agent_CreateAgentActionGroup_RequestSyntax)\n- [CreateAgentActionGroup response](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_CreateAgentActionGroup.html#API_agent_CreateAgentActionGroup_ResponseSyntax)\n- [UpdateAgentActionGroup request](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_UpdateAgentActionGroup.html#API_agent_UpdateAgentActionGroup_RequestSyntax)\n- [UpdateAgentActionGroup response](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_UpdateAgentActionGroup.html#API_agent_UpdateAgentActionGroup_ResponseSyntax)\n- [GetAgentActionGroup response](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_GetAgentActionGroup.html#API_agent_GetAgentActionGroup_ResponseSyntax)",
+            "description": "Contains details about the function schema for the action group or the JSON or YAML-formatted payload defining the schema.",
             "properties": {
                 "functions": {
                     "anyOf": [
@@ -270,6 +274,10 @@
                     "description": "Defines the prompt template with which to replace the default prompt template.\n\nYou can use placeholder variables in the base prompt template to customize the prompt. For more information, see [Prompt template placeholder variables](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-placeholders.html) . For more information, see [Configure the prompt templates](https://docs.aws.amazon.com/bedrock/latest/userguide/advanced-prompts-configure.html) .",
                     "type": "string"
                 },
+                "foundationModel": {
+                    "description": "The agent's foundation model.",
+                    "type": "string"
+                },
                 "inferenceConfiguration": {
                     "anyOf": [
                         {
@@ -282,7 +290,7 @@
                     "description": "Contains inference parameters to use when the agent invokes a foundation model in the part of the agent sequence defined by the `promptType` .\n\nFor more information, see [Inference parameters for foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html) ."
                 },
                 "parserMode": {
-                    "description": "Specifies whether to override the default parser Lambda function when parsing the raw foundation model output in the part of the agent sequence defined by the `promptType` .\n\nIf you set the field as `OVERRIDEN` , the `overrideLambda` field in the [PromptOverrideConfiguration](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_PromptOverrideConfiguration.html) must be specified with the ARN of a Lambda function.",
+                    "description": "Specifies whether to override the default parser Lambda function when parsing the raw foundation model output in the part of the agent sequence defined by the `promptType` .\n\nIf you set the field as `OVERRIDDEN` , the `overrideLambda` field in the [PromptOverrideConfiguration](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_PromptOverrideConfiguration.html) must be specified with the ARN of a Lambda function.",
                     "type": "string"
                 },
                 "promptCreationMode": {
@@ -290,7 +298,7 @@
                     "type": "string"
                 },
                 "promptState": {
-                    "description": "Specifies whether to allow the agent to carry out the step specified in the `promptType` .\n\nIf you set this value to `DISABLED` , the agent skips that step. The default state for each `promptType` is as follows.\n\n- `PRE_PROCESSING` – `ENABLED`\n- `ORCHESTRATION` – `ENABLED`\n- `KNOWLEDGE_BASE_RESPONSE_GENERATION` – `ENABLED`\n- `POST_PROCESSING` – `DISABLED`",
+                    "description": "Specifies whether to allow the inline agent to carry out the step specified in the `promptType` .\n\nIf you set this value to `DISABLED` , the agent skips that step. The default state for each `promptType` is as follows.\n\n- `PRE_PROCESSING` – `ENABLED`\n- `ORCHESTRATION` – `ENABLED`\n- `KNOWLEDGE_BASE_RESPONSE_GENERATION` – `ENABLED`\n- `POST_PROCESSING` – `DISABLED`",
                     "type": "string"
                 },
                 "promptType": {

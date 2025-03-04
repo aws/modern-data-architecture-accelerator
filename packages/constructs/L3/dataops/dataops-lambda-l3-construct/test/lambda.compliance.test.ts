@@ -25,7 +25,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
     srcDir: "./test/src/lambda/test",
     handler: "test_handler",
     roleArn: "arn:test-partition:iam::test-acct:role/test-lambda-role",
-    runtime: "python3.12"
+    runtime: "python3.13"
   }
 
   const dockerImageFunctionProps: FunctionProps = {

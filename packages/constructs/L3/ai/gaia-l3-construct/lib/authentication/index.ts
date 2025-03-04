@@ -1,7 +1,8 @@
 import * as cognitoIdentityPool from "@aws-cdk/aws-cognito-identitypool-alpha";
 import * as cdk from "aws-cdk-lib";
 import * as cognito from "aws-cdk-lib/aws-cognito";
-import {AdvancedSecurityMode} from "aws-cdk-lib/aws-cognito";
+
+import {AdvancedSecurityMode} from "aws-cdk-lib/aws-cognito"; //NOSONAR
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import {Construct} from "constructs";
 import {SupportedAuthTypes, SystemConfig} from "../shared/types";
@@ -28,6 +29,7 @@ export class Authentication extends Construct {
           props.config.auth.existingPoolId)
     } else {
       userPool = new cognito.UserPool(this, "UserPool", {
+        userPoolName: props.naming.resourceName(),
         removalPolicy: cdk.RemovalPolicy.DESTROY,
         selfSignUpEnabled: false,
         autoVerify: { email: true, phone: true },
@@ -41,7 +43,8 @@ export class Authentication extends Construct {
           requireDigits: true,
           requireSymbols: true,
         },
-        advancedSecurityMode: AdvancedSecurityMode.ENFORCED
+        featurePlan: cognito.FeaturePlan.PLUS,
+        advancedSecurityMode: AdvancedSecurityMode.ENFORCED //NOSONAR
       });
     }
 
@@ -133,6 +136,7 @@ export class Authentication extends Construct {
       this,
       "IdentityPool",
       {
+        identityPoolName: props.naming.resourceName(),
         authenticationProviders: {
           userPools: [
             new cognitoIdentityPool.UserPoolAuthenticationProvider({

@@ -90,7 +90,7 @@ export abstract class MdaaCdkApp extends App {
                 mdaa_org: this.org,
                 mdaa_env: this.env,
                 mdaa_domain: this.domain,
-                mdaa_cdk_app: packageVersion,
+                mdaa_cdk_app: packageName,
                 mdaa_module_name: this.moduleName
             }
         }
@@ -300,7 +300,7 @@ export abstract class MdaaCdkApp extends App {
             createOutputs: false
         } )
         const provisioningMacroFunctionProps: MdaaLambdaFunctionProps = {
-            runtime: Runtime.PYTHON_3_12,
+            runtime: Runtime.PYTHON_3_13,
             code: Code.fromAsset( `${ __dirname }/../src/python/provisioning_macro` ),
             handler: "provisioning_macro.lambda_handler",
             functionName: "provisioningMacro",

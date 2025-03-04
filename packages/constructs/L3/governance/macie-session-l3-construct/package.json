@@ -24,10 +24,10 @@
     "@aws-mdaa/construct": "0.44.0",
     "@aws-mdaa/l3-construct": "0.44.0",
     "@aws-mdaa/testing": "^0.44.0",
-    "@types/jest": "27.4.1",
+    "@types/jest": "29.5.0",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
-    "aws-cdk-lib": "2.164.1",
+    "aws-cdk-lib": "2.181.1",
     "constructs": "10.0.96",
     "jest": "29.5.0",
     "source-map-support": "0.5.21",
@@ -39,19 +39,19 @@
   "peerDependencies": {
     "@aws-mdaa/construct": "0.44.0",
     "@aws-mdaa/l3-construct": "0.44.0",
-    "aws-cdk-lib": "2.164.1",
+    "aws-cdk-lib": "2.181.1",
     "constructs": "10.0.96"
   },
   "overrides": {
-    "aws-cdk-lib": "2.164.1",
+    "aws-cdk-lib": "2.181.1",
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
     "@aws-mdaa/construct": "^0.44.0",
     "@aws-mdaa/l3-construct": "^0.44.0",
     "@aws-mdaa/naming": "^0.44.0",
-    "aws-cdk-lib": "2.164.1",
-    "cdk-nag": "2.28.27",
+    "aws-cdk-lib": "2.181.1",
+    "cdk-nag": "2.35.25",
     "constructs": "10.0.96"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
@@ -67,7 +67,7 @@
           "artifactId": "macie-session"
         }
       },
-      "python": {
+      "python_disabled": {
         "distName": "aws-mdaa.macie-session-l3-construct",
         "module": "aws_mdaa.macie_session_l3_construct"
       }

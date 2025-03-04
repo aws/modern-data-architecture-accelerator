@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { KubectlV27Layer } from '@aws-cdk/lambda-layer-kubectl-v27';
 import { Duration, Names, NestedStack, Stack } from 'aws-cdk-lib';
 import { Cluster, ICluster, IKubectlProvider, KubectlProvider, KubectlProviderAttributes, KubectlProviderProps } from 'aws-cdk-lib/aws-eks';
 import { IRole } from 'aws-cdk-lib/aws-iam';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Provider } from 'aws-cdk-lib/custom-resources';
 import { AwsCliLayer } from 'aws-cdk-lib/lambda-layer-awscli';
-import { KubectlLayer } from 'aws-cdk-lib/lambda-layer-kubectl';
+
 import { NagSuppressions } from 'cdk-nag';
 import { Construct } from 'constructs';
 import * as path from 'path';
@@ -91,7 +92,7 @@ export class CompliantKubectlProvider extends NestedStack implements IKubectlPro
 
     const handler = new Function( this, 'Handler', { //NOSONAR false positive
       code: Code.fromAsset( path.join( __dirname, 'kubectl-handler' ) ),
-      runtime: Runtime.PYTHON_3_12,
+      runtime: Runtime.PYTHON_3_13,
       handler: 'index.handler',
       timeout: Duration.minutes( 15 ),
       description: 'onEvent handler for EKS kubectl resource provider',
@@ -107,7 +108,7 @@ export class CompliantKubectlProvider extends NestedStack implements IKubectlPro
 
     // allow user to customize the layers with the tools we need
     handler.addLayers( props.cluster.awscliLayer ?? new AwsCliLayer( this, 'AwsCliLayer' ) );
-    handler.addLayers( props.cluster.kubectlLayer ?? new KubectlLayer( this, 'KubectlLayer' ) );
+    handler.addLayers( props.cluster.kubectlLayer ?? new KubectlV27Layer( this, 'KubectlLayer' ) );
 
     this.handlerRole = handler.role!;
 

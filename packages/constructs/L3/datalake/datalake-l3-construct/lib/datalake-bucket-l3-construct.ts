@@ -505,7 +505,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
             functionName: "folder-cr",
             code: Code.fromAsset( sourceDir ),
             handler: "datalake_folder.lambda_handler",
-            runtime: Runtime.PYTHON_3_12,
+            runtime: Runtime.PYTHON_3_13,
             timeout: Duration.seconds( 120 ),
             role: folderCrFunctionRole,
             naming: this.props.naming,

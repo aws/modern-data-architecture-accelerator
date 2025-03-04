@@ -14,6 +14,7 @@ target/
 packages/apps/dataops/dataops-lambda-app/test/src/lambda/test-layer.zip # Empty test file
 packages/constructs/L3/dataops/dataops-lambda-l3-construct/test/src/lambda/test-layer.zip # Empty test file
 packages/constructs/L2/lambda-constructs/src/python/boto3_layer/1.36.11.zip # Boto 3 layer package
+sample_blueprints/lambda_csv_parquet/lambda_csv_parquet/lambda.yaml
 sample_blueprints/lambda_csv_parquet/lambda_csv_parquet/src/lambda/aws_wrangler_layer/awswrangler-layer-3.9.1-py3.12.zip # Sample AWS Wrangler layer package
 sample_blueprints/stepfunction_orchestrator/stepfunctions/src/lambda/aws_wrangler_layer/awswrangler-layer-3.9.1-py3.12.zip # Sample AWS Wrangler layer package
 packages/constructs/L3/ai/gaia-l3-construct/lib/shared/layers/common/common_layer.zip # GAIA common layer package

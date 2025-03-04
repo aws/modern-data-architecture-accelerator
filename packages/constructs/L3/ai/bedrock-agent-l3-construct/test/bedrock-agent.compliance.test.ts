@@ -27,7 +27,7 @@ describe("Mdaa Compliance Stack Tests", () => {
     srcDir: "./test/lambda/test",
     handler: "test_handler",
     roleArn: "arn:test-partition:iam::test-acct:role/test-lambda-role",
-    runtime: "python3.12",
+    runtime: "python3.13",
     generatedLayerNames: [ "test-layer" ]
   }
   const agentExecutionRoleRef: MdaaRoleRef = {
