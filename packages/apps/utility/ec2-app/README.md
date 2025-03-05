@@ -133,15 +133,15 @@ cfnInit:
 # msi | rpm | python | yum | apt | gem
             packageManager: msi
 #location of package
-            packageLocation: "https://s3.amazonaws.com/aws-cli/AWSCLI64.msi"
+            packageLocation: "https://awscli.amazonaws.com/AWSCLIV2.msi"
           anotherpackage:
             packageManager: msi
-            packageLocation: "https://s3.amazonaws.com/aws-cli/thisisanotherpackage.msi"
+            packageLocation: "https://awscli.amazonaws.com/anotherpackagefromconfig.msi"
       Preinstall:
         packages:
           git:
             packageManager: msi
-            packageLocation: "https://s3.amazonaws.com/somepackagefromconfig.msi"
+            packageLocation: "https://awscli.amazonaws.com/somepackagefromconfig.msi"
 # Commands section consist of list of commands, these commands are run in lexographical order of their identifier(key) name
         commands:
 #Identifier(key) for the the command, commands are run in lexographical order of their identifier(key) name
@@ -200,7 +200,7 @@ cfnInit:
             packageVersions: []
           rpmpackage:
             packageManager: rpm
-            packageLocation: "https://s3.amazonaws.com/aws-cli/rpmpackage.rpm"
+            packageLocation: "https://awscli.amazonaws.com/rpmpackage.rpm"
           jqpackage:
             packageManager: yum
             packageName: jq
