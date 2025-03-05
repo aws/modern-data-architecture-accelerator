@@ -696,6 +696,9 @@
         "DatabaseProps": {
             "additionalProperties": false,
             "properties": {
+                "createDatazoneDatasource": {
+                    "type": "boolean"
+                },
                 "description": {
                     "description": "General description of the database",
                     "type": "string"
@@ -715,6 +718,27 @@
             "required": [
                 "description"
             ],
+            "type": "object"
+        },
+        "DatazoneProjectProps": {
+            "additionalProperties": false,
+            "properties": {
+                "domainConfigSSMParam": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "domainConfigSSMParam"
+            ],
+            "type": "object"
+        },
+        "DatazoneProps": {
+            "additionalProperties": false,
+            "properties": {
+                "project": {
+                    "$ref": "#/definitions/DatazoneProjectProps"
+                }
+            },
             "type": "object"
         },
         "FailureNotificationsProps": {
@@ -1848,6 +1872,9 @@
             "$ref": "#/definitions/NamedDatabaseProps",
             "description": "Glue Database definitions to create (required)"
         },
+        "datazone": {
+            "$ref": "#/definitions/DatazoneProps"
+        },
         "failureNotifications": {
             "$ref": "#/definitions/FailureNotificationsProps",
             "description": "Failure notifactions for glue jobs ."
@@ -1879,8 +1906,7 @@
         }
     },
     "required": [
-        "dataAdminRoles",
-        "s3OutputKmsKeyArn"
+        "dataAdminRoles"
     ],
     "type": "object"
 }

@@ -3,24 +3,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { SecurityConfiguration } from '@aws-cdk/aws-glue-alpha';
+import { AthenaWorkgroupL3Construct, AthenaWorkgroupL3ConstructProps } from '@aws-mdaa/athena-workgroup-l3-construct';
+import { MdaaDatazoneProject, MdaaDatazoneProjectProps } from '@aws-mdaa/datazone-constructs';
 import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
 import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-mdaa/ec2-l3-construct';
 import { MdaaSecurityConfig } from '@aws-mdaa/glue-constructs';
-import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
-import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { GrantProps, LakeFormationAccessControlL3Construct, LakeFormationAccessControlL3ConstructProps, NamedGrantProps, NamedPrincipalProps, NamedResourceLinkProps, PermissionsConfig, PrincipalProps, ResourceLinkProps } from '@aws-mdaa/lakeformation-access-control-l3-construct';
 import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
-import { SecurityConfiguration } from '@aws-cdk/aws-glue-alpha';
-import { ArnComponents, Arn, ArnFormat } from 'aws-cdk-lib';
+import { Arn, ArnComponents, ArnFormat, Tags } from 'aws-cdk-lib';
+import { CfnDataSource, CfnDataSourceProps, CfnEnvironment, CfnEnvironmentActions, CfnEnvironmentActionsProps, CfnEnvironmentProps, CfnSubscriptionTarget, CfnSubscriptionTargetProps } from 'aws-cdk-lib/aws-datazone';
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { CfnClassifier, CfnConnection, CfnDatabase } from 'aws-cdk-lib/aws-glue';
-import { Effect, IRole, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { AccountPrincipal, Effect, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { CfnPrincipalPermissions } from 'aws-cdk-lib/aws-lakeformation';
+import { CfnPrincipalPermissions, CfnResource } from 'aws-cdk-lib/aws-lakeformation';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { NagSuppressions } from 'cdk-nag';
@@ -31,12 +35,12 @@ export interface NamedDatabaseGrantProps {
      * The unique name of the grant
      */
     /** @jsii ignore */
-    readonly [ name: string ]: DatabaseGrantProps
+    readonly [name: string]: DatabaseGrantProps
 }
 
 export interface NamedPrincipalArnProps {
     /** @jsii ignore */
-    [ name: string ]: string
+    [name: string]: string
 }
 
 export interface DatabaseGrantProps {
@@ -102,7 +106,7 @@ export interface DatabaseLakeFormationProps {
 
 export interface NamedDatabaseProps {
     /** @jsii ignore */
-    readonly [ name: string ]: DatabaseProps
+    readonly [name: string]: DatabaseProps
 }
 
 export interface DatabaseProps {
@@ -120,6 +124,8 @@ export interface DatabaseProps {
     readonly locationPrefix?: string
 
     readonly lakeFormation?: DatabaseLakeFormationProps
+
+    readonly createDatazoneDatasource?: boolean
 }
 
 export type ClassifierType = "csv" | "grok" | "json" | "xml"
@@ -156,7 +162,7 @@ export interface ClassifierConfigProps {
 
 export interface NamedClassifierProps {
     /** @jsii ignore */
-    readonly [ name: string ]: ClassifierProps
+    readonly [name: string]: ClassifierProps
 }
 
 export interface ClassifierProps {
@@ -194,7 +200,7 @@ export interface ConnectionPhysical {
 
 export interface NamedConnectionProps {
     /** @jsii ignore */
-    readonly [ name: string ]: ConnectionProps
+    readonly [name: string]: ConnectionProps
 }
 
 export interface ConnectionProps {
@@ -224,7 +230,7 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
     /**
      * The KMS Key to be used to encrypt all Job outputs within the project.
      */
-    readonly s3OutputKmsKeyArn: string;
+    readonly s3OutputKmsKeyArn?: string;
     /**
      * Map of classifer names to classifier definitions
      */
@@ -262,11 +268,22 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
      * by project resources 
      */
     readonly securityGroupConfigs?: NamedSecurityGroupConfigProps
+
+    readonly datazone?: DatazoneProps
+}
+
+export interface DatazoneProps {
+    readonly project?: DatazoneProjectProps
+
+}
+
+export interface DatazoneProjectProps {
+    readonly domainConfigSSMParam: string
 }
 
 export interface NamedSecurityGroupConfigProps {
     /** @jsii ignore */
-    [ name: string ]: SecurityGroupConfigProps
+    [name: string]: SecurityGroupConfigProps
 }
 
 export interface SecurityGroupConfigProps {
@@ -284,110 +301,469 @@ export interface FailureNotificationsProps {
     readonly email?: string[]
 }
 
+interface DatazoneResources {
+    readonly datazoneProject: MdaaDatazoneProject
+    readonly datazoneEnv: CfnEnvironment
+    readonly datazoneManageAccessRole: IRole
+}
+
 export class DataOpsProjectL3Construct extends MdaaL3Construct {
     protected readonly props: DataOpsProjectL3ConstructProps
-
 
     private projectExecutionRoles: MdaaResolvableRole[]
     private dataAdminRoles: MdaaResolvableRole[]
     private dataEngineerRoles: MdaaResolvableRole[]
     private dataAdminRoleIds: string[]
-    private s3OutputKmsKey: IKey
 
-    constructor( scope: Construct, id: string, props: DataOpsProjectL3ConstructProps ) {
-        super( scope, id, props )
+    constructor(scope: Construct, id: string, props: DataOpsProjectL3ConstructProps) {
+        super(scope, id, props)
         this.props = props
-        this.s3OutputKmsKey = MdaaKmsKey.fromKeyArn( this.scope, "s3OutputKmsKey", props.s3OutputKmsKeyArn )
-        this.projectExecutionRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.projectExecutionRoleRefs, "ProjectExRoles" )
-        this.dataAdminRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.dataAdminRoleRefs, "DataAdmin" )
-        this.dataEngineerRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals( this.props.dataEngineerRoleRefs, "DataEngineer" )
-        this.dataAdminRoleIds = this.dataAdminRoles.map( x => x.id() )
-        this.createProjectDatabases( this.props.databases || {} )
+        
+        this.projectExecutionRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals(this.props.projectExecutionRoleRefs, "ProjectExRoles")
+        this.dataAdminRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals(this.props.dataAdminRoleRefs, "DataAdmin")
+        this.dataEngineerRoles = this.props.roleHelper.resolveRoleRefsWithOrdinals(this.props.dataEngineerRoleRefs, "DataEngineer")
+        this.dataAdminRoleIds = this.dataAdminRoles.map(x => x.id())
 
         const projectDeploymentRole = this.createProjectDeploymentRole()
+        const lakeFormationRole = this.createLakeFormationRole()
+        const datazoneUserRole = this.createDatazoneUserRole()
+        const projectKmsKey = this.createProjectKmsKey([projectDeploymentRole, datazoneUserRole, lakeFormationRole])
 
-        const projectKmsKey = this.createProjectKmsKey( [ projectDeploymentRole ] )
+        const s3OutputKmsKey = props.s3OutputKmsKeyArn ?  MdaaKmsKey.fromKeyArn(this.scope, "s3OutputKmsKey", props.s3OutputKmsKeyArn) : projectKmsKey
 
-        const projectSecurityGroups = Object.fromEntries( Object.entries( props.securityGroupConfigs || {} ).map( entry => {
-            const securityGroupName = entry[ 0 ]
-            const securityGroupProps = entry[ 1 ]
-            const sg = this.createProjectSecurityGroup( securityGroupName, securityGroupProps.vpcId, securityGroupProps.securityGroupEgressRules )
-            return [ securityGroupName, sg ]
-        } ) )
+        const projectSecurityGroups = Object.fromEntries(Object.entries(props.securityGroupConfigs || {}).map(entry => {
+            const securityGroupName = entry[0]
+            const securityGroupProps = entry[1]
+            const sg = this.createProjectSecurityGroup(securityGroupName, securityGroupProps.vpcId, securityGroupProps.securityGroupEgressRules)
+            return [securityGroupName, sg]
+        }))
+
+
 
         // Create project bucket
-        this.createProjectBucket( projectKmsKey, this.s3OutputKmsKey, projectDeploymentRole )
+        const projectBucket = this.createProjectBucket(projectKmsKey, s3OutputKmsKey, projectDeploymentRole, datazoneUserRole, lakeFormationRole)
 
-        this.createProjectSecurityConfig( projectKmsKey, this.s3OutputKmsKey )
+        const datazoneResources = this.createDatazoneResources(projectBucket, datazoneUserRole)
+
+        this.createAthenaWorkgroup(datazoneUserRole,projectBucket,datazoneResources?.datazoneEnv)
+
+        this.createProjectDatabases(this.props.databases || {}, projectBucket, datazoneResources)
+        this.createProjectSecurityConfig(projectKmsKey, s3OutputKmsKey)
 
         // create project SNS topic
-        const topic = this.createSNSTopic( projectKmsKey )
+        const topic = this.createSNSTopic(projectKmsKey)
 
         // subcribe SNS topic if failure notification config is enabled 
-        this.subscribeSNSTopic( topic, this.props.failureNotifications )
+        this.subscribeSNSTopic(topic, this.props.failureNotifications)
 
         // Build our custom classifiers if they are defined.
-        this.createProjectClassifiers( this.props.classifiers || {} )
-
+        this.createProjectClassifiers(this.props.classifiers || {})
 
         // Build our connectors if they are in use.
-        this.createProjectConnectors( this.props.connections || {}, projectSecurityGroups )
+        this.createProjectConnectors(this.props.connections || {}, projectSecurityGroups)
 
         //If the Glue Catalog KMS key is specified, grant decrypt access to it
         //for project execution roles (direct access required to decrypt Glue connections)
-        if ( this.props.glueCatalogKmsKeyArn ) {
+        if (this.props.glueCatalogKmsKeyArn) {
             let i = 0
-            const projectExecutionRoles = this.projectExecutionRoles.map( x => {
-                return MdaaRole.fromRoleArn( this.scope, `resolve-role-${ i++ }`, x.arn() )
-            } )
-            const keyAccessPolicy = new ManagedPolicy( this.scope, "catalog-key-access-policy", {
-                managedPolicyName: this.props.naming.resourceName( "catalog-key-access" ),
+            const projectExecutionRoles = this.projectExecutionRoles.map(x => {
+                return MdaaRole.fromRoleArn(this.scope, `resolve-role-${i++}`, x.arn())
+            })
+            const keyAccessPolicy = new ManagedPolicy(this.scope, "catalog-key-access-policy", {
+                managedPolicyName: this.props.naming.resourceName("catalog-key-access"),
                 roles: projectExecutionRoles
-            } )
-            const keyAccessStatement = new PolicyStatement( {
+            })
+            const keyAccessStatement = new PolicyStatement({
                 effect: Effect.ALLOW,
                 actions: DECRYPT_ACTIONS,
-                resources: [ this.props.glueCatalogKmsKeyArn ]
-            } )
-            keyAccessPolicy.addStatements( keyAccessStatement )
+                resources: [this.props.glueCatalogKmsKeyArn]
+            })
+            keyAccessPolicy.addStatements(keyAccessStatement)
         }
     }
+    private createAthenaWorkgroup(datazoneUserRole: IRole,projectBucket:IBucket,datazoneEnv?:CfnEnvironment) {
+        const athenaWgProps: AthenaWorkgroupL3ConstructProps = {
+            dataAdminRoles: this.props.dataAdminRoleRefs,
+            athenaUserRoles: [
+                {
+                    refId: "dz-user-role",
+                    arn: datazoneUserRole.roleArn
+                },
+                ...this.props.dataEngineerRoleRefs
+            ],
+            workgroupBucketName: projectBucket.bucketName,
+            workgroupKmsKeyArn: projectBucket.encryptionKey?.keyArn,
+            ...this.props
+        }
+        const athenaWg = new AthenaWorkgroupL3Construct(this, "datazone-env-athena-wg", athenaWgProps)
+        if(datazoneEnv){
+            Tags.of(athenaWg.workgroup).add("AmazonDataZoneEnvironment", datazoneEnv.attrId)
+            Tags.of(athenaWg.workgroup).add("AmazonDataZoneProject", datazoneEnv.projectIdentifier)
+            Tags.of(athenaWg.workgroup).add("AmazonDataZoneDomain", datazoneEnv.domainIdentifier)
+        }
+    }
+    private createLakeFormationRole() {
+        return new MdaaRole(this.scope, "lake-formation-role", {
+            naming: this.props.naming,
+            assumedBy: new ServicePrincipal("lakeformation.amazonaws.com"),
+            roleName: "lake-formation",
+            description: "Role for accessing the data lake via LakeFormation."
+        })
+    }
+    private createDatazoneResources(projectBucket: IBucket, datazoneUserRole: IRole): DatazoneResources | undefined {
+        if (this.props.datazone) {
+            if (this.props.datazone?.project) {
+                const datazoneProject = this.createDataZoneProject(this.props.datazone.project)
 
-    private createProjectSecurityGroup ( sgName: string, vpcId: string, securityGroupEgressRules?: MdaaSecurityGroupRuleProps ): SecurityGroup {
+                const datazoneManageAccessRole = this.createDatazoneManageAccessRole(this, this.account, datazoneProject.domainArn)
+                const datazoneEnv =  this.createDataZoneEnvironment(projectBucket, datazoneProject, datazoneManageAccessRole, datazoneUserRole) 
+               
+                return {
+                    datazoneProject,
+                    datazoneManageAccessRole,
+                    datazoneEnv: datazoneEnv
+                }
+            }
+            return undefined
+        }
+        return undefined
+    }
+
+    private createDatazoneManageAccessRole(scope: Construct, account: string,  domainArn: string): IRole {
+
+        const manageAccessRole = new MdaaRole(scope, 'manage-access-role', {
+            naming: this.props.naming,
+            roleName: "dz-manage-access",
+            assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions({
+                "StringEquals": {
+                    "aws:SourceAccount": account
+                },
+                "ArnEquals": {
+                    "aws:SourceArn": domainArn
+                }
+            }),
+            managedPolicies: [
+                MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneGlueManageAccessRolePolicy')
+            ],
+        });
+
+        NagSuppressions.addResourceSuppressions(manageAccessRole, [
+            {
+                id: 'AwsSolutions-IAM4',
+                reason: 'Permissions are restricted to one DataZone Domain and to one AWS Account.'
+            }
+        ])
+
+        return manageAccessRole
+    }
+
+    private createDataZoneProject(mdaaProjectProps:DatazoneProjectProps): MdaaDatazoneProject {
+
+        const constructProps: MdaaDatazoneProjectProps = {
+            naming: this.props.naming,
+            domainConfigSSMParam: mdaaProjectProps.domainConfigSSMParam
+        }
+        const project = new MdaaDatazoneProject(this, 'datazone-project', constructProps)
+
+        return project
+    }
+
+    private createDataZoneEnvironment(projectBucket: IBucket, mdaaProject: MdaaDatazoneProject, datazoneManageAccessRole: IRole, datazoneUserRole: IRole): CfnEnvironment {
+
+        const subBucketLocation = projectBucket.s3UrlForObject("/data/datazone")
+        // Create the database
+        const subDatabaseName = this.props.naming.resourceName("datazone-sub")
+        const subDatabase = new CfnDatabase(this.scope, `datazone-sub-database`, {
+            catalogId: this.account,
+            databaseInput: {
+                name: subDatabaseName,
+                description: "For consuming Datazone subscripts",
+                locationUri: subBucketLocation
+            }
+        })
+
+        const subDatabaseLFProps: DatabaseLakeFormationProps = {
+            createSuperGrantsForDataAdminRoles: true
+        }
+
+        const dataLakeEnvProps: CfnEnvironmentProps = {
+            domainIdentifier: mdaaProject.project.domainIdentifier,
+            environmentProfileIdentifier: "",
+            name: this.props.naming.resourceName(),
+            projectIdentifier: mdaaProject.project.attrId,
+        }
+
+        const datazoneEnv = new CfnEnvironment(this, 'datalake-env', dataLakeEnvProps)
+        datazoneEnv.addPropertyOverride("EnvironmentAccountIdentifier", this.account)
+        datazoneEnv.addPropertyOverride("EnvironmentAccountRegion", this.region)
+        datazoneEnv.addPropertyOverride("EnvironmentBlueprintId", mdaaProject.domainCustomEnvBlueprintId)
+        datazoneEnv.addPropertyOverride("EnvironmentRoleArn", datazoneUserRole.roleArn)
+
+        
+            this.createDatabaseLakeFormationConstruct("datazone-sub",
+                subDatabaseName,
+                subDatabase,
+                subDatabaseLFProps,
+                true,
+                datazoneManageAccessRole,
+                subBucketLocation
+            )
+
+
+            
+        const athenaActionProps: CfnEnvironmentActionsProps = {
+            name: 'Query data',
+            description: 'Amazon Athena',
+            domainIdentifier: mdaaProject.project.domainIdentifier,
+            environmentIdentifier: datazoneEnv.attrId,
+            parameters: {
+                // uri: `https://${this.region}.console.aws.amazon.com/athena/home#/query-editor/domain/${datazoneEnv.attrDomainId}/domainRegion/${this.region}/environment/${datazoneEnv.attrId}`
+                uri: `https://us-east-1.console.aws.amazon.com/athena/home?region=${this.region}#/query-editor`
+            }
+        }
+        new CfnEnvironmentActions(this, 'athena-env-action', athenaActionProps)
+
+        const glueEtlActionProps: CfnEnvironmentActionsProps = {
+            name: 'View Glue ETL jobs',
+            description: 'AWS Glue ETL',
+            domainIdentifier: mdaaProject.project.domainIdentifier,
+            environmentIdentifier: datazoneEnv.attrId,
+            parameters: {
+                uri: `https://${this.region}.console.aws.amazon.com/gluestudio/home?region=${this.region}#/jobs`
+            }
+        }
+        new CfnEnvironmentActions(this, 'glue-etl-env-action', glueEtlActionProps)
+
+        const glueCatalogActionProps: CfnEnvironmentActionsProps = {
+            name: 'View Glue Catalogs',
+            description: 'AWS Glue Catalog',
+            domainIdentifier: mdaaProject.project.domainIdentifier,
+            environmentIdentifier: datazoneEnv.attrId,
+            parameters: {
+                uri: `https://${this.region}.console.aws.amazon.com/glue/home?region=${this.region}#/v2/data-catalog/tables`
+            }
+        }
+        new CfnEnvironmentActions(this, 'glue-catalog-env-action', glueCatalogActionProps)
+
+        const s3BucketActionProps: CfnEnvironmentActionsProps = {
+            name: 'Project S3 Data',
+            description: 'Amazon S3',
+            domainIdentifier: mdaaProject.project.domainIdentifier,
+            environmentIdentifier: datazoneEnv.attrId,
+            parameters: {
+                uri: `https://${this.region}.console.aws.amazon.com/s3/buckets/${projectBucket}/data/`
+            }
+        }
+        new CfnEnvironmentActions(this, 's3-env-action', s3BucketActionProps)
+
+        const consoleActionProps: CfnEnvironmentActionsProps = {
+            name: 'View AWS Console',
+            description: 'AWS Console',
+            domainIdentifier: mdaaProject.project.domainIdentifier,
+            environmentIdentifier: datazoneEnv.attrId,
+            parameters: {
+                uri: "https://console.aws.amazon.com/"
+            }
+        }
+        new CfnEnvironmentActions(this, 'console-env-action', consoleActionProps)
+        const userManagedPolicy = this.createDatazoneUserManagedPolicy(projectBucket)
+        userManagedPolicy.attachToRole(datazoneUserRole)
+
+        
+        this.createDatazoneSubscriptionTarget(datazoneEnv, mdaaProject, datazoneUserRole, datazoneManageAccessRole, subDatabaseName)
+
+        return datazoneEnv
+
+    }
+
+    private createDatazoneSubscriptionTarget(env: CfnEnvironment,
+        mdaaProject: MdaaDatazoneProject,
+        envRole: IRole,
+        datazoneManageAccessRole: IRole,
+        subDatabaseName: string) {
+
+        const subTargetProps: CfnSubscriptionTargetProps = {
+            applicableAssetTypes: ["GlueTableAssetType"],
+            authorizedPrincipals: [envRole.roleArn], //User role
+            domainIdentifier: mdaaProject.project.domainIdentifier,
+            environmentIdentifier: env.attrId,
+            manageAccessRole: datazoneManageAccessRole.roleArn, //manage role
+            name: this.props.naming.resourceName(),
+            subscriptionTargetConfig: [
+                {
+                    content: `{\"databaseName\":\"${subDatabaseName}\"}`,
+                    formName: "GlueSubscriptionTargetConfigForm"
+                }
+            ],
+            type: 'GlueSubscriptionTargetType'
+        }
+        new CfnSubscriptionTarget(this, 'datazone-sub-target', subTargetProps)
+    }
+
+    private createDatazoneUserRole(): Role {
+        const role = new MdaaRole(this.scope, "dz-user-role", {
+            naming: this.props.naming,
+            roleName: "dz-user",
+            assumedBy: new AccountPrincipal(this.account),
+        });
+
+        role.assumeRolePolicy?.addStatements(new PolicyStatement({
+            actions: ["sts:AssumeRole", "sts:TagSession"],
+            principals: [new ServicePrincipal('datazone.amazonaws.com')],
+            effect: Effect.ALLOW
+        }))
+
+        return role;
+    }
+
+    private createDatazoneUserManagedPolicy(projectBucket: IBucket): ManagedPolicy {
+
+        //Allow to access the glue catalog resources
+        const userPolicy: ManagedPolicy = new ManagedPolicy(this, "datazone-user-access-policy", {
+            managedPolicyName: this.props.naming.resourceName("datazone-user-access-policy"),
+        })
+
+        const datazoneStatement: PolicyStatement = new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                "datazone:ListDomains",
+                "datazone:ListProjects",
+                "datazone:ListAccountEnvironments",
+                "datazone:ListEnvironments",
+                "datazone:GetEnvironment",
+                "datazone:*"
+            ],
+            resources: [
+                "*"
+            ]
+        })
+        userPolicy.addStatements(datazoneStatement)
+
+        //Allow smooth interactions with project bucket via Console
+        const projectBucketConsoleStatement = new PolicyStatement({
+            sid: "ProjectBucketGet",
+            effect: Effect.ALLOW,
+            resources: [
+                projectBucket.bucketArn
+            ],
+            actions: [
+                "s3:GetBucketLocation",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketTagging",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetIntelligentTieringConfiguration",
+                "s3:GetBucketPolicy"
+            ]
+        })
+        userPolicy.addStatements(projectBucketConsoleStatement)
+
+        const accessAthenaStatement: PolicyStatement = new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                "athena:ListWorkGroups"
+            ],
+            resources: [
+                "*"
+            ]
+        })
+        userPolicy.addStatements(accessAthenaStatement)
+
+        const accessLFStatement: PolicyStatement = new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                "lakeformation:GetDataAccess"
+            ],
+            resources: [
+                "*"
+            ]
+        })
+        userPolicy.addStatements(accessLFStatement)
+
+        const accessGlueStatement: PolicyStatement = new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                "glue:GetColumnStatisticsTaskRuns"
+            ],
+            resources: [
+                "*"
+            ]
+        })
+        userPolicy.addStatements(accessGlueStatement)
+
+        const accessGlueResourceStatement: PolicyStatement = new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                "glue:GetDatabase",
+                "glue:GetDatabases",
+                "glue:GetTable",
+                "glue:GetTables",
+                "glue:GetPartition",
+                "glue:GetPartitions",
+                "glue:SearchTables",
+                "glue:GetTableVersion",
+                "glue:GetTableVersions",
+                "glue:GetColumnStatistics*"
+            ],
+            resources: [
+                `arn:${this.partition}:glue:${this.region}:${this.account}:catalog`,
+                `arn:${this.partition}:glue:${this.region}:${this.account}:database/*`,
+                `arn:${this.partition}:glue:${this.region}:${this.account}:table/*`,
+                `arn:${this.partition}:glue:${this.region}:${this.account}:tableVersion/*`,
+            ]
+        })
+        userPolicy.addStatements(accessGlueResourceStatement)
+        NagSuppressions.addResourceSuppressions(userPolicy, [
+            {
+                id: 'AwsSolutions-IAM5',
+                reason: 'Fine-grained permissions enforced via LakeFormation.'
+            },
+            {
+                id: 'NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess',
+                reason: 'Fine-grained permissions enforced via LakeFormation.'
+            },
+            {
+                id: 'HIPAA.Security-IAMPolicyNoStatementsWithFullAccess',
+                reason: 'Fine-grained permissions enforced via LakeFormation.'
+            }
+        ])
+        return userPolicy
+    }
+
+    private createProjectSecurityGroup(sgName: string, vpcId: string, securityGroupEgressRules?: MdaaSecurityGroupRuleProps): SecurityGroup {
         const ec2L3Props: Ec2L3ConstructProps = {
             ...this.props as MdaaL3ConstructProps,
             adminRoles: [],
             securityGroups: {
-                [ sgName ]: {
+                [sgName]: {
                     vpcId: vpcId,
                     egressRules: securityGroupEgressRules,
                     addSelfReferenceRule: true
                 }
             }
         }
-        const ec2Construct = new Ec2L3Construct( this, `ec2`, ec2L3Props )
-        const securityGroup = ec2Construct.securityGroups[ sgName ]
+        const ec2Construct = new Ec2L3Construct(this, `ec2`, ec2L3Props)
+        const securityGroup = ec2Construct.securityGroups[sgName]
 
         // Required so we can auto-wire other stacks/resources to this project resource via SSM
-        this.createProjectSSMParam( `sg-ssm-${ sgName }`, `securityGroupId/${ sgName }`, securityGroup.securityGroupId )
+        this.createProjectSSMParam(`sg-ssm-${sgName}`, `securityGroupId/${sgName}`, securityGroup.securityGroupId)
 
         return securityGroup
     }
     /** @jsii ignore */
-    private createProjectConnectors ( connections: NamedConnectionProps, projectSecurityGroups: { [ name: string ]: SecurityGroup } ) {
-        Object.entries( connections ).forEach( entry => {
-            const connectionName = entry[ 0 ]
-            const connectionProps = entry[ 1 ]
+    private createProjectConnectors(connections: NamedConnectionProps, projectSecurityGroups: { [name: string]: SecurityGroup }) {
+        Object.entries(connections).forEach(entry => {
+            const connectionName = entry[0]
+            const connectionProps = entry[1]
 
             const securityGroupIds = [
                 ...connectionProps.physicalConnectionRequirements?.securityGroupIdList || [],
-                ...connectionProps.physicalConnectionRequirements?.projectSecurityGroupNames?.map( name => {
-                    const sg = projectSecurityGroups[ name ]
-                    if ( !sg ) {
-                        throw new Error( `Non-existant project security group name specified` )
+                ...connectionProps.physicalConnectionRequirements?.projectSecurityGroupNames?.map(name => {
+                    const sg = projectSecurityGroups[name]
+                    if (!sg) {
+                        throw new Error(`Non-existant project security group name specified`)
                     }
                     return sg.securityGroupId
-                } ) || []
+                }) || []
             ]
 
             const physicalConnectionRequirements = {
@@ -395,108 +771,152 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
                 securityGroupIdList: securityGroupIds
             }
 
-            const resourceName = this.props.naming.resourceName( connectionName )
+            const resourceName = this.props.naming.resourceName(connectionName)
             // We'll support SSM imports for our physical connection requirements as needed.
-            new CfnConnection( this.scope, `${ connectionName }-connection`, {
+            new CfnConnection(this.scope, `${connectionName}-connection`, {
                 catalogId: this.account,
                 connectionInput: {
                     ...connectionProps,
                     physicalConnectionRequirements: physicalConnectionRequirements,
                     name: resourceName
                 }
-            } )
+            })
 
-            this.createProjectSSMParam( `ssm-connection-${ connectionName }`, `connections/${ connectionName }`, resourceName )
+            this.createProjectSSMParam(`ssm-connection-${connectionName}`, `connections/${connectionName}`, resourceName)
 
-        } )
+        })
 
     }
-    private createProjectClassifiers ( classifiers: NamedClassifierProps ) {
-        Object.entries( classifiers ).forEach( entry => {
-            const classifierName = entry[ 0 ]
-            const classifierProps = entry[ 1 ]
-            let resourceName = this.props.naming.resourceName( classifierName )
+    private createProjectClassifiers(classifiers: NamedClassifierProps) {
+        Object.entries(classifiers).forEach(entry => {
+            const classifierName = entry[0]
+            const classifierProps = entry[1]
+            let resourceName = this.props.naming.resourceName(classifierName)
             // We'll need to name our classifiers appropriately over-riding any 'name' values that exist
-            for ( let classifierType of [ 'csvClassifier', 'xmlClassifier', 'jsonClassifier', 'grokClassifier' ] ) {
-                if ( classifierProps.configuration.hasOwnProperty( classifierType ) ) {
+            for (let classifierType of ['csvClassifier', 'xmlClassifier', 'jsonClassifier', 'grokClassifier']) {
+                if (classifierProps.configuration.hasOwnProperty(classifierType)) {
                     // @ts-ignore - suppressing read only property
-                    classifierProps.configuration[ classifierType ][ 'name' ] = resourceName
+                    classifierProps.configuration[classifierType]['name'] = resourceName
                 }
             }
-            new CfnClassifier( this.scope, `${ classifierName }-classifier`, {
+            new CfnClassifier(this.scope, `${classifierName}-classifier`, {
                 csvClassifier: classifierProps.configuration.csvClassifier,
                 xmlClassifier: classifierProps.configuration.xmlClassifier,
                 jsonClassifier: classifierProps.configuration.jsonClassifier,
                 grokClassifier: classifierProps.configuration.grokClassifier
-            } )
+            })
 
-            this.createProjectSSMParam( `ssm-classifier-${ classifierName }`, `classifiers/${ classifierName }`, resourceName )
+            this.createProjectSSMParam(`ssm-classifier-${classifierName}`, `classifiers/${classifierName}`, resourceName)
 
-        } )
+        })
     }
-    private createProjectSecurityConfig ( projectKmsKey: IMdaaKmsKey, s3OutputKmsKey: IKey ): SecurityConfiguration {
+    private createProjectSecurityConfig(projectKmsKey: IMdaaKmsKey, s3OutputKmsKey: IKey): SecurityConfiguration {
         //Create project security Config
-        const projectSecurityConfig = new MdaaSecurityConfig( this.scope, `security-config`, {
+        const projectSecurityConfig = new MdaaSecurityConfig(this.scope, `security-config`, {
             cloudWatchKmsKey: projectKmsKey,
             jobBookMarkKmsKey: projectKmsKey,
             s3OutputKmsKey: s3OutputKmsKey,
             naming: this.props.naming
-        } );
+        });
 
         // Required so we can auto-wire other stacks/resources to this project resource via SSM
-        this.createProjectSSMParam( `ssm-securityconfig`, `securityConfiguration/default`, projectSecurityConfig.securityConfigurationName )
+        this.createProjectSSMParam(`ssm-securityconfig`, `securityConfiguration/default`, projectSecurityConfig.securityConfigurationName)
 
         return projectSecurityConfig
     }
 
-    private createProjectDatabases ( databases: NamedDatabaseProps ) {
+    private createProjectDatabases(
+        databases: NamedDatabaseProps,
+        projectBucket: IBucket,
+        datazoneResources?: DatazoneResources) {
 
         // Build our databases
-        Object.entries( databases ).forEach( entry => {
-            const databaseName = entry[ 0 ]
-            const databaseProps = entry[ 1 ]
+        Object.entries(databases).forEach(entry => {
+            const databaseName = entry[0]
+            const databaseProps = entry[1]
 
-            const dbResourceName = this.props.naming.resourceName( `${ databaseName }` )
-            const databaseBucket = databaseProps.locationBucketName && databaseProps.locationPrefix ? MdaaBucket.fromBucketName( this, `database-bucket-${ databaseName }`, databaseProps.locationBucketName ) : undefined
+            const dbResourceName = this.props.naming.resourceName(databaseName)
+            const databaseBucket = databaseProps.locationBucketName ? MdaaBucket.fromBucketName(this, `database-bucket-${databaseName}`, databaseProps.locationBucketName) : projectBucket
 
             // Create the database
-            const database = new CfnDatabase( this.scope, `${ databaseName }-database`, {
+            const database = new CfnDatabase(this.scope, `${databaseName}-database`, {
                 catalogId: this.account,
                 databaseInput: {
                     name: dbResourceName,
                     description: databaseProps.description,
-                    locationUri: databaseBucket?.s3UrlForObject( databaseProps.locationPrefix )
+                    locationUri: databaseBucket?.s3UrlForObject(databaseProps.locationPrefix)
                 }
-            } )
+            })
+
+            if (databaseProps.createDatazoneDatasource) {
+                this.createDataZoneDatasource(databaseName, dbResourceName, database, datazoneResources)
+            }
 
             // Use LF Access Control L3 Contruct to create LF grants and Resource Links for the database
-            if ( databaseProps.lakeFormation ) {
-                this.createDatabaseLakeFormationConstruct( databaseName,
+            if (databaseProps.lakeFormation || databaseProps.createDatazoneDatasource) {
+                this.createDatabaseLakeFormationConstruct(databaseName,
                     dbResourceName,
                     database,
-                    databaseProps.lakeFormation,
-                    databaseBucket?.arnForObjects( databaseProps.locationPrefix || "" )
+                    databaseProps.lakeFormation || {},
+                    databaseProps.createDatazoneDatasource || false,
+                    datazoneResources?.datazoneManageAccessRole,
+                    databaseBucket?.arnForObjects(databaseProps.locationPrefix || ""),
                 )
             }
 
-            // Required so we can auto-wire other stacks/resources to this project resource via SSM
-            this.createProjectSSMParam( `ssm-database-name-${ databaseName }`, `databaseName/${ databaseName }`, dbResourceName )
 
-        } )
+            // Required so we can auto-wire other stacks/resources to this project resource via SSM
+            this.createProjectSSMParam(`ssm-database-name-${databaseName}`, `databaseName/${databaseName}`, dbResourceName)
+
+        })
     }
 
-    private createDatabaseLakeFormationConstruct ( databaseName: string,
+    private createDataZoneDatasource(
+        databaseName: string,
+        databaseResourceName: string,
+        database: CfnDatabase,
+        datazoneResources?: DatazoneResources) {
+
+        if (!datazoneResources || !datazoneResources?.datazoneEnv) {
+            throw new Error("DataZone Project must be defined if creating a DataZone Data Source")
+        }
+        const datasourceProps: CfnDataSourceProps = {
+            domainIdentifier: datazoneResources.datazoneProject.project.attrDomainId,
+            environmentIdentifier: datazoneResources.datazoneEnv?.attrId,
+            name: this.props.naming.resourceName(databaseName),
+            projectIdentifier: datazoneResources.datazoneProject.project.attrId,
+            type: 'glue',
+            configuration: {
+                glueRunConfiguration: {
+                    autoImportDataQualityResult: true,
+                    dataAccessRole: datazoneResources.datazoneManageAccessRole.roleArn,
+                    relationalFilterConfigurations: [{
+                        databaseName: databaseResourceName
+                    }]
+                }
+            }
+
+        }
+        const datasource = new CfnDataSource(this, `${databaseName}-datazone-datasource`, datasourceProps)
+        datasource.addDependency(database)
+
+
+    }
+
+    private createDatabaseLakeFormationConstruct(databaseName: string,
         dbResourceName: string,
         database: CfnDatabase,
         databaseLakeFormationProps: DatabaseLakeFormationProps,
-        locationArn?: string ) {
+        createDatazoneDatasource: boolean,
+        datazoneManageAccessRole?: IRole,
+        locationArn?: string) {
 
         // Provide Project Execution Roles (principal) data location permissions to create data catalog
         // tables that point to specified data-locations
-        if ( databaseLakeFormationProps.createReadWriteGrantsForProjectExecutionRoles && locationArn ) {
-            this.projectExecutionRoles.forEach( role => {
-                const grantId = LakeFormationAccessControlL3Construct.generateIdentifier( databaseName, role.refId() )
-                const grant = new CfnPrincipalPermissions( this, `lf-data-location-grant-${ grantId }`, {
+        if (databaseLakeFormationProps.createReadWriteGrantsForProjectExecutionRoles && locationArn) {
+            this.projectExecutionRoles.forEach(role => {
+                const grantId = LakeFormationAccessControlL3Construct.generateIdentifier(databaseName, role.refId())
+                const grant = new CfnPrincipalPermissions(this, `lf-data-location-grant-${grantId}`, {
                     principal: {
                         dataLakePrincipalIdentifier: role.arn(),
                     },
@@ -506,84 +926,103 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
                             resourceArn: locationArn
                         },
                     },
-                    permissions: [ 'DATA_LOCATION_ACCESS' ],
+                    permissions: ['DATA_LOCATION_ACCESS'],
                     permissionsWithGrantOption: []
-                } )
-                grant.addDependency( database )
-            } )
+                })
+                grant.addDependency(database)
+            })
         }
 
-        const projectRoleGrantProps: { [ key: string ]: GrantProps } = {}
-        if ( databaseLakeFormationProps.createSuperGrantsForDataAdminRoles ) {
+        const projectRoleGrantProps: { [key: string]: GrantProps } = {}
+        if (databaseLakeFormationProps.createSuperGrantsForDataAdminRoles) {
             const adminGrantProps: GrantProps = {
 
                 database: dbResourceName,
                 databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_SUPER_PERMISSIONS,
-                principals: Object.fromEntries( this.dataAdminRoles.map( x => {
-                    return [ x.refId(), {
+                principals: Object.fromEntries(this.dataAdminRoles.map(x => {
+                    return [x.refId(), {
                         role: x
-                    } ]
-                } ) ),
+                    }]
+                })),
                 tablePermissions: LakeFormationAccessControlL3Construct.TABLE_SUPER_PERMISSIONS
             }
-            
-            projectRoleGrantProps[ `data-admins-${ databaseName }` ] = adminGrantProps
+
+            projectRoleGrantProps[`data-admins-${databaseName}`] = adminGrantProps
         }
-        if ( databaseLakeFormationProps.createReadGrantsForDataEngineerRoles ) {
+        if (databaseLakeFormationProps.createReadGrantsForDataEngineerRoles) {
             const engineerGrantProps: GrantProps = {
                 database: dbResourceName,
                 databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_PERMISSIONS,
-                principals: Object.fromEntries( this.dataEngineerRoles.map( x => {
-                    return [ x.refId(), {
+                principals: Object.fromEntries(this.dataEngineerRoles.map(x => {
+                    return [x.refId(), {
                         role: x
-                    } ]
-                } ) ),
+                    }]
+                })),
                 tablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_PERMISSIONS
             }
-            projectRoleGrantProps[ `data-engineers-${ databaseName }` ] = engineerGrantProps
+            projectRoleGrantProps[`data-engineers-${databaseName}`] = engineerGrantProps
         }
 
-        if ( databaseLakeFormationProps.createReadWriteGrantsForProjectExecutionRoles ) {
+        if (databaseLakeFormationProps.createReadWriteGrantsForProjectExecutionRoles) {
             const executionRoleGrantProps: GrantProps = {
                 database: dbResourceName,
                 databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
-                principals: Object.fromEntries( this.projectExecutionRoles.map( x => {
-                    return [ x.refId(), {
+                principals: Object.fromEntries(this.projectExecutionRoles.map(x => {
+                    return [x.refId(), {
                         role: x
-                    } ]
-                } ) ),
+                    }]
+                })),
                 tablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS
             }
-            projectRoleGrantProps[ `execution-roles-${ databaseName }` ] = executionRoleGrantProps
+            projectRoleGrantProps[`execution-roles-${databaseName}`] = executionRoleGrantProps
         }
 
-        const lfGrantProps: NamedGrantProps = Object.fromEntries( Object.entries( databaseLakeFormationProps?.grants || {} ).map( entry => {
-            const dbGrantName = entry[ 0 ]
-            const dbGrantProps = entry[ 1 ]
-            const lakeFormationGrantProps = this.createLakeFormationGrantProps( dbResourceName, dbGrantProps )
-            return [ `${ databaseName }-${ dbGrantName }`, lakeFormationGrantProps ]
-        } ) ) || {}
+        if (createDatazoneDatasource && datazoneManageAccessRole) {
+            const datazoneRoleGrantProps: GrantProps = {
+                database: dbResourceName,
+                databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
+                databaseGrantablePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
+                principals: {
+                    "datazone": {
+                        role: {
+                            refId: "datazone",
+                            arn: datazoneManageAccessRole?.roleArn
+                        }
+                    }
+                },
+                tablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS,
+                tableGrantablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS,
+            }
+            projectRoleGrantProps[`datazone-roles-${databaseName}`] = datazoneRoleGrantProps
+        }
+
+        const lfGrantProps: NamedGrantProps = Object.fromEntries(Object.entries(databaseLakeFormationProps?.grants || {}).map(entry => {
+            const dbGrantName = entry[0]
+            const dbGrantProps = entry[1]
+            const lakeFormationGrantProps = this.createLakeFormationGrantProps(dbResourceName, dbGrantProps)
+            return [`${databaseName}-${dbGrantName}`, lakeFormationGrantProps]
+        })) || {}
 
         const resourceLinkName = databaseLakeFormationProps.createCrossAccountResourceLinkName || dbResourceName
-        const resourceLinkProps: NamedResourceLinkProps = Object.fromEntries( databaseLakeFormationProps?.createCrossAccountResourceLinkAccounts?.map( account => {
-            const accountPrincipalEntries = Object.entries( lfGrantProps ).map( lfGrantEntry => {
-                const lfGrantProps = lfGrantEntry[ 1 ]
-                return Object.entries( lfGrantProps.principals ).filter( principalEntry => {
-                    const principalName = principalEntry[ 0 ]
-                    const principalProps = principalEntry[ 1 ]
-                    const principalAccount = this.determinePrincipalAccount( principalName, principalProps )
+        const resourceLinkProps: NamedResourceLinkProps = Object.fromEntries(databaseLakeFormationProps?.createCrossAccountResourceLinkAccounts?.map(account => {
+            const accountPrincipalEntries = Object.entries(lfGrantProps).map(lfGrantEntry => {
+                const lfGrantProps = lfGrantEntry[1]
+                return Object.entries(lfGrantProps.principals).filter(principalEntry => {
+                    const principalName = principalEntry[0]
+                    const principalProps = principalEntry[1]
+                    const principalAccount = this.determinePrincipalAccount(principalName, principalProps)
                     return principalAccount == account
-                } )
-            } ).flat()
-            const namedAccountPrincipals: NamedPrincipalProps = Object.fromEntries( accountPrincipalEntries )
+                })
+            }).flat()
+            const namedAccountPrincipals: NamedPrincipalProps = Object.fromEntries(accountPrincipalEntries)
             const props: ResourceLinkProps = {
                 targetDatabase: dbResourceName,
                 targetAccount: this.account,
                 fromAccount: account,
                 grantPrincipals: namedAccountPrincipals
             }
-            return [ resourceLinkName, props ]
-        } ) || [] )
+            return [resourceLinkName, props]
+        }) || [])
 
         const lakeFormationProps: LakeFormationAccessControlL3ConstructProps = {
             grants: { ...projectRoleGrantProps, ...lfGrantProps },
@@ -593,38 +1032,38 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         }
 
         //Use the LF Account Control construct to create all database grants and resource links
-        const lf = new LakeFormationAccessControlL3Construct( this, `lf-grants-${ databaseName }`, lakeFormationProps )
-        lf.node.addDependency( database )
+        const lf = new LakeFormationAccessControlL3Construct(this, `lf-grants-${databaseName}`, lakeFormationProps)
+        lf.node.addDependency(database)
 
     }
 
-    private determinePrincipalAccount ( principalName: string, principalProps: PrincipalProps ): string | undefined {
-        if ( principalProps.role instanceof MdaaResolvableRole ) {
-            return this.tryParseArn( principalProps.role.arn() )?.account
-        } else if ( principalProps.role ) {
-            return this.tryParseArn( this.props.roleHelper.resolveRoleRefWithRefId( principalProps.role, principalName ).arn() )?.account
+    private determinePrincipalAccount(principalName: string, principalProps: PrincipalProps): string | undefined {
+        if (principalProps.role instanceof MdaaResolvableRole) {
+            return this.tryParseArn(principalProps.role.arn())?.account
+        } else if (principalProps.role) {
+            return this.tryParseArn(this.props.roleHelper.resolveRoleRefWithRefId(principalProps.role, principalName).arn())?.account
         } else {
             return undefined
         }
     }
-    private tryParseArn ( arnString: string ): ArnComponents | undefined {
+    private tryParseArn(arnString: string): ArnComponents | undefined {
         try {
-            return Arn.split( arnString, ArnFormat.NO_RESOURCE_NAME )
+            return Arn.split(arnString, ArnFormat.NO_RESOURCE_NAME)
         } catch {
             return undefined
         }
     }
-    private createLakeFormationGrantProps ( dbResourceName: string, dbGrantProps: DatabaseGrantProps ): GrantProps {
-        const databasePermissions = LakeFormationAccessControlL3Construct.DATABASE_PERMISSIONS_MAP[ dbGrantProps.databasePermissions || 'read' ]
-        const tablePermissions = LakeFormationAccessControlL3Construct.TABLE_PERMISSIONS_MAP[ dbGrantProps.tablePermissions || 'read' ]
-        const principalArns: NamedPrincipalProps = Object.fromEntries( Object.entries( dbGrantProps.principalArns || {} ).map( entry => {
+    private createLakeFormationGrantProps(dbResourceName: string, dbGrantProps: DatabaseGrantProps): GrantProps {
+        const databasePermissions = LakeFormationAccessControlL3Construct.DATABASE_PERMISSIONS_MAP[dbGrantProps.databasePermissions || 'read']
+        const tablePermissions = LakeFormationAccessControlL3Construct.TABLE_PERMISSIONS_MAP[dbGrantProps.tablePermissions || 'read']
+        const principalArns: NamedPrincipalProps = Object.fromEntries(Object.entries(dbGrantProps.principalArns || {}).map(entry => {
             const principalProps: PrincipalProps = {
                 role: {
-                    arn: entry[ 1 ]
+                    arn: entry[1]
                 }
             }
-            return [ entry[ 0 ], principalProps ]
-        } ) )
+            return [entry[0], principalProps]
+        }))
 
         const lakeFormationGrantProps: GrantProps = {
             ...dbGrantProps,
@@ -637,26 +1076,26 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         return lakeFormationGrantProps
     }
 
-    private createProjectKmsKey ( keyUserRoles: IRole[] ): IMdaaKmsKey {
+    private createProjectKmsKey(keyUserRoles: Role[]): IMdaaKmsKey {
         //Allow CloudWatch logs to us the project key to encrypt/decrypt log data using this key
-        const cloudwatchStatement = new PolicyStatement( {
+        const cloudwatchStatement = new PolicyStatement({
             sid: "CloudWatchLogsEncryption",
             effect: Effect.ALLOW,
             actions: [
                 ...DECRYPT_ACTIONS,
                 ...ENCRYPT_ACTIONS
             ],
-            principals: [ new ServicePrincipal( `logs.${ this.region }.amazonaws.com` ) ],
-            resources: [ "*" ],
+            principals: [new ServicePrincipal(`logs.${this.region}.amazonaws.com`)],
+            resources: ["*"],
             //Limit access to use this key only for log groups within this account
             conditions: {
                 "ArnEquals": {
-                    "kms:EncryptionContext:aws:logs:arn": `arn:${ this.partition }:logs:${ this.region }:${ this.account }:log-group:*`
+                    "kms:EncryptionContext:aws:logs:arn": `arn:${this.partition}:logs:${this.region}:${this.account}:log-group:*`
                 }
             }
-        } )
+        })
 
-        const projectDeploymentStatement = new PolicyStatement( {
+        const projectDeploymentStatement = new PolicyStatement({
             sid: "ProjectDeployment",
             effect: Effect.ALLOW,
             actions: [
@@ -664,12 +1103,12 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
                 ...ENCRYPT_ACTIONS
             ],
             principals: keyUserRoles,
-            resources: [ "*" ]
-        } )
+            resources: ["*"]
+        })
 
         // Allow the account use the project KMS key for encrypting
         // messages into SQS Dead Letter Queues
-        const sqsStatement = new PolicyStatement( {
+        const sqsStatement = new PolicyStatement({
             sid: "sqsEncryption",
             effect: Effect.ALLOW,
             // Actions required https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-key-management.html
@@ -677,69 +1116,69 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
                 "kms:GenerateDataKey",
                 "kms:Decrypt"
             ],
-            resources: [ "*" ],
+            resources: ["*"],
             conditions: {
                 StringEquals: {
                     "kms:CallerAccount": this.account,
-                    "kms:ViaService": `sqs.${ this.region }.amazonaws.com`
+                    "kms:ViaService": `sqs.${this.region}.amazonaws.com`
                 }
             }
-        } )
+        })
         sqsStatement.addAnyPrincipal()
 
         // Allow Eventbridge Service principal to use KMS key to publish to project SNS topic
-        const eventBridgeStatement = new PolicyStatement( {
+        const eventBridgeStatement = new PolicyStatement({
             sid: "eventBridgeEncryption",
             effect: Effect.ALLOW,
             actions: [
                 "kms:GenerateDataKey",
                 "kms:Decrypt"
             ],
-            principals: [ new ServicePrincipal( "events.amazonaws.com" ) ],
-            resources: [ "*" ]
-        } )
+            principals: [new ServicePrincipal("events.amazonaws.com")],
+            resources: ["*"]
+        })
 
         // Create a KMS Key if we need to make one for the project.
-        const kmsKey = new MdaaKmsKey( this.scope, 'ProjectKmsKey', {
+        const kmsKey = new MdaaKmsKey(this.scope, 'ProjectKmsKey', {
             alias: "cmk",
             naming: this.props.naming,
             keyAdminRoleIds: this.dataAdminRoleIds,
-            keyUserRoleIds: this.getAllRoleIds()
-        } )
-        kmsKey.addToResourcePolicy( cloudwatchStatement )
-        kmsKey.addToResourcePolicy( projectDeploymentStatement )
-        kmsKey.addToResourcePolicy( sqsStatement )
-        kmsKey.addToResourcePolicy( eventBridgeStatement )
+            keyUserRoleIds: [...this.getAllRoleIds(),...keyUserRoles.map(x => x.roleId)]
+        })
+        kmsKey.addToResourcePolicy(cloudwatchStatement)
+        kmsKey.addToResourcePolicy(projectDeploymentStatement)
+        kmsKey.addToResourcePolicy(sqsStatement)
+        kmsKey.addToResourcePolicy(eventBridgeStatement)
 
         // Required so we can auto-wire other stacks/resources to this project resource via SSM
-        this.createProjectSSMParam( "ssm-kms-arn", `kmsArn/default`, kmsKey.keyArn )
+        this.createProjectSSMParam("ssm-kms-arn", `kmsArn/default`, kmsKey.keyArn)
 
         return kmsKey
     }
 
-    private createProjectDeploymentRole (): IRole {
-        const role = new MdaaRole( this.scope, `project-deployment-role`, {
-            assumedBy: new ServicePrincipal( "lambda.amazonaws.com" ),
+    private createProjectDeploymentRole(): Role {
+        const role = new MdaaRole(this.scope, `project-deployment-role`, {
+            assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             roleName: "deployment",
             naming: this.props.naming
-        } )
+        })
 
         // Required so we can auto-wire other stacks/resources to this project resource via SSM
-        this.createProjectSSMParam( `ssm-deployment-role`, `deploymentRole/default`, role.roleArn )
+        this.createProjectSSMParam(`ssm-deployment-role`, `deploymentRole/default`, role.roleArn)
         return role
     }
 
-    private createProjectBucket ( projectKmsKey: IKey, s3OutputKmsKey: IKey, projectDeploymentRole: IRole ): MdaaBucket {
-        const dataEngineerRoleIds = this.dataEngineerRoles.map( x => x.id() )
-        const dataAdminRoleIds = this.dataAdminRoles.map( x => x.id() )
-        const projectExecutionRoleIds = this.projectExecutionRoles.map( x => x.id() )
+    private createProjectBucket(projectKmsKey: IKey, s3OutputKmsKey: IKey, projectDeploymentRole: IRole, datazoneUserRole: Role, lakeFormationRole: Role): IBucket {
+        const dataEngineerRoleIds = this.dataEngineerRoles.map(x => x.id())
+        const dataAdminRoleIds = this.dataAdminRoles.map(x => x.id())
+        const projectExecutionRoleIds = this.projectExecutionRoles.map(x => x.id())
 
         //This project bucket will be used for all project-specific data
-        const projectBucket = new MdaaBucket( this.scope, `Bucketproject`, {
+        const projectBucket = new MdaaBucket(this.scope, `Bucketproject`, {
             encryptionKey: projectKmsKey,
-            additionalKmsKeyArns: [ s3OutputKmsKey.keyArn ],
+            additionalKmsKeyArns: [s3OutputKmsKey.keyArn],
             naming: this.props.naming
-        } )
+        })
 
         NagSuppressions.addResourceSuppressions(
             projectBucket,
@@ -751,99 +1190,118 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         );
         //Data Admins can read/write the entire bucket
         //Data Engineers can read the entire bucket
-        const rootPolicy = new RestrictObjectPrefixToRoles( {
+        const rootPolicy = new RestrictObjectPrefixToRoles({
             s3Bucket: projectBucket,
             s3Prefix: "/",
             readRoleIds: dataEngineerRoleIds,
             readWriteSuperRoleIds: dataAdminRoleIds
-        } )
-        rootPolicy.statements().forEach( statement => projectBucket.addToResourcePolicy( statement ) )
+        })
+        rootPolicy.statements().forEach(statement => projectBucket.addToResourcePolicy(statement))
+
+        //Datazone env role and Data Engineers can read/write /athena-results
+        const athenaPolicy = new RestrictObjectPrefixToRoles({
+            s3Bucket: projectBucket,
+            s3Prefix: "/athena-results",
+            readRoleIds: dataEngineerRoleIds,
+            readWritePrincipals: [datazoneUserRole]
+        })
+        athenaPolicy.statements().forEach(statement => projectBucket.addToResourcePolicy(statement))
 
         //Deployment role can read/write /deployment
         //Execution role can read /deployment
-        const deploymentPolicy = new RestrictObjectPrefixToRoles( {
+        const deploymentPolicy = new RestrictObjectPrefixToRoles({
             s3Bucket: projectBucket,
             s3Prefix: "/deployment",
             readRoleIds: projectExecutionRoleIds,
-            readWritePrincipals: [ projectDeploymentRole ]
-        } )
-        deploymentPolicy.statements().forEach( statement => projectBucket.addToResourcePolicy( statement ) )
+            readWritePrincipals: [projectDeploymentRole]
+        })
+        deploymentPolicy.statements().forEach(statement => projectBucket.addToResourcePolicy(statement))
         //Data Engineers and can read/write under /data
-        const dataPolicy = new RestrictObjectPrefixToRoles( {
+        const dataPolicy = new RestrictObjectPrefixToRoles({
             s3Bucket: projectBucket,
             s3Prefix: "/data",
-            readWriteRoleIds: [ ...dataEngineerRoleIds, ...projectExecutionRoleIds ]
-        } )
-        dataPolicy.statements().forEach( statement => projectBucket.addToResourcePolicy( statement ) )
+            readWritePrincipals: [lakeFormationRole],
+            readWriteRoleIds: [...dataEngineerRoleIds, ...projectExecutionRoleIds],
+        })
+        dataPolicy.statements().forEach(statement => projectBucket.addToResourcePolicy(statement))
 
         //Execution role and can read/write under /temp
-        const tempPolicy = new RestrictObjectPrefixToRoles( {
+        const tempPolicy = new RestrictObjectPrefixToRoles({
             s3Bucket: projectBucket,
             s3Prefix: "/temp",
             readWriteRoleIds: projectExecutionRoleIds
-        } )
-        tempPolicy.statements().forEach( statement => projectBucket.addToResourcePolicy( statement ) )
+        })
+        tempPolicy.statements().forEach(statement => projectBucket.addToResourcePolicy(statement))
 
         //Default Deny Policy
         //Any role not specified in props is explicitely denied access to the bucket
-        const bucketRestrictPolicy = new RestrictBucketToRoles( {
+        const bucketRestrictPolicy = new RestrictBucketToRoles({
             s3Bucket: projectBucket,
-            roleExcludeIds: this.getAllRoleIds(),
-            principalExcludes: [ projectDeploymentRole.roleArn ]
-        } )
-        projectBucket.addToResourcePolicy( bucketRestrictPolicy.denyStatement )
-        projectBucket.addToResourcePolicy( bucketRestrictPolicy.allowStatement )
+            roleExcludeIds: [...this.getAllRoleIds(), lakeFormationRole.roleId, datazoneUserRole.roleId],
+            principalExcludes: [projectDeploymentRole.roleArn]
+        })
+        projectBucket.addToResourcePolicy(bucketRestrictPolicy.denyStatement)
+        projectBucket.addToResourcePolicy(bucketRestrictPolicy.allowStatement)
 
         // Required so we can auto-wire other stacks/resources to this project resource via SSM
-        this.createProjectSSMParam( "ssm-bucket-name", `projectBucket/default`, projectBucket.bucketName )
+        this.createProjectSSMParam("ssm-bucket-name", `projectBucket/default`, projectBucket.bucketName)
+
+        new CfnResource(this.scope, `lf-resource-project-data`, {
+            resourceArn: projectBucket.arnForObjects("data"),
+            useServiceLinkedRole: false,
+            roleArn: lakeFormationRole.roleArn
+        })
+
         return projectBucket
     }
 
-    private getAllRoles (): MdaaResolvableRole[] {
-        return [ ...new Set( [ ...this.dataAdminRoles, ...this.dataEngineerRoles, ...this.projectExecutionRoles ] ) ]
+    private getAllRoles(): MdaaResolvableRole[] {
+        return [...new Set([...this.dataAdminRoles, ...this.dataEngineerRoles, ...this.projectExecutionRoles])]
     }
 
-    private getAllRoleIds (): string[] {
-        return this.getAllRoles().map( x => x.id() )
+    private getAllRoleIds(): string[] {
+        return this.getAllRoles().map(x => x.id())
     }
 
-    private createSNSTopic ( projectKmsKey: IMdaaKmsKey ): MdaaSnsTopic {
+    private createSNSTopic(projectKmsKey: IMdaaKmsKey): MdaaSnsTopic {
         // create SNS topic
         const snsProps: MdaaSnsTopicProps = {
             naming: this.props.naming,
             topicName: "dataops-sns-topic",
             masterKey: projectKmsKey
         }
-        const topic = new MdaaSnsTopic( this.scope, "dataops-sns-topic", snsProps )
+        const topic = new MdaaSnsTopic(this.scope, "dataops-sns-topic", snsProps)
         //Allow EventBridge events to be published to the Topic
         const publishPolicyStatement = new PolicyStatement(
             {
                 "sid": "Publish Policy",
                 "effect": Effect.ALLOW,
-                principals: [ new ServicePrincipal( `events.amazonaws.com` ) ],
-                actions: [ "sns:Publish" ],
-                resources: [ topic.topicArn ]
+                principals: [new ServicePrincipal(`events.amazonaws.com`)],
+                actions: ["sns:Publish"],
+                resources: [topic.topicArn]
             }
         )
-        topic.addToResourcePolicy( publishPolicyStatement )
-        this.createProjectSSMParam( "ssm-topic-arn", `projectTopicArn/default`, topic.topicArn )
+        topic.addToResourcePolicy(publishPolicyStatement)
+        this.createProjectSSMParam("ssm-topic-arn", `projectTopicArn/default`, topic.topicArn)
 
         return topic
     }
 
-    private subscribeSNSTopic ( topic: MdaaSnsTopic, failureNotifications?: FailureNotificationsProps ) {
+    private subscribeSNSTopic(topic: MdaaSnsTopic, failureNotifications?: FailureNotificationsProps) {
         // subscribe to sns topic if email-ids are present
-        failureNotifications?.email?.forEach( email => {
-            topic.addSubscription( new EmailSubscription( email.trim() ) );
-        } );
+        failureNotifications?.email?.forEach(email => {
+            topic.addSubscription(new EmailSubscription(email.trim()));
+        });
     }
 
-    private createProjectSSMParam ( paramId: string, ssmPath: string, paramValue: string ) {
-        console.log( `Creating Project SSM Param: ${ ssmPath }` )
-        new StringParameter( this.scope, paramId, {
-            parameterName: this.props.naming.ssmPath( ssmPath, true, false ),
+    private createProjectSSMParam(paramId: string, ssmPath: string, paramValue: string) {
+        console.log(`Creating Project SSM Param: ${ssmPath}`)
+        new StringParameter(this.scope, paramId, {
+            parameterName: this.props.naming.ssmPath(ssmPath, true, false),
             stringValue: paramValue
-        } )
+        })
     }
+
+
 }
 

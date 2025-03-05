@@ -101,6 +101,14 @@ export interface GrantProps {
    */
   readonly tablePermissions?: string[]
   /**
+   * LF Grantable Permissions to grant on the database
+   */
+  readonly databaseGrantablePermissions?: string[]
+  /**
+   * LF Grantable Permissions to grant on the tables (if specified)
+   */
+  readonly tableGrantablePermissions?: string[]
+  /**
    * Named principals to grant permissions to.
    */
   readonly principals: NamedPrincipalProps
@@ -167,7 +175,9 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
         const principalProps = principalEntry[ 1 ]
         const principalIdentity = this.constructPrincipalIdentity( principalName, principalProps )
         this.createDatabaseGrant( principalIdentity, principalName, grantName, grantProps, principalIdentity.account == this.account ? this.props.externalDatabaseDependency : undefined )
-        this.createTableGrant( principalIdentity, principalName, grantName, grantProps, principalIdentity.account == this.account ? this.props.externalDatabaseDependency : undefined  )
+        if(grantProps.tablePermissions){
+          this.createTableGrant( principalIdentity, principalName, grantName, grantProps, principalIdentity.account == this.account ? this.props.externalDatabaseDependency : undefined  )
+        }
       } )
     } )
   }
@@ -260,7 +270,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
         dataLakePrincipalIdentifier: principalIdentity.identity
       },
       permissions: grantProps.databasePermissions,
-      permissionsWithGrantOption: []
+      permissionsWithGrantOption: grantProps.databaseGrantablePermissions || []
     } )
     LakeFormationAccessControlL3Construct.addToAccountGrants( this.account, databaseGrant, externalDependency )
 
@@ -288,7 +298,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
             dataLakePrincipalIdentifier: principalIdentity.identity
           },
           permissions: grantProps.tablePermissions || [],
-          permissionsWithGrantOption: []
+          permissionsWithGrantOption: grantProps.tableGrantablePermissions || []
         } )
         LakeFormationAccessControlL3Construct.addToAccountGrants( this.account, tableGrant, externalDependency )
       } )
@@ -306,7 +316,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
           dataLakePrincipalIdentifier: principalIdentity.identity
         },
         permissions: grantProps.tablePermissions || [],
-        permissionsWithGrantOption: []
+        permissionsWithGrantOption: grantProps.tableGrantablePermissions || []
       } )
       LakeFormationAccessControlL3Construct.addToAccountGrants( this.account, tableGrant, externalDependency )
     }

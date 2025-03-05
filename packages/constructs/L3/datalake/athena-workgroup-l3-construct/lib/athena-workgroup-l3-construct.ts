@@ -66,6 +66,7 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
     private athenaUserRoleIds: string[]
     private athenaUserRoleArns: string[]
     private resultsBucketOnlyRoleIds: string[]
+    public workgroup: CfnWorkGroup;
 
     constructor( scope: Construct, id: string, props: AthenaWorkgroupL3ConstructProps ) {
         super( scope, id, props )
@@ -88,7 +89,7 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
             MdaaBucket.fromBucketName( this, "resultsBucket", props.workgroupBucketName ) :
             this.createWorkgroupBucket( workgroupKmsKey, this.dataAdminRoleIds, [ ...this.athenaUserRoleIds, ...this.resultsBucketOnlyRoleIds ] )
 
-        this.createAthenaWorkgroup( workgroupKmsKey, workgroupBucket )
+        this.workgroup = this.createAthenaWorkgroup( workgroupKmsKey, workgroupBucket )
 
         let i = 0
         const athenaUserRoles = this.athenaUserRoleArns.map( x => {

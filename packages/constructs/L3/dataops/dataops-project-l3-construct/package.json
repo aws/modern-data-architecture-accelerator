@@ -61,6 +61,7 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
+    "@aws-mdaa/datazone-l3-construct": "^0.44.0",
     "@aws-cdk/aws-glue-alpha": "2.181.1-alpha.0",
     "@aws-mdaa/construct": "^0.44.0",
     "@aws-mdaa/ec2-constructs": "^0.44.0",
