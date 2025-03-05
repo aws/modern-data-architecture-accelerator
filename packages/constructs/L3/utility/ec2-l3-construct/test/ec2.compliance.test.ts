@@ -62,11 +62,11 @@ describe( 'MDAA Compliance Stack Tests', () => {
                 {
                     awsPackage:{
                         packageManager:'msi',
-                        packageLocation: "https://s3.amazonaws.com/aws-cli/AWSCLI64.msi"
+                        packageLocation: "https://awscli.amazonaws.com//AWSCLI64.msi"
                     },
                     anotherPackage:{
                         packageManager: 'msi',
-                        packageLocation: "https://s3.amazonaws.com/thisisanotherpackage.msi"                        
+                        packageLocation: "https://awscli.amazonaws.com/thisisanotherpackage.msi"                        
                     }
                 }
             },
@@ -75,7 +75,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
                 {
                     somePackage:{
                         packageManager: 'msi',
-                        packageLocation: "https://s3.amazonaws.com/somepackagefromconfig.msi"
+                        packageLocation: "https://awscli.amazonaws.com/somepackagefromconfig.msi"
                     }
                 },
              commands:
@@ -373,15 +373,15 @@ describe( 'MDAA Compliance Stack Tests', () => {
                       "awscli": {
                         "packages": {
                           "msi": {
-                            "000": "https://s3.amazonaws.com/aws-cli/AWSCLI64.msi",
-                            "001": "https://s3.amazonaws.com/thisisanotherpackage.msi"
+                            "000": "https://awscli.amazonaws.com//AWSCLI64.msi",
+                            "001": "https://awscli.amazonaws.com/thisisanotherpackage.msi"
                           }
                         }
                       },
                       "Preinstall": {
                         "packages": {
                           "msi": {
-                            "000": "https://s3.amazonaws.com/somepackagefromconfig.msi"
+                            "000": "https://awscli.amazonaws.com/somepackagefromconfig.msi"
                           }
                         },
                         "files": {
