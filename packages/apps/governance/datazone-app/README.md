@@ -14,16 +14,6 @@ The DataZone CDK application is used to configure and deploy DataZone Domains an
 
 * **Domain Execution Role** - An IAM Role used by DataZone. This role is specific to the domain.
 
-* **Domain Provisioning Role** - An IAM Role specific to the domain deployed only when at least one blueprint is enabled. This role is used and shared among all the enabled blueprints.
-
-* **Data Lake Blueprint** - Data Lake Blueprint (id: DefaultDataLake) specific to each domain.
-
-* **Data Lake Manage Access Role** - An IAM Role used by the Data Lake Blueprint and it's specific to each domain.
-
-* **Data Warehouse Blueprint** - Data Warehouse Blueprint (id: DefaultDataWarehouse) specific to each domain.
-
-* **Data Warehouse Manage Access Role** - An IAM Role use by the Data Warehouse blueprint and it's specific to each domain.
-
 ## Configuration
 
 ### MDAA Config
@@ -46,6 +36,10 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 domains:
   # domain's name (must be unique)
   test-domain:
+
+      # Arns for IAM roles which will be provided to the projects's resources (IE bucket)
+    dataAdminRole:
+      name: Admin
     # Required - Description to give to the domain
     description: DataZone Domain Description
 
@@ -55,15 +49,22 @@ domains:
     # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
     userAssignment: MANUAL
 
-    # Optional - Environment Blueprints to enable for the domain.
-    # At the moment, there are 2 available blueprints `dataLake` and `dataWarehouse` and it's possible to enable either one or both of them.
-    environmentBlueprints:
-      dataLake:
-        # Required - List of regions where the blueprint will be enabled 
-        enabledRegions:
-          - ca-central-1
-      dataWarehouse:
-        # Required - List of regions where the blueprint will be enabled
-        enabledRegions:
-          - ca-central-1
+    # Optional - Additional accounts which will be associated to the domain
+    associatedAccounts:
+      # A friendly name for the associated account
+      associated-account-name:
+        # The AWS account number fo the associated account.
+        # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
+        account: "1234567890"
+        # Optional -Admin users which will be added from the associated account for this domain.
+        # These users will be able to administer the domain from within the associated account
+        adminUsers:
+          # A friendly name for the associated account admin
+          associated-account-admin-name:
+            # The user type. One of IAM_ROLE or SSO_USER
+            userType: IAM_ROLE
+            # The role reference (required for userType IAM_ROLE )
+            role:
+              arn: associated-account-admin-role-arn
+
 ```

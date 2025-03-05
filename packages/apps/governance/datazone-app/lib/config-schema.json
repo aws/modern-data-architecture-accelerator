@@ -2,6 +2,47 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
+        "AdminUser": {
+            "additionalProperties": false,
+            "properties": {
+                "role": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                },
+                "userType": {
+                    "enum": [
+                        "IAM_ROLE",
+                        "SSO_USER"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "role",
+                "userType"
+            ],
+            "type": "object"
+        },
+        "AsscociatedAccount": {
+            "additionalProperties": false,
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "adminUsers": {
+                    "$ref": "#/definitions/NamedAdminUsers"
+                },
+                "cdkRoleArn": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "account"
+            ],
+            "type": "object"
+        },
         "CfnParameterProps": {
             "additionalProperties": false,
             "properties": {
@@ -68,11 +109,18 @@
         "DomainProps": {
             "additionalProperties": false,
             "properties": {
+                "additionalAdminUsers": {
+                    "$ref": "#/definitions/NamedAdminUsers"
+                },
+                "associatedAccounts": {
+                    "$ref": "#/definitions/NamedAssociatedAccounts"
+                },
+                "dataAdminRole": {
+                    "$ref": "#/definitions/MdaaRoleRef",
+                    "description": "List of data admin role ids which will administer project resources"
+                },
                 "description": {
                     "type": "string"
-                },
-                "environmentBlueprints": {
-                    "$ref": "#/definitions/EnvironmentBlueprints"
                 },
                 "singleSignOnType": {
                     "type": "string"
@@ -82,36 +130,10 @@
                 }
             },
             "required": [
+                "dataAdminRole",
                 "singleSignOnType",
                 "userAssignment"
             ],
-            "type": "object"
-        },
-        "EnvironmentBlueprintConfig": {
-            "additionalProperties": false,
-            "properties": {
-                "enabledRegions": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "enabledRegions"
-            ],
-            "type": "object"
-        },
-        "EnvironmentBlueprints": {
-            "additionalProperties": false,
-            "properties": {
-                "dataLake": {
-                    "$ref": "#/definitions/EnvironmentBlueprintConfig"
-                },
-                "dataWarehouse": {
-                    "$ref": "#/definitions/EnvironmentBlueprintConfig"
-                }
-            },
             "type": "object"
         },
         "MdaaNagSuppressionByPath": {
@@ -159,6 +181,37 @@
             "required": [
                 "by_path"
             ],
+            "type": "object"
+        },
+        "MdaaRoleRef": {
+            "additionalProperties": false,
+            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "properties": {
+                "arn": {
+                    "description": "Reference role by arn",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Reference role by id",
+                    "type": "string"
+                },
+                "immutable": {
+                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Reference role by name",
+                    "type": "string"
+                },
+                "refId": {
+                    "description": "A string which uniquely identifies the MdaaRoleRef within a scope.",
+                    "type": "string"
+                },
+                "sso": {
+                    "description": "If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.",
+                    "type": "boolean"
+                }
+            },
             "type": "object"
         },
         "MdaaServiceCatalogConstraintConfig": {
@@ -261,6 +314,18 @@
                 "owner",
                 "portfolio_arn"
             ],
+            "type": "object"
+        },
+        "NamedAdminUsers": {
+            "additionalProperties": {
+                "$ref": "#/definitions/AdminUser"
+            },
+            "type": "object"
+        },
+        "NamedAssociatedAccounts": {
+            "additionalProperties": {
+                "$ref": "#/definitions/AsscociatedAccount"
+            },
             "type": "object"
         },
         "NamedDomainsProps": {

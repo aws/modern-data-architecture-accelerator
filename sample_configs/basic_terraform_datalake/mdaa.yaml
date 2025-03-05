@@ -45,5 +45,3 @@ domains:
             module_type: tf
             module_path: ./datalake/
             mdaa_compliant: true
-
-

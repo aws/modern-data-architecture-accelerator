@@ -84,7 +84,7 @@ projectExecutionRoles:
   - arn: ssm:/sample-org/instance1/generated-role/glue-role/arn
   - id: generated-role-id:databrew
 
-# failure notifications.
+# DataOps failure notifications.
 # For jobs, this includes state changes of "FAILED", "TIMEOUT", and "STOPPED".
 # For crawlers, this includes state changes of "Failed".
 failureNotifications:
@@ -110,10 +110,11 @@ securityGroupConfigs:
           protocol: TCP
           port: 443
 
-# The ID of the KMS key which will encrypt all S3 outputs of Jobs run under this project
+# Optional - The ID of the KMS key which will encrypt all S3 outputs of Jobs run under this project.
+# If not specified, the project key will be used. 
 s3OutputKmsKeyArn: ssm:/sample-org/instance1/datalake/kms/id
 
-# The Arn of the KMS key used to encrypt the Glue Catalog. Specific access to this key
+# Optional - The Arn of the KMS key used to encrypt the Glue Catalog. Specific access to this key
 # will be granted to Glue executor roles for the purpose of decrypting
 # Glue connections.
 glueCatalogKmsKeyArn: ssm:/sample-org/shared/glue-catalog/kms/arn
@@ -189,6 +190,12 @@ connections:
       securityGroupIdList:
         - sg-890abc123asc
 
+# (Optional) - Generate a DataZone Project for this DataOps Project
+datazone:
+  project:
+    # The SSM Parameter containing domain config details for a DataZone Domain created by the MDAA Datazone module
+    domainConfigSSMParam: /sample-org/shared/datazone/domain/test-domain/config
+
 # (Optional) List of Databases to create. Referred to by name in the crawler configuration files.
 databases:
   test-database1:
@@ -261,4 +268,11 @@ databases:
         example_condensed_read_grant:
           principalArns:
             principalA: arn:{{partition}}:iam::{{account}}:role/cross-account-role
+
+  # A Database which will also create a Datazone Datasource (Requires the Datazone project to be configured in this config)
+  test-database3:
+    description: Test Datazone Datasource
+    locationPrefix: data/test-database3
+    createDatazoneDatasource: true
+
 ```

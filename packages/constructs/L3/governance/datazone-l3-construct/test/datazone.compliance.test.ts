@@ -3,16 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaTestApp } from "@aws-mdaa/testing";
-import { Template, Match } from "aws-cdk-lib/assertions";
-import { DataZoneL3Construct, DataZoneL3ConstructProps } from "../lib/datazone-l3-construct";
 import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
+import { MdaaTestApp } from "@aws-mdaa/testing";
+import { Template } from "aws-cdk-lib/assertions";
+import { DataZoneL3Construct, DataZoneL3ConstructProps } from "../lib/datazone-l3-construct";
+import { Stack } from "aws-cdk-lib";
 
 describe( 'MDAA Compliance Stack Tests', () => {
     const testApp = new MdaaTestApp()
     const stack = testApp.testStack
 
     const constructProps: DataZoneL3ConstructProps = {
+        crossAccountStacks: {
+            "12312421": new Stack(testApp,"testextrastack")
+        },
         roleHelper: new MdaaRoleHelper(stack, testApp.naming),
         naming: testApp.naming,
         domains: {
@@ -20,14 +24,27 @@ describe( 'MDAA Compliance Stack Tests', () => {
                 description: "Description of DZ Test Domain",
                 singleSignOnType: "DISABLED",
                 userAssignment: "MANUAL",
-                environmentBlueprints: {
-                    dataLake: {
-                        enabledRegions: ["ca-central-1"]
+                dataAdminRole: {
+                    name: "test"
+                },
+                additionalAdminUsers: {
+                    "test1": {
+                        role: {
+                            name: "test1",
+                        },
+                        userType: "IAM_ROLE"
                     },
-                    dataWarehouse: {
-                        enabledRegions: ["ca-central-1"]
+                    "test2": {
+                        role: {
+                            name: "test2",
+                        },
+                        userType: "SSO_USER"
                     }
-
+                },
+                associatedAccounts: {
+                    "test1": {
+                        account: "12312421"
+                    }
                 }
             }
         }
@@ -44,71 +61,14 @@ describe( 'MDAA Compliance Stack Tests', () => {
         template.resourceCountIs("AWS::DataZone::Domain", 1)
     })
 
-    test ('Validate if the DefaultDataLake Blueprint environment is enabled', () => {
-        template.hasResourceProperties(
-            "AWS::DataZone::EnvironmentBlueprintConfiguration",
-            Match.objectEquals({
-                "DomainIdentifier": {
-                        "Fn::GetAtt": [
-                                "testdomaindomain",
-                                "Id"
-                        ]
-                },
-                "EnabledRegions": [
-                        "ca-central-1"
-                ],
-                "EnvironmentBlueprintIdentifier": "DefaultDataLake",
-                "ManageAccessRoleArn": {
-                        "Fn::GetAtt": [
-                                "testdomaindatalakemanageroleBA199AAB",
-                                "Arn"
-                        ]
-                },
-                "ProvisioningRoleArn": {
-                        "Fn::GetAtt": [
-                                "testdomainprovisioningrole650A9E99",
-                                "Arn"
-                        ]
-                }
-            })
-        )
-    })
 
-    test ('Validate if the DefaultDataWarehouse Blueprint environment is enabled', () => {
-        template.hasResourceProperties(
-            "AWS::DataZone::EnvironmentBlueprintConfiguration",
-            Match.objectEquals({
-                    "DomainIdentifier": {
-                            "Fn::GetAtt": [
-                                    "testdomaindomain",
-                                    "Id"
-                            ]
-                    },
-                    "EnabledRegions": [
-                            "ca-central-1"
-                    ],
-                    "EnvironmentBlueprintIdentifier": "DefaultDataWarehouse",
-                    "ManageAccessRoleArn": {
-                            "Fn::GetAtt": [
-                                    "testdomaindatawarehousemanagerole92592C34",
-                                    "Arn"
-                            ]
-                    },
-                    "ProvisioningRoleArn": {
-                            "Fn::GetAtt": [
-                                    "testdomainprovisioningrole650A9E99",
-                                    "Arn"
-                            ]
-                    }
-            })
-        )
-    })
 
     test( 'Validate if KMS is created and used for the domain', () => {
         template.hasResourceProperties( "AWS::DataZone::Domain", {
             "KmsKeyIdentifier": {
-                "Fn::GetAtt": [ "testdomaincmkBD41EC2D", "Arn" ]
+                "Fn::GetAtt": [ "teststacktestdomaincmkF602D0BB", "Arn" ]
             },
         } )
     } );
 } )
+

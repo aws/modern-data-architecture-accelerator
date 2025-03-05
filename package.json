@@ -10,6 +10,9 @@
         "lerna": "8.2.1",
         "typedoc": "0.24.8"
     },
+    "dependencies": {
+        "aws-cdk": "2.1002.0"
+    },
     "overrides": {
         "semver": "7.5.2",
         "axios": "1.7.5",

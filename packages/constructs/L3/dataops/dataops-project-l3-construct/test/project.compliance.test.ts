@@ -59,6 +59,11 @@ describe( 'MDAA Compliance Stack Tests', () => {
         s3OutputKmsKeyArn: "arn:test-partition:kms:test-region:test-account:key/s3-output-key-id",
         glueCatalogKmsKeyArn: "arn:test-partition:kms:test-region:test-account:key/glue-catalog-key-id",
         projectExecutionRoleRefs: [ testGlueRoleRef ],
+        datazone: {
+            project:{
+                domainConfigSSMParam: "/test/config/param"
+            }
+        },
         securityGroupConfigs: {
             "test-group": {
                 vpcId: "test-vpc",
@@ -84,6 +89,12 @@ describe( 'MDAA Compliance Stack Tests', () => {
                 description: "testing_nolf",
                 locationBucketName: "test-bucket-name",
                 locationPrefix: "test-prefix"
+            },
+            "test_database_datazone": {
+                description: "testing_nolf",
+                locationBucketName: "test-bucket-name",
+                locationPrefix: "test-prefix",
+                createDatazoneDatasource: true
             },
             "test_database": {
                 description: "testing",
@@ -151,7 +162,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
     new DataOpsProjectL3Construct( testApp.testStack, 'test-stack', constructProps )
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )
-    // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
+    console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
 
     testApp.checkCdkNagCompliance( crossAccountStack )
     const crossAccountTemplate = Template.fromStack( crossAccountStack )
@@ -231,7 +242,49 @@ describe( 'MDAA Compliance Stack Tests', () => {
                                     "aws:userId": [
                                         "test-admin-role-id:*",
                                         "test-eng-super-role-id:*",
-                                        "test-glue-role-id:*"
+                                        "test-glue-role-id:*",
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "projectdeploymentrole542A1AAB",
+                                                  "RoleId"
+                                                ]
+                                              },
+                                              ":*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "dzuserrole4DA7E8E2",
+                                                  "RoleId"
+                                                ]
+                                              },
+                                              ":*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "lakeformationrole7FEE6C3C",
+                                                  "RoleId"
+                                                ]
+                                              },
+                                              ":*"
+                                            ]
+                                          ]
+                                        }
                                     ]
                                 }
                             },

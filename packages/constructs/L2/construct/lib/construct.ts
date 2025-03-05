@@ -6,7 +6,7 @@
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import { Construct } from 'constructs'
 import { CfnOutput, Token } from 'aws-cdk-lib';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { ParameterTier, StringParameter } from 'aws-cdk-lib/aws-ssm';
 
 /** Common properties for MDAA Constructs */
 export interface MdaaConstructProps {
@@ -29,7 +29,9 @@ export interface MdaaParamAndOutputProps extends MdaaConstructProps {
     /** Set the construct resource ID, without impacting SSM Param and Cfn Output names */
     readonly overrideResourceId?: string,
     /** Will be the value of the SSM Param and Cfn Output */
-    readonly value: string
+    readonly value: string,
+
+    readonly tier?: ParameterTier
 }
 
 /** A construct which creates SSM Params and Cfn Outputs/Exports in a standard fashion. */
@@ -37,7 +39,8 @@ export class MdaaParamAndOutput extends Construct {
 
     public static readonly LEGACY_PARAM_SCOPE_CONTEXT_KEY = "@aws-mdaa/legacyParamScope"
     public static readonly SKIP_CREATE_PARAMS = "@aws-mdaa/skipCreateParams"
-
+    public param?: StringParameter;
+    public paramName: string
     private static createId ( props: MdaaParamAndOutputProps ): string {
         if ( props.overrideResourceId ) {
             return `${ props.resourceType }-${ props.overrideResourceId }`
@@ -57,7 +60,7 @@ export class MdaaParamAndOutput extends Construct {
     constructor( scope: Construct, props: MdaaParamAndOutputProps, legacyScope?: Construct ) {
         super( MdaaParamAndOutput.determineScope( scope, legacyScope ), MdaaParamAndOutput.createId( props ) )
         const ssmPath = props.resourceId ? `${ props.resourceType }/${ props.resourceId }/${ props.name }` : `${ props.resourceType }/${ props.name }`
-        const ssmFullPath = props.naming.ssmPath( ssmPath )
+        this.paramName = props.naming.ssmPath( ssmPath )
 
         const skipCreateParamsContextString = this.node.tryGetContext( MdaaParamAndOutput.SKIP_CREATE_PARAMS )
         const skipCreateParamsContext = skipCreateParamsContextString != undefined ? 
@@ -66,11 +69,12 @@ export class MdaaParamAndOutput extends Construct {
         const createParams = skipCreateParamsContext == undefined || !skipCreateParamsContext ? createParamsProps : false
         
         if ( createParams ) {
-            console.log( `Creating SSM Param: ${ ssmFullPath }` )
-            new StringParameter( this, `ssm`, {
-                parameterName: ssmFullPath,
+            console.log( `Creating SSM Param: ${ this.paramName }` )
+            this.param = new StringParameter( this, `ssm`, {
+                parameterName: this.paramName,
                 stringValue: props.value,
-                simpleName: Token.isUnresolved( ssmFullPath )
+                simpleName: Token.isUnresolved( this.paramName ),
+                tier: props.tier
             } )
         } 
 
