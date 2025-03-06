@@ -1,5 +1,6 @@
 nav:
         - Home: "README.md"
+        - Security: "SECURITY.md"
         - Getting Started:
                   - Architecture and Design: "ARCHITECTURES.md"
                   - Configuration: CONFIGURATION.md

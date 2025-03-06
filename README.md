@@ -62,33 +62,9 @@ MDAA is conceptually, architecturally, and technically similar in nature to the 
 
 ## Design Principles
 
-### MDAA Compliance
+### Security and Compliance
 
-MDAA accelerates compliance with common standards such as FedRAMP Moderate, CCCS Medium, and HIPAA. This compliance is enabled by design within the MDAA codebase through adherence to AWS Solutions best practices, NIST 800-53 Rev 5, and HIPAA-specific security controls. These security controls are validated through global application of corresponding CDK Nag rulesets during MDAA execution. Any non-compliance with these controls will halt MDAA deployment progress, and must be explicitely suppressed. All evaluated compliance rules, findings, and explicit suppressions are published in a report for review prior to deployment. 
-
-![MDAA Compliance](docs/MDAA-Compliance.png)
-
-#### Integral Compliance
-
-The following security controls are integral to the MDAA design:
-
-* Ubiquitous encryption at rest and in transit within all MDAA Compliant Constructs
-* Least-priviledge in generated permissions within all MDAA Compliant Constructs
-* Separation of Duties in generated roles and permissions within all MDAA Compliant Constructs
-* Compliance with AWS Solutions [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
-* Compliance with NIST 800-53 Rev 5 [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
-* Compliance with HIPAA [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
-* Compliance with ITSG-33 PBMM Security Control Requirements
-* (Terraform) Compliance with Checkov standard policies.
-
-#### Compliance Recommendations
-
-In addition to the integral security controls, the following additional controls are recommended:
-
-* MDAA should be deployed to production via a governed and robust DevSecOps pipeline
-* There should be a separation of duties within the DevSecOps pipeline, with separate roles employed for MDAA configuration, review, and final deployment
-* MDAA CDK/CloudFormation Diffs should be manually reviewed prior to final deployment
-* MDAA CDK Nag reports should be manually reviewd prior to final deployment
+See [MDAA Security](SECURITY.md)
 
 ### Governance
 
@@ -123,7 +99,7 @@ MDAA is implemented as a set of compliant modules which can be deployed via a un
 
 * **MDAA CLI (Deployement/Orchestration) App** - A configuration driven CLI application which allows for composition and orchestration of multiple MDAA Modules (CDK and Terraform) in order to deploy a compliant end to end data analytics environment. Also ensures that each MDAA Module is deployed with the specified configuration into the specified accounts while also accounting for dependencies between modules.
 
-![Mdaa Design](docs/MDAA-Physical_Design.png)
+![MDAA Code Architecture](docs/MDAA-Code-Architecture.png)
 
 ***
 
