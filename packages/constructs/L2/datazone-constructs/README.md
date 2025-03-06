@@ -2,9 +2,10 @@
 
 Opinionated implementation of the Layer 2 CDK Constructs for Datazone.
 
-The following opinions are enforced in the datazone Job constructs:
+## Security/Compliance
 
-- Require the use of a Customer Managed KMS encryption key.
+### DataZone Project
+* Enforce Project Name
+* Securely integrates DataZone Project with MDAA-produced DataZone Domain 
+* Assigns project admin/owner membership
 
-These construct can be used in the same way as the documented here.
-[https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_datazone.CfnJob.html](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_datazone.CfnJob.html)

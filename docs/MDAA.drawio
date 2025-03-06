@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17" pages="8">
   <diagram id="ClJCbJjLPGlymk5hao94" name="Logical Building Blocks">
-    <mxGraphModel dx="1106" dy="840" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" background="#ffffff" math="0" shadow="0">
+    <mxGraphModel dx="1062" dy="360" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="fevdDNMqQ7dgRxWTKc9Z-0" />
         <mxCell id="fevdDNMqQ7dgRxWTKc9Z-1" parent="fevdDNMqQ7dgRxWTKc9Z-0" />
@@ -128,123 +128,132 @@
     </mxGraphModel>
   </diagram>
   <diagram id="7yuBA7P-b5soQr1Q9Tz8" name="Compliance">
-    <mxGraphModel dx="1553" dy="1098" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+    <mxGraphModel dx="1668" dy="987" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-2" value="MDAA Build Phase" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#60a917;strokeColor=#2D7600;fontColor=#000000;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-2" value="MDAA Build Phase" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#60a917;strokeColor=#2D7600;fontColor=#000000;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="350" y="350" width="370" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-4" value="&lt;div style=&quot;font-size: 16px;&quot;&gt;Validated&lt;/div&gt;MDAA&lt;div style=&quot;font-size: 16px;&quot;&gt;Configs&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-1" target="4zActMS6L_WUKU7qv7aQ-10">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-4" value="&lt;div&gt;Validated&lt;/div&gt;MDAA&lt;div&gt;Configs&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=16;fontColor=#000000;" parent="1" source="4zActMS6L_WUKU7qv7aQ-1" target="4zActMS6L_WUKU7qv7aQ-10" edge="1">
           <mxGeometry x="-0.1837" y="3" relative="1" as="geometry">
             <mxPoint y="1" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-1" value="MDAA Configuration Phase" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#60a917;strokeColor=#2D7600;fontColor=#000000;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-1" value="MDAA Configuration Phase" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#60a917;strokeColor=#2D7600;fontColor=#000000;fontSize=16;" parent="1" vertex="1">
           <mxGeometry y="350" width="250" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-3" value="MDAA Deploy Phase" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#60a917;strokeColor=#2D7600;fontColor=#000000;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-3" value="MDAA Deploy Phase" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#60a917;strokeColor=#2D7600;fontColor=#000000;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="850" y="347.5" width="360" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-8" value="Functional Behaviour" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-5" target="4zActMS6L_WUKU7qv7aQ-1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-8" value="Functional Behaviour" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;fontColor=#000000;" parent="1" source="4zActMS6L_WUKU7qv7aQ-5" target="4zActMS6L_WUKU7qv7aQ-1" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-13" value="Explicit Suppressions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-5" target="4zActMS6L_WUKU7qv7aQ-11">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-13" value="Explicit Suppressions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;fontSize=16;fontColor=#000000;" parent="1" source="4zActMS6L_WUKU7qv7aQ-5" target="4zActMS6L_WUKU7qv7aQ-11" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-5" value="MDAA Configs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-5" value="MDAA Configs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#000000;strokeColor=#006EAF;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="65" y="620" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-7" value="Authors" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-6" target="4zActMS6L_WUKU7qv7aQ-5">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-7" value="Authors" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=16;fontColor=#000000;" parent="1" source="4zActMS6L_WUKU7qv7aQ-6" target="4zActMS6L_WUKU7qv7aQ-5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-6" value="MDAA Config User" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.user;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-6" value="MDAA Config User" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.user;fontSize=16;fontColor=#000000;" parent="1" vertex="1">
           <mxGeometry x="101.25" y="750" width="47.5" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-9" value="MDAA Config Validation&amp;nbsp;&lt;div style=&quot;font-size: 16px;&quot;&gt;Schemas&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;fontColor=#FFFFFF;strokeColor=#BD7000;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-9" value="MDAA Config Validation&amp;nbsp;&lt;div&gt;Schemas&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;fontColor=#000000;strokeColor=#BD7000;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="65" y="415" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-12" value="CDK&lt;div style=&quot;font-size: 16px;&quot;&gt;Resource&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;Definitions&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#FFFFFF;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-10" target="4zActMS6L_WUKU7qv7aQ-11">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-12" value="CDK&lt;div&gt;Resource&lt;/div&gt;&lt;div&gt;Definitions&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#000000;fontSize=16;" parent="1" source="4zActMS6L_WUKU7qv7aQ-10" target="4zActMS6L_WUKU7qv7aQ-11" edge="1">
           <mxGeometry x="-0.0045" y="-32" relative="1" as="geometry">
             <mxPoint y="-65" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-10" value="MDAA Compliant&lt;div style=&quot;font-size: 16px;&quot;&gt;Modules&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;fontColor=#FFFFFF;strokeColor=#BD7000;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-10" value="MDAA Compliant&lt;div&gt;Modules&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;fontColor=#000000;strokeColor=#BD7000;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="370" y="382.5" width="100" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-14" value="CloudFormation&lt;div style=&quot;font-size: 16px;&quot;&gt;Resources&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-11" target="4zActMS6L_WUKU7qv7aQ-17">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-14" value="CloudFormation&lt;div&gt;Resources&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=16;fontColor=#000000;" parent="1" source="4zActMS6L_WUKU7qv7aQ-11" target="4zActMS6L_WUKU7qv7aQ-17" edge="1">
           <mxGeometry x="0.0154" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-11" value="CDK Nag&lt;div style=&quot;font-size: 16px;&quot;&gt;Rulesets&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;- AWS Solutions&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;- NIST 800-53r5&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;- HIPAA&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#FFFFFF;strokeColor=#C73500;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-11" value="CDK Nag&lt;div&gt;Rulesets&lt;/div&gt;&lt;div&gt;- AWS Solutions&lt;/div&gt;&lt;div&gt;- NIST 800-53r5&lt;/div&gt;&lt;div&gt;- HIPAA&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#000000;strokeColor=#C73500;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="580" y="383" width="130" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-18" value="Manual&lt;div style=&quot;font-size: 16px;&quot;&gt;Approval&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-15" target="4zActMS6L_WUKU7qv7aQ-17">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-18" value="Manual&lt;div&gt;Approval&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;fontColor=#000000;" parent="1" source="4zActMS6L_WUKU7qv7aQ-15" target="4zActMS6L_WUKU7qv7aQ-17" edge="1">
           <mxGeometry x="0.0005" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-15" value="DevSecOps&amp;nbsp;&lt;div style=&quot;font-size: 16px;&quot;&gt;Practitioner&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;(Recommended)&lt;/div&gt;" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.user;fontSize=16;" vertex="1" parent="1">
-          <mxGeometry x="780" y="700" width="47.5" height="50" as="geometry" />
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-15" value="DevSecOps&amp;nbsp;&lt;div&gt;Practitioner&lt;/div&gt;&lt;div&gt;(Recommended)&lt;/div&gt;" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.user;fontSize=16;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry x="780" y="590" width="47.5" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-16" value="&lt;div style=&quot;font-size: 16px;&quot;&gt;CDK Nag&lt;/div&gt;Compliance&lt;div style=&quot;font-size: 16px;&quot;&gt;Reports&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-11" target="4zActMS6L_WUKU7qv7aQ-15">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-16" value="&lt;div&gt;CDK Nag&lt;/div&gt;Compliance&lt;div&gt;Reports&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;fontSize=16;fontColor=#000000;" parent="1" source="4zActMS6L_WUKU7qv7aQ-11" target="4zActMS6L_WUKU7qv7aQ-15" edge="1">
           <mxGeometry x="-0.0382" y="3" relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="675" y="725" />
+              <mxPoint x="678" y="615" />
             </Array>
             <mxPoint x="-1" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-20" value="Deploys" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#FFFFFF;labelBackgroundColor=none;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-17" target="4zActMS6L_WUKU7qv7aQ-19">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-20" value="Deploys" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#000000;labelBackgroundColor=none;fontSize=16;" parent="1" source="4zActMS6L_WUKU7qv7aQ-17" target="4zActMS6L_WUKU7qv7aQ-19" edge="1">
           <mxGeometry x="-0.0286" y="10" relative="1" as="geometry">
             <mxPoint y="1" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-17" value="CloudFormation Changeset/Diff" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#FFFFFF;strokeColor=#006EAF;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-17" value="CloudFormation Changeset/Diff" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;fontColor=#000000;strokeColor=#BD7000;fontSize=16;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
           <mxGeometry x="870" y="394" width="130" height="97" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-19" value="Deployed&lt;div style=&quot;font-size: 16px;&quot;&gt;Respources&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#FFFFFF;strokeColor=#006EAF;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-19" value="&lt;font&gt;Deployed&lt;/font&gt;&lt;div&gt;&lt;font&gt;Respources&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;fontColor=#000000;strokeColor=#BD7000;fontSize=16;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
           <mxGeometry x="1080" y="394.5" width="110" height="97" as="geometry" />
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-21" target="4zActMS6L_WUKU7qv7aQ-10">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;fontColor=#000000;" parent="1" source="4zActMS6L_WUKU7qv7aQ-21" target="4zActMS6L_WUKU7qv7aQ-10" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="420" y="249" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="sbynHIGFQBwoYTQ5HEpt-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;" edge="1" parent="1" source="4zActMS6L_WUKU7qv7aQ-21" target="4zActMS6L_WUKU7qv7aQ-11">
+        <mxCell id="sbynHIGFQBwoYTQ5HEpt-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;fontColor=#000000;" parent="1" source="4zActMS6L_WUKU7qv7aQ-21" target="4zActMS6L_WUKU7qv7aQ-11" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="650" y="249" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="4zActMS6L_WUKU7qv7aQ-21" value="Compliance&lt;div style=&quot;font-size: 16px;&quot;&gt;Requirements&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#FFFFFF;strokeColor=#C73500;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="4zActMS6L_WUKU7qv7aQ-21" value="&lt;font&gt;Compliance&lt;/font&gt;&lt;div&gt;&lt;font&gt;Requirement&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font&gt;Validation&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#000000;strokeColor=#006EAF;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="484" y="200" width="110" height="97" as="geometry" />
         </mxCell>
-        <mxCell id="sbynHIGFQBwoYTQ5HEpt-3" value="Detect&lt;div style=&quot;font-size: 16px;&quot;&gt;Drift&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;" edge="1" parent="1" source="sbynHIGFQBwoYTQ5HEpt-2" target="4zActMS6L_WUKU7qv7aQ-19">
+        <mxCell id="sbynHIGFQBwoYTQ5HEpt-3" value="Validate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;fontColor=#000000;" parent="1" source="sbynHIGFQBwoYTQ5HEpt-2" target="4zActMS6L_WUKU7qv7aQ-19" edge="1">
           <mxGeometry x="0.0393" relative="1" as="geometry">
             <mxPoint x="1" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="sbynHIGFQBwoYTQ5HEpt-2" value="Post-Deployment&lt;div style=&quot;font-size: 16px;&quot;&gt;Detective Controls&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;(Recommended)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#FCFCFC;strokeColor=#C73500;fontSize=16;" vertex="1" parent="1">
-          <mxGeometry x="1300" y="385.5" width="150" height="106" as="geometry" />
+        <mxCell id="sbynHIGFQBwoYTQ5HEpt-2" value="Post-Deployment&lt;div&gt;Detective Controls&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#000000;strokeColor=#006EAF;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="1310" y="388.5" width="150" height="106" as="geometry" />
         </mxCell>
-        <mxCell id="sbynHIGFQBwoYTQ5HEpt-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;" edge="1" parent="1" source="sbynHIGFQBwoYTQ5HEpt-4">
+        <mxCell id="sbynHIGFQBwoYTQ5HEpt-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;fontColor=#000000;" parent="1" source="sbynHIGFQBwoYTQ5HEpt-4" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="783.75" y="420" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="sbynHIGFQBwoYTQ5HEpt-4" value="CFN Nag/ CHECKOV&lt;div style=&quot;font-size: 16px;&quot;&gt;(Recommended)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#FFFFFF;strokeColor=#C73500;fontSize=16;" vertex="1" parent="1">
+        <mxCell id="sbynHIGFQBwoYTQ5HEpt-4" value="CFN Nag/ CHECKOV&lt;div&gt;(Recommended)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#000000;strokeColor=#006EAF;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="720" y="197" width="126.25" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="IdMycw2OnXzqeKRvRB8t-1" value="MDAA Provided" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;fontColor=#000000;strokeColor=#BD7000;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="400" y="716.25" width="130" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IdMycw2OnXzqeKRvRB8t-2" value="MDAA - Integrated 3rd Party Compliance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fa6800;fontColor=#000000;strokeColor=#C73500;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="590" y="716.75" width="130" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IdMycw2OnXzqeKRvRB8t-3" value="Customer Provided" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#000000;strokeColor=#006EAF;fontSize=16;" parent="1" vertex="1">
+          <mxGeometry x="770" y="713.25" width="140" height="123.5" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="W2XnrTOiE35qk1IC1nW6" name="Reference Architecture">
-    <mxGraphModel dx="2552" dy="2392" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
+    <mxGraphModel dx="2268" dy="1939" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
       <root>
         <mxCell id="1RsxVmJANoO8PWmkigMX-0" />
         <mxCell id="1RsxVmJANoO8PWmkigMX-1" parent="1RsxVmJANoO8PWmkigMX-0" />
@@ -1518,13 +1527,25 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="Jqz37_vZMH-bP33JY0JD" name="Physical_Design">
-    <mxGraphModel dx="1106" dy="840" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" background="#FFFFFF" math="0" shadow="0">
+  <diagram id="Jqz37_vZMH-bP33JY0JD" name="Code-Architecture">
+    <mxGraphModel dx="2026" dy="1199" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1100" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="mQHexDfNPo3EaRtXDjzP-0" />
         <mxCell id="mQHexDfNPo3EaRtXDjzP-1" parent="mQHexDfNPo3EaRtXDjzP-0" />
         <mxCell id="mQHexDfNPo3EaRtXDjzP-3" value="" style="rounded=1;whiteSpace=wrap;html=1;fontSize=17;fontColor=#FFFFFF;dashed=1;arcSize=3;" parent="mQHexDfNPo3EaRtXDjzP-1" vertex="1">
-          <mxGeometry x="80" y="190" width="1040" height="850" as="geometry" />
+          <mxGeometry x="80" y="140" width="1040" height="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="J0VPGIA8ZPDLaGk2A8W1-7" value="MDAA&amp;nbsp;&lt;div style=&quot;font-size: 23px;&quot;&gt;CLI&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#4D9900;strokeWidth=5;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;fontSize=23;spacingLeft=8;" vertex="1" parent="mQHexDfNPo3EaRtXDjzP-1">
+          <mxGeometry x="100" y="178" width="1320" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="J0VPGIA8ZPDLaGk2A8W1-5" value="MDAA&amp;nbsp;&lt;div style=&quot;font-size: 23px;&quot;&gt;L2 Constructs&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#4D9900;strokeWidth=5;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;fontSize=23;spacingLeft=8;" vertex="1" parent="mQHexDfNPo3EaRtXDjzP-1">
+          <mxGeometry x="100" y="900" width="1320" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="J0VPGIA8ZPDLaGk2A8W1-2" value="MDAA&amp;nbsp;&lt;div style=&quot;font-size: 23px;&quot;&gt;L3 Constructs&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#4D9900;strokeWidth=5;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;fontSize=23;spacingLeft=8;" vertex="1" parent="mQHexDfNPo3EaRtXDjzP-1">
+          <mxGeometry x="100" y="660" width="1320" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="J0VPGIA8ZPDLaGk2A8W1-0" value="MDAA&amp;nbsp;&lt;div style=&quot;font-size: 23px;&quot;&gt;Modules&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#4D9900;strokeWidth=5;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;fontSize=23;spacingLeft=8;" vertex="1" parent="mQHexDfNPo3EaRtXDjzP-1">
+          <mxGeometry x="100" y="420" width="1320" height="230" as="geometry" />
         </mxCell>
         <mxCell id="mQHexDfNPo3EaRtXDjzP-16" value="Deployment Stage 2" style="rounded=1;whiteSpace=wrap;html=1;fontSize=17;dashed=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;movableLabel=1;" parent="mQHexDfNPo3EaRtXDjzP-1" vertex="1">
           <mxGeometry x="810" y="449" width="280" height="170" as="geometry">
@@ -1559,7 +1580,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="mQHexDfNPo3EaRtXDjzP-8" value="Executes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;" parent="mQHexDfNPo3EaRtXDjzP-1" source="mQHexDfNPo3EaRtXDjzP-7" target="mQHexDfNPo3EaRtXDjzP-2" edge="1">
-          <mxGeometry x="0.562" relative="1" as="geometry">
+          <mxGeometry x="0.3187" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
@@ -1571,7 +1592,7 @@
         </mxCell>
         <mxCell id="mQHexDfNPo3EaRtXDjzP-12" value="Executes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;fontColor=#000000;" parent="mQHexDfNPo3EaRtXDjzP-10" vertex="1" connectable="0">
           <mxGeometry x="-0.7143" y="1" relative="1" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint x="-1" y="-11" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="mQHexDfNPo3EaRtXDjzP-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=16;fontColor=#FFFFFF;" parent="mQHexDfNPo3EaRtXDjzP-1" source="mQHexDfNPo3EaRtXDjzP-7" target="mQHexDfNPo3EaRtXDjzP-6" edge="1">
@@ -1579,20 +1600,20 @@
         </mxCell>
         <mxCell id="mQHexDfNPo3EaRtXDjzP-13" value="Executes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;fontColor=#000000;" parent="mQHexDfNPo3EaRtXDjzP-11" vertex="1" connectable="0">
           <mxGeometry x="0.6597" y="1" relative="1" as="geometry">
-            <mxPoint x="-1" y="-17" as="offset" />
+            <mxPoint x="-1" y="-67" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="mQHexDfNPo3EaRtXDjzP-7" value="MDAA CLI (Deployment/Orchestration)" style="pointerEvents=1;dashed=0;html=1;strokeColor=#ffffff;fillColor=#3334B9;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;outlineConnect=0;align=center;shape=mxgraph.office.concepts.service_application;fontSize=16;fontColor=#232F3E;fontStyle=0;gradientColor=#4D72F3;gradientDirection=north;" parent="mQHexDfNPo3EaRtXDjzP-1" vertex="1">
           <mxGeometry x="510" y="230" width="170" height="140" as="geometry" />
         </mxCell>
         <mxCell id="C2QBJ5togxliZAFdw0EL-0" value="MDAA CDK &lt;br&gt;L2 Construct" style="points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=16;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloud_development_kit;" parent="mQHexDfNPo3EaRtXDjzP-1" vertex="1">
-          <mxGeometry x="250" y="900" width="78" height="78" as="geometry" />
+          <mxGeometry x="250" y="950" width="78" height="78" as="geometry" />
         </mxCell>
         <mxCell id="C2QBJ5togxliZAFdw0EL-1" value="MDAA CDK&lt;br&gt;L2 Construct" style="points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=16;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloud_development_kit;" parent="mQHexDfNPo3EaRtXDjzP-1" vertex="1">
-          <mxGeometry x="556" y="910" width="78" height="78" as="geometry" />
+          <mxGeometry x="556" y="960" width="78" height="78" as="geometry" />
         </mxCell>
         <mxCell id="C2QBJ5togxliZAFdw0EL-2" value="MDAA CDK&lt;br&gt;L2 Construct" style="points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=16;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloud_development_kit;" parent="mQHexDfNPo3EaRtXDjzP-1" vertex="1">
-          <mxGeometry x="880" y="910" width="78" height="78" as="geometry" />
+          <mxGeometry x="880" y="960" width="78" height="78" as="geometry" />
         </mxCell>
         <mxCell id="C2QBJ5togxliZAFdw0EL-3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;" parent="mQHexDfNPo3EaRtXDjzP-1" source="mQHexDfNPo3EaRtXDjzP-2" target="JP8GRWOnoGMPv1ib64UV-0" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -1656,6 +1677,18 @@
         </mxCell>
         <mxCell id="mQHexDfNPo3EaRtXDjzP-6" value="MDAA CDK&lt;br&gt;Application" style="points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=middle;verticalAlign=middle;align=left;html=1;fontSize=16;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloud_development_kit;labelPosition=right;" parent="mQHexDfNPo3EaRtXDjzP-1" vertex="1">
           <mxGeometry x="880" y="490" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="J0VPGIA8ZPDLaGk2A8W1-1" value="&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Extend a common MDAA CDK App base class, providing:&amp;nbsp;&amp;nbsp;&lt;/li&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Common module configuration behaviours&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;CDK Nag ruleset integration&lt;/li&gt;&lt;/ul&gt;&lt;/ul&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Parse module-level configuration and produce stacks containing MDAA L3 Constructs&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=15;" vertex="1" parent="mQHexDfNPo3EaRtXDjzP-1">
+          <mxGeometry x="1100" y="434" width="300" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="J0VPGIA8ZPDLaGk2A8W1-3" value="&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Provide compliant module-level functionality&lt;/li&gt;&lt;/ul&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Produce compliant resources using MDAA L2 constructs, other MDAA L3 Constructs, and CDK L2/L1 constructs&amp;nbsp;&lt;br&gt;&lt;br&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Provide common resource naming (for CDK L1/L2 constructs)&lt;br&gt;&lt;br&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Integrate individual resources into functional architectural components&amp;nbsp;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=15;" vertex="1" parent="mQHexDfNPo3EaRtXDjzP-1">
+          <mxGeometry x="1100" y="675" width="310" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="J0VPGIA8ZPDLaGk2A8W1-6" value="&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Provide compliant resource-level functionality&lt;/li&gt;&lt;/ul&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Produce compliant resources by extending/using CDK L2/L1 constructs with compliance-specific properties&amp;nbsp;&lt;br&gt;&lt;br&gt;&lt;/li&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Provide common resource naming&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=15;" vertex="1" parent="mQHexDfNPo3EaRtXDjzP-1">
+          <mxGeometry x="1100" y="910" width="310" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="J0VPGIA8ZPDLaGk2A8W1-9" value="&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Provides orchestration of all modules required to deploy a Modern Data Architecture&lt;/li&gt;&lt;/ul&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Invokes each MDAA Module with the required CDK context and configuration&lt;/li&gt;&lt;/ul&gt;&lt;ul style=&quot;font-size: 15px;&quot;&gt;&lt;li style=&quot;font-size: 15px;&quot;&gt;Set required CDK environment for deployment across account topologies&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=15;" vertex="1" parent="mQHexDfNPo3EaRtXDjzP-1">
+          <mxGeometry x="1105" y="165" width="300" height="200" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
