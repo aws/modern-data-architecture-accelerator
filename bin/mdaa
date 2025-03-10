@@ -8,6 +8,7 @@ npm install --no-save --quiet > /dev/null
 echo ""
 echo "Building MDAA CLI"
 echo ""
+export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1
 npx lerna run build --scope "@aws-mdaa/cli" --loglevel warn > /dev/null
 
 echo ""
