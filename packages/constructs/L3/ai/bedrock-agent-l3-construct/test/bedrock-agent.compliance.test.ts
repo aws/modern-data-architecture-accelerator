@@ -19,7 +19,7 @@ describe("Mdaa Compliance Stack Tests", () => {
   
   const layerProps: LayerProps = {
     layerName: "test-layer",
-    src: "./test/lambda/test-layer.zip",
+    src: "./test/lambda/test",
     description: "layer testing"
   };
   const functionProps: FunctionProps = {

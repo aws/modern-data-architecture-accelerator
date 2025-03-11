@@ -55,7 +55,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
 
     const template = Template.fromStack(testApp.testStack)
 
-    console.log(JSON.stringify(template.toJSON(), null, '\t'));
+    // console.log(JSON.stringify(template.toJSON(), null, '\t'));
 
     test ('Validate if Domain is created', () => {
         template.resourceCountIs("AWS::DataZone::Domain", 1)

@@ -28,7 +28,7 @@ describe( 'MDAA Construct Compliance Tests', () => {
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )
 
-    console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
+    // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
 
     test( 'LogGroupEncrypion', () => {
         template.hasResourceProperties( "AWS::Logs::LogGroup", {

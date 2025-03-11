@@ -162,7 +162,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
     new DataOpsProjectL3Construct( testApp.testStack, 'test-stack', constructProps )
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )
-    console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
+    // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
 
     testApp.checkCdkNagCompliance( crossAccountStack )
     const crossAccountTemplate = Template.fromStack( crossAccountStack )
