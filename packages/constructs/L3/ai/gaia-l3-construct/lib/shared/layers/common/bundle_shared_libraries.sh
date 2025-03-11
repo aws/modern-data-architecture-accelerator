@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -f ./lib/shared/layers/common/common_layer.zip
+rm -f common_layer.zip
 
 if ! command -v docker 2>&1 >/dev/null
 then

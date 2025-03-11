@@ -1,7 +1,6 @@
 #!/bin/bash
 
-mkdir -p ./src/python/boto3_layer/
-rm -f ./src/python/boto3_layer/1.36.11.zip
+rm -f 1.36.11.zip
 
 if ! command -v docker 2>&1 >/dev/null
 then
