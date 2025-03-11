@@ -25,7 +25,7 @@ export class MdaaBoto3LayerVersion extends LayerVersion {
         const boto3Version: Boto3Version = props.boto3Version || MdaaBoto3LayerVersion.BOTO3_LATEST_VERSION
         const overrideProps = {
             layerVersionName: props.naming.resourceName( `boto3-${ boto3Version.replace( /\W/g, '_' ) }` ),
-            code: Code.fromAsset( `${ __dirname }/../src/python/boto3_layer/${ boto3Version }.zip` )
+            code: Code.fromAsset( `${ __dirname }/../src/${ boto3Version }.zip` )
         }
         return { ...props, ...overrideProps }
     }

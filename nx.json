@@ -31,7 +31,9 @@
         "{projectRoot}/lib/*.d.ts",
         "{projectRoot}/lib/*.js",
         "{projectRoot}/test/*.d.ts",
-        "{projectRoot}/test/*.js"
+        "{projectRoot}/test/*.js",
+        "{projectRoot}/lib/*.zip",
+        "{projectRoot}/src/*.zip"
       ]
     },
     "test": {

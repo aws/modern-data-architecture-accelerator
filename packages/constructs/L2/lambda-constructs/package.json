@@ -17,7 +17,7 @@
     "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references && cd ./src && ./bundle_libraries.sh",
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
-    "test": "mkdir -p ./src/python/boto3_layer/ && touch ./src/python/boto3_layer/1.36.11.zip  && jest --passWithNoTests --coverage",
+    "test": "touch ./src/1.36.11.zip  && jest --passWithNoTests --coverage",
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "devDependencies": {
