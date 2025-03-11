@@ -43,7 +43,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )
 
-    console.log( JSON.stringify( template, undefined, 2 ) )
+    // console.log( JSON.stringify( template, undefined, 2 ) )
 
     test( 'Resource Count', () => {
         template.resourceCountIs( "AWS::CloudTrail::Trail", 2 )

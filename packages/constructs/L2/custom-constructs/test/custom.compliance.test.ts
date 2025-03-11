@@ -35,7 +35,7 @@ describe( 'MDAA Construct Compliance Tests', () => {
     testApp.checkCdkNagCompliance( testApp.testStack )
     const template = Template.fromStack( testApp.testStack )
 
-    console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
+    // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
     test( 'Validate resource counts', () => {
         template.resourceCountIs( "AWS::Lambda::Function", 2 );
     } );

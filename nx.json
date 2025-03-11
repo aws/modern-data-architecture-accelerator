@@ -19,6 +19,10 @@
         "{projectRoot}/package.json",
         "{projectRoot}/bin/*.ts",
         "{projectRoot}/lib/*.ts",
+        "{projectRoot}/lib/*.py",
+        "{projectRoot}/lib/*.sh",
+        "{projectRoot}/src/*.py",
+        "{projectRoot}/src/*.sh",
         "{projectRoot}/test/*.ts"
       ],
       "outputs": [
@@ -31,6 +35,10 @@
       ]
     },
     "test": {
+      "dependsOn": [
+        "build",
+        "^test"
+      ],
       "inputs": [
         "{projectRoot}/bin/*.ts",
         "{projectRoot}/lib/*.ts",

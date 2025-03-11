@@ -43,7 +43,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
   const template = Template.fromStack( stack );
   testApp.checkCdkNagCompliance( stack )
 
-  console.log( JSON.stringify( template, undefined, 2 ) )
+  // console.log( JSON.stringify( template, undefined, 2 ) )
 
   test( 'Validate resource counts', () => {
     template.resourceCountIs( "AWS::CloudFormation::CustomResource", 1 );

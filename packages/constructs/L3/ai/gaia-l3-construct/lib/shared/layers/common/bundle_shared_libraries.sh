@@ -1,8 +1,15 @@
 #!/bin/bash
 
+rm -f ./lib/shared/layers/common/common_layer.zip
+
+if ! command -v docker 2>&1 >/dev/null
+then
+    echo "Docker command could not be found. Skipping container builds. Note, this might break functionality for this module."
+    exit 0
+fi
+
 # Build the Docker image
 docker build -t bundler .
-
 
 docker run --name bundler-container bundler
 

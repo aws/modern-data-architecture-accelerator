@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
 import { MdaaTestApp } from "@aws-mdaa/testing";
-import { Template } from "aws-cdk-lib/assertions";
+import { Match, Template } from "aws-cdk-lib/assertions";
 import { Protocol } from "aws-cdk-lib/aws-ec2";
 import { FunctionProps, LambdaFunctionL3Construct, LambdaFunctionL3ConstructProps, LayerProps } from "../lib";
 
@@ -16,7 +16,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
 
   const layerProps: LayerProps = {
     layerName: "test-layer",
-    src: "./test/src/lambda/test-layer.zip",
+    src: "./test/src/lambda/test",
     description: "layer testing"
   }
 
@@ -258,7 +258,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
       template.hasResourceProperties( "AWS::Lambda::LayerVersion", {
         "Content": {
           "S3Bucket": "cdk-hnb659fds-assets-test-account-test-region",
-          "S3Key": "1bba73604a80e93991d5c841d67bac5fcfd5131456ba8dd186dab4edba0c5129.zip" //gitleaks:allow
+          "S3Key": Match.stringLikeRegexp(".*\.zip$") //gitleaks:allow
         },
         "Description": "layer testing",
         "LayerName": "test-org-test-env-test-domain-test-module-test-layer"

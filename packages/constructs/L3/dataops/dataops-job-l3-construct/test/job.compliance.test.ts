@@ -44,7 +44,7 @@ describe( 'MDAA Compliance Stack Tests', () => {
   const template = Template.fromStack( testApp.testStack )
 
 
-  console.log( JSON.stringify( template, undefined, 2 ) )
+  // console.log( JSON.stringify( template, undefined, 2 ) )
 
   test( 'Validate resource counts', () => {
     template.resourceCountIs( "AWS::Glue::Job", 1 );

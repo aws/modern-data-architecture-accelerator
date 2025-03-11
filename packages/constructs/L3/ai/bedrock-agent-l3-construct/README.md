@@ -12,7 +12,7 @@ The Bedrock Agent CDK L3 construct is used to configure and deploy a secure Bedr
 * **Agent Execution Role**: Bedrock Execution Policy will be attached to the External Agent Role. This role should have Bedrock Service as a Trusted Principal. 
 * **Agent KMS Key**: Encrypt Agent resources with the KMS Key. One will be generated if a KMS key is not provided as part of Agent Configuration
 * **Lambdas**: (Optional) Allows you to generate Lambda Layer, Lambda Function or both, which can be associate with Agent Action Group. (*Refer: [MDAA DataOps-LambdaFunctions](../../dataops/dataops-lambda-app/README.md)*)
-  * **Lambda Layers** - Lambda layers which can be used in Lambda functions (inside or outside of this config)
+  * **Lambda Layers** - Lambda layers which can be used in Lambda functions (inside or outside of this config).
   * **Lambda Functions** - Lambda function(s) for Agent Action Group(s)
     * May be optionally VPC bound with configurable VPC, Subnet, and Security Group Paramters
 
