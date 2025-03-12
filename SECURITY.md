@@ -22,15 +22,15 @@ The following security principles are integral to the MDAA design:
 
 * Separation of Duties in generated roles and permissions within all MDAA Compliant Constructs
 
-* Compliance with AWS Solutions [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
+* Compliance with [AWS Solutions CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#awssolutions) 
 
-* Compliance with NIST 800-53 Rev 5 [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
+* Compliance with [NIST 800-53 Rev 5 CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#nist-800-53-rev-5) targeting FedRAMP Moderate Compliance
 
-* Compliance with HIPAA [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
+* Compliance with [HIPAA CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#hipaa-security) 
 
-* Compliance with PCI-DSS [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
+* Compliance with [PCI-DSS CDK Nag Ruleset](https://github.com/cdklabs/cdk-nag/blob/main/RULES.md#pci-dss-321) 
 
-* Compliance with ITSG-33 PBMM Security Control Requirements
+* Compliance with ITSG-33 PBMM Security Control Requirements targeting CCCS Medium Compliance
 
 * (Terraform) Compliance with Checkov standard policies
 
