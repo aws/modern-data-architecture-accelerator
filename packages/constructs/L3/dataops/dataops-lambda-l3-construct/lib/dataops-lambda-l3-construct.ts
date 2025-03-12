@@ -287,8 +287,10 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
             [
                 { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Concurrency Limits not required.' },
                 { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'VPC Not Required' },
-                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Concurrency Limits not required.' },
-                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'VPC Not Required' }
+                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Concurrency Limits not required.'  },
+                { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Concurrency Limits not required.'  },
+                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'VPC Not Required'  },
+                { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'VPC Not Required'  }
             ],
             true
         );

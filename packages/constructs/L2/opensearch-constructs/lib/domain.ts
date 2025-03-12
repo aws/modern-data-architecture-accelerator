@@ -122,7 +122,8 @@ export class MdaaOpensearchDomain extends Domain {
                             [
                                 { id: 'AwsSolutions-IAM5', reason: 'Role is for Custom Resource Provider. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/encryption-at-rest.html' },
                                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.' },
-                                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.' }
+                                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.'  },
+                                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.'  }
                             ]
                         );
                     }
@@ -146,7 +147,8 @@ export class MdaaOpensearchDomain extends Domain {
                             child2,
                             [
                                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.' },
-                                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.' },
+                                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.'  },
+                                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.'  },
                             ]
                         );
                     }
@@ -163,9 +165,12 @@ export class MdaaOpensearchDomain extends Domain {
                         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.' },
                         { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with IAM.' },
                         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.' },
-                        { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.' },
-                        { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with IAM.' },
-                        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.' }
+                        { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.'  },
+                        { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.'  },
+                        { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with IAM.'  },
+                        { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with IAM.'  },
+                        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.'  },
+                        { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.'  }
                     ]
                 );
                 child.node.children.forEach( child2 => {
@@ -184,7 +189,8 @@ export class MdaaOpensearchDomain extends Domain {
                                 [
                                     { id: 'AwsSolutions-IAM5', reason: 'Role is for Custom Resource Provider Lambda Function. KMS policy added is least privilege.' },
                                     { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.' },
-                                    { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.' }
+                                    { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.'  },
+                                    { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.'  }
                                 ]
                             );
                         }

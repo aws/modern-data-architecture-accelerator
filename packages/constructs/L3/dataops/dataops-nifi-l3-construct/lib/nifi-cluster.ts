@@ -145,7 +145,8 @@ export class NifiCluster extends Construct {
         NagSuppressions.addResourceSuppressions( props.fargateProfile.podExecutionRole, [
             { id: "AwsSolutions-IAM5", reason: "ecr:GetAuthorizationToken does not accept a resource." },
             { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Permissions are appropriate as inline policy." },
-            { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Permissions are appropriate as inline policy." },
+            { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Permissions are appropriate as inline policy."} ,
+            { id: "PCI.DSS.321-IAMNoInlinePolicy", reason: "Permissions are appropriate as inline policy." },
         ], true );
 
 
@@ -353,6 +354,10 @@ export class NifiCluster extends Construct {
                 id: 'HIPAA.Security-EFSInBackupPlan',
                 reason: 'MDAA does not enforce HIPAA.Security-EFSInBackupPlan on EFS volume.',
             },
+            {
+                id: 'PCI.DSS.321-EFSInBackupPlan',
+                reason: 'MDAA does not enforce HIPAA.Security-EFSInBackupPlan on EFS volume.',
+            },
         ] );
 
         const efsPvs: [ FileSystem, AccessPoint ][] = [ ...Array( createEfsPvsProps.nodeCount ).keys() ].map( i => {
@@ -389,6 +394,7 @@ export class NifiCluster extends Construct {
             { id: "AwsSolutions-SMG4", reason: "Nifi does not support rotation of this secret" },
             { id: "NIST.800.53.R5-SecretsManagerRotationEnabled", reason: "Nifi does not support rotation of this secret" },
             { id: "HIPAA.Security-SecretsManagerRotationEnabled", reason: "Nifi does not support rotation of this secret" },
+            { id: "PCI.DSS.321-SecretsManagerRotationEnabled", reason: "Nifi does not support rotation of this secret" },
         ], true );
         return nifiSensitivePropSecret
     }

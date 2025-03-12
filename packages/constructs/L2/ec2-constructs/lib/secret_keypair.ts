@@ -99,6 +99,10 @@ export class MdaaEC2SecretKeyPair extends Construct {
                     id: 'HIPAA.Security-SecretsManagerRotationEnabled',
                     reason: 'Secret is for EC2 Key Pair, which does not support rotation.',
                 },
+                {
+                    id: 'PCI.DSS.321-SecretsManagerRotationEnabled',
+                    reason: 'Secret is for EC2 Key Pair, which does not support rotation.',
+                },
             ] );
     }
 }

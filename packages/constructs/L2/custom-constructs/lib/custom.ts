@@ -65,7 +65,8 @@ export class MdaaCustomResource extends CustomResource {
                 handlerPolicy,
                 [
                     { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Function is for custom resource; inline policy use appropriate' },
-                    { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Function is for custom resource; inline policy use appropriate' },
+                    { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Function is for custom resource; inline policy use appropriate'  },
+                    { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Function is for custom resource; inline policy use appropriate'  },
                     ...props.handlerPolicySuppressions || []
                 ],
                 true
@@ -96,9 +97,12 @@ export class MdaaCustomResource extends CustomResource {
                 { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.' },
                 { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function is for custom resource.' },
                 { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.' },
-                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.' },
-                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for custom resource.' },
-                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.' }
+                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.'  },
+                { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.'  },
+                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for custom resource.'  },
+                { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Function is for custom resource.'  },
+                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.'  },
+                { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.'  }
             ],
             true
         );
@@ -133,6 +137,11 @@ export class MdaaCustomResource extends CustomResource {
                 },
                 {
                     id: "HIPAA.Security-IAMNoInlinePolicy",
+                    reason:
+                        "Role is for Custom Resource Provider. Inline policy automatically added.",
+                },
+                {
+                    id: "PCI.DSS.321-IAMNoInlinePolicy",
                     reason:
                         "Role is for Custom Resource Provider. Inline policy automatically added.",
                 },
@@ -181,6 +190,21 @@ export class MdaaCustomResource extends CustomResource {
                 },
                 {
                     id: "HIPAA.Security-LambdaConcurrency",
+                    reason:
+                        "Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                },
+                {
+                    id: "PCI.DSS.321-LambdaDLQ",
+                    reason:
+                        "Function is for custom resource and error handling will be handled by CloudFormation.",
+                },
+                {
+                    id: "PCI.DSS.321-LambdaInsideVPC",
+                    reason:
+                        "Function is for custom resource and will interact only with QuickSight APIs.",
+                },
+                {
+                    id: "PCI.DSS.321-LambdaConcurrency",
                     reason:
                         "Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
                 },

@@ -129,8 +129,11 @@ export class CompliantKubectlProvider extends NestedStack implements IKubectlPro
       { id: "NIST.800.53.R5-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn." },
       { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
       { id: "HIPAA.Security-LambdaConcurrency", reason: "Function is used as Cfn Custom Resource only during deployment time. Concurrency managed via Cfn." },
+      { id: "PCI.DSS.321-LambdaConcurrency", reason: "Function is used as Cfn Custom Resource only during deployment time. Concurrency managed via Cfn." },
       { id: "HIPAA.Security-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn." },
+      { id: "PCI.DSS.321-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn."},
       { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
+      { id: "PCI.DSS.321-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource."} ,
     ], true );
   }
 

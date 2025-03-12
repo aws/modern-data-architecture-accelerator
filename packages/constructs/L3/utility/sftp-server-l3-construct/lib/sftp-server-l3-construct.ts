@@ -112,7 +112,8 @@ export class SftpServerL3Construct extends MdaaL3Construct {
             [
                 { id: 'AwsSolutions-IAM5', reason: 'Wildcard is for log stream names, which are not known at deployment time.' },
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Role is specific to this server. Inline policy is appropriate.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is specific to this server. Inline policy is appropriate.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is specific to this server. Inline policy is appropriate.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Role is specific to this server. Inline policy is appropriate.'  }
             ],
             true
         );

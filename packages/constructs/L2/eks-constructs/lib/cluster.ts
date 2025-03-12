@@ -292,7 +292,8 @@ export class MdaaEKSCluster extends Cluster {
             podLogGroup,
             [
                 { id: 'NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod', reason: 'LogGroup retention is set to RetentionDays.INFINITE.' },
-                { id: 'HIPAA.Security-CloudWatchLogGroupRetentionPeriod', reason: 'LogGroup retention is set to RetentionDays.INFINITE.' }
+                { id: 'HIPAA.Security-CloudWatchLogGroupRetentionPeriod', reason: 'LogGroup retention is set to RetentionDays.INFINITE.'  },
+                { id: 'PCI.DSS.321-CloudWatchLogGroupRetentionPeriod', reason: 'LogGroup retention is set to RetentionDays.INFINITE.'  }
             ],
             true
         );
@@ -369,6 +370,7 @@ export class MdaaEKSCluster extends Cluster {
             },
             { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Permissions are specific to cluster." },
             { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Permissions are specific to cluster." },
+            { id: "PCI.DSS.321-IAMNoInlinePolicy", reason: "Permissions are specific to cluster."} ,
         ], true );
 
         if ( this.kubectlLambdaRole ) {
@@ -376,7 +378,8 @@ export class MdaaEKSCluster extends Cluster {
                 { id: "AwsSolutions-IAM4", reason: "AWSLambdaBasicExecutionRole, AWSLambdaVPCAccessExecutionRole are least privilege." },
                 { id: "AwsSolutions-IAM5", reason: "S3 CDK Asset names not known at deployment time" },
                 { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Permissions are specific to custom resource requirements." },
-                { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Permissions are specific to custom resource requirements." },
+                { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Permissions are specific to custom resource requirements."} ,
+                { id: "PCI.DSS.321-IAMNoInlinePolicy", reason: "Permissions are specific to custom resource requirements." },
             ], true );
         }
 
@@ -390,11 +393,16 @@ export class MdaaEKSCluster extends Cluster {
                 { id: "NIST.800.53.R5-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn." },
                 { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
                 { id: "NIST.800.53.R5-LambdaInsideVPC", reason: "Function is used as Cfn Custom Resource only during deployment time." },
-                { id: "HIPAA.Security-LambdaInsideVPC", reason: "Function is used as Cfn Custom Resource only during deployment time." },
+                { id: "HIPAA.Security-LambdaInsideVPC", reason: "Function is used as Cfn Custom Resource only during deployment time."} ,
+                { id: "PCI.DSS.321-LambdaInsideVPC", reason: "Function is used as Cfn Custom Resource only during deployment time." },
                 { id: "HIPAA.Security-LambdaConcurrency", reason: "Function is used as Cfn Custom Resource only during deployment time. Concurrency managed via Cfn." },
+                { id: "PCI.DSS.321-LambdaConcurrency", reason: "Function is used as Cfn Custom Resource only during deployment time. Concurrency managed via Cfn."} ,
                 { id: "HIPAA.Security-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn." },
-                { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
-                { id: 'HIPAA.Security-CloudWatchLogGroupEncrypted', reason: 'Loggroup data is always encrypted in CloudWatch Logs'},
+                { id: "PCI.DSS.321-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn."} ,
+                { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource."} ,
+                { id: "PCI.DSS.321-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource."} ,
+                { id: 'HIPAA.Security-CloudWatchLogGroupEncrypted', reason: 'Loggroup data is always encrypted in CloudWatch Logs' },
+                { id: 'PCI.DSS.321-CloudWatchLogGroupEncrypted', reason: 'Loggroup data is always encrypted in CloudWatch Logs' },
                 { id: 'NIST.800.53.R5-CloudWatchLogGroupEncrypted', reason: 'Loggroup data is always encrypted in CloudWatch Logs'},
                 { id: 'AwsSolutions-SF1', reason: 'Function is used as Cfn Custom Resource only during deployment time.'},
                 { id: 'AwsSolutions-SF2', reason: 'Function is used as Cfn Custom Resource only during deployment time.'}
@@ -412,8 +420,11 @@ export class MdaaEKSCluster extends Cluster {
                 { id: "NIST.800.53.R5-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn." },
                 { id: "NIST.800.53.R5-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
                 { id: "HIPAA.Security-LambdaConcurrency", reason: "Function is used as Cfn Custom Resource only during deployment time. Concurrency managed via Cfn." },
+                { id: "PCI.DSS.321-LambdaConcurrency", reason: "Function is used as Cfn Custom Resource only during deployment time. Concurrency managed via Cfn."} ,
                 { id: "HIPAA.Security-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn." },
-                { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
+                { id: "PCI.DSS.321-LambdaDLQ", reason: "Function is used as Cfn Custom Resource only during deployment time. Error handling managed via Cfn."} ,
+                { id: "HIPAA.Security-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource."} ,
+                { id: "PCI.DSS.321-IAMNoInlinePolicy", reason: "Policy statements are specific to custom resource." },
             ], true );
         }
 
@@ -602,13 +613,18 @@ export class MdaaEKSCluster extends Cluster {
             this.clusterSecurityGroup.connections.allowTo( securityGroup, Port.allTraffic() )
 
             NagSuppressions.addResourceSuppressions( securityGroup, [ {
-                id: "NIST.800.53.R5-EC2RestrictedCommonPorts",
-                reason: "Unrestricted traffic is required between cluster and pods."
-            },
-            {
-                id: "HIPAA.Security-EC2RestrictedCommonPorts",
-                reason: "Unrestricted traffic is required between cluster and pods."
-            } ], true )
+                    id: "NIST.800.53.R5-EC2RestrictedCommonPorts",
+                    reason: "Unrestricted traffic is required between cluster and pods."
+                },
+                {
+                    id: "HIPAA.Security-EC2RestrictedCommonPorts",
+                    reason: "Unrestricted traffic is required between cluster and pods."
+                },
+                {
+                    id: "PCI.DSS.321-EC2RestrictedCommonPorts",
+                    reason: "Unrestricted traffic is required between cluster and pods."
+                } 
+            ], true )
             NagSuppressions.addResourceSuppressions( this.clusterSecurityGroup, [ {
                 id: "NIST.800.53.R5-EC2RestrictedCommonPorts",
                 reason: "Unrestricted traffic is required between cluster and pods."
@@ -616,7 +632,11 @@ export class MdaaEKSCluster extends Cluster {
             {
                 id: "HIPAA.Security-EC2RestrictedCommonPorts",
                 reason: "Unrestricted traffic is required between cluster and pods."
-            } ], true )
+            },
+            {
+                id: "PCI.DSS.321-EC2RestrictedCommonPorts",
+                reason: "Unrestricted traffic is required between cluster and pods."
+            }  ], true )
         }
         return this.addCdk8sChart( id, new NamespaceChart( scope, id, { namespaceName: namespaceName, securityGroupId: securityGroup?.securityGroupId } ) )
     }

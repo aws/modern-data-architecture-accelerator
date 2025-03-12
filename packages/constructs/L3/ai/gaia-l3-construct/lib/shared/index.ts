@@ -231,7 +231,8 @@ export class Shared extends Construct {
     NagSuppressions.addResourceSuppressions( apiKeysSecret, [
       { id: "AwsSolutions-SMG4", reason: "Key entry is managed via the console and ties to 3rd party api keys, no support for automatic rotation" },
       { id: "NIST.800.53.R5-SecretsManagerRotationEnabled", reason: "Key entry is managed via the console and ties to 3rd party api keys, no support for automatic rotation" },
-      { id: "HIPAA.Security-SecretsManagerRotationEnabled", reason: "Key entry is managed via the console and ties to 3rd party api keys, no support for automatic rotation" },
+      { id: "HIPAA.Security-SecretsManagerRotationEnabled", reason: "Key entry is managed via the console and ties to 3rd party api keys, no support for automatic rotation"} ,
+      { id: "PCI.DSS.321-SecretsManagerRotationEnabled", reason: "Key entry is managed via the console and ties to 3rd party api keys, no support for automatic rotation"} ,
     ], true );
 
     this.vpc = vpc;

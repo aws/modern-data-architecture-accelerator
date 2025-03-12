@@ -860,7 +860,8 @@ export class Ec2L3Construct extends MdaaL3Construct {
         this.instances[instanceName].role,
         [
           { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Adding cfn init adds inline policy to instance role to describe stack' },
-          { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Adding cfn init adds inline policy to instance role to describe stack' },
+          { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Adding cfn init adds inline policy to instance role to describe stack'  },
+          { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Adding cfn init adds inline policy to instance role to describe stack'  },
           { id: 'AwsSolutions-IAM5', reason: 'Adding files section for cfn init, adds permission for cdk bootstrap bucket with wildcard to store the file' },
         ],
         true

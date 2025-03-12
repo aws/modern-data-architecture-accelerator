@@ -336,6 +336,10 @@ export class MdaaECSContainerDefinition extends ContainerDefinition {
                 {
                     id: "HIPAA.Security-IAMNoInlinePolicy",
                     reason: "Inline policy is specific to task logging and is appropriate."
+                },
+                {
+                    id: "PCI.DSS.321-IAMNoInlinePolicy",
+                    reason: "Inline policy is specific to task logging and is appropriate."
                 }
             ], true );
         }

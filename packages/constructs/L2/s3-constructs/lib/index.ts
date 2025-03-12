@@ -140,7 +140,8 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
             [
                 { id: 'AwsSolutions-S1', reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.' },
                 { id: 'NIST.800.53.R5-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.' },
-                { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.' }
+                { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.'  },
+                { id: 'PCI.DSS.321-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.'  }
             ],
             true
         );

@@ -69,3 +69,5 @@ suppressions:
         reason: "- GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action"
     -   id: "HIPAA.Security-IAMPolicyNoStatementsWithFullAccess"
         reason: "- GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action"    
+    -   id: "PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess"
+        reason: "- GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action"  

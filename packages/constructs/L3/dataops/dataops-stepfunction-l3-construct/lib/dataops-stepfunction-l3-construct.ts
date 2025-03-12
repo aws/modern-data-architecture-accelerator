@@ -190,7 +190,8 @@ export class StepFunctionL3Construct extends MdaaL3Construct {
             stepFunction,
             [
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Role is specific to invocation of this step function. Inline policy is appropriate.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is specific to invocation of this step function. Inline policy is appropriate.' },
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is specific to invocation of this step function. Inline policy is appropriate.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Role is specific to invocation of this step function. Inline policy is appropriate.'  },
             ],
             true
         );

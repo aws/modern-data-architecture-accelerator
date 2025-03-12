@@ -240,6 +240,10 @@ export class MdaaEC2Instance extends Instance {
                 id: 'HIPAA.Security-EC2IMDSv2Enabled',
                 reason: 'Remediated through property override.',
             },
+            {
+                id: 'PCI.DSS.321-EC2IMDSv2Enabled',
+                reason: 'Remediated through property override.',
+            },
         ] );
 
         new MdaaParamAndOutput( this, {

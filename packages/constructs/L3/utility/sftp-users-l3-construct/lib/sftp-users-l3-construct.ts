@@ -144,7 +144,8 @@ export class SftpUsersL3Construct extends MdaaL3Construct {
                 [
                     { id: 'AwsSolutions-IAM5', reason: 'Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.' },
                     { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Permissions are specific to this SFTP server role. Inline policy is appropriate.' },
-                    { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Permissions are specific to this SFTP server role. Inline policy is appropriate.' }
+                    { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Permissions are specific to this SFTP server role. Inline policy is appropriate.'  },
+                    { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Permissions are specific to this SFTP server role. Inline policy is appropriate.'  }
                 ],
                 true
             );

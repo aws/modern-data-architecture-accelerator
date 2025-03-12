@@ -570,7 +570,8 @@ export class DataSyncL3Construct extends MdaaL3Construct {
             [
                 { id: 'AwsSolutions-SMG4', reason: 'Secret is for access to external system and cannot be automatically rotated.' },
                 { id: 'NIST.800.53.R5-SecretsManagerRotationEnabled', reason: 'Secret is for access to external system and cannot be automatically rotated.' },
-                { id: 'HIPAA.Security-SecretsManagerRotationEnabled', reason: 'Secret is for access to external system and cannot be automatically rotated.' },
+                { id: 'HIPAA.Security-SecretsManagerRotationEnabled', reason: 'Secret is for access to external system and cannot be automatically rotated.'  },
+                { id: 'PCI.DSS.321-SecretsManagerRotationEnabled', reason: 'Secret is for access to external system and cannot be automatically rotated.'  },
 
             ],
             true

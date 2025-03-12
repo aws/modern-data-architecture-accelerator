@@ -164,6 +164,10 @@ export class MdaaSecurityGroup extends SecurityGroup {
             {
                 id: "HIPAA.Security-EC2RestrictedCommonPorts",
                 reason: "Ingress/Egress is limited to this security group"
+            } ,
+            {
+                id: "PCI.DSS.321-EC2RestrictedCommonPorts",
+                reason: "Ingress/Egress is limited to this security group"
             } ]
             this.addSuppressableIngressRule( this, Port.allTraffic(), `Self-Ref`, false, suppressions );
             //Only add self ref egress rule if all outbound traffic is not otherwise allowed

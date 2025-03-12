@@ -147,8 +147,10 @@ export class AuditL3Construct extends MdaaL3Construct {
                 { id: 'AwsSolutions-S1', reason: '1. Audit bucket is target of cloudtrail audit logs. 2. Server access logs do not support KMS on targets.' },
                 { id: 'NIST.800.53.R5-S3BucketLoggingEnabled', reason: '1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.' },
                 { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-                { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: '1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.' },
-                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
+                { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: '1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.'  },
+                { id: 'PCI.DSS.321-S3BucketLoggingEnabled', reason: '1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.'  },
+                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.'  },
+                { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.'  }
             ],
             true
         );

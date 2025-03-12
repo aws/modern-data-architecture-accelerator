@@ -67,7 +67,8 @@ export class MdaaLogGroup extends LogGroup implements IMdaaLogGroup {
                 this,
                 [
                     { id: 'NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod', reason: 'LogGroup retention is set to RetentionDays.INFINITE.' },
-                    { id: 'HIPAA.Security-CloudWatchLogGroupRetentionPeriod', reason: 'LogGroup retention is set to RetentionDays.INFINITE.' }
+                    { id: 'HIPAA.Security-CloudWatchLogGroupRetentionPeriod', reason: 'LogGroup retention is set to RetentionDays.INFINITE.'  },
+                    { id: 'PCI.DSS.321-CloudWatchLogGroupRetentionPeriod', reason: 'LogGroup retention is set to RetentionDays.INFINITE.'  }
                 ],
                 true
             );

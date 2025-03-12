@@ -10,7 +10,7 @@ import { MdaaDefaultResourceNaming, IMdaaResourceNaming } from "@aws-mdaa/naming
 import { App, AppProps, Aspects, CfnMacro, Stack, Tags } from "aws-cdk-lib";
 import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { CfnLaunchRoleConstraint, CfnLaunchRoleConstraintProps, CloudFormationProduct, CloudFormationProductProps, CloudFormationTemplate, Portfolio } from "aws-cdk-lib/aws-servicecatalog";
-import { AwsSolutionsChecks, HIPAASecurityChecks, NagSuppressions, NIST80053R5Checks } from "cdk-nag";
+import { AwsSolutionsChecks, HIPAASecurityChecks, NagSuppressions, NIST80053R5Checks, PCIDSS321Checks } from "cdk-nag";
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'yaml';
@@ -108,6 +108,7 @@ export abstract class MdaaCdkApp extends App {
         Aspects.of( this ).add( new AwsSolutionsChecks( { verbose: true, logIgnores: logSuppressions } ) )
         Aspects.of( this ).add( new NIST80053R5Checks( { verbose: true, logIgnores: logSuppressions } ) )
         Aspects.of( this ).add( new HIPAASecurityChecks( { verbose: true, logIgnores: logSuppressions } ) )
+        Aspects.of( this ).add( new PCIDSS321Checks( { verbose: true, logIgnores: logSuppressions } ) )
 
         this.applyCustomAspects()
 
@@ -314,9 +315,12 @@ export abstract class MdaaCdkApp extends App {
                 { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is for Cfn Macro and error handling will be handled by CloudFormation.' },
                 { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function is for Cfn Macro and will interact only with CloudFormation.' },
                 { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is for Cfn Macro and will only execute during stack deployement. Reserved concurrency not appropriate.' },
-                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for Cfn Macro and error handling will be handled by CloudFormation.' },
-                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for Cfn Macro and will interact only with CloudFormation.' },
-                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for Cfn Macro and will only execute during stack deployement. Reserved concurrency not appropriate.' }
+                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for Cfn Macro and error handling will be handled by CloudFormation.'      },
+                { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is for Cfn Macro and error handling will be handled by CloudFormation.'      },
+                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for Cfn Macro and will interact only with CloudFormation.'  },
+                { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Function is for Cfn Macro and will interact only with CloudFormation.'  },
+                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for Cfn Macro and will only execute during stack deployement. Reserved concurrency not appropriate.'  },
+                { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is for Cfn Macro and will only execute during stack deployement. Reserved concurrency not appropriate.'  }
             ],
             true
         );

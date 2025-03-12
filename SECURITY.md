@@ -2,7 +2,7 @@
 
 ## Overview
 
-MDAA is designed to enable and accelerate compliance with common standards such as FedRAMP Moderate, CCCS Medium, and HIPAA. This compliance is enabled by design within the MDAA codebase through adherence to AWS Solutions best practices, NIST 800-53 Rev 5, and HIPAA-specific security controls. These security controls are validated through global application of corresponding CDK Nag rulesets during MDAA execution. Any non-compliance with these controls will halt MDAA deployment progress, and must be explicitely suppressed. All evaluated compliance rules, findings, and explicit suppressions are published in a report for review prior to deployment. 
+MDAA is designed to enable and accelerate compliance with common standards such as FedRAMP Moderate, CCCS Medium, PCI-DSS and HIPAA. This compliance is enabled by design within the MDAA codebase through adherence to AWS Solutions best practices, NIST 800-53 Rev 5, PCI-DSS and HIPAA-specific security controls. These security controls are validated through global application of corresponding CDK Nag rulesets during MDAA execution. Any non-compliance with these controls will halt MDAA deployment progress, and must be explicitely suppressed. All evaluated compliance rules, findings, and explicit suppressions are published in a report for review prior to deployment. 
 
 ## Customer Responsibilities
 
@@ -27,6 +27,8 @@ The following security principles are integral to the MDAA design:
 * Compliance with NIST 800-53 Rev 5 [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
 
 * Compliance with HIPAA [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
+
+* Compliance with PCI-DSS [CDK Nag](https://github.com/cdklabs/cdk-nag) Ruleset
 
 * Compliance with ITSG-33 PBMM Security Control Requirements
 

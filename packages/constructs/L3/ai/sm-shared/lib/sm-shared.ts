@@ -82,7 +82,8 @@ export class LifeCycleConfigHelper {
             [
                 { id: 'AwsSolutions-IAM5', reason: 'Inline policy used only for deployment.' },
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Policy used only for deployment.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Policy used only for deployment.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Policy used only for deployment.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Policy used only for deployment.'  }
             ],
             true
         );
@@ -98,9 +99,12 @@ export class LifeCycleConfigHelper {
                         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is used only as custom resource during CDK deployment.' },
                         { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.' },
                         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.' },
-                        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is used only as custom resource during CDK deployment.' },
-                        { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.' },
-                        { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.' }
+                        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is used only as custom resource during CDK deployment.'  },
+                        { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is used only as custom resource during CDK deployment.'  },
+                        { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.'  },
+                        { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.'  },
+                        { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.'  },
+                        { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.'  }
                     ],
                     true
                 );

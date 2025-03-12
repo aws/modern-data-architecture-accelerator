@@ -366,6 +366,10 @@ export class DataZoneL3Construct extends MdaaL3Construct {
             {
                 id: 'HIPAA.Security-IAMNoInlinePolicy',
                 reason: 'Permission to use Key for DataZone. No other role requires this.'
+            },
+            {
+                id: 'PCI.DSS.321-IAMNoInlinePolicy',
+                reason: 'Permission to use Key for DataZone. No other role requires this.'
             }
         ], true)
 
