@@ -114,7 +114,8 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
             devOpsBucket,
             [
                 { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'Bucket does not contain data assets. Replication not required.' },
-                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'Bucket does not contain data assets. Replication not required.' }
+                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'Bucket does not contain data assets. Replication not required.'  },
+                { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'Bucket does not contain data assets. Replication not required.'  }
             ],
             true
         );
@@ -218,7 +219,8 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
             [
                 { id: 'AwsSolutions-IAM5', reason: 'Permissions are scoped least privilege for deployment time.' },
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  }
             ],
             true
         );
@@ -264,7 +266,8 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
             [
                 { id: 'AwsSolutions-IAM5', reason: 'Permissions are scoped least privilege for deployment time.' },
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  }
             ],
             true
         );
@@ -274,7 +277,8 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
                 { id: 'AwsSolutions-IAM4', reason: 'AWSCloudFormationReadOnlyAccess is Read Only Access' },
                 { id: 'AwsSolutions-IAM5', reason: 'Permissions are scoped least privilege for deployment time.' },
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  }
             ],
             true
         );
@@ -283,7 +287,8 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
             [
                 { id: 'AwsSolutions-IAM5', reason: 'Permissions are scoped least privilege for deployment time.' },
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  }
             ],
             true
         );
@@ -291,7 +296,8 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
             codeCommitEventRole,
             [
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  }
             ],
             true
         );
@@ -352,7 +358,8 @@ export class MdaaPipeline extends Pipeline {
             codeBuildActionPolicy,
             [
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy appropriate.'  }
             ],
             true
         );
@@ -575,7 +582,8 @@ class FixCdkBuildProject implements IAspect {
             NagSuppressions.addResourceSuppressions(
                 construct,
                 [
-                    { id: 'HIPAA.Security-CodeBuildProjectSourceRepoUrl', reason: 'Pipeline source is CodeCommit.' }
+                    { id: 'HIPAA.Security-CodeBuildProjectSourceRepoUrl', reason: 'Pipeline source is CodeCommit.'  },
+                    { id: 'PCI.DSS.321-CodeBuildProjectSourceRepoUrl', reason: 'Pipeline source is CodeCommit.'  }
                 ],
                 true
             );

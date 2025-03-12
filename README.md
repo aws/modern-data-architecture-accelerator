@@ -5,7 +5,7 @@
 The Modern Data Architecture Accelerator (MDAA) is designed to accelerate the implementation of a secure, compliant and fully capable Modern Data Architecture on AWS, allowing organizations of all sizes and sophsitication to quickly focus on driving business outcomes from their data while maintaining high assurance of security compliance. Specifically, organizations are enabled to rapidly solve data-driven problems using both traditional analytics, as well as using contemporary capabilities such as generative AI.
 
 MDAA provides rapid deployment of all major elements of a Modern Data Architcture, such as Ingest, Persistence, Governance, DataOps, Consumption, Visual Analytics, Data Science, and AI/ML.
-Additionally, MDAA has been designed to enable compliance with AWS Solutions, NIST 800-53 Rev5 (US), HIPAA CDK Nag Rulesets, as well as ITSG-33 (Canada) security control requirements. Terraform modules are compliant with standard Checkov security policies. This combination of integral compliance and broad, configuration-driven capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
+Additionally, MDAA has been designed to enable compliance with AWS Solutions, NIST 800-53 Rev5 (US), HIPAA, PCI-DSS CDK Nag Rulesets, as well as ITSG-33 (Canada) security control requirements. Terraform modules are compliant with standard Checkov security policies. This combination of integral compliance and broad, configuration-driven capability allows for rapid design and deployment of simple to complex data analytics environments--including Lake House and Data Mesh architectures--while minimizing security compliance risks.
 
 ## Target Usage
 
@@ -95,7 +95,7 @@ MDAA is implemented as a set of compliant modules which can be deployed via a un
 
 * **MDAA Terraform Modules (Preview)** - A set of standardized Terraform modules which adhere to security control requirements. These apps can be executed directly and independantly using Terraform cli, or composed and orchestrated via the MDAA CLI. Note that Terraform integration is currently in preview, and not all MDAA functionality is available.
 
-* **MDAA CDK L2 and L3 Constructs** - A set of reusable CDK constructs which are leveraged by the rest of the MDAA codebase, but can also be reused to build additional compliant CDK constructs, stacks, or apps. These constructs are each designed for compliance with AWS Solutions, HIPAA, and NIST 800-53 R5 CDK Nag rulesets. Similar to the CDK codebase MDAA is built on, MDAA constructs are available with binding for multiple langauges, currently including TypeScript/Node.js and Python 3.
+* **MDAA CDK L2 and L3 Constructs** - A set of reusable CDK constructs which are leveraged by the rest of the MDAA codebase, but can also be reused to build additional compliant CDK constructs, stacks, or apps. These constructs are each designed for compliance with AWS Solutions, HIPAA, PCI-DSS and NIST 800-53 R5 CDK Nag rulesets. Similar to the CDK codebase MDAA is built on, MDAA constructs are available with binding for multiple langauges, currently including TypeScript/Node.js and Python 3.
 
 * **MDAA CLI (Deployement/Orchestration) App** - A configuration driven CLI application which allows for composition and orchestration of multiple MDAA Modules (CDK and Terraform) in order to deploy a compliant end to end data analytics environment. Also ensures that each MDAA Module is deployed with the specified configuration into the specified accounts while also accounting for dependencies between modules.
 
@@ -160,7 +160,7 @@ MDAA is implemented as a set of compliant modules which can be deployed via a un
 
 ## Available MDAA Reusable CDK L2 Constructs
 
-These constructs are specifically designed to be compliant with the AWSSolutions, HIPAA, and NIST 800-53 R5 CDK Nag Rulesets and are used throughout the MDAA codebase. Additionally, these compliant constructs can be directly leveraged to build new constructs outside of the MDAA codebase.
+These constructs are specifically designed to be compliant with the AWSSolutions, HIPAA, PCI-DSS, and NIST 800-53 R5 CDK Nag Rulesets and are used throughout the MDAA codebase. Additionally, these compliant constructs can be directly leveraged to build new constructs outside of the MDAA codebase.
 
 * [**Athena Workgroup Constructs**](packages/constructs/L2/athena-constructs/README.md)
 * [**EC2 Constructs**](packages/constructs/L2/ec2-constructs/README.md)

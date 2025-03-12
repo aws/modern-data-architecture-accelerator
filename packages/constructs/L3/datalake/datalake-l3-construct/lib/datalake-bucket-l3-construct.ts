@@ -286,7 +286,8 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
             bucket,
             [
                 { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
+                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.'  },
+                { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.'  }
             ],
             true
         );
@@ -518,9 +519,12 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
                 { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.' },
                 { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with S3.' },
                 { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.' },
-                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.' },
-                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with S3.' },
-                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.' }
+                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.'  },
+                { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.'  },
+                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with S3.'  },
+                { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with S3.'  },
+                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.'  },
+                { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.'  }
             ],
             true
         );
@@ -545,7 +549,8 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
             folderCrProviderRole,
             [
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.'  }
             ],
             true
         );
@@ -556,9 +561,12 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
                 { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.' },
                 { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with S3.' },
                 { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.' },
-                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.' },
-                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with S3.' },
-                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.' }
+                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.'  },
+                { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is for custom resource and error handling will be handled by CloudFormation.'  },
+                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with S3.'  },
+                { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Function is for custom resource and will interact only with S3.'  },
+                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.'  },
+                { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.'  }
             ],
             true
         );

@@ -724,6 +724,10 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
             {
                 id: 'HIPAA.Security-IAMPolicyNoStatementsWithFullAccess',
                 reason: 'Fine-grained permissions enforced via LakeFormation.'
+            },
+            {
+                id: 'PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess',
+                reason: 'Fine-grained permissions enforced via LakeFormation.'
             }
         ])
         return userPolicy
@@ -1184,7 +1188,8 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
             projectBucket,
             [
                 { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA DataOps bucket does not use bucket replication.' },
-                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA DataOps bucket does not use bucket replication.' },
+                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA DataOps bucket does not use bucket replication.'  },
+                { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA DataOps bucket does not use bucket replication.'  },
             ],
             true
         );

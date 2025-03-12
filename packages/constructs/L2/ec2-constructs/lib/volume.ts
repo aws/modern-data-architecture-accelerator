@@ -82,6 +82,10 @@ export class MdaaEC2Volume extends Volume {
                 id: 'HIPAA.Security-EC2EBSInBackupPlan',
                 reason: 'MDAA does not enforce HIPAA.Security-EC2EBSInBackupPlan on EBS volume.',
             },
+            {
+                id: 'PCI.DSS.321-EC2EBSInBackupPlan',
+                reason: 'MDAA does not enforce PCI.DSS.321-EC2EBSInBackupPlan on EBS volume.',
+            },
         ] );
 
         new MdaaParamAndOutput( this, {

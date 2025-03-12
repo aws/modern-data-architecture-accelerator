@@ -50,7 +50,8 @@ export class AuditTrailL3Construct extends MdaaL3Construct {
             auditTrail,
             [
                 { id: 'NIST.800.53.R5-CloudTrailCloudWatchLogsEnabled', reason: 'CloudTrail targeted at dedicated Audit Bucket.' },
-                { id: 'HIPAA.Security-CloudTrailCloudWatchLogsEnabled', reason: 'CloudTrail targeted at dedicated Audit Bucket.' }
+                { id: 'HIPAA.Security-CloudTrailCloudWatchLogsEnabled', reason: 'CloudTrail targeted at dedicated Audit Bucket.'  },
+                { id: 'PCI.DSS.321-CloudTrailCloudWatchLogsEnabled', reason: 'CloudTrail targeted at dedicated Audit Bucket.'  }
             ],
             true
         );

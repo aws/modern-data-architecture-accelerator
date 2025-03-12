@@ -249,11 +249,14 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
         // Children specific nag suppressions to avoid bloating template:
         NagSuppressions.addResourceSuppressions(this, [
             { id: 'NIST.800.53.R5-RDSEnhancedMonitoringEnabled', reason: 'Monitoring role required and monitoring intervals set with a minimum default.' },
-            { id: 'HIPAA.Security-RDSEnhancedMonitoringEnabled', reason: 'Monitoring role required and monitoring intervals set with a minimum default.' },
-            { id: 'HIPAA.Security-RDSInstancePublicAccess', reason: 'Deployed within private subnets and vpc along with iam auth enforced and security group.' },
+            { id: 'HIPAA.Security-RDSEnhancedMonitoringEnabled', reason: 'Monitoring role required and monitoring intervals set with a minimum default.'  },
+            { id: 'PCI.DSS.321-RDSEnhancedMonitoringEnabled', reason: 'Monitoring role required and monitoring intervals set with a minimum default.'  },
+            { id: 'HIPAA.Security-RDSInstancePublicAccess', reason: 'Deployed within private subnets and vpc along with iam auth enforced and security group.'  },
+            { id: 'PCI.DSS.321-RDSInstancePublicAccess', reason: 'Deployed within private subnets and vpc along with iam auth enforced and security group.'  },
             { id: 'NIST.800.53.R5-RDSInstancePublicAccess', reason: 'Deployed within private subnets and vpc along with iam auth enforced and security group.' },
             { id: 'NIST.800.53.R5-RDSInBackupPlan', reason: 'Instance is serverless and has a backup retention policy defaulting to 1.' },
-            { id: 'HIPAA.Security-RDSInBackupPlan', reason: 'Instance is serverless and has a backup retention policy defaulting to 1.' },
+            { id: 'HIPAA.Security-RDSInBackupPlan', reason: 'Instance is serverless and has a backup retention policy defaulting to 1.'  },
+            { id: 'PCI.DSS.321-RDSInBackupPlan', reason: 'Instance is serverless and has a backup retention policy defaulting to 1.'  },
         ], true)
 
         new MdaaParamAndOutput( this, {
@@ -277,7 +280,7 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
             cfnDbCluster.addPropertyOverride( 'EnableCloudwatchLogsExports', dbEngineCwLogsExports )
 
             // Add NAG suppressions for each log type
-            const ruleIds: string[] = [ "AwsSolutions-RDS16", "NIST.800.53.R5-RDSLoggingEnabled", "HIPAA.Security-RDSLoggingEnabled" ]
+            const ruleIds: string[] = [ "AwsSolutions-RDS16", "NIST.800.53.R5-RDSLoggingEnabled", "HIPAA.Security-RDSLoggingEnabled","PCI.DSS.321-RDSLoggingEnabled" ]
             for ( const ruleId of ruleIds ) {
                 dbEngineCwLogsExports.forEach( logType => {
                     suppressions.push( {

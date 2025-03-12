@@ -170,7 +170,8 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
             workgroupBucket,
             [
                 { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
-                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' }
+                { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.'  },
+                { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.'  }
             ],
             true
         );

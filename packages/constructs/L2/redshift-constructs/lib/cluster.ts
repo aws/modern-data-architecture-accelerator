@@ -234,6 +234,10 @@ export class MdaaRedshiftCluster extends Cluster {
                 reason: 'Remediated through property override.',
             },
             {
+                id: 'PCI.DSS.321-RedshiftEnhancedVPCRoutingEnabled',
+                reason: 'Remediated through property override.',
+            },
+            {
                 id: 'CdkNagValidationFailure',
                 reason: 'Some cluster properties will reference intrinsic functions.'
             }

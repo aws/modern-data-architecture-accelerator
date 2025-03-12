@@ -384,6 +384,21 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
           reason:
             "Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
         },
+        {
+          id: "PCI.DSS.321-LambdaDLQ",
+          reason:
+            "Function is for custom resource and error handling will be handled by CloudFormation.",
+        },
+        {
+          id: "PCI.DSS.321-LambdaInsideVPC",
+          reason:
+            "Function is for custom resource and will interact only with QuickSight APIs.",
+        },
+        {
+          id: "PCI.DSS.321-LambdaConcurrency",
+          reason:
+            "Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+        }
       ],
       true
     );
@@ -418,6 +433,11 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
         },
         {
           id: "HIPAA.Security-IAMNoInlinePolicy",
+          reason:
+            "Role is for Custom Resource Provider. Inline policy automatically added.",
+        },
+        {
+          id: "PCI.DSS.321-IAMNoInlinePolicy",
           reason:
             "Role is for Custom Resource Provider. Inline policy automatically added.",
         },
@@ -462,6 +482,21 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
           reason:
             "Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
         },
+        {
+          id: "PCI.DSS.321-LambdaDLQ",
+          reason:
+            "Function is for custom resource and error handling will be handled by CloudFormation.",
+        },
+        {
+          id: "PCI.DSS.321-LambdaInsideVPC",
+          reason:
+            "Function is for custom resource and will interact only with QuickSight APIs.",
+        },
+        {
+          id: "PCI.DSS.321-LambdaConcurrency",
+          reason:
+            "Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+        }
       ],
       true
     );

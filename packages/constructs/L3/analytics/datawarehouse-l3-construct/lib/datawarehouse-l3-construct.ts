@@ -313,7 +313,8 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       [
         { id: 'AwsSolutions-SNS2', reason: 'Redshift event subscriptions do not currently support an encrypted SNS topic.' },
         { id: 'NIST.800.53.R5-SNSEncryptedKMS', reason: 'Redshift event subscriptions do not currently support an encrypted SNS topic.' },
-        { id: 'HIPAA.Security-SNSEncryptedKMS', reason: 'Redshift event subscriptions do not currently support an encrypted SNS topic.' }
+        { id: 'HIPAA.Security-SNSEncryptedKMS', reason: 'Redshift event subscriptions do not currently support an encrypted SNS topic.'  },
+        { id: 'PCI.DSS.321-SNSEncryptedKMS', reason: 'Redshift event subscriptions do not currently support an encrypted SNS topic.'  }
       ],
       true
     );
@@ -552,15 +553,19 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
             [
               { id: 'AwsSolutions-IAM4', reason: 'Role is for Custom Resource Provider.' },
               { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.' },
-              { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.' },
+              { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.'  },
+              { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Role is for Custom Resource Provider. Inline policy automatically added.'  },
               { id: 'AwsSolutions-IAM5', reason: 'Role is for Custom Resource Provider.' },
               { id: 'AwsSolutions-L1', reason: 'Role is for Custom Resource Provider.' },
               { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation' },
               { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager' },
               { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.' },
-              { id: 'HIPAA.Security-LambdaDLQ', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation' },
-              { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager' },
-              { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.' },
+              { id: 'HIPAA.Security-LambdaDLQ', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation'  },
+              { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and error handling will be handled by CloudFormation'  },
+              { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager'  },
+              { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and will interact only with Redshift/SecretsManager'  },
+              { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.'  },
+              { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Lambda Function is created by aws-redshift-alpha cdk module and will only execute during stack deployement. Reserved concurrency not appropriate.'  },
             ],
             true
           );
@@ -692,7 +697,8 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       warehouseBucket,
       [
         { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.' }
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.'  },
+        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.'  }
       ],
       true
     );
@@ -751,9 +757,12 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
         { id: 'NIST.800.53.R5-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets.' },
         { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.' },
         { id: 'NIST.800.53.R5-S3DefaultEncryptionKMS', reason: 'Redshift audit logging does not support KMS-encrypted buckets' },
-        { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.' },
-        { id: 'HIPAA.Security-S3DefaultEncryptionKMS', reason: 'Redshift audit logging does not support KMS-encrypted buckets' }
+        { id: 'HIPAA.Security-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets.'  },
+        { id: 'PCI.DSS.321-S3BucketLoggingEnabled', reason: 'Server access logs do not support KMS on targets.'  },
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.'  },
+        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA Warehouse bucket does not use bucket replication.'  },
+        { id: 'HIPAA.Security-S3DefaultEncryptionKMS', reason: 'Redshift audit logging does not support KMS-encrypted buckets'  },
+        { id: 'PCI.DSS.321-S3DefaultEncryptionKMS', reason: 'Redshift audit logging does not support KMS-encrypted buckets'  }
       ],
       true
     );

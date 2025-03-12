@@ -156,10 +156,12 @@ export class MdaaDDBTable extends Table  {
         NagSuppressions.addResourceSuppressions(
             this,
             [
-                { id: 'HIPAA.Security-DynamoDBInBackupPlan', reason: 'MDAA does not enforce use of AWS Backup' },
+                { id: 'HIPAA.Security-DynamoDBInBackupPlan', reason: 'MDAA does not enforce use of AWS Backup'  },
+                { id: 'PCI.DSS.321-DynamoDBInBackupPlan', reason: 'MDAA does not enforce use of AWS Backup'  },
                 { id: 'NIST.800.53.R5-DynamoDBInBackupPlan', reason: 'MDAA does not enforce use of AWS Backup' },
                 { id: 'NIST.800.53.R5-DynamoDBAutoScalingEnabled', reason: 'MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.' },
-                { id: 'HIPAA.Security-DynamoDBAutoScalingEnabled', reason: 'MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.' },
+                { id: 'HIPAA.Security-DynamoDBAutoScalingEnabled', reason: 'MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.'  },
+                { id: 'PCI.DSS.321-DynamoDBAutoScalingEnabled', reason: 'MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.'  },
             ],
             true
         );

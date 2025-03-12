@@ -273,9 +273,12 @@ export class M2MApiL3Construct extends MdaaL3Construct {
                 { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function only logs to stdout. DLQ is not required.' },
                 { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.' },
                 { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is logging successful authentication requests. Concurrency is unbounded by design.' },
-                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function only logs to stdout. DLQ is not required.' },
-                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.' },
-                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is logging successful authentication requests. Concurrency is unbounded by design.' }
+                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function only logs to stdout. DLQ is not required.'  },
+                { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function only logs to stdout. DLQ is not required.'  },
+                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.'  },
+                { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.'  },
+                { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is logging successful authentication requests. Concurrency is unbounded by design.'  },
+                { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is logging successful authentication requests. Concurrency is unbounded by design.'  }
             ],
             true
         );
@@ -346,8 +349,10 @@ export class M2MApiL3Construct extends MdaaL3Construct {
             [
                 { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.' },
                 { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function is API implementation behind API gateway.' },
-                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.' },
-                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is API implementation behind API gateway.' },
+                { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.'  },
+                { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.'  },
+                { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Function is API implementation behind API gateway.'  },
+                { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Function is API implementation behind API gateway.'  },
             ],
             true
         );
@@ -410,9 +415,11 @@ export class M2MApiL3Construct extends MdaaL3Construct {
             restApi,
             [
                 { id: 'NIST.800.53.R5-APIGWSSLEnabled', reason: 'Integrations/backend are Lambda functions. Backend client certificate not required.' },
-                { id: 'HIPAA.Security-APIGWSSLEnabled', reason: 'Integrations/backend are Lambda functions. Backend client certificate not required.' },
+                { id: 'HIPAA.Security-APIGWSSLEnabled', reason: 'Integrations/backend are Lambda functions. Backend client certificate not required.'  },
+                { id: 'PCI.DSS.321-APIGWSSLEnabled', reason: 'Integrations/backend are Lambda functions. Backend client certificate not required.'  },
                 { id: 'NIST.800.53.R5-APIGWCacheEnabledAndEncrypted', reason: 'Caching intentionally disabled.' },
-                { id: 'HIPAA.Security-APIGWCacheEnabledAndEncrypted', reason: 'Caching intentionally disabled.' },
+                { id: 'HIPAA.Security-APIGWCacheEnabledAndEncrypted', reason: 'Caching intentionally disabled.'  },
+                { id: 'PCI.DSS.321-APIGWCacheEnabledAndEncrypted', reason: 'Caching intentionally disabled.'  },
             ],
             true
         );
@@ -532,7 +539,8 @@ export class M2MApiL3Construct extends MdaaL3Construct {
             restApiRole,
             [
                 { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' },
-                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' }
+                { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.'  },
+                { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.'  }
             ],
             true
         );
