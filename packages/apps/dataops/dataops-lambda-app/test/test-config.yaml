@@ -7,7 +7,7 @@ projectName: dataops-project-test
 # List of Lambda layers to create
 layers:
   - layerName: test-layer
-    src: ./src/lambda/test-layer.zip
+    src: ./src/lambda/test
     description: "test layer"
 
 # List of functions definitions
