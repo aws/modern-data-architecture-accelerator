@@ -29,6 +29,3 @@ packages/constructs/L3/ai/gaia-l3-construct/lib/models/index.ts # Known SageMake
 packages/constructs/L3/ai/gaia-l3-construct/lib/shared/index.ts # Known Lambda service account
 packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/hf-custom-script-model/build-script/script.py:63 # runs in deployment once, command string fully controlled by script code and not inputs
 packages/constructs/L3/ai/bedrock-agent-l3-construct/test/lambda/test-layer.zip # Empty test file
-packages/constructs/L3/dataops/dataops-nifi-l3-construct/src/helm/aws-privateca-issuer-v1.2.5.zip # EKS Helm chart
-packages/constructs/L3/dataops/dataops-nifi-l3-construct/src/helm/cert-manager-v1.13.0.zip # EKS Helm chart
-packages/constructs/L3/dataops/dataops-nifi-l3-construct/src/helm/external-secrets-0.9.5.zip # EKS Helm chart

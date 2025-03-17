@@ -25,7 +25,6 @@ import { NifiRegistryChart, NifiRegistryChartProps } from './cdk8s/nifi-registry
 import { ZookeeperChart } from './cdk8s/zookeeper-chart';
 import { NifiCluster, NifiClusterProps } from './nifi-cluster';
 import { AwsManagedPolicySpec, NamedNifiRegistryClientProps, NifiClusterOptions, NifiIdentityAuthorizationOptions, NifiNetworkOptions, PolicyAction } from './nifi-options';
-import { Asset } from 'aws-cdk-lib/aws-s3-assets';
 
 
 
@@ -565,7 +564,7 @@ export class NifiL3Construct extends MdaaL3Construct {
 
     private createNifiManagerImage (): DockerImageAsset {
         const imageAsset = new DockerImageAsset( this, 'nifi-update-image', {
-            directory: `${ __dirname }/../src/docker/nifi-manager`
+            directory: `${ __dirname }/../docker/nifi-manager`
         } )
         return imageAsset
     }
@@ -854,12 +853,10 @@ export class NifiL3Construct extends MdaaL3Construct {
         eksCluster: MdaaEKSCluster,
         servicesNamespaceManifest: KubernetesManifest ): KubernetesCmd {
 
-        const chartAsset = new Asset(this, 'external-secrets-helm-asset', {
-            path: `${__dirname}/../src/helm/external-secrets-0.9.5.zip`
-        });
-
         const externalSecretsHelm = eksCluster.addHelmChart( 'external-secrets-helm', {
-            chartAsset: chartAsset,
+            repository: "https://charts.external-secrets.io",
+            chart: "external-secrets",
+            version: "0.9.5",
             release: "external-secrets",
             namespace: NifiL3Construct.EXTERNAL_SECRETS_NAMESPACE,
             createNamespace: false,
@@ -876,7 +873,6 @@ export class NifiL3Construct extends MdaaL3Construct {
                 }
             }
         } )
-        
         externalSecretsHelm.node.addDependency( servicesNamespaceManifest )
         //Ensure External Secrets is Ready
         const checkReadyProps: KubernetesCmdProps = {
@@ -982,12 +978,10 @@ export class NifiL3Construct extends MdaaL3Construct {
         const serviceAccountManifest = eksCluster.addCdk8sChart( 'private-ca-service-account', serviceAccountChart )
         serviceAccountManifest.node.addDependency( servicesNamespaceManifest )
 
-        const chartAsset = new Asset(this, 'aws-pca-helm-asset', {
-            path: `${__dirname}/../src/helm/aws-privateca-issuer-v1.2.5.zip`
-        });
-
         const pcaManagerHelm = eksCluster.addHelmChart( 'private-ca-helm', {
-            chartAsset: chartAsset,
+            repository: "https://cert-manager.github.io/aws-privateca-issuer",
+            chart: "aws-privateca-issuer",
+            version: "1.2.5",
             release: "aws-privateca-issuer",
             namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
             createNamespace: false,
@@ -1050,12 +1044,11 @@ export class NifiL3Construct extends MdaaL3Construct {
 
     private addCertManager ( eksCluster: MdaaEKSCluster, servicesNamespaceManifest: KubernetesManifest ): KubernetesCmd {
 
-        const chartAsset = new Asset(this, 'cert-manager-helm-asset', {
-            path: `${__dirname}/../src/helm/cert-manager-v1.13.0.zip`
-        });
 
         const certManagerHelm = eksCluster.addHelmChart( 'cert-manager-helm', {
-            chartAsset: chartAsset,
+            repository: "https://charts.jetstack.io",
+            chart: "cert-manager",
+            version: "1.13.0",
             release: "cert-manager",
             namespace: NifiL3Construct.CERT_MANAGER_NAMESPACE,
             createNamespace: false,
