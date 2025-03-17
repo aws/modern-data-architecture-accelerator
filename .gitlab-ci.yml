@@ -74,6 +74,33 @@ feature_merge_build:
     - ./scripts/npm_install.sh
     - ./scripts/build.sh
 
+feature_merge_lint:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    - merge_requests
+  stage: build
+  cache:
+    key: feature-merge-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: push
+  artifacts:
+    untracked: false
+    paths:
+      - packages
+      - schemas
+    exclude:
+      - "**/node_modules/**"
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/npm_install.sh
+    - ./scripts/lint.sh
+
 feature_merge_test:
   tags:
     - arch:amd64

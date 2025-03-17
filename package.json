@@ -2,13 +2,32 @@
     "name": "@aws-mdaa/mdaa",
     "private": true,
     "bin": "./packages/cli/bin/mdaa",
+    "scripts": {
+        "git-clean": "git clean -Xfd -e !development -e !development/** -e !.vscode -e !.vscode/** -e !.idea -e !.idea/**",
+        "lint": "lerna run lint --stream",
+        "prepare": "husky install source/.husky",
+        "prettier": "lerna run prettier --stream"
+    },
+    "lint-staged": {
+        "*.{ts,tsx}": "eslint --fix --max-warnings 0 -c .eslintrc.json --ignore-pattern \"*.d.ts\""
+    },
     "devDependencies": {
         "@types/jest": "29.5.0",
+        "@typescript-eslint/eslint-plugin": "5.53.0",
+        "@typescript-eslint/parser": "5.53.0",
+        "eslint": "8.34.0",
+        "eslint-config-prettier": "8.6.0",
+        "eslint-plugin-jest": "27.2.1",
+        "eslint-plugin-prettier": "4.2.1",
+        "lint-staged": "15.2.10",
+        "husky-init": "8.0.0",
+        "prettier": "2.8.4",
         "jsii": "5.7.5",
         "jsii-config": "1.107.0",
         "jsii-pacmak": "1.107.0",
         "lerna": "8.2.1",
-        "typedoc": "0.24.8"
+        "typedoc": "0.24.8",
+        "typescript": "4.6.3"
     },
     "dependencies": {
         "aws-cdk": "2.1002.0"
@@ -26,7 +45,7 @@
         "tar": "6.2.1",
         "glob": "9.3.5",
         "follow-redirects": "1.15.6",
-        "cdk8s@>=2.68.32":{
+        "cdk8s@>=2.68.32": {
             "backport": "9.4.3",
             "follow-redirects": "1.15.6"
         }
