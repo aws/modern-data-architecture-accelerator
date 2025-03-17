@@ -97,6 +97,7 @@ export class LangChainInterface extends MdaaL3Construct {
           { id: 'AwsSolutions-IAM5', reason: 'X-Ray, Comprehend, & Bedrock actions only support wildcard, s3 bucket bound to stack managed bucket, and DDB index and KMS key deployed and managed by stack' },
           { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
           { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+          { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
         ], true);
 
     NagSuppressions.addResourceSuppressions(
@@ -106,6 +107,8 @@ export class LangChainInterface extends MdaaL3Construct {
       { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
       { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
       { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+      { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+      { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
     ], true)
 
     this.ingestionQueue = queue;

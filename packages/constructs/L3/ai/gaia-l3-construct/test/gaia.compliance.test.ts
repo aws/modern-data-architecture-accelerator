@@ -25,7 +25,9 @@ describe( 'MDAA Compliance Stack Tests', () => {
     const constructProps: GAIAL3ConstructProps = {
 
         gaia: {
-            dataAdminRoles: [],
+            dataAdminRoles: [{
+                name: "test-admin"
+            }],
             prefix: "test",
             llms: {
                 sagemaker: [
@@ -54,7 +56,10 @@ describe( 'MDAA Compliance Stack Tests', () => {
             },
             rag: {
                 engines: {
-                    aurora: {},
+                    aurora: {
+                        minCapacity: 0.5,
+                        maxCapacity: 4
+                    },
                     kendra: {
                         createIndex: true,
                         external: [

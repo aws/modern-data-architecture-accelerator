@@ -631,7 +631,28 @@
             "additionalProperties": false,
             "properties": {
                 "override": {
-                    "additionalProperties": {},
+                    "additionalProperties": false,
+                    "properties": {
+                        "terraform": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "backend": {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "s3": {
+                                            "additionalProperties": {},
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "s3"
+                                    ],
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
                     "type": "object"
                 }
             },

@@ -291,12 +291,14 @@ export class WebSocketApi extends MdaaL3Construct {
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only support wildcard and execute api manage connections restricted to stack api gateway' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     NagSuppressions.addResourceSuppressions(outgoingMessageHandlerFunctionRole, [
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only support wildcard and execute api manage connections restricted to stack api gateway, and AWSLambdaBasicExecutionRole restrictive enough' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     NagSuppressions.addResourceSuppressions(webSocketApi, [
@@ -343,10 +345,13 @@ export class WebSocketApi extends MdaaL3Construct {
       [
         { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.' },
         { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.' },
+        { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.' },
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
         { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
-        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
+        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
       ],
       true
     );
@@ -394,7 +399,9 @@ export class WebSocketApi extends MdaaL3Construct {
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
         { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
-        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
+        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
       ],
       true
     );
@@ -432,7 +439,9 @@ export class WebSocketApi extends MdaaL3Construct {
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
         { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
-        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
+        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
       ],
       true
     );
@@ -442,6 +451,7 @@ export class WebSocketApi extends MdaaL3Construct {
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only support wildcard.' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true )
     return authorizerFunction
   }
@@ -512,7 +522,10 @@ export class WebSocketApi extends MdaaL3Construct {
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
         { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
-        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
+        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
+
       ],
       true
     );
@@ -520,6 +533,7 @@ export class WebSocketApi extends MdaaL3Construct {
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only support wildcard and log group not known at deployment.' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true );
 
     return connectionHandlerFunction

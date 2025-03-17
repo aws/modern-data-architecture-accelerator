@@ -170,6 +170,16 @@ export class Shared extends Construct {
             reason:
                 "Function is for Secrets Manager rotation and will only execute once a month. Reserved concurrency not appropriate.",
           },
+          {
+            id: "PCI.DSS.321-LambdaDLQ",
+            reason:
+                "Function is for Secrets Manager rotation and error handling will be handled by Secrets Manager.",
+          },
+          {
+            id: "PCI.DSS.321-LambdaConcurrency",
+            reason:
+                "Function is for Secrets Manager rotation and will only execute once a month. Reserved concurrency not appropriate.",
+          },
         ],
         true
     );
@@ -216,7 +226,8 @@ export class Shared extends Construct {
             appliesTo: ['Resource::arn:<AWS::Partition>:ec2:<AWS::Region>:<AWS::AccountId>:network-interface/*']
           },
           { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' },
-          { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' }
+          { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' },
+          { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' }
         ],
         true
     );

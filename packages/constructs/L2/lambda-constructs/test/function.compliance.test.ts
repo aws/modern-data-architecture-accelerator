@@ -32,8 +32,11 @@ describe( 'MDAA Construct Compliance Tests', () => {
             { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Compliance not enforced in construct' },
             { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Compliance not enforced in construct' },
             { id: 'HIPAA.Security-LambdaDLQ', reason: 'Compliance not enforced in construct' },
+            { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Compliance not enforced in construct' },
             { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Compliance not enforced in construct' },
-            { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Compliance not enforced in construct' }
+            { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Compliance not enforced in construct' },
+            { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Compliance not enforced in construct' },
+            { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Compliance not enforced in construct' },
         ],
         true
     );

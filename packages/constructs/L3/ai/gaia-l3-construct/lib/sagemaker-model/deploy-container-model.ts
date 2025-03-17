@@ -99,6 +99,10 @@ export function deployContainerModel(
         id: 'HIPAA.Security-SageMakerEndpointConfigurationKMSKeyConfigured',
         reason: 'Large models require NVMe instances that do not support KMS.  Instance is managed, in private subnet, and no data is persisted'
       },
+      {
+        id: 'PCI.DSS.321-SageMakerEndpointConfigurationKMSKeyConfigured',
+        reason: 'Large models require NVMe instances that do not support KMS.  Instance is managed, in private subnet, and no data is persisted'
+      }
     ])
   }
 

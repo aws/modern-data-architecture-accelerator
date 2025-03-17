@@ -93,10 +93,13 @@ export class CreateAuroraWorkspace extends MdaaL3Construct {
     NagSuppressions.addResourceSuppressions( createFunction, [
       { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Only run during deployment, concurrency does not fit the scenario.' },
       { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Only run during deployment, concurrency does not fit the scenario.' },
+      { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Only run during deployment, concurrency does not fit the scenario.' },
       { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Used in a custom resource, error handling is managed by Cloudformation.' },
       { id: 'HIPAA.Security-LambdaDLQ', reason: 'Used in a custom resource, error handling is managed by Cloudformation.' },
+      { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Used in a custom resource, error handling is managed by Cloudformation.' },
       { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Used in a custom resource only during deployment.' },
       { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Used in a custom resource only during deployment.' },
+      { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Used in a custom resource only during deployment.' },
       {
         id: 'AwsSolutions-IAM5',
         reason: 'Event handler lambda resources unknown at deployment, used for deployment only'
@@ -121,6 +124,10 @@ export class CreateAuroraWorkspace extends MdaaL3Construct {
       },
       {
         id: 'HIPAA.Security-IAMNoInlinePolicy',
+        reason: 'Permissions are role specific. Inline policy use appropriate.'
+      },
+      {
+        id: 'PCI.DSS.321-IAMNoInlinePolicy',
         reason: 'Permissions are role specific. Inline policy use appropriate.'
       },
     ], true );
@@ -222,6 +229,7 @@ export class CreateAuroraWorkspace extends MdaaL3Construct {
       { id: 'AwsSolutions-IAM5', reason: 'Invoke function restricted to delete workspace lambda.  The lambda arn is not known at deployment time.' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true )
     this.stateMachine = stateMachine;
   }

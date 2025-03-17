@@ -744,6 +744,8 @@ export class MdaaDeploy {
         encodedContextValue = `"obj:${escaped}"`;
       } else if (typeof contextValue === 'string') {
         encodedContextValue = contextValue;
+      } else if (typeof contextValue === 'boolean') {
+        encodedContextValue = contextValue ? "true" : "false";
       } else {
         throw Error(`Don't know how to handle type ${contextValue}`);
       }

@@ -200,6 +200,7 @@ export class FileImportBatchJob extends MdaaL3Construct {
       { id: 'AwsSolutions-IAM5', reason: 'AmazonEC2ContainerServiceforEC2Role is restrictive enough.  Resources actions for ECS only support widlcard log group name not known at deployment time.' },
         { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.  Wildcard is towards bedrock but service enabled on region level controls are in place.'},
         { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.  Wildcard is towards bedrock but service enabled on region level controls are in place.'},
+        { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.  Wildcard is towards bedrock but service enabled on region level controls are in place.'},
     ], true );
 
     NagSuppressions.addResourceSuppressions(fileImportContainer, [
@@ -210,12 +211,14 @@ export class FileImportBatchJob extends MdaaL3Construct {
       },
     { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.'},
     { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.'},
+    { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.'},
     ], true)
 
     NagSuppressions.addResourceSuppressions(fileImportJob, [
         { id: 'AwsSolutions-IAM5', reason: 'Events handled by upstream dynamodb service, resource unknown at deployment time' },
         { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
         { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+        { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     this.jobQueue = jobQueue;

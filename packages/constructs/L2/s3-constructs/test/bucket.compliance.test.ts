@@ -27,7 +27,8 @@ describe( 'MDAA Construct Mandatory Prop Compliance Tests', () => {
         testConstruct,
         [
             { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
+            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
+            { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
         ],
         true
     );
@@ -176,7 +177,8 @@ describe( 'MDAA Construct Optional Prop Compliance Tests', () => {
         testConstruct,
         [
             { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
+            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
+            { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' }
         ],
         true
     );

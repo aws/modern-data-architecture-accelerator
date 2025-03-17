@@ -34,6 +34,10 @@ describe( 'MDAA Construct Compliance Tests', () => {
                 {
                     id: "HIPAA.Security-EC2RestrictedCommonPorts",
                     reason: "security group testing"
+                },
+                {
+                    id: "PCI.DSS.321-EC2RestrictedCommonPorts",
+                    reason: "security group testing"
                 } ]
             },
         ],
@@ -70,7 +74,11 @@ describe( 'MDAA Construct Compliance Tests', () => {
                 {
                     id: "HIPAA.Security-EC2RestrictedCommonPorts",
                     reason: "security group testing"
-                } ]
+                } ,
+                {
+                    id: "PCI.DSS.321-EC2RestrictedCommonPorts",
+                    reason: "security group testing"
+                }]
             }
         ],
         sg: [

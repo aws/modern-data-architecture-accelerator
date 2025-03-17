@@ -8,7 +8,7 @@ import { App, Aspects, Stack } from "aws-cdk-lib"
 import { Annotations, Match } from "aws-cdk-lib/assertions"
 import { ManagedPolicy, PolicyDocument, PolicyStatement } from "aws-cdk-lib/aws-iam"
 import { Fact, FactName, IFact } from "aws-cdk-lib/region-info"
-import { AwsSolutionsChecks, HIPAASecurityChecks, NIST80053R5Checks } from "cdk-nag"
+import { AwsSolutionsChecks, HIPAASecurityChecks, NIST80053R5Checks, PCIDSS321Checks } from "cdk-nag"
 
 export class MdaaTestApp extends App {
 
@@ -35,6 +35,8 @@ export class MdaaTestApp extends App {
         Aspects.of( this ).add( new AwsSolutionsChecks( { verbose: true, logIgnores: false } ) )
         Aspects.of( this ).add( new NIST80053R5Checks( { verbose: true, logIgnores: false } ) )
         Aspects.of( this ).add( new HIPAASecurityChecks( { verbose: true, logIgnores: false } ) )
+        Aspects.of( this ).add( new PCIDSS321Checks( { verbose: true, logIgnores: false } ) )
+
         const namingProps = {
             ...{
                 cdkNode: this.node
@@ -57,7 +59,7 @@ export class MdaaTestApp extends App {
                 const annotations = Annotations.fromStack( stack )
                 const errors = annotations.findError(
                     '*',
-                    Match.stringLikeRegexp( 'AwsSolutions.*|HIPAA.*|NIST.*' )
+                    Match.stringLikeRegexp( 'AwsSolutions.*|HIPAA.*|NIST.*|PCI.*' )
                 );
                 //Expect our Managed Policy to trigger 6 errors
                 if ( errors.length > 0 ) console.log( errors )
@@ -81,11 +83,11 @@ export class MdaaTestApp extends App {
                 const annotations = Annotations.fromStack( testStack )
                 const errors = annotations.findError(
                     '*',
-                    Match.stringLikeRegexp( 'AwsSolutions.*|HIPAA.*|NIST.*' )
+                    Match.stringLikeRegexp( 'AwsSolutions.*|HIPAA.*|NIST.*|PCI.*' )
                 );
-                //Expect our Managed Policy to trigger 6 errors
-                if ( errors.length != 6 ) console.log( errors )
-                expect( errors ).toHaveLength( 6 );
+                //Expect our Managed Policy to trigger 8 errors
+                if ( errors.length != 8 ) console.log( errors )
+                expect( errors ).toHaveLength( 8 );
             } );
         } )
     }

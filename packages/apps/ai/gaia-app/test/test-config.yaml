@@ -3,18 +3,33 @@ gaia:
   dataAdminRoles:
     - name: Admin
   prefix: testing
+  bedrock:
+    enabled: true
+    region: "ca-central-1"
   llms:
     sagemaker: []
-  rag:
-    engines:
-      aurora: {}
-      kendra:
-        createIndex: true
-    embeddingsModels: []
+  rag: 
+    engines: 
+      sagemaker:
+        instanceType: ml.inf1.xlarge
+      aurora:
+        minCapacity: 0.5
+        maxCapacity: 4
+      knowledgeBase: {}
+    embeddingsModels: [
+      {
+        provider: "bedrock",
+        name: "amazon.titan-embed-text-v2:0",
+        dimensions: 1024,
+        isDefault: true
+      }
+    ]
     crossEncoderModels: []
   auth:
     authType: 'email_pass'
     cognitoDomain: 'some-unique-pool-domain-name'
+  setApiGateWayAccountCloudwatchRole: true
+  skipApiGatewayDefaultWaf: true
   vpc:
     vpcId: XXXXXXXX
     appSecurityGroupId: 'sg-12345351356'
