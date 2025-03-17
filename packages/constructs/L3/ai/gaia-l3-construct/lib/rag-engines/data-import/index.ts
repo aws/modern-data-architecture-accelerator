@@ -92,7 +92,8 @@ export class DataImportWorkflows extends MdaaL3Construct {
       uploadBucket,
       [
         { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
+        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
       ],
       true
     );
@@ -130,7 +131,8 @@ export class DataImportWorkflows extends MdaaL3Construct {
       processingBucket,
       [
         { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
+        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
       ],
       true
     );
@@ -249,6 +251,7 @@ export class DataImportWorkflows extends MdaaL3Construct {
     NagSuppressions.addResourceSuppressions( uploadHandler, [
       { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is S3 Event handler. S3 service will provide concurrency and anti-hammering protections.' },
       { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is S3 Event handler. S3 service will provide concurrency and anti-hammering protections.' },
+      { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is S3 Event handler. S3 service will provide concurrency and anti-hammering protections.' },
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only accept wildcard and s3 operations restricted to kms key and s3 buckets managed by stack' }
     ], true );
 
@@ -284,6 +287,7 @@ export class DataImportWorkflows extends MdaaL3Construct {
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only accept wildcard and s3 operations restricted to kms key and s3 buckets managed by stack' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     this.uploadBucket = uploadBucket;

@@ -26,6 +26,10 @@ describe( 'MDAA Compliance Stack Tests', () => {
       {
         id: 'HIPAA.Security-CloudWatchLogGroupRetentionPeriod',
         reason: 'Cloudwatch Log Group retention period is managed by AWS Secure Environment Accelerator'
+      },
+      {
+        id: 'PCI.DSS.321-CloudWatchLogGroupRetentionPeriod',
+        reason: 'Cloudwatch Log Group retention period is managed by AWS Secure Environment Accelerator'
       }
     ],
     eventBridge: {

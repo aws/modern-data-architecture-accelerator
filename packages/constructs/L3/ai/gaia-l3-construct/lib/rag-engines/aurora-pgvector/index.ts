@@ -135,10 +135,13 @@ export class AuroraPgVector extends MdaaL3Construct {
       { id: 'AwsSolutions-L1', reason: 'Only run during deployment.' },
       { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Only run during deployment, concurrency does not fit the scenario.' },
       { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Only run during deployment, concurrency does not fit the scenario.' },
+      { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Only run during deployment, concurrency does not fit the scenario.' },
       { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Used in a custom resource, error handling is managed by Cloudformation.' },
       { id: 'HIPAA.Security-LambdaDLQ', reason: 'Used in a custom resource, error handling is managed by Cloudformation.' },
+      { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Used in a custom resource, error handling is managed by Cloudformation.' },
       { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Used in a custom resource only during deployment.' },
       { id: 'HIPAA.Security-LambdaInsideVPC', reason: 'Used in a custom resource only during deployment.' },
+      { id: 'PCI.DSS.321-LambdaInsideVPC', reason: 'Used in a custom resource only during deployment.' },
       {
         id: 'AwsSolutions-IAM5',
         reason: 'Event handler lambda resources unknown at deployment, used for deployment only'

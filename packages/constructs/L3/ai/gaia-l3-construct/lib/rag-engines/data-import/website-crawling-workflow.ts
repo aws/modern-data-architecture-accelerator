@@ -123,6 +123,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
     NagSuppressions.addResourceSuppressions( websiteParserFunction, [
       { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function will be throttled by upstream services.' },
       { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function will be throttled by upstream services.' },
+      { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function will be throttled by upstream services.' },
     ], true );
 
     props.shared.configParameter.grantRead(websiteParserRole);
@@ -289,6 +290,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
       { id: 'AwsSolutions-IAM5', reason: 'AmazonEC2ContainerServiceforEC2Role is restrictive enough.  Resources actions for ECS only support widlcard log group name not known at deployment time.' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.'},
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.'},
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy maintained by MDAA framework.'},
     ], true );
 
     NagSuppressions.addResourceSuppressions(websiteParserFunction, [
@@ -302,12 +304,14 @@ export class WebsiteCrawlingWorkflow extends Construct {
       },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     NagSuppressions.addResourceSuppressions(stateMachine, [
       { id: 'AwsSolutions-IAM5', reason: 'Permissions are restrictive to stack resources. Processing s3 bucket managed and deployed by stack, not known at deployment.  KMS key resource deployed and managed by stack, not known at deployment time.' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
 
     this.stateMachine = stateMachine;

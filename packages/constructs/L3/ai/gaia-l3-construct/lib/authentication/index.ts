@@ -157,7 +157,8 @@ export class Authentication extends Construct {
             appliesTo: ['Resource::*']
           },
           { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' },
-          { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' }
+          { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' },
+          { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' }
         ],
         true
     );

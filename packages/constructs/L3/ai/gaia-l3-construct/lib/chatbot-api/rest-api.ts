@@ -35,7 +35,7 @@ export interface RestApiProps extends MdaaL3ConstructProps {
   readonly models: SageMakerModelEndpoint[];
   readonly allowedCidrs?: string[]
   readonly stageName?: string;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class RestApi extends MdaaL3Construct {
@@ -73,6 +73,7 @@ export class RestApi extends MdaaL3Construct {
     if(this.props.config?.skipApiGatewayDefaultWaf) {
       NagSuppressions.addResourceSuppressions(chatBotApi.deploymentStage.restApi, [
         { id: "NIST.800.53.R5-APIGWAssociatedWithWAF", reason: "For organizations that leverage Firewall Manager to apply WAF, default is to create waf"},
+        { id: "PCI.DSS.321-APIGWAssociatedWithWAF", reason: "For organizations that leverage Firewall Manager to apply WAF, default is to create waf"},
         { id: "AwsSolutions-APIG3", reason: "For organizations that leverage Firewall Manager to apply WAF, default is to create waf"}
       ], true)
     } else {
@@ -107,6 +108,7 @@ export class RestApi extends MdaaL3Construct {
       { id: 'AwsSolutions-IAM5', reason: 'X-Ray and Comprehend actions only support wildcard, and bedrock foundation models access controlled by application along with region restriction, other resources managed by stack and not known at deployment time' },
       { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
       { id: 'HIPAA.Security-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
+      { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Inline policy managed by MDAA framework.' },
     ], true)
     
     NagSuppressions.addResourceSuppressions(
@@ -114,8 +116,10 @@ export class RestApi extends MdaaL3Construct {
       [
         { id: 'NIST.800.53.R5-APIGWSSLEnabled', reason: 'Integrations/backend are Lambda functions. Backend client certificate not required.' },
         { id: 'HIPAA.Security-APIGWSSLEnabled', reason: 'Integrations/backend are Lambda functions. Backend client certificate not required.' },
+        { id: 'PCI.DSS.321-APIGWSSLEnabled', reason: 'Integrations/backend are Lambda functions. Backend client certificate not required.' },
         { id: 'NIST.800.53.R5-APIGWCacheEnabledAndEncrypted', reason: 'Caching intentionally disabled.' },
         { id: 'HIPAA.Security-APIGWCacheEnabledAndEncrypted', reason: 'Caching intentionally disabled.' },
+        { id: 'PCI.DSS.321-APIGWCacheEnabledAndEncrypted', reason: 'Caching intentionally disabled.' },
         { id: 'AwsSolutions-APIG4', reason: 'Authorization implemented for non-OPTIONS methods' },
         { id: 'AwsSolutions-COG4', reason: 'Cognito User Pools implemented for non-OPTIONS methods' },
       ],
@@ -588,7 +592,9 @@ export class RestApi extends MdaaL3Construct {
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
         { id: 'HIPAA.Security-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
-        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
+        { id: 'PCI.DSS.321-LambdaDLQ', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'HIPAA.Security-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' },
+        { id: 'PCI.DSS.321-LambdaConcurrency', reason: 'Function is API implementation and will be invoked via API Gateway with WAF protections.' }
       ],
       true
     );

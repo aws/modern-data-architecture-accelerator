@@ -59,7 +59,8 @@ export class KendraRetrieval extends MdaaL3Construct {
           dataBucket,
           [
             { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
+            { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
+            { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' }
           ],
           true
       );
@@ -187,9 +188,14 @@ export class KendraRetrieval extends MdaaL3Construct {
                   id: 'HIPAA.Security-IAMNoInlinePolicy',
                   reason: 'Permissions are role specific. Inline policy use appropriate.'
               },
+              {
+                id: 'PCI.DSS.321-IAMNoInlinePolicy',
+                reason: 'Permissions are role specific. Inline policy use appropriate.'
+              },
               { id: 'NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess', reason: 'Permission bound by cloudwatch namespace.  Other policies further restrict log group access' },
               { id: 'HIPAA.Security-IAMPolicyNoStatementsWithFullAccess', reason: 'Permission bound by cloudwatch namespace.  Other policies further restrict log group access' },
-          ],
+              { id: 'PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess', reason: 'Permission bound by cloudwatch namespace.  Other policies further restrict log group access' },
+            ],
           true
       );
 
