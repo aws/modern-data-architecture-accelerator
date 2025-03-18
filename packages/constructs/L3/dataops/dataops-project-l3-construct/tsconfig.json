@@ -36,10 +36,10 @@
   ],
   "references": [
     {
-      "path": "../../governance/datazone-l3-construct"
+      "path": "../../../L2/construct"
     },
     {
-      "path": "../../../L2/construct"
+      "path": "../../governance/datazone-l3-construct"
     },
     {
       "path": "../../../L2/ec2-constructs"

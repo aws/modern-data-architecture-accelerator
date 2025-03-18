@@ -5,7 +5,7 @@
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"
   },
-  "version": "0.44.0",
+  "version": "0.45.0",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -31,9 +31,9 @@
   },
   "dependencies": {
     "@aws-cdk/aws-glue-alpha": "2.181.1-alpha.0",
-    "@aws-mdaa/kms-constructs": "^0.44.0",
-    "@aws-mdaa/naming": "^0.44.0",
-    "@aws-mdaa/s3-constructs": "^0.44.0",
+    "@aws-mdaa/kms-constructs": "^0.45.0",
+    "@aws-mdaa/naming": "^0.45.0",
+    "@aws-mdaa/s3-constructs": "^0.45.0",
     "aws-cdk-lib": "2.181.1",
     "cdk-nag": "2.35.25",
     "constructs": "10.0.96"

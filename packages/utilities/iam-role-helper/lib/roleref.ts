@@ -1,8 +1,10 @@
-
 /*!
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
+
+
+
 
 /**
  * A reference to an IAM role. Roles can be referenced by name, arn, and/or id.
