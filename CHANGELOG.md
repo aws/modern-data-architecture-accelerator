@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.45.0
+
+### General Changes
+
+* Bumped CDK dependency to latest version (2.181.1)
+* Bumped CDK Nag to latest version (2.35.25)
+* Bumped build/test tooling (including Lerna, NX, Jest, JSII) to latest versions
+* Bumped Lambda runtime versions to latest (Python: 3.13) for all MDAA-deployed Lambda functions
+* Added @mdaaLookupSSMValues context flag, which will force MDAA to perform early SSM parameter lookup, providing earlier detection of SSM-related configuration errors
+* Removed all sample data from repo, replaced with instructions on obtaining sample data from public repos
+* Removed all binary zip contents from repo, replaced with docker-based builds
+  * MDAA requires Docker command to be locally available in order to build Lambda layers (in the Lambda module), as well as for the GAIA module
+* Added Prettier/ESLint validation for MDAA CLI package
+  * Will be gradually expanded across the codebase in future versions
+
+### Security Changes
+
+* Added CDK Nag ruleset evaluation for PCI-DSS compliance
+  * PCI-DSS Ruleset compliance is now validated for all MDAA executions
+* Updated security-related documentation, including adding SECURITY.md, as well as L2 construct-level compliance details
+
+### Governance Changes
+
+* Added ability to configure IAM Identity Center integration in LakeFormation Settings module
+* Added expanded support for DataZone (Preview)
+  * Only DataZone domains are created in the DataZone module (Preview)
+  * Domains can now be associated to multiple accounts
+  * Standard DataZone blueprint support has been removed, and replaced with functionality in DataOps project. 
+
+### DataOps Changes
+
+* DataZone Projects, Environments, Subscription Targets, and DataSources, can now be created in the DataOps Project module
+  * A DataZone Project can be created per DataOps Project, and will be created with in a DataZone domain created by the DataZone module
+  * A DataZone Custom Environment and subscription target will be created per DataZone project, pointing at DataOps project resources
+  * A DataZone Data Source may be created per Glue Database within the DataOps project, allowing for publishing of data assets within each database
+
 ## 0.44.0
 
 ### General Changes
