@@ -396,7 +396,7 @@ prerelease_analyze:
   stage: analyze
   allow_failure: false
   script:
-    - ./scripts/analyze.sh
+    - ./scripts/sonarqube.sh
 
 prerelease_package:
   tags:
