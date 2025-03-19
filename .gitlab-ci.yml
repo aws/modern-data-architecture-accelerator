@@ -1,4 +1,5 @@
 stages:
+  - prebuild
   - build
   - test
   - analyze
@@ -19,20 +20,33 @@ include:
     file: "/aws-solutions/viperlight.yaml"
 
 sast:
+  stage: prebuild
   after_script:
     - mkdir reports
     - cp gl-sast-report.json reports/$CI_JOB_NAME.json
   artifacts:
     paths:
       - reports/
-      
 
 # Exclude bulk of CDK TS under **/lib from semgrep, as it is not application code.
 # Other code (such as Lambda, application code) should typically be
 # under ./src and will be included.
 semgrep-sast:
+  stage: prebuild
   variables:
     SAST_EXCLUDED_PATHS: "spec, test, tests, tmp, scripts, **/lib/*.ts"
+  after_script: 
+    - echo "Analyzing GitLab SAST reports"
+    - python3 ./scripts/analyze_sast_reports.py
+
+secret_detection:
+  stage: prebuild
+
+viperlight_prebuild:
+  stage: prebuild
+
+viperlight_postbuild:
+  stage: analyze
 
 # Build image has CDK, Node/NPM, Lerna, Python, SonarQube pre installed
 image: $CAEF_BUILD_IMAGE
@@ -46,13 +60,51 @@ before_script:
   - git config --global user.name "CICD"
   - git config --global user.email "ci@example.com"
 
-feature_merge_build:
+feature_merge_lint:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    - merge_requests
+  stage: prebuild
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/npm_install.sh
+    - ./scripts/lint.sh
+
+feature_merge_main:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    - merge_requests
+  stage: prebuild
+  artifacts:
+    paths:
+      - "*"
+    exclude:
+      - .git
+      - .git/**/*
+    untracked: false
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/merge_main.sh
+
+feature_merge_build_test:
   tags:
     - arch:amd64
     - size:3xlarge
   only:
     - merge_requests
   stage: build
+  dependencies:
+    - feature_merge_main
+  needs:
+    - feature_merge_main
   cache:
     key: feature-merge-build-$CI_COMMIT_SHA
     paths:
@@ -62,8 +114,7 @@ feature_merge_build:
   artifacts:
     untracked: false
     paths:
-      - packages
-      - schemas
+      - "*"
     exclude:
       - "**/node_modules/**"
   allow_failure: false
@@ -72,86 +123,28 @@ feature_merge_build:
   script:
     - ./scripts/git_secrets.sh
     - ./scripts/npm_install.sh
-    - ./scripts/build.sh
+    - ./scripts/build_test.sh
 
-feature_merge_lint:
-  tags:
-    - arch:amd64
-    - size:3xlarge
-  only:
-    - merge_requests
-  stage: build
-  cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-    policy: push
-  artifacts:
-    untracked: false
-    paths:
-      - packages
-      - schemas
-    exclude:
-      - "**/node_modules/**"
-  allow_failure: false
-  variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
-  script:
-    - ./scripts/npm_install.sh
-    - ./scripts/lint.sh
-
-feature_merge_test:
-  tags:
-    - arch:amd64
-    - size:3xlarge
-  only:
-    - merge_requests
-  stage: test
-  cache:
-    key: feature-merge-build-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-    policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - package.json
-      - lerna.json
-      - package-lock.json
-      - packages
-      - schemas
-      - target
-    exclude:
-      - "**/node_modules/**"
-  allow_failure: false
-  script:
-    - ./scripts/test.sh
-
-feature_merge_analyze:
+feature_merge_sonarqube:
   tags:
     - arch:amd64
     - size:3xlarge
   only:
     - merge_requests
   stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
   cache:
     key: feature-merge-build-$CI_COMMIT_SHA
     paths:
       - node_modules/
       - packages/**/node_modules/
     policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - packages
-      - schemas
-    exclude:
-      - "**/node_modules/**"
   allow_failure: false
   script:
-    - ./scripts/analyze.sh
+    - ./scripts/sonarqube.sh
 
 feature_version:
   tags:
@@ -161,7 +154,7 @@ feature_version:
     refs:
       - main
       - tags
-  stage: build
+  stage: prebuild
   cache:
     key: feature-build-$CI_COMMIT_SHA
     paths:
@@ -186,7 +179,7 @@ feature_version:
     - ./scripts/version_prerelease.sh
     - ./scripts/npm_install.sh
 
-feature_build:
+feature_build_test:
   tags:
     - arch:amd64
     - size:3xlarge
@@ -218,39 +211,7 @@ feature_build:
       - "**/node_modules/**"
   allow_failure: false
   script:
-    - ./scripts/build.sh
-
-feature_test:
-  tags:
-    - arch:amd64
-    - size:3xlarge
-  except:
-    refs:
-      - main
-      - tags
-  stage: test
-  cache:
-    key: feature-build-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-    policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - package.json
-      - lerna.json
-      - package-lock.json
-      - packages
-      - schemas
-      - target
-    exclude:
-      - "**/node_modules/**"
-  dependencies:
-    - feature_build
-  allow_failure: false
-  script:
-    - ./scripts/test.sh
+    - ./scripts/build_test.sh
 
 feature_package:
   tags:
@@ -276,9 +237,9 @@ feature_package:
     exclude:
       - "**/node_modules/**"
   dependencies:
-    - feature_build
+    - feature_build_test
   needs:
-    - feature_build
+    - feature_build_test
   allow_failure: false
   script:
     - ./scripts/package.sh
@@ -302,7 +263,6 @@ feature_publish_npm:
     - feature_package
   needs:
     - feature_package
-    - feature_test
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
@@ -328,7 +288,6 @@ feature_publish_pip:
     - feature_package
   needs:
     - feature_package
-    - feature_test
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
@@ -362,7 +321,7 @@ prerelease_version:
       - schemas
     exclude:
       - "**/node_modules/**"
-  stage: build
+  stage: prebuild
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
@@ -371,7 +330,7 @@ prerelease_version:
     - ./scripts/version_prerelease.sh
     - ./scripts/npm_install.sh
 
-prerelease_build:
+prerelease_build_test:
   tags:
     - arch:amd64
     - size:3xlarge
@@ -405,43 +364,7 @@ prerelease_build:
     - prerelease_version
   allow_failure: false
   script:
-    - ./scripts/build.sh
-
-prerelease_test:
-  tags:
-    - arch:amd64
-    - size:3xlarge
-  only:
-    refs:
-      - main
-  except:
-    refs:
-      - tags
-  cache:
-    key: prerelease-$CI_COMMIT_SHA
-    paths:
-      - node_modules/
-      - packages/**/node_modules/
-    policy: pull
-  artifacts:
-    untracked: false
-    paths:
-      - package.json
-      - lerna.json
-      - package-lock.json
-      - packages
-      - schemas
-      - target
-    exclude:
-      - "**/node_modules/**"
-  dependencies:
-    - prerelease_build
-  needs:
-    - prerelease_build
-  stage: test
-  allow_failure: false
-  script:
-    - ./scripts/test.sh
+    - ./scripts/build_test.sh
 
 prerelease_analyze:
   tags:
@@ -470,10 +393,6 @@ prerelease_analyze:
       - target
     exclude:
       - "**/node_modules/**"
-  # dependencies:
-  #   - prerelease_test
-  # needs:
-  #   - prerelease_test
   stage: analyze
   allow_failure: false
   script:
@@ -507,9 +426,9 @@ prerelease_package:
     exclude:
       - "**/node_modules/**"
   dependencies:
-    - prerelease_build
+    - prerelease_build_test
   needs:
-    - prerelease_build
+    - prerelease_build_test
   stage: package
   allow_failure: false
   script:
@@ -689,7 +608,7 @@ release_version_package:
     - ./scripts/npm_install.sh
     - ./scripts/version_release.sh
     - ./scripts/npm_install.sh
-    - ./scripts/build.sh
+    - ./scripts/build_test.sh
     - ./scripts/package.sh
 
 release:
