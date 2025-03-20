@@ -386,7 +386,7 @@
             "type": "number"
         },
         "adminUsername": {
-            "description": "Set the admin user name for the cluster",
+            "description": "Set the admin username for the cluster",
             "type": "string"
         },
         "automatedSnapshotRetentionDays": {

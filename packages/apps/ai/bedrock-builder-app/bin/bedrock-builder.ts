@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BedrockBuilderApp } from "../lib/bedrock-builder";
-new BedrockBuilderApp().generateStack()
+import { BedrockBuilderApp } from '../lib';
+new BedrockBuilderApp().generateStack();

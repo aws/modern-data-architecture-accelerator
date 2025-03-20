@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GlueCatalogSettingsCDKApp } from "../lib/glue-catalog";
+import { GlueCatalogSettingsCDKApp } from '../lib/glue-catalog';
 
-new GlueCatalogSettingsCDKApp().generateStack()
-
-
+new GlueCatalogSettingsCDKApp().generateStack();

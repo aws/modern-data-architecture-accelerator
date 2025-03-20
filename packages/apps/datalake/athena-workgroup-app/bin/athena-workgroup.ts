@@ -4,10 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { AthenaWorkgroupCDKApp } from "../lib/athena-workgroup";
-new AthenaWorkgroupCDKApp().generateStack()
-
-
-
-
-
+import { AthenaWorkgroupCDKApp } from '../lib/athena-workgroup';
+new AthenaWorkgroupCDKApp().generateStack();

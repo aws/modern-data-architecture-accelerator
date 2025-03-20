@@ -12,14 +12,14 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 interface QuickSightAccountConfigContents extends MdaaBaseConfigContents {
-    readonly account: AccountProps
+  readonly account: AccountProps;
 }
 
 export class QuickSightAccountConfigParser extends MdaaAppConfigParser<QuickSightAccountConfigContents> {
-    readonly account: AccountProps
+  readonly account: AccountProps;
 
-    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
-        super( stack, props, configSchema as Schema )
-        this.account = this.configContents.account
-    }
+  constructor(stack: Stack, props: MdaaAppConfigParserProps) {
+    super(stack, props, configSchema as Schema);
+    this.account = this.configContents.account;
+  }
 }

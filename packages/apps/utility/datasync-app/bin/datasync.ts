@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DataSyncCDKApp } from "../lib/datasync";
-new DataSyncCDKApp().generateStack()
+import { DataSyncCDKApp } from '../lib/datasync';
+new DataSyncCDKApp().generateStack();

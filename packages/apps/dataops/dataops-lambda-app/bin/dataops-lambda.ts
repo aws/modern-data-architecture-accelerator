@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { LambdaFunctionCDKApp } from "../lib/dataops-lambda";
-new LambdaFunctionCDKApp().generateStack()
+import { LambdaFunctionCDKApp } from '../lib/dataops-lambda';
+new LambdaFunctionCDKApp().generateStack();

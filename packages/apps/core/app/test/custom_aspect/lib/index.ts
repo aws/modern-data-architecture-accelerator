@@ -3,4 +3,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './sample-custom-aspect'
+export * from './sample-custom-aspect';

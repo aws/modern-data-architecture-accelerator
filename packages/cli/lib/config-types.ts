@@ -1,11 +1,39 @@
-/*!
- * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0
- */
+import { ConfigurationElement, MdaaCustomAspect, MdaaCustomNaming, TagElement } from '@aws-mdaa/config';
+import { MdaaEnvironmentConfig, TerraformConfig } from './mdaa-cli-config-parser';
 
-export type ConfigurationElement = { [key: string]: unknown };
-export type TagElement = { [key: string]: string };
-export type Workspace = {
-  name: string;
-  location: string;
-};
+export interface EffectiveConfig {
+  effectiveContext: ConfigurationElement;
+  effectiveTagConfig: TagElement;
+  tagConfigFiles: string[];
+  effectiveMdaaVersion?: string;
+  customAspects: MdaaCustomAspect[];
+  customNaming?: MdaaCustomNaming;
+  envTemplates?: { [key: string]: MdaaEnvironmentConfig };
+  terraform?: TerraformConfig;
+}
+
+export interface DomainEffectiveConfig extends EffectiveConfig {
+  domainName: string;
+}
+
+export interface EnvEffectiveConfig extends DomainEffectiveConfig {
+  envName: string;
+  useBootstrap: boolean;
+  deployAccount?: string;
+}
+
+export interface ModuleEffectiveConfig extends EnvEffectiveConfig {
+  moduleType?: 'cdk' | 'tf';
+  modulePath: string;
+  moduleName: string;
+  useBootstrap: boolean;
+  additionalAccounts?: string[];
+  effectiveModuleConfig: ConfigurationElement;
+  moduleConfigFiles?: string[];
+  mdaaCompliant?: boolean;
+}
+
+export interface ModuleDeploymentConfig extends ModuleEffectiveConfig {
+  moduleCmds: string[];
+  localModule: boolean;
+}

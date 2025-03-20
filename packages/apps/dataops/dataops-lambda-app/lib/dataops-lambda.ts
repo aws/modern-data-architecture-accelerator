@@ -9,22 +9,23 @@ import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { LambdaFunctionConfigParser } from './dataops-lambda-config';
 
-
 export class LambdaFunctionCDKApp extends MdaaCdkApp {
-    constructor( props: AppProps = {} ) {
-        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
-    }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
-
-        const appConfig = new LambdaFunctionConfigParser( stack, parserProps )
-        const constructProps: LambdaFunctionL3ConstructProps = {
-            kmsArn: appConfig.kmsArn,
-            layers: appConfig.layers,
-            functions: appConfig.functions,
-            ...l3ConstructProps
-        }
-        new LambdaFunctionL3Construct( stack, "construct", constructProps );
-        return [ stack ]
-
-    }
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
+  }
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new LambdaFunctionConfigParser(stack, parserProps);
+    const constructProps: LambdaFunctionL3ConstructProps = {
+      kmsArn: appConfig.kmsArn,
+      layers: appConfig.layers,
+      functions: appConfig.functions,
+      ...l3ConstructProps,
+    };
+    new LambdaFunctionL3Construct(stack, 'construct', constructProps);
+    return [stack];
+  }
 }

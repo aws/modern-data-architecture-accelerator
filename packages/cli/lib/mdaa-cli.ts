@@ -4,10 +4,13 @@
  */
 
 import {
+  ConfigurationElement,
   MdaaConfigParamRefValueTransformerProps,
   MdaaConfigRefValueTransformer,
   MdaaCustomAspect,
   MdaaCustomNaming,
+  TagElement,
+  Workspace,
 } from '@aws-mdaa/config';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -18,7 +21,14 @@ import {
   MdaaModuleConfig,
   TerraformConfig,
 } from './mdaa-cli-config-parser';
-import { ConfigurationElement, TagElement, Workspace } from './config-types';
+import {
+  DomainEffectiveConfig,
+  EffectiveConfig,
+  EnvEffectiveConfig,
+  ModuleDeploymentConfig,
+  ModuleEffectiveConfig,
+} from './config-types';
+import { generateContextCdkParams } from './utils';
 
 export interface DeployStageMap {
   [key: string]: ModuleDeploymentConfig[];
@@ -683,7 +693,7 @@ export class MdaaDeploy {
       cdkCmd.push(`-r '${this.roleArn}'`);
     }
 
-    cdkCmd.push(...this.generateContextCdkParams(moduleEffectiveConfig));
+    cdkCmd.push(...generateContextCdkParams(moduleEffectiveConfig));
 
     if (this.cdkPushdown) {
       console.log(
@@ -727,30 +737,6 @@ export class MdaaDeploy {
       cdkEnv.push(`export CDK_DEPLOY_ACCOUNT=${moduleEffectiveConfig.deployAccount}`);
     }
     return cdkEnv;
-  }
-
-  private generateContextCdkParams(moduleEffectiveConfig: EffectiveConfig): string[] {
-    return Object.entries(moduleEffectiveConfig.effectiveContext).map(contextEntry => {
-      const contextKey = contextEntry[0];
-      const contextValue = contextEntry[1];
-      let encodedContextValue: string;
-      if (contextValue instanceof Array) {
-        let escaped = JSON.stringify(JSON.stringify(contextValue));
-        escaped = escaped.substring(1, escaped.length - 1);
-        encodedContextValue = `"list:${escaped}"`;
-      } else if (contextValue instanceof Object) {
-        let escaped = JSON.stringify(JSON.stringify(contextValue));
-        escaped = escaped.substring(1, escaped.length - 1);
-        encodedContextValue = `"obj:${escaped}"`;
-      } else if (typeof contextValue === 'string') {
-        encodedContextValue = contextValue;
-      } else if (typeof contextValue === 'boolean') {
-        encodedContextValue = contextValue ? "true" : "false";
-      } else {
-        throw Error(`Don't know how to handle type ${contextValue}`);
-      }
-      return `-c '${contextKey}=${encodedContextValue}'`;
-    });
   }
 
   private computeDomainEffectiveConfig(
@@ -877,41 +863,4 @@ export class MdaaDeploy {
     });
     return h.toString(16);
   }
-}
-
-interface EffectiveConfig {
-  effectiveContext: ConfigurationElement;
-  effectiveTagConfig: TagElement;
-  tagConfigFiles: string[];
-  effectiveMdaaVersion?: string;
-  customAspects: MdaaCustomAspect[];
-  customNaming?: MdaaCustomNaming;
-  envTemplates?: { [key: string]: MdaaEnvironmentConfig };
-  terraform?: TerraformConfig;
-}
-
-interface DomainEffectiveConfig extends EffectiveConfig {
-  domainName: string;
-}
-
-interface EnvEffectiveConfig extends DomainEffectiveConfig {
-  envName: string;
-  useBootstrap: boolean;
-  deployAccount?: string;
-}
-
-interface ModuleEffectiveConfig extends EnvEffectiveConfig {
-  moduleType?: 'cdk' | 'tf';
-  modulePath: string;
-  moduleName: string;
-  useBootstrap: boolean;
-  additionalAccounts?: string[];
-  effectiveModuleConfig: ConfigurationElement;
-  moduleConfigFiles?: string[];
-  mdaaCompliant?: boolean;
-}
-
-interface ModuleDeploymentConfig extends ModuleEffectiveConfig {
-  moduleCmds: string[];
-  localModule: boolean;
 }

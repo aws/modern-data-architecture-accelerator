@@ -10,24 +10,27 @@ import { AppProps, Stack } from 'aws-cdk-lib';
 import { GlueJobConfigParser } from './dataops-job-config';
 
 export class GlueJobCDKApp extends MdaaCdkApp {
-    constructor( props: AppProps = {} ) {
-        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
-    }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
-
-        const appConfig = new GlueJobConfigParser( stack, parserProps )
-        const constructProps: GlueJobL3ConstructProps = {
-            ...{
-                deploymentRoleArn: appConfig.deploymentRole,
-                projectBucketName: appConfig.projectBucket,
-                jobConfigs: appConfig.jobConfigs,
-                securityConfigurationName: appConfig.securityConfigurationName,
-                projectName: appConfig.projectName,
-                notificationTopicArn: appConfig.projectTopicArn
-            }, ...l3ConstructProps
-        }
-        new GlueJobL3Construct( stack, "construct", constructProps );
-        return [ stack ]
-    }
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
+  }
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new GlueJobConfigParser(stack, parserProps);
+    const constructProps: GlueJobL3ConstructProps = {
+      ...{
+        deploymentRoleArn: appConfig.deploymentRole,
+        projectBucketName: appConfig.projectBucket,
+        jobConfigs: appConfig.jobConfigs,
+        securityConfigurationName: appConfig.securityConfigurationName,
+        projectName: appConfig.projectName,
+        notificationTopicArn: appConfig.projectTopicArn,
+      },
+      ...l3ConstructProps,
+    };
+    new GlueJobL3Construct(stack, 'construct', constructProps);
+    return [stack];
+  }
 }
-

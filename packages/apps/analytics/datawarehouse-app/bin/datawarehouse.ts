@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DataWarehouseCDKApp } from "../lib/datawarehouse";
-new DataWarehouseCDKApp().generateStack()
+import { DataWarehouseCDKApp } from '../lib/datawarehouse';
+new DataWarehouseCDKApp().generateStack();

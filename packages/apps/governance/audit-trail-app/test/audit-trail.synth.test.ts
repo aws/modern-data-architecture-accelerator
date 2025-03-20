@@ -4,19 +4,20 @@
  */
 
 import { AuditTrailCDKApp } from '../lib/audit-trail';
-test( 'SynthTest', () => {
-    const context = {
-        org: "test-org",
-        env: "test-env",
-        domain: "test-domain",
-        module_name: "test-module",
-        module_configs: "./test/test-config.yaml"
-    }
-    const app = new AuditTrailCDKApp( { context: context } )
-    app.generateStack()
-    expect( () => app.synth( {
-        force: true,
-        validateOnSynthesis: true
-    } ) ).not.toThrow()
-} );
-
+test('SynthTest', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './test/test-config.yaml',
+  };
+  const app = new AuditTrailCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});

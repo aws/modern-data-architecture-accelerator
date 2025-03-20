@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GlueWorkflowCDKApp } from "../lib/dataops-workflow";
-new GlueWorkflowCDKApp().generateStack()
+import { GlueWorkflowCDKApp } from '../lib/dataops-workflow';
+new GlueWorkflowCDKApp().generateStack();

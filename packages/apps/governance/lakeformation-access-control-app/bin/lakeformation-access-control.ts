@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { LakeFormationCdkApp } from "../lib/lakeformation-access-control";
-new LakeFormationCdkApp().generateStack()
+import { LakeFormationCdkApp } from '../lib/lakeformation-access-control';
+new LakeFormationCdkApp().generateStack();

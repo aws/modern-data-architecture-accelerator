@@ -10,19 +10,21 @@ import { AppProps, Stack } from 'aws-cdk-lib';
 import { AuditTrailConfigParser } from './audit-trail-config';
 
 export class AuditTrailCDKApp extends MdaaCdkApp {
-    constructor( props: AppProps = {} ) {
-        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
-    }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
+  }
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new AuditTrailConfigParser(stack, parserProps);
+    const constructProps: AuditTrailL3ConstructProps = {
+      trail: appConfig.trail,
+      ...l3ConstructProps,
+    };
 
-        const appConfig = new AuditTrailConfigParser( stack, parserProps )
-        const constructProps: AuditTrailL3ConstructProps = {
-            trail: appConfig.trail,
-            ...l3ConstructProps
-        }
-
-        new AuditTrailL3Construct( stack, "audit-trail", constructProps );
-        return [ stack ]
-
-    }
+    new AuditTrailL3Construct(stack, 'audit-trail', constructProps);
+    return [stack];
+  }
 }

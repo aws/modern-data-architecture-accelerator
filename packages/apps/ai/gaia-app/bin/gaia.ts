@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GAIAApp } from "../lib/gaia";
-new GAIAApp().generateStack()
+import { GAIAApp } from '../lib/gaia';
+new GAIAApp().generateStack();

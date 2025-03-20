@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DataLakeCDKApp } from "../lib/datalake"
-new DataLakeCDKApp().generateStack()
+import { DataLakeCDKApp } from '../lib/datalake';
+new DataLakeCDKApp().generateStack();

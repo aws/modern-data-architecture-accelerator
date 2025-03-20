@@ -10,18 +10,21 @@ import { AppProps, Stack } from 'aws-cdk-lib';
 import { DataWarehouseConfigParser } from './datawarehouse-config';
 
 export class DataWarehouseCDKApp extends MdaaCdkApp {
-  constructor( props: AppProps = {} ) {
-    super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
   }
-  protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
-
-    const appConfig = new DataWarehouseConfigParser( stack, parserProps )
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new DataWarehouseConfigParser(stack, parserProps);
     const constructProps: DataWarehouseL3ConstructProps = {
-      ...appConfig, ...l3ConstructProps
-    }
-    new DataWarehouseL3Construct( stack, "construct", constructProps );
+      ...appConfig,
+      ...l3ConstructProps,
+    };
+    new DataWarehouseL3Construct(stack, 'construct', constructProps);
 
-    return [ stack ]
+    return [stack];
   }
 }
-

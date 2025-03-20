@@ -11,21 +11,21 @@ import { AppProps, Stack } from 'aws-cdk-lib';
 import { GlueCatalogConfigParser } from './glue-catalog-config';
 
 export class GlueCatalogSettingsCDKApp extends MdaaCdkApp {
-    constructor( props: AppProps = {} ) {
-        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
-    }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
+  }
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new GlueCatalogConfigParser(stack, parserProps);
+    const constructProps: GlueCatalogL3ConstructProps = {
+      ...appConfig,
+      ...l3ConstructProps,
+    };
 
-        const appConfig = new GlueCatalogConfigParser( stack, parserProps )
-        const constructProps: GlueCatalogL3ConstructProps = {
-            ...appConfig,
-            ...l3ConstructProps
-        }
-
-        new GlueCatalogL3Construct( stack, "construct", constructProps );
-        return [ stack ]
-    }
+    new GlueCatalogL3Construct(stack, 'construct', constructProps);
+    return [stack];
+  }
 }
-
-
-

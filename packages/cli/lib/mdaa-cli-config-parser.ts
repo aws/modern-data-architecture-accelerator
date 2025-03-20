@@ -5,16 +5,17 @@
 
 import {
   ConfigConfigPathValueTransformer,
+  ConfigurationElement,
   MdaaConfigTransformer,
   MdaaCustomAspect,
   MdaaCustomNaming,
+  TagElement,
 } from '@aws-mdaa/config';
 import Ajv, { JSONSchemaType, ValidateFunction } from 'ajv';
 import * as fs from 'fs';
 import * as yaml from 'yaml';
 import * as configSchema from './config-schema.json';
 import { DevOpsConfigContents } from '@aws-mdaa/devops';
-import { ConfigurationElement, TagElement } from './config-types';
 // nosemgrep
 import path = require('path');
 
@@ -319,7 +320,7 @@ export class MdaaCliConfig {
         );
       }
       // Config file is shaped correctly and contains required values!
-      this.contents = relativePathTransformedContents as MdaaConfigContents;
+      this.contents = relativePathTransformedContents as unknown as MdaaConfigContents;
     } else {
       if (!configShapeValidator(this.props.configContents)) {
         throw new Error(

@@ -3,21 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NifiClusterCDKApp } from "../lib/dataops-nifi";
+import { NifiClusterCDKApp } from '../lib/dataops-nifi';
 
-test( 'SynthTest', () => {
-    const context = {
-        org: "test-org",
-        env: "test-env",
-        domain: "test-domain",
-        module_name: "test-module",
-        module_configs: "./test/test-config.yaml"
-    }
-    const app = new NifiClusterCDKApp( { context: context } )
-    app.generateStack()
-    expect( () => app.synth( {
-        force: true,
-        validateOnSynthesis: true
-    } ) ).not.toThrow()
-} );
-
+test('SynthTest', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './test/test-config.yaml',
+  };
+  const app = new NifiClusterCDKApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});

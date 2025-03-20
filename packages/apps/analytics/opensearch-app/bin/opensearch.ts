@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { OpensearchCDKApp } from "../lib/opensearch";
-new OpensearchCDKApp().generateStack()
+import { OpensearchCDKApp } from '../lib/opensearch';
+new OpensearchCDKApp().generateStack();

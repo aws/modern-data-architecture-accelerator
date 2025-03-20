@@ -475,7 +475,7 @@
             "additionalProperties": {
                 "$ref": "#/definitions/LifecycleConfigurationConfig"
             },
-            "description": "/**\n  Map of named lifecycleConfigurations which will be referenced by bucket definitions.",
+            "description": "/**\n Map of named lifecycleConfigurations which will be referenced by bucket definitions.",
             "type": "object"
         },
         "nag_suppressions": {
