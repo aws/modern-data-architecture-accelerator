@@ -9,23 +9,24 @@ import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { MacieSessionConfigParser } from './macie-session-config';
 
-
 export class MacieSessionCDKApp extends MdaaCdkApp {
-    constructor( props: AppProps = {} ) {
-        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
-    }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
+  }
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new MacieSessionConfigParser(stack, parserProps);
+    const constructProps: MacieSessionL3ConstructProps = {
+      ...{
+        session: appConfig.macieSessionConfig,
+      },
+      ...l3ConstructProps,
+    };
 
-        const appConfig = new MacieSessionConfigParser( stack, parserProps )
-        const constructProps: MacieSessionL3ConstructProps = {
-            ...{
-                session: appConfig.macieSessionConfig
-            }, ...l3ConstructProps
-        }
-
-        new MacieSessionL3Construct( stack, "macie-session", constructProps );
-        return [ stack ]
-
-    }
+    new MacieSessionL3Construct(stack, 'macie-session', constructProps);
+    return [stack];
+  }
 }
-

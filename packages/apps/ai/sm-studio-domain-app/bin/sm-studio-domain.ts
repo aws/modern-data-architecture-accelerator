@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { SageMakerStudioDomainApp } from "../lib/sm-studio-domain";
-new SageMakerStudioDomainApp().generateStack()
+import { SageMakerStudioDomainApp } from '../lib/sm-studio-domain';
+new SageMakerStudioDomainApp().generateStack();

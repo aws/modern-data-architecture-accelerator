@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NifiClusterCDKApp } from "../lib/dataops-nifi";
-new NifiClusterCDKApp().generateStack()
+import { NifiClusterCDKApp } from '../lib/dataops-nifi';
+new NifiClusterCDKApp().generateStack();

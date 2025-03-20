@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DataScienceTeamApp } from "../lib/datascience-team";
-new DataScienceTeamApp().generateStack()
+import { DataScienceTeamApp } from '../lib/datascience-team';
+new DataScienceTeamApp().generateStack();

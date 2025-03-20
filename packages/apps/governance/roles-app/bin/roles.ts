@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GenerateRolesCDKApp } from "../lib/roles";
-new GenerateRolesCDKApp().generateStack()
+import { GenerateRolesCDKApp } from '../lib/roles';
+new GenerateRolesCDKApp().generateStack();

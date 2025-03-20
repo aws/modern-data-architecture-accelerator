@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaDevopsCDKApp } from "../lib/devops";
-new MdaaDevopsCDKApp().generateStack()
+import { MdaaDevopsCDKApp } from '../lib/devops';
+new MdaaDevopsCDKApp().generateStack();

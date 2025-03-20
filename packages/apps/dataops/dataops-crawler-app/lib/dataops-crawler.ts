@@ -10,21 +10,25 @@ import { AppProps, Stack } from 'aws-cdk-lib';
 import { GlueCrawlerConfigParser } from './dataops-crawler-config';
 
 export class GlueCrawlerCDKApp extends MdaaCdkApp {
-    constructor( props: AppProps = {} ) {
-        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
-    }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
-
-        const appConfig = new GlueCrawlerConfigParser( stack, parserProps )
-        const constructProps: GlueCrawlerL3ConstructProps = {
-            ...{
-                crawlerConfigs: appConfig.crawlerConfigs,
-                securityConfigurationName: appConfig.securityConfigurationName,
-                projectName: appConfig.projectName,
-                notificationTopicArn: appConfig.projectTopicArn
-            }, ...l3ConstructProps
-        }
-        new GlueCrawlerL3Construct( stack, "construct", constructProps );
-        return [ stack ]
-    }
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
+  }
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new GlueCrawlerConfigParser(stack, parserProps);
+    const constructProps: GlueCrawlerL3ConstructProps = {
+      ...{
+        crawlerConfigs: appConfig.crawlerConfigs,
+        securityConfigurationName: appConfig.securityConfigurationName,
+        projectName: appConfig.projectName,
+        notificationTopicArn: appConfig.projectTopicArn,
+      },
+      ...l3ConstructProps,
+    };
+    new GlueCrawlerL3Construct(stack, 'construct', constructProps);
+    return [stack];
+  }
 }

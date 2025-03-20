@@ -4,6 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { SftpUsersCDKApp } from "../lib/sftp-users";
-new SftpUsersCDKApp().generateStack()
-
+import { SftpUsersCDKApp } from '../lib/sftp-users';
+new SftpUsersCDKApp().generateStack();

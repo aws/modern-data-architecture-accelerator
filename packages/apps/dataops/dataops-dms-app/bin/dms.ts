@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DMSCDKApp } from "../lib/dms";
-new DMSCDKApp().generateStack()
+import { DMSCDKApp } from '../lib/dms';
+new DMSCDKApp().generateStack();

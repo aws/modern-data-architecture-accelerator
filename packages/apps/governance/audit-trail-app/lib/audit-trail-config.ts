@@ -10,17 +10,14 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 export interface AuditTrailConfigContents extends MdaaBaseConfigContents {
-    readonly trail: AuditTrailProps
+  readonly trail: AuditTrailProps;
 }
 
 export class AuditTrailConfigParser extends MdaaAppConfigParser<AuditTrailConfigContents> {
+  public readonly trail: AuditTrailProps;
 
-    public readonly trail: AuditTrailProps
-
-    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
-        super( stack, props, configSchema as Schema )
-        this.trail = this.configContents.trail
-    }
-
+  constructor(stack: Stack, props: MdaaAppConfigParserProps) {
+    super(stack, props, configSchema as Schema);
+    this.trail = this.configContents.trail;
+  }
 }
-

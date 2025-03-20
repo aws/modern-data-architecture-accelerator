@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { M2MApiCDKApp } from "../lib/m2m-api";
-new M2MApiCDKApp().generateStack()
+import { M2MApiCDKApp } from '../lib/m2m-api';
+new M2MApiCDKApp().generateStack();

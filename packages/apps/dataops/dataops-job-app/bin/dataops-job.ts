@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GlueJobCDKApp } from "../lib/dataops-job";
-new GlueJobCDKApp().generateStack()
+import { GlueJobCDKApp } from '../lib/dataops-job';
+new GlueJobCDKApp().generateStack();

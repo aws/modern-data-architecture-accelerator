@@ -9,21 +9,24 @@ import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { GAIAConfigParser } from './gaia-config';
 
-
 export class GAIAApp extends MdaaCdkApp {
-    constructor( props: AppProps = {} ) {
-        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
-    }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
+  }
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new GAIAConfigParser(stack, parserProps);
 
-        const appConfig = new GAIAConfigParser( stack, parserProps )
-
-        const constructProps: GAIAL3ConstructProps = {
-            ...{
-                gaia: appConfig.gaia
-            }, ...l3ConstructProps
-        }
-        new GAIAL3Construct( stack, "gaia", constructProps );
-        return [ stack ]
-    }
+    const constructProps: GAIAL3ConstructProps = {
+      ...{
+        gaia: appConfig.gaia,
+      },
+      ...l3ConstructProps,
+    };
+    new GAIAL3Construct(stack, 'gaia', constructProps);
+    return [stack];
+  }
 }

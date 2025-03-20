@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DataOpsProjectCDKApp } from "../lib/dataops-project";
-new DataOpsProjectCDKApp().generateStack()
+import { DataOpsProjectCDKApp } from '../lib/dataops-project';
+new DataOpsProjectCDKApp().generateStack();

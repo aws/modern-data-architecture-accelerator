@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ServiceCatalogCDKApp } from "../lib/service-catalog";
-new ServiceCatalogCDKApp().generateStack()
+import { ServiceCatalogCDKApp } from '../lib/service-catalog';
+new ServiceCatalogCDKApp().generateStack();

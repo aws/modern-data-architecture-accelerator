@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { QuickSightNamespaceCDKApp } from "../lib/quicksight-namespace";
-new QuickSightNamespaceCDKApp().generateStack()
+import { QuickSightNamespaceCDKApp } from '../lib/quicksight-namespace';
+new QuickSightNamespaceCDKApp().generateStack();

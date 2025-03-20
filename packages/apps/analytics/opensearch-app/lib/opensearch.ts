@@ -10,20 +10,23 @@ import { AppProps, Stack } from 'aws-cdk-lib';
 import { OpensearchConfigParser } from './opensearch-config';
 
 export class OpensearchCDKApp extends MdaaCdkApp {
-  constructor( props: AppProps = {} ) {
-    super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
   }
-  protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
-
-    const appConfig = new OpensearchConfigParser( stack, parserProps )
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new OpensearchConfigParser(stack, parserProps);
 
     const constructProps: OpensearchL3ConstructProps = {
-      ...appConfig, ...l3ConstructProps
-    }
+      ...appConfig,
+      ...l3ConstructProps,
+    };
 
-    new OpensearchL3Construct( stack, "construct", constructProps );
+    new OpensearchL3Construct(stack, 'construct', constructProps);
 
-    return [ stack ]
+    return [stack];
   }
 }
-

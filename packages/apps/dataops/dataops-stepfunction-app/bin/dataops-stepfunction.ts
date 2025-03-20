@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { StepFunctionCDKApp } from "../lib/dataops-stepfunction";
-new StepFunctionCDKApp().generateStack()
+import { StepFunctionCDKApp } from '../lib/dataops-stepfunction';
+new StepFunctionCDKApp().generateStack();

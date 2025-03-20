@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './app'
-export * from './stack'
-export * from './app_config'
-
+export * from './app';
+export * from './stack';
+export * from './app_config';

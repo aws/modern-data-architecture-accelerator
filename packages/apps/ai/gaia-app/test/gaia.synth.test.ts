@@ -3,21 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GAIAApp } from "../lib/gaia";
+import { GAIAApp } from '../lib/gaia';
 
-test( 'SynthTest', () => {
-    const context = {
-        org: "test-org",
-        env: "test-env",
-        domain: "test-domain",
-        module_name: "test-module",
-        module_configs: "./test/test-config.yaml"
-    }
-    const app = new GAIAApp( { context: context } )
-    app.generateStack()
-    expect( () => app.synth( {
-        force: true,
-        validateOnSynthesis: true
-    } ) ).not.toThrow()
-} );
-
+test('SynthTest', () => {
+  const context = {
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    module_name: 'test-module',
+    module_configs: './test/test-config.yaml',
+  };
+  const app = new GAIAApp({ context: context });
+  app.generateStack();
+  expect(() =>
+    app.synth({
+      force: true,
+      validateOnSynthesis: true,
+    }),
+  ).not.toThrow();
+});

@@ -16,7 +16,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest --passWithNoTests --coverage"
+    "test": "jest --passWithNoTests --coverage",
+    "lint": "eslint --fix --max-warnings 0 -c ../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" "
   },
   "devDependencies": {
     "@types/jest": "29.5.0",

@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GlueCrawlerCDKApp } from "../lib/dataops-crawler";
-new GlueCrawlerCDKApp().generateStack()
+import { GlueCrawlerCDKApp } from '../lib/dataops-crawler';
+new GlueCrawlerCDKApp().generateStack();

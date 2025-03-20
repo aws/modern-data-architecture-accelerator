@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { SageMakerNotebookApp } from "../lib/sm-notebook";
-new SageMakerNotebookApp().generateStack()
+import { SageMakerNotebookApp } from '../lib/sm-notebook';
+new SageMakerNotebookApp().generateStack();

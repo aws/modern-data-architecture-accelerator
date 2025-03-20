@@ -12,22 +12,21 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 export interface PortfolioConfig {
-    readonly providerName: string,
-    readonly description?: string,
-    readonly access?: MdaaRoleRef[]
+  readonly providerName: string;
+  readonly description?: string;
+  readonly access?: MdaaRoleRef[];
 }
 
 export interface MdaaServiceCatalogProductConfigContents extends MdaaBaseConfigContents {
-    readonly portfolios: { [ portfolioName: string ]: PortfolioConfig }
+  readonly portfolios: { [portfolioName: string]: PortfolioConfig };
 }
 
 export class MdaaServiceCatalogProductConfigParser extends MdaaAppConfigParser<MdaaServiceCatalogProductConfigContents> {
-    public readonly portfolioProps: PortfolioProps[]
-    constructor( stack: Stack, props: MdaaAppConfigParserProps ) {
-        super( stack, props, configSchema as Schema )
-        this.portfolioProps = Object.entries( this.configContents.portfolios ).map( nameAndProps => {
-            return { ...{ displayName: nameAndProps[ 0 ] }, ...nameAndProps[ 1 ] }
-        } )
-    }
+  public readonly portfolioProps: PortfolioProps[];
+  constructor(stack: Stack, props: MdaaAppConfigParserProps) {
+    super(stack, props, configSchema as Schema);
+    this.portfolioProps = Object.entries(this.configContents.portfolios).map(nameAndProps => {
+      return { ...{ displayName: nameAndProps[0] }, ...nameAndProps[1] };
+    });
+  }
 }
-

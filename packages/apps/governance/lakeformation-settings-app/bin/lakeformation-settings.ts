@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { LakeFormationSettingsCDKApp } from "../lib/lakeformation-settings";
+import { LakeFormationSettingsCDKApp } from '../lib/lakeformation-settings';
 
-new LakeFormationSettingsCDKApp().generateStack()
-
-
+new LakeFormationSettingsCDKApp().generateStack();

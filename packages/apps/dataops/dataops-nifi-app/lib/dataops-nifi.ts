@@ -10,20 +10,21 @@ import { AppProps, Stack } from 'aws-cdk-lib';
 import { NifiConfigParser } from './dataops-nifi-config';
 import { NifiL3Construct, NifiL3ConstructProps } from '@aws-mdaa/dataops-nifi-l3-construct';
 
-
 export class NifiClusterCDKApp extends MdaaCdkApp {
-    constructor( props: AppProps = {} ) {
-        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
-    }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
-
-        const appConfig = new NifiConfigParser( stack, parserProps )
-        const constructProps: NifiL3ConstructProps = {
-            ...appConfig,
-            ...l3ConstructProps
-        }
-        new NifiL3Construct( stack, "construct", constructProps );
-        return [ stack ]
-
-    }
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
+  }
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new NifiConfigParser(stack, parserProps);
+    const constructProps: NifiL3ConstructProps = {
+      ...appConfig,
+      ...l3ConstructProps,
+    };
+    new NifiL3Construct(stack, 'construct', constructProps);
+    return [stack];
+  }
 }

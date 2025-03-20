@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaBootstrapCDKApp } from "../lib/bootstrap";
-new MdaaBootstrapCDKApp().generateStack()
+import { MdaaBootstrapCDKApp } from '../lib/bootstrap';
+new MdaaBootstrapCDKApp().generateStack();

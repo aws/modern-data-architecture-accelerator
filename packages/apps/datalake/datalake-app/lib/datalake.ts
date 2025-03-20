@@ -9,22 +9,24 @@ import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { DataLakeConfigParser } from './datalake-config';
 
-
 export class DataLakeCDKApp extends MdaaCdkApp {
-    constructor( props: AppProps = {} ) {
-        super( props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`) )
-    }
-    protected subGenerateResources ( stack: Stack, l3ConstructProps: MdaaL3ConstructProps, parserProps: MdaaAppConfigParserProps ) {
+  constructor(props: AppProps = {}) {
+    super(props, MdaaCdkApp.parsePackageJson(`${__dirname}/../package.json`));
+  }
+  protected subGenerateResources(
+    stack: Stack,
+    l3ConstructProps: MdaaL3ConstructProps,
+    parserProps: MdaaAppConfigParserProps,
+  ) {
+    const appConfig = new DataLakeConfigParser(stack, parserProps);
+    const constructProps: DataLakeL3ConstructProps = {
+      ...{
+        buckets: appConfig.buckets,
+      },
+      ...l3ConstructProps,
+    };
 
-        const appConfig = new DataLakeConfigParser( stack, parserProps )
-        const constructProps: DataLakeL3ConstructProps = {
-            ...{
-                buckets: appConfig.buckets,
-
-            }, ...l3ConstructProps
-        }
-
-        new S3DatalakeBucketL3Construct( stack, "contruct", constructProps );
-        return [ stack ]
-    }
+    new S3DatalakeBucketL3Construct(stack, 'contruct', constructProps);
+    return [stack];
+  }
 }

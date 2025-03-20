@@ -4,6 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { QuickSightAccountCDKApp } from "../lib/quicksight-account";
-new QuickSightAccountCDKApp().generateStack()
-
+import { QuickSightAccountCDKApp } from '../lib/quicksight-account';
+new QuickSightAccountCDKApp().generateStack();
