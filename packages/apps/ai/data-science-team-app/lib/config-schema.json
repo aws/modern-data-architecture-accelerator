@@ -328,7 +328,7 @@
             "properties": {
                 "assetDeploymentRole": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "If defined, this role will be used to deploy lifecycle assets.\nShould be assumable by lambda, and have write access\nto the domain bucket under the assetPrefix.\nMust be specified if an existing domainBucketName is also specified. \nOtherwise, a new role will be created with access to the generated\ndomain bucket."
+                    "description": "If defined, this role will be used to deploy lifecycle assets.\nShould be assumable by lambda, and have write access\nto the domain bucket under the assetPrefix.\nMust be specified if an existing domainBucketName is also specified.\nOtherwise, a new role will be created with access to the generated\ndomain bucket."
                 },
                 "domainBucketName": {
                     "description": "If specified, will be used as the bucket for the domain,\nwhere notebooks will be shared, and lifecycle assets will be uploaded.\nOtherwise a new bucket will be created.",
@@ -365,7 +365,7 @@
                 },
                 "defaultExecutionRole": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "If defined, will be set as the default execution role for the domain. \nIf undefined, a default execution role will be created with minimal permissions required\nto launch Studio Apps."
+                    "description": "If defined, will be set as the default execution role for the domain.\nIf undefined, a default execution role will be created with minimal permissions required\nto launch Studio Apps."
                 },
                 "defaultUserSettings": {
                     "$ref": "#/definitions/DomainUserSettings",

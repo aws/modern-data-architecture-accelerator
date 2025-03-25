@@ -23,7 +23,7 @@
                     "type": "string"
                 },
                 "iops": {
-                    "description": "The number of I/O operations per second (IOPS). \nThis parameter is required for io1 and io2 volumes.",
+                    "description": "The number of I/O operations per second (IOPS).\nThis parameter is required for io1 and io2 volumes.",
                     "type": "number"
                 },
                 "volumeSizeInGb": {
@@ -154,11 +154,11 @@
             "properties": {
                 "commands": {
                     "$ref": "#/definitions/NamedCommandProps",
-                    "description": "You can use the commands key to run commands on the EC2 instance. \nThe commands are processed in alphabetical order by name."
+                    "description": "You can use the commands key to run commands on the EC2 instance.\nThe commands are processed in alphabetical order by name."
                 },
                 "files": {
                     "$ref": "#/definitions/NamedFileProps",
-                    "description": "You can use the files key to create files on the EC2 instance. \nContent is pulled from a given file"
+                    "description": "You can use the files key to create files on the EC2 instance.\nContent is pulled from a given file"
                 },
                 "groups": {
                     "$ref": "#/definitions/NamedGroupProps",
@@ -219,7 +219,7 @@
             "additionalProperties": false,
             "properties": {
                 "gid": {
-                    "description": "A group ID number\nIf a group ID is specified, and the group already exists by name, the group creation will fail. \nIf another group has the specified group ID, the OS may reject the group creation.",
+                    "description": "A group ID number\nIf a group ID is specified, and the group already exists by name, the group creation will fail.\nIf another group has the specified group ID, the OS may reject the group creation.",
                     "type": "string"
                 }
             },
@@ -903,7 +903,7 @@
                     "type": "string"
                 },
                 "uid": {
-                    "description": "A user ID. \nThe creation process fails if the user name exists with a different user ID.\nIf the user ID is already assigned to an existing user the operating system may reject the creation request.",
+                    "description": "A user ID.\nThe creation process fails if the user name exists with a different user ID.\nIf the user ID is already assigned to an existing user the operating system may reject the creation request.",
                     "type": "string"
                 }
             },

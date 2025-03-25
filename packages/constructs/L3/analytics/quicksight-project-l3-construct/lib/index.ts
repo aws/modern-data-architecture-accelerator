@@ -3,4 +3,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './quicksight-project-l3-construct'
+export * from './quicksight-project-l3-construct';

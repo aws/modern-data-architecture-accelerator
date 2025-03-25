@@ -1,88 +1,88 @@
-import * as sagemaker from "aws-cdk-lib/aws-sagemaker";
+import * as sagemaker from 'aws-cdk-lib/aws-sagemaker';
 
-export type ModelProvider = "sagemaker" | "bedrock" | "openai";
+export type ModelProvider = 'sagemaker' | 'bedrock' | 'openai';
 
 export enum SupportedSageMakerModels {
-  FALCON_LITE = "FalconLite",
-  LLAMA2_13B_CHAT = "Llama2_13b_Chat",
-  MISTRAL7B_INSTRUCT2 = "Mistral7b_Instruct2",
+  FALCON_LITE = 'FalconLite',
+  LLAMA2_13B_CHAT = 'Llama2_13b_Chat',
+  MISTRAL7B_INSTRUCT2 = 'Mistral7b_Instruct2',
 }
 
 export enum SupportedAuthTypes {
-  EMAIL_PASSWORD = "email_pass",
-  ACTIVE_DIRECTORY = "ad",
-  EXISTING_POOL = 'existing'
+  EMAIL_PASSWORD = 'email_pass',
+  ACTIVE_DIRECTORY = 'ad',
+  EXISTING_POOL = 'existing',
 }
 
 export enum SupportedRegion {
-  AF_SOUTH_1 = "af-south-1",
-  AP_EAST_1 = "ap-east-1",
-  AP_NORTHEAST_1 = "ap-northeast-1",
-  AP_NORTHEAST_2 = "ap-northeast-2",
-  AP_NORTHEAST_3 = "ap-northeast-3",
-  AP_SOUTH_1 = "ap-south-1",
-  AP_SOUTH_2 = "ap-south-2",
-  AP_SOUTHEAST_1 = "ap-southeast-1",
-  AP_SOUTHEAST_2 = "ap-southeast-2",
-  AP_SOUTHEAST_3 = "ap-southeast-3",
-  AP_SOUTHEAST_4 = "ap-southeast-4",
-  CA_CENTRAL_1 = "ca-central-1",
-  EU_CENTRAL_1 = "eu-central-1",
-  EU_CENTRAL_2 = "eu-central-2",
-  EU_NORTH_1 = "eu-north-1",
-  EU_SOUTH_1 = "eu-south-1",
-  EU_SOUTH_2 = "eu-south-2",
-  EU_WEST_1 = "eu-west-1",
-  EU_WEST_2 = "eu-west-2",
-  EU_WEST_3 = "eu-west-3",
-  IL_CENTRAL_1 = "il-central-1",
-  ME_CENTRAL_1 = "me-central-1",
-  ME_SOUTH_1 = "me-south-1",
-  SA_EAST_1 = "sa-east-1",
-  US_EAST_1 = "us-east-1",
-  US_EAST_2 = "us-east-2",
-  US_WEST_1 = "us-west-1",
-  US_WEST_2 = "us-west-2",
+  AF_SOUTH_1 = 'af-south-1',
+  AP_EAST_1 = 'ap-east-1',
+  AP_NORTHEAST_1 = 'ap-northeast-1',
+  AP_NORTHEAST_2 = 'ap-northeast-2',
+  AP_NORTHEAST_3 = 'ap-northeast-3',
+  AP_SOUTH_1 = 'ap-south-1',
+  AP_SOUTH_2 = 'ap-south-2',
+  AP_SOUTHEAST_1 = 'ap-southeast-1',
+  AP_SOUTHEAST_2 = 'ap-southeast-2',
+  AP_SOUTHEAST_3 = 'ap-southeast-3',
+  AP_SOUTHEAST_4 = 'ap-southeast-4',
+  CA_CENTRAL_1 = 'ca-central-1',
+  EU_CENTRAL_1 = 'eu-central-1',
+  EU_CENTRAL_2 = 'eu-central-2',
+  EU_NORTH_1 = 'eu-north-1',
+  EU_SOUTH_1 = 'eu-south-1',
+  EU_SOUTH_2 = 'eu-south-2',
+  EU_WEST_1 = 'eu-west-1',
+  EU_WEST_2 = 'eu-west-2',
+  EU_WEST_3 = 'eu-west-3',
+  IL_CENTRAL_1 = 'il-central-1',
+  ME_CENTRAL_1 = 'me-central-1',
+  ME_SOUTH_1 = 'me-south-1',
+  SA_EAST_1 = 'sa-east-1',
+  US_EAST_1 = 'us-east-1',
+  US_EAST_2 = 'us-east-2',
+  US_WEST_1 = 'us-west-1',
+  US_WEST_2 = 'us-west-2',
 }
 
 export enum ModelInterface {
-  LANG_CHAIN = "langchain",
+  LANG_CHAIN = 'langchain',
 }
 
 export enum Modality {
-  TEXT = "TEXT",
-  EMBEDDING = "EMBEDDING",
+  TEXT = 'TEXT',
+  EMBEDDING = 'EMBEDDING',
 }
 
 export enum Direction {
-  IN = "IN",
-  OUT = "OUT",
+  IN = 'IN',
+  OUT = 'OUT',
 }
 
 export interface VpcProps {
-    readonly vpcId: string;
-    readonly dataSubnets: string[]
-    readonly dataSecurityGroupId: string
-    readonly appSubnets: string[]
-    readonly appSecurityGroupId: string
+  readonly vpcId: string;
+  readonly dataSubnets: string[];
+  readonly dataSecurityGroupId: string;
+  readonly appSubnets: string[];
+  readonly appSecurityGroupId: string;
 }
 
 export interface CodeOverwritesProps {
-  readonly restApiHandlerCodePath?: string
-  readonly ragEnginesInferenceCodePath?: string
-  readonly commonLibsLayerCodeZipPath?: string
-  readonly genAiCoreLayerCodePath?: string
-  readonly pgVectorDbSetupCodePath?: string
-  readonly createAuroraWorkspaceCodePath?: string
-  readonly dataImportUploadHandlerCodePath?: string
-  readonly websiteParserCodePath?: string
-  readonly fileImportBatchJobDockerFilePath?: string
-  readonly deleteWorkspaceHandlerCodePath?: string
-  readonly webSocketConnectionHandlerCodePath?: string
-  readonly webSocketAuthorizerFunctionCodePath?: string
-  readonly webSocketIncomingMessageHandlerCodePath?: string
-  readonly webSocketOutgoingMessageHandlerCodePath?: string
-  readonly langchainInterfaceHandlerCodePath?: string
+  readonly restApiHandlerCodePath?: string;
+  readonly ragEnginesInferenceCodePath?: string;
+  readonly commonLibsLayerCodeZipPath?: string;
+  readonly genAiCoreLayerCodePath?: string;
+  readonly pgVectorDbSetupCodePath?: string;
+  readonly createAuroraWorkspaceCodePath?: string;
+  readonly dataImportUploadHandlerCodePath?: string;
+  readonly websiteParserCodePath?: string;
+  readonly fileImportBatchJobDockerFilePath?: string;
+  readonly deleteWorkspaceHandlerCodePath?: string;
+  readonly webSocketConnectionHandlerCodePath?: string;
+  readonly webSocketAuthorizerFunctionCodePath?: string;
+  readonly webSocketIncomingMessageHandlerCodePath?: string;
+  readonly webSocketOutgoingMessageHandlerCodePath?: string;
+  readonly langchainInterfaceHandlerCodePath?: string;
 }
 
 export interface AuthProps {
@@ -103,15 +103,15 @@ export interface BedrockProps {
 }
 
 export interface SagemakerLlmModelConfig {
-  readonly model: SupportedSageMakerModels
-  readonly instanceType?: string
-  readonly initialInstanceCount?: number
-  readonly minimumInstanceCount?: number
-  readonly maximumInstanceCount?: number
+  readonly model: SupportedSageMakerModels;
+  readonly instanceType?: string;
+  readonly initialInstanceCount?: number;
+  readonly minimumInstanceCount?: number;
+  readonly maximumInstanceCount?: number;
 }
 
 export interface LlmsProps {
-  readonly huggingFaceApiToken?: string
+  readonly huggingFaceApiToken?: string;
   readonly sagemaker: SagemakerLlmModelConfig[];
 }
 
@@ -120,7 +120,6 @@ export interface AuroraEngineProps {
   readonly minCapacity?: number;
   readonly maxCapacity?: number;
 }
-
 
 export interface KendraExternalProps {
   readonly name: string;
@@ -133,7 +132,7 @@ export interface KendraS3DataSourceConfigProps {
   readonly bucketName: string;
   readonly kmsKeyArn: string;
   readonly includedDirectories: string[];
-  readonly metadataDirectory?: string
+  readonly metadataDirectory?: string;
 }
 
 export interface KendraEngineProps {
@@ -146,7 +145,7 @@ export interface SagemakerRagProps {
   readonly instanceType?: string;
   readonly minInstanceCount?: number;
   readonly maxInstanceCount?: number;
-  readonly initialInstanceCount?: number
+  readonly initialInstanceCount?: number;
 }
 
 export interface ExternalKnowledgeBaseProps {
@@ -161,9 +160,9 @@ export interface KnowledgeBaseProps {
 }
 
 export interface EngineProps {
-  readonly sagemaker?: SagemakerRagProps
+  readonly sagemaker?: SagemakerRagProps;
   readonly aurora?: AuroraEngineProps;
-  readonly kendra?: KendraEngineProps ;
+  readonly kendra?: KendraEngineProps;
   readonly knowledgeBase?: KnowledgeBaseProps;
 }
 
@@ -181,7 +180,7 @@ export interface CrossEncoderModelProps {
 }
 
 export interface RagProps {
-  readonly engines: EngineProps
+  readonly engines: EngineProps;
   readonly embeddingsModels: ModelProps[];
   readonly crossEncoderModels: CrossEncoderModelProps[];
 }
@@ -199,19 +198,19 @@ export interface ConcurrencyProps {
 }
 
 export interface SystemConfig {
-  readonly prefix: string
-  readonly mainDomain?: string
-  readonly vpc: VpcProps
-  readonly auth: AuthProps
-  readonly bedrock?: BedrockProps
-  readonly llms: LlmsProps
-  readonly rag?: RagProps
-  readonly api?: BackendApisProps
-  readonly concurrency?: ConcurrencyProps
-  readonly powertoolsDevLogging?: "true" | "false"
-  readonly setApiGateWayAccountCloudwatchRole?: boolean
-  readonly skipApiGatewayDefaultWaf?: boolean
-  readonly codeOverwrites?: CodeOverwritesProps
+  readonly prefix: string;
+  readonly mainDomain?: string;
+  readonly vpc: VpcProps;
+  readonly auth: AuthProps;
+  readonly bedrock?: BedrockProps;
+  readonly llms: LlmsProps;
+  readonly rag?: RagProps;
+  readonly api?: BackendApisProps;
+  readonly concurrency?: ConcurrencyProps;
+  readonly powertoolsDevLogging?: 'true' | 'false';
+  readonly setApiGateWayAccountCloudwatchRole?: boolean;
+  readonly skipApiGatewayDefaultWaf?: boolean;
+  readonly codeOverwrites?: CodeOverwritesProps;
 }
 
 export interface SageMakerLLMEndpoint {

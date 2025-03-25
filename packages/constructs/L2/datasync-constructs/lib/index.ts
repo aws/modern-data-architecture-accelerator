@@ -3,5 +3,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './agent'
-export * from './location'
+export * from './agent';
+export * from './location';

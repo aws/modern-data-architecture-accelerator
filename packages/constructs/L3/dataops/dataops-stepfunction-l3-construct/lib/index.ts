@@ -3,4 +3,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './dataops-stepfunction-l3-construct'
+export * from './dataops-stepfunction-l3-construct';

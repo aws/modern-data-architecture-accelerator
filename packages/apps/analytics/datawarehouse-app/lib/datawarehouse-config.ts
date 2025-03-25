@@ -84,7 +84,7 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
   /**
    * Additional parameters for the cluster parameter group. Certain security-sensitive values will be overridden.
    */
-  parameterGroupParams?: ConfigurationElement;
+  parameterGroupParams?: Record<string, string>;
   /**
    * The cluster workload management configuration.
    */
@@ -148,7 +148,7 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
   public readonly multiNode?: boolean;
   public readonly preferredMaintenanceWindow: string;
   public readonly securityGroupIngress: { ipv4?: string[]; sg?: string[] };
-  public readonly parameterGroupParams: ConfigurationElement;
+  public readonly parameterGroupParams: Record<string, string>;
   public readonly workloadManagement: ConfigurationElement[];
   public readonly additionalBucketKmsKeyArns?: string[];
   public static readonly defaultClusterPort = 54390;

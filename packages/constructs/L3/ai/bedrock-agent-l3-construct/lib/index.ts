@@ -3,4 +3,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './bedrock-agent-l3-construct'
+export * from './bedrock-agent-l3-construct';

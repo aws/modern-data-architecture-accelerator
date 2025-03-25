@@ -3,4 +3,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './datazone-l3-construct'
+export * from './datazone-l3-construct';

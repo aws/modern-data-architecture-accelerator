@@ -336,6 +336,10 @@
             ],
             "type": "object"
         },
+        "Record<string,string>": {
+            "additionalProperties": false,
+            "type": "object"
+        },
         "ScheduledActionProps": {
             "additionalProperties": false,
             "properties": {
@@ -458,9 +462,8 @@
             "type": "number"
         },
         "parameterGroupParams": {
-            "additionalProperties": {},
-            "description": "Additional parameters for the cluster parameter group. Certain security-sensitive values will be overridden.",
-            "type": "object"
+            "$ref": "#/definitions/Record<string,string>",
+            "description": "Additional parameters for the cluster parameter group. Certain security-sensitive values will be overridden."
         },
         "preferredMaintenanceWindow": {
             "description": "The preferred maintenance window for the cluster\nExample: 'Sun:23:45-Mon:00:15'",

@@ -3,71 +3,74 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaTestApp } from "@aws-mdaa/testing";
-import { Template } from "aws-cdk-lib/assertions";
-import { MdaaDataBrewRecipe, MdaaDataBrewRecipeProps } from "../lib";
+import { MdaaTestApp } from '@aws-mdaa/testing';
+import { Template } from 'aws-cdk-lib/assertions';
+import { MdaaDataBrewRecipe, MdaaDataBrewRecipeProps } from '../lib';
 
-describe( 'MDAA Construct Compliance Tests', () => {
-  const testApp = new MdaaTestApp()
-
+describe('MDAA Construct Compliance Tests', () => {
+  const testApp = new MdaaTestApp();
 
   const testContstructProps: MdaaDataBrewRecipeProps = {
     naming: testApp.naming,
-    name: "test-recipe",
-    steps: [ {
-      action: {
-        operation: 'operation',
+    name: 'test-recipe',
+    steps: [
+      {
+        action: {
+          operation: 'operation',
 
-        // the properties below are optional
-        parameters: {
-          parametersKey: 'parameters',
+          // the properties below are optional
+          parameters: {
+            parametersKey: 'parameters',
+          },
         },
-      },
-
-      // the properties below are optional
-      conditionExpressions: [ {
-        condition: 'condition',
-        targetColumn: 'targetColumn',
 
         // the properties below are optional
-        value: 'value',
-      } ],
-    } ],
+        conditionExpressions: [
+          {
+            condition: 'condition',
+            targetColumn: 'targetColumn',
+
+            // the properties below are optional
+            value: 'value',
+          },
+        ],
+      },
+    ],
 
     // the properties below are optional
-    description: 'description'
-  }
+    description: 'description',
+  };
 
-  new MdaaDataBrewRecipe( testApp.testStack, "test-construct", testContstructProps )
-  testApp.checkCdkNagCompliance( testApp.testStack )
-  const template = Template.fromStack( testApp.testStack )
+  new MdaaDataBrewRecipe(testApp.testStack, 'test-construct', testContstructProps);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
 
-  test( 'TestRecipeName', () => {
-    template.hasResourceProperties( "AWS::DataBrew::Recipe", {
-      "Name": testApp.naming.resourceName( "test-recipe" )
-    } )
-  } )
+  test('TestRecipeName', () => {
+    template.hasResourceProperties('AWS::DataBrew::Recipe', {
+      Name: testApp.naming.resourceName('test-recipe'),
+    });
+  });
 
-  test( 'TestInput', () => {
-    template.hasResourceProperties( "AWS::DataBrew::Recipe", {
-      "Steps": [
+  test('TestInput', () => {
+    template.hasResourceProperties('AWS::DataBrew::Recipe', {
+      Steps: [
         {
-          "Action": {
-            "Operation": "operation",
-            "Parameters": {
-              "parametersKey": "parameters"
-            }
+          Action: {
+            Operation: 'operation',
+            Parameters: {
+              parametersKey: 'parameters',
+            },
           },
-          "ConditionExpressions": [
+          ConditionExpressions: [
             {
-              "Condition": "condition",
-              "TargetColumn": "targetColumn",
-              "Value": "value"
-            }
-          ]
-        }
+              Condition: 'condition',
+              TargetColumn: 'targetColumn',
+              Value: 'value',
+            },
+          ],
+        },
       ],
-      "Description": "description"
-    } )
-  } )
-} )
+      Description: 'description',
+    });
+  });
+});

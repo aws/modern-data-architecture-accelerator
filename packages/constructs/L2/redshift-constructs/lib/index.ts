@@ -3,5 +3,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './cluster'
-export * from './parameter-group'
+export * from './cluster';
+export * from './parameter-group';

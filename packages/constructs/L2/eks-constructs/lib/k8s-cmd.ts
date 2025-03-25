@@ -29,9 +29,8 @@ export interface KubernetesCmdProps {
    *
    * @default 'default'
    * @jsii ignore
-  */
+   */
   readonly namespace?: string;
-
 
   /**
    * Timeout for waiting on a value.
@@ -44,10 +43,9 @@ export interface KubernetesCmdProps {
    * If specified, causes re-execution of the cmd only if this key changes across deployments.
    * If not specified, the cmd will run only once.
    */
-  readonly executionKey?: string
+  readonly executionKey?: string;
 
-
-  readonly expectedOutput?: string
+  readonly expectedOutput?: string;
 }
 
 /**
@@ -62,12 +60,12 @@ export class KubernetesCmd extends Construct {
 
   private _resource: CustomResource;
 
-  constructor( scope: Construct, id: string, props: KubernetesCmdProps ) {
-    super( scope, id );
+  constructor(scope: Construct, id: string, props: KubernetesCmdProps) {
+    super(scope, id);
 
-    const provider = props.cluster.mdaaKubeCtlProvider
+    const provider = props.cluster.mdaaKubeCtlProvider;
 
-    this._resource = new CustomResource( this, 'Resource', {
+    this._resource = new CustomResource(this, 'Resource', {
       resourceType: KubernetesCmd.RESOURCE_TYPE,
       serviceToken: provider.serviceToken,
       properties: {
@@ -76,17 +74,16 @@ export class KubernetesCmd extends Construct {
         Cmd: props.cmd,
         ExpectedOutput: props.expectedOutput,
         Namespace: props.namespace ?? 'default',
-        TimeoutSeconds: ( props?.timeout ?? Duration.minutes( 5 ) ).toSeconds(),
-        ExecutionKey: props.executionKey
+        TimeoutSeconds: (props?.timeout ?? Duration.minutes(5)).toSeconds(),
+        ExecutionKey: props.executionKey,
       },
-    } );
-
+    });
   }
 
   /**
    * The value as a string token.
    */
-  public get value (): string {
-    return Token.asString( this._resource.getAtt( 'Value' ) );
+  public get value(): string {
+    return Token.asString(this._resource.getAtt('Value'));
   }
 }

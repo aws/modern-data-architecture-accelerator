@@ -7,7 +7,7 @@
             "properties": {
                 "authenticationMethod": {
                     "$ref": "#/definitions/AuthenticationMethod",
-                    "description": "The method to authenticate your Amazon QuickSight account. \nValid Values:"
+                    "description": "The method to authenticate your Amazon QuickSight account.\nValid Values:"
                 },
                 "contactNumber": {
                     "description": "A 10-digit phone number for the author of the Amazon QuickSight account to use for future communications.",
@@ -15,7 +15,7 @@
                 },
                 "edition": {
                     "$ref": "#/definitions/Edition",
-                    "description": "The edition of Amazon QuickSight. \nValid Values: STANDARD | ENTERPRISE | ENTERPRISE_AND_Q"
+                    "description": "The edition of Amazon QuickSight.\nValid Values: STANDARD | ENTERPRISE | ENTERPRISE_AND_Q"
                 },
                 "emailAddress": {
                     "description": "The email address of the author of the Amazon QuickSight account to use for future communications.",
