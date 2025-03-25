@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './crawler'
-export * from './job'
-export * from './security-config'
-export * from './catalog-settings'
+export * from './crawler';
+export * from './job';
+export * from './security-config';
+export * from './catalog-settings';

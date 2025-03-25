@@ -87,7 +87,7 @@
             "additionalProperties": false,
             "properties": {
                 "adminRoles": {
-                    "description": "Roles which will be provided Admin access to the \nKMS key, and KeyPair secrets.",
+                    "description": "Roles which will be provided Admin access to the\nKMS key, and KeyPair secrets.",
                     "items": {
                         "$ref": "#/definitions/MdaaRoleRef"
                     },
@@ -131,7 +131,7 @@
                     "additionalProperties": {
                         "type": "boolean"
                     },
-                    "description": "Map of accepted request parameter names to boolean indicating if they are required.\nIf specified, API gateway will validate that: 1) each provided parameter is accepted; \nand 2) all required parameters have been provided.",
+                    "description": "Map of accepted request parameter names to boolean indicating if they are required.\nIf specified, API gateway will validate that: 1) each provided parameter is accepted;\nand 2) all required parameters have been provided.",
                     "type": "object"
                 },
                 "setAccountCloudWatchRole": {

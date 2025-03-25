@@ -1,12 +1,12 @@
-import {MdaaL3Construct} from "@aws-mdaa/l3-construct";
+import { MdaaL3Construct } from '@aws-mdaa/l3-construct';
 
-export * from "./container-images";
-export * from "./types";
-import * as sagemaker from "aws-cdk-lib/aws-sagemaker";
-import { Construct } from "constructs";
-import { deployContainerModel } from "./deploy-container-model";
-import { deployPackageModel } from "./deploy-package-model";
-import { DeploymentType, SageMakerModelProps } from "./types";
+export * from './container-images';
+export * from './types';
+import * as sagemaker from 'aws-cdk-lib/aws-sagemaker';
+import { Construct } from 'constructs';
+import { deployContainerModel } from './deploy-container-model';
+import { deployPackageModel } from './deploy-package-model';
+import { DeploymentType, SageMakerModelProps } from './types';
 
 export class SageMakerModel extends MdaaL3Construct {
   public readonly endpoint: sagemaker.CfnEndpoint;
@@ -25,7 +25,7 @@ export class SageMakerModel extends MdaaL3Construct {
       const { endpoint } = deployPackageModel(this, props, model);
       this.endpoint = endpoint;
     } else {
-      throw new Error( `Unknown model type`)
+      throw new Error(`Unknown model type`);
     }
   }
 }

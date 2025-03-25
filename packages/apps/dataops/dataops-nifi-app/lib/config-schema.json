@@ -613,7 +613,7 @@
                     "type": "number"
                 },
                 "nodeSize": {
-                    "description": "Size of the Nifi cluster nodes. \nDefaults to SMALL.",
+                    "description": "Size of the Nifi cluster nodes.\nDefaults to SMALL.",
                     "enum": [
                         "2XLARGE",
                         "LARGE",

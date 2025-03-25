@@ -3,27 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaTestApp } from "@aws-mdaa/testing";
-import { Template } from "aws-cdk-lib/assertions";
-import { MdaaDatazoneProject, MdaaDatazoneProjectProps } from "../lib";
+import { MdaaTestApp } from '@aws-mdaa/testing';
+import { Template } from 'aws-cdk-lib/assertions';
+import { MdaaDatazoneProject, MdaaDatazoneProjectProps } from '../lib';
 
-describe( 'MDAA Construct Compliance Tests', () => {
-  const testApp = new MdaaTestApp()
-
+describe('MDAA Construct Compliance Tests', () => {
+  const testApp = new MdaaTestApp();
 
   const testContstructProps: MdaaDatazoneProjectProps = {
     naming: testApp.naming,
-    name: "test-project",
-    domainConfigSSMParam: "testing"
-  
-  }
+    name: 'test-project',
+    domainConfigSSMParam: 'testing',
+  };
 
-  new MdaaDatazoneProject( testApp.testStack, "test-construct", testContstructProps )
+  new MdaaDatazoneProject(testApp.testStack, 'test-construct', testContstructProps);
 
-  testApp.checkCdkNagCompliance( testApp.testStack )
-  const template = Template.fromStack( testApp.testStack )
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
 
-  console.log(template)
-
-  
-} )
+  console.log(template);
+});

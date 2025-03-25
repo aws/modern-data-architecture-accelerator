@@ -3,54 +3,53 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaTestApp } from "@aws-mdaa/testing";
-import { Template } from "aws-cdk-lib/assertions";
-import { MdaaReplicationInstance, MdaaReplicationInstanceProps } from "../lib";
-import { CfnReplicationSubnetGroup } from "aws-cdk-lib/aws-dms";
-import { Key } from "aws-cdk-lib/aws-kms";
+import { MdaaTestApp } from '@aws-mdaa/testing';
+import { Template } from 'aws-cdk-lib/assertions';
+import { MdaaReplicationInstance, MdaaReplicationInstanceProps } from '../lib';
+import { CfnReplicationSubnetGroup } from 'aws-cdk-lib/aws-dms';
+import { Key } from 'aws-cdk-lib/aws-kms';
 
+describe('Replication Instance Compliance Tests', () => {
+  const testApp = new MdaaTestApp();
 
-describe( 'Replication Instance Compliance Tests', () => {
-    const testApp = new MdaaTestApp()
+  const subnetGroup = new CfnReplicationSubnetGroup(testApp.testStack, 'test-subnet-group', {
+    replicationSubnetGroupIdentifier: 'testing',
+    replicationSubnetGroupDescription: 'testing',
+    subnetIds: ['test-subnet1'],
+  });
+  const testKey = Key.fromKeyArn(
+    testApp.testStack,
+    'testKey',
+    'arn:test-partition:kms:test-region:test-account:key/test-key',
+  );
+  const replicationInstanceProps: MdaaReplicationInstanceProps = {
+    kmsKey: testKey,
+    replicationInstanceClass: 'dms.t2.micro',
+    naming: testApp.naming,
+    replicationSubnetGroupIdentifier: subnetGroup.attrId,
+  };
 
-    const subnetGroup = new CfnReplicationSubnetGroup(testApp.testStack,'test-subnet-group', {
-        replicationSubnetGroupIdentifier: "testing",
-        replicationSubnetGroupDescription: "testing",
-        subnetIds: [
-            "test-subnet1"
-        ]
-    })
-    const testKey = Key.fromKeyArn( testApp.testStack, "testKey", "arn:test-partition:kms:test-region:test-account:key/test-key" )
-    const replicationInstanceProps: MdaaReplicationInstanceProps = {
-        kmsKey: testKey,
-        replicationInstanceClass: "dms.t2.micro",
-        naming: testApp.naming,
-        replicationSubnetGroupIdentifier: subnetGroup.attrId
-    }
+  new MdaaReplicationInstance(testApp.testStack, 'test-rep-isntance', replicationInstanceProps);
 
-    new MdaaReplicationInstance(testApp.testStack,'test-rep-isntance',replicationInstanceProps)
-   
-    testApp.checkCdkNagCompliance( testApp.testStack )
-    const template = Template.fromStack( testApp.testStack );
-    // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+  // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
 
+  test('Replication Instance ID', () => {
+    template.hasResourceProperties('AWS::DMS::ReplicationInstance', {
+      ReplicationInstanceIdentifier: 'test-org-test-env-test-domain-test-module',
+    });
+  });
 
-    test( 'Replication Instance ID', () => {
-        template.hasResourceProperties( "AWS::DMS::ReplicationInstance", {
-            "ReplicationInstanceIdentifier": "test-org-test-env-test-domain-test-module"
-        } )
-    } )
+  test('Kms Key Id', () => {
+    template.hasResourceProperties('AWS::DMS::ReplicationInstance', {
+      KmsKeyId: 'test-key',
+    });
+  });
 
-    test( 'Kms Key Id', () => {
-        template.hasResourceProperties( "AWS::DMS::ReplicationInstance", {
-            "KmsKeyId": "test-key"
-        } )
-    } )
-    
-    test( 'Non-Publicly Accessible', () => {
-        template.hasResourceProperties( "AWS::DMS::ReplicationInstance", {
-            "PubliclyAccessible": false
-        } )
-    } )
-} )
-
+  test('Non-Publicly Accessible', () => {
+    template.hasResourceProperties('AWS::DMS::ReplicationInstance', {
+      PubliclyAccessible: false,
+    });
+  });
+});

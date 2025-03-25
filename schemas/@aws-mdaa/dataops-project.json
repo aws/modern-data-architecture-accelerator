@@ -531,7 +531,9 @@
             "additionalProperties": false,
             "properties": {
                 "connectionProperties": {
-                    "description": "Connection properties key value pairs.  See: https://docs.aws.amazon.com/glue/latest/webapi/API_Connection.html"
+                    "additionalProperties": {},
+                    "description": "Connection properties key value pairs.  See: https://docs.aws.amazon.com/glue/latest/webapi/API_Connection.html",
+                    "type": "object"
                 },
                 "connectionType": {
                     "$ref": "#/definitions/ConnectionType",
@@ -1548,7 +1550,7 @@
             "additionalProperties": false,
             "properties": {
                 "account": {
-                    "description": "Optionally, the principal account can be specified for cases where the account cannot be \ndetermined from the role arn",
+                    "description": "Optionally, the principal account can be specified for cases where the account cannot be\ndetermined from the role arn",
                     "type": "string"
                 },
                 "federatedGroup": {

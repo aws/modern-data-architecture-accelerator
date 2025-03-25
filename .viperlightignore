@@ -29,3 +29,6 @@ packages/constructs/L3/ai/gaia-l3-construct/lib/models/index.ts # Known SageMake
 packages/constructs/L3/ai/gaia-l3-construct/lib/shared/index.ts # Known Lambda service account
 packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/hf-custom-script-model/build-script/script.py:63 # runs in deployment once, command string fully controlled by script code and not inputs
 packages/constructs/L3/ai/bedrock-agent-l3-construct/test/lambda/test-layer.zip # Empty test file
+packages/constructs/L2/eks-constructs/lib/cluster.ts:467 # it's not an email address!
+packages/constructs/L2/eks-constructs/lib/cluster.ts:539 # it's not an email address!
+packages/constructs/L3/ai/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:30 # public ECR account

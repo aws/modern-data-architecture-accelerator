@@ -1221,7 +1221,7 @@
                     "description": "List of ingress rules to be added to the function SG"
                 },
                 "instanceClass": {
-                    "description": "The compute class of the replication instance. \nFor supported types, see https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.Types.html",
+                    "description": "The compute class of the replication instance.\nFor supported types, see https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.Types.html",
                     "type": "string"
                 },
                 "subnetIds": {

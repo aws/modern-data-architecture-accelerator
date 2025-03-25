@@ -2,6 +2,7 @@
 import { ApiObject, GroupVersionKind } from 'cdk8s';
 import { Construct } from 'constructs';
 
+type ManifestType = GroupVersionKind | Record<string, unknown> | undefined;
 /**
  * MutatingWebhookConfiguration describes the configuration of and admission webhook that accept or reject and may change the object.
  *
@@ -14,7 +15,7 @@ export class KubeMutatingWebhookConfiguration extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'admissionregistration.k8s.io/v1',
     kind: 'MutatingWebhookConfiguration',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.admissionregistration.v1.MutatingWebhookConfiguration".
@@ -23,7 +24,7 @@ export class KubeMutatingWebhookConfiguration extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeMutatingWebhookConfigurationProps = {}): any {
+  public static manifest(props: KubeMutatingWebhookConfigurationProps = {}): ManifestType {
     return {
       ...KubeMutatingWebhookConfiguration.GVK,
       ...toJson_KubeMutatingWebhookConfigurationProps(props),
@@ -46,7 +47,7 @@ export class KubeMutatingWebhookConfiguration extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -68,7 +69,7 @@ export class KubeMutatingWebhookConfigurationList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'admissionregistration.k8s.io/v1',
     kind: 'MutatingWebhookConfigurationList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.admissionregistration.v1.MutatingWebhookConfigurationList".
@@ -77,7 +78,7 @@ export class KubeMutatingWebhookConfigurationList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeMutatingWebhookConfigurationListProps): any {
+  public static manifest(props: KubeMutatingWebhookConfigurationListProps): ManifestType {
     return {
       ...KubeMutatingWebhookConfigurationList.GVK,
       ...toJson_KubeMutatingWebhookConfigurationListProps(props),
@@ -100,7 +101,7 @@ export class KubeMutatingWebhookConfigurationList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -122,7 +123,7 @@ export class KubeValidatingWebhookConfiguration extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'admissionregistration.k8s.io/v1',
     kind: 'ValidatingWebhookConfiguration',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.admissionregistration.v1.ValidatingWebhookConfiguration".
@@ -131,7 +132,7 @@ export class KubeValidatingWebhookConfiguration extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeValidatingWebhookConfigurationProps = {}): any {
+  public static manifest(props: KubeValidatingWebhookConfigurationProps = {}): ManifestType {
     return {
       ...KubeValidatingWebhookConfiguration.GVK,
       ...toJson_KubeValidatingWebhookConfigurationProps(props),
@@ -154,7 +155,7 @@ export class KubeValidatingWebhookConfiguration extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -176,7 +177,7 @@ export class KubeValidatingWebhookConfigurationList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'admissionregistration.k8s.io/v1',
     kind: 'ValidatingWebhookConfigurationList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.admissionregistration.v1.ValidatingWebhookConfigurationList".
@@ -185,7 +186,7 @@ export class KubeValidatingWebhookConfigurationList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeValidatingWebhookConfigurationListProps): any {
+  public static manifest(props: KubeValidatingWebhookConfigurationListProps): ManifestType {
     return {
       ...KubeValidatingWebhookConfigurationList.GVK,
       ...toJson_KubeValidatingWebhookConfigurationListProps(props),
@@ -208,7 +209,7 @@ export class KubeValidatingWebhookConfigurationList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -230,7 +231,7 @@ export class KubeStorageVersionV1Alpha1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'internal.apiserver.k8s.io/v1alpha1',
     kind: 'StorageVersion',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apiserverinternal.v1alpha1.StorageVersion".
@@ -239,7 +240,7 @@ export class KubeStorageVersionV1Alpha1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeStorageVersionV1Alpha1Props): any {
+  public static manifest(props: KubeStorageVersionV1Alpha1Props): ManifestType {
     return {
       ...KubeStorageVersionV1Alpha1.GVK,
       ...toJson_KubeStorageVersionV1Alpha1Props(props),
@@ -262,7 +263,7 @@ export class KubeStorageVersionV1Alpha1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -284,7 +285,7 @@ export class KubeStorageVersionListV1Alpha1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'internal.apiserver.k8s.io/v1alpha1',
     kind: 'StorageVersionList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apiserverinternal.v1alpha1.StorageVersionList".
@@ -293,7 +294,7 @@ export class KubeStorageVersionListV1Alpha1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeStorageVersionListV1Alpha1Props): any {
+  public static manifest(props: KubeStorageVersionListV1Alpha1Props): ManifestType {
     return {
       ...KubeStorageVersionListV1Alpha1.GVK,
       ...toJson_KubeStorageVersionListV1Alpha1Props(props),
@@ -316,7 +317,7 @@ export class KubeStorageVersionListV1Alpha1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -338,7 +339,7 @@ export class KubeControllerRevision extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'ControllerRevision',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.ControllerRevision".
@@ -347,7 +348,7 @@ export class KubeControllerRevision extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeControllerRevisionProps): any {
+  public static manifest(props: KubeControllerRevisionProps): ManifestType {
     return {
       ...KubeControllerRevision.GVK,
       ...toJson_KubeControllerRevisionProps(props),
@@ -370,7 +371,7 @@ export class KubeControllerRevision extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -392,7 +393,7 @@ export class KubeControllerRevisionList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'ControllerRevisionList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.ControllerRevisionList".
@@ -401,7 +402,7 @@ export class KubeControllerRevisionList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeControllerRevisionListProps): any {
+  public static manifest(props: KubeControllerRevisionListProps): ManifestType {
     return {
       ...KubeControllerRevisionList.GVK,
       ...toJson_KubeControllerRevisionListProps(props),
@@ -424,7 +425,7 @@ export class KubeControllerRevisionList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -446,7 +447,7 @@ export class KubeDaemonSet extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'DaemonSet',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.DaemonSet".
@@ -455,7 +456,7 @@ export class KubeDaemonSet extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeDaemonSetProps = {}): any {
+  public static manifest(props: KubeDaemonSetProps = {}): ManifestType {
     return {
       ...KubeDaemonSet.GVK,
       ...toJson_KubeDaemonSetProps(props),
@@ -478,7 +479,7 @@ export class KubeDaemonSet extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -500,7 +501,7 @@ export class KubeDaemonSetList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'DaemonSetList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.DaemonSetList".
@@ -509,7 +510,7 @@ export class KubeDaemonSetList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeDaemonSetListProps): any {
+  public static manifest(props: KubeDaemonSetListProps): ManifestType {
     return {
       ...KubeDaemonSetList.GVK,
       ...toJson_KubeDaemonSetListProps(props),
@@ -532,7 +533,7 @@ export class KubeDaemonSetList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -554,7 +555,7 @@ export class KubeDeployment extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'Deployment',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.Deployment".
@@ -563,7 +564,7 @@ export class KubeDeployment extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeDeploymentProps = {}): any {
+  public static manifest(props: KubeDeploymentProps = {}): ManifestType {
     return {
       ...KubeDeployment.GVK,
       ...toJson_KubeDeploymentProps(props),
@@ -586,7 +587,7 @@ export class KubeDeployment extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -608,7 +609,7 @@ export class KubeDeploymentList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'DeploymentList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.DeploymentList".
@@ -617,7 +618,7 @@ export class KubeDeploymentList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeDeploymentListProps): any {
+  public static manifest(props: KubeDeploymentListProps): ManifestType {
     return {
       ...KubeDeploymentList.GVK,
       ...toJson_KubeDeploymentListProps(props),
@@ -640,7 +641,7 @@ export class KubeDeploymentList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -662,7 +663,7 @@ export class KubeReplicaSet extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'ReplicaSet',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.ReplicaSet".
@@ -671,7 +672,7 @@ export class KubeReplicaSet extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeReplicaSetProps = {}): any {
+  public static manifest(props: KubeReplicaSetProps = {}): ManifestType {
     return {
       ...KubeReplicaSet.GVK,
       ...toJson_KubeReplicaSetProps(props),
@@ -694,7 +695,7 @@ export class KubeReplicaSet extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -716,7 +717,7 @@ export class KubeReplicaSetList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'ReplicaSetList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.ReplicaSetList".
@@ -725,7 +726,7 @@ export class KubeReplicaSetList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeReplicaSetListProps): any {
+  public static manifest(props: KubeReplicaSetListProps): ManifestType {
     return {
       ...KubeReplicaSetList.GVK,
       ...toJson_KubeReplicaSetListProps(props),
@@ -748,7 +749,7 @@ export class KubeReplicaSetList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -774,7 +775,7 @@ export class KubeStatefulSet extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'StatefulSet',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.StatefulSet".
@@ -783,7 +784,7 @@ export class KubeStatefulSet extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeStatefulSetProps = {}): any {
+  public static manifest(props: KubeStatefulSetProps = {}): ManifestType {
     return {
       ...KubeStatefulSet.GVK,
       ...toJson_KubeStatefulSetProps(props),
@@ -806,7 +807,7 @@ export class KubeStatefulSet extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -828,7 +829,7 @@ export class KubeStatefulSetList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apps/v1',
     kind: 'StatefulSetList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.apps.v1.StatefulSetList".
@@ -837,7 +838,7 @@ export class KubeStatefulSetList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeStatefulSetListProps): any {
+  public static manifest(props: KubeStatefulSetListProps): ManifestType {
     return {
       ...KubeStatefulSetList.GVK,
       ...toJson_KubeStatefulSetListProps(props),
@@ -860,7 +861,7 @@ export class KubeStatefulSetList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -882,7 +883,7 @@ export class KubeTokenRequest extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'authentication.k8s.io/v1',
     kind: 'TokenRequest',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.authentication.v1.TokenRequest".
@@ -891,7 +892,7 @@ export class KubeTokenRequest extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeTokenRequestProps): any {
+  public static manifest(props: KubeTokenRequestProps): ManifestType {
     return {
       ...KubeTokenRequest.GVK,
       ...toJson_KubeTokenRequestProps(props),
@@ -914,7 +915,7 @@ export class KubeTokenRequest extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -936,7 +937,7 @@ export class KubeTokenReview extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'authentication.k8s.io/v1',
     kind: 'TokenReview',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.authentication.v1.TokenReview".
@@ -945,7 +946,7 @@ export class KubeTokenReview extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeTokenReviewProps): any {
+  public static manifest(props: KubeTokenReviewProps): ManifestType {
     return {
       ...KubeTokenReview.GVK,
       ...toJson_KubeTokenReviewProps(props),
@@ -968,7 +969,7 @@ export class KubeTokenReview extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -990,7 +991,7 @@ export class KubeLocalSubjectAccessReview extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'authorization.k8s.io/v1',
     kind: 'LocalSubjectAccessReview',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.authorization.v1.LocalSubjectAccessReview".
@@ -999,7 +1000,7 @@ export class KubeLocalSubjectAccessReview extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeLocalSubjectAccessReviewProps): any {
+  public static manifest(props: KubeLocalSubjectAccessReviewProps): ManifestType {
     return {
       ...KubeLocalSubjectAccessReview.GVK,
       ...toJson_KubeLocalSubjectAccessReviewProps(props),
@@ -1022,7 +1023,7 @@ export class KubeLocalSubjectAccessReview extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1044,7 +1045,7 @@ export class KubeSelfSubjectAccessReview extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'authorization.k8s.io/v1',
     kind: 'SelfSubjectAccessReview',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.authorization.v1.SelfSubjectAccessReview".
@@ -1053,7 +1054,7 @@ export class KubeSelfSubjectAccessReview extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeSelfSubjectAccessReviewProps): any {
+  public static manifest(props: KubeSelfSubjectAccessReviewProps): ManifestType {
     return {
       ...KubeSelfSubjectAccessReview.GVK,
       ...toJson_KubeSelfSubjectAccessReviewProps(props),
@@ -1076,7 +1077,7 @@ export class KubeSelfSubjectAccessReview extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1098,7 +1099,7 @@ export class KubeSelfSubjectRulesReview extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'authorization.k8s.io/v1',
     kind: 'SelfSubjectRulesReview',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.authorization.v1.SelfSubjectRulesReview".
@@ -1107,7 +1108,7 @@ export class KubeSelfSubjectRulesReview extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeSelfSubjectRulesReviewProps): any {
+  public static manifest(props: KubeSelfSubjectRulesReviewProps): ManifestType {
     return {
       ...KubeSelfSubjectRulesReview.GVK,
       ...toJson_KubeSelfSubjectRulesReviewProps(props),
@@ -1130,7 +1131,7 @@ export class KubeSelfSubjectRulesReview extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1152,7 +1153,7 @@ export class KubeSubjectAccessReview extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'authorization.k8s.io/v1',
     kind: 'SubjectAccessReview',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.authorization.v1.SubjectAccessReview".
@@ -1161,7 +1162,7 @@ export class KubeSubjectAccessReview extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeSubjectAccessReviewProps): any {
+  public static manifest(props: KubeSubjectAccessReviewProps): ManifestType {
     return {
       ...KubeSubjectAccessReview.GVK,
       ...toJson_KubeSubjectAccessReviewProps(props),
@@ -1184,7 +1185,7 @@ export class KubeSubjectAccessReview extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1206,7 +1207,7 @@ export class KubeHorizontalPodAutoscaler extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'autoscaling/v1',
     kind: 'HorizontalPodAutoscaler',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.autoscaling.v1.HorizontalPodAutoscaler".
@@ -1215,7 +1216,7 @@ export class KubeHorizontalPodAutoscaler extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeHorizontalPodAutoscalerProps = {}): any {
+  public static manifest(props: KubeHorizontalPodAutoscalerProps = {}): ManifestType {
     return {
       ...KubeHorizontalPodAutoscaler.GVK,
       ...toJson_KubeHorizontalPodAutoscalerProps(props),
@@ -1238,7 +1239,7 @@ export class KubeHorizontalPodAutoscaler extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1260,7 +1261,7 @@ export class KubeHorizontalPodAutoscalerList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'autoscaling/v1',
     kind: 'HorizontalPodAutoscalerList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerList".
@@ -1269,7 +1270,7 @@ export class KubeHorizontalPodAutoscalerList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeHorizontalPodAutoscalerListProps): any {
+  public static manifest(props: KubeHorizontalPodAutoscalerListProps): ManifestType {
     return {
       ...KubeHorizontalPodAutoscalerList.GVK,
       ...toJson_KubeHorizontalPodAutoscalerListProps(props),
@@ -1292,7 +1293,7 @@ export class KubeHorizontalPodAutoscalerList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1314,7 +1315,7 @@ export class KubeScale extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'autoscaling/v1',
     kind: 'Scale',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.autoscaling.v1.Scale".
@@ -1323,7 +1324,7 @@ export class KubeScale extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeScaleProps = {}): any {
+  public static manifest(props: KubeScaleProps = {}): ManifestType {
     return {
       ...KubeScale.GVK,
       ...toJson_KubeScaleProps(props),
@@ -1346,7 +1347,7 @@ export class KubeScale extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1368,7 +1369,7 @@ export class KubeHorizontalPodAutoscalerV2 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'autoscaling/v2',
     kind: 'HorizontalPodAutoscaler',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.autoscaling.v2.HorizontalPodAutoscaler".
@@ -1377,7 +1378,7 @@ export class KubeHorizontalPodAutoscalerV2 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeHorizontalPodAutoscalerV2Props = {}): any {
+  public static manifest(props: KubeHorizontalPodAutoscalerV2Props = {}): ManifestType {
     return {
       ...KubeHorizontalPodAutoscalerV2.GVK,
       ...toJson_KubeHorizontalPodAutoscalerV2Props(props),
@@ -1400,7 +1401,7 @@ export class KubeHorizontalPodAutoscalerV2 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1422,7 +1423,7 @@ export class KubeHorizontalPodAutoscalerListV2 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'autoscaling/v2',
     kind: 'HorizontalPodAutoscalerList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerList".
@@ -1431,7 +1432,7 @@ export class KubeHorizontalPodAutoscalerListV2 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeHorizontalPodAutoscalerListV2Props): any {
+  public static manifest(props: KubeHorizontalPodAutoscalerListV2Props): ManifestType {
     return {
       ...KubeHorizontalPodAutoscalerListV2.GVK,
       ...toJson_KubeHorizontalPodAutoscalerListV2Props(props),
@@ -1454,7 +1455,7 @@ export class KubeHorizontalPodAutoscalerListV2 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1476,7 +1477,7 @@ export class KubeHorizontalPodAutoscalerV2Beta2 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'autoscaling/v2beta2',
     kind: 'HorizontalPodAutoscaler',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.autoscaling.v2beta2.HorizontalPodAutoscaler".
@@ -1485,7 +1486,7 @@ export class KubeHorizontalPodAutoscalerV2Beta2 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeHorizontalPodAutoscalerV2Beta2Props = {}): any {
+  public static manifest(props: KubeHorizontalPodAutoscalerV2Beta2Props = {}): ManifestType {
     return {
       ...KubeHorizontalPodAutoscalerV2Beta2.GVK,
       ...toJson_KubeHorizontalPodAutoscalerV2Beta2Props(props),
@@ -1508,7 +1509,7 @@ export class KubeHorizontalPodAutoscalerV2Beta2 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1530,7 +1531,7 @@ export class KubeHorizontalPodAutoscalerListV2Beta2 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'autoscaling/v2beta2',
     kind: 'HorizontalPodAutoscalerList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.autoscaling.v2beta2.HorizontalPodAutoscalerList".
@@ -1539,7 +1540,7 @@ export class KubeHorizontalPodAutoscalerListV2Beta2 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeHorizontalPodAutoscalerListV2Beta2Props): any {
+  public static manifest(props: KubeHorizontalPodAutoscalerListV2Beta2Props): ManifestType {
     return {
       ...KubeHorizontalPodAutoscalerListV2Beta2.GVK,
       ...toJson_KubeHorizontalPodAutoscalerListV2Beta2Props(props),
@@ -1562,7 +1563,7 @@ export class KubeHorizontalPodAutoscalerListV2Beta2 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1584,7 +1585,7 @@ export class KubeCronJob extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'batch/v1',
     kind: 'CronJob',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.batch.v1.CronJob".
@@ -1593,7 +1594,7 @@ export class KubeCronJob extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCronJobProps = {}): any {
+  public static manifest(props: KubeCronJobProps = {}): ManifestType {
     return {
       ...KubeCronJob.GVK,
       ...toJson_KubeCronJobProps(props),
@@ -1616,7 +1617,7 @@ export class KubeCronJob extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1638,7 +1639,7 @@ export class KubeCronJobList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'batch/v1',
     kind: 'CronJobList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.batch.v1.CronJobList".
@@ -1647,7 +1648,7 @@ export class KubeCronJobList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCronJobListProps): any {
+  public static manifest(props: KubeCronJobListProps): ManifestType {
     return {
       ...KubeCronJobList.GVK,
       ...toJson_KubeCronJobListProps(props),
@@ -1670,7 +1671,7 @@ export class KubeCronJobList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1692,7 +1693,7 @@ export class KubeJob extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'batch/v1',
     kind: 'Job',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.batch.v1.Job".
@@ -1701,7 +1702,7 @@ export class KubeJob extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeJobProps = {}): any {
+  public static manifest(props: KubeJobProps = {}): ManifestType {
     return {
       ...KubeJob.GVK,
       ...toJson_KubeJobProps(props),
@@ -1724,7 +1725,7 @@ export class KubeJob extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1746,7 +1747,7 @@ export class KubeJobList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'batch/v1',
     kind: 'JobList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.batch.v1.JobList".
@@ -1755,7 +1756,7 @@ export class KubeJobList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeJobListProps): any {
+  public static manifest(props: KubeJobListProps): ManifestType {
     return {
       ...KubeJobList.GVK,
       ...toJson_KubeJobListProps(props),
@@ -1778,7 +1779,7 @@ export class KubeJobList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1806,7 +1807,7 @@ export class KubeCertificateSigningRequest extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'certificates.k8s.io/v1',
     kind: 'CertificateSigningRequest',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.certificates.v1.CertificateSigningRequest".
@@ -1815,7 +1816,7 @@ export class KubeCertificateSigningRequest extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCertificateSigningRequestProps): any {
+  public static manifest(props: KubeCertificateSigningRequestProps): ManifestType {
     return {
       ...KubeCertificateSigningRequest.GVK,
       ...toJson_KubeCertificateSigningRequestProps(props),
@@ -1838,7 +1839,7 @@ export class KubeCertificateSigningRequest extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1860,7 +1861,7 @@ export class KubeCertificateSigningRequestList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'certificates.k8s.io/v1',
     kind: 'CertificateSigningRequestList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.certificates.v1.CertificateSigningRequestList".
@@ -1869,7 +1870,7 @@ export class KubeCertificateSigningRequestList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCertificateSigningRequestListProps): any {
+  public static manifest(props: KubeCertificateSigningRequestListProps): ManifestType {
     return {
       ...KubeCertificateSigningRequestList.GVK,
       ...toJson_KubeCertificateSigningRequestListProps(props),
@@ -1892,7 +1893,7 @@ export class KubeCertificateSigningRequestList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1914,7 +1915,7 @@ export class KubeLease extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'coordination.k8s.io/v1',
     kind: 'Lease',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.coordination.v1.Lease".
@@ -1923,7 +1924,7 @@ export class KubeLease extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeLeaseProps = {}): any {
+  public static manifest(props: KubeLeaseProps = {}): ManifestType {
     return {
       ...KubeLease.GVK,
       ...toJson_KubeLeaseProps(props),
@@ -1946,7 +1947,7 @@ export class KubeLease extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -1968,7 +1969,7 @@ export class KubeLeaseList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'coordination.k8s.io/v1',
     kind: 'LeaseList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.coordination.v1.LeaseList".
@@ -1977,7 +1978,7 @@ export class KubeLeaseList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeLeaseListProps): any {
+  public static manifest(props: KubeLeaseListProps): ManifestType {
     return {
       ...KubeLeaseList.GVK,
       ...toJson_KubeLeaseListProps(props),
@@ -2000,7 +2001,7 @@ export class KubeLeaseList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2022,7 +2023,7 @@ export class KubeBinding extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'Binding',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.Binding".
@@ -2031,7 +2032,7 @@ export class KubeBinding extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeBindingProps): any {
+  public static manifest(props: KubeBindingProps): ManifestType {
     return {
       ...KubeBinding.GVK,
       ...toJson_KubeBindingProps(props),
@@ -2054,7 +2055,7 @@ export class KubeBinding extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2076,7 +2077,7 @@ export class KubeComponentStatus extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ComponentStatus',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ComponentStatus".
@@ -2085,7 +2086,7 @@ export class KubeComponentStatus extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeComponentStatusProps = {}): any {
+  public static manifest(props: KubeComponentStatusProps = {}): ManifestType {
     return {
       ...KubeComponentStatus.GVK,
       ...toJson_KubeComponentStatusProps(props),
@@ -2108,7 +2109,7 @@ export class KubeComponentStatus extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2130,7 +2131,7 @@ export class KubeComponentStatusList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ComponentStatusList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ComponentStatusList".
@@ -2139,7 +2140,7 @@ export class KubeComponentStatusList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeComponentStatusListProps): any {
+  public static manifest(props: KubeComponentStatusListProps): ManifestType {
     return {
       ...KubeComponentStatusList.GVK,
       ...toJson_KubeComponentStatusListProps(props),
@@ -2162,7 +2163,7 @@ export class KubeComponentStatusList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2184,7 +2185,7 @@ export class KubeConfigMap extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ConfigMap',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ConfigMap".
@@ -2193,7 +2194,7 @@ export class KubeConfigMap extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeConfigMapProps = {}): any {
+  public static manifest(props: KubeConfigMapProps = {}): ManifestType {
     return {
       ...KubeConfigMap.GVK,
       ...toJson_KubeConfigMapProps(props),
@@ -2216,7 +2217,7 @@ export class KubeConfigMap extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2238,7 +2239,7 @@ export class KubeConfigMapList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ConfigMapList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ConfigMapList".
@@ -2247,7 +2248,7 @@ export class KubeConfigMapList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeConfigMapListProps): any {
+  public static manifest(props: KubeConfigMapListProps): ManifestType {
     return {
       ...KubeConfigMapList.GVK,
       ...toJson_KubeConfigMapListProps(props),
@@ -2270,7 +2271,7 @@ export class KubeConfigMapList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2304,7 +2305,7 @@ export class KubeEndpoints extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'Endpoints',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.Endpoints".
@@ -2313,7 +2314,7 @@ export class KubeEndpoints extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeEndpointsProps = {}): any {
+  public static manifest(props: KubeEndpointsProps = {}): ManifestType {
     return {
       ...KubeEndpoints.GVK,
       ...toJson_KubeEndpointsProps(props),
@@ -2336,7 +2337,7 @@ export class KubeEndpoints extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2358,7 +2359,7 @@ export class KubeEndpointsList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'EndpointsList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.EndpointsList".
@@ -2367,7 +2368,7 @@ export class KubeEndpointsList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeEndpointsListProps): any {
+  public static manifest(props: KubeEndpointsListProps): ManifestType {
     return {
       ...KubeEndpointsList.GVK,
       ...toJson_KubeEndpointsListProps(props),
@@ -2390,7 +2391,7 @@ export class KubeEndpointsList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2412,7 +2413,7 @@ export class KubeEvent extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'events.k8s.io/v1',
     kind: 'Event',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.events.v1.Event".
@@ -2421,7 +2422,7 @@ export class KubeEvent extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeEventProps): any {
+  public static manifest(props: KubeEventProps): ManifestType {
     return {
       ...KubeEvent.GVK,
       ...toJson_KubeEventProps(props),
@@ -2444,7 +2445,7 @@ export class KubeEvent extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2466,7 +2467,7 @@ export class KubeEventList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'events.k8s.io/v1',
     kind: 'EventList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.events.v1.EventList".
@@ -2475,7 +2476,7 @@ export class KubeEventList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeEventListProps): any {
+  public static manifest(props: KubeEventListProps): ManifestType {
     return {
       ...KubeEventList.GVK,
       ...toJson_KubeEventListProps(props),
@@ -2498,7 +2499,7 @@ export class KubeEventList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2520,7 +2521,7 @@ export class KubeLimitRange extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'LimitRange',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.LimitRange".
@@ -2529,7 +2530,7 @@ export class KubeLimitRange extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeLimitRangeProps = {}): any {
+  public static manifest(props: KubeLimitRangeProps = {}): ManifestType {
     return {
       ...KubeLimitRange.GVK,
       ...toJson_KubeLimitRangeProps(props),
@@ -2552,7 +2553,7 @@ export class KubeLimitRange extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2574,7 +2575,7 @@ export class KubeLimitRangeList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'LimitRangeList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.LimitRangeList".
@@ -2583,7 +2584,7 @@ export class KubeLimitRangeList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeLimitRangeListProps): any {
+  public static manifest(props: KubeLimitRangeListProps): ManifestType {
     return {
       ...KubeLimitRangeList.GVK,
       ...toJson_KubeLimitRangeListProps(props),
@@ -2606,7 +2607,7 @@ export class KubeLimitRangeList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2628,7 +2629,7 @@ export class KubeNamespace extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'Namespace',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.Namespace".
@@ -2637,7 +2638,7 @@ export class KubeNamespace extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeNamespaceProps = {}): any {
+  public static manifest(props: KubeNamespaceProps = {}): ManifestType {
     return {
       ...KubeNamespace.GVK,
       ...toJson_KubeNamespaceProps(props),
@@ -2660,7 +2661,7 @@ export class KubeNamespace extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2682,7 +2683,7 @@ export class KubeNamespaceList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'NamespaceList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.NamespaceList".
@@ -2691,7 +2692,7 @@ export class KubeNamespaceList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeNamespaceListProps): any {
+  public static manifest(props: KubeNamespaceListProps): ManifestType {
     return {
       ...KubeNamespaceList.GVK,
       ...toJson_KubeNamespaceListProps(props),
@@ -2714,7 +2715,7 @@ export class KubeNamespaceList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2736,7 +2737,7 @@ export class KubeNode extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'Node',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.Node".
@@ -2745,7 +2746,7 @@ export class KubeNode extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeNodeProps = {}): any {
+  public static manifest(props: KubeNodeProps = {}): ManifestType {
     return {
       ...KubeNode.GVK,
       ...toJson_KubeNodeProps(props),
@@ -2768,7 +2769,7 @@ export class KubeNode extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2790,7 +2791,7 @@ export class KubeNodeList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'NodeList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.NodeList".
@@ -2799,7 +2800,7 @@ export class KubeNodeList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeNodeListProps): any {
+  public static manifest(props: KubeNodeListProps): ManifestType {
     return {
       ...KubeNodeList.GVK,
       ...toJson_KubeNodeListProps(props),
@@ -2822,7 +2823,7 @@ export class KubeNodeList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2844,7 +2845,7 @@ export class KubePersistentVolume extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'PersistentVolume',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.PersistentVolume".
@@ -2853,7 +2854,7 @@ export class KubePersistentVolume extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePersistentVolumeProps = {}): any {
+  public static manifest(props: KubePersistentVolumeProps = {}): ManifestType {
     return {
       ...KubePersistentVolume.GVK,
       ...toJson_KubePersistentVolumeProps(props),
@@ -2876,7 +2877,7 @@ export class KubePersistentVolume extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2898,7 +2899,7 @@ export class KubePersistentVolumeClaim extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'PersistentVolumeClaim',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.PersistentVolumeClaim".
@@ -2907,7 +2908,7 @@ export class KubePersistentVolumeClaim extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePersistentVolumeClaimProps = {}): any {
+  public static manifest(props: KubePersistentVolumeClaimProps = {}): ManifestType {
     return {
       ...KubePersistentVolumeClaim.GVK,
       ...toJson_KubePersistentVolumeClaimProps(props),
@@ -2930,7 +2931,7 @@ export class KubePersistentVolumeClaim extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -2952,7 +2953,7 @@ export class KubePersistentVolumeClaimList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'PersistentVolumeClaimList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.PersistentVolumeClaimList".
@@ -2961,7 +2962,7 @@ export class KubePersistentVolumeClaimList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePersistentVolumeClaimListProps): any {
+  public static manifest(props: KubePersistentVolumeClaimListProps): ManifestType {
     return {
       ...KubePersistentVolumeClaimList.GVK,
       ...toJson_KubePersistentVolumeClaimListProps(props),
@@ -2984,7 +2985,7 @@ export class KubePersistentVolumeClaimList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3006,7 +3007,7 @@ export class KubePersistentVolumeList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'PersistentVolumeList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.PersistentVolumeList".
@@ -3015,7 +3016,7 @@ export class KubePersistentVolumeList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePersistentVolumeListProps): any {
+  public static manifest(props: KubePersistentVolumeListProps): ManifestType {
     return {
       ...KubePersistentVolumeList.GVK,
       ...toJson_KubePersistentVolumeListProps(props),
@@ -3038,7 +3039,7 @@ export class KubePersistentVolumeList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3060,7 +3061,7 @@ export class KubePod extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'Pod',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.Pod".
@@ -3069,7 +3070,7 @@ export class KubePod extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePodProps = {}): any {
+  public static manifest(props: KubePodProps = {}): ManifestType {
     return {
       ...KubePod.GVK,
       ...toJson_KubePodProps(props),
@@ -3092,7 +3093,7 @@ export class KubePod extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3114,7 +3115,7 @@ export class KubePodList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'PodList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.PodList".
@@ -3123,7 +3124,7 @@ export class KubePodList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePodListProps): any {
+  public static manifest(props: KubePodListProps): ManifestType {
     return {
       ...KubePodList.GVK,
       ...toJson_KubePodListProps(props),
@@ -3146,7 +3147,7 @@ export class KubePodList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3168,7 +3169,7 @@ export class KubePodTemplate extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'PodTemplate',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.PodTemplate".
@@ -3177,7 +3178,7 @@ export class KubePodTemplate extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePodTemplateProps = {}): any {
+  public static manifest(props: KubePodTemplateProps = {}): ManifestType {
     return {
       ...KubePodTemplate.GVK,
       ...toJson_KubePodTemplateProps(props),
@@ -3200,7 +3201,7 @@ export class KubePodTemplate extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3222,7 +3223,7 @@ export class KubePodTemplateList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'PodTemplateList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.PodTemplateList".
@@ -3231,7 +3232,7 @@ export class KubePodTemplateList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePodTemplateListProps): any {
+  public static manifest(props: KubePodTemplateListProps): ManifestType {
     return {
       ...KubePodTemplateList.GVK,
       ...toJson_KubePodTemplateListProps(props),
@@ -3254,7 +3255,7 @@ export class KubePodTemplateList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3276,7 +3277,7 @@ export class KubeReplicationController extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ReplicationController',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ReplicationController".
@@ -3285,7 +3286,7 @@ export class KubeReplicationController extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeReplicationControllerProps = {}): any {
+  public static manifest(props: KubeReplicationControllerProps = {}): ManifestType {
     return {
       ...KubeReplicationController.GVK,
       ...toJson_KubeReplicationControllerProps(props),
@@ -3308,7 +3309,7 @@ export class KubeReplicationController extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3330,7 +3331,7 @@ export class KubeReplicationControllerList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ReplicationControllerList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ReplicationControllerList".
@@ -3339,7 +3340,7 @@ export class KubeReplicationControllerList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeReplicationControllerListProps): any {
+  public static manifest(props: KubeReplicationControllerListProps): ManifestType {
     return {
       ...KubeReplicationControllerList.GVK,
       ...toJson_KubeReplicationControllerListProps(props),
@@ -3362,7 +3363,7 @@ export class KubeReplicationControllerList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3384,7 +3385,7 @@ export class KubeResourceQuota extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ResourceQuota',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ResourceQuota".
@@ -3393,7 +3394,7 @@ export class KubeResourceQuota extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeResourceQuotaProps = {}): any {
+  public static manifest(props: KubeResourceQuotaProps = {}): ManifestType {
     return {
       ...KubeResourceQuota.GVK,
       ...toJson_KubeResourceQuotaProps(props),
@@ -3416,7 +3417,7 @@ export class KubeResourceQuota extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3438,7 +3439,7 @@ export class KubeResourceQuotaList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ResourceQuotaList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ResourceQuotaList".
@@ -3447,7 +3448,7 @@ export class KubeResourceQuotaList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeResourceQuotaListProps): any {
+  public static manifest(props: KubeResourceQuotaListProps): ManifestType {
     return {
       ...KubeResourceQuotaList.GVK,
       ...toJson_KubeResourceQuotaListProps(props),
@@ -3470,7 +3471,7 @@ export class KubeResourceQuotaList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3492,7 +3493,7 @@ export class KubeSecret extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'Secret',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.Secret".
@@ -3501,7 +3502,7 @@ export class KubeSecret extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeSecretProps = {}): any {
+  public static manifest(props: KubeSecretProps = {}): ManifestType {
     return {
       ...KubeSecret.GVK,
       ...toJson_KubeSecretProps(props),
@@ -3524,7 +3525,7 @@ export class KubeSecret extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3546,7 +3547,7 @@ export class KubeSecretList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'SecretList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.SecretList".
@@ -3555,7 +3556,7 @@ export class KubeSecretList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeSecretListProps): any {
+  public static manifest(props: KubeSecretListProps): ManifestType {
     return {
       ...KubeSecretList.GVK,
       ...toJson_KubeSecretListProps(props),
@@ -3578,7 +3579,7 @@ export class KubeSecretList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3600,7 +3601,7 @@ export class KubeService extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'Service',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.Service".
@@ -3609,7 +3610,7 @@ export class KubeService extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeServiceProps = {}): any {
+  public static manifest(props: KubeServiceProps = {}): ManifestType {
     return {
       ...KubeService.GVK,
       ...toJson_KubeServiceProps(props),
@@ -3632,7 +3633,7 @@ export class KubeService extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3654,7 +3655,7 @@ export class KubeServiceAccount extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ServiceAccount',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ServiceAccount".
@@ -3663,7 +3664,7 @@ export class KubeServiceAccount extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeServiceAccountProps = {}): any {
+  public static manifest(props: KubeServiceAccountProps = {}): ManifestType {
     return {
       ...KubeServiceAccount.GVK,
       ...toJson_KubeServiceAccountProps(props),
@@ -3686,7 +3687,7 @@ export class KubeServiceAccount extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3708,7 +3709,7 @@ export class KubeServiceAccountList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ServiceAccountList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ServiceAccountList".
@@ -3717,7 +3718,7 @@ export class KubeServiceAccountList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeServiceAccountListProps): any {
+  public static manifest(props: KubeServiceAccountListProps): ManifestType {
     return {
       ...KubeServiceAccountList.GVK,
       ...toJson_KubeServiceAccountListProps(props),
@@ -3740,7 +3741,7 @@ export class KubeServiceAccountList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3762,7 +3763,7 @@ export class KubeServiceList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'ServiceList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.core.v1.ServiceList".
@@ -3771,7 +3772,7 @@ export class KubeServiceList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeServiceListProps): any {
+  public static manifest(props: KubeServiceListProps): ManifestType {
     return {
       ...KubeServiceList.GVK,
       ...toJson_KubeServiceListProps(props),
@@ -3794,7 +3795,7 @@ export class KubeServiceList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3816,7 +3817,7 @@ export class KubeEndpointSlice extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'discovery.k8s.io/v1',
     kind: 'EndpointSlice',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.discovery.v1.EndpointSlice".
@@ -3825,7 +3826,7 @@ export class KubeEndpointSlice extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeEndpointSliceProps): any {
+  public static manifest(props: KubeEndpointSliceProps): ManifestType {
     return {
       ...KubeEndpointSlice.GVK,
       ...toJson_KubeEndpointSliceProps(props),
@@ -3848,7 +3849,7 @@ export class KubeEndpointSlice extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3870,7 +3871,7 @@ export class KubeEndpointSliceList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'discovery.k8s.io/v1',
     kind: 'EndpointSliceList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.discovery.v1.EndpointSliceList".
@@ -3879,7 +3880,7 @@ export class KubeEndpointSliceList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeEndpointSliceListProps): any {
+  public static manifest(props: KubeEndpointSliceListProps): ManifestType {
     return {
       ...KubeEndpointSliceList.GVK,
       ...toJson_KubeEndpointSliceListProps(props),
@@ -3902,7 +3903,7 @@ export class KubeEndpointSliceList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3924,7 +3925,7 @@ export class KubeFlowSchemaV1Beta1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'flowcontrol.apiserver.k8s.io/v1beta1',
     kind: 'FlowSchema',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.flowcontrol.v1beta1.FlowSchema".
@@ -3933,7 +3934,7 @@ export class KubeFlowSchemaV1Beta1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeFlowSchemaV1Beta1Props = {}): any {
+  public static manifest(props: KubeFlowSchemaV1Beta1Props = {}): ManifestType {
     return {
       ...KubeFlowSchemaV1Beta1.GVK,
       ...toJson_KubeFlowSchemaV1Beta1Props(props),
@@ -3956,7 +3957,7 @@ export class KubeFlowSchemaV1Beta1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -3978,7 +3979,7 @@ export class KubeFlowSchemaListV1Beta1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'flowcontrol.apiserver.k8s.io/v1beta1',
     kind: 'FlowSchemaList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.flowcontrol.v1beta1.FlowSchemaList".
@@ -3987,7 +3988,7 @@ export class KubeFlowSchemaListV1Beta1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeFlowSchemaListV1Beta1Props): any {
+  public static manifest(props: KubeFlowSchemaListV1Beta1Props): ManifestType {
     return {
       ...KubeFlowSchemaListV1Beta1.GVK,
       ...toJson_KubeFlowSchemaListV1Beta1Props(props),
@@ -4010,7 +4011,7 @@ export class KubeFlowSchemaListV1Beta1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4032,7 +4033,7 @@ export class KubePriorityLevelConfigurationV1Beta1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'flowcontrol.apiserver.k8s.io/v1beta1',
     kind: 'PriorityLevelConfiguration',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.flowcontrol.v1beta1.PriorityLevelConfiguration".
@@ -4041,7 +4042,7 @@ export class KubePriorityLevelConfigurationV1Beta1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePriorityLevelConfigurationV1Beta1Props = {}): any {
+  public static manifest(props: KubePriorityLevelConfigurationV1Beta1Props = {}): ManifestType {
     return {
       ...KubePriorityLevelConfigurationV1Beta1.GVK,
       ...toJson_KubePriorityLevelConfigurationV1Beta1Props(props),
@@ -4064,7 +4065,7 @@ export class KubePriorityLevelConfigurationV1Beta1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4086,7 +4087,7 @@ export class KubePriorityLevelConfigurationListV1Beta1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'flowcontrol.apiserver.k8s.io/v1beta1',
     kind: 'PriorityLevelConfigurationList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.flowcontrol.v1beta1.PriorityLevelConfigurationList".
@@ -4095,7 +4096,7 @@ export class KubePriorityLevelConfigurationListV1Beta1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePriorityLevelConfigurationListV1Beta1Props): any {
+  public static manifest(props: KubePriorityLevelConfigurationListV1Beta1Props): ManifestType {
     return {
       ...KubePriorityLevelConfigurationListV1Beta1.GVK,
       ...toJson_KubePriorityLevelConfigurationListV1Beta1Props(props),
@@ -4118,7 +4119,7 @@ export class KubePriorityLevelConfigurationListV1Beta1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4140,7 +4141,7 @@ export class KubeFlowSchemaV1Beta2 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'flowcontrol.apiserver.k8s.io/v1beta2',
     kind: 'FlowSchema',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.flowcontrol.v1beta2.FlowSchema".
@@ -4149,7 +4150,7 @@ export class KubeFlowSchemaV1Beta2 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeFlowSchemaV1Beta2Props = {}): any {
+  public static manifest(props: KubeFlowSchemaV1Beta2Props = {}): ManifestType {
     return {
       ...KubeFlowSchemaV1Beta2.GVK,
       ...toJson_KubeFlowSchemaV1Beta2Props(props),
@@ -4172,7 +4173,7 @@ export class KubeFlowSchemaV1Beta2 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4194,7 +4195,7 @@ export class KubeFlowSchemaListV1Beta2 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'flowcontrol.apiserver.k8s.io/v1beta2',
     kind: 'FlowSchemaList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.flowcontrol.v1beta2.FlowSchemaList".
@@ -4203,7 +4204,7 @@ export class KubeFlowSchemaListV1Beta2 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeFlowSchemaListV1Beta2Props): any {
+  public static manifest(props: KubeFlowSchemaListV1Beta2Props): ManifestType {
     return {
       ...KubeFlowSchemaListV1Beta2.GVK,
       ...toJson_KubeFlowSchemaListV1Beta2Props(props),
@@ -4226,7 +4227,7 @@ export class KubeFlowSchemaListV1Beta2 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4248,7 +4249,7 @@ export class KubePriorityLevelConfigurationV1Beta2 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'flowcontrol.apiserver.k8s.io/v1beta2',
     kind: 'PriorityLevelConfiguration',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.flowcontrol.v1beta2.PriorityLevelConfiguration".
@@ -4257,7 +4258,7 @@ export class KubePriorityLevelConfigurationV1Beta2 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePriorityLevelConfigurationV1Beta2Props = {}): any {
+  public static manifest(props: KubePriorityLevelConfigurationV1Beta2Props = {}): ManifestType {
     return {
       ...KubePriorityLevelConfigurationV1Beta2.GVK,
       ...toJson_KubePriorityLevelConfigurationV1Beta2Props(props),
@@ -4280,7 +4281,7 @@ export class KubePriorityLevelConfigurationV1Beta2 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4302,7 +4303,7 @@ export class KubePriorityLevelConfigurationListV1Beta2 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'flowcontrol.apiserver.k8s.io/v1beta2',
     kind: 'PriorityLevelConfigurationList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.flowcontrol.v1beta2.PriorityLevelConfigurationList".
@@ -4311,7 +4312,7 @@ export class KubePriorityLevelConfigurationListV1Beta2 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePriorityLevelConfigurationListV1Beta2Props): any {
+  public static manifest(props: KubePriorityLevelConfigurationListV1Beta2Props): ManifestType {
     return {
       ...KubePriorityLevelConfigurationListV1Beta2.GVK,
       ...toJson_KubePriorityLevelConfigurationListV1Beta2Props(props),
@@ -4334,7 +4335,7 @@ export class KubePriorityLevelConfigurationListV1Beta2 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4356,7 +4357,7 @@ export class KubeIngress extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'networking.k8s.io/v1',
     kind: 'Ingress',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.networking.v1.Ingress".
@@ -4365,7 +4366,7 @@ export class KubeIngress extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeIngressProps = {}): any {
+  public static manifest(props: KubeIngressProps = {}): ManifestType {
     return {
       ...KubeIngress.GVK,
       ...toJson_KubeIngressProps(props),
@@ -4388,7 +4389,7 @@ export class KubeIngress extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4410,7 +4411,7 @@ export class KubeIngressClass extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'networking.k8s.io/v1',
     kind: 'IngressClass',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.networking.v1.IngressClass".
@@ -4419,7 +4420,7 @@ export class KubeIngressClass extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeIngressClassProps = {}): any {
+  public static manifest(props: KubeIngressClassProps = {}): ManifestType {
     return {
       ...KubeIngressClass.GVK,
       ...toJson_KubeIngressClassProps(props),
@@ -4442,7 +4443,7 @@ export class KubeIngressClass extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4464,7 +4465,7 @@ export class KubeIngressClassList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'networking.k8s.io/v1',
     kind: 'IngressClassList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.networking.v1.IngressClassList".
@@ -4473,7 +4474,7 @@ export class KubeIngressClassList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeIngressClassListProps): any {
+  public static manifest(props: KubeIngressClassListProps): ManifestType {
     return {
       ...KubeIngressClassList.GVK,
       ...toJson_KubeIngressClassListProps(props),
@@ -4496,7 +4497,7 @@ export class KubeIngressClassList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4518,7 +4519,7 @@ export class KubeIngressList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'networking.k8s.io/v1',
     kind: 'IngressList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.networking.v1.IngressList".
@@ -4527,7 +4528,7 @@ export class KubeIngressList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeIngressListProps): any {
+  public static manifest(props: KubeIngressListProps): ManifestType {
     return {
       ...KubeIngressList.GVK,
       ...toJson_KubeIngressListProps(props),
@@ -4550,7 +4551,7 @@ export class KubeIngressList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4572,7 +4573,7 @@ export class KubeNetworkPolicy extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'networking.k8s.io/v1',
     kind: 'NetworkPolicy',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.networking.v1.NetworkPolicy".
@@ -4581,7 +4582,7 @@ export class KubeNetworkPolicy extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeNetworkPolicyProps = {}): any {
+  public static manifest(props: KubeNetworkPolicyProps = {}): ManifestType {
     return {
       ...KubeNetworkPolicy.GVK,
       ...toJson_KubeNetworkPolicyProps(props),
@@ -4604,7 +4605,7 @@ export class KubeNetworkPolicy extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4626,7 +4627,7 @@ export class KubeNetworkPolicyList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'networking.k8s.io/v1',
     kind: 'NetworkPolicyList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.networking.v1.NetworkPolicyList".
@@ -4635,7 +4636,7 @@ export class KubeNetworkPolicyList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeNetworkPolicyListProps): any {
+  public static manifest(props: KubeNetworkPolicyListProps): ManifestType {
     return {
       ...KubeNetworkPolicyList.GVK,
       ...toJson_KubeNetworkPolicyListProps(props),
@@ -4658,7 +4659,7 @@ export class KubeNetworkPolicyList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4680,7 +4681,7 @@ export class KubeClusterCidrv1Alpha1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'networking.k8s.io/v1alpha1',
     kind: 'ClusterCIDR',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.networking.v1alpha1.ClusterCIDR".
@@ -4689,7 +4690,7 @@ export class KubeClusterCidrv1Alpha1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeClusterCidrv1Alpha1Props = {}): any {
+  public static manifest(props: KubeClusterCidrv1Alpha1Props = {}): ManifestType {
     return {
       ...KubeClusterCidrv1Alpha1.GVK,
       ...toJson_KubeClusterCidrv1Alpha1Props(props),
@@ -4712,7 +4713,7 @@ export class KubeClusterCidrv1Alpha1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4734,7 +4735,7 @@ export class KubeClusterCidrListV1Alpha1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'networking.k8s.io/v1alpha1',
     kind: 'ClusterCIDRList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.networking.v1alpha1.ClusterCIDRList".
@@ -4743,7 +4744,7 @@ export class KubeClusterCidrListV1Alpha1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeClusterCidrListV1Alpha1Props): any {
+  public static manifest(props: KubeClusterCidrListV1Alpha1Props): ManifestType {
     return {
       ...KubeClusterCidrListV1Alpha1.GVK,
       ...toJson_KubeClusterCidrListV1Alpha1Props(props),
@@ -4766,7 +4767,7 @@ export class KubeClusterCidrListV1Alpha1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4788,7 +4789,7 @@ export class KubeRuntimeClass extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'node.k8s.io/v1',
     kind: 'RuntimeClass',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.node.v1.RuntimeClass".
@@ -4797,7 +4798,7 @@ export class KubeRuntimeClass extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeRuntimeClassProps): any {
+  public static manifest(props: KubeRuntimeClassProps): ManifestType {
     return {
       ...KubeRuntimeClass.GVK,
       ...toJson_KubeRuntimeClassProps(props),
@@ -4820,7 +4821,7 @@ export class KubeRuntimeClass extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4842,7 +4843,7 @@ export class KubeRuntimeClassList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'node.k8s.io/v1',
     kind: 'RuntimeClassList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.node.v1.RuntimeClassList".
@@ -4851,7 +4852,7 @@ export class KubeRuntimeClassList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeRuntimeClassListProps): any {
+  public static manifest(props: KubeRuntimeClassListProps): ManifestType {
     return {
       ...KubeRuntimeClassList.GVK,
       ...toJson_KubeRuntimeClassListProps(props),
@@ -4874,7 +4875,7 @@ export class KubeRuntimeClassList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4896,7 +4897,7 @@ export class KubeEviction extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'policy/v1',
     kind: 'Eviction',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.policy.v1.Eviction".
@@ -4905,7 +4906,7 @@ export class KubeEviction extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeEvictionProps = {}): any {
+  public static manifest(props: KubeEvictionProps = {}): ManifestType {
     return {
       ...KubeEviction.GVK,
       ...toJson_KubeEvictionProps(props),
@@ -4928,7 +4929,7 @@ export class KubeEviction extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -4950,7 +4951,7 @@ export class KubePodDisruptionBudget extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'policy/v1',
     kind: 'PodDisruptionBudget',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.policy.v1.PodDisruptionBudget".
@@ -4959,7 +4960,7 @@ export class KubePodDisruptionBudget extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePodDisruptionBudgetProps = {}): any {
+  public static manifest(props: KubePodDisruptionBudgetProps = {}): ManifestType {
     return {
       ...KubePodDisruptionBudget.GVK,
       ...toJson_KubePodDisruptionBudgetProps(props),
@@ -4982,7 +4983,7 @@ export class KubePodDisruptionBudget extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5004,7 +5005,7 @@ export class KubePodDisruptionBudgetList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'policy/v1',
     kind: 'PodDisruptionBudgetList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.policy.v1.PodDisruptionBudgetList".
@@ -5013,7 +5014,7 @@ export class KubePodDisruptionBudgetList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePodDisruptionBudgetListProps): any {
+  public static manifest(props: KubePodDisruptionBudgetListProps): ManifestType {
     return {
       ...KubePodDisruptionBudgetList.GVK,
       ...toJson_KubePodDisruptionBudgetListProps(props),
@@ -5036,7 +5037,7 @@ export class KubePodDisruptionBudgetList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5058,7 +5059,7 @@ export class KubeClusterRole extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'rbac.authorization.k8s.io/v1',
     kind: 'ClusterRole',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.rbac.v1.ClusterRole".
@@ -5067,7 +5068,7 @@ export class KubeClusterRole extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeClusterRoleProps = {}): any {
+  public static manifest(props: KubeClusterRoleProps = {}): ManifestType {
     return {
       ...KubeClusterRole.GVK,
       ...toJson_KubeClusterRoleProps(props),
@@ -5090,7 +5091,7 @@ export class KubeClusterRole extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5112,7 +5113,7 @@ export class KubeClusterRoleBinding extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'rbac.authorization.k8s.io/v1',
     kind: 'ClusterRoleBinding',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.rbac.v1.ClusterRoleBinding".
@@ -5121,7 +5122,7 @@ export class KubeClusterRoleBinding extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeClusterRoleBindingProps): any {
+  public static manifest(props: KubeClusterRoleBindingProps): ManifestType {
     return {
       ...KubeClusterRoleBinding.GVK,
       ...toJson_KubeClusterRoleBindingProps(props),
@@ -5144,7 +5145,7 @@ export class KubeClusterRoleBinding extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5166,7 +5167,7 @@ export class KubeClusterRoleBindingList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'rbac.authorization.k8s.io/v1',
     kind: 'ClusterRoleBindingList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.rbac.v1.ClusterRoleBindingList".
@@ -5175,7 +5176,7 @@ export class KubeClusterRoleBindingList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeClusterRoleBindingListProps): any {
+  public static manifest(props: KubeClusterRoleBindingListProps): ManifestType {
     return {
       ...KubeClusterRoleBindingList.GVK,
       ...toJson_KubeClusterRoleBindingListProps(props),
@@ -5198,7 +5199,7 @@ export class KubeClusterRoleBindingList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5220,7 +5221,7 @@ export class KubeClusterRoleList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'rbac.authorization.k8s.io/v1',
     kind: 'ClusterRoleList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.rbac.v1.ClusterRoleList".
@@ -5229,7 +5230,7 @@ export class KubeClusterRoleList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeClusterRoleListProps): any {
+  public static manifest(props: KubeClusterRoleListProps): ManifestType {
     return {
       ...KubeClusterRoleList.GVK,
       ...toJson_KubeClusterRoleListProps(props),
@@ -5252,7 +5253,7 @@ export class KubeClusterRoleList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5274,7 +5275,7 @@ export class KubeRole extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'rbac.authorization.k8s.io/v1',
     kind: 'Role',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.rbac.v1.Role".
@@ -5283,7 +5284,7 @@ export class KubeRole extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeRoleProps = {}): any {
+  public static manifest(props: KubeRoleProps = {}): ManifestType {
     return {
       ...KubeRole.GVK,
       ...toJson_KubeRoleProps(props),
@@ -5306,7 +5307,7 @@ export class KubeRole extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5328,7 +5329,7 @@ export class KubeRoleBinding extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'rbac.authorization.k8s.io/v1',
     kind: 'RoleBinding',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.rbac.v1.RoleBinding".
@@ -5337,7 +5338,7 @@ export class KubeRoleBinding extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeRoleBindingProps): any {
+  public static manifest(props: KubeRoleBindingProps): ManifestType {
     return {
       ...KubeRoleBinding.GVK,
       ...toJson_KubeRoleBindingProps(props),
@@ -5360,7 +5361,7 @@ export class KubeRoleBinding extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5382,7 +5383,7 @@ export class KubeRoleBindingList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'rbac.authorization.k8s.io/v1',
     kind: 'RoleBindingList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.rbac.v1.RoleBindingList".
@@ -5391,7 +5392,7 @@ export class KubeRoleBindingList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeRoleBindingListProps): any {
+  public static manifest(props: KubeRoleBindingListProps): ManifestType {
     return {
       ...KubeRoleBindingList.GVK,
       ...toJson_KubeRoleBindingListProps(props),
@@ -5414,7 +5415,7 @@ export class KubeRoleBindingList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5436,7 +5437,7 @@ export class KubeRoleList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'rbac.authorization.k8s.io/v1',
     kind: 'RoleList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.rbac.v1.RoleList".
@@ -5445,7 +5446,7 @@ export class KubeRoleList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeRoleListProps): any {
+  public static manifest(props: KubeRoleListProps): ManifestType {
     return {
       ...KubeRoleList.GVK,
       ...toJson_KubeRoleListProps(props),
@@ -5468,7 +5469,7 @@ export class KubeRoleList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5490,7 +5491,7 @@ export class KubePriorityClass extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'scheduling.k8s.io/v1',
     kind: 'PriorityClass',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.scheduling.v1.PriorityClass".
@@ -5499,7 +5500,7 @@ export class KubePriorityClass extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePriorityClassProps): any {
+  public static manifest(props: KubePriorityClassProps): ManifestType {
     return {
       ...KubePriorityClass.GVK,
       ...toJson_KubePriorityClassProps(props),
@@ -5522,7 +5523,7 @@ export class KubePriorityClass extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5544,7 +5545,7 @@ export class KubePriorityClassList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'scheduling.k8s.io/v1',
     kind: 'PriorityClassList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.scheduling.v1.PriorityClassList".
@@ -5553,7 +5554,7 @@ export class KubePriorityClassList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubePriorityClassListProps): any {
+  public static manifest(props: KubePriorityClassListProps): ManifestType {
     return {
       ...KubePriorityClassList.GVK,
       ...toJson_KubePriorityClassListProps(props),
@@ -5576,7 +5577,7 @@ export class KubePriorityClassList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5598,7 +5599,7 @@ export class KubeCsiDriver extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'CSIDriver',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.CSIDriver".
@@ -5607,7 +5608,7 @@ export class KubeCsiDriver extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCsiDriverProps): any {
+  public static manifest(props: KubeCsiDriverProps): ManifestType {
     return {
       ...KubeCsiDriver.GVK,
       ...toJson_KubeCsiDriverProps(props),
@@ -5630,7 +5631,7 @@ export class KubeCsiDriver extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5652,7 +5653,7 @@ export class KubeCsiDriverList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'CSIDriverList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.CSIDriverList".
@@ -5661,7 +5662,7 @@ export class KubeCsiDriverList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCsiDriverListProps): any {
+  public static manifest(props: KubeCsiDriverListProps): ManifestType {
     return {
       ...KubeCsiDriverList.GVK,
       ...toJson_KubeCsiDriverListProps(props),
@@ -5684,7 +5685,7 @@ export class KubeCsiDriverList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5706,7 +5707,7 @@ export class KubeCsiNode extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'CSINode',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.CSINode".
@@ -5715,7 +5716,7 @@ export class KubeCsiNode extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCsiNodeProps): any {
+  public static manifest(props: KubeCsiNodeProps): ManifestType {
     return {
       ...KubeCsiNode.GVK,
       ...toJson_KubeCsiNodeProps(props),
@@ -5738,7 +5739,7 @@ export class KubeCsiNode extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5760,7 +5761,7 @@ export class KubeCsiNodeList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'CSINodeList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.CSINodeList".
@@ -5769,7 +5770,7 @@ export class KubeCsiNodeList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCsiNodeListProps): any {
+  public static manifest(props: KubeCsiNodeListProps): ManifestType {
     return {
       ...KubeCsiNodeList.GVK,
       ...toJson_KubeCsiNodeListProps(props),
@@ -5792,7 +5793,7 @@ export class KubeCsiNodeList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5822,7 +5823,7 @@ export class KubeCsiStorageCapacity extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'CSIStorageCapacity',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.CSIStorageCapacity".
@@ -5831,7 +5832,7 @@ export class KubeCsiStorageCapacity extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCsiStorageCapacityProps): any {
+  public static manifest(props: KubeCsiStorageCapacityProps): ManifestType {
     return {
       ...KubeCsiStorageCapacity.GVK,
       ...toJson_KubeCsiStorageCapacityProps(props),
@@ -5854,7 +5855,7 @@ export class KubeCsiStorageCapacity extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5876,7 +5877,7 @@ export class KubeCsiStorageCapacityList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'CSIStorageCapacityList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.CSIStorageCapacityList".
@@ -5885,7 +5886,7 @@ export class KubeCsiStorageCapacityList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCsiStorageCapacityListProps): any {
+  public static manifest(props: KubeCsiStorageCapacityListProps): ManifestType {
     return {
       ...KubeCsiStorageCapacityList.GVK,
       ...toJson_KubeCsiStorageCapacityListProps(props),
@@ -5908,7 +5909,7 @@ export class KubeCsiStorageCapacityList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5932,7 +5933,7 @@ export class KubeStorageClass extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'StorageClass',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.StorageClass".
@@ -5941,7 +5942,7 @@ export class KubeStorageClass extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeStorageClassProps): any {
+  public static manifest(props: KubeStorageClassProps): ManifestType {
     return {
       ...KubeStorageClass.GVK,
       ...toJson_KubeStorageClassProps(props),
@@ -5964,7 +5965,7 @@ export class KubeStorageClass extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -5986,7 +5987,7 @@ export class KubeStorageClassList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'StorageClassList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.StorageClassList".
@@ -5995,7 +5996,7 @@ export class KubeStorageClassList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeStorageClassListProps): any {
+  public static manifest(props: KubeStorageClassListProps): ManifestType {
     return {
       ...KubeStorageClassList.GVK,
       ...toJson_KubeStorageClassListProps(props),
@@ -6018,7 +6019,7 @@ export class KubeStorageClassList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6042,7 +6043,7 @@ export class KubeVolumeAttachment extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'VolumeAttachment',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.VolumeAttachment".
@@ -6051,7 +6052,7 @@ export class KubeVolumeAttachment extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeVolumeAttachmentProps): any {
+  public static manifest(props: KubeVolumeAttachmentProps): ManifestType {
     return {
       ...KubeVolumeAttachment.GVK,
       ...toJson_KubeVolumeAttachmentProps(props),
@@ -6074,7 +6075,7 @@ export class KubeVolumeAttachment extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6096,7 +6097,7 @@ export class KubeVolumeAttachmentList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1',
     kind: 'VolumeAttachmentList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1.VolumeAttachmentList".
@@ -6105,7 +6106,7 @@ export class KubeVolumeAttachmentList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeVolumeAttachmentListProps): any {
+  public static manifest(props: KubeVolumeAttachmentListProps): ManifestType {
     return {
       ...KubeVolumeAttachmentList.GVK,
       ...toJson_KubeVolumeAttachmentListProps(props),
@@ -6128,7 +6129,7 @@ export class KubeVolumeAttachmentList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6158,7 +6159,7 @@ export class KubeCsiStorageCapacityV1Beta1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1beta1',
     kind: 'CSIStorageCapacity',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1beta1.CSIStorageCapacity".
@@ -6167,7 +6168,7 @@ export class KubeCsiStorageCapacityV1Beta1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCsiStorageCapacityV1Beta1Props): any {
+  public static manifest(props: KubeCsiStorageCapacityV1Beta1Props): ManifestType {
     return {
       ...KubeCsiStorageCapacityV1Beta1.GVK,
       ...toJson_KubeCsiStorageCapacityV1Beta1Props(props),
@@ -6190,7 +6191,7 @@ export class KubeCsiStorageCapacityV1Beta1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6212,7 +6213,7 @@ export class KubeCsiStorageCapacityListV1Beta1 extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'storage.k8s.io/v1beta1',
     kind: 'CSIStorageCapacityList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.api.storage.v1beta1.CSIStorageCapacityList".
@@ -6221,7 +6222,7 @@ export class KubeCsiStorageCapacityListV1Beta1 extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCsiStorageCapacityListV1Beta1Props): any {
+  public static manifest(props: KubeCsiStorageCapacityListV1Beta1Props): ManifestType {
     return {
       ...KubeCsiStorageCapacityListV1Beta1.GVK,
       ...toJson_KubeCsiStorageCapacityListV1Beta1Props(props),
@@ -6244,7 +6245,7 @@ export class KubeCsiStorageCapacityListV1Beta1 extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6266,7 +6267,7 @@ export class KubeCustomResourceDefinition extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apiextensions.k8s.io/v1',
     kind: 'CustomResourceDefinition',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinition".
@@ -6275,7 +6276,7 @@ export class KubeCustomResourceDefinition extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCustomResourceDefinitionProps): any {
+  public static manifest(props: KubeCustomResourceDefinitionProps): ManifestType {
     return {
       ...KubeCustomResourceDefinition.GVK,
       ...toJson_KubeCustomResourceDefinitionProps(props),
@@ -6298,7 +6299,7 @@ export class KubeCustomResourceDefinition extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6320,7 +6321,7 @@ export class KubeCustomResourceDefinitionList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apiextensions.k8s.io/v1',
     kind: 'CustomResourceDefinitionList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionList".
@@ -6329,7 +6330,7 @@ export class KubeCustomResourceDefinitionList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeCustomResourceDefinitionListProps): any {
+  public static manifest(props: KubeCustomResourceDefinitionListProps): ManifestType {
     return {
       ...KubeCustomResourceDefinitionList.GVK,
       ...toJson_KubeCustomResourceDefinitionListProps(props),
@@ -6352,7 +6353,7 @@ export class KubeCustomResourceDefinitionList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6374,7 +6375,7 @@ export class KubeStatus extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'v1',
     kind: 'Status',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.apimachinery.pkg.apis.meta.v1.Status".
@@ -6383,7 +6384,7 @@ export class KubeStatus extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeStatusProps = {}): any {
+  public static manifest(props: KubeStatusProps = {}): ManifestType {
     return {
       ...KubeStatus.GVK,
       ...toJson_KubeStatusProps(props),
@@ -6406,7 +6407,7 @@ export class KubeStatus extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6428,7 +6429,7 @@ export class KubeApiService extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apiregistration.k8s.io/v1',
     kind: 'APIService',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIService".
@@ -6437,7 +6438,7 @@ export class KubeApiService extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeApiServiceProps = {}): any {
+  public static manifest(props: KubeApiServiceProps = {}): ManifestType {
     return {
       ...KubeApiService.GVK,
       ...toJson_KubeApiServiceProps(props),
@@ -6460,7 +6461,7 @@ export class KubeApiService extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6482,7 +6483,7 @@ export class KubeApiServiceList extends ApiObject {
   public static readonly GVK: GroupVersionKind = {
     apiVersion: 'apiregistration.k8s.io/v1',
     kind: 'APIServiceList',
-  }
+  };
 
   /**
    * Renders a Kubernetes manifest for "io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceList".
@@ -6491,7 +6492,7 @@ export class KubeApiServiceList extends ApiObject {
    *
    * @param props initialization props
    */
-  public static manifest(props: KubeApiServiceListProps): any {
+  public static manifest(props: KubeApiServiceListProps): ManifestType {
     return {
       ...KubeApiServiceList.GVK,
       ...toJson_KubeApiServiceListProps(props),
@@ -6514,7 +6515,7 @@ export class KubeApiServiceList extends ApiObject {
   /**
    * Renders the object to Kubernetes JSON.
    */
-  public toJson(): any {
+  public toJson(): ManifestType {
     const resolved = super.toJson();
 
     return {
@@ -6543,21 +6544,24 @@ export interface KubeMutatingWebhookConfigurationProps {
    * @schema io.k8s.api.admissionregistration.v1.MutatingWebhookConfiguration#webhooks
    */
   readonly webhooks?: MutatingWebhook[];
-
 }
 
 /**
  * Converts an object of type 'KubeMutatingWebhookConfigurationProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeMutatingWebhookConfigurationProps(obj: KubeMutatingWebhookConfigurationProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeMutatingWebhookConfigurationProps(
+  obj: KubeMutatingWebhookConfigurationProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'webhooks': obj.webhooks?.map(y => toJson_MutatingWebhook(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    webhooks: obj.webhooks?.map(y => toJson_MutatingWebhook(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6580,21 +6584,24 @@ export interface KubeMutatingWebhookConfigurationListProps {
    * @schema io.k8s.api.admissionregistration.v1.MutatingWebhookConfigurationList#items
    */
   readonly items: KubeMutatingWebhookConfigurationProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeMutatingWebhookConfigurationListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeMutatingWebhookConfigurationListProps(obj: KubeMutatingWebhookConfigurationListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeMutatingWebhookConfigurationListProps(
+  obj: KubeMutatingWebhookConfigurationListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeMutatingWebhookConfigurationProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeMutatingWebhookConfigurationProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6617,21 +6624,24 @@ export interface KubeValidatingWebhookConfigurationProps {
    * @schema io.k8s.api.admissionregistration.v1.ValidatingWebhookConfiguration#webhooks
    */
   readonly webhooks?: ValidatingWebhook[];
-
 }
 
 /**
  * Converts an object of type 'KubeValidatingWebhookConfigurationProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeValidatingWebhookConfigurationProps(obj: KubeValidatingWebhookConfigurationProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeValidatingWebhookConfigurationProps(
+  obj: KubeValidatingWebhookConfigurationProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'webhooks': obj.webhooks?.map(y => toJson_ValidatingWebhook(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    webhooks: obj.webhooks?.map(y => toJson_ValidatingWebhook(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6654,21 +6664,24 @@ export interface KubeValidatingWebhookConfigurationListProps {
    * @schema io.k8s.api.admissionregistration.v1.ValidatingWebhookConfigurationList#items
    */
   readonly items: KubeValidatingWebhookConfigurationProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeValidatingWebhookConfigurationListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeValidatingWebhookConfigurationListProps(obj: KubeValidatingWebhookConfigurationListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeValidatingWebhookConfigurationListProps(
+  obj: KubeValidatingWebhookConfigurationListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeValidatingWebhookConfigurationProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeValidatingWebhookConfigurationProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6690,22 +6703,25 @@ export interface KubeStorageVersionV1Alpha1Props {
    *
    * @schema io.k8s.api.apiserverinternal.v1alpha1.StorageVersion#spec
    */
-  readonly spec: any;
-
+  readonly spec: unknown;
 }
 
 /**
  * Converts an object of type 'KubeStorageVersionV1Alpha1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeStorageVersionV1Alpha1Props(obj: KubeStorageVersionV1Alpha1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeStorageVersionV1Alpha1Props(
+  obj: KubeStorageVersionV1Alpha1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': obj.spec,
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: obj.spec,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6728,21 +6744,24 @@ export interface KubeStorageVersionListV1Alpha1Props {
    * @schema io.k8s.api.apiserverinternal.v1alpha1.StorageVersionList#items
    */
   readonly items: KubeStorageVersionV1Alpha1Props[];
-
 }
 
 /**
  * Converts an object of type 'KubeStorageVersionListV1Alpha1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeStorageVersionListV1Alpha1Props(obj: KubeStorageVersionListV1Alpha1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeStorageVersionListV1Alpha1Props(
+  obj: KubeStorageVersionListV1Alpha1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeStorageVersionV1Alpha1Props(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeStorageVersionV1Alpha1Props(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6764,7 +6783,7 @@ export interface KubeControllerRevisionProps {
    *
    * @schema io.k8s.api.apps.v1.ControllerRevision#data
    */
-  readonly data?: any;
+  readonly data?: unknown;
 
   /**
    * Revision indicates the revision of the state represented by Data.
@@ -6772,22 +6791,25 @@ export interface KubeControllerRevisionProps {
    * @schema io.k8s.api.apps.v1.ControllerRevision#revision
    */
   readonly revision: number;
-
 }
 
 /**
  * Converts an object of type 'KubeControllerRevisionProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeControllerRevisionProps(obj: KubeControllerRevisionProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeControllerRevisionProps(
+  obj: KubeControllerRevisionProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'data': obj.data,
-    'revision': obj.revision,
+    metadata: toJson_ObjectMeta(obj.metadata),
+    data: obj.data,
+    revision: obj.revision,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6810,21 +6832,24 @@ export interface KubeControllerRevisionListProps {
    * @schema io.k8s.api.apps.v1.ControllerRevisionList#items
    */
   readonly items: KubeControllerRevisionProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeControllerRevisionListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeControllerRevisionListProps(obj: KubeControllerRevisionListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeControllerRevisionListProps(
+  obj: KubeControllerRevisionListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeControllerRevisionProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeControllerRevisionProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6847,21 +6872,22 @@ export interface KubeDaemonSetProps {
    * @schema io.k8s.api.apps.v1.DaemonSet#spec
    */
   readonly spec?: DaemonSetSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeDaemonSetProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeDaemonSetProps(obj: KubeDaemonSetProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeDaemonSetProps(obj: KubeDaemonSetProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_DaemonSetSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_DaemonSetSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6884,21 +6910,24 @@ export interface KubeDaemonSetListProps {
    * @schema io.k8s.api.apps.v1.DaemonSetList#items
    */
   readonly items: KubeDaemonSetProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeDaemonSetListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeDaemonSetListProps(obj: KubeDaemonSetListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeDaemonSetListProps(
+  obj: KubeDaemonSetListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeDaemonSetProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeDaemonSetProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6921,21 +6950,22 @@ export interface KubeDeploymentProps {
    * @schema io.k8s.api.apps.v1.Deployment#spec
    */
   readonly spec?: DeploymentSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeDeploymentProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeDeploymentProps(obj: KubeDeploymentProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeDeploymentProps(obj: KubeDeploymentProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_DeploymentSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_DeploymentSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6958,21 +6988,24 @@ export interface KubeDeploymentListProps {
    * @schema io.k8s.api.apps.v1.DeploymentList#items
    */
   readonly items: KubeDeploymentProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeDeploymentListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeDeploymentListProps(obj: KubeDeploymentListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeDeploymentListProps(
+  obj: KubeDeploymentListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeDeploymentProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeDeploymentProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -6995,21 +7028,22 @@ export interface KubeReplicaSetProps {
    * @schema io.k8s.api.apps.v1.ReplicaSet#spec
    */
   readonly spec?: ReplicaSetSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeReplicaSetProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeReplicaSetProps(obj: KubeReplicaSetProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeReplicaSetProps(obj: KubeReplicaSetProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_ReplicaSetSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_ReplicaSetSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7032,21 +7066,24 @@ export interface KubeReplicaSetListProps {
    * @schema io.k8s.api.apps.v1.ReplicaSetList#items
    */
   readonly items: KubeReplicaSetProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeReplicaSetListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeReplicaSetListProps(obj: KubeReplicaSetListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeReplicaSetListProps(
+  obj: KubeReplicaSetListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeReplicaSetProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeReplicaSetProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7073,21 +7110,24 @@ export interface KubeStatefulSetProps {
    * @schema io.k8s.api.apps.v1.StatefulSet#spec
    */
   readonly spec?: StatefulSetSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeStatefulSetProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeStatefulSetProps(obj: KubeStatefulSetProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeStatefulSetProps(
+  obj: KubeStatefulSetProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_StatefulSetSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_StatefulSetSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7110,21 +7150,24 @@ export interface KubeStatefulSetListProps {
    * @schema io.k8s.api.apps.v1.StatefulSetList#items
    */
   readonly items: KubeStatefulSetProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeStatefulSetListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeStatefulSetListProps(obj: KubeStatefulSetListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeStatefulSetListProps(
+  obj: KubeStatefulSetListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeStatefulSetProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeStatefulSetProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7147,21 +7190,24 @@ export interface KubeTokenRequestProps {
    * @schema io.k8s.api.authentication.v1.TokenRequest#spec
    */
   readonly spec: TokenRequestSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeTokenRequestProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeTokenRequestProps(obj: KubeTokenRequestProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeTokenRequestProps(
+  obj: KubeTokenRequestProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_TokenRequestSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_TokenRequestSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7184,21 +7230,24 @@ export interface KubeTokenReviewProps {
    * @schema io.k8s.api.authentication.v1.TokenReview#spec
    */
   readonly spec: TokenReviewSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeTokenReviewProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeTokenReviewProps(obj: KubeTokenReviewProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeTokenReviewProps(
+  obj: KubeTokenReviewProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_TokenReviewSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_TokenReviewSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7221,21 +7270,24 @@ export interface KubeLocalSubjectAccessReviewProps {
    * @schema io.k8s.api.authorization.v1.LocalSubjectAccessReview#spec
    */
   readonly spec: SubjectAccessReviewSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeLocalSubjectAccessReviewProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeLocalSubjectAccessReviewProps(obj: KubeLocalSubjectAccessReviewProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeLocalSubjectAccessReviewProps(
+  obj: KubeLocalSubjectAccessReviewProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_SubjectAccessReviewSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_SubjectAccessReviewSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7258,21 +7310,24 @@ export interface KubeSelfSubjectAccessReviewProps {
    * @schema io.k8s.api.authorization.v1.SelfSubjectAccessReview#spec
    */
   readonly spec: SelfSubjectAccessReviewSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeSelfSubjectAccessReviewProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeSelfSubjectAccessReviewProps(obj: KubeSelfSubjectAccessReviewProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeSelfSubjectAccessReviewProps(
+  obj: KubeSelfSubjectAccessReviewProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_SelfSubjectAccessReviewSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_SelfSubjectAccessReviewSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7295,21 +7350,24 @@ export interface KubeSelfSubjectRulesReviewProps {
    * @schema io.k8s.api.authorization.v1.SelfSubjectRulesReview#spec
    */
   readonly spec: SelfSubjectRulesReviewSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeSelfSubjectRulesReviewProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeSelfSubjectRulesReviewProps(obj: KubeSelfSubjectRulesReviewProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeSelfSubjectRulesReviewProps(
+  obj: KubeSelfSubjectRulesReviewProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_SelfSubjectRulesReviewSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_SelfSubjectRulesReviewSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7332,21 +7390,24 @@ export interface KubeSubjectAccessReviewProps {
    * @schema io.k8s.api.authorization.v1.SubjectAccessReview#spec
    */
   readonly spec: SubjectAccessReviewSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeSubjectAccessReviewProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeSubjectAccessReviewProps(obj: KubeSubjectAccessReviewProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeSubjectAccessReviewProps(
+  obj: KubeSubjectAccessReviewProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_SubjectAccessReviewSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_SubjectAccessReviewSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7369,21 +7430,24 @@ export interface KubeHorizontalPodAutoscalerProps {
    * @schema io.k8s.api.autoscaling.v1.HorizontalPodAutoscaler#spec
    */
   readonly spec?: HorizontalPodAutoscalerSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeHorizontalPodAutoscalerProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeHorizontalPodAutoscalerProps(obj: KubeHorizontalPodAutoscalerProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeHorizontalPodAutoscalerProps(
+  obj: KubeHorizontalPodAutoscalerProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_HorizontalPodAutoscalerSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_HorizontalPodAutoscalerSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7406,21 +7470,24 @@ export interface KubeHorizontalPodAutoscalerListProps {
    * @schema io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerList#items
    */
   readonly items: KubeHorizontalPodAutoscalerProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeHorizontalPodAutoscalerListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeHorizontalPodAutoscalerListProps(obj: KubeHorizontalPodAutoscalerListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeHorizontalPodAutoscalerListProps(
+  obj: KubeHorizontalPodAutoscalerListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeHorizontalPodAutoscalerProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeHorizontalPodAutoscalerProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7443,21 +7510,22 @@ export interface KubeScaleProps {
    * @schema io.k8s.api.autoscaling.v1.Scale#spec
    */
   readonly spec?: ScaleSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeScaleProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeScaleProps(obj: KubeScaleProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeScaleProps(obj: KubeScaleProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_ScaleSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_ScaleSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7480,21 +7548,24 @@ export interface KubeHorizontalPodAutoscalerV2Props {
    * @schema io.k8s.api.autoscaling.v2.HorizontalPodAutoscaler#spec
    */
   readonly spec?: HorizontalPodAutoscalerSpecV2;
-
 }
 
 /**
  * Converts an object of type 'KubeHorizontalPodAutoscalerV2Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeHorizontalPodAutoscalerV2Props(obj: KubeHorizontalPodAutoscalerV2Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeHorizontalPodAutoscalerV2Props(
+  obj: KubeHorizontalPodAutoscalerV2Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_HorizontalPodAutoscalerSpecV2(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_HorizontalPodAutoscalerSpecV2(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7517,21 +7588,24 @@ export interface KubeHorizontalPodAutoscalerListV2Props {
    * @schema io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerList#items
    */
   readonly items: KubeHorizontalPodAutoscalerV2Props[];
-
 }
 
 /**
  * Converts an object of type 'KubeHorizontalPodAutoscalerListV2Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeHorizontalPodAutoscalerListV2Props(obj: KubeHorizontalPodAutoscalerListV2Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeHorizontalPodAutoscalerListV2Props(
+  obj: KubeHorizontalPodAutoscalerListV2Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeHorizontalPodAutoscalerV2Props(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeHorizontalPodAutoscalerV2Props(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7554,21 +7628,24 @@ export interface KubeHorizontalPodAutoscalerV2Beta2Props {
    * @schema io.k8s.api.autoscaling.v2beta2.HorizontalPodAutoscaler#spec
    */
   readonly spec?: HorizontalPodAutoscalerSpecV2Beta2;
-
 }
 
 /**
  * Converts an object of type 'KubeHorizontalPodAutoscalerV2Beta2Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeHorizontalPodAutoscalerV2Beta2Props(obj: KubeHorizontalPodAutoscalerV2Beta2Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeHorizontalPodAutoscalerV2Beta2Props(
+  obj: KubeHorizontalPodAutoscalerV2Beta2Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_HorizontalPodAutoscalerSpecV2Beta2(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_HorizontalPodAutoscalerSpecV2Beta2(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7591,21 +7668,24 @@ export interface KubeHorizontalPodAutoscalerListV2Beta2Props {
    * @schema io.k8s.api.autoscaling.v2beta2.HorizontalPodAutoscalerList#items
    */
   readonly items: KubeHorizontalPodAutoscalerV2Beta2Props[];
-
 }
 
 /**
  * Converts an object of type 'KubeHorizontalPodAutoscalerListV2Beta2Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeHorizontalPodAutoscalerListV2Beta2Props(obj: KubeHorizontalPodAutoscalerListV2Beta2Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeHorizontalPodAutoscalerListV2Beta2Props(
+  obj: KubeHorizontalPodAutoscalerListV2Beta2Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeHorizontalPodAutoscalerV2Beta2Props(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeHorizontalPodAutoscalerV2Beta2Props(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7628,21 +7708,22 @@ export interface KubeCronJobProps {
    * @schema io.k8s.api.batch.v1.CronJob#spec
    */
   readonly spec?: CronJobSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeCronJobProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCronJobProps(obj: KubeCronJobProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCronJobProps(obj: KubeCronJobProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_CronJobSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_CronJobSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7665,21 +7746,24 @@ export interface KubeCronJobListProps {
    * @schema io.k8s.api.batch.v1.CronJobList#items
    */
   readonly items: KubeCronJobProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeCronJobListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCronJobListProps(obj: KubeCronJobListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCronJobListProps(
+  obj: KubeCronJobListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeCronJobProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeCronJobProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7702,21 +7786,22 @@ export interface KubeJobProps {
    * @schema io.k8s.api.batch.v1.Job#spec
    */
   readonly spec?: JobSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeJobProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeJobProps(obj: KubeJobProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeJobProps(obj: KubeJobProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_JobSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_JobSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7739,21 +7824,22 @@ export interface KubeJobListProps {
    * @schema io.k8s.api.batch.v1.JobList#items
    */
   readonly items: KubeJobProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeJobListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeJobListProps(obj: KubeJobListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeJobListProps(obj: KubeJobListProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeJobProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeJobProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7780,21 +7866,24 @@ export interface KubeCertificateSigningRequestProps {
    * @schema io.k8s.api.certificates.v1.CertificateSigningRequest#spec
    */
   readonly spec: CertificateSigningRequestSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeCertificateSigningRequestProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCertificateSigningRequestProps(obj: KubeCertificateSigningRequestProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCertificateSigningRequestProps(
+  obj: KubeCertificateSigningRequestProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_CertificateSigningRequestSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_CertificateSigningRequestSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7815,21 +7904,24 @@ export interface KubeCertificateSigningRequestListProps {
    * @schema io.k8s.api.certificates.v1.CertificateSigningRequestList#items
    */
   readonly items: KubeCertificateSigningRequestProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeCertificateSigningRequestListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCertificateSigningRequestListProps(obj: KubeCertificateSigningRequestListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCertificateSigningRequestListProps(
+  obj: KubeCertificateSigningRequestListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeCertificateSigningRequestProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeCertificateSigningRequestProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7852,21 +7944,22 @@ export interface KubeLeaseProps {
    * @schema io.k8s.api.coordination.v1.Lease#spec
    */
   readonly spec?: LeaseSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeLeaseProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeLeaseProps(obj: KubeLeaseProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeLeaseProps(obj: KubeLeaseProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_LeaseSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_LeaseSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7889,21 +7982,22 @@ export interface KubeLeaseListProps {
    * @schema io.k8s.api.coordination.v1.LeaseList#items
    */
   readonly items: KubeLeaseProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeLeaseListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeLeaseListProps(obj: KubeLeaseListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeLeaseListProps(obj: KubeLeaseListProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeLeaseProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeLeaseProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7926,21 +8020,22 @@ export interface KubeBindingProps {
    * @schema io.k8s.api.core.v1.Binding#target
    */
   readonly target: ObjectReference;
-
 }
 
 /**
  * Converts an object of type 'KubeBindingProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeBindingProps(obj: KubeBindingProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeBindingProps(obj: KubeBindingProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'target': toJson_ObjectReference(obj.target),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    target: toJson_ObjectReference(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -7963,21 +8058,24 @@ export interface KubeComponentStatusProps {
    * @schema io.k8s.api.core.v1.ComponentStatus#conditions
    */
   readonly conditions?: ComponentCondition[];
-
 }
 
 /**
  * Converts an object of type 'KubeComponentStatusProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeComponentStatusProps(obj: KubeComponentStatusProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeComponentStatusProps(
+  obj: KubeComponentStatusProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'conditions': obj.conditions?.map(y => toJson_ComponentCondition(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    conditions: obj.conditions?.map(y => toJson_ComponentCondition(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8000,21 +8098,24 @@ export interface KubeComponentStatusListProps {
    * @schema io.k8s.api.core.v1.ComponentStatusList#items
    */
   readonly items: KubeComponentStatusProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeComponentStatusListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeComponentStatusListProps(obj: KubeComponentStatusListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeComponentStatusListProps(
+  obj: KubeComponentStatusListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeComponentStatusProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeComponentStatusProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8051,23 +8152,30 @@ export interface KubeConfigMapProps {
    * @schema io.k8s.api.core.v1.ConfigMap#immutable
    */
   readonly immutable?: boolean;
-
 }
 
 /**
  * Converts an object of type 'KubeConfigMapProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeConfigMapProps(obj: KubeConfigMapProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeConfigMapProps(obj: KubeConfigMapProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'binaryData': ((obj.binaryData) === undefined) ? undefined : (Object.entries(obj.binaryData).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'data': ((obj.data) === undefined) ? undefined : (Object.entries(obj.data).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'immutable': obj.immutable,
+    metadata: toJson_ObjectMeta(obj.metadata),
+    binaryData:
+      obj.binaryData === undefined
+        ? undefined
+        : Object.entries(obj.binaryData).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    data:
+      obj.data === undefined
+        ? undefined
+        : Object.entries(obj.data).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    immutable: obj.immutable,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8090,21 +8198,24 @@ export interface KubeConfigMapListProps {
    * @schema io.k8s.api.core.v1.ConfigMapList#items
    */
   readonly items: KubeConfigMapProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeConfigMapListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeConfigMapListProps(obj: KubeConfigMapListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeConfigMapListProps(
+  obj: KubeConfigMapListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeConfigMapProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeConfigMapProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8139,21 +8250,22 @@ export interface KubeEndpointsProps {
    * @schema io.k8s.api.core.v1.Endpoints#subsets
    */
   readonly subsets?: EndpointSubset[];
-
 }
 
 /**
  * Converts an object of type 'KubeEndpointsProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeEndpointsProps(obj: KubeEndpointsProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeEndpointsProps(obj: KubeEndpointsProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'subsets': obj.subsets?.map(y => toJson_EndpointSubset(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    subsets: obj.subsets?.map(y => toJson_EndpointSubset(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8176,21 +8288,24 @@ export interface KubeEndpointsListProps {
    * @schema io.k8s.api.core.v1.EndpointsList#items
    */
   readonly items: KubeEndpointsProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeEndpointsListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeEndpointsListProps(obj: KubeEndpointsListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeEndpointsListProps(
+  obj: KubeEndpointsListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeEndpointsProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeEndpointsProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8304,34 +8419,35 @@ export interface KubeEventProps {
    * @schema io.k8s.api.events.v1.Event#type
    */
   readonly type?: string;
-
 }
 
 /**
  * Converts an object of type 'KubeEventProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeEventProps(obj: KubeEventProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeEventProps(obj: KubeEventProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'action': obj.action,
-    'deprecatedCount': obj.deprecatedCount,
-    'deprecatedFirstTimestamp': obj.deprecatedFirstTimestamp?.toISOString(),
-    'deprecatedLastTimestamp': obj.deprecatedLastTimestamp?.toISOString(),
-    'deprecatedSource': toJson_EventSource(obj.deprecatedSource),
-    'eventTime': obj.eventTime?.toISOString(),
-    'note': obj.note,
-    'reason': obj.reason,
-    'regarding': toJson_ObjectReference(obj.regarding),
-    'related': toJson_ObjectReference(obj.related),
-    'reportingController': obj.reportingController,
-    'reportingInstance': obj.reportingInstance,
-    'series': toJson_EventSeries(obj.series),
-    'type': obj.type,
+    metadata: toJson_ObjectMeta(obj.metadata),
+    action: obj.action,
+    deprecatedCount: obj.deprecatedCount,
+    deprecatedFirstTimestamp: obj.deprecatedFirstTimestamp?.toISOString(),
+    deprecatedLastTimestamp: obj.deprecatedLastTimestamp?.toISOString(),
+    deprecatedSource: toJson_EventSource(obj.deprecatedSource),
+    eventTime: obj.eventTime?.toISOString(),
+    note: obj.note,
+    reason: obj.reason,
+    regarding: toJson_ObjectReference(obj.regarding),
+    related: toJson_ObjectReference(obj.related),
+    reportingController: obj.reportingController,
+    reportingInstance: obj.reportingInstance,
+    series: toJson_EventSeries(obj.series),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8354,21 +8470,22 @@ export interface KubeEventListProps {
    * @schema io.k8s.api.events.v1.EventList#items
    */
   readonly items: KubeEventProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeEventListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeEventListProps(obj: KubeEventListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeEventListProps(obj: KubeEventListProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeEventProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeEventProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8391,21 +8508,22 @@ export interface KubeLimitRangeProps {
    * @schema io.k8s.api.core.v1.LimitRange#spec
    */
   readonly spec?: LimitRangeSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeLimitRangeProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeLimitRangeProps(obj: KubeLimitRangeProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeLimitRangeProps(obj: KubeLimitRangeProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_LimitRangeSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_LimitRangeSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8428,21 +8546,24 @@ export interface KubeLimitRangeListProps {
    * @schema io.k8s.api.core.v1.LimitRangeList#items
    */
   readonly items: KubeLimitRangeProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeLimitRangeListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeLimitRangeListProps(obj: KubeLimitRangeListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeLimitRangeListProps(
+  obj: KubeLimitRangeListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeLimitRangeProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeLimitRangeProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8465,21 +8586,22 @@ export interface KubeNamespaceProps {
    * @schema io.k8s.api.core.v1.Namespace#spec
    */
   readonly spec?: NamespaceSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeNamespaceProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeNamespaceProps(obj: KubeNamespaceProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeNamespaceProps(obj: KubeNamespaceProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_NamespaceSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_NamespaceSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8502,21 +8624,24 @@ export interface KubeNamespaceListProps {
    * @schema io.k8s.api.core.v1.NamespaceList#items
    */
   readonly items: KubeNamespaceProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeNamespaceListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeNamespaceListProps(obj: KubeNamespaceListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeNamespaceListProps(
+  obj: KubeNamespaceListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeNamespaceProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeNamespaceProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8539,21 +8664,22 @@ export interface KubeNodeProps {
    * @schema io.k8s.api.core.v1.Node#spec
    */
   readonly spec?: NodeSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeNodeProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeNodeProps(obj: KubeNodeProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeNodeProps(obj: KubeNodeProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_NodeSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_NodeSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8576,21 +8702,22 @@ export interface KubeNodeListProps {
    * @schema io.k8s.api.core.v1.NodeList#items
    */
   readonly items: KubeNodeProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeNodeListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeNodeListProps(obj: KubeNodeListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeNodeListProps(obj: KubeNodeListProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeNodeProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeNodeProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8613,21 +8740,24 @@ export interface KubePersistentVolumeProps {
    * @schema io.k8s.api.core.v1.PersistentVolume#spec
    */
   readonly spec?: PersistentVolumeSpec;
-
 }
 
 /**
  * Converts an object of type 'KubePersistentVolumeProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePersistentVolumeProps(obj: KubePersistentVolumeProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePersistentVolumeProps(
+  obj: KubePersistentVolumeProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_PersistentVolumeSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_PersistentVolumeSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8650,21 +8780,24 @@ export interface KubePersistentVolumeClaimProps {
    * @schema io.k8s.api.core.v1.PersistentVolumeClaim#spec
    */
   readonly spec?: PersistentVolumeClaimSpec;
-
 }
 
 /**
  * Converts an object of type 'KubePersistentVolumeClaimProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePersistentVolumeClaimProps(obj: KubePersistentVolumeClaimProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePersistentVolumeClaimProps(
+  obj: KubePersistentVolumeClaimProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_PersistentVolumeClaimSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_PersistentVolumeClaimSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8687,21 +8820,24 @@ export interface KubePersistentVolumeClaimListProps {
    * @schema io.k8s.api.core.v1.PersistentVolumeClaimList#items
    */
   readonly items: KubePersistentVolumeClaimProps[];
-
 }
 
 /**
  * Converts an object of type 'KubePersistentVolumeClaimListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePersistentVolumeClaimListProps(obj: KubePersistentVolumeClaimListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePersistentVolumeClaimListProps(
+  obj: KubePersistentVolumeClaimListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubePersistentVolumeClaimProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubePersistentVolumeClaimProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8724,21 +8860,24 @@ export interface KubePersistentVolumeListProps {
    * @schema io.k8s.api.core.v1.PersistentVolumeList#items
    */
   readonly items: KubePersistentVolumeProps[];
-
 }
 
 /**
  * Converts an object of type 'KubePersistentVolumeListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePersistentVolumeListProps(obj: KubePersistentVolumeListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePersistentVolumeListProps(
+  obj: KubePersistentVolumeListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubePersistentVolumeProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubePersistentVolumeProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8761,21 +8900,22 @@ export interface KubePodProps {
    * @schema io.k8s.api.core.v1.Pod#spec
    */
   readonly spec?: PodSpec;
-
 }
 
 /**
  * Converts an object of type 'KubePodProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePodProps(obj: KubePodProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePodProps(obj: KubePodProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_PodSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_PodSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8798,21 +8938,22 @@ export interface KubePodListProps {
    * @schema io.k8s.api.core.v1.PodList#items
    */
   readonly items: KubePodProps[];
-
 }
 
 /**
  * Converts an object of type 'KubePodListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePodListProps(obj: KubePodListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePodListProps(obj: KubePodListProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubePodProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubePodProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8835,21 +8976,24 @@ export interface KubePodTemplateProps {
    * @schema io.k8s.api.core.v1.PodTemplate#template
    */
   readonly template?: PodTemplateSpec;
-
 }
 
 /**
  * Converts an object of type 'KubePodTemplateProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePodTemplateProps(obj: KubePodTemplateProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePodTemplateProps(
+  obj: KubePodTemplateProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'template': toJson_PodTemplateSpec(obj.template),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    template: toJson_PodTemplateSpec(obj.template),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8872,21 +9016,24 @@ export interface KubePodTemplateListProps {
    * @schema io.k8s.api.core.v1.PodTemplateList#items
    */
   readonly items: KubePodTemplateProps[];
-
 }
 
 /**
  * Converts an object of type 'KubePodTemplateListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePodTemplateListProps(obj: KubePodTemplateListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePodTemplateListProps(
+  obj: KubePodTemplateListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubePodTemplateProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubePodTemplateProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8909,21 +9056,24 @@ export interface KubeReplicationControllerProps {
    * @schema io.k8s.api.core.v1.ReplicationController#spec
    */
   readonly spec?: ReplicationControllerSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeReplicationControllerProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeReplicationControllerProps(obj: KubeReplicationControllerProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeReplicationControllerProps(
+  obj: KubeReplicationControllerProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_ReplicationControllerSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_ReplicationControllerSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8946,21 +9096,24 @@ export interface KubeReplicationControllerListProps {
    * @schema io.k8s.api.core.v1.ReplicationControllerList#items
    */
   readonly items: KubeReplicationControllerProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeReplicationControllerListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeReplicationControllerListProps(obj: KubeReplicationControllerListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeReplicationControllerListProps(
+  obj: KubeReplicationControllerListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeReplicationControllerProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeReplicationControllerProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -8983,21 +9136,24 @@ export interface KubeResourceQuotaProps {
    * @schema io.k8s.api.core.v1.ResourceQuota#spec
    */
   readonly spec?: ResourceQuotaSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeResourceQuotaProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeResourceQuotaProps(obj: KubeResourceQuotaProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeResourceQuotaProps(
+  obj: KubeResourceQuotaProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_ResourceQuotaSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_ResourceQuotaSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9020,21 +9176,24 @@ export interface KubeResourceQuotaListProps {
    * @schema io.k8s.api.core.v1.ResourceQuotaList#items
    */
   readonly items: KubeResourceQuotaProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeResourceQuotaListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeResourceQuotaListProps(obj: KubeResourceQuotaListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeResourceQuotaListProps(
+  obj: KubeResourceQuotaListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeResourceQuotaProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeResourceQuotaProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9078,24 +9237,31 @@ export interface KubeSecretProps {
    * @schema io.k8s.api.core.v1.Secret#type
    */
   readonly type?: string;
-
 }
 
 /**
  * Converts an object of type 'KubeSecretProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeSecretProps(obj: KubeSecretProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeSecretProps(obj: KubeSecretProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'data': ((obj.data) === undefined) ? undefined : (Object.entries(obj.data).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'immutable': obj.immutable,
-    'stringData': ((obj.stringData) === undefined) ? undefined : (Object.entries(obj.stringData).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'type': obj.type,
+    metadata: toJson_ObjectMeta(obj.metadata),
+    data:
+      obj.data === undefined
+        ? undefined
+        : Object.entries(obj.data).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    immutable: obj.immutable,
+    stringData:
+      obj.stringData === undefined
+        ? undefined
+        : Object.entries(obj.stringData).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9118,21 +9284,22 @@ export interface KubeSecretListProps {
    * @schema io.k8s.api.core.v1.SecretList#items
    */
   readonly items: KubeSecretProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeSecretListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeSecretListProps(obj: KubeSecretListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeSecretListProps(obj: KubeSecretListProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeSecretProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeSecretProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9155,21 +9322,22 @@ export interface KubeServiceProps {
    * @schema io.k8s.api.core.v1.Service#spec
    */
   readonly spec?: ServiceSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeServiceProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeServiceProps(obj: KubeServiceProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeServiceProps(obj: KubeServiceProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_ServiceSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_ServiceSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9206,23 +9374,26 @@ export interface KubeServiceAccountProps {
    * @schema io.k8s.api.core.v1.ServiceAccount#secrets
    */
   readonly secrets?: ObjectReference[];
-
 }
 
 /**
  * Converts an object of type 'KubeServiceAccountProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeServiceAccountProps(obj: KubeServiceAccountProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeServiceAccountProps(
+  obj: KubeServiceAccountProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'automountServiceAccountToken': obj.automountServiceAccountToken,
-    'imagePullSecrets': obj.imagePullSecrets?.map(y => toJson_LocalObjectReference(y)),
-    'secrets': obj.secrets?.map(y => toJson_ObjectReference(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    automountServiceAccountToken: obj.automountServiceAccountToken,
+    imagePullSecrets: obj.imagePullSecrets?.map(y => toJson_LocalObjectReference(y)),
+    secrets: obj.secrets?.map(y => toJson_ObjectReference(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9245,21 +9416,24 @@ export interface KubeServiceAccountListProps {
    * @schema io.k8s.api.core.v1.ServiceAccountList#items
    */
   readonly items: KubeServiceAccountProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeServiceAccountListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeServiceAccountListProps(obj: KubeServiceAccountListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeServiceAccountListProps(
+  obj: KubeServiceAccountListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeServiceAccountProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeServiceAccountProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9282,21 +9456,24 @@ export interface KubeServiceListProps {
    * @schema io.k8s.api.core.v1.ServiceList#items
    */
   readonly items: KubeServiceProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeServiceListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeServiceListProps(obj: KubeServiceListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeServiceListProps(
+  obj: KubeServiceListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeServiceProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeServiceProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9335,23 +9512,26 @@ export interface KubeEndpointSliceProps {
    * @schema io.k8s.api.discovery.v1.EndpointSlice#ports
    */
   readonly ports?: EndpointPort[];
-
 }
 
 /**
  * Converts an object of type 'KubeEndpointSliceProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeEndpointSliceProps(obj: KubeEndpointSliceProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeEndpointSliceProps(
+  obj: KubeEndpointSliceProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'addressType': obj.addressType,
-    'endpoints': obj.endpoints?.map(y => toJson_Endpoint(y)),
-    'ports': obj.ports?.map(y => toJson_EndpointPort(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    addressType: obj.addressType,
+    endpoints: obj.endpoints?.map(y => toJson_Endpoint(y)),
+    ports: obj.ports?.map(y => toJson_EndpointPort(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9374,21 +9554,24 @@ export interface KubeEndpointSliceListProps {
    * @schema io.k8s.api.discovery.v1.EndpointSliceList#items
    */
   readonly items: KubeEndpointSliceProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeEndpointSliceListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeEndpointSliceListProps(obj: KubeEndpointSliceListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeEndpointSliceListProps(
+  obj: KubeEndpointSliceListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeEndpointSliceProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeEndpointSliceProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9411,21 +9594,24 @@ export interface KubeFlowSchemaV1Beta1Props {
    * @schema io.k8s.api.flowcontrol.v1beta1.FlowSchema#spec
    */
   readonly spec?: FlowSchemaSpecV1Beta1;
-
 }
 
 /**
  * Converts an object of type 'KubeFlowSchemaV1Beta1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeFlowSchemaV1Beta1Props(obj: KubeFlowSchemaV1Beta1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeFlowSchemaV1Beta1Props(
+  obj: KubeFlowSchemaV1Beta1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_FlowSchemaSpecV1Beta1(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_FlowSchemaSpecV1Beta1(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9448,21 +9634,24 @@ export interface KubeFlowSchemaListV1Beta1Props {
    * @schema io.k8s.api.flowcontrol.v1beta1.FlowSchemaList#items
    */
   readonly items: KubeFlowSchemaV1Beta1Props[];
-
 }
 
 /**
  * Converts an object of type 'KubeFlowSchemaListV1Beta1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeFlowSchemaListV1Beta1Props(obj: KubeFlowSchemaListV1Beta1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeFlowSchemaListV1Beta1Props(
+  obj: KubeFlowSchemaListV1Beta1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeFlowSchemaV1Beta1Props(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeFlowSchemaV1Beta1Props(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9485,21 +9674,24 @@ export interface KubePriorityLevelConfigurationV1Beta1Props {
    * @schema io.k8s.api.flowcontrol.v1beta1.PriorityLevelConfiguration#spec
    */
   readonly spec?: PriorityLevelConfigurationSpecV1Beta1;
-
 }
 
 /**
  * Converts an object of type 'KubePriorityLevelConfigurationV1Beta1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePriorityLevelConfigurationV1Beta1Props(obj: KubePriorityLevelConfigurationV1Beta1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePriorityLevelConfigurationV1Beta1Props(
+  obj: KubePriorityLevelConfigurationV1Beta1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_PriorityLevelConfigurationSpecV1Beta1(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_PriorityLevelConfigurationSpecV1Beta1(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9522,21 +9714,24 @@ export interface KubePriorityLevelConfigurationListV1Beta1Props {
    * @schema io.k8s.api.flowcontrol.v1beta1.PriorityLevelConfigurationList#items
    */
   readonly items: KubePriorityLevelConfigurationV1Beta1Props[];
-
 }
 
 /**
  * Converts an object of type 'KubePriorityLevelConfigurationListV1Beta1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePriorityLevelConfigurationListV1Beta1Props(obj: KubePriorityLevelConfigurationListV1Beta1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePriorityLevelConfigurationListV1Beta1Props(
+  obj: KubePriorityLevelConfigurationListV1Beta1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubePriorityLevelConfigurationV1Beta1Props(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubePriorityLevelConfigurationV1Beta1Props(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9559,21 +9754,24 @@ export interface KubeFlowSchemaV1Beta2Props {
    * @schema io.k8s.api.flowcontrol.v1beta2.FlowSchema#spec
    */
   readonly spec?: FlowSchemaSpecV1Beta2;
-
 }
 
 /**
  * Converts an object of type 'KubeFlowSchemaV1Beta2Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeFlowSchemaV1Beta2Props(obj: KubeFlowSchemaV1Beta2Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeFlowSchemaV1Beta2Props(
+  obj: KubeFlowSchemaV1Beta2Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_FlowSchemaSpecV1Beta2(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_FlowSchemaSpecV1Beta2(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9596,21 +9794,24 @@ export interface KubeFlowSchemaListV1Beta2Props {
    * @schema io.k8s.api.flowcontrol.v1beta2.FlowSchemaList#items
    */
   readonly items: KubeFlowSchemaV1Beta2Props[];
-
 }
 
 /**
  * Converts an object of type 'KubeFlowSchemaListV1Beta2Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeFlowSchemaListV1Beta2Props(obj: KubeFlowSchemaListV1Beta2Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeFlowSchemaListV1Beta2Props(
+  obj: KubeFlowSchemaListV1Beta2Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeFlowSchemaV1Beta2Props(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeFlowSchemaV1Beta2Props(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9633,21 +9834,24 @@ export interface KubePriorityLevelConfigurationV1Beta2Props {
    * @schema io.k8s.api.flowcontrol.v1beta2.PriorityLevelConfiguration#spec
    */
   readonly spec?: PriorityLevelConfigurationSpecV1Beta2;
-
 }
 
 /**
  * Converts an object of type 'KubePriorityLevelConfigurationV1Beta2Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePriorityLevelConfigurationV1Beta2Props(obj: KubePriorityLevelConfigurationV1Beta2Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePriorityLevelConfigurationV1Beta2Props(
+  obj: KubePriorityLevelConfigurationV1Beta2Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_PriorityLevelConfigurationSpecV1Beta2(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_PriorityLevelConfigurationSpecV1Beta2(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9670,21 +9874,24 @@ export interface KubePriorityLevelConfigurationListV1Beta2Props {
    * @schema io.k8s.api.flowcontrol.v1beta2.PriorityLevelConfigurationList#items
    */
   readonly items: KubePriorityLevelConfigurationV1Beta2Props[];
-
 }
 
 /**
  * Converts an object of type 'KubePriorityLevelConfigurationListV1Beta2Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePriorityLevelConfigurationListV1Beta2Props(obj: KubePriorityLevelConfigurationListV1Beta2Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePriorityLevelConfigurationListV1Beta2Props(
+  obj: KubePriorityLevelConfigurationListV1Beta2Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubePriorityLevelConfigurationV1Beta2Props(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubePriorityLevelConfigurationV1Beta2Props(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9707,21 +9914,22 @@ export interface KubeIngressProps {
    * @schema io.k8s.api.networking.v1.Ingress#spec
    */
   readonly spec?: IngressSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeIngressProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeIngressProps(obj: KubeIngressProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeIngressProps(obj: KubeIngressProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_IngressSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_IngressSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9744,21 +9952,24 @@ export interface KubeIngressClassProps {
    * @schema io.k8s.api.networking.v1.IngressClass#spec
    */
   readonly spec?: IngressClassSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeIngressClassProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeIngressClassProps(obj: KubeIngressClassProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeIngressClassProps(
+  obj: KubeIngressClassProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_IngressClassSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_IngressClassSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9781,21 +9992,24 @@ export interface KubeIngressClassListProps {
    * @schema io.k8s.api.networking.v1.IngressClassList#items
    */
   readonly items: KubeIngressClassProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeIngressClassListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeIngressClassListProps(obj: KubeIngressClassListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeIngressClassListProps(
+  obj: KubeIngressClassListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeIngressClassProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeIngressClassProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9818,21 +10032,24 @@ export interface KubeIngressListProps {
    * @schema io.k8s.api.networking.v1.IngressList#items
    */
   readonly items: KubeIngressProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeIngressListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeIngressListProps(obj: KubeIngressListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeIngressListProps(
+  obj: KubeIngressListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeIngressProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeIngressProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9855,21 +10072,24 @@ export interface KubeNetworkPolicyProps {
    * @schema io.k8s.api.networking.v1.NetworkPolicy#spec
    */
   readonly spec?: NetworkPolicySpec;
-
 }
 
 /**
  * Converts an object of type 'KubeNetworkPolicyProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeNetworkPolicyProps(obj: KubeNetworkPolicyProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeNetworkPolicyProps(
+  obj: KubeNetworkPolicyProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_NetworkPolicySpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_NetworkPolicySpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9892,21 +10112,24 @@ export interface KubeNetworkPolicyListProps {
    * @schema io.k8s.api.networking.v1.NetworkPolicyList#items
    */
   readonly items: KubeNetworkPolicyProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeNetworkPolicyListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeNetworkPolicyListProps(obj: KubeNetworkPolicyListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeNetworkPolicyListProps(
+  obj: KubeNetworkPolicyListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeNetworkPolicyProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeNetworkPolicyProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9929,21 +10152,24 @@ export interface KubeClusterCidrv1Alpha1Props {
    * @schema io.k8s.api.networking.v1alpha1.ClusterCIDR#spec
    */
   readonly spec?: ClusterCidrSpecV1Alpha1;
-
 }
 
 /**
  * Converts an object of type 'KubeClusterCidrv1Alpha1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeClusterCidrv1Alpha1Props(obj: KubeClusterCidrv1Alpha1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeClusterCidrv1Alpha1Props(
+  obj: KubeClusterCidrv1Alpha1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_ClusterCidrSpecV1Alpha1(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_ClusterCidrSpecV1Alpha1(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -9966,21 +10192,24 @@ export interface KubeClusterCidrListV1Alpha1Props {
    * @schema io.k8s.api.networking.v1alpha1.ClusterCIDRList#items
    */
   readonly items: KubeClusterCidrv1Alpha1Props[];
-
 }
 
 /**
  * Converts an object of type 'KubeClusterCidrListV1Alpha1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeClusterCidrListV1Alpha1Props(obj: KubeClusterCidrListV1Alpha1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeClusterCidrListV1Alpha1Props(
+  obj: KubeClusterCidrListV1Alpha1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeClusterCidrv1Alpha1Props(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeClusterCidrv1Alpha1Props(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10018,23 +10247,26 @@ export interface KubeRuntimeClassProps {
    * @schema io.k8s.api.node.v1.RuntimeClass#scheduling
    */
   readonly scheduling?: Scheduling;
-
 }
 
 /**
  * Converts an object of type 'KubeRuntimeClassProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeRuntimeClassProps(obj: KubeRuntimeClassProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeRuntimeClassProps(
+  obj: KubeRuntimeClassProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'handler': obj.handler,
-    'overhead': toJson_Overhead(obj.overhead),
-    'scheduling': toJson_Scheduling(obj.scheduling),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    handler: obj.handler,
+    overhead: toJson_Overhead(obj.overhead),
+    scheduling: toJson_Scheduling(obj.scheduling),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10057,21 +10289,24 @@ export interface KubeRuntimeClassListProps {
    * @schema io.k8s.api.node.v1.RuntimeClassList#items
    */
   readonly items: KubeRuntimeClassProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeRuntimeClassListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeRuntimeClassListProps(obj: KubeRuntimeClassListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeRuntimeClassListProps(
+  obj: KubeRuntimeClassListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeRuntimeClassProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeRuntimeClassProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10094,21 +10329,22 @@ export interface KubeEvictionProps {
    * @schema io.k8s.api.policy.v1.Eviction#deleteOptions
    */
   readonly deleteOptions?: DeleteOptions;
-
 }
 
 /**
  * Converts an object of type 'KubeEvictionProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeEvictionProps(obj: KubeEvictionProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeEvictionProps(obj: KubeEvictionProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'deleteOptions': toJson_DeleteOptions(obj.deleteOptions),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    deleteOptions: toJson_DeleteOptions(obj.deleteOptions),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10131,21 +10367,24 @@ export interface KubePodDisruptionBudgetProps {
    * @schema io.k8s.api.policy.v1.PodDisruptionBudget#spec
    */
   readonly spec?: PodDisruptionBudgetSpec;
-
 }
 
 /**
  * Converts an object of type 'KubePodDisruptionBudgetProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePodDisruptionBudgetProps(obj: KubePodDisruptionBudgetProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePodDisruptionBudgetProps(
+  obj: KubePodDisruptionBudgetProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_PodDisruptionBudgetSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_PodDisruptionBudgetSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10168,21 +10407,24 @@ export interface KubePodDisruptionBudgetListProps {
    * @schema io.k8s.api.policy.v1.PodDisruptionBudgetList#items
    */
   readonly items: KubePodDisruptionBudgetProps[];
-
 }
 
 /**
  * Converts an object of type 'KubePodDisruptionBudgetListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePodDisruptionBudgetListProps(obj: KubePodDisruptionBudgetListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePodDisruptionBudgetListProps(
+  obj: KubePodDisruptionBudgetListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubePodDisruptionBudgetProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubePodDisruptionBudgetProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10212,22 +10454,25 @@ export interface KubeClusterRoleProps {
    * @schema io.k8s.api.rbac.v1.ClusterRole#rules
    */
   readonly rules?: PolicyRule[];
-
 }
 
 /**
  * Converts an object of type 'KubeClusterRoleProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeClusterRoleProps(obj: KubeClusterRoleProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeClusterRoleProps(
+  obj: KubeClusterRoleProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'aggregationRule': toJson_AggregationRule(obj.aggregationRule),
-    'rules': obj.rules?.map(y => toJson_PolicyRule(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    aggregationRule: toJson_AggregationRule(obj.aggregationRule),
+    rules: obj.rules?.map(y => toJson_PolicyRule(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10257,22 +10502,25 @@ export interface KubeClusterRoleBindingProps {
    * @schema io.k8s.api.rbac.v1.ClusterRoleBinding#subjects
    */
   readonly subjects?: Subject[];
-
 }
 
 /**
  * Converts an object of type 'KubeClusterRoleBindingProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeClusterRoleBindingProps(obj: KubeClusterRoleBindingProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeClusterRoleBindingProps(
+  obj: KubeClusterRoleBindingProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'roleRef': toJson_RoleRef(obj.roleRef),
-    'subjects': obj.subjects?.map(y => toJson_Subject(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    roleRef: toJson_RoleRef(obj.roleRef),
+    subjects: obj.subjects?.map(y => toJson_Subject(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10295,21 +10543,24 @@ export interface KubeClusterRoleBindingListProps {
    * @schema io.k8s.api.rbac.v1.ClusterRoleBindingList#items
    */
   readonly items: KubeClusterRoleBindingProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeClusterRoleBindingListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeClusterRoleBindingListProps(obj: KubeClusterRoleBindingListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeClusterRoleBindingListProps(
+  obj: KubeClusterRoleBindingListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeClusterRoleBindingProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeClusterRoleBindingProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10332,21 +10583,24 @@ export interface KubeClusterRoleListProps {
    * @schema io.k8s.api.rbac.v1.ClusterRoleList#items
    */
   readonly items: KubeClusterRoleProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeClusterRoleListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeClusterRoleListProps(obj: KubeClusterRoleListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeClusterRoleListProps(
+  obj: KubeClusterRoleListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeClusterRoleProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeClusterRoleProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10369,21 +10623,22 @@ export interface KubeRoleProps {
    * @schema io.k8s.api.rbac.v1.Role#rules
    */
   readonly rules?: PolicyRule[];
-
 }
 
 /**
  * Converts an object of type 'KubeRoleProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeRoleProps(obj: KubeRoleProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeRoleProps(obj: KubeRoleProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'rules': obj.rules?.map(y => toJson_PolicyRule(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    rules: obj.rules?.map(y => toJson_PolicyRule(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10413,22 +10668,25 @@ export interface KubeRoleBindingProps {
    * @schema io.k8s.api.rbac.v1.RoleBinding#subjects
    */
   readonly subjects?: Subject[];
-
 }
 
 /**
  * Converts an object of type 'KubeRoleBindingProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeRoleBindingProps(obj: KubeRoleBindingProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeRoleBindingProps(
+  obj: KubeRoleBindingProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'roleRef': toJson_RoleRef(obj.roleRef),
-    'subjects': obj.subjects?.map(y => toJson_Subject(y)),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    roleRef: toJson_RoleRef(obj.roleRef),
+    subjects: obj.subjects?.map(y => toJson_Subject(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10451,21 +10709,24 @@ export interface KubeRoleBindingListProps {
    * @schema io.k8s.api.rbac.v1.RoleBindingList#items
    */
   readonly items: KubeRoleBindingProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeRoleBindingListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeRoleBindingListProps(obj: KubeRoleBindingListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeRoleBindingListProps(
+  obj: KubeRoleBindingListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeRoleBindingProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeRoleBindingProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10488,21 +10749,22 @@ export interface KubeRoleListProps {
    * @schema io.k8s.api.rbac.v1.RoleList#items
    */
   readonly items: KubeRoleProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeRoleListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeRoleListProps(obj: KubeRoleListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeRoleListProps(obj: KubeRoleListProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeRoleProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeRoleProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10547,24 +10809,27 @@ export interface KubePriorityClassProps {
    * @schema io.k8s.api.scheduling.v1.PriorityClass#value
    */
   readonly value: number;
-
 }
 
 /**
  * Converts an object of type 'KubePriorityClassProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePriorityClassProps(obj: KubePriorityClassProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePriorityClassProps(
+  obj: KubePriorityClassProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'description': obj.description,
-    'globalDefault': obj.globalDefault,
-    'preemptionPolicy': obj.preemptionPolicy,
-    'value': obj.value,
+    metadata: toJson_ObjectMeta(obj.metadata),
+    description: obj.description,
+    globalDefault: obj.globalDefault,
+    preemptionPolicy: obj.preemptionPolicy,
+    value: obj.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10587,21 +10852,24 @@ export interface KubePriorityClassListProps {
    * @schema io.k8s.api.scheduling.v1.PriorityClassList#items
    */
   readonly items: KubePriorityClassProps[];
-
 }
 
 /**
  * Converts an object of type 'KubePriorityClassListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubePriorityClassListProps(obj: KubePriorityClassListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubePriorityClassListProps(
+  obj: KubePriorityClassListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubePriorityClassProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubePriorityClassProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10624,21 +10892,22 @@ export interface KubeCsiDriverProps {
    * @schema io.k8s.api.storage.v1.CSIDriver#spec
    */
   readonly spec: CsiDriverSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeCsiDriverProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCsiDriverProps(obj: KubeCsiDriverProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCsiDriverProps(obj: KubeCsiDriverProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_CsiDriverSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_CsiDriverSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10661,21 +10930,24 @@ export interface KubeCsiDriverListProps {
    * @schema io.k8s.api.storage.v1.CSIDriverList#items
    */
   readonly items: KubeCsiDriverProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeCsiDriverListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCsiDriverListProps(obj: KubeCsiDriverListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCsiDriverListProps(
+  obj: KubeCsiDriverListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeCsiDriverProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeCsiDriverProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10698,21 +10970,22 @@ export interface KubeCsiNodeProps {
    * @schema io.k8s.api.storage.v1.CSINode#spec
    */
   readonly spec: CsiNodeSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeCsiNodeProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCsiNodeProps(obj: KubeCsiNodeProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCsiNodeProps(obj: KubeCsiNodeProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_CsiNodeSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_CsiNodeSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10735,21 +11008,24 @@ export interface KubeCsiNodeListProps {
    * @schema io.k8s.api.storage.v1.CSINodeList#items
    */
   readonly items: KubeCsiNodeProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeCsiNodeListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCsiNodeListProps(obj: KubeCsiNodeListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCsiNodeListProps(
+  obj: KubeCsiNodeListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeCsiNodeProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeCsiNodeProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10809,24 +11085,27 @@ export interface KubeCsiStorageCapacityProps {
    * @schema io.k8s.api.storage.v1.CSIStorageCapacity#storageClassName
    */
   readonly storageClassName: string;
-
 }
 
 /**
  * Converts an object of type 'KubeCsiStorageCapacityProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCsiStorageCapacityProps(obj: KubeCsiStorageCapacityProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCsiStorageCapacityProps(
+  obj: KubeCsiStorageCapacityProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'capacity': obj.capacity?.value,
-    'maximumVolumeSize': obj.maximumVolumeSize?.value,
-    'nodeTopology': toJson_LabelSelector(obj.nodeTopology),
-    'storageClassName': obj.storageClassName,
+    metadata: toJson_ObjectMeta(obj.metadata),
+    capacity: obj.capacity?.value,
+    maximumVolumeSize: obj.maximumVolumeSize?.value,
+    nodeTopology: toJson_LabelSelector(obj.nodeTopology),
+    storageClassName: obj.storageClassName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10849,21 +11128,24 @@ export interface KubeCsiStorageCapacityListProps {
    * @schema io.k8s.api.storage.v1.CSIStorageCapacityList#items
    */
   readonly items: KubeCsiStorageCapacityProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeCsiStorageCapacityListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCsiStorageCapacityListProps(obj: KubeCsiStorageCapacityListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCsiStorageCapacityListProps(
+  obj: KubeCsiStorageCapacityListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeCsiStorageCapacityProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeCsiStorageCapacityProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10931,27 +11213,33 @@ export interface KubeStorageClassProps {
    * @schema io.k8s.api.storage.v1.StorageClass#volumeBindingMode
    */
   readonly volumeBindingMode?: string;
-
 }
 
 /**
  * Converts an object of type 'KubeStorageClassProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeStorageClassProps(obj: KubeStorageClassProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeStorageClassProps(
+  obj: KubeStorageClassProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'allowVolumeExpansion': obj.allowVolumeExpansion,
-    'allowedTopologies': obj.allowedTopologies?.map(y => toJson_TopologySelectorTerm(y)),
-    'mountOptions': obj.mountOptions?.map(y => y),
-    'parameters': ((obj.parameters) === undefined) ? undefined : (Object.entries(obj.parameters).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'provisioner': obj.provisioner,
-    'reclaimPolicy': obj.reclaimPolicy,
-    'volumeBindingMode': obj.volumeBindingMode,
+    metadata: toJson_ObjectMeta(obj.metadata),
+    allowVolumeExpansion: obj.allowVolumeExpansion,
+    allowedTopologies: obj.allowedTopologies?.map(y => toJson_TopologySelectorTerm(y)),
+    mountOptions: obj.mountOptions?.map(y => y),
+    parameters:
+      obj.parameters === undefined
+        ? undefined
+        : Object.entries(obj.parameters).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    provisioner: obj.provisioner,
+    reclaimPolicy: obj.reclaimPolicy,
+    volumeBindingMode: obj.volumeBindingMode,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -10974,21 +11262,24 @@ export interface KubeStorageClassListProps {
    * @schema io.k8s.api.storage.v1.StorageClassList#items
    */
   readonly items: KubeStorageClassProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeStorageClassListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeStorageClassListProps(obj: KubeStorageClassListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeStorageClassListProps(
+  obj: KubeStorageClassListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeStorageClassProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeStorageClassProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11013,21 +11304,24 @@ export interface KubeVolumeAttachmentProps {
    * @schema io.k8s.api.storage.v1.VolumeAttachment#spec
    */
   readonly spec: VolumeAttachmentSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeVolumeAttachmentProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeVolumeAttachmentProps(obj: KubeVolumeAttachmentProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeVolumeAttachmentProps(
+  obj: KubeVolumeAttachmentProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_VolumeAttachmentSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_VolumeAttachmentSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11050,21 +11344,24 @@ export interface KubeVolumeAttachmentListProps {
    * @schema io.k8s.api.storage.v1.VolumeAttachmentList#items
    */
   readonly items: KubeVolumeAttachmentProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeVolumeAttachmentListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeVolumeAttachmentListProps(obj: KubeVolumeAttachmentListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeVolumeAttachmentListProps(
+  obj: KubeVolumeAttachmentListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeVolumeAttachmentProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeVolumeAttachmentProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11124,24 +11421,27 @@ export interface KubeCsiStorageCapacityV1Beta1Props {
    * @schema io.k8s.api.storage.v1beta1.CSIStorageCapacity#storageClassName
    */
   readonly storageClassName: string;
-
 }
 
 /**
  * Converts an object of type 'KubeCsiStorageCapacityV1Beta1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCsiStorageCapacityV1Beta1Props(obj: KubeCsiStorageCapacityV1Beta1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCsiStorageCapacityV1Beta1Props(
+  obj: KubeCsiStorageCapacityV1Beta1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'capacity': obj.capacity?.value,
-    'maximumVolumeSize': obj.maximumVolumeSize?.value,
-    'nodeTopology': toJson_LabelSelector(obj.nodeTopology),
-    'storageClassName': obj.storageClassName,
+    metadata: toJson_ObjectMeta(obj.metadata),
+    capacity: obj.capacity?.value,
+    maximumVolumeSize: obj.maximumVolumeSize?.value,
+    nodeTopology: toJson_LabelSelector(obj.nodeTopology),
+    storageClassName: obj.storageClassName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11164,21 +11464,24 @@ export interface KubeCsiStorageCapacityListV1Beta1Props {
    * @schema io.k8s.api.storage.v1beta1.CSIStorageCapacityList#items
    */
   readonly items: KubeCsiStorageCapacityV1Beta1Props[];
-
 }
 
 /**
  * Converts an object of type 'KubeCsiStorageCapacityListV1Beta1Props' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCsiStorageCapacityListV1Beta1Props(obj: KubeCsiStorageCapacityListV1Beta1Props | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCsiStorageCapacityListV1Beta1Props(
+  obj: KubeCsiStorageCapacityListV1Beta1Props | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeCsiStorageCapacityV1Beta1Props(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeCsiStorageCapacityV1Beta1Props(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11201,21 +11504,24 @@ export interface KubeCustomResourceDefinitionProps {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinition#spec
    */
   readonly spec: CustomResourceDefinitionSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeCustomResourceDefinitionProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCustomResourceDefinitionProps(obj: KubeCustomResourceDefinitionProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCustomResourceDefinitionProps(
+  obj: KubeCustomResourceDefinitionProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_CustomResourceDefinitionSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_CustomResourceDefinitionSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11238,21 +11544,24 @@ export interface KubeCustomResourceDefinitionListProps {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionList#items
    */
   readonly items: KubeCustomResourceDefinitionProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeCustomResourceDefinitionListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeCustomResourceDefinitionListProps(obj: KubeCustomResourceDefinitionListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeCustomResourceDefinitionListProps(
+  obj: KubeCustomResourceDefinitionListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeCustomResourceDefinitionProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeCustomResourceDefinitionProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11296,24 +11605,25 @@ export interface KubeStatusProps {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.Status#reason
    */
   readonly reason?: string;
-
 }
 
 /**
  * Converts an object of type 'KubeStatusProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeStatusProps(obj: KubeStatusProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeStatusProps(obj: KubeStatusProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'code': obj.code,
-    'details': toJson_StatusDetails(obj.details),
-    'message': obj.message,
-    'reason': obj.reason,
+    metadata: toJson_ListMeta(obj.metadata),
+    code: obj.code,
+    details: toJson_StatusDetails(obj.details),
+    message: obj.message,
+    reason: obj.reason,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11336,21 +11646,22 @@ export interface KubeApiServiceProps {
    * @schema io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIService#spec
    */
   readonly spec?: ApiServiceSpec;
-
 }
 
 /**
  * Converts an object of type 'KubeApiServiceProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeApiServiceProps(obj: KubeApiServiceProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeApiServiceProps(obj: KubeApiServiceProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_ApiServiceSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_ApiServiceSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11373,21 +11684,24 @@ export interface KubeApiServiceListProps {
    * @schema io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceList#items
    */
   readonly items: KubeApiServiceProps[];
-
 }
 
 /**
  * Converts an object of type 'KubeApiServiceListProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KubeApiServiceListProps(obj: KubeApiServiceListProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KubeApiServiceListProps(
+  obj: KubeApiServiceListProps | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ListMeta(obj.metadata),
-    'items': obj.items?.map(y => toJson_KubeApiServiceProps(y)),
+    metadata: toJson_ListMeta(obj.metadata),
+    items: obj.items?.map(y => toJson_KubeApiServiceProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11515,34 +11829,41 @@ export interface ObjectMeta {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta#uid
    */
   readonly uid?: string;
-
 }
 
 /**
  * Converts an object of type 'ObjectMeta' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ObjectMeta(obj: ObjectMeta | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ObjectMeta(obj: ObjectMeta | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'annotations': ((obj.annotations) === undefined) ? undefined : (Object.entries(obj.annotations).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'creationTimestamp': obj.creationTimestamp?.toISOString(),
-    'deletionGracePeriodSeconds': obj.deletionGracePeriodSeconds,
-    'deletionTimestamp': obj.deletionTimestamp?.toISOString(),
-    'finalizers': obj.finalizers?.map(y => y),
-    'generateName': obj.generateName,
-    'generation': obj.generation,
-    'labels': ((obj.labels) === undefined) ? undefined : (Object.entries(obj.labels).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'managedFields': obj.managedFields?.map(y => toJson_ManagedFieldsEntry(y)),
-    'name': obj.name,
-    'namespace': obj.namespace,
-    'ownerReferences': obj.ownerReferences?.map(y => toJson_OwnerReference(y)),
-    'resourceVersion': obj.resourceVersion,
-    'selfLink': obj.selfLink,
-    'uid': obj.uid,
+    annotations:
+      obj.annotations === undefined
+        ? undefined
+        : Object.entries(obj.annotations).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    creationTimestamp: obj.creationTimestamp?.toISOString(),
+    deletionGracePeriodSeconds: obj.deletionGracePeriodSeconds,
+    deletionTimestamp: obj.deletionTimestamp?.toISOString(),
+    finalizers: obj.finalizers?.map(y => y),
+    generateName: obj.generateName,
+    generation: obj.generation,
+    labels:
+      obj.labels === undefined
+        ? undefined
+        : Object.entries(obj.labels).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    managedFields: obj.managedFields?.map(y => toJson_ManagedFieldsEntry(y)),
+    name: obj.name,
+    namespace: obj.namespace,
+    ownerReferences: obj.ownerReferences?.map(y => toJson_OwnerReference(y)),
+    resourceVersion: obj.resourceVersion,
+    selfLink: obj.selfLink,
+    uid: obj.uid,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11676,30 +11997,31 @@ export interface MutatingWebhook {
    * @schema io.k8s.api.admissionregistration.v1.MutatingWebhook#timeoutSeconds
    */
   readonly timeoutSeconds?: number;
-
 }
 
 /**
  * Converts an object of type 'MutatingWebhook' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_MutatingWebhook(obj: MutatingWebhook | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_MutatingWebhook(obj: MutatingWebhook | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'admissionReviewVersions': obj.admissionReviewVersions?.map(y => y),
-    'clientConfig': toJson_WebhookClientConfig(obj.clientConfig),
-    'failurePolicy': obj.failurePolicy,
-    'matchPolicy': obj.matchPolicy,
-    'name': obj.name,
-    'namespaceSelector': toJson_LabelSelector(obj.namespaceSelector),
-    'objectSelector': toJson_LabelSelector(obj.objectSelector),
-    'reinvocationPolicy': obj.reinvocationPolicy,
-    'rules': obj.rules?.map(y => toJson_RuleWithOperations(y)),
-    'sideEffects': obj.sideEffects,
-    'timeoutSeconds': obj.timeoutSeconds,
+    admissionReviewVersions: obj.admissionReviewVersions?.map(y => y),
+    clientConfig: toJson_WebhookClientConfig(obj.clientConfig),
+    failurePolicy: obj.failurePolicy,
+    matchPolicy: obj.matchPolicy,
+    name: obj.name,
+    namespaceSelector: toJson_LabelSelector(obj.namespaceSelector),
+    objectSelector: toJson_LabelSelector(obj.objectSelector),
+    reinvocationPolicy: obj.reinvocationPolicy,
+    rules: obj.rules?.map(y => toJson_RuleWithOperations(y)),
+    sideEffects: obj.sideEffects,
+    timeoutSeconds: obj.timeoutSeconds,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11736,23 +12058,24 @@ export interface ListMeta {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta#selfLink
    */
   readonly selfLink?: string;
-
 }
 
 /**
  * Converts an object of type 'ListMeta' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ListMeta(obj: ListMeta | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ListMeta(obj: ListMeta | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'continue': obj.continue,
-    'remainingItemCount': obj.remainingItemCount,
-    'resourceVersion': obj.resourceVersion,
-    'selfLink': obj.selfLink,
+    continue: obj.continue,
+    remainingItemCount: obj.remainingItemCount,
+    resourceVersion: obj.resourceVersion,
+    selfLink: obj.selfLink,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11872,29 +12195,30 @@ export interface ValidatingWebhook {
    * @schema io.k8s.api.admissionregistration.v1.ValidatingWebhook#timeoutSeconds
    */
   readonly timeoutSeconds?: number;
-
 }
 
 /**
  * Converts an object of type 'ValidatingWebhook' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ValidatingWebhook(obj: ValidatingWebhook | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ValidatingWebhook(obj: ValidatingWebhook | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'admissionReviewVersions': obj.admissionReviewVersions?.map(y => y),
-    'clientConfig': toJson_WebhookClientConfig(obj.clientConfig),
-    'failurePolicy': obj.failurePolicy,
-    'matchPolicy': obj.matchPolicy,
-    'name': obj.name,
-    'namespaceSelector': toJson_LabelSelector(obj.namespaceSelector),
-    'objectSelector': toJson_LabelSelector(obj.objectSelector),
-    'rules': obj.rules?.map(y => toJson_RuleWithOperations(y)),
-    'sideEffects': obj.sideEffects,
-    'timeoutSeconds': obj.timeoutSeconds,
+    admissionReviewVersions: obj.admissionReviewVersions?.map(y => y),
+    clientConfig: toJson_WebhookClientConfig(obj.clientConfig),
+    failurePolicy: obj.failurePolicy,
+    matchPolicy: obj.matchPolicy,
+    name: obj.name,
+    namespaceSelector: toJson_LabelSelector(obj.namespaceSelector),
+    objectSelector: toJson_LabelSelector(obj.objectSelector),
+    rules: obj.rules?.map(y => toJson_RuleWithOperations(y)),
+    sideEffects: obj.sideEffects,
+    timeoutSeconds: obj.timeoutSeconds,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -11940,24 +12264,25 @@ export interface DaemonSetSpec {
    * @schema io.k8s.api.apps.v1.DaemonSetSpec#updateStrategy
    */
   readonly updateStrategy?: DaemonSetUpdateStrategy;
-
 }
 
 /**
  * Converts an object of type 'DaemonSetSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_DaemonSetSpec(obj: DaemonSetSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_DaemonSetSpec(obj: DaemonSetSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'minReadySeconds': obj.minReadySeconds,
-    'revisionHistoryLimit': obj.revisionHistoryLimit,
-    'selector': toJson_LabelSelector(obj.selector),
-    'template': toJson_PodTemplateSpec(obj.template),
-    'updateStrategy': toJson_DaemonSetUpdateStrategy(obj.updateStrategy),
+    minReadySeconds: obj.minReadySeconds,
+    revisionHistoryLimit: obj.revisionHistoryLimit,
+    selector: toJson_LabelSelector(obj.selector),
+    template: toJson_PodTemplateSpec(obj.template),
+    updateStrategy: toJson_DaemonSetUpdateStrategy(obj.updateStrategy),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12026,27 +12351,28 @@ export interface DeploymentSpec {
    * @schema io.k8s.api.apps.v1.DeploymentSpec#template
    */
   readonly template: PodTemplateSpec;
-
 }
 
 /**
  * Converts an object of type 'DeploymentSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_DeploymentSpec(obj: DeploymentSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_DeploymentSpec(obj: DeploymentSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'minReadySeconds': obj.minReadySeconds,
-    'paused': obj.paused,
-    'progressDeadlineSeconds': obj.progressDeadlineSeconds,
-    'replicas': obj.replicas,
-    'revisionHistoryLimit': obj.revisionHistoryLimit,
-    'selector': toJson_LabelSelector(obj.selector),
-    'strategy': toJson_DeploymentStrategy(obj.strategy),
-    'template': toJson_PodTemplateSpec(obj.template),
+    minReadySeconds: obj.minReadySeconds,
+    paused: obj.paused,
+    progressDeadlineSeconds: obj.progressDeadlineSeconds,
+    replicas: obj.replicas,
+    revisionHistoryLimit: obj.revisionHistoryLimit,
+    selector: toJson_LabelSelector(obj.selector),
+    strategy: toJson_DeploymentStrategy(obj.strategy),
+    template: toJson_PodTemplateSpec(obj.template),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12085,23 +12411,24 @@ export interface ReplicaSetSpec {
    * @schema io.k8s.api.apps.v1.ReplicaSetSpec#template
    */
   readonly template?: PodTemplateSpec;
-
 }
 
 /**
  * Converts an object of type 'ReplicaSetSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ReplicaSetSpec(obj: ReplicaSetSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ReplicaSetSpec(obj: ReplicaSetSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'minReadySeconds': obj.minReadySeconds,
-    'replicas': obj.replicas,
-    'selector': toJson_LabelSelector(obj.selector),
-    'template': toJson_PodTemplateSpec(obj.template),
+    minReadySeconds: obj.minReadySeconds,
+    replicas: obj.replicas,
+    selector: toJson_LabelSelector(obj.selector),
+    template: toJson_PodTemplateSpec(obj.template),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12183,29 +12510,32 @@ export interface StatefulSetSpec {
    * @schema io.k8s.api.apps.v1.StatefulSetSpec#volumeClaimTemplates
    */
   readonly volumeClaimTemplates?: KubePersistentVolumeClaimProps[];
-
 }
 
 /**
  * Converts an object of type 'StatefulSetSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_StatefulSetSpec(obj: StatefulSetSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_StatefulSetSpec(obj: StatefulSetSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'minReadySeconds': obj.minReadySeconds,
-    'persistentVolumeClaimRetentionPolicy': toJson_StatefulSetPersistentVolumeClaimRetentionPolicy(obj.persistentVolumeClaimRetentionPolicy),
-    'podManagementPolicy': obj.podManagementPolicy,
-    'replicas': obj.replicas,
-    'revisionHistoryLimit': obj.revisionHistoryLimit,
-    'selector': toJson_LabelSelector(obj.selector),
-    'serviceName': obj.serviceName,
-    'template': toJson_PodTemplateSpec(obj.template),
-    'updateStrategy': toJson_StatefulSetUpdateStrategy(obj.updateStrategy),
-    'volumeClaimTemplates': obj.volumeClaimTemplates?.map(y => toJson_KubePersistentVolumeClaimProps(y)),
+    minReadySeconds: obj.minReadySeconds,
+    persistentVolumeClaimRetentionPolicy: toJson_StatefulSetPersistentVolumeClaimRetentionPolicy(
+      obj.persistentVolumeClaimRetentionPolicy,
+    ),
+    podManagementPolicy: obj.podManagementPolicy,
+    replicas: obj.replicas,
+    revisionHistoryLimit: obj.revisionHistoryLimit,
+    selector: toJson_LabelSelector(obj.selector),
+    serviceName: obj.serviceName,
+    template: toJson_PodTemplateSpec(obj.template),
+    updateStrategy: toJson_StatefulSetUpdateStrategy(obj.updateStrategy),
+    volumeClaimTemplates: obj.volumeClaimTemplates?.map(y => toJson_KubePersistentVolumeClaimProps(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12235,22 +12565,23 @@ export interface TokenRequestSpec {
    * @schema io.k8s.api.authentication.v1.TokenRequestSpec#expirationSeconds
    */
   readonly expirationSeconds?: number;
-
 }
 
 /**
  * Converts an object of type 'TokenRequestSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_TokenRequestSpec(obj: TokenRequestSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_TokenRequestSpec(obj: TokenRequestSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'audiences': obj.audiences?.map(y => y),
-    'boundObjectRef': toJson_BoundObjectReference(obj.boundObjectRef),
-    'expirationSeconds': obj.expirationSeconds,
+    audiences: obj.audiences?.map(y => y),
+    boundObjectRef: toJson_BoundObjectReference(obj.boundObjectRef),
+    expirationSeconds: obj.expirationSeconds,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12273,21 +12604,22 @@ export interface TokenReviewSpec {
    * @schema io.k8s.api.authentication.v1.TokenReviewSpec#token
    */
   readonly token?: string;
-
 }
 
 /**
  * Converts an object of type 'TokenReviewSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_TokenReviewSpec(obj: TokenReviewSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_TokenReviewSpec(obj: TokenReviewSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'audiences': obj.audiences?.map(y => y),
-    'token': obj.token,
+    audiences: obj.audiences?.map(y => y),
+    token: obj.token,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12338,25 +12670,34 @@ export interface SubjectAccessReviewSpec {
    * @schema io.k8s.api.authorization.v1.SubjectAccessReviewSpec#user
    */
   readonly user?: string;
-
 }
 
 /**
  * Converts an object of type 'SubjectAccessReviewSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SubjectAccessReviewSpec(obj: SubjectAccessReviewSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SubjectAccessReviewSpec(
+  obj: SubjectAccessReviewSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'extra': ((obj.extra) === undefined) ? undefined : (Object.entries(obj.extra).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.map(y => y) }), {})),
-    'groups': obj.groups?.map(y => y),
-    'nonResourceAttributes': toJson_NonResourceAttributes(obj.nonResourceAttributes),
-    'resourceAttributes': toJson_ResourceAttributes(obj.resourceAttributes),
-    'uid': obj.uid,
-    'user': obj.user,
+    extra:
+      obj.extra === undefined
+        ? undefined
+        : Object.entries(obj.extra).reduce(
+            (r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.map(y => y) }),
+            {},
+          ),
+    groups: obj.groups?.map(y => y),
+    nonResourceAttributes: toJson_NonResourceAttributes(obj.nonResourceAttributes),
+    resourceAttributes: toJson_ResourceAttributes(obj.resourceAttributes),
+    uid: obj.uid,
+    user: obj.user,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12379,21 +12720,24 @@ export interface SelfSubjectAccessReviewSpec {
    * @schema io.k8s.api.authorization.v1.SelfSubjectAccessReviewSpec#resourceAttributes
    */
   readonly resourceAttributes?: ResourceAttributes;
-
 }
 
 /**
  * Converts an object of type 'SelfSubjectAccessReviewSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SelfSubjectAccessReviewSpec(obj: SelfSubjectAccessReviewSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SelfSubjectAccessReviewSpec(
+  obj: SelfSubjectAccessReviewSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'nonResourceAttributes': toJson_NonResourceAttributes(obj.nonResourceAttributes),
-    'resourceAttributes': toJson_ResourceAttributes(obj.resourceAttributes),
+    nonResourceAttributes: toJson_NonResourceAttributes(obj.nonResourceAttributes),
+    resourceAttributes: toJson_ResourceAttributes(obj.resourceAttributes),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12409,20 +12753,23 @@ export interface SelfSubjectRulesReviewSpec {
    * @schema io.k8s.api.authorization.v1.SelfSubjectRulesReviewSpec#namespace
    */
   readonly namespace?: string;
-
 }
 
 /**
  * Converts an object of type 'SelfSubjectRulesReviewSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SelfSubjectRulesReviewSpec(obj: SelfSubjectRulesReviewSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SelfSubjectRulesReviewSpec(
+  obj: SelfSubjectRulesReviewSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'namespace': obj.namespace,
+    namespace: obj.namespace,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12459,23 +12806,26 @@ export interface HorizontalPodAutoscalerSpec {
    * @schema io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerSpec#targetCPUUtilizationPercentage
    */
   readonly targetCpuUtilizationPercentage?: number;
-
 }
 
 /**
  * Converts an object of type 'HorizontalPodAutoscalerSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HorizontalPodAutoscalerSpec(obj: HorizontalPodAutoscalerSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HorizontalPodAutoscalerSpec(
+  obj: HorizontalPodAutoscalerSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'maxReplicas': obj.maxReplicas,
-    'minReplicas': obj.minReplicas,
-    'scaleTargetRef': toJson_CrossVersionObjectReference(obj.scaleTargetRef),
-    'targetCPUUtilizationPercentage': obj.targetCpuUtilizationPercentage,
+    maxReplicas: obj.maxReplicas,
+    minReplicas: obj.minReplicas,
+    scaleTargetRef: toJson_CrossVersionObjectReference(obj.scaleTargetRef),
+    targetCPUUtilizationPercentage: obj.targetCpuUtilizationPercentage,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12491,20 +12841,21 @@ export interface ScaleSpec {
    * @schema io.k8s.api.autoscaling.v1.ScaleSpec#replicas
    */
   readonly replicas?: number;
-
 }
 
 /**
  * Converts an object of type 'ScaleSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ScaleSpec(obj: ScaleSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ScaleSpec(obj: ScaleSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'replicas': obj.replicas,
+    replicas: obj.replicas,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12548,24 +12899,27 @@ export interface HorizontalPodAutoscalerSpecV2 {
    * @schema io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerSpec#scaleTargetRef
    */
   readonly scaleTargetRef: CrossVersionObjectReferenceV2;
-
 }
 
 /**
  * Converts an object of type 'HorizontalPodAutoscalerSpecV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HorizontalPodAutoscalerSpecV2(obj: HorizontalPodAutoscalerSpecV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HorizontalPodAutoscalerSpecV2(
+  obj: HorizontalPodAutoscalerSpecV2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'behavior': toJson_HorizontalPodAutoscalerBehaviorV2(obj.behavior),
-    'maxReplicas': obj.maxReplicas,
-    'metrics': obj.metrics?.map(y => toJson_MetricSpecV2(y)),
-    'minReplicas': obj.minReplicas,
-    'scaleTargetRef': toJson_CrossVersionObjectReferenceV2(obj.scaleTargetRef),
+    behavior: toJson_HorizontalPodAutoscalerBehaviorV2(obj.behavior),
+    maxReplicas: obj.maxReplicas,
+    metrics: obj.metrics?.map(y => toJson_MetricSpecV2(y)),
+    minReplicas: obj.minReplicas,
+    scaleTargetRef: toJson_CrossVersionObjectReferenceV2(obj.scaleTargetRef),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12609,24 +12963,27 @@ export interface HorizontalPodAutoscalerSpecV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.HorizontalPodAutoscalerSpec#scaleTargetRef
    */
   readonly scaleTargetRef: CrossVersionObjectReferenceV2Beta2;
-
 }
 
 /**
  * Converts an object of type 'HorizontalPodAutoscalerSpecV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HorizontalPodAutoscalerSpecV2Beta2(obj: HorizontalPodAutoscalerSpecV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HorizontalPodAutoscalerSpecV2Beta2(
+  obj: HorizontalPodAutoscalerSpecV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'behavior': toJson_HorizontalPodAutoscalerBehaviorV2Beta2(obj.behavior),
-    'maxReplicas': obj.maxReplicas,
-    'metrics': obj.metrics?.map(y => toJson_MetricSpecV2Beta2(y)),
-    'minReplicas': obj.minReplicas,
-    'scaleTargetRef': toJson_CrossVersionObjectReferenceV2Beta2(obj.scaleTargetRef),
+    behavior: toJson_HorizontalPodAutoscalerBehaviorV2Beta2(obj.behavior),
+    maxReplicas: obj.maxReplicas,
+    metrics: obj.metrics?.map(y => toJson_MetricSpecV2Beta2(y)),
+    minReplicas: obj.minReplicas,
+    scaleTargetRef: toJson_CrossVersionObjectReferenceV2Beta2(obj.scaleTargetRef),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12696,27 +13053,28 @@ export interface CronJobSpec {
    * @schema io.k8s.api.batch.v1.CronJobSpec#timeZone
    */
   readonly timeZone?: string;
-
 }
 
 /**
  * Converts an object of type 'CronJobSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CronJobSpec(obj: CronJobSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CronJobSpec(obj: CronJobSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'concurrencyPolicy': obj.concurrencyPolicy,
-    'failedJobsHistoryLimit': obj.failedJobsHistoryLimit,
-    'jobTemplate': toJson_JobTemplateSpec(obj.jobTemplate),
-    'schedule': obj.schedule,
-    'startingDeadlineSeconds': obj.startingDeadlineSeconds,
-    'successfulJobsHistoryLimit': obj.successfulJobsHistoryLimit,
-    'suspend': obj.suspend,
-    'timeZone': obj.timeZone,
+    concurrencyPolicy: obj.concurrencyPolicy,
+    failedJobsHistoryLimit: obj.failedJobsHistoryLimit,
+    jobTemplate: toJson_JobTemplateSpec(obj.jobTemplate),
+    schedule: obj.schedule,
+    startingDeadlineSeconds: obj.startingDeadlineSeconds,
+    successfulJobsHistoryLimit: obj.successfulJobsHistoryLimit,
+    suspend: obj.suspend,
+    timeZone: obj.timeZone,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12812,30 +13170,31 @@ export interface JobSpec {
    * @schema io.k8s.api.batch.v1.JobSpec#ttlSecondsAfterFinished
    */
   readonly ttlSecondsAfterFinished?: number;
-
 }
 
 /**
  * Converts an object of type 'JobSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_JobSpec(obj: JobSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_JobSpec(obj: JobSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'activeDeadlineSeconds': obj.activeDeadlineSeconds,
-    'backoffLimit': obj.backoffLimit,
-    'completionMode': obj.completionMode,
-    'completions': obj.completions,
-    'manualSelector': obj.manualSelector,
-    'parallelism': obj.parallelism,
-    'podFailurePolicy': toJson_PodFailurePolicy(obj.podFailurePolicy),
-    'selector': toJson_LabelSelector(obj.selector),
-    'suspend': obj.suspend,
-    'template': toJson_PodTemplateSpec(obj.template),
-    'ttlSecondsAfterFinished': obj.ttlSecondsAfterFinished,
+    activeDeadlineSeconds: obj.activeDeadlineSeconds,
+    backoffLimit: obj.backoffLimit,
+    completionMode: obj.completionMode,
+    completions: obj.completions,
+    manualSelector: obj.manualSelector,
+    parallelism: obj.parallelism,
+    podFailurePolicy: toJson_PodFailurePolicy(obj.podFailurePolicy),
+    selector: toJson_LabelSelector(obj.selector),
+    suspend: obj.suspend,
+    template: toJson_PodTemplateSpec(obj.template),
+    ttlSecondsAfterFinished: obj.ttlSecondsAfterFinished,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -12944,27 +13303,36 @@ export interface CertificateSigningRequestSpec {
    * @schema io.k8s.api.certificates.v1.CertificateSigningRequestSpec#username
    */
   readonly username?: string;
-
 }
 
 /**
  * Converts an object of type 'CertificateSigningRequestSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CertificateSigningRequestSpec(obj: CertificateSigningRequestSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CertificateSigningRequestSpec(
+  obj: CertificateSigningRequestSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'expirationSeconds': obj.expirationSeconds,
-    'extra': ((obj.extra) === undefined) ? undefined : (Object.entries(obj.extra).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.map(y => y) }), {})),
-    'groups': obj.groups?.map(y => y),
-    'request': obj.request,
-    'signerName': obj.signerName,
-    'uid': obj.uid,
-    'usages': obj.usages?.map(y => y),
-    'username': obj.username,
+    expirationSeconds: obj.expirationSeconds,
+    extra:
+      obj.extra === undefined
+        ? undefined
+        : Object.entries(obj.extra).reduce(
+            (r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.map(y => y) }),
+            {},
+          ),
+    groups: obj.groups?.map(y => y),
+    request: obj.request,
+    signerName: obj.signerName,
+    uid: obj.uid,
+    usages: obj.usages?.map(y => y),
+    username: obj.username,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13008,24 +13376,25 @@ export interface LeaseSpec {
    * @schema io.k8s.api.coordination.v1.LeaseSpec#renewTime
    */
   readonly renewTime?: Date;
-
 }
 
 /**
  * Converts an object of type 'LeaseSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LeaseSpec(obj: LeaseSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LeaseSpec(obj: LeaseSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'acquireTime': obj.acquireTime?.toISOString(),
-    'holderIdentity': obj.holderIdentity,
-    'leaseDurationSeconds': obj.leaseDurationSeconds,
-    'leaseTransitions': obj.leaseTransitions,
-    'renewTime': obj.renewTime?.toISOString(),
+    acquireTime: obj.acquireTime?.toISOString(),
+    holderIdentity: obj.holderIdentity,
+    leaseDurationSeconds: obj.leaseDurationSeconds,
+    leaseTransitions: obj.leaseTransitions,
+    renewTime: obj.renewTime?.toISOString(),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13083,26 +13452,27 @@ export interface ObjectReference {
    * @schema io.k8s.api.core.v1.ObjectReference#uid
    */
   readonly uid?: string;
-
 }
 
 /**
  * Converts an object of type 'ObjectReference' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ObjectReference(obj: ObjectReference | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ObjectReference(obj: ObjectReference | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiVersion': obj.apiVersion,
-    'fieldPath': obj.fieldPath,
-    'kind': obj.kind,
-    'name': obj.name,
-    'namespace': obj.namespace,
-    'resourceVersion': obj.resourceVersion,
-    'uid': obj.uid,
+    apiVersion: obj.apiVersion,
+    fieldPath: obj.fieldPath,
+    kind: obj.kind,
+    name: obj.name,
+    namespace: obj.namespace,
+    resourceVersion: obj.resourceVersion,
+    uid: obj.uid,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13139,23 +13509,24 @@ export interface ComponentCondition {
    * @schema io.k8s.api.core.v1.ComponentCondition#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'ComponentCondition' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ComponentCondition(obj: ComponentCondition | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ComponentCondition(obj: ComponentCondition | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'error': obj.error,
-    'message': obj.message,
-    'status': obj.status,
-    'type': obj.type,
+    error: obj.error,
+    message: obj.message,
+    status: obj.status,
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13195,22 +13566,23 @@ export interface EndpointSubset {
    * @schema io.k8s.api.core.v1.EndpointSubset#ports
    */
   readonly ports?: EndpointPort[];
-
 }
 
 /**
  * Converts an object of type 'EndpointSubset' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EndpointSubset(obj: EndpointSubset | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EndpointSubset(obj: EndpointSubset | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'addresses': obj.addresses?.map(y => toJson_EndpointAddress(y)),
-    'notReadyAddresses': obj.notReadyAddresses?.map(y => toJson_EndpointAddress(y)),
-    'ports': obj.ports?.map(y => toJson_EndpointPort(y)),
+    addresses: obj.addresses?.map(y => toJson_EndpointAddress(y)),
+    notReadyAddresses: obj.notReadyAddresses?.map(y => toJson_EndpointAddress(y)),
+    ports: obj.ports?.map(y => toJson_EndpointPort(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13233,21 +13605,22 @@ export interface EventSource {
    * @schema io.k8s.api.core.v1.EventSource#host
    */
   readonly host?: string;
-
 }
 
 /**
  * Converts an object of type 'EventSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EventSource(obj: EventSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EventSource(obj: EventSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'component': obj.component,
-    'host': obj.host,
+    component: obj.component,
+    host: obj.host,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13270,21 +13643,22 @@ export interface EventSeries {
    * @schema io.k8s.api.events.v1.EventSeries#lastObservedTime
    */
   readonly lastObservedTime: Date;
-
 }
 
 /**
  * Converts an object of type 'EventSeries' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EventSeries(obj: EventSeries | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EventSeries(obj: EventSeries | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'count': obj.count,
-    'lastObservedTime': obj.lastObservedTime?.toISOString(),
+    count: obj.count,
+    lastObservedTime: obj.lastObservedTime?.toISOString(),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13300,20 +13674,21 @@ export interface LimitRangeSpec {
    * @schema io.k8s.api.core.v1.LimitRangeSpec#limits
    */
   readonly limits: LimitRangeItem[];
-
 }
 
 /**
  * Converts an object of type 'LimitRangeSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LimitRangeSpec(obj: LimitRangeSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LimitRangeSpec(obj: LimitRangeSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'limits': obj.limits?.map(y => toJson_LimitRangeItem(y)),
+    limits: obj.limits?.map(y => toJson_LimitRangeItem(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13329,20 +13704,21 @@ export interface NamespaceSpec {
    * @schema io.k8s.api.core.v1.NamespaceSpec#finalizers
    */
   readonly finalizers?: string[];
-
 }
 
 /**
  * Converts an object of type 'NamespaceSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NamespaceSpec(obj: NamespaceSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NamespaceSpec(obj: NamespaceSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'finalizers': obj.finalizers?.map(y => y),
+    finalizers: obj.finalizers?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13400,26 +13776,27 @@ export interface NodeSpec {
    * @schema io.k8s.api.core.v1.NodeSpec#unschedulable
    */
   readonly unschedulable?: boolean;
-
 }
 
 /**
  * Converts an object of type 'NodeSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NodeSpec(obj: NodeSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NodeSpec(obj: NodeSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'configSource': toJson_NodeConfigSource(obj.configSource),
-    'externalID': obj.externalId,
-    'podCIDR': obj.podCidr,
-    'podCIDRs': obj.podCidRs?.map(y => y),
-    'providerID': obj.providerId,
-    'taints': obj.taints?.map(y => toJson_Taint(y)),
-    'unschedulable': obj.unschedulable,
+    configSource: toJson_NodeConfigSource(obj.configSource),
+    externalID: obj.externalId,
+    podCIDR: obj.podCidr,
+    podCIDRs: obj.podCidRs?.map(y => y),
+    providerID: obj.providerId,
+    taints: obj.taints?.map(y => toJson_Taint(y)),
+    unschedulable: obj.unschedulable,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13640,49 +14017,55 @@ export interface PersistentVolumeSpec {
    * @schema io.k8s.api.core.v1.PersistentVolumeSpec#vsphereVolume
    */
   readonly vsphereVolume?: VsphereVirtualDiskVolumeSource;
-
 }
 
 /**
  * Converts an object of type 'PersistentVolumeSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PersistentVolumeSpec(obj: PersistentVolumeSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PersistentVolumeSpec(
+  obj: PersistentVolumeSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'accessModes': obj.accessModes?.map(y => y),
-    'awsElasticBlockStore': toJson_AwsElasticBlockStoreVolumeSource(obj.awsElasticBlockStore),
-    'azureDisk': toJson_AzureDiskVolumeSource(obj.azureDisk),
-    'azureFile': toJson_AzureFilePersistentVolumeSource(obj.azureFile),
-    'capacity': ((obj.capacity) === undefined) ? undefined : (Object.entries(obj.capacity).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
-    'cephfs': toJson_CephFsPersistentVolumeSource(obj.cephfs),
-    'cinder': toJson_CinderPersistentVolumeSource(obj.cinder),
-    'claimRef': toJson_ObjectReference(obj.claimRef),
-    'csi': toJson_CsiPersistentVolumeSource(obj.csi),
-    'fc': toJson_FcVolumeSource(obj.fc),
-    'flexVolume': toJson_FlexPersistentVolumeSource(obj.flexVolume),
-    'flocker': toJson_FlockerVolumeSource(obj.flocker),
-    'gcePersistentDisk': toJson_GcePersistentDiskVolumeSource(obj.gcePersistentDisk),
-    'glusterfs': toJson_GlusterfsPersistentVolumeSource(obj.glusterfs),
-    'hostPath': toJson_HostPathVolumeSource(obj.hostPath),
-    'iscsi': toJson_IscsiPersistentVolumeSource(obj.iscsi),
-    'local': toJson_LocalVolumeSource(obj.local),
-    'mountOptions': obj.mountOptions?.map(y => y),
-    'nfs': toJson_NfsVolumeSource(obj.nfs),
-    'nodeAffinity': toJson_VolumeNodeAffinity(obj.nodeAffinity),
-    'persistentVolumeReclaimPolicy': obj.persistentVolumeReclaimPolicy,
-    'photonPersistentDisk': toJson_PhotonPersistentDiskVolumeSource(obj.photonPersistentDisk),
-    'portworxVolume': toJson_PortworxVolumeSource(obj.portworxVolume),
-    'quobyte': toJson_QuobyteVolumeSource(obj.quobyte),
-    'rbd': toJson_RbdPersistentVolumeSource(obj.rbd),
-    'scaleIO': toJson_ScaleIoPersistentVolumeSource(obj.scaleIo),
-    'storageClassName': obj.storageClassName,
-    'storageos': toJson_StorageOsPersistentVolumeSource(obj.storageos),
-    'volumeMode': obj.volumeMode,
-    'vsphereVolume': toJson_VsphereVirtualDiskVolumeSource(obj.vsphereVolume),
+    accessModes: obj.accessModes?.map(y => y),
+    awsElasticBlockStore: toJson_AwsElasticBlockStoreVolumeSource(obj.awsElasticBlockStore),
+    azureDisk: toJson_AzureDiskVolumeSource(obj.azureDisk),
+    azureFile: toJson_AzureFilePersistentVolumeSource(obj.azureFile),
+    capacity:
+      obj.capacity === undefined
+        ? undefined
+        : Object.entries(obj.capacity).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }), {}),
+    cephfs: toJson_CephFsPersistentVolumeSource(obj.cephfs),
+    cinder: toJson_CinderPersistentVolumeSource(obj.cinder),
+    claimRef: toJson_ObjectReference(obj.claimRef),
+    csi: toJson_CsiPersistentVolumeSource(obj.csi),
+    fc: toJson_FcVolumeSource(obj.fc),
+    flexVolume: toJson_FlexPersistentVolumeSource(obj.flexVolume),
+    flocker: toJson_FlockerVolumeSource(obj.flocker),
+    gcePersistentDisk: toJson_GcePersistentDiskVolumeSource(obj.gcePersistentDisk),
+    glusterfs: toJson_GlusterfsPersistentVolumeSource(obj.glusterfs),
+    hostPath: toJson_HostPathVolumeSource(obj.hostPath),
+    iscsi: toJson_IscsiPersistentVolumeSource(obj.iscsi),
+    local: toJson_LocalVolumeSource(obj.local),
+    mountOptions: obj.mountOptions?.map(y => y),
+    nfs: toJson_NfsVolumeSource(obj.nfs),
+    nodeAffinity: toJson_VolumeNodeAffinity(obj.nodeAffinity),
+    persistentVolumeReclaimPolicy: obj.persistentVolumeReclaimPolicy,
+    photonPersistentDisk: toJson_PhotonPersistentDiskVolumeSource(obj.photonPersistentDisk),
+    portworxVolume: toJson_PortworxVolumeSource(obj.portworxVolume),
+    quobyte: toJson_QuobyteVolumeSource(obj.quobyte),
+    rbd: toJson_RbdPersistentVolumeSource(obj.rbd),
+    scaleIO: toJson_ScaleIoPersistentVolumeSource(obj.scaleIo),
+    storageClassName: obj.storageClassName,
+    storageos: toJson_StorageOsPersistentVolumeSource(obj.storageos),
+    volumeMode: obj.volumeMode,
+    vsphereVolume: toJson_VsphereVirtualDiskVolumeSource(obj.vsphereVolume),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -13752,27 +14135,30 @@ export interface PersistentVolumeClaimSpec {
    * @schema io.k8s.api.core.v1.PersistentVolumeClaimSpec#volumeName
    */
   readonly volumeName?: string;
-
 }
 
 /**
  * Converts an object of type 'PersistentVolumeClaimSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PersistentVolumeClaimSpec(obj: PersistentVolumeClaimSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PersistentVolumeClaimSpec(
+  obj: PersistentVolumeClaimSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'accessModes': obj.accessModes?.map(y => y),
-    'dataSource': toJson_TypedLocalObjectReference(obj.dataSource),
-    'dataSourceRef': toJson_TypedLocalObjectReference(obj.dataSourceRef),
-    'resources': toJson_ResourceRequirements(obj.resources),
-    'selector': toJson_LabelSelector(obj.selector),
-    'storageClassName': obj.storageClassName,
-    'volumeMode': obj.volumeMode,
-    'volumeName': obj.volumeName,
+    accessModes: obj.accessModes?.map(y => y),
+    dataSource: toJson_TypedLocalObjectReference(obj.dataSource),
+    dataSourceRef: toJson_TypedLocalObjectReference(obj.dataSourceRef),
+    resources: toJson_ResourceRequirements(obj.resources),
+    selector: toJson_LabelSelector(obj.selector),
+    storageClassName: obj.storageClassName,
+    volumeMode: obj.volumeMode,
+    volumeName: obj.volumeName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14060,56 +14446,63 @@ export interface PodSpec {
    * @schema io.k8s.api.core.v1.PodSpec#volumes
    */
   readonly volumes?: Volume[];
-
 }
 
 /**
  * Converts an object of type 'PodSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodSpec(obj: PodSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodSpec(obj: PodSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'activeDeadlineSeconds': obj.activeDeadlineSeconds,
-    'affinity': toJson_Affinity(obj.affinity),
-    'automountServiceAccountToken': obj.automountServiceAccountToken,
-    'containers': obj.containers?.map(y => toJson_Container(y)),
-    'dnsConfig': toJson_PodDnsConfig(obj.dnsConfig),
-    'dnsPolicy': obj.dnsPolicy,
-    'enableServiceLinks': obj.enableServiceLinks,
-    'ephemeralContainers': obj.ephemeralContainers?.map(y => toJson_EphemeralContainer(y)),
-    'hostAliases': obj.hostAliases?.map(y => toJson_HostAlias(y)),
-    'hostIPC': obj.hostIpc,
-    'hostNetwork': obj.hostNetwork,
-    'hostPID': obj.hostPid,
-    'hostUsers': obj.hostUsers,
-    'hostname': obj.hostname,
-    'imagePullSecrets': obj.imagePullSecrets?.map(y => toJson_LocalObjectReference(y)),
-    'initContainers': obj.initContainers?.map(y => toJson_Container(y)),
-    'nodeName': obj.nodeName,
-    'nodeSelector': ((obj.nodeSelector) === undefined) ? undefined : (Object.entries(obj.nodeSelector).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'os': toJson_PodOs(obj.os),
-    'overhead': ((obj.overhead) === undefined) ? undefined : (Object.entries(obj.overhead).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
-    'preemptionPolicy': obj.preemptionPolicy,
-    'priority': obj.priority,
-    'priorityClassName': obj.priorityClassName,
-    'readinessGates': obj.readinessGates?.map(y => toJson_PodReadinessGate(y)),
-    'restartPolicy': obj.restartPolicy,
-    'runtimeClassName': obj.runtimeClassName,
-    'schedulerName': obj.schedulerName,
-    'securityContext': toJson_PodSecurityContext(obj.securityContext),
-    'serviceAccount': obj.serviceAccount,
-    'serviceAccountName': obj.serviceAccountName,
-    'setHostnameAsFQDN': obj.setHostnameAsFqdn,
-    'shareProcessNamespace': obj.shareProcessNamespace,
-    'subdomain': obj.subdomain,
-    'terminationGracePeriodSeconds': obj.terminationGracePeriodSeconds,
-    'tolerations': obj.tolerations?.map(y => toJson_Toleration(y)),
-    'topologySpreadConstraints': obj.topologySpreadConstraints?.map(y => toJson_TopologySpreadConstraint(y)),
-    'volumes': obj.volumes?.map(y => toJson_Volume(y)),
+    activeDeadlineSeconds: obj.activeDeadlineSeconds,
+    affinity: toJson_Affinity(obj.affinity),
+    automountServiceAccountToken: obj.automountServiceAccountToken,
+    containers: obj.containers?.map(y => toJson_Container(y)),
+    dnsConfig: toJson_PodDnsConfig(obj.dnsConfig),
+    dnsPolicy: obj.dnsPolicy,
+    enableServiceLinks: obj.enableServiceLinks,
+    ephemeralContainers: obj.ephemeralContainers?.map(y => toJson_EphemeralContainer(y)),
+    hostAliases: obj.hostAliases?.map(y => toJson_HostAlias(y)),
+    hostIPC: obj.hostIpc,
+    hostNetwork: obj.hostNetwork,
+    hostPID: obj.hostPid,
+    hostUsers: obj.hostUsers,
+    hostname: obj.hostname,
+    imagePullSecrets: obj.imagePullSecrets?.map(y => toJson_LocalObjectReference(y)),
+    initContainers: obj.initContainers?.map(y => toJson_Container(y)),
+    nodeName: obj.nodeName,
+    nodeSelector:
+      obj.nodeSelector === undefined
+        ? undefined
+        : Object.entries(obj.nodeSelector).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    os: toJson_PodOs(obj.os),
+    overhead:
+      obj.overhead === undefined
+        ? undefined
+        : Object.entries(obj.overhead).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }), {}),
+    preemptionPolicy: obj.preemptionPolicy,
+    priority: obj.priority,
+    priorityClassName: obj.priorityClassName,
+    readinessGates: obj.readinessGates?.map(y => toJson_PodReadinessGate(y)),
+    restartPolicy: obj.restartPolicy,
+    runtimeClassName: obj.runtimeClassName,
+    schedulerName: obj.schedulerName,
+    securityContext: toJson_PodSecurityContext(obj.securityContext),
+    serviceAccount: obj.serviceAccount,
+    serviceAccountName: obj.serviceAccountName,
+    setHostnameAsFQDN: obj.setHostnameAsFqdn,
+    shareProcessNamespace: obj.shareProcessNamespace,
+    subdomain: obj.subdomain,
+    terminationGracePeriodSeconds: obj.terminationGracePeriodSeconds,
+    tolerations: obj.tolerations?.map(y => toJson_Toleration(y)),
+    topologySpreadConstraints: obj.topologySpreadConstraints?.map(y => toJson_TopologySpreadConstraint(y)),
+    volumes: obj.volumes?.map(y => toJson_Volume(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14132,21 +14525,22 @@ export interface PodTemplateSpec {
    * @schema io.k8s.api.core.v1.PodTemplateSpec#spec
    */
   readonly spec?: PodSpec;
-
 }
 
 /**
  * Converts an object of type 'PodTemplateSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodTemplateSpec(obj: PodTemplateSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodTemplateSpec(obj: PodTemplateSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_PodSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_PodSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14185,23 +14579,29 @@ export interface ReplicationControllerSpec {
    * @schema io.k8s.api.core.v1.ReplicationControllerSpec#template
    */
   readonly template?: PodTemplateSpec;
-
 }
 
 /**
  * Converts an object of type 'ReplicationControllerSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ReplicationControllerSpec(obj: ReplicationControllerSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ReplicationControllerSpec(
+  obj: ReplicationControllerSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'minReadySeconds': obj.minReadySeconds,
-    'replicas': obj.replicas,
-    'selector': ((obj.selector) === undefined) ? undefined : (Object.entries(obj.selector).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'template': toJson_PodTemplateSpec(obj.template),
+    minReadySeconds: obj.minReadySeconds,
+    replicas: obj.replicas,
+    selector:
+      obj.selector === undefined
+        ? undefined
+        : Object.entries(obj.selector).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    template: toJson_PodTemplateSpec(obj.template),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14231,22 +14631,26 @@ export interface ResourceQuotaSpec {
    * @schema io.k8s.api.core.v1.ResourceQuotaSpec#scopes
    */
   readonly scopes?: string[];
-
 }
 
 /**
  * Converts an object of type 'ResourceQuotaSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ResourceQuotaSpec(obj: ResourceQuotaSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ResourceQuotaSpec(obj: ResourceQuotaSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'hard': ((obj.hard) === undefined) ? undefined : (Object.entries(obj.hard).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
-    'scopeSelector': toJson_ScopeSelector(obj.scopeSelector),
-    'scopes': obj.scopes?.map(y => y),
+    hard:
+      obj.hard === undefined
+        ? undefined
+        : Object.entries(obj.hard).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }), {}),
+    scopeSelector: toJson_ScopeSelector(obj.scopeSelector),
+    scopes: obj.scopes?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14401,38 +14805,42 @@ export interface ServiceSpec {
    * @schema io.k8s.api.core.v1.ServiceSpec#type
    */
   readonly type?: string;
-
 }
 
 /**
  * Converts an object of type 'ServiceSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ServiceSpec(obj: ServiceSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ServiceSpec(obj: ServiceSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'allocateLoadBalancerNodePorts': obj.allocateLoadBalancerNodePorts,
-    'clusterIP': obj.clusterIp,
-    'clusterIPs': obj.clusterIPs?.map(y => y),
-    'externalIPs': obj.externalIPs?.map(y => y),
-    'externalName': obj.externalName,
-    'externalTrafficPolicy': obj.externalTrafficPolicy,
-    'healthCheckNodePort': obj.healthCheckNodePort,
-    'internalTrafficPolicy': obj.internalTrafficPolicy,
-    'ipFamilies': obj.ipFamilies?.map(y => y),
-    'ipFamilyPolicy': obj.ipFamilyPolicy,
-    'loadBalancerClass': obj.loadBalancerClass,
-    'loadBalancerIP': obj.loadBalancerIp,
-    'loadBalancerSourceRanges': obj.loadBalancerSourceRanges?.map(y => y),
-    'ports': obj.ports?.map(y => toJson_ServicePort(y)),
-    'publishNotReadyAddresses': obj.publishNotReadyAddresses,
-    'selector': ((obj.selector) === undefined) ? undefined : (Object.entries(obj.selector).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'sessionAffinity': obj.sessionAffinity,
-    'sessionAffinityConfig': toJson_SessionAffinityConfig(obj.sessionAffinityConfig),
-    'type': obj.type,
+    allocateLoadBalancerNodePorts: obj.allocateLoadBalancerNodePorts,
+    clusterIP: obj.clusterIp,
+    clusterIPs: obj.clusterIPs?.map(y => y),
+    externalIPs: obj.externalIPs?.map(y => y),
+    externalName: obj.externalName,
+    externalTrafficPolicy: obj.externalTrafficPolicy,
+    healthCheckNodePort: obj.healthCheckNodePort,
+    internalTrafficPolicy: obj.internalTrafficPolicy,
+    ipFamilies: obj.ipFamilies?.map(y => y),
+    ipFamilyPolicy: obj.ipFamilyPolicy,
+    loadBalancerClass: obj.loadBalancerClass,
+    loadBalancerIP: obj.loadBalancerIp,
+    loadBalancerSourceRanges: obj.loadBalancerSourceRanges?.map(y => y),
+    ports: obj.ports?.map(y => toJson_ServicePort(y)),
+    publishNotReadyAddresses: obj.publishNotReadyAddresses,
+    selector:
+      obj.selector === undefined
+        ? undefined
+        : Object.entries(obj.selector).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    sessionAffinity: obj.sessionAffinity,
+    sessionAffinityConfig: toJson_SessionAffinityConfig(obj.sessionAffinityConfig),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14448,20 +14856,23 @@ export interface LocalObjectReference {
    * @schema io.k8s.api.core.v1.LocalObjectReference#name
    */
   readonly name?: string;
-
 }
 
 /**
  * Converts an object of type 'LocalObjectReference' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LocalObjectReference(obj: LocalObjectReference | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LocalObjectReference(
+  obj: LocalObjectReference | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14526,27 +14937,34 @@ export interface Endpoint {
    * @schema io.k8s.api.discovery.v1.Endpoint#zone
    */
   readonly zone?: string;
-
 }
 
 /**
  * Converts an object of type 'Endpoint' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Endpoint(obj: Endpoint | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Endpoint(obj: Endpoint | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'addresses': obj.addresses?.map(y => y),
-    'conditions': toJson_EndpointConditions(obj.conditions),
-    'deprecatedTopology': ((obj.deprecatedTopology) === undefined) ? undefined : (Object.entries(obj.deprecatedTopology).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'hints': toJson_EndpointHints(obj.hints),
-    'hostname': obj.hostname,
-    'nodeName': obj.nodeName,
-    'targetRef': toJson_ObjectReference(obj.targetRef),
-    'zone': obj.zone,
+    addresses: obj.addresses?.map(y => y),
+    conditions: toJson_EndpointConditions(obj.conditions),
+    deprecatedTopology:
+      obj.deprecatedTopology === undefined
+        ? undefined
+        : Object.entries(obj.deprecatedTopology).reduce(
+            (r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }),
+            {},
+          ),
+    hints: toJson_EndpointHints(obj.hints),
+    hostname: obj.hostname,
+    nodeName: obj.nodeName,
+    targetRef: toJson_ObjectReference(obj.targetRef),
+    zone: obj.zone,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14586,23 +15004,24 @@ export interface EndpointPort {
    * @schema io.k8s.api.core.v1.EndpointPort#protocol
    */
   readonly protocol?: string;
-
 }
 
 /**
  * Converts an object of type 'EndpointPort' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EndpointPort(obj: EndpointPort | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EndpointPort(obj: EndpointPort | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'appProtocol': obj.appProtocol,
-    'name': obj.name,
-    'port': obj.port,
-    'protocol': obj.protocol,
+    appProtocol: obj.appProtocol,
+    name: obj.name,
+    port: obj.port,
+    protocol: obj.protocol,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14639,23 +15058,26 @@ export interface FlowSchemaSpecV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.FlowSchemaSpec#rules
    */
   readonly rules?: PolicyRulesWithSubjectsV1Beta1[];
-
 }
 
 /**
  * Converts an object of type 'FlowSchemaSpecV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_FlowSchemaSpecV1Beta1(obj: FlowSchemaSpecV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_FlowSchemaSpecV1Beta1(
+  obj: FlowSchemaSpecV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'distinguisherMethod': toJson_FlowDistinguisherMethodV1Beta1(obj.distinguisherMethod),
-    'matchingPrecedence': obj.matchingPrecedence,
-    'priorityLevelConfiguration': toJson_PriorityLevelConfigurationReferenceV1Beta1(obj.priorityLevelConfiguration),
-    'rules': obj.rules?.map(y => toJson_PolicyRulesWithSubjectsV1Beta1(y)),
+    distinguisherMethod: toJson_FlowDistinguisherMethodV1Beta1(obj.distinguisherMethod),
+    matchingPrecedence: obj.matchingPrecedence,
+    priorityLevelConfiguration: toJson_PriorityLevelConfigurationReferenceV1Beta1(obj.priorityLevelConfiguration),
+    rules: obj.rules?.map(y => toJson_PolicyRulesWithSubjectsV1Beta1(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14678,21 +15100,24 @@ export interface PriorityLevelConfigurationSpecV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.PriorityLevelConfigurationSpec#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'PriorityLevelConfigurationSpecV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PriorityLevelConfigurationSpecV1Beta1(obj: PriorityLevelConfigurationSpecV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PriorityLevelConfigurationSpecV1Beta1(
+  obj: PriorityLevelConfigurationSpecV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'limited': toJson_LimitedPriorityLevelConfigurationV1Beta1(obj.limited),
-    'type': obj.type,
+    limited: toJson_LimitedPriorityLevelConfigurationV1Beta1(obj.limited),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14729,23 +15154,26 @@ export interface FlowSchemaSpecV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.FlowSchemaSpec#rules
    */
   readonly rules?: PolicyRulesWithSubjectsV1Beta2[];
-
 }
 
 /**
  * Converts an object of type 'FlowSchemaSpecV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_FlowSchemaSpecV1Beta2(obj: FlowSchemaSpecV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_FlowSchemaSpecV1Beta2(
+  obj: FlowSchemaSpecV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'distinguisherMethod': toJson_FlowDistinguisherMethodV1Beta2(obj.distinguisherMethod),
-    'matchingPrecedence': obj.matchingPrecedence,
-    'priorityLevelConfiguration': toJson_PriorityLevelConfigurationReferenceV1Beta2(obj.priorityLevelConfiguration),
-    'rules': obj.rules?.map(y => toJson_PolicyRulesWithSubjectsV1Beta2(y)),
+    distinguisherMethod: toJson_FlowDistinguisherMethodV1Beta2(obj.distinguisherMethod),
+    matchingPrecedence: obj.matchingPrecedence,
+    priorityLevelConfiguration: toJson_PriorityLevelConfigurationReferenceV1Beta2(obj.priorityLevelConfiguration),
+    rules: obj.rules?.map(y => toJson_PolicyRulesWithSubjectsV1Beta2(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14768,21 +15196,24 @@ export interface PriorityLevelConfigurationSpecV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.PriorityLevelConfigurationSpec#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'PriorityLevelConfigurationSpecV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PriorityLevelConfigurationSpecV1Beta2(obj: PriorityLevelConfigurationSpecV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PriorityLevelConfigurationSpecV1Beta2(
+  obj: PriorityLevelConfigurationSpecV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'limited': toJson_LimitedPriorityLevelConfigurationV1Beta2(obj.limited),
-    'type': obj.type,
+    limited: toJson_LimitedPriorityLevelConfigurationV1Beta2(obj.limited),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14819,23 +15250,24 @@ export interface IngressSpec {
    * @schema io.k8s.api.networking.v1.IngressSpec#tls
    */
   readonly tls?: IngressTls[];
-
 }
 
 /**
  * Converts an object of type 'IngressSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IngressSpec(obj: IngressSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IngressSpec(obj: IngressSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'defaultBackend': toJson_IngressBackend(obj.defaultBackend),
-    'ingressClassName': obj.ingressClassName,
-    'rules': obj.rules?.map(y => toJson_IngressRule(y)),
-    'tls': obj.tls?.map(y => toJson_IngressTls(y)),
+    defaultBackend: toJson_IngressBackend(obj.defaultBackend),
+    ingressClassName: obj.ingressClassName,
+    rules: obj.rules?.map(y => toJson_IngressRule(y)),
+    tls: obj.tls?.map(y => toJson_IngressTls(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14858,21 +15290,22 @@ export interface IngressClassSpec {
    * @schema io.k8s.api.networking.v1.IngressClassSpec#parameters
    */
   readonly parameters?: IngressClassParametersReference;
-
 }
 
 /**
  * Converts an object of type 'IngressClassSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IngressClassSpec(obj: IngressClassSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IngressClassSpec(obj: IngressClassSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'controller': obj.controller,
-    'parameters': toJson_IngressClassParametersReference(obj.parameters),
+    controller: obj.controller,
+    parameters: toJson_IngressClassParametersReference(obj.parameters),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14909,23 +15342,24 @@ export interface NetworkPolicySpec {
    * @schema io.k8s.api.networking.v1.NetworkPolicySpec#policyTypes
    */
   readonly policyTypes?: string[];
-
 }
 
 /**
  * Converts an object of type 'NetworkPolicySpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NetworkPolicySpec(obj: NetworkPolicySpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NetworkPolicySpec(obj: NetworkPolicySpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'egress': obj.egress?.map(y => toJson_NetworkPolicyEgressRule(y)),
-    'ingress': obj.ingress?.map(y => toJson_NetworkPolicyIngressRule(y)),
-    'podSelector': toJson_LabelSelector(obj.podSelector),
-    'policyTypes': obj.policyTypes?.map(y => y),
+    egress: obj.egress?.map(y => toJson_NetworkPolicyEgressRule(y)),
+    ingress: obj.ingress?.map(y => toJson_NetworkPolicyIngressRule(y)),
+    podSelector: toJson_LabelSelector(obj.podSelector),
+    policyTypes: obj.policyTypes?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14962,23 +15396,26 @@ export interface ClusterCidrSpecV1Alpha1 {
    * @schema io.k8s.api.networking.v1alpha1.ClusterCIDRSpec#perNodeHostBits
    */
   readonly perNodeHostBits: number;
-
 }
 
 /**
  * Converts an object of type 'ClusterCidrSpecV1Alpha1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ClusterCidrSpecV1Alpha1(obj: ClusterCidrSpecV1Alpha1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ClusterCidrSpecV1Alpha1(
+  obj: ClusterCidrSpecV1Alpha1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'ipv4': obj.ipv4,
-    'ipv6': obj.ipv6,
-    'nodeSelector': toJson_NodeSelector(obj.nodeSelector),
-    'perNodeHostBits': obj.perNodeHostBits,
+    ipv4: obj.ipv4,
+    ipv6: obj.ipv6,
+    nodeSelector: toJson_NodeSelector(obj.nodeSelector),
+    perNodeHostBits: obj.perNodeHostBits,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -14994,20 +15431,24 @@ export interface Overhead {
    * @schema io.k8s.api.node.v1.Overhead#podFixed
    */
   readonly podFixed?: { [key: string]: Quantity };
-
 }
 
 /**
  * Converts an object of type 'Overhead' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Overhead(obj: Overhead | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Overhead(obj: Overhead | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'podFixed': ((obj.podFixed) === undefined) ? undefined : (Object.entries(obj.podFixed).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
+    podFixed:
+      obj.podFixed === undefined
+        ? undefined
+        : Object.entries(obj.podFixed).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }), {}),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15030,21 +15471,25 @@ export interface Scheduling {
    * @schema io.k8s.api.node.v1.Scheduling#tolerations
    */
   readonly tolerations?: Toleration[];
-
 }
 
 /**
  * Converts an object of type 'Scheduling' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Scheduling(obj: Scheduling | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Scheduling(obj: Scheduling | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'nodeSelector': ((obj.nodeSelector) === undefined) ? undefined : (Object.entries(obj.nodeSelector).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'tolerations': obj.tolerations?.map(y => toJson_Toleration(y)),
+    nodeSelector:
+      obj.nodeSelector === undefined
+        ? undefined
+        : Object.entries(obj.nodeSelector).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    tolerations: obj.tolerations?.map(y => toJson_Toleration(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15103,26 +15548,27 @@ export interface DeleteOptions {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.DeleteOptions#propagationPolicy
    */
   readonly propagationPolicy?: string;
-
 }
 
 /**
  * Converts an object of type 'DeleteOptions' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_DeleteOptions(obj: DeleteOptions | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_DeleteOptions(obj: DeleteOptions | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiVersion': obj.apiVersion,
-    'dryRun': obj.dryRun?.map(y => y),
-    'gracePeriodSeconds': obj.gracePeriodSeconds,
-    'kind': obj.kind,
-    'orphanDependents': obj.orphanDependents,
-    'preconditions': toJson_Preconditions(obj.preconditions),
-    'propagationPolicy': obj.propagationPolicy,
+    apiVersion: obj.apiVersion,
+    dryRun: obj.dryRun?.map(y => y),
+    gracePeriodSeconds: obj.gracePeriodSeconds,
+    kind: obj.kind,
+    orphanDependents: obj.orphanDependents,
+    preconditions: toJson_Preconditions(obj.preconditions),
+    propagationPolicy: obj.propagationPolicy,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15152,22 +15598,25 @@ export interface PodDisruptionBudgetSpec {
    * @schema io.k8s.api.policy.v1.PodDisruptionBudgetSpec#selector
    */
   readonly selector?: LabelSelector;
-
 }
 
 /**
  * Converts an object of type 'PodDisruptionBudgetSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodDisruptionBudgetSpec(obj: PodDisruptionBudgetSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodDisruptionBudgetSpec(
+  obj: PodDisruptionBudgetSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'maxUnavailable': obj.maxUnavailable?.value,
-    'minAvailable': obj.minAvailable?.value,
-    'selector': toJson_LabelSelector(obj.selector),
+    maxUnavailable: obj.maxUnavailable?.value,
+    minAvailable: obj.minAvailable?.value,
+    selector: toJson_LabelSelector(obj.selector),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15183,20 +15632,21 @@ export interface AggregationRule {
    * @schema io.k8s.api.rbac.v1.AggregationRule#clusterRoleSelectors
    */
   readonly clusterRoleSelectors?: LabelSelector[];
-
 }
 
 /**
  * Converts an object of type 'AggregationRule' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_AggregationRule(obj: AggregationRule | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_AggregationRule(obj: AggregationRule | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'clusterRoleSelectors': obj.clusterRoleSelectors?.map(y => toJson_LabelSelector(y)),
+    clusterRoleSelectors: obj.clusterRoleSelectors?.map(y => toJson_LabelSelector(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15240,24 +15690,25 @@ export interface PolicyRule {
    * @schema io.k8s.api.rbac.v1.PolicyRule#verbs
    */
   readonly verbs: string[];
-
 }
 
 /**
  * Converts an object of type 'PolicyRule' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PolicyRule(obj: PolicyRule | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PolicyRule(obj: PolicyRule | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiGroups': obj.apiGroups?.map(y => y),
-    'nonResourceURLs': obj.nonResourceUrLs?.map(y => y),
-    'resourceNames': obj.resourceNames?.map(y => y),
-    'resources': obj.resources?.map(y => y),
-    'verbs': obj.verbs?.map(y => y),
+    apiGroups: obj.apiGroups?.map(y => y),
+    nonResourceURLs: obj.nonResourceUrLs?.map(y => y),
+    resourceNames: obj.resourceNames?.map(y => y),
+    resources: obj.resources?.map(y => y),
+    verbs: obj.verbs?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15287,22 +15738,23 @@ export interface RoleRef {
    * @schema io.k8s.api.rbac.v1.RoleRef#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'RoleRef' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_RoleRef(obj: RoleRef | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_RoleRef(obj: RoleRef | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiGroup': obj.apiGroup,
-    'kind': obj.kind,
-    'name': obj.name,
+    apiGroup: obj.apiGroup,
+    kind: obj.kind,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15340,23 +15792,24 @@ export interface Subject {
    * @schema io.k8s.api.rbac.v1.Subject#namespace
    */
   readonly namespace?: string;
-
 }
 
 /**
  * Converts an object of type 'Subject' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Subject(obj: Subject | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Subject(obj: Subject | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiGroup': obj.apiGroup,
-    'kind': obj.kind,
-    'name': obj.name,
-    'namespace': obj.namespace,
+    apiGroup: obj.apiGroup,
+    kind: obj.kind,
+    name: obj.name,
+    namespace: obj.namespace,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15459,27 +15912,28 @@ export interface CsiDriverSpec {
    * @schema io.k8s.api.storage.v1.CSIDriverSpec#volumeLifecycleModes
    */
   readonly volumeLifecycleModes?: string[];
-
 }
 
 /**
  * Converts an object of type 'CsiDriverSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CsiDriverSpec(obj: CsiDriverSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CsiDriverSpec(obj: CsiDriverSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'attachRequired': obj.attachRequired,
-    'fsGroupPolicy': obj.fsGroupPolicy,
-    'podInfoOnMount': obj.podInfoOnMount,
-    'requiresRepublish': obj.requiresRepublish,
-    'seLinuxMount': obj.seLinuxMount,
-    'storageCapacity': obj.storageCapacity,
-    'tokenRequests': obj.tokenRequests?.map(y => toJson_TokenRequest(y)),
-    'volumeLifecycleModes': obj.volumeLifecycleModes?.map(y => y),
+    attachRequired: obj.attachRequired,
+    fsGroupPolicy: obj.fsGroupPolicy,
+    podInfoOnMount: obj.podInfoOnMount,
+    requiresRepublish: obj.requiresRepublish,
+    seLinuxMount: obj.seLinuxMount,
+    storageCapacity: obj.storageCapacity,
+    tokenRequests: obj.tokenRequests?.map(y => toJson_TokenRequest(y)),
+    volumeLifecycleModes: obj.volumeLifecycleModes?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15495,20 +15949,21 @@ export interface CsiNodeSpec {
    * @schema io.k8s.api.storage.v1.CSINodeSpec#drivers
    */
   readonly drivers: CsiNodeDriver[];
-
 }
 
 /**
  * Converts an object of type 'CsiNodeSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CsiNodeSpec(obj: CsiNodeSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CsiNodeSpec(obj: CsiNodeSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'drivers': obj.drivers?.map(y => toJson_CsiNodeDriver(y)),
+    drivers: obj.drivers?.map(y => toJson_CsiNodeDriver(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15522,8 +15977,7 @@ export class Quantity {
   public static fromNumber(value: number): Quantity {
     return new Quantity(value);
   }
-  private constructor(public readonly value: string | number) {
-  }
+  private constructor(public readonly value: string | number) {}
 }
 
 /**
@@ -15545,21 +15999,25 @@ export interface LabelSelector {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector#matchLabels
    */
   readonly matchLabels?: { [key: string]: string };
-
 }
 
 /**
  * Converts an object of type 'LabelSelector' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LabelSelector(obj: LabelSelector | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LabelSelector(obj: LabelSelector | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'matchExpressions': obj.matchExpressions?.map(y => toJson_LabelSelectorRequirement(y)),
-    'matchLabels': ((obj.matchLabels) === undefined) ? undefined : (Object.entries(obj.matchLabels).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
+    matchExpressions: obj.matchExpressions?.map(y => toJson_LabelSelectorRequirement(y)),
+    matchLabels:
+      obj.matchLabels === undefined
+        ? undefined
+        : Object.entries(obj.matchLabels).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15575,20 +16033,23 @@ export interface TopologySelectorTerm {
    * @schema io.k8s.api.core.v1.TopologySelectorTerm#matchLabelExpressions
    */
   readonly matchLabelExpressions?: TopologySelectorLabelRequirement[];
-
 }
 
 /**
  * Converts an object of type 'TopologySelectorTerm' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_TopologySelectorTerm(obj: TopologySelectorTerm | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_TopologySelectorTerm(
+  obj: TopologySelectorTerm | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'matchLabelExpressions': obj.matchLabelExpressions?.map(y => toJson_TopologySelectorLabelRequirement(y)),
+    matchLabelExpressions: obj.matchLabelExpressions?.map(y => toJson_TopologySelectorLabelRequirement(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15618,22 +16079,25 @@ export interface VolumeAttachmentSpec {
    * @schema io.k8s.api.storage.v1.VolumeAttachmentSpec#source
    */
   readonly source: VolumeAttachmentSource;
-
 }
 
 /**
  * Converts an object of type 'VolumeAttachmentSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_VolumeAttachmentSpec(obj: VolumeAttachmentSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_VolumeAttachmentSpec(
+  obj: VolumeAttachmentSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'attacher': obj.attacher,
-    'nodeName': obj.nodeName,
-    'source': toJson_VolumeAttachmentSource(obj.source),
+    attacher: obj.attacher,
+    nodeName: obj.nodeName,
+    source: toJson_VolumeAttachmentSource(obj.source),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15684,25 +16148,28 @@ export interface CustomResourceDefinitionSpec {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionSpec#versions
    */
   readonly versions: CustomResourceDefinitionVersion[];
-
 }
 
 /**
  * Converts an object of type 'CustomResourceDefinitionSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CustomResourceDefinitionSpec(obj: CustomResourceDefinitionSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CustomResourceDefinitionSpec(
+  obj: CustomResourceDefinitionSpec | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'conversion': toJson_CustomResourceConversion(obj.conversion),
-    'group': obj.group,
-    'names': toJson_CustomResourceDefinitionNames(obj.names),
-    'preserveUnknownFields': obj.preserveUnknownFields,
-    'scope': obj.scope,
-    'versions': obj.versions?.map(y => toJson_CustomResourceDefinitionVersion(y)),
+    conversion: toJson_CustomResourceConversion(obj.conversion),
+    group: obj.group,
+    names: toJson_CustomResourceDefinitionNames(obj.names),
+    preserveUnknownFields: obj.preserveUnknownFields,
+    scope: obj.scope,
+    versions: obj.versions?.map(y => toJson_CustomResourceDefinitionVersion(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15753,25 +16220,26 @@ export interface StatusDetails {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.StatusDetails#uid
    */
   readonly uid?: string;
-
 }
 
 /**
  * Converts an object of type 'StatusDetails' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_StatusDetails(obj: StatusDetails | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_StatusDetails(obj: StatusDetails | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'causes': obj.causes?.map(y => toJson_StatusCause(y)),
-    'group': obj.group,
-    'kind': obj.kind,
-    'name': obj.name,
-    'retryAfterSeconds': obj.retryAfterSeconds,
-    'uid': obj.uid,
+    causes: obj.causes?.map(y => toJson_StatusCause(y)),
+    group: obj.group,
+    kind: obj.kind,
+    name: obj.name,
+    retryAfterSeconds: obj.retryAfterSeconds,
+    uid: obj.uid,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15829,26 +16297,27 @@ export interface ApiServiceSpec {
    * @schema io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceSpec#versionPriority
    */
   readonly versionPriority: number;
-
 }
 
 /**
  * Converts an object of type 'ApiServiceSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ApiServiceSpec(obj: ApiServiceSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ApiServiceSpec(obj: ApiServiceSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'caBundle': obj.caBundle,
-    'group': obj.group,
-    'groupPriorityMinimum': obj.groupPriorityMinimum,
-    'insecureSkipTLSVerify': obj.insecureSkipTlsVerify,
-    'service': toJson_ServiceReference(obj.service),
-    'version': obj.version,
-    'versionPriority': obj.versionPriority,
+    caBundle: obj.caBundle,
+    group: obj.group,
+    groupPriorityMinimum: obj.groupPriorityMinimum,
+    insecureSkipTLSVerify: obj.insecureSkipTlsVerify,
+    service: toJson_ServiceReference(obj.service),
+    version: obj.version,
+    versionPriority: obj.versionPriority,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15877,7 +16346,7 @@ export interface ManagedFieldsEntry {
    *
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.ManagedFieldsEntry#fieldsV1
    */
-  readonly fieldsV1?: any;
+  readonly fieldsV1?: unknown;
 
   /**
    * Manager is an identifier of the workflow managing these fields.
@@ -15906,26 +16375,27 @@ export interface ManagedFieldsEntry {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.ManagedFieldsEntry#time
    */
   readonly time?: Date;
-
 }
 
 /**
  * Converts an object of type 'ManagedFieldsEntry' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ManagedFieldsEntry(obj: ManagedFieldsEntry | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ManagedFieldsEntry(obj: ManagedFieldsEntry | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiVersion': obj.apiVersion,
-    'fieldsType': obj.fieldsType,
-    'fieldsV1': obj.fieldsV1,
-    'manager': obj.manager,
-    'operation': obj.operation,
-    'subresource': obj.subresource,
-    'time': obj.time?.toISOString(),
+    apiVersion: obj.apiVersion,
+    fieldsType: obj.fieldsType,
+    fieldsV1: obj.fieldsV1,
+    manager: obj.manager,
+    operation: obj.operation,
+    subresource: obj.subresource,
+    time: obj.time?.toISOString(),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -15977,25 +16447,26 @@ export interface OwnerReference {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.OwnerReference#uid
    */
   readonly uid: string;
-
 }
 
 /**
  * Converts an object of type 'OwnerReference' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_OwnerReference(obj: OwnerReference | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_OwnerReference(obj: OwnerReference | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiVersion': obj.apiVersion,
-    'blockOwnerDeletion': obj.blockOwnerDeletion,
-    'controller': obj.controller,
-    'kind': obj.kind,
-    'name': obj.name,
-    'uid': obj.uid,
+    apiVersion: obj.apiVersion,
+    blockOwnerDeletion: obj.blockOwnerDeletion,
+    controller: obj.controller,
+    kind: obj.kind,
+    name: obj.name,
+    uid: obj.uid,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16037,22 +16508,23 @@ export interface WebhookClientConfig {
    * @schema io.k8s.api.admissionregistration.v1.WebhookClientConfig#url
    */
   readonly url?: string;
-
 }
 
 /**
  * Converts an object of type 'WebhookClientConfig' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_WebhookClientConfig(obj: WebhookClientConfig | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_WebhookClientConfig(obj: WebhookClientConfig | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'caBundle': obj.caBundle,
-    'service': toJson_ServiceReference(obj.service),
-    'url': obj.url,
+    caBundle: obj.caBundle,
+    service: toJson_ServiceReference(obj.service),
+    url: obj.url,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16103,24 +16575,25 @@ export interface RuleWithOperations {
    * @schema io.k8s.api.admissionregistration.v1.RuleWithOperations#scope
    */
   readonly scope?: string;
-
 }
 
 /**
  * Converts an object of type 'RuleWithOperations' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_RuleWithOperations(obj: RuleWithOperations | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_RuleWithOperations(obj: RuleWithOperations | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiGroups': obj.apiGroups?.map(y => y),
-    'apiVersions': obj.apiVersions?.map(y => y),
-    'operations': obj.operations?.map(y => y),
-    'resources': obj.resources?.map(y => y),
-    'scope': obj.scope,
+    apiGroups: obj.apiGroups?.map(y => y),
+    apiVersions: obj.apiVersions?.map(y => y),
+    operations: obj.operations?.map(y => y),
+    resources: obj.resources?.map(y => y),
+    scope: obj.scope,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16146,21 +16619,24 @@ export interface DaemonSetUpdateStrategy {
    * @schema io.k8s.api.apps.v1.DaemonSetUpdateStrategy#type
    */
   readonly type?: string;
-
 }
 
 /**
  * Converts an object of type 'DaemonSetUpdateStrategy' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_DaemonSetUpdateStrategy(obj: DaemonSetUpdateStrategy | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_DaemonSetUpdateStrategy(
+  obj: DaemonSetUpdateStrategy | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'rollingUpdate': toJson_RollingUpdateDaemonSet(obj.rollingUpdate),
-    'type': obj.type,
+    rollingUpdate: toJson_RollingUpdateDaemonSet(obj.rollingUpdate),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16186,21 +16662,22 @@ export interface DeploymentStrategy {
    * @schema io.k8s.api.apps.v1.DeploymentStrategy#type
    */
   readonly type?: string;
-
 }
 
 /**
  * Converts an object of type 'DeploymentStrategy' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_DeploymentStrategy(obj: DeploymentStrategy | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_DeploymentStrategy(obj: DeploymentStrategy | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'rollingUpdate': toJson_RollingUpdateDeployment(obj.rollingUpdate),
-    'type': obj.type,
+    rollingUpdate: toJson_RollingUpdateDeployment(obj.rollingUpdate),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16223,21 +16700,24 @@ export interface StatefulSetPersistentVolumeClaimRetentionPolicy {
    * @schema io.k8s.api.apps.v1.StatefulSetPersistentVolumeClaimRetentionPolicy#whenScaled
    */
   readonly whenScaled?: string;
-
 }
 
 /**
  * Converts an object of type 'StatefulSetPersistentVolumeClaimRetentionPolicy' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_StatefulSetPersistentVolumeClaimRetentionPolicy(obj: StatefulSetPersistentVolumeClaimRetentionPolicy | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_StatefulSetPersistentVolumeClaimRetentionPolicy(
+  obj: StatefulSetPersistentVolumeClaimRetentionPolicy | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'whenDeleted': obj.whenDeleted,
-    'whenScaled': obj.whenScaled,
+    whenDeleted: obj.whenDeleted,
+    whenScaled: obj.whenScaled,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16263,21 +16743,24 @@ export interface StatefulSetUpdateStrategy {
    * @schema io.k8s.api.apps.v1.StatefulSetUpdateStrategy#type
    */
   readonly type?: string;
-
 }
 
 /**
  * Converts an object of type 'StatefulSetUpdateStrategy' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_StatefulSetUpdateStrategy(obj: StatefulSetUpdateStrategy | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_StatefulSetUpdateStrategy(
+  obj: StatefulSetUpdateStrategy | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'rollingUpdate': toJson_RollingUpdateStatefulSetStrategy(obj.rollingUpdate),
-    'type': obj.type,
+    rollingUpdate: toJson_RollingUpdateStatefulSetStrategy(obj.rollingUpdate),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16314,23 +16797,26 @@ export interface BoundObjectReference {
    * @schema io.k8s.api.authentication.v1.BoundObjectReference#uid
    */
   readonly uid?: string;
-
 }
 
 /**
  * Converts an object of type 'BoundObjectReference' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_BoundObjectReference(obj: BoundObjectReference | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_BoundObjectReference(
+  obj: BoundObjectReference | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiVersion': obj.apiVersion,
-    'kind': obj.kind,
-    'name': obj.name,
-    'uid': obj.uid,
+    apiVersion: obj.apiVersion,
+    kind: obj.kind,
+    name: obj.name,
+    uid: obj.uid,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16353,21 +16839,24 @@ export interface NonResourceAttributes {
    * @schema io.k8s.api.authorization.v1.NonResourceAttributes#verb
    */
   readonly verb?: string;
-
 }
 
 /**
  * Converts an object of type 'NonResourceAttributes' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NonResourceAttributes(obj: NonResourceAttributes | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NonResourceAttributes(
+  obj: NonResourceAttributes | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'path': obj.path,
-    'verb': obj.verb,
+    path: obj.path,
+    verb: obj.verb,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16425,26 +16914,27 @@ export interface ResourceAttributes {
    * @schema io.k8s.api.authorization.v1.ResourceAttributes#version
    */
   readonly version?: string;
-
 }
 
 /**
  * Converts an object of type 'ResourceAttributes' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ResourceAttributes(obj: ResourceAttributes | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ResourceAttributes(obj: ResourceAttributes | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'group': obj.group,
-    'name': obj.name,
-    'namespace': obj.namespace,
-    'resource': obj.resource,
-    'subresource': obj.subresource,
-    'verb': obj.verb,
-    'version': obj.version,
+    group: obj.group,
+    name: obj.name,
+    namespace: obj.namespace,
+    resource: obj.resource,
+    subresource: obj.subresource,
+    verb: obj.verb,
+    version: obj.version,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16474,22 +16964,25 @@ export interface CrossVersionObjectReference {
    * @schema io.k8s.api.autoscaling.v1.CrossVersionObjectReference#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'CrossVersionObjectReference' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CrossVersionObjectReference(obj: CrossVersionObjectReference | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CrossVersionObjectReference(
+  obj: CrossVersionObjectReference | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiVersion': obj.apiVersion,
-    'kind': obj.kind,
-    'name': obj.name,
+    apiVersion: obj.apiVersion,
+    kind: obj.kind,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16515,21 +17008,24 @@ export interface HorizontalPodAutoscalerBehaviorV2 {
    * @schema io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerBehavior#scaleUp
    */
   readonly scaleUp?: HpaScalingRulesV2;
-
 }
 
 /**
  * Converts an object of type 'HorizontalPodAutoscalerBehaviorV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HorizontalPodAutoscalerBehaviorV2(obj: HorizontalPodAutoscalerBehaviorV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HorizontalPodAutoscalerBehaviorV2(
+  obj: HorizontalPodAutoscalerBehaviorV2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'scaleDown': toJson_HpaScalingRulesV2(obj.scaleDown),
-    'scaleUp': toJson_HpaScalingRulesV2(obj.scaleUp),
+    scaleDown: toJson_HpaScalingRulesV2(obj.scaleDown),
+    scaleUp: toJson_HpaScalingRulesV2(obj.scaleUp),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16580,25 +17076,26 @@ export interface MetricSpecV2 {
    * @schema io.k8s.api.autoscaling.v2.MetricSpec#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'MetricSpecV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_MetricSpecV2(obj: MetricSpecV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_MetricSpecV2(obj: MetricSpecV2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'containerResource': toJson_ContainerResourceMetricSourceV2(obj.containerResource),
-    'external': toJson_ExternalMetricSourceV2(obj.external),
-    'object': toJson_ObjectMetricSourceV2(obj.object),
-    'pods': toJson_PodsMetricSourceV2(obj.pods),
-    'resource': toJson_ResourceMetricSourceV2(obj.resource),
-    'type': obj.type,
+    containerResource: toJson_ContainerResourceMetricSourceV2(obj.containerResource),
+    external: toJson_ExternalMetricSourceV2(obj.external),
+    object: toJson_ObjectMetricSourceV2(obj.object),
+    pods: toJson_PodsMetricSourceV2(obj.pods),
+    resource: toJson_ResourceMetricSourceV2(obj.resource),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16628,22 +17125,25 @@ export interface CrossVersionObjectReferenceV2 {
    * @schema io.k8s.api.autoscaling.v2.CrossVersionObjectReference#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'CrossVersionObjectReferenceV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CrossVersionObjectReferenceV2(obj: CrossVersionObjectReferenceV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CrossVersionObjectReferenceV2(
+  obj: CrossVersionObjectReferenceV2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiVersion': obj.apiVersion,
-    'kind': obj.kind,
-    'name': obj.name,
+    apiVersion: obj.apiVersion,
+    kind: obj.kind,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16669,21 +17169,24 @@ export interface HorizontalPodAutoscalerBehaviorV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.HorizontalPodAutoscalerBehavior#scaleUp
    */
   readonly scaleUp?: HpaScalingRulesV2Beta2;
-
 }
 
 /**
  * Converts an object of type 'HorizontalPodAutoscalerBehaviorV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HorizontalPodAutoscalerBehaviorV2Beta2(obj: HorizontalPodAutoscalerBehaviorV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HorizontalPodAutoscalerBehaviorV2Beta2(
+  obj: HorizontalPodAutoscalerBehaviorV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'scaleDown': toJson_HpaScalingRulesV2Beta2(obj.scaleDown),
-    'scaleUp': toJson_HpaScalingRulesV2Beta2(obj.scaleUp),
+    scaleDown: toJson_HpaScalingRulesV2Beta2(obj.scaleDown),
+    scaleUp: toJson_HpaScalingRulesV2Beta2(obj.scaleUp),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16734,25 +17237,26 @@ export interface MetricSpecV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.MetricSpec#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'MetricSpecV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_MetricSpecV2Beta2(obj: MetricSpecV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_MetricSpecV2Beta2(obj: MetricSpecV2Beta2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'containerResource': toJson_ContainerResourceMetricSourceV2Beta2(obj.containerResource),
-    'external': toJson_ExternalMetricSourceV2Beta2(obj.external),
-    'object': toJson_ObjectMetricSourceV2Beta2(obj.object),
-    'pods': toJson_PodsMetricSourceV2Beta2(obj.pods),
-    'resource': toJson_ResourceMetricSourceV2Beta2(obj.resource),
-    'type': obj.type,
+    containerResource: toJson_ContainerResourceMetricSourceV2Beta2(obj.containerResource),
+    external: toJson_ExternalMetricSourceV2Beta2(obj.external),
+    object: toJson_ObjectMetricSourceV2Beta2(obj.object),
+    pods: toJson_PodsMetricSourceV2Beta2(obj.pods),
+    resource: toJson_ResourceMetricSourceV2Beta2(obj.resource),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16782,22 +17286,25 @@ export interface CrossVersionObjectReferenceV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.CrossVersionObjectReference#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'CrossVersionObjectReferenceV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CrossVersionObjectReferenceV2Beta2(obj: CrossVersionObjectReferenceV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CrossVersionObjectReferenceV2Beta2(
+  obj: CrossVersionObjectReferenceV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiVersion': obj.apiVersion,
-    'kind': obj.kind,
-    'name': obj.name,
+    apiVersion: obj.apiVersion,
+    kind: obj.kind,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16820,21 +17327,22 @@ export interface JobTemplateSpec {
    * @schema io.k8s.api.batch.v1.JobTemplateSpec#spec
    */
   readonly spec?: JobSpec;
-
 }
 
 /**
  * Converts an object of type 'JobTemplateSpec' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_JobTemplateSpec(obj: JobTemplateSpec | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_JobTemplateSpec(obj: JobTemplateSpec | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_JobSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_JobSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16850,20 +17358,21 @@ export interface PodFailurePolicy {
    * @schema io.k8s.api.batch.v1.PodFailurePolicy#rules
    */
   readonly rules: PodFailurePolicyRule[];
-
 }
 
 /**
  * Converts an object of type 'PodFailurePolicy' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodFailurePolicy(obj: PodFailurePolicy | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodFailurePolicy(obj: PodFailurePolicy | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'rules': obj.rules?.map(y => toJson_PodFailurePolicyRule(y)),
+    rules: obj.rules?.map(y => toJson_PodFailurePolicyRule(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16900,23 +17409,24 @@ export interface EndpointAddress {
    * @schema io.k8s.api.core.v1.EndpointAddress#targetRef
    */
   readonly targetRef?: ObjectReference;
-
 }
 
 /**
  * Converts an object of type 'EndpointAddress' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EndpointAddress(obj: EndpointAddress | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EndpointAddress(obj: EndpointAddress | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'hostname': obj.hostname,
-    'ip': obj.ip,
-    'nodeName': obj.nodeName,
-    'targetRef': toJson_ObjectReference(obj.targetRef),
+    hostname: obj.hostname,
+    ip: obj.ip,
+    nodeName: obj.nodeName,
+    targetRef: toJson_ObjectReference(obj.targetRef),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -16967,25 +17477,47 @@ export interface LimitRangeItem {
    * @schema io.k8s.api.core.v1.LimitRangeItem#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'LimitRangeItem' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LimitRangeItem(obj: LimitRangeItem | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LimitRangeItem(obj: LimitRangeItem | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'default': ((obj.default) === undefined) ? undefined : (Object.entries(obj.default).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
-    'defaultRequest': ((obj.defaultRequest) === undefined) ? undefined : (Object.entries(obj.defaultRequest).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
-    'max': ((obj.max) === undefined) ? undefined : (Object.entries(obj.max).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
-    'maxLimitRequestRatio': ((obj.maxLimitRequestRatio) === undefined) ? undefined : (Object.entries(obj.maxLimitRequestRatio).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
-    'min': ((obj.min) === undefined) ? undefined : (Object.entries(obj.min).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
-    'type': obj.type,
+    default:
+      obj.default === undefined
+        ? undefined
+        : Object.entries(obj.default).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }), {}),
+    defaultRequest:
+      obj.defaultRequest === undefined
+        ? undefined
+        : Object.entries(obj.defaultRequest).reduce(
+            (r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }),
+            {},
+          ),
+    max:
+      obj.max === undefined
+        ? undefined
+        : Object.entries(obj.max).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }), {}),
+    maxLimitRequestRatio:
+      obj.maxLimitRequestRatio === undefined
+        ? undefined
+        : Object.entries(obj.maxLimitRequestRatio).reduce(
+            (r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }),
+            {},
+          ),
+    min:
+      obj.min === undefined
+        ? undefined
+        : Object.entries(obj.min).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }), {}),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17001,20 +17533,21 @@ export interface NodeConfigSource {
    * @schema io.k8s.api.core.v1.NodeConfigSource#configMap
    */
   readonly configMap?: ConfigMapNodeConfigSource;
-
 }
 
 /**
  * Converts an object of type 'NodeConfigSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NodeConfigSource(obj: NodeConfigSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NodeConfigSource(obj: NodeConfigSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'configMap': toJson_ConfigMapNodeConfigSource(obj.configMap),
+    configMap: toJson_ConfigMapNodeConfigSource(obj.configMap),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17053,23 +17586,24 @@ export interface Taint {
    * @schema io.k8s.api.core.v1.Taint#value
    */
   readonly value?: string;
-
 }
 
 /**
  * Converts an object of type 'Taint' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Taint(obj: Taint | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Taint(obj: Taint | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'effect': obj.effect,
-    'key': obj.key,
-    'timeAdded': obj.timeAdded?.toISOString(),
-    'value': obj.value,
+    effect: obj.effect,
+    key: obj.key,
+    timeAdded: obj.timeAdded?.toISOString(),
+    value: obj.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17108,23 +17642,26 @@ export interface AwsElasticBlockStoreVolumeSource {
    * @schema io.k8s.api.core.v1.AWSElasticBlockStoreVolumeSource#volumeID
    */
   readonly volumeId: string;
-
 }
 
 /**
  * Converts an object of type 'AwsElasticBlockStoreVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_AwsElasticBlockStoreVolumeSource(obj: AwsElasticBlockStoreVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_AwsElasticBlockStoreVolumeSource(
+  obj: AwsElasticBlockStoreVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'partition': obj.partition,
-    'readOnly': obj.readOnly,
-    'volumeID': obj.volumeId,
+    fsType: obj.fsType,
+    partition: obj.partition,
+    readOnly: obj.readOnly,
+    volumeID: obj.volumeId,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17176,25 +17713,28 @@ export interface AzureDiskVolumeSource {
    * @schema io.k8s.api.core.v1.AzureDiskVolumeSource#readOnly
    */
   readonly readOnly?: boolean;
-
 }
 
 /**
  * Converts an object of type 'AzureDiskVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_AzureDiskVolumeSource(obj: AzureDiskVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_AzureDiskVolumeSource(
+  obj: AzureDiskVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'cachingMode': obj.cachingMode,
-    'diskName': obj.diskName,
-    'diskURI': obj.diskUri,
-    'fsType': obj.fsType,
-    'kind': obj.kind,
-    'readOnly': obj.readOnly,
+    cachingMode: obj.cachingMode,
+    diskName: obj.diskName,
+    diskURI: obj.diskUri,
+    fsType: obj.fsType,
+    kind: obj.kind,
+    readOnly: obj.readOnly,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17231,23 +17771,26 @@ export interface AzureFilePersistentVolumeSource {
    * @schema io.k8s.api.core.v1.AzureFilePersistentVolumeSource#shareName
    */
   readonly shareName: string;
-
 }
 
 /**
  * Converts an object of type 'AzureFilePersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_AzureFilePersistentVolumeSource(obj: AzureFilePersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_AzureFilePersistentVolumeSource(
+  obj: AzureFilePersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'readOnly': obj.readOnly,
-    'secretName': obj.secretName,
-    'secretNamespace': obj.secretNamespace,
-    'shareName': obj.shareName,
+    readOnly: obj.readOnly,
+    secretName: obj.secretName,
+    secretNamespace: obj.secretNamespace,
+    shareName: obj.shareName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17299,25 +17842,28 @@ export interface CephFsPersistentVolumeSource {
    * @schema io.k8s.api.core.v1.CephFSPersistentVolumeSource#user
    */
   readonly user?: string;
-
 }
 
 /**
  * Converts an object of type 'CephFsPersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CephFsPersistentVolumeSource(obj: CephFsPersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CephFsPersistentVolumeSource(
+  obj: CephFsPersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'monitors': obj.monitors?.map(y => y),
-    'path': obj.path,
-    'readOnly': obj.readOnly,
-    'secretFile': obj.secretFile,
-    'secretRef': toJson_SecretReference(obj.secretRef),
-    'user': obj.user,
+    monitors: obj.monitors?.map(y => y),
+    path: obj.path,
+    readOnly: obj.readOnly,
+    secretFile: obj.secretFile,
+    secretRef: toJson_SecretReference(obj.secretRef),
+    user: obj.user,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17355,23 +17901,26 @@ export interface CinderPersistentVolumeSource {
    * @schema io.k8s.api.core.v1.CinderPersistentVolumeSource#volumeID
    */
   readonly volumeId: string;
-
 }
 
 /**
  * Converts an object of type 'CinderPersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CinderPersistentVolumeSource(obj: CinderPersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CinderPersistentVolumeSource(
+  obj: CinderPersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_SecretReference(obj.secretRef),
-    'volumeID': obj.volumeId,
+    fsType: obj.fsType,
+    readOnly: obj.readOnly,
+    secretRef: toJson_SecretReference(obj.secretRef),
+    volumeID: obj.volumeId,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17451,29 +18000,35 @@ export interface CsiPersistentVolumeSource {
    * @schema io.k8s.api.core.v1.CSIPersistentVolumeSource#volumeHandle
    */
   readonly volumeHandle: string;
-
 }
 
 /**
  * Converts an object of type 'CsiPersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CsiPersistentVolumeSource(obj: CsiPersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CsiPersistentVolumeSource(
+  obj: CsiPersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'controllerExpandSecretRef': toJson_SecretReference(obj.controllerExpandSecretRef),
-    'controllerPublishSecretRef': toJson_SecretReference(obj.controllerPublishSecretRef),
-    'driver': obj.driver,
-    'fsType': obj.fsType,
-    'nodeExpandSecretRef': toJson_SecretReference(obj.nodeExpandSecretRef),
-    'nodePublishSecretRef': toJson_SecretReference(obj.nodePublishSecretRef),
-    'nodeStageSecretRef': toJson_SecretReference(obj.nodeStageSecretRef),
-    'readOnly': obj.readOnly,
-    'volumeAttributes': ((obj.volumeAttributes) === undefined) ? undefined : (Object.entries(obj.volumeAttributes).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'volumeHandle': obj.volumeHandle,
+    controllerExpandSecretRef: toJson_SecretReference(obj.controllerExpandSecretRef),
+    controllerPublishSecretRef: toJson_SecretReference(obj.controllerPublishSecretRef),
+    driver: obj.driver,
+    fsType: obj.fsType,
+    nodeExpandSecretRef: toJson_SecretReference(obj.nodeExpandSecretRef),
+    nodePublishSecretRef: toJson_SecretReference(obj.nodePublishSecretRef),
+    nodeStageSecretRef: toJson_SecretReference(obj.nodeStageSecretRef),
+    readOnly: obj.readOnly,
+    volumeAttributes:
+      obj.volumeAttributes === undefined
+        ? undefined
+        : Object.entries(obj.volumeAttributes).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    volumeHandle: obj.volumeHandle,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17518,24 +18073,25 @@ export interface FcVolumeSource {
    * @schema io.k8s.api.core.v1.FCVolumeSource#wwids
    */
   readonly wwids?: string[];
-
 }
 
 /**
  * Converts an object of type 'FcVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_FcVolumeSource(obj: FcVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_FcVolumeSource(obj: FcVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'lun': obj.lun,
-    'readOnly': obj.readOnly,
-    'targetWWNs': obj.targetWwNs?.map(y => y),
-    'wwids': obj.wwids?.map(y => y),
+    fsType: obj.fsType,
+    lun: obj.lun,
+    readOnly: obj.readOnly,
+    targetWWNs: obj.targetWwNs?.map(y => y),
+    wwids: obj.wwids?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17579,24 +18135,30 @@ export interface FlexPersistentVolumeSource {
    * @schema io.k8s.api.core.v1.FlexPersistentVolumeSource#secretRef
    */
   readonly secretRef?: SecretReference;
-
 }
 
 /**
  * Converts an object of type 'FlexPersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_FlexPersistentVolumeSource(obj: FlexPersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_FlexPersistentVolumeSource(
+  obj: FlexPersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'driver': obj.driver,
-    'fsType': obj.fsType,
-    'options': ((obj.options) === undefined) ? undefined : (Object.entries(obj.options).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_SecretReference(obj.secretRef),
+    driver: obj.driver,
+    fsType: obj.fsType,
+    options:
+      obj.options === undefined
+        ? undefined
+        : Object.entries(obj.options).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    readOnly: obj.readOnly,
+    secretRef: toJson_SecretReference(obj.secretRef),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17619,21 +18181,22 @@ export interface FlockerVolumeSource {
    * @schema io.k8s.api.core.v1.FlockerVolumeSource#datasetUUID
    */
   readonly datasetUuid?: string;
-
 }
 
 /**
  * Converts an object of type 'FlockerVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_FlockerVolumeSource(obj: FlockerVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_FlockerVolumeSource(obj: FlockerVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'datasetName': obj.datasetName,
-    'datasetUUID': obj.datasetUuid,
+    datasetName: obj.datasetName,
+    datasetUUID: obj.datasetUuid,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17673,23 +18236,26 @@ export interface GcePersistentDiskVolumeSource {
    * @schema io.k8s.api.core.v1.GCEPersistentDiskVolumeSource#readOnly
    */
   readonly readOnly?: boolean;
-
 }
 
 /**
  * Converts an object of type 'GcePersistentDiskVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_GcePersistentDiskVolumeSource(obj: GcePersistentDiskVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_GcePersistentDiskVolumeSource(
+  obj: GcePersistentDiskVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'partition': obj.partition,
-    'pdName': obj.pdName,
-    'readOnly': obj.readOnly,
+    fsType: obj.fsType,
+    partition: obj.partition,
+    pdName: obj.pdName,
+    readOnly: obj.readOnly,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17727,23 +18293,26 @@ export interface GlusterfsPersistentVolumeSource {
    * @schema io.k8s.api.core.v1.GlusterfsPersistentVolumeSource#readOnly
    */
   readonly readOnly?: boolean;
-
 }
 
 /**
  * Converts an object of type 'GlusterfsPersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_GlusterfsPersistentVolumeSource(obj: GlusterfsPersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_GlusterfsPersistentVolumeSource(
+  obj: GlusterfsPersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'endpoints': obj.endpoints,
-    'endpointsNamespace': obj.endpointsNamespace,
-    'path': obj.path,
-    'readOnly': obj.readOnly,
+    endpoints: obj.endpoints,
+    endpointsNamespace: obj.endpointsNamespace,
+    path: obj.path,
+    readOnly: obj.readOnly,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17767,21 +18336,24 @@ export interface HostPathVolumeSource {
    * @schema io.k8s.api.core.v1.HostPathVolumeSource#type
    */
   readonly type?: string;
-
 }
 
 /**
  * Converts an object of type 'HostPathVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HostPathVolumeSource(obj: HostPathVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HostPathVolumeSource(
+  obj: HostPathVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'path': obj.path,
-    'type': obj.type,
+    path: obj.path,
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17869,30 +18441,33 @@ export interface IscsiPersistentVolumeSource {
    * @schema io.k8s.api.core.v1.ISCSIPersistentVolumeSource#targetPortal
    */
   readonly targetPortal: string;
-
 }
 
 /**
  * Converts an object of type 'IscsiPersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IscsiPersistentVolumeSource(obj: IscsiPersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IscsiPersistentVolumeSource(
+  obj: IscsiPersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'chapAuthDiscovery': obj.chapAuthDiscovery,
-    'chapAuthSession': obj.chapAuthSession,
-    'fsType': obj.fsType,
-    'initiatorName': obj.initiatorName,
-    'iqn': obj.iqn,
-    'iscsiInterface': obj.iscsiInterface,
-    'lun': obj.lun,
-    'portals': obj.portals?.map(y => y),
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_SecretReference(obj.secretRef),
-    'targetPortal': obj.targetPortal,
+    chapAuthDiscovery: obj.chapAuthDiscovery,
+    chapAuthSession: obj.chapAuthSession,
+    fsType: obj.fsType,
+    initiatorName: obj.initiatorName,
+    iqn: obj.iqn,
+    iscsiInterface: obj.iscsiInterface,
+    lun: obj.lun,
+    portals: obj.portals?.map(y => y),
+    readOnly: obj.readOnly,
+    secretRef: toJson_SecretReference(obj.secretRef),
+    targetPortal: obj.targetPortal,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17915,21 +18490,22 @@ export interface LocalVolumeSource {
    * @schema io.k8s.api.core.v1.LocalVolumeSource#path
    */
   readonly path: string;
-
 }
 
 /**
  * Converts an object of type 'LocalVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LocalVolumeSource(obj: LocalVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LocalVolumeSource(obj: LocalVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'path': obj.path,
+    fsType: obj.fsType,
+    path: obj.path,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17960,22 +18536,23 @@ export interface NfsVolumeSource {
    * @schema io.k8s.api.core.v1.NFSVolumeSource#server
    */
   readonly server: string;
-
 }
 
 /**
  * Converts an object of type 'NfsVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NfsVolumeSource(obj: NfsVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NfsVolumeSource(obj: NfsVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'path': obj.path,
-    'readOnly': obj.readOnly,
-    'server': obj.server,
+    path: obj.path,
+    readOnly: obj.readOnly,
+    server: obj.server,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -17991,20 +18568,21 @@ export interface VolumeNodeAffinity {
    * @schema io.k8s.api.core.v1.VolumeNodeAffinity#required
    */
   readonly required?: NodeSelector;
-
 }
 
 /**
  * Converts an object of type 'VolumeNodeAffinity' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_VolumeNodeAffinity(obj: VolumeNodeAffinity | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_VolumeNodeAffinity(obj: VolumeNodeAffinity | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'required': toJson_NodeSelector(obj.required),
+    required: toJson_NodeSelector(obj.required),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18027,21 +18605,24 @@ export interface PhotonPersistentDiskVolumeSource {
    * @schema io.k8s.api.core.v1.PhotonPersistentDiskVolumeSource#pdID
    */
   readonly pdId: string;
-
 }
 
 /**
  * Converts an object of type 'PhotonPersistentDiskVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PhotonPersistentDiskVolumeSource(obj: PhotonPersistentDiskVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PhotonPersistentDiskVolumeSource(
+  obj: PhotonPersistentDiskVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'pdID': obj.pdId,
+    fsType: obj.fsType,
+    pdID: obj.pdId,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18071,22 +18652,25 @@ export interface PortworxVolumeSource {
    * @schema io.k8s.api.core.v1.PortworxVolumeSource#volumeID
    */
   readonly volumeId: string;
-
 }
 
 /**
  * Converts an object of type 'PortworxVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PortworxVolumeSource(obj: PortworxVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PortworxVolumeSource(
+  obj: PortworxVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'readOnly': obj.readOnly,
-    'volumeID': obj.volumeId,
+    fsType: obj.fsType,
+    readOnly: obj.readOnly,
+    volumeID: obj.volumeId,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18140,25 +18724,26 @@ export interface QuobyteVolumeSource {
    * @schema io.k8s.api.core.v1.QuobyteVolumeSource#volume
    */
   readonly volume: string;
-
 }
 
 /**
  * Converts an object of type 'QuobyteVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_QuobyteVolumeSource(obj: QuobyteVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_QuobyteVolumeSource(obj: QuobyteVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'group': obj.group,
-    'readOnly': obj.readOnly,
-    'registry': obj.registry,
-    'tenant': obj.tenant,
-    'user': obj.user,
-    'volume': obj.volume,
+    group: obj.group,
+    readOnly: obj.readOnly,
+    registry: obj.registry,
+    tenant: obj.tenant,
+    user: obj.user,
+    volume: obj.volume,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18228,27 +18813,30 @@ export interface RbdPersistentVolumeSource {
    * @schema io.k8s.api.core.v1.RBDPersistentVolumeSource#user
    */
   readonly user?: string;
-
 }
 
 /**
  * Converts an object of type 'RbdPersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_RbdPersistentVolumeSource(obj: RbdPersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_RbdPersistentVolumeSource(
+  obj: RbdPersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'image': obj.image,
-    'keyring': obj.keyring,
-    'monitors': obj.monitors?.map(y => y),
-    'pool': obj.pool,
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_SecretReference(obj.secretRef),
-    'user': obj.user,
+    fsType: obj.fsType,
+    image: obj.image,
+    keyring: obj.keyring,
+    monitors: obj.monitors?.map(y => y),
+    pool: obj.pool,
+    readOnly: obj.readOnly,
+    secretRef: toJson_SecretReference(obj.secretRef),
+    user: obj.user,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18329,29 +18917,32 @@ export interface ScaleIoPersistentVolumeSource {
    * @schema io.k8s.api.core.v1.ScaleIOPersistentVolumeSource#volumeName
    */
   readonly volumeName?: string;
-
 }
 
 /**
  * Converts an object of type 'ScaleIoPersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ScaleIoPersistentVolumeSource(obj: ScaleIoPersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ScaleIoPersistentVolumeSource(
+  obj: ScaleIoPersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'gateway': obj.gateway,
-    'protectionDomain': obj.protectionDomain,
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_SecretReference(obj.secretRef),
-    'sslEnabled': obj.sslEnabled,
-    'storageMode': obj.storageMode,
-    'storagePool': obj.storagePool,
-    'system': obj.system,
-    'volumeName': obj.volumeName,
+    fsType: obj.fsType,
+    gateway: obj.gateway,
+    protectionDomain: obj.protectionDomain,
+    readOnly: obj.readOnly,
+    secretRef: toJson_SecretReference(obj.secretRef),
+    sslEnabled: obj.sslEnabled,
+    storageMode: obj.storageMode,
+    storagePool: obj.storagePool,
+    system: obj.system,
+    volumeName: obj.volumeName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18395,24 +18986,27 @@ export interface StorageOsPersistentVolumeSource {
    * @schema io.k8s.api.core.v1.StorageOSPersistentVolumeSource#volumeNamespace
    */
   readonly volumeNamespace?: string;
-
 }
 
 /**
  * Converts an object of type 'StorageOsPersistentVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_StorageOsPersistentVolumeSource(obj: StorageOsPersistentVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_StorageOsPersistentVolumeSource(
+  obj: StorageOsPersistentVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_ObjectReference(obj.secretRef),
-    'volumeName': obj.volumeName,
-    'volumeNamespace': obj.volumeNamespace,
+    fsType: obj.fsType,
+    readOnly: obj.readOnly,
+    secretRef: toJson_ObjectReference(obj.secretRef),
+    volumeName: obj.volumeName,
+    volumeNamespace: obj.volumeNamespace,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18449,23 +19043,26 @@ export interface VsphereVirtualDiskVolumeSource {
    * @schema io.k8s.api.core.v1.VsphereVirtualDiskVolumeSource#volumePath
    */
   readonly volumePath: string;
-
 }
 
 /**
  * Converts an object of type 'VsphereVirtualDiskVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_VsphereVirtualDiskVolumeSource(obj: VsphereVirtualDiskVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_VsphereVirtualDiskVolumeSource(
+  obj: VsphereVirtualDiskVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'storagePolicyID': obj.storagePolicyId,
-    'storagePolicyName': obj.storagePolicyName,
-    'volumePath': obj.volumePath,
+    fsType: obj.fsType,
+    storagePolicyID: obj.storagePolicyId,
+    storagePolicyName: obj.storagePolicyName,
+    volumePath: obj.volumePath,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18495,22 +19092,25 @@ export interface TypedLocalObjectReference {
    * @schema io.k8s.api.core.v1.TypedLocalObjectReference#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'TypedLocalObjectReference' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_TypedLocalObjectReference(obj: TypedLocalObjectReference | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_TypedLocalObjectReference(
+  obj: TypedLocalObjectReference | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiGroup': obj.apiGroup,
-    'kind': obj.kind,
-    'name': obj.name,
+    apiGroup: obj.apiGroup,
+    kind: obj.kind,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18533,21 +19133,30 @@ export interface ResourceRequirements {
    * @schema io.k8s.api.core.v1.ResourceRequirements#requests
    */
   readonly requests?: { [key: string]: Quantity };
-
 }
 
 /**
  * Converts an object of type 'ResourceRequirements' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ResourceRequirements(obj: ResourceRequirements | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ResourceRequirements(
+  obj: ResourceRequirements | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'limits': ((obj.limits) === undefined) ? undefined : (Object.entries(obj.limits).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
-    'requests': ((obj.requests) === undefined) ? undefined : (Object.entries(obj.requests).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1]?.value }), {})),
+    limits:
+      obj.limits === undefined
+        ? undefined
+        : Object.entries(obj.limits).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }), {}),
+    requests:
+      obj.requests === undefined
+        ? undefined
+        : Object.entries(obj.requests).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1]?.value }), {}),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18577,22 +19186,23 @@ export interface Affinity {
    * @schema io.k8s.api.core.v1.Affinity#podAntiAffinity
    */
   readonly podAntiAffinity?: PodAntiAffinity;
-
 }
 
 /**
  * Converts an object of type 'Affinity' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Affinity(obj: Affinity | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Affinity(obj: Affinity | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'nodeAffinity': toJson_NodeAffinity(obj.nodeAffinity),
-    'podAffinity': toJson_PodAffinity(obj.podAffinity),
-    'podAntiAffinity': toJson_PodAntiAffinity(obj.podAntiAffinity),
+    nodeAffinity: toJson_NodeAffinity(obj.nodeAffinity),
+    podAffinity: toJson_PodAffinity(obj.podAffinity),
+    podAntiAffinity: toJson_PodAntiAffinity(obj.podAntiAffinity),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18765,41 +19375,42 @@ export interface Container {
    * @schema io.k8s.api.core.v1.Container#workingDir
    */
   readonly workingDir?: string;
-
 }
 
 /**
  * Converts an object of type 'Container' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Container(obj: Container | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Container(obj: Container | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'args': obj.args?.map(y => y),
-    'command': obj.command?.map(y => y),
-    'env': obj.env?.map(y => toJson_EnvVar(y)),
-    'envFrom': obj.envFrom?.map(y => toJson_EnvFromSource(y)),
-    'image': obj.image,
-    'imagePullPolicy': obj.imagePullPolicy,
-    'lifecycle': toJson_Lifecycle(obj.lifecycle),
-    'livenessProbe': toJson_Probe(obj.livenessProbe),
-    'name': obj.name,
-    'ports': obj.ports?.map(y => toJson_ContainerPort(y)),
-    'readinessProbe': toJson_Probe(obj.readinessProbe),
-    'resources': toJson_ResourceRequirements(obj.resources),
-    'securityContext': toJson_SecurityContext(obj.securityContext),
-    'startupProbe': toJson_Probe(obj.startupProbe),
-    'stdin': obj.stdin,
-    'stdinOnce': obj.stdinOnce,
-    'terminationMessagePath': obj.terminationMessagePath,
-    'terminationMessagePolicy': obj.terminationMessagePolicy,
-    'tty': obj.tty,
-    'volumeDevices': obj.volumeDevices?.map(y => toJson_VolumeDevice(y)),
-    'volumeMounts': obj.volumeMounts?.map(y => toJson_VolumeMount(y)),
-    'workingDir': obj.workingDir,
+    args: obj.args?.map(y => y),
+    command: obj.command?.map(y => y),
+    env: obj.env?.map(y => toJson_EnvVar(y)),
+    envFrom: obj.envFrom?.map(y => toJson_EnvFromSource(y)),
+    image: obj.image,
+    imagePullPolicy: obj.imagePullPolicy,
+    lifecycle: toJson_Lifecycle(obj.lifecycle),
+    livenessProbe: toJson_Probe(obj.livenessProbe),
+    name: obj.name,
+    ports: obj.ports?.map(y => toJson_ContainerPort(y)),
+    readinessProbe: toJson_Probe(obj.readinessProbe),
+    resources: toJson_ResourceRequirements(obj.resources),
+    securityContext: toJson_SecurityContext(obj.securityContext),
+    startupProbe: toJson_Probe(obj.startupProbe),
+    stdin: obj.stdin,
+    stdinOnce: obj.stdinOnce,
+    terminationMessagePath: obj.terminationMessagePath,
+    terminationMessagePolicy: obj.terminationMessagePolicy,
+    tty: obj.tty,
+    volumeDevices: obj.volumeDevices?.map(y => toJson_VolumeDevice(y)),
+    volumeMounts: obj.volumeMounts?.map(y => toJson_VolumeMount(y)),
+    workingDir: obj.workingDir,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -18829,22 +19440,23 @@ export interface PodDnsConfig {
    * @schema io.k8s.api.core.v1.PodDNSConfig#searches
    */
   readonly searches?: string[];
-
 }
 
 /**
  * Converts an object of type 'PodDnsConfig' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodDnsConfig(obj: PodDnsConfig | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodDnsConfig(obj: PodDnsConfig | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'nameservers': obj.nameservers?.map(y => y),
-    'options': obj.options?.map(y => toJson_PodDnsConfigOption(y)),
-    'searches': obj.searches?.map(y => y),
+    nameservers: obj.nameservers?.map(y => y),
+    options: obj.options?.map(y => toJson_PodDnsConfigOption(y)),
+    searches: obj.searches?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19028,42 +19640,43 @@ export interface EphemeralContainer {
    * @schema io.k8s.api.core.v1.EphemeralContainer#workingDir
    */
   readonly workingDir?: string;
-
 }
 
 /**
  * Converts an object of type 'EphemeralContainer' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EphemeralContainer(obj: EphemeralContainer | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EphemeralContainer(obj: EphemeralContainer | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'args': obj.args?.map(y => y),
-    'command': obj.command?.map(y => y),
-    'env': obj.env?.map(y => toJson_EnvVar(y)),
-    'envFrom': obj.envFrom?.map(y => toJson_EnvFromSource(y)),
-    'image': obj.image,
-    'imagePullPolicy': obj.imagePullPolicy,
-    'lifecycle': toJson_Lifecycle(obj.lifecycle),
-    'livenessProbe': toJson_Probe(obj.livenessProbe),
-    'name': obj.name,
-    'ports': obj.ports?.map(y => toJson_ContainerPort(y)),
-    'readinessProbe': toJson_Probe(obj.readinessProbe),
-    'resources': toJson_ResourceRequirements(obj.resources),
-    'securityContext': toJson_SecurityContext(obj.securityContext),
-    'startupProbe': toJson_Probe(obj.startupProbe),
-    'stdin': obj.stdin,
-    'stdinOnce': obj.stdinOnce,
-    'targetContainerName': obj.targetContainerName,
-    'terminationMessagePath': obj.terminationMessagePath,
-    'terminationMessagePolicy': obj.terminationMessagePolicy,
-    'tty': obj.tty,
-    'volumeDevices': obj.volumeDevices?.map(y => toJson_VolumeDevice(y)),
-    'volumeMounts': obj.volumeMounts?.map(y => toJson_VolumeMount(y)),
-    'workingDir': obj.workingDir,
+    args: obj.args?.map(y => y),
+    command: obj.command?.map(y => y),
+    env: obj.env?.map(y => toJson_EnvVar(y)),
+    envFrom: obj.envFrom?.map(y => toJson_EnvFromSource(y)),
+    image: obj.image,
+    imagePullPolicy: obj.imagePullPolicy,
+    lifecycle: toJson_Lifecycle(obj.lifecycle),
+    livenessProbe: toJson_Probe(obj.livenessProbe),
+    name: obj.name,
+    ports: obj.ports?.map(y => toJson_ContainerPort(y)),
+    readinessProbe: toJson_Probe(obj.readinessProbe),
+    resources: toJson_ResourceRequirements(obj.resources),
+    securityContext: toJson_SecurityContext(obj.securityContext),
+    startupProbe: toJson_Probe(obj.startupProbe),
+    stdin: obj.stdin,
+    stdinOnce: obj.stdinOnce,
+    targetContainerName: obj.targetContainerName,
+    terminationMessagePath: obj.terminationMessagePath,
+    terminationMessagePolicy: obj.terminationMessagePolicy,
+    tty: obj.tty,
+    volumeDevices: obj.volumeDevices?.map(y => toJson_VolumeDevice(y)),
+    volumeMounts: obj.volumeMounts?.map(y => toJson_VolumeMount(y)),
+    workingDir: obj.workingDir,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19086,21 +19699,22 @@ export interface HostAlias {
    * @schema io.k8s.api.core.v1.HostAlias#ip
    */
   readonly ip?: string;
-
 }
 
 /**
  * Converts an object of type 'HostAlias' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HostAlias(obj: HostAlias | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HostAlias(obj: HostAlias | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'hostnames': obj.hostnames?.map(y => y),
-    'ip': obj.ip,
+    hostnames: obj.hostnames?.map(y => y),
+    ip: obj.ip,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19116,20 +19730,21 @@ export interface PodOs {
    * @schema io.k8s.api.core.v1.PodOS#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'PodOs' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodOs(obj: PodOs | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodOs(obj: PodOs | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19145,20 +19760,21 @@ export interface PodReadinessGate {
    * @schema io.k8s.api.core.v1.PodReadinessGate#conditionType
    */
   readonly conditionType: string;
-
 }
 
 /**
  * Converts an object of type 'PodReadinessGate' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodReadinessGate(obj: PodReadinessGate | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodReadinessGate(obj: PodReadinessGate | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'conditionType': obj.conditionType,
+    conditionType: obj.conditionType,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19242,29 +19858,30 @@ export interface PodSecurityContext {
    * @schema io.k8s.api.core.v1.PodSecurityContext#windowsOptions
    */
   readonly windowsOptions?: WindowsSecurityContextOptions;
-
 }
 
 /**
  * Converts an object of type 'PodSecurityContext' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodSecurityContext(obj: PodSecurityContext | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodSecurityContext(obj: PodSecurityContext | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsGroup': obj.fsGroup,
-    'fsGroupChangePolicy': obj.fsGroupChangePolicy,
-    'runAsGroup': obj.runAsGroup,
-    'runAsNonRoot': obj.runAsNonRoot,
-    'runAsUser': obj.runAsUser,
-    'seLinuxOptions': toJson_SeLinuxOptions(obj.seLinuxOptions),
-    'seccompProfile': toJson_SeccompProfile(obj.seccompProfile),
-    'supplementalGroups': obj.supplementalGroups?.map(y => y),
-    'sysctls': obj.sysctls?.map(y => toJson_Sysctl(y)),
-    'windowsOptions': toJson_WindowsSecurityContextOptions(obj.windowsOptions),
+    fsGroup: obj.fsGroup,
+    fsGroupChangePolicy: obj.fsGroupChangePolicy,
+    runAsGroup: obj.runAsGroup,
+    runAsNonRoot: obj.runAsNonRoot,
+    runAsUser: obj.runAsUser,
+    seLinuxOptions: toJson_SeLinuxOptions(obj.seLinuxOptions),
+    seccompProfile: toJson_SeccompProfile(obj.seccompProfile),
+    supplementalGroups: obj.supplementalGroups?.map(y => y),
+    sysctls: obj.sysctls?.map(y => toJson_Sysctl(y)),
+    windowsOptions: toJson_WindowsSecurityContextOptions(obj.windowsOptions),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19313,24 +19930,25 @@ export interface Toleration {
    * @schema io.k8s.api.core.v1.Toleration#value
    */
   readonly value?: string;
-
 }
 
 /**
  * Converts an object of type 'Toleration' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Toleration(obj: Toleration | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Toleration(obj: Toleration | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'effect': obj.effect,
-    'key': obj.key,
-    'operator': obj.operator,
-    'tolerationSeconds': obj.tolerationSeconds,
-    'value': obj.value,
+    effect: obj.effect,
+    key: obj.key,
+    operator: obj.operator,
+    tolerationSeconds: obj.tolerationSeconds,
+    value: obj.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19408,27 +20026,30 @@ export interface TopologySpreadConstraint {
    * @schema io.k8s.api.core.v1.TopologySpreadConstraint#whenUnsatisfiable
    */
   readonly whenUnsatisfiable: string;
-
 }
 
 /**
  * Converts an object of type 'TopologySpreadConstraint' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_TopologySpreadConstraint(obj: TopologySpreadConstraint | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_TopologySpreadConstraint(
+  obj: TopologySpreadConstraint | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'labelSelector': toJson_LabelSelector(obj.labelSelector),
-    'matchLabelKeys': obj.matchLabelKeys?.map(y => y),
-    'maxSkew': obj.maxSkew,
-    'minDomains': obj.minDomains,
-    'nodeAffinityPolicy': obj.nodeAffinityPolicy,
-    'nodeTaintsPolicy': obj.nodeTaintsPolicy,
-    'topologyKey': obj.topologyKey,
-    'whenUnsatisfiable': obj.whenUnsatisfiable,
+    labelSelector: toJson_LabelSelector(obj.labelSelector),
+    matchLabelKeys: obj.matchLabelKeys?.map(y => y),
+    maxSkew: obj.maxSkew,
+    minDomains: obj.minDomains,
+    nodeAffinityPolicy: obj.nodeAffinityPolicy,
+    nodeTaintsPolicy: obj.nodeTaintsPolicy,
+    topologyKey: obj.topologyKey,
+    whenUnsatisfiable: obj.whenUnsatisfiable,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19660,49 +20281,50 @@ export interface Volume {
    * @schema io.k8s.api.core.v1.Volume#vsphereVolume
    */
   readonly vsphereVolume?: VsphereVirtualDiskVolumeSource;
-
 }
 
 /**
  * Converts an object of type 'Volume' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Volume(obj: Volume | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Volume(obj: Volume | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'awsElasticBlockStore': toJson_AwsElasticBlockStoreVolumeSource(obj.awsElasticBlockStore),
-    'azureDisk': toJson_AzureDiskVolumeSource(obj.azureDisk),
-    'azureFile': toJson_AzureFileVolumeSource(obj.azureFile),
-    'cephfs': toJson_CephFsVolumeSource(obj.cephfs),
-    'cinder': toJson_CinderVolumeSource(obj.cinder),
-    'configMap': toJson_ConfigMapVolumeSource(obj.configMap),
-    'csi': toJson_CsiVolumeSource(obj.csi),
-    'downwardAPI': toJson_DownwardApiVolumeSource(obj.downwardApi),
-    'emptyDir': toJson_EmptyDirVolumeSource(obj.emptyDir),
-    'ephemeral': toJson_EphemeralVolumeSource(obj.ephemeral),
-    'fc': toJson_FcVolumeSource(obj.fc),
-    'flexVolume': toJson_FlexVolumeSource(obj.flexVolume),
-    'flocker': toJson_FlockerVolumeSource(obj.flocker),
-    'gcePersistentDisk': toJson_GcePersistentDiskVolumeSource(obj.gcePersistentDisk),
-    'gitRepo': toJson_GitRepoVolumeSource(obj.gitRepo),
-    'glusterfs': toJson_GlusterfsVolumeSource(obj.glusterfs),
-    'hostPath': toJson_HostPathVolumeSource(obj.hostPath),
-    'iscsi': toJson_IscsiVolumeSource(obj.iscsi),
-    'name': obj.name,
-    'nfs': toJson_NfsVolumeSource(obj.nfs),
-    'persistentVolumeClaim': toJson_PersistentVolumeClaimVolumeSource(obj.persistentVolumeClaim),
-    'photonPersistentDisk': toJson_PhotonPersistentDiskVolumeSource(obj.photonPersistentDisk),
-    'portworxVolume': toJson_PortworxVolumeSource(obj.portworxVolume),
-    'projected': toJson_ProjectedVolumeSource(obj.projected),
-    'quobyte': toJson_QuobyteVolumeSource(obj.quobyte),
-    'rbd': toJson_RbdVolumeSource(obj.rbd),
-    'scaleIO': toJson_ScaleIoVolumeSource(obj.scaleIo),
-    'secret': toJson_SecretVolumeSource(obj.secret),
-    'storageos': toJson_StorageOsVolumeSource(obj.storageos),
-    'vsphereVolume': toJson_VsphereVirtualDiskVolumeSource(obj.vsphereVolume),
+    awsElasticBlockStore: toJson_AwsElasticBlockStoreVolumeSource(obj.awsElasticBlockStore),
+    azureDisk: toJson_AzureDiskVolumeSource(obj.azureDisk),
+    azureFile: toJson_AzureFileVolumeSource(obj.azureFile),
+    cephfs: toJson_CephFsVolumeSource(obj.cephfs),
+    cinder: toJson_CinderVolumeSource(obj.cinder),
+    configMap: toJson_ConfigMapVolumeSource(obj.configMap),
+    csi: toJson_CsiVolumeSource(obj.csi),
+    downwardAPI: toJson_DownwardApiVolumeSource(obj.downwardApi),
+    emptyDir: toJson_EmptyDirVolumeSource(obj.emptyDir),
+    ephemeral: toJson_EphemeralVolumeSource(obj.ephemeral),
+    fc: toJson_FcVolumeSource(obj.fc),
+    flexVolume: toJson_FlexVolumeSource(obj.flexVolume),
+    flocker: toJson_FlockerVolumeSource(obj.flocker),
+    gcePersistentDisk: toJson_GcePersistentDiskVolumeSource(obj.gcePersistentDisk),
+    gitRepo: toJson_GitRepoVolumeSource(obj.gitRepo),
+    glusterfs: toJson_GlusterfsVolumeSource(obj.glusterfs),
+    hostPath: toJson_HostPathVolumeSource(obj.hostPath),
+    iscsi: toJson_IscsiVolumeSource(obj.iscsi),
+    name: obj.name,
+    nfs: toJson_NfsVolumeSource(obj.nfs),
+    persistentVolumeClaim: toJson_PersistentVolumeClaimVolumeSource(obj.persistentVolumeClaim),
+    photonPersistentDisk: toJson_PhotonPersistentDiskVolumeSource(obj.photonPersistentDisk),
+    portworxVolume: toJson_PortworxVolumeSource(obj.portworxVolume),
+    projected: toJson_ProjectedVolumeSource(obj.projected),
+    quobyte: toJson_QuobyteVolumeSource(obj.quobyte),
+    rbd: toJson_RbdVolumeSource(obj.rbd),
+    scaleIO: toJson_ScaleIoVolumeSource(obj.scaleIo),
+    secret: toJson_SecretVolumeSource(obj.secret),
+    storageos: toJson_StorageOsVolumeSource(obj.storageos),
+    vsphereVolume: toJson_VsphereVirtualDiskVolumeSource(obj.vsphereVolume),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19718,20 +20340,21 @@ export interface ScopeSelector {
    * @schema io.k8s.api.core.v1.ScopeSelector#matchExpressions
    */
   readonly matchExpressions?: ScopedResourceSelectorRequirement[];
-
 }
 
 /**
  * Converts an object of type 'ScopeSelector' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ScopeSelector(obj: ScopeSelector | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ScopeSelector(obj: ScopeSelector | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'matchExpressions': obj.matchExpressions?.map(y => toJson_ScopedResourceSelectorRequirement(y)),
+    matchExpressions: obj.matchExpressions?.map(y => toJson_ScopedResourceSelectorRequirement(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19785,25 +20408,26 @@ export interface ServicePort {
    * @schema io.k8s.api.core.v1.ServicePort#targetPort
    */
   readonly targetPort?: IntOrString;
-
 }
 
 /**
  * Converts an object of type 'ServicePort' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ServicePort(obj: ServicePort | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ServicePort(obj: ServicePort | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'appProtocol': obj.appProtocol,
-    'name': obj.name,
-    'nodePort': obj.nodePort,
-    'port': obj.port,
-    'protocol': obj.protocol,
-    'targetPort': obj.targetPort?.value,
+    appProtocol: obj.appProtocol,
+    name: obj.name,
+    nodePort: obj.nodePort,
+    port: obj.port,
+    protocol: obj.protocol,
+    targetPort: obj.targetPort?.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19819,20 +20443,23 @@ export interface SessionAffinityConfig {
    * @schema io.k8s.api.core.v1.SessionAffinityConfig#clientIP
    */
   readonly clientIp?: ClientIpConfig;
-
 }
 
 /**
  * Converts an object of type 'SessionAffinityConfig' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SessionAffinityConfig(obj: SessionAffinityConfig | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SessionAffinityConfig(
+  obj: SessionAffinityConfig | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'clientIP': toJson_ClientIpConfig(obj.clientIp),
+    clientIP: toJson_ClientIpConfig(obj.clientIp),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19862,22 +20489,23 @@ export interface EndpointConditions {
    * @schema io.k8s.api.discovery.v1.EndpointConditions#terminating
    */
   readonly terminating?: boolean;
-
 }
 
 /**
  * Converts an object of type 'EndpointConditions' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EndpointConditions(obj: EndpointConditions | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EndpointConditions(obj: EndpointConditions | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'ready': obj.ready,
-    'serving': obj.serving,
-    'terminating': obj.terminating,
+    ready: obj.ready,
+    serving: obj.serving,
+    terminating: obj.terminating,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19893,20 +20521,21 @@ export interface EndpointHints {
    * @schema io.k8s.api.discovery.v1.EndpointHints#forZones
    */
   readonly forZones?: ForZone[];
-
 }
 
 /**
  * Converts an object of type 'EndpointHints' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EndpointHints(obj: EndpointHints | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EndpointHints(obj: EndpointHints | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'forZones': obj.forZones?.map(y => toJson_ForZone(y)),
+    forZones: obj.forZones?.map(y => toJson_ForZone(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19922,20 +20551,23 @@ export interface FlowDistinguisherMethodV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.FlowDistinguisherMethod#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'FlowDistinguisherMethodV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_FlowDistinguisherMethodV1Beta1(obj: FlowDistinguisherMethodV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_FlowDistinguisherMethodV1Beta1(
+  obj: FlowDistinguisherMethodV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'type': obj.type,
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19951,20 +20583,23 @@ export interface PriorityLevelConfigurationReferenceV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.PriorityLevelConfigurationReference#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'PriorityLevelConfigurationReferenceV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PriorityLevelConfigurationReferenceV1Beta1(obj: PriorityLevelConfigurationReferenceV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PriorityLevelConfigurationReferenceV1Beta1(
+  obj: PriorityLevelConfigurationReferenceV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -19994,22 +20629,25 @@ export interface PolicyRulesWithSubjectsV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.PolicyRulesWithSubjects#subjects
    */
   readonly subjects: SubjectV1Beta1[];
-
 }
 
 /**
  * Converts an object of type 'PolicyRulesWithSubjectsV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PolicyRulesWithSubjectsV1Beta1(obj: PolicyRulesWithSubjectsV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PolicyRulesWithSubjectsV1Beta1(
+  obj: PolicyRulesWithSubjectsV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'nonResourceRules': obj.nonResourceRules?.map(y => toJson_NonResourcePolicyRuleV1Beta1(y)),
-    'resourceRules': obj.resourceRules?.map(y => toJson_ResourcePolicyRuleV1Beta1(y)),
-    'subjects': obj.subjects?.map(y => toJson_SubjectV1Beta1(y)),
+    nonResourceRules: obj.nonResourceRules?.map(y => toJson_NonResourcePolicyRuleV1Beta1(y)),
+    resourceRules: obj.resourceRules?.map(y => toJson_ResourcePolicyRuleV1Beta1(y)),
+    subjects: obj.subjects?.map(y => toJson_SubjectV1Beta1(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20038,21 +20676,24 @@ export interface LimitedPriorityLevelConfigurationV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.LimitedPriorityLevelConfiguration#limitResponse
    */
   readonly limitResponse?: LimitResponseV1Beta1;
-
 }
 
 /**
  * Converts an object of type 'LimitedPriorityLevelConfigurationV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LimitedPriorityLevelConfigurationV1Beta1(obj: LimitedPriorityLevelConfigurationV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LimitedPriorityLevelConfigurationV1Beta1(
+  obj: LimitedPriorityLevelConfigurationV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'assuredConcurrencyShares': obj.assuredConcurrencyShares,
-    'limitResponse': toJson_LimitResponseV1Beta1(obj.limitResponse),
+    assuredConcurrencyShares: obj.assuredConcurrencyShares,
+    limitResponse: toJson_LimitResponseV1Beta1(obj.limitResponse),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20068,20 +20709,23 @@ export interface FlowDistinguisherMethodV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.FlowDistinguisherMethod#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'FlowDistinguisherMethodV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_FlowDistinguisherMethodV1Beta2(obj: FlowDistinguisherMethodV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_FlowDistinguisherMethodV1Beta2(
+  obj: FlowDistinguisherMethodV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'type': obj.type,
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20097,20 +20741,23 @@ export interface PriorityLevelConfigurationReferenceV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.PriorityLevelConfigurationReference#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'PriorityLevelConfigurationReferenceV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PriorityLevelConfigurationReferenceV1Beta2(obj: PriorityLevelConfigurationReferenceV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PriorityLevelConfigurationReferenceV1Beta2(
+  obj: PriorityLevelConfigurationReferenceV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20140,22 +20787,25 @@ export interface PolicyRulesWithSubjectsV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.PolicyRulesWithSubjects#subjects
    */
   readonly subjects: SubjectV1Beta2[];
-
 }
 
 /**
  * Converts an object of type 'PolicyRulesWithSubjectsV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PolicyRulesWithSubjectsV1Beta2(obj: PolicyRulesWithSubjectsV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PolicyRulesWithSubjectsV1Beta2(
+  obj: PolicyRulesWithSubjectsV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'nonResourceRules': obj.nonResourceRules?.map(y => toJson_NonResourcePolicyRuleV1Beta2(y)),
-    'resourceRules': obj.resourceRules?.map(y => toJson_ResourcePolicyRuleV1Beta2(y)),
-    'subjects': obj.subjects?.map(y => toJson_SubjectV1Beta2(y)),
+    nonResourceRules: obj.nonResourceRules?.map(y => toJson_NonResourcePolicyRuleV1Beta2(y)),
+    resourceRules: obj.resourceRules?.map(y => toJson_ResourcePolicyRuleV1Beta2(y)),
+    subjects: obj.subjects?.map(y => toJson_SubjectV1Beta2(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20184,21 +20834,24 @@ export interface LimitedPriorityLevelConfigurationV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.LimitedPriorityLevelConfiguration#limitResponse
    */
   readonly limitResponse?: LimitResponseV1Beta2;
-
 }
 
 /**
  * Converts an object of type 'LimitedPriorityLevelConfigurationV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LimitedPriorityLevelConfigurationV1Beta2(obj: LimitedPriorityLevelConfigurationV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LimitedPriorityLevelConfigurationV1Beta2(
+  obj: LimitedPriorityLevelConfigurationV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'assuredConcurrencyShares': obj.assuredConcurrencyShares,
-    'limitResponse': toJson_LimitResponseV1Beta2(obj.limitResponse),
+    assuredConcurrencyShares: obj.assuredConcurrencyShares,
+    limitResponse: toJson_LimitResponseV1Beta2(obj.limitResponse),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20221,21 +20874,22 @@ export interface IngressBackend {
    * @schema io.k8s.api.networking.v1.IngressBackend#service
    */
   readonly service?: IngressServiceBackend;
-
 }
 
 /**
  * Converts an object of type 'IngressBackend' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IngressBackend(obj: IngressBackend | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IngressBackend(obj: IngressBackend | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'resource': toJson_TypedLocalObjectReference(obj.resource),
-    'service': toJson_IngressServiceBackend(obj.service),
+    resource: toJson_TypedLocalObjectReference(obj.resource),
+    service: toJson_IngressServiceBackend(obj.service),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20263,21 +20917,22 @@ export interface IngressRule {
    * @schema io.k8s.api.networking.v1.IngressRule#http
    */
   readonly http?: HttpIngressRuleValue;
-
 }
 
 /**
  * Converts an object of type 'IngressRule' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IngressRule(obj: IngressRule | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IngressRule(obj: IngressRule | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'host': obj.host,
-    'http': toJson_HttpIngressRuleValue(obj.http),
+    host: obj.host,
+    http: toJson_HttpIngressRuleValue(obj.http),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20301,21 +20956,22 @@ export interface IngressTls {
    * @schema io.k8s.api.networking.v1.IngressTLS#secretName
    */
   readonly secretName?: string;
-
 }
 
 /**
  * Converts an object of type 'IngressTls' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IngressTls(obj: IngressTls | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IngressTls(obj: IngressTls | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'hosts': obj.hosts?.map(y => y),
-    'secretName': obj.secretName,
+    hosts: obj.hosts?.map(y => y),
+    secretName: obj.secretName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20359,24 +21015,27 @@ export interface IngressClassParametersReference {
    * @schema io.k8s.api.networking.v1.IngressClassParametersReference#scope
    */
   readonly scope?: string;
-
 }
 
 /**
  * Converts an object of type 'IngressClassParametersReference' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IngressClassParametersReference(obj: IngressClassParametersReference | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IngressClassParametersReference(
+  obj: IngressClassParametersReference | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiGroup': obj.apiGroup,
-    'kind': obj.kind,
-    'name': obj.name,
-    'namespace': obj.namespace,
-    'scope': obj.scope,
+    apiGroup: obj.apiGroup,
+    kind: obj.kind,
+    name: obj.name,
+    namespace: obj.namespace,
+    scope: obj.scope,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20399,21 +21058,24 @@ export interface NetworkPolicyEgressRule {
    * @schema io.k8s.api.networking.v1.NetworkPolicyEgressRule#to
    */
   readonly to?: NetworkPolicyPeer[];
-
 }
 
 /**
  * Converts an object of type 'NetworkPolicyEgressRule' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NetworkPolicyEgressRule(obj: NetworkPolicyEgressRule | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NetworkPolicyEgressRule(
+  obj: NetworkPolicyEgressRule | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'ports': obj.ports?.map(y => toJson_NetworkPolicyPort(y)),
-    'to': obj.to?.map(y => toJson_NetworkPolicyPeer(y)),
+    ports: obj.ports?.map(y => toJson_NetworkPolicyPort(y)),
+    to: obj.to?.map(y => toJson_NetworkPolicyPeer(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20436,21 +21098,24 @@ export interface NetworkPolicyIngressRule {
    * @schema io.k8s.api.networking.v1.NetworkPolicyIngressRule#ports
    */
   readonly ports?: NetworkPolicyPort[];
-
 }
 
 /**
  * Converts an object of type 'NetworkPolicyIngressRule' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NetworkPolicyIngressRule(obj: NetworkPolicyIngressRule | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NetworkPolicyIngressRule(
+  obj: NetworkPolicyIngressRule | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'from': obj.from?.map(y => toJson_NetworkPolicyPeer(y)),
-    'ports': obj.ports?.map(y => toJson_NetworkPolicyPort(y)),
+    from: obj.from?.map(y => toJson_NetworkPolicyPeer(y)),
+    ports: obj.ports?.map(y => toJson_NetworkPolicyPort(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20466,20 +21131,21 @@ export interface NodeSelector {
    * @schema io.k8s.api.core.v1.NodeSelector#nodeSelectorTerms
    */
   readonly nodeSelectorTerms: NodeSelectorTerm[];
-
 }
 
 /**
  * Converts an object of type 'NodeSelector' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NodeSelector(obj: NodeSelector | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NodeSelector(obj: NodeSelector | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'nodeSelectorTerms': obj.nodeSelectorTerms?.map(y => toJson_NodeSelectorTerm(y)),
+    nodeSelectorTerms: obj.nodeSelectorTerms?.map(y => toJson_NodeSelectorTerm(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20490,7 +21156,7 @@ export function toJson_NodeSelector(obj: NodeSelector | undefined): Record<strin
  */
 export enum IoK8SApimachineryPkgApisMetaV1DeleteOptionsKind {
   /** DeleteOptions */
-  DELETE_OPTIONS = "DeleteOptions",
+  DELETE_OPTIONS = 'DeleteOptions',
 }
 
 /**
@@ -20512,21 +21178,22 @@ export interface Preconditions {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.Preconditions#uid
    */
   readonly uid?: string;
-
 }
 
 /**
  * Converts an object of type 'Preconditions' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Preconditions(obj: Preconditions | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Preconditions(obj: Preconditions | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'resourceVersion': obj.resourceVersion,
-    'uid': obj.uid,
+    resourceVersion: obj.resourceVersion,
+    uid: obj.uid,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20540,8 +21207,7 @@ export class IntOrString {
   public static fromNumber(value: number): IntOrString {
     return new IntOrString(value);
   }
-  private constructor(public readonly value: string | number) {
-  }
+  private constructor(public readonly value: string | number) {}
 }
 
 /**
@@ -20563,21 +21229,22 @@ export interface TokenRequest {
    * @schema io.k8s.api.storage.v1.TokenRequest#expirationSeconds
    */
   readonly expirationSeconds?: number;
-
 }
 
 /**
  * Converts an object of type 'TokenRequest' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_TokenRequest(obj: TokenRequest | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_TokenRequest(obj: TokenRequest | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'audience': obj.audience,
-    'expirationSeconds': obj.expirationSeconds,
+    audience: obj.audience,
+    expirationSeconds: obj.expirationSeconds,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20614,23 +21281,24 @@ export interface CsiNodeDriver {
    * @schema io.k8s.api.storage.v1.CSINodeDriver#topologyKeys
    */
   readonly topologyKeys?: string[];
-
 }
 
 /**
  * Converts an object of type 'CsiNodeDriver' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CsiNodeDriver(obj: CsiNodeDriver | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CsiNodeDriver(obj: CsiNodeDriver | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'allocatable': toJson_VolumeNodeResources(obj.allocatable),
-    'name': obj.name,
-    'nodeID': obj.nodeId,
-    'topologyKeys': obj.topologyKeys?.map(y => y),
+    allocatable: toJson_VolumeNodeResources(obj.allocatable),
+    name: obj.name,
+    nodeID: obj.nodeId,
+    topologyKeys: obj.topologyKeys?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20660,22 +21328,25 @@ export interface LabelSelectorRequirement {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelectorRequirement#values
    */
   readonly values?: string[];
-
 }
 
 /**
  * Converts an object of type 'LabelSelectorRequirement' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LabelSelectorRequirement(obj: LabelSelectorRequirement | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LabelSelectorRequirement(
+  obj: LabelSelectorRequirement | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'key': obj.key,
-    'operator': obj.operator,
-    'values': obj.values?.map(y => y),
+    key: obj.key,
+    operator: obj.operator,
+    values: obj.values?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20698,21 +21369,24 @@ export interface TopologySelectorLabelRequirement {
    * @schema io.k8s.api.core.v1.TopologySelectorLabelRequirement#values
    */
   readonly values: string[];
-
 }
 
 /**
  * Converts an object of type 'TopologySelectorLabelRequirement' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_TopologySelectorLabelRequirement(obj: TopologySelectorLabelRequirement | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_TopologySelectorLabelRequirement(
+  obj: TopologySelectorLabelRequirement | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'key': obj.key,
-    'values': obj.values?.map(y => y),
+    key: obj.key,
+    values: obj.values?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20735,21 +21409,24 @@ export interface VolumeAttachmentSource {
    * @schema io.k8s.api.storage.v1.VolumeAttachmentSource#persistentVolumeName
    */
   readonly persistentVolumeName?: string;
-
 }
 
 /**
  * Converts an object of type 'VolumeAttachmentSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_VolumeAttachmentSource(obj: VolumeAttachmentSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_VolumeAttachmentSource(
+  obj: VolumeAttachmentSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'inlineVolumeSpec': toJson_PersistentVolumeSpec(obj.inlineVolumeSpec),
-    'persistentVolumeName': obj.persistentVolumeName,
+    inlineVolumeSpec: toJson_PersistentVolumeSpec(obj.inlineVolumeSpec),
+    persistentVolumeName: obj.persistentVolumeName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20773,21 +21450,24 @@ export interface CustomResourceConversion {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceConversion#webhook
    */
   readonly webhook?: WebhookConversion;
-
 }
 
 /**
  * Converts an object of type 'CustomResourceConversion' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CustomResourceConversion(obj: CustomResourceConversion | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CustomResourceConversion(
+  obj: CustomResourceConversion | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'strategy': obj.strategy,
-    'webhook': toJson_WebhookConversion(obj.webhook),
+    strategy: obj.strategy,
+    webhook: toJson_WebhookConversion(obj.webhook),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20840,25 +21520,28 @@ export interface CustomResourceDefinitionNames {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionNames#singular
    */
   readonly singular?: string;
-
 }
 
 /**
  * Converts an object of type 'CustomResourceDefinitionNames' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CustomResourceDefinitionNames(obj: CustomResourceDefinitionNames | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CustomResourceDefinitionNames(
+  obj: CustomResourceDefinitionNames | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'categories': obj.categories?.map(y => y),
-    'kind': obj.kind,
-    'listKind': obj.listKind,
-    'plural': obj.plural,
-    'shortNames': obj.shortNames?.map(y => y),
-    'singular': obj.singular,
+    categories: obj.categories?.map(y => y),
+    kind: obj.kind,
+    listKind: obj.listKind,
+    plural: obj.plural,
+    shortNames: obj.shortNames?.map(y => y),
+    singular: obj.singular,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20924,27 +21607,30 @@ export interface CustomResourceDefinitionVersion {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionVersion#subresources
    */
   readonly subresources?: CustomResourceSubresources;
-
 }
 
 /**
  * Converts an object of type 'CustomResourceDefinitionVersion' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CustomResourceDefinitionVersion(obj: CustomResourceDefinitionVersion | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CustomResourceDefinitionVersion(
+  obj: CustomResourceDefinitionVersion | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'additionalPrinterColumns': obj.additionalPrinterColumns?.map(y => toJson_CustomResourceColumnDefinition(y)),
-    'deprecated': obj.deprecated,
-    'deprecationWarning': obj.deprecationWarning,
-    'name': obj.name,
-    'schema': toJson_CustomResourceValidation(obj.schema),
-    'served': obj.served,
-    'storage': obj.storage,
-    'subresources': toJson_CustomResourceSubresources(obj.subresources),
+    additionalPrinterColumns: obj.additionalPrinterColumns?.map(y => toJson_CustomResourceColumnDefinition(y)),
+    deprecated: obj.deprecated,
+    deprecationWarning: obj.deprecationWarning,
+    name: obj.name,
+    schema: toJson_CustomResourceValidation(obj.schema),
+    served: obj.served,
+    storage: obj.storage,
+    subresources: toJson_CustomResourceSubresources(obj.subresources),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -20978,22 +21664,23 @@ export interface StatusCause {
    * @schema io.k8s.apimachinery.pkg.apis.meta.v1.StatusCause#reason
    */
   readonly reason?: string;
-
 }
 
 /**
  * Converts an object of type 'StatusCause' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_StatusCause(obj: StatusCause | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_StatusCause(obj: StatusCause | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'field': obj.field,
-    'message': obj.message,
-    'reason': obj.reason,
+    field: obj.field,
+    message: obj.message,
+    reason: obj.reason,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21031,23 +21718,24 @@ export interface ServiceReference {
    * @schema io.k8s.api.admissionregistration.v1.ServiceReference#port
    */
   readonly port?: number;
-
 }
 
 /**
  * Converts an object of type 'ServiceReference' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ServiceReference(obj: ServiceReference | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ServiceReference(obj: ServiceReference | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'namespace': obj.namespace,
-    'path': obj.path,
-    'port': obj.port,
+    name: obj.name,
+    namespace: obj.namespace,
+    path: obj.path,
+    port: obj.port,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21070,21 +21758,24 @@ export interface RollingUpdateDaemonSet {
    * @schema io.k8s.api.apps.v1.RollingUpdateDaemonSet#maxUnavailable
    */
   readonly maxUnavailable?: IntOrString;
-
 }
 
 /**
  * Converts an object of type 'RollingUpdateDaemonSet' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_RollingUpdateDaemonSet(obj: RollingUpdateDaemonSet | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_RollingUpdateDaemonSet(
+  obj: RollingUpdateDaemonSet | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'maxSurge': obj.maxSurge?.value,
-    'maxUnavailable': obj.maxUnavailable?.value,
+    maxSurge: obj.maxSurge?.value,
+    maxUnavailable: obj.maxUnavailable?.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21109,21 +21800,24 @@ export interface RollingUpdateDeployment {
    * @schema io.k8s.api.apps.v1.RollingUpdateDeployment#maxUnavailable
    */
   readonly maxUnavailable?: IntOrString;
-
 }
 
 /**
  * Converts an object of type 'RollingUpdateDeployment' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_RollingUpdateDeployment(obj: RollingUpdateDeployment | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_RollingUpdateDeployment(
+  obj: RollingUpdateDeployment | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'maxSurge': obj.maxSurge?.value,
-    'maxUnavailable': obj.maxUnavailable?.value,
+    maxSurge: obj.maxSurge?.value,
+    maxUnavailable: obj.maxUnavailable?.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21147,21 +21841,24 @@ export interface RollingUpdateStatefulSetStrategy {
    * @schema io.k8s.api.apps.v1.RollingUpdateStatefulSetStrategy#partition
    */
   readonly partition?: number;
-
 }
 
 /**
  * Converts an object of type 'RollingUpdateStatefulSetStrategy' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_RollingUpdateStatefulSetStrategy(obj: RollingUpdateStatefulSetStrategy | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_RollingUpdateStatefulSetStrategy(
+  obj: RollingUpdateStatefulSetStrategy | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'maxUnavailable': obj.maxUnavailable?.value,
-    'partition': obj.partition,
+    maxUnavailable: obj.maxUnavailable?.value,
+    partition: obj.partition,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21191,22 +21888,23 @@ export interface HpaScalingRulesV2 {
    * @schema io.k8s.api.autoscaling.v2.HPAScalingRules#stabilizationWindowSeconds
    */
   readonly stabilizationWindowSeconds?: number;
-
 }
 
 /**
  * Converts an object of type 'HpaScalingRulesV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HpaScalingRulesV2(obj: HpaScalingRulesV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HpaScalingRulesV2(obj: HpaScalingRulesV2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'policies': obj.policies?.map(y => toJson_HpaScalingPolicyV2(y)),
-    'selectPolicy': obj.selectPolicy,
-    'stabilizationWindowSeconds': obj.stabilizationWindowSeconds,
+    policies: obj.policies?.map(y => toJson_HpaScalingPolicyV2(y)),
+    selectPolicy: obj.selectPolicy,
+    stabilizationWindowSeconds: obj.stabilizationWindowSeconds,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21236,22 +21934,25 @@ export interface ContainerResourceMetricSourceV2 {
    * @schema io.k8s.api.autoscaling.v2.ContainerResourceMetricSource#target
    */
   readonly target: MetricTargetV2;
-
 }
 
 /**
  * Converts an object of type 'ContainerResourceMetricSourceV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ContainerResourceMetricSourceV2(obj: ContainerResourceMetricSourceV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ContainerResourceMetricSourceV2(
+  obj: ContainerResourceMetricSourceV2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'container': obj.container,
-    'name': obj.name,
-    'target': toJson_MetricTargetV2(obj.target),
+    container: obj.container,
+    name: obj.name,
+    target: toJson_MetricTargetV2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21274,21 +21975,24 @@ export interface ExternalMetricSourceV2 {
    * @schema io.k8s.api.autoscaling.v2.ExternalMetricSource#target
    */
   readonly target: MetricTargetV2;
-
 }
 
 /**
  * Converts an object of type 'ExternalMetricSourceV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ExternalMetricSourceV2(obj: ExternalMetricSourceV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ExternalMetricSourceV2(
+  obj: ExternalMetricSourceV2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metric': toJson_MetricIdentifierV2(obj.metric),
-    'target': toJson_MetricTargetV2(obj.target),
+    metric: toJson_MetricIdentifierV2(obj.metric),
+    target: toJson_MetricTargetV2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21318,22 +22022,25 @@ export interface ObjectMetricSourceV2 {
    * @schema io.k8s.api.autoscaling.v2.ObjectMetricSource#target
    */
   readonly target: MetricTargetV2;
-
 }
 
 /**
  * Converts an object of type 'ObjectMetricSourceV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ObjectMetricSourceV2(obj: ObjectMetricSourceV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ObjectMetricSourceV2(
+  obj: ObjectMetricSourceV2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'describedObject': toJson_CrossVersionObjectReferenceV2(obj.describedObject),
-    'metric': toJson_MetricIdentifierV2(obj.metric),
-    'target': toJson_MetricTargetV2(obj.target),
+    describedObject: toJson_CrossVersionObjectReferenceV2(obj.describedObject),
+    metric: toJson_MetricIdentifierV2(obj.metric),
+    target: toJson_MetricTargetV2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21356,21 +22063,22 @@ export interface PodsMetricSourceV2 {
    * @schema io.k8s.api.autoscaling.v2.PodsMetricSource#target
    */
   readonly target: MetricTargetV2;
-
 }
 
 /**
  * Converts an object of type 'PodsMetricSourceV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodsMetricSourceV2(obj: PodsMetricSourceV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodsMetricSourceV2(obj: PodsMetricSourceV2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metric': toJson_MetricIdentifierV2(obj.metric),
-    'target': toJson_MetricTargetV2(obj.target),
+    metric: toJson_MetricIdentifierV2(obj.metric),
+    target: toJson_MetricTargetV2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21393,21 +22101,24 @@ export interface ResourceMetricSourceV2 {
    * @schema io.k8s.api.autoscaling.v2.ResourceMetricSource#target
    */
   readonly target: MetricTargetV2;
-
 }
 
 /**
  * Converts an object of type 'ResourceMetricSourceV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ResourceMetricSourceV2(obj: ResourceMetricSourceV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ResourceMetricSourceV2(
+  obj: ResourceMetricSourceV2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'target': toJson_MetricTargetV2(obj.target),
+    name: obj.name,
+    target: toJson_MetricTargetV2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21437,22 +22148,25 @@ export interface HpaScalingRulesV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.HPAScalingRules#stabilizationWindowSeconds
    */
   readonly stabilizationWindowSeconds?: number;
-
 }
 
 /**
  * Converts an object of type 'HpaScalingRulesV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HpaScalingRulesV2Beta2(obj: HpaScalingRulesV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HpaScalingRulesV2Beta2(
+  obj: HpaScalingRulesV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'policies': obj.policies?.map(y => toJson_HpaScalingPolicyV2Beta2(y)),
-    'selectPolicy': obj.selectPolicy,
-    'stabilizationWindowSeconds': obj.stabilizationWindowSeconds,
+    policies: obj.policies?.map(y => toJson_HpaScalingPolicyV2Beta2(y)),
+    selectPolicy: obj.selectPolicy,
+    stabilizationWindowSeconds: obj.stabilizationWindowSeconds,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21482,22 +22196,25 @@ export interface ContainerResourceMetricSourceV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.ContainerResourceMetricSource#target
    */
   readonly target: MetricTargetV2Beta2;
-
 }
 
 /**
  * Converts an object of type 'ContainerResourceMetricSourceV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ContainerResourceMetricSourceV2Beta2(obj: ContainerResourceMetricSourceV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ContainerResourceMetricSourceV2Beta2(
+  obj: ContainerResourceMetricSourceV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'container': obj.container,
-    'name': obj.name,
-    'target': toJson_MetricTargetV2Beta2(obj.target),
+    container: obj.container,
+    name: obj.name,
+    target: toJson_MetricTargetV2Beta2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21520,21 +22237,24 @@ export interface ExternalMetricSourceV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.ExternalMetricSource#target
    */
   readonly target: MetricTargetV2Beta2;
-
 }
 
 /**
  * Converts an object of type 'ExternalMetricSourceV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ExternalMetricSourceV2Beta2(obj: ExternalMetricSourceV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ExternalMetricSourceV2Beta2(
+  obj: ExternalMetricSourceV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metric': toJson_MetricIdentifierV2Beta2(obj.metric),
-    'target': toJson_MetricTargetV2Beta2(obj.target),
+    metric: toJson_MetricIdentifierV2Beta2(obj.metric),
+    target: toJson_MetricTargetV2Beta2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21562,22 +22282,25 @@ export interface ObjectMetricSourceV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.ObjectMetricSource#target
    */
   readonly target: MetricTargetV2Beta2;
-
 }
 
 /**
  * Converts an object of type 'ObjectMetricSourceV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ObjectMetricSourceV2Beta2(obj: ObjectMetricSourceV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ObjectMetricSourceV2Beta2(
+  obj: ObjectMetricSourceV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'describedObject': toJson_CrossVersionObjectReferenceV2Beta2(obj.describedObject),
-    'metric': toJson_MetricIdentifierV2Beta2(obj.metric),
-    'target': toJson_MetricTargetV2Beta2(obj.target),
+    describedObject: toJson_CrossVersionObjectReferenceV2Beta2(obj.describedObject),
+    metric: toJson_MetricIdentifierV2Beta2(obj.metric),
+    target: toJson_MetricTargetV2Beta2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21600,21 +22323,24 @@ export interface PodsMetricSourceV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.PodsMetricSource#target
    */
   readonly target: MetricTargetV2Beta2;
-
 }
 
 /**
  * Converts an object of type 'PodsMetricSourceV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodsMetricSourceV2Beta2(obj: PodsMetricSourceV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodsMetricSourceV2Beta2(
+  obj: PodsMetricSourceV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metric': toJson_MetricIdentifierV2Beta2(obj.metric),
-    'target': toJson_MetricTargetV2Beta2(obj.target),
+    metric: toJson_MetricIdentifierV2Beta2(obj.metric),
+    target: toJson_MetricTargetV2Beta2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21637,21 +22363,24 @@ export interface ResourceMetricSourceV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.ResourceMetricSource#target
    */
   readonly target: MetricTargetV2Beta2;
-
 }
 
 /**
  * Converts an object of type 'ResourceMetricSourceV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ResourceMetricSourceV2Beta2(obj: ResourceMetricSourceV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ResourceMetricSourceV2Beta2(
+  obj: ResourceMetricSourceV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'target': toJson_MetricTargetV2Beta2(obj.target),
+    name: obj.name,
+    target: toJson_MetricTargetV2Beta2(obj.target),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21689,22 +22418,25 @@ export interface PodFailurePolicyRule {
    * @schema io.k8s.api.batch.v1.PodFailurePolicyRule#onPodConditions
    */
   readonly onPodConditions: PodFailurePolicyOnPodConditionsPattern[];
-
 }
 
 /**
  * Converts an object of type 'PodFailurePolicyRule' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodFailurePolicyRule(obj: PodFailurePolicyRule | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodFailurePolicyRule(
+  obj: PodFailurePolicyRule | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'action': obj.action,
-    'onExitCodes': toJson_PodFailurePolicyOnExitCodesRequirement(obj.onExitCodes),
-    'onPodConditions': obj.onPodConditions?.map(y => toJson_PodFailurePolicyOnPodConditionsPattern(y)),
+    action: obj.action,
+    onExitCodes: toJson_PodFailurePolicyOnExitCodesRequirement(obj.onExitCodes),
+    onPodConditions: obj.onPodConditions?.map(y => toJson_PodFailurePolicyOnPodConditionsPattern(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21748,24 +22480,27 @@ export interface ConfigMapNodeConfigSource {
    * @schema io.k8s.api.core.v1.ConfigMapNodeConfigSource#uid
    */
   readonly uid?: string;
-
 }
 
 /**
  * Converts an object of type 'ConfigMapNodeConfigSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ConfigMapNodeConfigSource(obj: ConfigMapNodeConfigSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ConfigMapNodeConfigSource(
+  obj: ConfigMapNodeConfigSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'kubeletConfigKey': obj.kubeletConfigKey,
-    'name': obj.name,
-    'namespace': obj.namespace,
-    'resourceVersion': obj.resourceVersion,
-    'uid': obj.uid,
+    kubeletConfigKey: obj.kubeletConfigKey,
+    name: obj.name,
+    namespace: obj.namespace,
+    resourceVersion: obj.resourceVersion,
+    uid: obj.uid,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21788,21 +22523,22 @@ export interface SecretReference {
    * @schema io.k8s.api.core.v1.SecretReference#namespace
    */
   readonly namespace?: string;
-
 }
 
 /**
  * Converts an object of type 'SecretReference' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SecretReference(obj: SecretReference | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SecretReference(obj: SecretReference | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'namespace': obj.namespace,
+    name: obj.name,
+    namespace: obj.namespace,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21825,21 +22561,26 @@ export interface NodeAffinity {
    * @schema io.k8s.api.core.v1.NodeAffinity#requiredDuringSchedulingIgnoredDuringExecution
    */
   readonly requiredDuringSchedulingIgnoredDuringExecution?: NodeSelector;
-
 }
 
 /**
  * Converts an object of type 'NodeAffinity' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NodeAffinity(obj: NodeAffinity | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NodeAffinity(obj: NodeAffinity | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'preferredDuringSchedulingIgnoredDuringExecution': obj.preferredDuringSchedulingIgnoredDuringExecution?.map(y => toJson_PreferredSchedulingTerm(y)),
-    'requiredDuringSchedulingIgnoredDuringExecution': toJson_NodeSelector(obj.requiredDuringSchedulingIgnoredDuringExecution),
+    preferredDuringSchedulingIgnoredDuringExecution: obj.preferredDuringSchedulingIgnoredDuringExecution?.map(y =>
+      toJson_PreferredSchedulingTerm(y),
+    ),
+    requiredDuringSchedulingIgnoredDuringExecution: toJson_NodeSelector(
+      obj.requiredDuringSchedulingIgnoredDuringExecution,
+    ),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21862,21 +22603,26 @@ export interface PodAffinity {
    * @schema io.k8s.api.core.v1.PodAffinity#requiredDuringSchedulingIgnoredDuringExecution
    */
   readonly requiredDuringSchedulingIgnoredDuringExecution?: PodAffinityTerm[];
-
 }
 
 /**
  * Converts an object of type 'PodAffinity' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodAffinity(obj: PodAffinity | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodAffinity(obj: PodAffinity | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'preferredDuringSchedulingIgnoredDuringExecution': obj.preferredDuringSchedulingIgnoredDuringExecution?.map(y => toJson_WeightedPodAffinityTerm(y)),
-    'requiredDuringSchedulingIgnoredDuringExecution': obj.requiredDuringSchedulingIgnoredDuringExecution?.map(y => toJson_PodAffinityTerm(y)),
+    preferredDuringSchedulingIgnoredDuringExecution: obj.preferredDuringSchedulingIgnoredDuringExecution?.map(y =>
+      toJson_WeightedPodAffinityTerm(y),
+    ),
+    requiredDuringSchedulingIgnoredDuringExecution: obj.requiredDuringSchedulingIgnoredDuringExecution?.map(y =>
+      toJson_PodAffinityTerm(y),
+    ),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21899,21 +22645,26 @@ export interface PodAntiAffinity {
    * @schema io.k8s.api.core.v1.PodAntiAffinity#requiredDuringSchedulingIgnoredDuringExecution
    */
   readonly requiredDuringSchedulingIgnoredDuringExecution?: PodAffinityTerm[];
-
 }
 
 /**
  * Converts an object of type 'PodAntiAffinity' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodAntiAffinity(obj: PodAntiAffinity | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodAntiAffinity(obj: PodAntiAffinity | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'preferredDuringSchedulingIgnoredDuringExecution': obj.preferredDuringSchedulingIgnoredDuringExecution?.map(y => toJson_WeightedPodAffinityTerm(y)),
-    'requiredDuringSchedulingIgnoredDuringExecution': obj.requiredDuringSchedulingIgnoredDuringExecution?.map(y => toJson_PodAffinityTerm(y)),
+    preferredDuringSchedulingIgnoredDuringExecution: obj.preferredDuringSchedulingIgnoredDuringExecution?.map(y =>
+      toJson_WeightedPodAffinityTerm(y),
+    ),
+    requiredDuringSchedulingIgnoredDuringExecution: obj.requiredDuringSchedulingIgnoredDuringExecution?.map(y =>
+      toJson_PodAffinityTerm(y),
+    ),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21944,22 +22695,23 @@ export interface EnvVar {
    * @schema io.k8s.api.core.v1.EnvVar#valueFrom
    */
   readonly valueFrom?: EnvVarSource;
-
 }
 
 /**
  * Converts an object of type 'EnvVar' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EnvVar(obj: EnvVar | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EnvVar(obj: EnvVar | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'value': obj.value,
-    'valueFrom': toJson_EnvVarSource(obj.valueFrom),
+    name: obj.name,
+    value: obj.value,
+    valueFrom: toJson_EnvVarSource(obj.valueFrom),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -21989,22 +22741,23 @@ export interface EnvFromSource {
    * @schema io.k8s.api.core.v1.EnvFromSource#secretRef
    */
   readonly secretRef?: SecretEnvSource;
-
 }
 
 /**
  * Converts an object of type 'EnvFromSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EnvFromSource(obj: EnvFromSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EnvFromSource(obj: EnvFromSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'configMapRef': toJson_ConfigMapEnvSource(obj.configMapRef),
-    'prefix': obj.prefix,
-    'secretRef': toJson_SecretEnvSource(obj.secretRef),
+    configMapRef: toJson_ConfigMapEnvSource(obj.configMapRef),
+    prefix: obj.prefix,
+    secretRef: toJson_SecretEnvSource(obj.secretRef),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22027,21 +22780,22 @@ export interface Lifecycle {
    * @schema io.k8s.api.core.v1.Lifecycle#preStop
    */
   readonly preStop?: LifecycleHandler;
-
 }
 
 /**
  * Converts an object of type 'Lifecycle' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Lifecycle(obj: Lifecycle | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Lifecycle(obj: Lifecycle | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'postStart': toJson_LifecycleHandler(obj.postStart),
-    'preStop': toJson_LifecycleHandler(obj.preStop),
+    postStart: toJson_LifecycleHandler(obj.postStart),
+    preStop: toJson_LifecycleHandler(obj.preStop),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22124,29 +22878,30 @@ export interface Probe {
    * @schema io.k8s.api.core.v1.Probe#timeoutSeconds
    */
   readonly timeoutSeconds?: number;
-
 }
 
 /**
  * Converts an object of type 'Probe' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Probe(obj: Probe | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Probe(obj: Probe | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'exec': toJson_ExecAction(obj.exec),
-    'failureThreshold': obj.failureThreshold,
-    'grpc': toJson_GrpcAction(obj.grpc),
-    'httpGet': toJson_HttpGetAction(obj.httpGet),
-    'initialDelaySeconds': obj.initialDelaySeconds,
-    'periodSeconds': obj.periodSeconds,
-    'successThreshold': obj.successThreshold,
-    'tcpSocket': toJson_TcpSocketAction(obj.tcpSocket),
-    'terminationGracePeriodSeconds': obj.terminationGracePeriodSeconds,
-    'timeoutSeconds': obj.timeoutSeconds,
+    exec: toJson_ExecAction(obj.exec),
+    failureThreshold: obj.failureThreshold,
+    grpc: toJson_GrpcAction(obj.grpc),
+    httpGet: toJson_HttpGetAction(obj.httpGet),
+    initialDelaySeconds: obj.initialDelaySeconds,
+    periodSeconds: obj.periodSeconds,
+    successThreshold: obj.successThreshold,
+    tcpSocket: toJson_TcpSocketAction(obj.tcpSocket),
+    terminationGracePeriodSeconds: obj.terminationGracePeriodSeconds,
+    timeoutSeconds: obj.timeoutSeconds,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22193,24 +22948,25 @@ export interface ContainerPort {
    * @schema io.k8s.api.core.v1.ContainerPort#protocol
    */
   readonly protocol?: string;
-
 }
 
 /**
  * Converts an object of type 'ContainerPort' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ContainerPort(obj: ContainerPort | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ContainerPort(obj: ContainerPort | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'containerPort': obj.containerPort,
-    'hostIP': obj.hostIp,
-    'hostPort': obj.hostPort,
-    'name': obj.name,
-    'protocol': obj.protocol,
+    containerPort: obj.containerPort,
+    hostIP: obj.hostIp,
+    hostPort: obj.hostPort,
+    name: obj.name,
+    protocol: obj.protocol,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22300,30 +23056,31 @@ export interface SecurityContext {
    * @schema io.k8s.api.core.v1.SecurityContext#windowsOptions
    */
   readonly windowsOptions?: WindowsSecurityContextOptions;
-
 }
 
 /**
  * Converts an object of type 'SecurityContext' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SecurityContext(obj: SecurityContext | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SecurityContext(obj: SecurityContext | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'allowPrivilegeEscalation': obj.allowPrivilegeEscalation,
-    'capabilities': toJson_Capabilities(obj.capabilities),
-    'privileged': obj.privileged,
-    'procMount': obj.procMount,
-    'readOnlyRootFilesystem': obj.readOnlyRootFilesystem,
-    'runAsGroup': obj.runAsGroup,
-    'runAsNonRoot': obj.runAsNonRoot,
-    'runAsUser': obj.runAsUser,
-    'seLinuxOptions': toJson_SeLinuxOptions(obj.seLinuxOptions),
-    'seccompProfile': toJson_SeccompProfile(obj.seccompProfile),
-    'windowsOptions': toJson_WindowsSecurityContextOptions(obj.windowsOptions),
+    allowPrivilegeEscalation: obj.allowPrivilegeEscalation,
+    capabilities: toJson_Capabilities(obj.capabilities),
+    privileged: obj.privileged,
+    procMount: obj.procMount,
+    readOnlyRootFilesystem: obj.readOnlyRootFilesystem,
+    runAsGroup: obj.runAsGroup,
+    runAsNonRoot: obj.runAsNonRoot,
+    runAsUser: obj.runAsUser,
+    seLinuxOptions: toJson_SeLinuxOptions(obj.seLinuxOptions),
+    seccompProfile: toJson_SeccompProfile(obj.seccompProfile),
+    windowsOptions: toJson_WindowsSecurityContextOptions(obj.windowsOptions),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22346,21 +23103,22 @@ export interface VolumeDevice {
    * @schema io.k8s.api.core.v1.VolumeDevice#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'VolumeDevice' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_VolumeDevice(obj: VolumeDevice | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_VolumeDevice(obj: VolumeDevice | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'devicePath': obj.devicePath,
-    'name': obj.name,
+    devicePath: obj.devicePath,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22414,25 +23172,26 @@ export interface VolumeMount {
    * @schema io.k8s.api.core.v1.VolumeMount#subPathExpr
    */
   readonly subPathExpr?: string;
-
 }
 
 /**
  * Converts an object of type 'VolumeMount' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_VolumeMount(obj: VolumeMount | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_VolumeMount(obj: VolumeMount | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'mountPath': obj.mountPath,
-    'mountPropagation': obj.mountPropagation,
-    'name': obj.name,
-    'readOnly': obj.readOnly,
-    'subPath': obj.subPath,
-    'subPathExpr': obj.subPathExpr,
+    mountPath: obj.mountPath,
+    mountPropagation: obj.mountPropagation,
+    name: obj.name,
+    readOnly: obj.readOnly,
+    subPath: obj.subPath,
+    subPathExpr: obj.subPathExpr,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22453,21 +23212,22 @@ export interface PodDnsConfigOption {
    * @schema io.k8s.api.core.v1.PodDNSConfigOption#value
    */
   readonly value?: string;
-
 }
 
 /**
  * Converts an object of type 'PodDnsConfigOption' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodDnsConfigOption(obj: PodDnsConfigOption | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodDnsConfigOption(obj: PodDnsConfigOption | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'value': obj.value,
+    name: obj.name,
+    value: obj.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22504,23 +23264,24 @@ export interface SeLinuxOptions {
    * @schema io.k8s.api.core.v1.SELinuxOptions#user
    */
   readonly user?: string;
-
 }
 
 /**
  * Converts an object of type 'SeLinuxOptions' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SeLinuxOptions(obj: SeLinuxOptions | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SeLinuxOptions(obj: SeLinuxOptions | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'level': obj.level,
-    'role': obj.role,
-    'type': obj.type,
-    'user': obj.user,
+    level: obj.level,
+    role: obj.role,
+    type: obj.type,
+    user: obj.user,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22547,21 +23308,22 @@ export interface SeccompProfile {
    * @schema io.k8s.api.core.v1.SeccompProfile#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'SeccompProfile' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SeccompProfile(obj: SeccompProfile | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SeccompProfile(obj: SeccompProfile | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'localhostProfile': obj.localhostProfile,
-    'type': obj.type,
+    localhostProfile: obj.localhostProfile,
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22584,21 +23346,22 @@ export interface Sysctl {
    * @schema io.k8s.api.core.v1.Sysctl#value
    */
   readonly value: string;
-
 }
 
 /**
  * Converts an object of type 'Sysctl' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Sysctl(obj: Sysctl | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Sysctl(obj: Sysctl | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'value': obj.value,
+    name: obj.name,
+    value: obj.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22636,23 +23399,26 @@ export interface WindowsSecurityContextOptions {
    * @schema io.k8s.api.core.v1.WindowsSecurityContextOptions#runAsUserName
    */
   readonly runAsUserName?: string;
-
 }
 
 /**
  * Converts an object of type 'WindowsSecurityContextOptions' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_WindowsSecurityContextOptions(obj: WindowsSecurityContextOptions | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_WindowsSecurityContextOptions(
+  obj: WindowsSecurityContextOptions | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'gmsaCredentialSpec': obj.gmsaCredentialSpec,
-    'gmsaCredentialSpecName': obj.gmsaCredentialSpecName,
-    'hostProcess': obj.hostProcess,
-    'runAsUserName': obj.runAsUserName,
+    gmsaCredentialSpec: obj.gmsaCredentialSpec,
+    gmsaCredentialSpecName: obj.gmsaCredentialSpecName,
+    hostProcess: obj.hostProcess,
+    runAsUserName: obj.runAsUserName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22682,22 +23448,25 @@ export interface AzureFileVolumeSource {
    * @schema io.k8s.api.core.v1.AzureFileVolumeSource#shareName
    */
   readonly shareName: string;
-
 }
 
 /**
  * Converts an object of type 'AzureFileVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_AzureFileVolumeSource(obj: AzureFileVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_AzureFileVolumeSource(
+  obj: AzureFileVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'readOnly': obj.readOnly,
-    'secretName': obj.secretName,
-    'shareName': obj.shareName,
+    readOnly: obj.readOnly,
+    secretName: obj.secretName,
+    shareName: obj.shareName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22749,25 +23518,26 @@ export interface CephFsVolumeSource {
    * @schema io.k8s.api.core.v1.CephFSVolumeSource#user
    */
   readonly user?: string;
-
 }
 
 /**
  * Converts an object of type 'CephFsVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CephFsVolumeSource(obj: CephFsVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CephFsVolumeSource(obj: CephFsVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'monitors': obj.monitors?.map(y => y),
-    'path': obj.path,
-    'readOnly': obj.readOnly,
-    'secretFile': obj.secretFile,
-    'secretRef': toJson_LocalObjectReference(obj.secretRef),
-    'user': obj.user,
+    monitors: obj.monitors?.map(y => y),
+    path: obj.path,
+    readOnly: obj.readOnly,
+    secretFile: obj.secretFile,
+    secretRef: toJson_LocalObjectReference(obj.secretRef),
+    user: obj.user,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22804,23 +23574,24 @@ export interface CinderVolumeSource {
    * @schema io.k8s.api.core.v1.CinderVolumeSource#volumeID
    */
   readonly volumeId: string;
-
 }
 
 /**
  * Converts an object of type 'CinderVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CinderVolumeSource(obj: CinderVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CinderVolumeSource(obj: CinderVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_LocalObjectReference(obj.secretRef),
-    'volumeID': obj.volumeId,
+    fsType: obj.fsType,
+    readOnly: obj.readOnly,
+    secretRef: toJson_LocalObjectReference(obj.secretRef),
+    volumeID: obj.volumeId,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22860,23 +23631,26 @@ export interface ConfigMapVolumeSource {
    * @schema io.k8s.api.core.v1.ConfigMapVolumeSource#optional
    */
   readonly optional?: boolean;
-
 }
 
 /**
  * Converts an object of type 'ConfigMapVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ConfigMapVolumeSource(obj: ConfigMapVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ConfigMapVolumeSource(
+  obj: ConfigMapVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'defaultMode': obj.defaultMode,
-    'items': obj.items?.map(y => toJson_KeyToPath(y)),
-    'name': obj.name,
-    'optional': obj.optional,
+    defaultMode: obj.defaultMode,
+    items: obj.items?.map(y => toJson_KeyToPath(y)),
+    name: obj.name,
+    optional: obj.optional,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22921,24 +23695,28 @@ export interface CsiVolumeSource {
    * @schema io.k8s.api.core.v1.CSIVolumeSource#volumeAttributes
    */
   readonly volumeAttributes?: { [key: string]: string };
-
 }
 
 /**
  * Converts an object of type 'CsiVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CsiVolumeSource(obj: CsiVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CsiVolumeSource(obj: CsiVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'driver': obj.driver,
-    'fsType': obj.fsType,
-    'nodePublishSecretRef': toJson_LocalObjectReference(obj.nodePublishSecretRef),
-    'readOnly': obj.readOnly,
-    'volumeAttributes': ((obj.volumeAttributes) === undefined) ? undefined : (Object.entries(obj.volumeAttributes).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
+    driver: obj.driver,
+    fsType: obj.fsType,
+    nodePublishSecretRef: toJson_LocalObjectReference(obj.nodePublishSecretRef),
+    readOnly: obj.readOnly,
+    volumeAttributes:
+      obj.volumeAttributes === undefined
+        ? undefined
+        : Object.entries(obj.volumeAttributes).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22962,21 +23740,24 @@ export interface DownwardApiVolumeSource {
    * @schema io.k8s.api.core.v1.DownwardAPIVolumeSource#items
    */
   readonly items?: DownwardApiVolumeFile[];
-
 }
 
 /**
  * Converts an object of type 'DownwardApiVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_DownwardApiVolumeSource(obj: DownwardApiVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_DownwardApiVolumeSource(
+  obj: DownwardApiVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'defaultMode': obj.defaultMode,
-    'items': obj.items?.map(y => toJson_DownwardApiVolumeFile(y)),
+    defaultMode: obj.defaultMode,
+    items: obj.items?.map(y => toJson_DownwardApiVolumeFile(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -22999,21 +23780,24 @@ export interface EmptyDirVolumeSource {
    * @schema io.k8s.api.core.v1.EmptyDirVolumeSource#sizeLimit
    */
   readonly sizeLimit?: Quantity;
-
 }
 
 /**
  * Converts an object of type 'EmptyDirVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EmptyDirVolumeSource(obj: EmptyDirVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EmptyDirVolumeSource(
+  obj: EmptyDirVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'medium': obj.medium,
-    'sizeLimit': obj.sizeLimit?.value,
+    medium: obj.medium,
+    sizeLimit: obj.sizeLimit?.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23035,20 +23819,23 @@ export interface EphemeralVolumeSource {
    * @schema io.k8s.api.core.v1.EphemeralVolumeSource#volumeClaimTemplate
    */
   readonly volumeClaimTemplate?: PersistentVolumeClaimTemplate;
-
 }
 
 /**
  * Converts an object of type 'EphemeralVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EphemeralVolumeSource(obj: EphemeralVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EphemeralVolumeSource(
+  obj: EphemeralVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'volumeClaimTemplate': toJson_PersistentVolumeClaimTemplate(obj.volumeClaimTemplate),
+    volumeClaimTemplate: toJson_PersistentVolumeClaimTemplate(obj.volumeClaimTemplate),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23092,24 +23879,28 @@ export interface FlexVolumeSource {
    * @schema io.k8s.api.core.v1.FlexVolumeSource#secretRef
    */
   readonly secretRef?: LocalObjectReference;
-
 }
 
 /**
  * Converts an object of type 'FlexVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_FlexVolumeSource(obj: FlexVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_FlexVolumeSource(obj: FlexVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'driver': obj.driver,
-    'fsType': obj.fsType,
-    'options': ((obj.options) === undefined) ? undefined : (Object.entries(obj.options).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_LocalObjectReference(obj.secretRef),
+    driver: obj.driver,
+    fsType: obj.fsType,
+    options:
+      obj.options === undefined
+        ? undefined
+        : Object.entries(obj.options).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    readOnly: obj.readOnly,
+    secretRef: toJson_LocalObjectReference(obj.secretRef),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23141,22 +23932,23 @@ export interface GitRepoVolumeSource {
    * @schema io.k8s.api.core.v1.GitRepoVolumeSource#revision
    */
   readonly revision?: string;
-
 }
 
 /**
  * Converts an object of type 'GitRepoVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_GitRepoVolumeSource(obj: GitRepoVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_GitRepoVolumeSource(obj: GitRepoVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'directory': obj.directory,
-    'repository': obj.repository,
-    'revision': obj.revision,
+    directory: obj.directory,
+    repository: obj.repository,
+    revision: obj.revision,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23187,22 +23979,25 @@ export interface GlusterfsVolumeSource {
    * @schema io.k8s.api.core.v1.GlusterfsVolumeSource#readOnly
    */
   readonly readOnly?: boolean;
-
 }
 
 /**
  * Converts an object of type 'GlusterfsVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_GlusterfsVolumeSource(obj: GlusterfsVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_GlusterfsVolumeSource(
+  obj: GlusterfsVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'endpoints': obj.endpoints,
-    'path': obj.path,
-    'readOnly': obj.readOnly,
+    endpoints: obj.endpoints,
+    path: obj.path,
+    readOnly: obj.readOnly,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23290,30 +24085,31 @@ export interface IscsiVolumeSource {
    * @schema io.k8s.api.core.v1.ISCSIVolumeSource#targetPortal
    */
   readonly targetPortal: string;
-
 }
 
 /**
  * Converts an object of type 'IscsiVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IscsiVolumeSource(obj: IscsiVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IscsiVolumeSource(obj: IscsiVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'chapAuthDiscovery': obj.chapAuthDiscovery,
-    'chapAuthSession': obj.chapAuthSession,
-    'fsType': obj.fsType,
-    'initiatorName': obj.initiatorName,
-    'iqn': obj.iqn,
-    'iscsiInterface': obj.iscsiInterface,
-    'lun': obj.lun,
-    'portals': obj.portals?.map(y => y),
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_LocalObjectReference(obj.secretRef),
-    'targetPortal': obj.targetPortal,
+    chapAuthDiscovery: obj.chapAuthDiscovery,
+    chapAuthSession: obj.chapAuthSession,
+    fsType: obj.fsType,
+    initiatorName: obj.initiatorName,
+    iqn: obj.iqn,
+    iscsiInterface: obj.iscsiInterface,
+    lun: obj.lun,
+    portals: obj.portals?.map(y => y),
+    readOnly: obj.readOnly,
+    secretRef: toJson_LocalObjectReference(obj.secretRef),
+    targetPortal: obj.targetPortal,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23336,21 +24132,24 @@ export interface PersistentVolumeClaimVolumeSource {
    * @schema io.k8s.api.core.v1.PersistentVolumeClaimVolumeSource#readOnly
    */
   readonly readOnly?: boolean;
-
 }
 
 /**
  * Converts an object of type 'PersistentVolumeClaimVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PersistentVolumeClaimVolumeSource(obj: PersistentVolumeClaimVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PersistentVolumeClaimVolumeSource(
+  obj: PersistentVolumeClaimVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'claimName': obj.claimName,
-    'readOnly': obj.readOnly,
+    claimName: obj.claimName,
+    readOnly: obj.readOnly,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23373,21 +24172,24 @@ export interface ProjectedVolumeSource {
    * @schema io.k8s.api.core.v1.ProjectedVolumeSource#sources
    */
   readonly sources?: VolumeProjection[];
-
 }
 
 /**
  * Converts an object of type 'ProjectedVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ProjectedVolumeSource(obj: ProjectedVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ProjectedVolumeSource(
+  obj: ProjectedVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'defaultMode': obj.defaultMode,
-    'sources': obj.sources?.map(y => toJson_VolumeProjection(y)),
+    defaultMode: obj.defaultMode,
+    sources: obj.sources?.map(y => toJson_VolumeProjection(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23457,27 +24259,28 @@ export interface RbdVolumeSource {
    * @schema io.k8s.api.core.v1.RBDVolumeSource#user
    */
   readonly user?: string;
-
 }
 
 /**
  * Converts an object of type 'RbdVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_RbdVolumeSource(obj: RbdVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_RbdVolumeSource(obj: RbdVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'image': obj.image,
-    'keyring': obj.keyring,
-    'monitors': obj.monitors?.map(y => y),
-    'pool': obj.pool,
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_LocalObjectReference(obj.secretRef),
-    'user': obj.user,
+    fsType: obj.fsType,
+    image: obj.image,
+    keyring: obj.keyring,
+    monitors: obj.monitors?.map(y => y),
+    pool: obj.pool,
+    readOnly: obj.readOnly,
+    secretRef: toJson_LocalObjectReference(obj.secretRef),
+    user: obj.user,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23559,29 +24362,30 @@ export interface ScaleIoVolumeSource {
    * @schema io.k8s.api.core.v1.ScaleIOVolumeSource#volumeName
    */
   readonly volumeName?: string;
-
 }
 
 /**
  * Converts an object of type 'ScaleIoVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ScaleIoVolumeSource(obj: ScaleIoVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ScaleIoVolumeSource(obj: ScaleIoVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'gateway': obj.gateway,
-    'protectionDomain': obj.protectionDomain,
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_LocalObjectReference(obj.secretRef),
-    'sslEnabled': obj.sslEnabled,
-    'storageMode': obj.storageMode,
-    'storagePool': obj.storagePool,
-    'system': obj.system,
-    'volumeName': obj.volumeName,
+    fsType: obj.fsType,
+    gateway: obj.gateway,
+    protectionDomain: obj.protectionDomain,
+    readOnly: obj.readOnly,
+    secretRef: toJson_LocalObjectReference(obj.secretRef),
+    sslEnabled: obj.sslEnabled,
+    storageMode: obj.storageMode,
+    storagePool: obj.storagePool,
+    system: obj.system,
+    volumeName: obj.volumeName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23621,23 +24425,24 @@ export interface SecretVolumeSource {
    * @schema io.k8s.api.core.v1.SecretVolumeSource#secretName
    */
   readonly secretName?: string;
-
 }
 
 /**
  * Converts an object of type 'SecretVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SecretVolumeSource(obj: SecretVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SecretVolumeSource(obj: SecretVolumeSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'defaultMode': obj.defaultMode,
-    'items': obj.items?.map(y => toJson_KeyToPath(y)),
-    'optional': obj.optional,
-    'secretName': obj.secretName,
+    defaultMode: obj.defaultMode,
+    items: obj.items?.map(y => toJson_KeyToPath(y)),
+    optional: obj.optional,
+    secretName: obj.secretName,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23681,24 +24486,27 @@ export interface StorageOsVolumeSource {
    * @schema io.k8s.api.core.v1.StorageOSVolumeSource#volumeNamespace
    */
   readonly volumeNamespace?: string;
-
 }
 
 /**
  * Converts an object of type 'StorageOsVolumeSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_StorageOsVolumeSource(obj: StorageOsVolumeSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_StorageOsVolumeSource(
+  obj: StorageOsVolumeSource | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fsType': obj.fsType,
-    'readOnly': obj.readOnly,
-    'secretRef': toJson_LocalObjectReference(obj.secretRef),
-    'volumeName': obj.volumeName,
-    'volumeNamespace': obj.volumeNamespace,
+    fsType: obj.fsType,
+    readOnly: obj.readOnly,
+    secretRef: toJson_LocalObjectReference(obj.secretRef),
+    volumeName: obj.volumeName,
+    volumeNamespace: obj.volumeNamespace,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23732,22 +24540,25 @@ export interface ScopedResourceSelectorRequirement {
    * @schema io.k8s.api.core.v1.ScopedResourceSelectorRequirement#values
    */
   readonly values?: string[];
-
 }
 
 /**
  * Converts an object of type 'ScopedResourceSelectorRequirement' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ScopedResourceSelectorRequirement(obj: ScopedResourceSelectorRequirement | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ScopedResourceSelectorRequirement(
+  obj: ScopedResourceSelectorRequirement | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'operator': obj.operator,
-    'scopeName': obj.scopeName,
-    'values': obj.values?.map(y => y),
+    operator: obj.operator,
+    scopeName: obj.scopeName,
+    values: obj.values?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23763,20 +24574,21 @@ export interface ClientIpConfig {
    * @schema io.k8s.api.core.v1.ClientIPConfig#timeoutSeconds
    */
   readonly timeoutSeconds?: number;
-
 }
 
 /**
  * Converts an object of type 'ClientIpConfig' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ClientIpConfig(obj: ClientIpConfig | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ClientIpConfig(obj: ClientIpConfig | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'timeoutSeconds': obj.timeoutSeconds,
+    timeoutSeconds: obj.timeoutSeconds,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23792,20 +24604,21 @@ export interface ForZone {
    * @schema io.k8s.api.discovery.v1.ForZone#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'ForZone' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ForZone(obj: ForZone | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ForZone(obj: ForZone | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23834,21 +24647,24 @@ export interface NonResourcePolicyRuleV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.NonResourcePolicyRule#verbs
    */
   readonly verbs: string[];
-
 }
 
 /**
  * Converts an object of type 'NonResourcePolicyRuleV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NonResourcePolicyRuleV1Beta1(obj: NonResourcePolicyRuleV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NonResourcePolicyRuleV1Beta1(
+  obj: NonResourcePolicyRuleV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'nonResourceURLs': obj.nonResourceUrLs?.map(y => y),
-    'verbs': obj.verbs?.map(y => y),
+    nonResourceURLs: obj.nonResourceUrLs?.map(y => y),
+    verbs: obj.verbs?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23892,24 +24708,27 @@ export interface ResourcePolicyRuleV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.ResourcePolicyRule#verbs
    */
   readonly verbs: string[];
-
 }
 
 /**
  * Converts an object of type 'ResourcePolicyRuleV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ResourcePolicyRuleV1Beta1(obj: ResourcePolicyRuleV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ResourcePolicyRuleV1Beta1(
+  obj: ResourcePolicyRuleV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiGroups': obj.apiGroups?.map(y => y),
-    'clusterScope': obj.clusterScope,
-    'namespaces': obj.namespaces?.map(y => y),
-    'resources': obj.resources?.map(y => y),
-    'verbs': obj.verbs?.map(y => y),
+    apiGroups: obj.apiGroups?.map(y => y),
+    clusterScope: obj.clusterScope,
+    namespaces: obj.namespaces?.map(y => y),
+    resources: obj.resources?.map(y => y),
+    verbs: obj.verbs?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23946,23 +24765,24 @@ export interface SubjectV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.Subject#user
    */
   readonly user?: UserSubjectV1Beta1;
-
 }
 
 /**
  * Converts an object of type 'SubjectV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SubjectV1Beta1(obj: SubjectV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SubjectV1Beta1(obj: SubjectV1Beta1 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'group': toJson_GroupSubjectV1Beta1(obj.group),
-    'kind': obj.kind,
-    'serviceAccount': toJson_ServiceAccountSubjectV1Beta1(obj.serviceAccount),
-    'user': toJson_UserSubjectV1Beta1(obj.user),
+    group: toJson_GroupSubjectV1Beta1(obj.group),
+    kind: obj.kind,
+    serviceAccount: toJson_ServiceAccountSubjectV1Beta1(obj.serviceAccount),
+    user: toJson_UserSubjectV1Beta1(obj.user),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -23985,21 +24805,24 @@ export interface LimitResponseV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.LimitResponse#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'LimitResponseV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LimitResponseV1Beta1(obj: LimitResponseV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LimitResponseV1Beta1(
+  obj: LimitResponseV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'queuing': toJson_QueuingConfigurationV1Beta1(obj.queuing),
-    'type': obj.type,
+    queuing: toJson_QueuingConfigurationV1Beta1(obj.queuing),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24028,21 +24851,24 @@ export interface NonResourcePolicyRuleV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.NonResourcePolicyRule#verbs
    */
   readonly verbs: string[];
-
 }
 
 /**
  * Converts an object of type 'NonResourcePolicyRuleV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NonResourcePolicyRuleV1Beta2(obj: NonResourcePolicyRuleV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NonResourcePolicyRuleV1Beta2(
+  obj: NonResourcePolicyRuleV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'nonResourceURLs': obj.nonResourceUrLs?.map(y => y),
-    'verbs': obj.verbs?.map(y => y),
+    nonResourceURLs: obj.nonResourceUrLs?.map(y => y),
+    verbs: obj.verbs?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24086,24 +24912,27 @@ export interface ResourcePolicyRuleV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.ResourcePolicyRule#verbs
    */
   readonly verbs: string[];
-
 }
 
 /**
  * Converts an object of type 'ResourcePolicyRuleV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ResourcePolicyRuleV1Beta2(obj: ResourcePolicyRuleV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ResourcePolicyRuleV1Beta2(
+  obj: ResourcePolicyRuleV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiGroups': obj.apiGroups?.map(y => y),
-    'clusterScope': obj.clusterScope,
-    'namespaces': obj.namespaces?.map(y => y),
-    'resources': obj.resources?.map(y => y),
-    'verbs': obj.verbs?.map(y => y),
+    apiGroups: obj.apiGroups?.map(y => y),
+    clusterScope: obj.clusterScope,
+    namespaces: obj.namespaces?.map(y => y),
+    resources: obj.resources?.map(y => y),
+    verbs: obj.verbs?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24140,23 +24969,24 @@ export interface SubjectV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.Subject#user
    */
   readonly user?: UserSubjectV1Beta2;
-
 }
 
 /**
  * Converts an object of type 'SubjectV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SubjectV1Beta2(obj: SubjectV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SubjectV1Beta2(obj: SubjectV1Beta2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'group': toJson_GroupSubjectV1Beta2(obj.group),
-    'kind': obj.kind,
-    'serviceAccount': toJson_ServiceAccountSubjectV1Beta2(obj.serviceAccount),
-    'user': toJson_UserSubjectV1Beta2(obj.user),
+    group: toJson_GroupSubjectV1Beta2(obj.group),
+    kind: obj.kind,
+    serviceAccount: toJson_ServiceAccountSubjectV1Beta2(obj.serviceAccount),
+    user: toJson_UserSubjectV1Beta2(obj.user),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24179,21 +25009,24 @@ export interface LimitResponseV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.LimitResponse#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'LimitResponseV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LimitResponseV1Beta2(obj: LimitResponseV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LimitResponseV1Beta2(
+  obj: LimitResponseV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'queuing': toJson_QueuingConfigurationV1Beta2(obj.queuing),
-    'type': obj.type,
+    queuing: toJson_QueuingConfigurationV1Beta2(obj.queuing),
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24216,21 +25049,24 @@ export interface IngressServiceBackend {
    * @schema io.k8s.api.networking.v1.IngressServiceBackend#port
    */
   readonly port?: ServiceBackendPort;
-
 }
 
 /**
  * Converts an object of type 'IngressServiceBackend' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IngressServiceBackend(obj: IngressServiceBackend | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IngressServiceBackend(
+  obj: IngressServiceBackend | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'port': toJson_ServiceBackendPort(obj.port),
+    name: obj.name,
+    port: toJson_ServiceBackendPort(obj.port),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24246,20 +25082,23 @@ export interface HttpIngressRuleValue {
    * @schema io.k8s.api.networking.v1.HTTPIngressRuleValue#paths
    */
   readonly paths: HttpIngressPath[];
-
 }
 
 /**
  * Converts an object of type 'HttpIngressRuleValue' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HttpIngressRuleValue(obj: HttpIngressRuleValue | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HttpIngressRuleValue(
+  obj: HttpIngressRuleValue | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'paths': obj.paths?.map(y => toJson_HttpIngressPath(y)),
+    paths: obj.paths?.map(y => toJson_HttpIngressPath(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24289,22 +25128,23 @@ export interface NetworkPolicyPort {
    * @schema io.k8s.api.networking.v1.NetworkPolicyPort#protocol
    */
   readonly protocol?: string;
-
 }
 
 /**
  * Converts an object of type 'NetworkPolicyPort' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NetworkPolicyPort(obj: NetworkPolicyPort | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NetworkPolicyPort(obj: NetworkPolicyPort | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'endPort': obj.endPort,
-    'port': obj.port?.value,
-    'protocol': obj.protocol,
+    endPort: obj.endPort,
+    port: obj.port?.value,
+    protocol: obj.protocol,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24338,22 +25178,23 @@ export interface NetworkPolicyPeer {
    * @schema io.k8s.api.networking.v1.NetworkPolicyPeer#podSelector
    */
   readonly podSelector?: LabelSelector;
-
 }
 
 /**
  * Converts an object of type 'NetworkPolicyPeer' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NetworkPolicyPeer(obj: NetworkPolicyPeer | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NetworkPolicyPeer(obj: NetworkPolicyPeer | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'ipBlock': toJson_IpBlock(obj.ipBlock),
-    'namespaceSelector': toJson_LabelSelector(obj.namespaceSelector),
-    'podSelector': toJson_LabelSelector(obj.podSelector),
+    ipBlock: toJson_IpBlock(obj.ipBlock),
+    namespaceSelector: toJson_LabelSelector(obj.namespaceSelector),
+    podSelector: toJson_LabelSelector(obj.podSelector),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24376,21 +25217,22 @@ export interface NodeSelectorTerm {
    * @schema io.k8s.api.core.v1.NodeSelectorTerm#matchFields
    */
   readonly matchFields?: NodeSelectorRequirement[];
-
 }
 
 /**
  * Converts an object of type 'NodeSelectorTerm' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NodeSelectorTerm(obj: NodeSelectorTerm | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NodeSelectorTerm(obj: NodeSelectorTerm | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'matchExpressions': obj.matchExpressions?.map(y => toJson_NodeSelectorRequirement(y)),
-    'matchFields': obj.matchFields?.map(y => toJson_NodeSelectorRequirement(y)),
+    matchExpressions: obj.matchExpressions?.map(y => toJson_NodeSelectorRequirement(y)),
+    matchFields: obj.matchFields?.map(y => toJson_NodeSelectorRequirement(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24406,20 +25248,21 @@ export interface VolumeNodeResources {
    * @schema io.k8s.api.storage.v1.VolumeNodeResources#count
    */
   readonly count?: number;
-
 }
 
 /**
  * Converts an object of type 'VolumeNodeResources' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_VolumeNodeResources(obj: VolumeNodeResources | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_VolumeNodeResources(obj: VolumeNodeResources | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'count': obj.count,
+    count: obj.count,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24442,21 +25285,22 @@ export interface WebhookConversion {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.WebhookConversion#conversionReviewVersions
    */
   readonly conversionReviewVersions: string[];
-
 }
 
 /**
  * Converts an object of type 'WebhookConversion' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_WebhookConversion(obj: WebhookConversion | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_WebhookConversion(obj: WebhookConversion | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'clientConfig': toJson_WebhookClientConfig(obj.clientConfig),
-    'conversionReviewVersions': obj.conversionReviewVersions?.map(y => y),
+    clientConfig: toJson_WebhookClientConfig(obj.clientConfig),
+    conversionReviewVersions: obj.conversionReviewVersions?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24507,25 +25351,28 @@ export interface CustomResourceColumnDefinition {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceColumnDefinition#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'CustomResourceColumnDefinition' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CustomResourceColumnDefinition(obj: CustomResourceColumnDefinition | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CustomResourceColumnDefinition(
+  obj: CustomResourceColumnDefinition | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'description': obj.description,
-    'format': obj.format,
-    'jsonPath': obj.jsonPath,
-    'name': obj.name,
-    'priority': obj.priority,
-    'type': obj.type,
+    description: obj.description,
+    format: obj.format,
+    jsonPath: obj.jsonPath,
+    name: obj.name,
+    priority: obj.priority,
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24541,20 +25388,23 @@ export interface CustomResourceValidation {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceValidation#openAPIV3Schema
    */
   readonly openApiv3Schema?: JsonSchemaProps;
-
 }
 
 /**
  * Converts an object of type 'CustomResourceValidation' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CustomResourceValidation(obj: CustomResourceValidation | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CustomResourceValidation(
+  obj: CustomResourceValidation | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'openAPIV3Schema': toJson_JsonSchemaProps(obj.openApiv3Schema),
+    openAPIV3Schema: toJson_JsonSchemaProps(obj.openApiv3Schema),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24576,22 +25426,25 @@ export interface CustomResourceSubresources {
    *
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceSubresources#status
    */
-  readonly status?: any;
-
+  readonly status?: unknown;
 }
 
 /**
  * Converts an object of type 'CustomResourceSubresources' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CustomResourceSubresources(obj: CustomResourceSubresources | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CustomResourceSubresources(
+  obj: CustomResourceSubresources | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'scale': toJson_CustomResourceSubresourceScale(obj.scale),
-    'status': obj.status,
+    scale: toJson_CustomResourceSubresourceScale(obj.scale),
+    status: obj.status,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24621,22 +25474,23 @@ export interface HpaScalingPolicyV2 {
    * @schema io.k8s.api.autoscaling.v2.HPAScalingPolicy#value
    */
   readonly value: number;
-
 }
 
 /**
  * Converts an object of type 'HpaScalingPolicyV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HpaScalingPolicyV2(obj: HpaScalingPolicyV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HpaScalingPolicyV2(obj: HpaScalingPolicyV2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'periodSeconds': obj.periodSeconds,
-    'type': obj.type,
-    'value': obj.value,
+    periodSeconds: obj.periodSeconds,
+    type: obj.type,
+    value: obj.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24673,23 +25527,24 @@ export interface MetricTargetV2 {
    * @schema io.k8s.api.autoscaling.v2.MetricTarget#value
    */
   readonly value?: Quantity;
-
 }
 
 /**
  * Converts an object of type 'MetricTargetV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_MetricTargetV2(obj: MetricTargetV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_MetricTargetV2(obj: MetricTargetV2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'averageUtilization': obj.averageUtilization,
-    'averageValue': obj.averageValue?.value,
-    'type': obj.type,
-    'value': obj.value?.value,
+    averageUtilization: obj.averageUtilization,
+    averageValue: obj.averageValue?.value,
+    type: obj.type,
+    value: obj.value?.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24712,21 +25567,22 @@ export interface MetricIdentifierV2 {
    * @schema io.k8s.api.autoscaling.v2.MetricIdentifier#selector
    */
   readonly selector?: LabelSelector;
-
 }
 
 /**
  * Converts an object of type 'MetricIdentifierV2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_MetricIdentifierV2(obj: MetricIdentifierV2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_MetricIdentifierV2(obj: MetricIdentifierV2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'selector': toJson_LabelSelector(obj.selector),
+    name: obj.name,
+    selector: toJson_LabelSelector(obj.selector),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24756,22 +25612,25 @@ export interface HpaScalingPolicyV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.HPAScalingPolicy#value
    */
   readonly value: number;
-
 }
 
 /**
  * Converts an object of type 'HpaScalingPolicyV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HpaScalingPolicyV2Beta2(obj: HpaScalingPolicyV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HpaScalingPolicyV2Beta2(
+  obj: HpaScalingPolicyV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'periodSeconds': obj.periodSeconds,
-    'type': obj.type,
-    'value': obj.value,
+    periodSeconds: obj.periodSeconds,
+    type: obj.type,
+    value: obj.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24808,23 +25667,24 @@ export interface MetricTargetV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.MetricTarget#value
    */
   readonly value?: Quantity;
-
 }
 
 /**
  * Converts an object of type 'MetricTargetV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_MetricTargetV2Beta2(obj: MetricTargetV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_MetricTargetV2Beta2(obj: MetricTargetV2Beta2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'averageUtilization': obj.averageUtilization,
-    'averageValue': obj.averageValue?.value,
-    'type': obj.type,
-    'value': obj.value?.value,
+    averageUtilization: obj.averageUtilization,
+    averageValue: obj.averageValue?.value,
+    type: obj.type,
+    value: obj.value?.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24847,21 +25707,24 @@ export interface MetricIdentifierV2Beta2 {
    * @schema io.k8s.api.autoscaling.v2beta2.MetricIdentifier#selector
    */
   readonly selector?: LabelSelector;
-
 }
 
 /**
  * Converts an object of type 'MetricIdentifierV2Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_MetricIdentifierV2Beta2(obj: MetricIdentifierV2Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_MetricIdentifierV2Beta2(
+  obj: MetricIdentifierV2Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'selector': toJson_LabelSelector(obj.selector),
+    name: obj.name,
+    selector: toJson_LabelSelector(obj.selector),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24899,22 +25762,25 @@ export interface PodFailurePolicyOnExitCodesRequirement {
    * @schema io.k8s.api.batch.v1.PodFailurePolicyOnExitCodesRequirement#values
    */
   readonly values: number[];
-
 }
 
 /**
  * Converts an object of type 'PodFailurePolicyOnExitCodesRequirement' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodFailurePolicyOnExitCodesRequirement(obj: PodFailurePolicyOnExitCodesRequirement | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodFailurePolicyOnExitCodesRequirement(
+  obj: PodFailurePolicyOnExitCodesRequirement | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'containerName': obj.containerName,
-    'operator': obj.operator,
-    'values': obj.values?.map(y => y),
+    containerName: obj.containerName,
+    operator: obj.operator,
+    values: obj.values?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24938,21 +25804,24 @@ export interface PodFailurePolicyOnPodConditionsPattern {
    * @schema io.k8s.api.batch.v1.PodFailurePolicyOnPodConditionsPattern#type
    */
   readonly type: string;
-
 }
 
 /**
  * Converts an object of type 'PodFailurePolicyOnPodConditionsPattern' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodFailurePolicyOnPodConditionsPattern(obj: PodFailurePolicyOnPodConditionsPattern | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodFailurePolicyOnPodConditionsPattern(
+  obj: PodFailurePolicyOnPodConditionsPattern | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'status': obj.status,
-    'type': obj.type,
+    status: obj.status,
+    type: obj.type,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -24975,21 +25844,24 @@ export interface PreferredSchedulingTerm {
    * @schema io.k8s.api.core.v1.PreferredSchedulingTerm#weight
    */
   readonly weight: number;
-
 }
 
 /**
  * Converts an object of type 'PreferredSchedulingTerm' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PreferredSchedulingTerm(obj: PreferredSchedulingTerm | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PreferredSchedulingTerm(
+  obj: PreferredSchedulingTerm | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'preference': toJson_NodeSelectorTerm(obj.preference),
-    'weight': obj.weight,
+    preference: toJson_NodeSelectorTerm(obj.preference),
+    weight: obj.weight,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25012,21 +25884,24 @@ export interface WeightedPodAffinityTerm {
    * @schema io.k8s.api.core.v1.WeightedPodAffinityTerm#weight
    */
   readonly weight: number;
-
 }
 
 /**
  * Converts an object of type 'WeightedPodAffinityTerm' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_WeightedPodAffinityTerm(obj: WeightedPodAffinityTerm | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_WeightedPodAffinityTerm(
+  obj: WeightedPodAffinityTerm | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'podAffinityTerm': toJson_PodAffinityTerm(obj.podAffinityTerm),
-    'weight': obj.weight,
+    podAffinityTerm: toJson_PodAffinityTerm(obj.podAffinityTerm),
+    weight: obj.weight,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25063,23 +25938,24 @@ export interface PodAffinityTerm {
    * @schema io.k8s.api.core.v1.PodAffinityTerm#topologyKey
    */
   readonly topologyKey: string;
-
 }
 
 /**
  * Converts an object of type 'PodAffinityTerm' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PodAffinityTerm(obj: PodAffinityTerm | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PodAffinityTerm(obj: PodAffinityTerm | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'labelSelector': toJson_LabelSelector(obj.labelSelector),
-    'namespaceSelector': toJson_LabelSelector(obj.namespaceSelector),
-    'namespaces': obj.namespaces?.map(y => y),
-    'topologyKey': obj.topologyKey,
+    labelSelector: toJson_LabelSelector(obj.labelSelector),
+    namespaceSelector: toJson_LabelSelector(obj.namespaceSelector),
+    namespaces: obj.namespaces?.map(y => y),
+    topologyKey: obj.topologyKey,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25116,23 +25992,24 @@ export interface EnvVarSource {
    * @schema io.k8s.api.core.v1.EnvVarSource#secretKeyRef
    */
   readonly secretKeyRef?: SecretKeySelector;
-
 }
 
 /**
  * Converts an object of type 'EnvVarSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_EnvVarSource(obj: EnvVarSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_EnvVarSource(obj: EnvVarSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'configMapKeyRef': toJson_ConfigMapKeySelector(obj.configMapKeyRef),
-    'fieldRef': toJson_ObjectFieldSelector(obj.fieldRef),
-    'resourceFieldRef': toJson_ResourceFieldSelector(obj.resourceFieldRef),
-    'secretKeyRef': toJson_SecretKeySelector(obj.secretKeyRef),
+    configMapKeyRef: toJson_ConfigMapKeySelector(obj.configMapKeyRef),
+    fieldRef: toJson_ObjectFieldSelector(obj.fieldRef),
+    resourceFieldRef: toJson_ResourceFieldSelector(obj.resourceFieldRef),
+    secretKeyRef: toJson_SecretKeySelector(obj.secretKeyRef),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25157,21 +26034,22 @@ export interface ConfigMapEnvSource {
    * @schema io.k8s.api.core.v1.ConfigMapEnvSource#optional
    */
   readonly optional?: boolean;
-
 }
 
 /**
  * Converts an object of type 'ConfigMapEnvSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ConfigMapEnvSource(obj: ConfigMapEnvSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ConfigMapEnvSource(obj: ConfigMapEnvSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'optional': obj.optional,
+    name: obj.name,
+    optional: obj.optional,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25196,21 +26074,22 @@ export interface SecretEnvSource {
    * @schema io.k8s.api.core.v1.SecretEnvSource#optional
    */
   readonly optional?: boolean;
-
 }
 
 /**
  * Converts an object of type 'SecretEnvSource' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SecretEnvSource(obj: SecretEnvSource | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SecretEnvSource(obj: SecretEnvSource | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'optional': obj.optional,
+    name: obj.name,
+    optional: obj.optional,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25240,22 +26119,23 @@ export interface LifecycleHandler {
    * @schema io.k8s.api.core.v1.LifecycleHandler#tcpSocket
    */
   readonly tcpSocket?: TcpSocketAction;
-
 }
 
 /**
  * Converts an object of type 'LifecycleHandler' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_LifecycleHandler(obj: LifecycleHandler | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_LifecycleHandler(obj: LifecycleHandler | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'exec': toJson_ExecAction(obj.exec),
-    'httpGet': toJson_HttpGetAction(obj.httpGet),
-    'tcpSocket': toJson_TcpSocketAction(obj.tcpSocket),
+    exec: toJson_ExecAction(obj.exec),
+    httpGet: toJson_HttpGetAction(obj.httpGet),
+    tcpSocket: toJson_TcpSocketAction(obj.tcpSocket),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25271,20 +26151,21 @@ export interface ExecAction {
    * @schema io.k8s.api.core.v1.ExecAction#command
    */
   readonly command?: string[];
-
 }
 
 /**
  * Converts an object of type 'ExecAction' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ExecAction(obj: ExecAction | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ExecAction(obj: ExecAction | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'command': obj.command?.map(y => y),
+    command: obj.command?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25307,21 +26188,22 @@ export interface GrpcAction {
    * @schema io.k8s.api.core.v1.GRPCAction#service
    */
   readonly service?: string;
-
 }
 
 /**
  * Converts an object of type 'GrpcAction' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_GrpcAction(obj: GrpcAction | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_GrpcAction(obj: GrpcAction | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'port': obj.port,
-    'service': obj.service,
+    port: obj.port,
+    service: obj.service,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25368,24 +26250,25 @@ export interface HttpGetAction {
    * @schema io.k8s.api.core.v1.HTTPGetAction#scheme
    */
   readonly scheme?: string;
-
 }
 
 /**
  * Converts an object of type 'HttpGetAction' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HttpGetAction(obj: HttpGetAction | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HttpGetAction(obj: HttpGetAction | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'host': obj.host,
-    'httpHeaders': obj.httpHeaders?.map(y => toJson_HttpHeader(y)),
-    'path': obj.path,
-    'port': obj.port?.value,
-    'scheme': obj.scheme,
+    host: obj.host,
+    httpHeaders: obj.httpHeaders?.map(y => toJson_HttpHeader(y)),
+    path: obj.path,
+    port: obj.port?.value,
+    scheme: obj.scheme,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25408,21 +26291,22 @@ export interface TcpSocketAction {
    * @schema io.k8s.api.core.v1.TCPSocketAction#port
    */
   readonly port: IntOrString;
-
 }
 
 /**
  * Converts an object of type 'TcpSocketAction' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_TcpSocketAction(obj: TcpSocketAction | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_TcpSocketAction(obj: TcpSocketAction | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'host': obj.host,
-    'port': obj.port?.value,
+    host: obj.host,
+    port: obj.port?.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25445,21 +26329,22 @@ export interface Capabilities {
    * @schema io.k8s.api.core.v1.Capabilities#drop
    */
   readonly drop?: string[];
-
 }
 
 /**
  * Converts an object of type 'Capabilities' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_Capabilities(obj: Capabilities | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_Capabilities(obj: Capabilities | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'add': obj.add?.map(y => y),
-    'drop': obj.drop?.map(y => y),
+    add: obj.add?.map(y => y),
+    drop: obj.drop?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25489,22 +26374,23 @@ export interface KeyToPath {
    * @schema io.k8s.api.core.v1.KeyToPath#path
    */
   readonly path: string;
-
 }
 
 /**
  * Converts an object of type 'KeyToPath' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_KeyToPath(obj: KeyToPath | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_KeyToPath(obj: KeyToPath | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'key': obj.key,
-    'mode': obj.mode,
-    'path': obj.path,
+    key: obj.key,
+    mode: obj.mode,
+    path: obj.path,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25541,23 +26427,26 @@ export interface DownwardApiVolumeFile {
    * @schema io.k8s.api.core.v1.DownwardAPIVolumeFile#resourceFieldRef
    */
   readonly resourceFieldRef?: ResourceFieldSelector;
-
 }
 
 /**
  * Converts an object of type 'DownwardApiVolumeFile' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_DownwardApiVolumeFile(obj: DownwardApiVolumeFile | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_DownwardApiVolumeFile(
+  obj: DownwardApiVolumeFile | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'fieldRef': toJson_ObjectFieldSelector(obj.fieldRef),
-    'mode': obj.mode,
-    'path': obj.path,
-    'resourceFieldRef': toJson_ResourceFieldSelector(obj.resourceFieldRef),
+    fieldRef: toJson_ObjectFieldSelector(obj.fieldRef),
+    mode: obj.mode,
+    path: obj.path,
+    resourceFieldRef: toJson_ResourceFieldSelector(obj.resourceFieldRef),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25580,21 +26469,24 @@ export interface PersistentVolumeClaimTemplate {
    * @schema io.k8s.api.core.v1.PersistentVolumeClaimTemplate#spec
    */
   readonly spec: PersistentVolumeClaimSpec;
-
 }
 
 /**
  * Converts an object of type 'PersistentVolumeClaimTemplate' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_PersistentVolumeClaimTemplate(obj: PersistentVolumeClaimTemplate | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_PersistentVolumeClaimTemplate(
+  obj: PersistentVolumeClaimTemplate | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'metadata': toJson_ObjectMeta(obj.metadata),
-    'spec': toJson_PersistentVolumeClaimSpec(obj.spec),
+    metadata: toJson_ObjectMeta(obj.metadata),
+    spec: toJson_PersistentVolumeClaimSpec(obj.spec),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25631,23 +26523,24 @@ export interface VolumeProjection {
    * @schema io.k8s.api.core.v1.VolumeProjection#serviceAccountToken
    */
   readonly serviceAccountToken?: ServiceAccountTokenProjection;
-
 }
 
 /**
  * Converts an object of type 'VolumeProjection' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_VolumeProjection(obj: VolumeProjection | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_VolumeProjection(obj: VolumeProjection | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'configMap': toJson_ConfigMapProjection(obj.configMap),
-    'downwardAPI': toJson_DownwardApiProjection(obj.downwardApi),
-    'secret': toJson_SecretProjection(obj.secret),
-    'serviceAccountToken': toJson_ServiceAccountTokenProjection(obj.serviceAccountToken),
+    configMap: toJson_ConfigMapProjection(obj.configMap),
+    downwardAPI: toJson_DownwardApiProjection(obj.downwardApi),
+    secret: toJson_SecretProjection(obj.secret),
+    serviceAccountToken: toJson_ServiceAccountTokenProjection(obj.serviceAccountToken),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25663,20 +26556,21 @@ export interface GroupSubjectV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.GroupSubject#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'GroupSubjectV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_GroupSubjectV1Beta1(obj: GroupSubjectV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_GroupSubjectV1Beta1(obj: GroupSubjectV1Beta1 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25699,21 +26593,24 @@ export interface ServiceAccountSubjectV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.ServiceAccountSubject#namespace
    */
   readonly namespace: string;
-
 }
 
 /**
  * Converts an object of type 'ServiceAccountSubjectV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ServiceAccountSubjectV1Beta1(obj: ServiceAccountSubjectV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ServiceAccountSubjectV1Beta1(
+  obj: ServiceAccountSubjectV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'namespace': obj.namespace,
+    name: obj.name,
+    namespace: obj.namespace,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25729,20 +26626,21 @@ export interface UserSubjectV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.UserSubject#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'UserSubjectV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_UserSubjectV1Beta1(obj: UserSubjectV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_UserSubjectV1Beta1(obj: UserSubjectV1Beta1 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25772,22 +26670,25 @@ export interface QueuingConfigurationV1Beta1 {
    * @schema io.k8s.api.flowcontrol.v1beta1.QueuingConfiguration#queues
    */
   readonly queues?: number;
-
 }
 
 /**
  * Converts an object of type 'QueuingConfigurationV1Beta1' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_QueuingConfigurationV1Beta1(obj: QueuingConfigurationV1Beta1 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_QueuingConfigurationV1Beta1(
+  obj: QueuingConfigurationV1Beta1 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'handSize': obj.handSize,
-    'queueLengthLimit': obj.queueLengthLimit,
-    'queues': obj.queues,
+    handSize: obj.handSize,
+    queueLengthLimit: obj.queueLengthLimit,
+    queues: obj.queues,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25803,20 +26704,21 @@ export interface GroupSubjectV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.GroupSubject#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'GroupSubjectV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_GroupSubjectV1Beta2(obj: GroupSubjectV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_GroupSubjectV1Beta2(obj: GroupSubjectV1Beta2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25839,21 +26741,24 @@ export interface ServiceAccountSubjectV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.ServiceAccountSubject#namespace
    */
   readonly namespace: string;
-
 }
 
 /**
  * Converts an object of type 'ServiceAccountSubjectV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ServiceAccountSubjectV1Beta2(obj: ServiceAccountSubjectV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ServiceAccountSubjectV1Beta2(
+  obj: ServiceAccountSubjectV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'namespace': obj.namespace,
+    name: obj.name,
+    namespace: obj.namespace,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25869,20 +26774,21 @@ export interface UserSubjectV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.UserSubject#name
    */
   readonly name: string;
-
 }
 
 /**
  * Converts an object of type 'UserSubjectV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_UserSubjectV1Beta2(obj: UserSubjectV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_UserSubjectV1Beta2(obj: UserSubjectV1Beta2 | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
+    name: obj.name,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25912,22 +26818,25 @@ export interface QueuingConfigurationV1Beta2 {
    * @schema io.k8s.api.flowcontrol.v1beta2.QueuingConfiguration#queues
    */
   readonly queues?: number;
-
 }
 
 /**
  * Converts an object of type 'QueuingConfigurationV1Beta2' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_QueuingConfigurationV1Beta2(obj: QueuingConfigurationV1Beta2 | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_QueuingConfigurationV1Beta2(
+  obj: QueuingConfigurationV1Beta2 | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'handSize': obj.handSize,
-    'queueLengthLimit': obj.queueLengthLimit,
-    'queues': obj.queues,
+    handSize: obj.handSize,
+    queueLengthLimit: obj.queueLengthLimit,
+    queues: obj.queues,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -25950,21 +26859,22 @@ export interface ServiceBackendPort {
    * @schema io.k8s.api.networking.v1.ServiceBackendPort#number
    */
   readonly number?: number;
-
 }
 
 /**
  * Converts an object of type 'ServiceBackendPort' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ServiceBackendPort(obj: ServiceBackendPort | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ServiceBackendPort(obj: ServiceBackendPort | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'number': obj.number,
+    name: obj.name,
+    number: obj.number,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26004,22 +26914,23 @@ export interface HttpIngressPath {
    * @schema io.k8s.api.networking.v1.HTTPIngressPath#pathType
    */
   readonly pathType: string;
-
 }
 
 /**
  * Converts an object of type 'HttpIngressPath' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HttpIngressPath(obj: HttpIngressPath | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HttpIngressPath(obj: HttpIngressPath | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'backend': toJson_IngressBackend(obj.backend),
-    'path': obj.path,
-    'pathType': obj.pathType,
+    backend: toJson_IngressBackend(obj.backend),
+    path: obj.path,
+    pathType: obj.pathType,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26042,21 +26953,22 @@ export interface IpBlock {
    * @schema io.k8s.api.networking.v1.IPBlock#except
    */
   readonly except?: string[];
-
 }
 
 /**
  * Converts an object of type 'IpBlock' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_IpBlock(obj: IpBlock | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_IpBlock(obj: IpBlock | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'cidr': obj.cidr,
-    'except': obj.except?.map(y => y),
+    cidr: obj.cidr,
+    except: obj.except?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26088,22 +27000,25 @@ export interface NodeSelectorRequirement {
    * @schema io.k8s.api.core.v1.NodeSelectorRequirement#values
    */
   readonly values?: string[];
-
 }
 
 /**
  * Converts an object of type 'NodeSelectorRequirement' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_NodeSelectorRequirement(obj: NodeSelectorRequirement | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_NodeSelectorRequirement(
+  obj: NodeSelectorRequirement | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'key': obj.key,
-    'operator': obj.operator,
-    'values': obj.values?.map(y => y),
+    key: obj.key,
+    operator: obj.operator,
+    values: obj.values?.map(y => y),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26126,12 +27041,12 @@ export interface JsonSchemaProps {
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#additionalItems
    */
-  readonly additionalItems?: any;
+  readonly additionalItems?: unknown;
 
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#additionalProperties
    */
-  readonly additionalProperties?: any;
+  readonly additionalProperties?: unknown;
 
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#allOf
@@ -26148,7 +27063,7 @@ export interface JsonSchemaProps {
    *
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#default
    */
-  readonly default?: any;
+  readonly default?: unknown;
 
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#definitions
@@ -26158,7 +27073,7 @@ export interface JsonSchemaProps {
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#dependencies
    */
-  readonly dependencies?: { [key: string]: any };
+  readonly dependencies?: { [key: string]: unknown };
 
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#description
@@ -26168,12 +27083,12 @@ export interface JsonSchemaProps {
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#enum
    */
-  readonly enum?: any[];
+  readonly enum?: unknown[];
 
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#example
    */
-  readonly example?: any;
+  readonly example?: unknown;
 
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#exclusiveMaximum
@@ -26207,7 +27122,7 @@ export interface JsonSchemaProps {
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#items
    */
-  readonly items?: any;
+  readonly items?: unknown;
 
   /**
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#maxItems
@@ -26386,53 +27301,75 @@ export interface JsonSchemaProps {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps#x-kubernetes-validations
    */
   readonly xKubernetesValidations?: ValidationRule[];
-
 }
 
 /**
  * Converts an object of type 'JsonSchemaProps' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_JsonSchemaProps(obj: JsonSchemaProps | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_JsonSchemaProps(obj: JsonSchemaProps | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    '$ref': obj.ref,
-    '$schema': obj.schema,
-    'additionalItems': obj.additionalItems,
-    'additionalProperties': obj.additionalProperties,
-    'allOf': obj.allOf?.map(y => toJson_JsonSchemaProps(y)),
-    'anyOf': obj.anyOf?.map(y => toJson_JsonSchemaProps(y)),
-    'default': obj.default,
-    'definitions': ((obj.definitions) === undefined) ? undefined : (Object.entries(obj.definitions).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: toJson_JsonSchemaProps(i[1]) }), {})),
-    'dependencies': ((obj.dependencies) === undefined) ? undefined : (Object.entries(obj.dependencies).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {})),
-    'description': obj.description,
-    'enum': obj.enum?.map(y => y),
-    'example': obj.example,
-    'exclusiveMaximum': obj.exclusiveMaximum,
-    'exclusiveMinimum': obj.exclusiveMinimum,
-    'externalDocs': toJson_ExternalDocumentation(obj.externalDocs),
-    'format': obj.format,
-    'id': obj.id,
-    'items': obj.items,
-    'maxItems': obj.maxItems,
-    'maxLength': obj.maxLength,
-    'maxProperties': obj.maxProperties,
-    'maximum': obj.maximum,
-    'minItems': obj.minItems,
-    'minLength': obj.minLength,
-    'minProperties': obj.minProperties,
-    'minimum': obj.minimum,
-    'multipleOf': obj.multipleOf,
-    'not': toJson_JsonSchemaProps(obj.not),
-    'nullable': obj.nullable,
-    'oneOf': obj.oneOf?.map(y => toJson_JsonSchemaProps(y)),
-    'pattern': obj.pattern,
-    'patternProperties': ((obj.patternProperties) === undefined) ? undefined : (Object.entries(obj.patternProperties).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: toJson_JsonSchemaProps(i[1]) }), {})),
-    'properties': ((obj.properties) === undefined) ? undefined : (Object.entries(obj.properties).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: toJson_JsonSchemaProps(i[1]) }), {})),
-    'required': obj.required?.map(y => y),
-    'title': obj.title,
-    'type': obj.type,
-    'uniqueItems': obj.uniqueItems,
+    $ref: obj.ref,
+    $schema: obj.schema,
+    additionalItems: obj.additionalItems,
+    additionalProperties: obj.additionalProperties,
+    allOf: obj.allOf?.map(y => toJson_JsonSchemaProps(y)),
+    anyOf: obj.anyOf?.map(y => toJson_JsonSchemaProps(y)),
+    default: obj.default,
+    definitions:
+      obj.definitions === undefined
+        ? undefined
+        : Object.entries(obj.definitions).reduce(
+            (r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: toJson_JsonSchemaProps(i[1]) }),
+            {},
+          ),
+    dependencies:
+      obj.dependencies === undefined
+        ? undefined
+        : Object.entries(obj.dependencies).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {}),
+    description: obj.description,
+    enum: obj.enum?.map(y => y),
+    example: obj.example,
+    exclusiveMaximum: obj.exclusiveMaximum,
+    exclusiveMinimum: obj.exclusiveMinimum,
+    externalDocs: toJson_ExternalDocumentation(obj.externalDocs),
+    format: obj.format,
+    id: obj.id,
+    items: obj.items,
+    maxItems: obj.maxItems,
+    maxLength: obj.maxLength,
+    maxProperties: obj.maxProperties,
+    maximum: obj.maximum,
+    minItems: obj.minItems,
+    minLength: obj.minLength,
+    minProperties: obj.minProperties,
+    minimum: obj.minimum,
+    multipleOf: obj.multipleOf,
+    not: toJson_JsonSchemaProps(obj.not),
+    nullable: obj.nullable,
+    oneOf: obj.oneOf?.map(y => toJson_JsonSchemaProps(y)),
+    pattern: obj.pattern,
+    patternProperties:
+      obj.patternProperties === undefined
+        ? undefined
+        : Object.entries(obj.patternProperties).reduce(
+            (r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: toJson_JsonSchemaProps(i[1]) }),
+            {},
+          ),
+    properties:
+      obj.properties === undefined
+        ? undefined
+        : Object.entries(obj.properties).reduce(
+            (r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: toJson_JsonSchemaProps(i[1]) }),
+            {},
+          ),
+    required: obj.required?.map(y => y),
+    title: obj.title,
+    type: obj.type,
+    uniqueItems: obj.uniqueItems,
     'x-kubernetes-embedded-resource': obj.xKubernetesEmbeddedResource,
     'x-kubernetes-int-or-string': obj.xKubernetesIntOrString,
     'x-kubernetes-list-map-keys': obj.xKubernetesListMapKeys?.map(y => y),
@@ -26442,7 +27379,7 @@ export function toJson_JsonSchemaProps(obj: JsonSchemaProps | undefined): Record
     'x-kubernetes-validations': obj.xKubernetesValidations?.map(y => toJson_ValidationRule(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26472,22 +27409,25 @@ export interface CustomResourceSubresourceScale {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceSubresourceScale#statusReplicasPath
    */
   readonly statusReplicasPath: string;
-
 }
 
 /**
  * Converts an object of type 'CustomResourceSubresourceScale' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_CustomResourceSubresourceScale(obj: CustomResourceSubresourceScale | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_CustomResourceSubresourceScale(
+  obj: CustomResourceSubresourceScale | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'labelSelectorPath': obj.labelSelectorPath,
-    'specReplicasPath': obj.specReplicasPath,
-    'statusReplicasPath': obj.statusReplicasPath,
+    labelSelectorPath: obj.labelSelectorPath,
+    specReplicasPath: obj.specReplicasPath,
+    statusReplicasPath: obj.statusReplicasPath,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26517,22 +27457,25 @@ export interface ConfigMapKeySelector {
    * @schema io.k8s.api.core.v1.ConfigMapKeySelector#optional
    */
   readonly optional?: boolean;
-
 }
 
 /**
  * Converts an object of type 'ConfigMapKeySelector' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ConfigMapKeySelector(obj: ConfigMapKeySelector | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ConfigMapKeySelector(
+  obj: ConfigMapKeySelector | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'key': obj.key,
-    'name': obj.name,
-    'optional': obj.optional,
+    key: obj.key,
+    name: obj.name,
+    optional: obj.optional,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26555,21 +27498,22 @@ export interface ObjectFieldSelector {
    * @schema io.k8s.api.core.v1.ObjectFieldSelector#fieldPath
    */
   readonly fieldPath: string;
-
 }
 
 /**
  * Converts an object of type 'ObjectFieldSelector' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ObjectFieldSelector(obj: ObjectFieldSelector | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ObjectFieldSelector(obj: ObjectFieldSelector | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'apiVersion': obj.apiVersion,
-    'fieldPath': obj.fieldPath,
+    apiVersion: obj.apiVersion,
+    fieldPath: obj.fieldPath,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26599,22 +27543,25 @@ export interface ResourceFieldSelector {
    * @schema io.k8s.api.core.v1.ResourceFieldSelector#resource
    */
   readonly resource: string;
-
 }
 
 /**
  * Converts an object of type 'ResourceFieldSelector' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ResourceFieldSelector(obj: ResourceFieldSelector | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ResourceFieldSelector(
+  obj: ResourceFieldSelector | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'containerName': obj.containerName,
-    'divisor': obj.divisor?.value,
-    'resource': obj.resource,
+    containerName: obj.containerName,
+    divisor: obj.divisor?.value,
+    resource: obj.resource,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26644,22 +27591,23 @@ export interface SecretKeySelector {
    * @schema io.k8s.api.core.v1.SecretKeySelector#optional
    */
   readonly optional?: boolean;
-
 }
 
 /**
  * Converts an object of type 'SecretKeySelector' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SecretKeySelector(obj: SecretKeySelector | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SecretKeySelector(obj: SecretKeySelector | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'key': obj.key,
-    'name': obj.name,
-    'optional': obj.optional,
+    key: obj.key,
+    name: obj.name,
+    optional: obj.optional,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26682,21 +27630,22 @@ export interface HttpHeader {
    * @schema io.k8s.api.core.v1.HTTPHeader#value
    */
   readonly value: string;
-
 }
 
 /**
  * Converts an object of type 'HttpHeader' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_HttpHeader(obj: HttpHeader | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_HttpHeader(obj: HttpHeader | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'name': obj.name,
-    'value': obj.value,
+    name: obj.name,
+    value: obj.value,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26728,22 +27677,23 @@ export interface ConfigMapProjection {
    * @schema io.k8s.api.core.v1.ConfigMapProjection#optional
    */
   readonly optional?: boolean;
-
 }
 
 /**
  * Converts an object of type 'ConfigMapProjection' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ConfigMapProjection(obj: ConfigMapProjection | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ConfigMapProjection(obj: ConfigMapProjection | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'items': obj.items?.map(y => toJson_KeyToPath(y)),
-    'name': obj.name,
-    'optional': obj.optional,
+    items: obj.items?.map(y => toJson_KeyToPath(y)),
+    name: obj.name,
+    optional: obj.optional,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26759,20 +27709,23 @@ export interface DownwardApiProjection {
    * @schema io.k8s.api.core.v1.DownwardAPIProjection#items
    */
   readonly items?: DownwardApiVolumeFile[];
-
 }
 
 /**
  * Converts an object of type 'DownwardApiProjection' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_DownwardApiProjection(obj: DownwardApiProjection | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_DownwardApiProjection(
+  obj: DownwardApiProjection | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'items': obj.items?.map(y => toJson_DownwardApiVolumeFile(y)),
+    items: obj.items?.map(y => toJson_DownwardApiVolumeFile(y)),
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26804,22 +27757,23 @@ export interface SecretProjection {
    * @schema io.k8s.api.core.v1.SecretProjection#optional
    */
   readonly optional?: boolean;
-
 }
 
 /**
  * Converts an object of type 'SecretProjection' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_SecretProjection(obj: SecretProjection | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_SecretProjection(obj: SecretProjection | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'items': obj.items?.map(y => toJson_KeyToPath(y)),
-    'name': obj.name,
-    'optional': obj.optional,
+    items: obj.items?.map(y => toJson_KeyToPath(y)),
+    name: obj.name,
+    optional: obj.optional,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26850,22 +27804,25 @@ export interface ServiceAccountTokenProjection {
    * @schema io.k8s.api.core.v1.ServiceAccountTokenProjection#path
    */
   readonly path: string;
-
 }
 
 /**
  * Converts an object of type 'ServiceAccountTokenProjection' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ServiceAccountTokenProjection(obj: ServiceAccountTokenProjection | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ServiceAccountTokenProjection(
+  obj: ServiceAccountTokenProjection | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'audience': obj.audience,
-    'expirationSeconds': obj.expirationSeconds,
-    'path': obj.path,
+    audience: obj.audience,
+    expirationSeconds: obj.expirationSeconds,
+    path: obj.path,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26884,21 +27841,24 @@ export interface ExternalDocumentation {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.ExternalDocumentation#url
    */
   readonly url?: string;
-
 }
 
 /**
  * Converts an object of type 'ExternalDocumentation' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ExternalDocumentation(obj: ExternalDocumentation | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ExternalDocumentation(
+  obj: ExternalDocumentation | undefined,
+): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'description': obj.description,
-    'url': obj.url,
+    description: obj.description,
+    url: obj.url,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
 
@@ -26945,21 +27905,21 @@ export interface ValidationRule {
    * @schema io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.ValidationRule#rule
    */
   readonly rule: string;
-
 }
 
 /**
  * Converts an object of type 'ValidationRule' to JSON representation.
  */
 /* eslint-disable max-len, quote-props */
-export function toJson_ValidationRule(obj: ValidationRule | undefined): Record<string, any> | undefined {
-  if (obj === undefined) { return undefined; }
+export function toJson_ValidationRule(obj: ValidationRule | undefined): Record<string, unknown> | undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
   const result = {
-    'message': obj.message,
-    'rule': obj.rule,
+    message: obj.message,
+    rule: obj.rule,
   };
   // filter undefined values
-  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined ? r : { ...r, [i[0]]: i[1] }), {});
 }
 /* eslint-enable max-len, quote-props */
-

@@ -3,114 +3,116 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaRoleHelper } from "@aws-mdaa/iam-role-helper";
-import { MdaaTestApp } from "@aws-mdaa/testing";
-import { Template } from "aws-cdk-lib/assertions";
-import { Protocol } from "aws-cdk-lib/aws-ec2";
-import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import { SagemakerStudioDomainL3Construct, SagemakerStudioDomainL3ConstructProps } from '../lib/sm-studio-domain-l3-construct';
-import { LifecycleScriptProps } from "@aws-mdaa/sm-shared";
+import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
+import { MdaaTestApp } from '@aws-mdaa/testing';
+import { Template } from 'aws-cdk-lib/assertions';
+import { Protocol } from 'aws-cdk-lib/aws-ec2';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import {
+  SagemakerStudioDomainL3Construct,
+  SagemakerStudioDomainL3ConstructProps,
+} from '../lib/sm-studio-domain-l3-construct';
+import { LifecycleScriptProps } from '@aws-mdaa/sm-shared';
 
+describe('Studio Domain Optional Props', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
 
+  const ingress = {
+    ipv4: [
+      {
+        cidr: '10.0.0.0/28',
+        port: 443,
+        protocol: Protocol.TCP,
+      },
+    ],
+  };
+  const egress = {
+    ipv4: [
+      {
+        cidr: '10.0.0.0/28',
+        port: 443,
+        protocol: Protocol.TCP,
+      },
+    ],
+  };
 
+  const lifecycleConfig: LifecycleScriptProps = {
+    assets: {
+      testing: {
+        sourcePath: './test/test_assets/',
+      },
+    },
+    cmds: ['testing'],
+  };
 
-describe( 'Studio Domain Optional Props', () => {
-    const testApp = new MdaaTestApp()
-    const stack = testApp.testStack
+  const assetDeploymentRole = new Role(stack, 'test-existing-deployment-role', {
+    assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+  });
 
-    const ingress = {
-        ipv4: [ {
-            cidr: "10.0.0.0/28",
-            port: 443,
-            protocol: Protocol.TCP
-        } ]
-    }
-    const egress = {
-        ipv4: [ {
-            cidr: "10.0.0.0/28",
-            port: 443,
-            protocol: Protocol.TCP
-        } ]
-    }
-
-    const lifecycleConfig: LifecycleScriptProps = {
-        assets: {
-            testing: {
-                sourcePath: "./test/test_assets/"
-            }
+  const constructProps: SagemakerStudioDomainL3ConstructProps = {
+    domain: {
+      authMode: 'SSO',
+      vpcId: 'test-vpc-id',
+      subnetIds: ['test-sub-id'],
+      defaultUserSettings: {},
+      securityGroupIngress: ingress,
+      securityGroupEgress: egress,
+      notebookSharingPrefix: 'testing',
+      userProfiles: {
+        'test-user-id': {
+          userRole: {
+            id: 'test-role-id',
+          },
         },
-        cmds: [ "testing" ]
-    }
-
-    const assetDeploymentRole = new Role( stack, "test-existing-deployment-role", {
-        assumedBy: new ServicePrincipal( "lambda.amazonaws.com" )
-    } )
-
-    const constructProps: SagemakerStudioDomainL3ConstructProps = {
-        domain: {
-            authMode: "SSO",
-            vpcId: "test-vpc-id",
-            subnetIds: [ "test-sub-id" ],
-            defaultUserSettings: {},
-            securityGroupIngress: ingress,
-            securityGroupEgress: egress,
-            notebookSharingPrefix: "testing",
-            userProfiles: {
-                "test-user-id": {
-                    userRole: {
-                        id: "test-role-id"
-                    }
-                }
-            },
-            lifecycleConfigs: {
-                kernel: lifecycleConfig,
-                jupyter: lifecycleConfig,
-            },
-            domainBucket: {
-                domainBucketName: "test-existing-bucket",
-                assetDeploymentRole: {
-                    arn: assetDeploymentRole.roleArn
-                }
-            }
+      },
+      lifecycleConfigs: {
+        kernel: lifecycleConfig,
+        jupyter: lifecycleConfig,
+      },
+      domainBucket: {
+        domainBucketName: 'test-existing-bucket',
+        assetDeploymentRole: {
+          arn: assetDeploymentRole.roleArn,
         },
-        naming: testApp.naming,
+      },
+    },
+    naming: testApp.naming,
 
-        roleHelper: new MdaaRoleHelper( stack, testApp.naming ),
-    }
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+  };
 
-    new SagemakerStudioDomainL3Construct( stack, "domain", constructProps );
-    const template = Template.fromStack( stack );
+  new SagemakerStudioDomainL3Construct(stack, 'domain', constructProps);
+  const template = Template.fromStack(stack);
 
-    // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
+  // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
 
-    testApp.checkCdkNagCompliance( stack )
+  testApp.checkCdkNagCompliance(stack);
 
-    test( 'Validate if Domain is created', () => {
-        template.resourceCountIs( "AWS::SageMaker::Domain", 1 );
-    } );
+  test('Validate if Domain is created', () => {
+    template.resourceCountIs('AWS::SageMaker::Domain', 1);
+  });
 
-    test( 'SecurityGroup Egress Testing', () => {
-        template.resourceCountIs( "AWS::EC2::SecurityGroupEgress", 2 )
-        template.hasResourceProperties( "AWS::EC2::SecurityGroupEgress", {
-            "CidrIp": "10.0.0.0/28",
-            "Description": "to 10.0.0.0/28:tcp PORT 443",
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443
-        } )
-    } )
-    test( 'SecurityGroup Ingress Testing', () => {
-        // 1 configured in test
-        // 2 Self referencing rule for inter-container traffic
-        template.resourceCountIs( "AWS::EC2::SecurityGroupIngress", 2 )
-        template.hasResourceProperties( "AWS::EC2::SecurityGroupIngress", {
-            "CidrIp": "10.0.0.0/28",
-            "Description": "from 10.0.0.0/28:tcp PORT 443",
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443
-
-        } )
-    } )
-
-} )
+  test('SecurityGroup Egress Testing', () => {
+    template.resourceCountIs('AWS::EC2::SecurityGroupEgress', 2);
+    template.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
+      CidrIp: '10.0.0.0/28',
+      Description: 'to 10.0.0.0/28:tcp PORT 443',
+      FromPort: 443,
+      IpProtocol: 'tcp',
+      ToPort: 443,
+    });
+  });
+  test('SecurityGroup Ingress Testing', () => {
+    // 1 configured in test
+    // 2 Self referencing rule for inter-container traffic
+    template.resourceCountIs('AWS::EC2::SecurityGroupIngress', 2);
+    template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
+      CidrIp: '10.0.0.0/28',
+      Description: 'from 10.0.0.0/28:tcp PORT 443',
+      FromPort: 443,
+      IpProtocol: 'tcp',
+      ToPort: 443,
+    });
+  });
+});

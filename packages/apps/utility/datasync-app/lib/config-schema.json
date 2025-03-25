@@ -276,7 +276,7 @@
                     "type": "string"
                 },
                 "secretName": {
-                    "description": "The name of the secret in Secrets Manager that stores the credential (accessKey/user name and secretKey) of the object storage server.\n \nThe secret must have \"accessKey\" and \"secretKey\" fields.\n\nFor example (in JSON format): {\"accessKey\":\"<access_key>\",\"secretKey\":\"<secret_key>\"}",
+                    "description": "The name of the secret in Secrets Manager that stores the credential (accessKey/user name and secretKey) of the object storage server.\n\nThe secret must have \"accessKey\" and \"secretKey\" fields.\n\nFor example (in JSON format): {\"accessKey\":\"<access_key>\",\"secretKey\":\"<secret_key>\"}",
                     "type": "string"
                 },
                 "serverHostname": {
@@ -360,7 +360,7 @@
                     "type": "string"
                 },
                 "secretName": {
-                    "description": "The name of the secret in Secrets Manager that stores the credential (domain, user and password) of the user in SMB File Server that can mount the share and has the permissions to access files and folders in the SMB share.\n \nThe secret must have \"user\" and \"password\" fields.\n\nFor example (in JSON format): {\"user\":\"<username>\",\"password\":\"<password>\"}",
+                    "description": "The name of the secret in Secrets Manager that stores the credential (domain, user and password) of the user in SMB File Server that can mount the share and has the permissions to access files and folders in the SMB share.\n\nThe secret must have \"user\" and \"password\" fields.\n\nFor example (in JSON format): {\"user\":\"<username>\",\"password\":\"<password>\"}",
                     "type": "string"
                 },
                 "serverHostname": {

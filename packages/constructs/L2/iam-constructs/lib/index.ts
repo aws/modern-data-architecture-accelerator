@@ -3,5 +3,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './roles'
-export * from './policies'
+export * from './roles';
+export * from './policies';

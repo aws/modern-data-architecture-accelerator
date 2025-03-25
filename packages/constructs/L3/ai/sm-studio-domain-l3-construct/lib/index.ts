@@ -3,4 +3,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from './sm-studio-domain-l3-construct'
+export * from './sm-studio-domain-l3-construct';

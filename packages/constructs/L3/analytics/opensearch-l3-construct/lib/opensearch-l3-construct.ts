@@ -31,12 +31,12 @@ export interface SecurityGroupIngressProps {
   /**
    * Security Group ID of the ingres definition
    */
-  readonly sg?: string[]
+  readonly sg?: string[];
 }
 
 export interface SubnetConfig {
   readonly subnetId: string;
-  readonly availabilityZone: string
+  readonly availabilityZone: string;
 }
 
 export interface CustomEndpointConfig {
@@ -60,30 +60,29 @@ export interface CustomEndpointConfig {
 }
 
 export interface OpensearchDomainProps {
-
   /**
    * Required. ARN of Data Admin role. This role will be granted admin access to Opensearch Dashboard to update SAML configurations via web interface
    */
-  readonly dataAdminRole: MdaaRoleRef
+  readonly dataAdminRole: MdaaRoleRef;
   /**
    * Required. Functional Name of Opensearch Domain.
    * This will be prefixed as per MDAA naming convention.
    * If resultant name is longer than 28 characters, a randomly generated ID will be suffixed to truncated name.
    */
-  readonly opensearchDomainName: string
+  readonly opensearchDomainName: string;
   /**
    * Optional. Custom endpoint configuration.
    */
-  readonly customEndpoint?: CustomEndpointConfig
+  readonly customEndpoint?: CustomEndpointConfig;
   /**
    * Required. ID of VPC in which Opensearch domain will be created.
    */
-  readonly vpcId: string
+  readonly vpcId: string;
   /**
    * Required. ID(s) of subnets in which Opensearch domain will be created.
    * Make sure the number of subnets specified is same as or more than the number of AZs speceified in zoneAwareness configuration and span across as many AZs.
    */
-  readonly subnets: SubnetConfig[]
+  readonly subnets: SubnetConfig[];
 
   /**
    * List of security group ingress properties
@@ -93,212 +92,250 @@ export interface OpensearchDomainProps {
   /**
    * Optional. Opensearch cluster will enable shard distribution across 2 or 3 zones as specified.
    */
-  readonly zoneAwareness?: ZoneAwarenessConfig
+  readonly zoneAwareness?: ZoneAwarenessConfig;
   /**
    * Required. Opensearch cluster node configurations.
    */
-  readonly capacity: CapacityConfig
+  readonly capacity: CapacityConfig;
   /**
    * Required. EBS storage configuration for cluster nodes.
    */
-  readonly ebs: EbsOptions
+  readonly ebs: EbsOptions;
   /**
    * Required. Hour of day when automated snapshot creation will start
    */
-  readonly automatedSnapshotStartHour: number
+  readonly automatedSnapshotStartHour: number;
   /**
    * Required. version of Opensearch engine to provision in format x.y where x= major version, y=minor version. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/what-is.html#choosing-version
    */
-  readonly opensearchEngineVersion: string
+  readonly opensearchEngineVersion: string;
   /**
    * Required. Allow/Disallow automatic version upgrades.
    */
-  readonly enableVersionUpgrade: boolean
+  readonly enableVersionUpgrade: boolean;
   /**
    * Optional. Domain access policies.
    */
-  readonly accessPolicies: PolicyStatementProps[]
+  readonly accessPolicies: PolicyStatementProps[];
 
   /**
    * Event notification configuration
    */
-  readonly eventNotifications?: EventNotificationsProps
-
+  readonly eventNotifications?: EventNotificationsProps;
 }
 
 export interface EventNotificationsProps {
-  readonly email?: string[]
+  readonly email?: string[];
 }
 
 export interface SuppressionProps {
-  readonly id: string
-  readonly reason: string
+  readonly id: string;
+  readonly reason: string;
 }
 
 export interface OpensearchL3ConstructProps extends MdaaL3ConstructProps {
-  readonly domain: OpensearchDomainProps
+  readonly domain: OpensearchDomainProps;
 }
 //This stack creates all of the resources required for a Data Warehouse
 export class OpensearchL3Construct extends MdaaL3Construct {
-  protected readonly props: OpensearchL3ConstructProps
- 
-  private dataAdminRole: MdaaResolvableRole
-  private opensearchDomainKmsKey: MdaaKmsKey
-  private logGroup: MdaaLogGroup
+  protected readonly props: OpensearchL3ConstructProps;
 
-constructor( scope: Construct, id: string, props: OpensearchL3ConstructProps ) {
-  super( scope, id, props )
-  this.props = props
+  private dataAdminRole: MdaaResolvableRole;
+  private opensearchDomainKmsKey: MdaaKmsKey;
+  private logGroup: MdaaLogGroup;
 
-  const azIds = this.props.domain.subnets.map( s => s.availabilityZone )
-  const subnetIds = this.props.domain.subnets.map( s => s.subnetId )
-  const subnets = this.props.domain.subnets.map( s => Subnet.fromSubnetAttributes( this, 'subnet-'.concat( s.subnetId ), s ) )
+  constructor(scope: Construct, id: string, props: OpensearchL3ConstructProps) {
+    super(scope, id, props);
+    this.props = props;
 
-  const vpc = Vpc.fromVpcAttributes( this.scope, `domain-vpc`, {
-    vpcId: this.props.domain.vpcId,
-    availabilityZones: azIds,
-    privateSubnetIds: subnetIds
-  } )
+    const azIds = this.props.domain.subnets.map(s => s.availabilityZone);
+    const subnetIds = this.props.domain.subnets.map(s => s.subnetId);
+    const subnets = this.props.domain.subnets.map(s =>
+      Subnet.fromSubnetAttributes(this, 'subnet-'.concat(s.subnetId), s),
+    );
 
-  const securityGroupIngress: MdaaSecurityGroupRuleProps = {
-    ipv4: this.props.domain.securityGroupIngress.ipv4?.map( x => { return { cidr: x, port: 443, protocol: Protocol.TCP, description: `https Ingress for IPV4 CIDR ${ x }` } } ),
-    sg: this.props.domain.securityGroupIngress.sg?.map( x => { return { sgId: x, port: 443, protocol: Protocol.TCP, description: `https Ingress for SG ${ x }` } } )
-  }
+    const vpc = Vpc.fromVpcAttributes(this.scope, `domain-vpc`, {
+      vpcId: this.props.domain.vpcId,
+      availabilityZones: azIds,
+      privateSubnetIds: subnetIds,
+    });
 
-  const securityGroupProps: MdaaSecurityGroupProps = {
-    vpc: vpc,
-    naming: this.props.naming,
-    ingressRules: securityGroupIngress
-  }
+    const securityGroupIngress: MdaaSecurityGroupRuleProps = {
+      ipv4: this.props.domain.securityGroupIngress.ipv4?.map(x => {
+        return { cidr: x, port: 443, protocol: Protocol.TCP, description: `https Ingress for IPV4 CIDR ${x}` };
+      }),
+      sg: this.props.domain.securityGroupIngress.sg?.map(x => {
+        return { sgId: x, port: 443, protocol: Protocol.TCP, description: `https Ingress for SG ${x}` };
+      }),
+    };
 
-  const securityGroup = new MdaaSecurityGroup( this, 'domain-sg', securityGroupProps )
+    const securityGroupProps: MdaaSecurityGroupProps = {
+      vpc: vpc,
+      naming: this.props.naming,
+      ingressRules: securityGroupIngress,
+    };
 
-  this.dataAdminRole = this.props.roleHelper.resolveRoleRefWithRefId( this.props.domain.dataAdminRole, "DataAdmin" )
+    const securityGroup = new MdaaSecurityGroup(this, 'domain-sg', securityGroupProps);
 
-  this.opensearchDomainKmsKey = this.createOpensearchDomainKMSKey()
+    this.dataAdminRole = this.props.roleHelper.resolveRoleRefWithRefId(this.props.domain.dataAdminRole, 'DataAdmin');
 
-  this.logGroup = this.createLogGroup( this.opensearchDomainKmsKey, props.domain.opensearchDomainName, props.naming )
+    this.opensearchDomainKmsKey = this.createOpensearchDomainKMSKey();
 
-  const certificate = ( this.props.domain.customEndpoint != undefined && this.props.domain.customEndpoint.acmCertificateArn != undefined ) ?
-    Certificate.fromCertificateArn( this.scope, `opensearch-custom-endpoint-certificate-${ this.props.domain.opensearchDomainName }`, this.props.domain.customEndpoint?.acmCertificateArn ) : undefined
+    this.logGroup = this.createLogGroup(this.opensearchDomainKmsKey, props.domain.opensearchDomainName, props.naming);
 
-  const hostedZoneProviderProps = ( this.props.domain.customEndpoint != undefined && this.props.domain.customEndpoint.route53HostedZoneDomainName != undefined ) ?
-    { domainName: this.props.domain.customEndpoint.route53HostedZoneDomainName, privateZone: true, vpcId: this.props.domain.vpcId } : undefined
+    const certificate =
+      this.props.domain.customEndpoint != undefined && this.props.domain.customEndpoint.acmCertificateArn != undefined
+        ? Certificate.fromCertificateArn(
+            this.scope,
+            `opensearch-custom-endpoint-certificate-${this.props.domain.opensearchDomainName}`,
+            this.props.domain.customEndpoint?.acmCertificateArn,
+          )
+        : undefined;
 
-  const hostedZone = ( hostedZoneProviderProps != undefined ) ?
-    HostedZone.fromLookup( this.scope, `opensearch-custom-endpoint-hosted-zone-${ this.props.domain.opensearchDomainName }`, hostedZoneProviderProps ) : undefined
+    const hostedZoneProviderProps =
+      this.props.domain.customEndpoint != undefined &&
+      this.props.domain.customEndpoint.route53HostedZoneDomainName != undefined
+        ? {
+            domainName: this.props.domain.customEndpoint.route53HostedZoneDomainName,
+            privateZone: true,
+            vpcId: this.props.domain.vpcId,
+          }
+        : undefined;
 
-  const domainL2Props: MdaaOpensearchDomainProps = {
-    masterUserRoleArn: this.dataAdminRole.arn(),
-    version: EngineVersion.openSearch( this.props.domain.opensearchEngineVersion ),
-    opensearchDomainName: this.props.naming.props.moduleName,
-    enableVersionUpgrade: this.props.domain.enableVersionUpgrade,
-    encryptionKey: this.opensearchDomainKmsKey,
-    vpc: vpc,
-    vpcSubnets: [ { availabilityZones: azIds, subnets: subnets } ],
-    securityGroups: [ securityGroup ],
-    zoneAwareness: this.props.domain.zoneAwareness ? this.props.domain.zoneAwareness : {},
-    capacity: this.props.domain.capacity,
-    ebs: this.props.domain.ebs ? this.props.domain.ebs : {},
-    customEndpoint: this.props.domain.customEndpoint ? { domainName: this.props.domain.customEndpoint.domainName, certificate: certificate, hostedZone: hostedZone } : undefined,
-    automatedSnapshotStartHour: this.props.domain.automatedSnapshotStartHour,
-    accessPolicies: this.props.domain.accessPolicies.map( x => new PolicyStatement( x ) ),
-    naming: this.props.naming,
-    logGroup: this.logGroup
-  }
+    const hostedZone =
+      hostedZoneProviderProps != undefined
+        ? HostedZone.fromLookup(
+            this.scope,
+            `opensearch-custom-endpoint-hosted-zone-${this.props.domain.opensearchDomainName}`,
+            hostedZoneProviderProps,
+          )
+        : undefined;
 
-  //Create the domain
-  const domain = new MdaaOpensearchDomain( this.scope, `opensearch-domain-${ props.domain.opensearchDomainName }`, domainL2Props );
-  if ( props.domain.eventNotifications ) {
-    this.createEventNotifications( this.props.domain.opensearchDomainName, domain, this.opensearchDomainKmsKey, props.domain.eventNotifications )
-  }
+    const domainL2Props: MdaaOpensearchDomainProps = {
+      masterUserRoleArn: this.dataAdminRole.arn(),
+      version: EngineVersion.openSearch(this.props.domain.opensearchEngineVersion),
+      opensearchDomainName: this.props.naming.props.moduleName,
+      enableVersionUpgrade: this.props.domain.enableVersionUpgrade,
+      encryptionKey: this.opensearchDomainKmsKey,
+      vpc: vpc,
+      vpcSubnets: [{ availabilityZones: azIds, subnets: subnets }],
+      securityGroups: [securityGroup],
+      zoneAwareness: this.props.domain.zoneAwareness ? this.props.domain.zoneAwareness : {},
+      capacity: this.props.domain.capacity,
+      ebs: this.props.domain.ebs ? this.props.domain.ebs : {},
+      customEndpoint: this.props.domain.customEndpoint
+        ? { domainName: this.props.domain.customEndpoint.domainName, certificate: certificate, hostedZone: hostedZone }
+        : undefined,
+      automatedSnapshotStartHour: this.props.domain.automatedSnapshotStartHour,
+      accessPolicies: this.props.domain.accessPolicies.map(x => new PolicyStatement(x)),
+      naming: this.props.naming,
+      logGroup: this.logGroup,
+    };
 
-}
-
-  private createEventNotifications( domainName: string,
-  domain: MdaaOpensearchDomain,
-  domainKmsKey: IKey,
-  eventNotifications: EventNotificationsProps ) {
-
-  //Create Rule
-  const ruleProps: EventBridgeRuleProps = {
-    description: `Matches OpenSearch events for domain ${ domainName }`,
-    eventPattern: {
-      source: [ 'aws.es' ],
-      resources: [ domain.domainArn ]
+    //Create the domain
+    const domain = new MdaaOpensearchDomain(
+      this.scope,
+      `opensearch-domain-${props.domain.opensearchDomainName}`,
+      domainL2Props,
+    );
+    if (props.domain.eventNotifications) {
+      this.createEventNotifications(
+        this.props.domain.opensearchDomainName,
+        domain,
+        this.opensearchDomainKmsKey,
+        props.domain.eventNotifications,
+      );
     }
   }
-  const rule = EventBridgeHelper.createEventRule( this.scope, this.props.naming, `${ domainName }-opensearch-events`, ruleProps )
 
-  //Create Topic
-  const topic = new MdaaSnsTopic( this.scope, `domain-events-topic`, {
-    naming: this.props.naming,
-    topicName: `${ domainName }-opensearch-events`,
-    masterKey: domainKmsKey
-  } )
+  private createEventNotifications(
+    domainName: string,
+    domain: MdaaOpensearchDomain,
+    domainKmsKey: IKey,
+    eventNotifications: EventNotificationsProps,
+  ) {
+    //Create Rule
+    const ruleProps: EventBridgeRuleProps = {
+      description: `Matches OpenSearch events for domain ${domainName}`,
+      eventPattern: {
+        source: ['aws.es'],
+        resources: [domain.domainArn],
+      },
+    };
+    const rule = EventBridgeHelper.createEventRule(
+      this.scope,
+      this.props.naming,
+      `${domainName}-opensearch-events`,
+      ruleProps,
+    );
 
-  //Add email subs
-  eventNotifications?.email?.forEach( email => {
-    topic.addSubscription( new EmailSubscription( email.trim() ) );
-  } );
+    //Create Topic
+    const topic = new MdaaSnsTopic(this.scope, `domain-events-topic`, {
+      naming: this.props.naming,
+      topicName: `${domainName}-opensearch-events`,
+      masterKey: domainKmsKey,
+    });
 
-  //Create DLQ
-  const dlq = EventBridgeHelper.createDlq( this.scope, this.props.naming, `${ domainName }-opensearch-events`, domainKmsKey )
+    //Add email subs
+    eventNotifications?.email?.forEach(email => {
+      topic.addSubscription(new EmailSubscription(email.trim()));
+    });
 
-  //Create Target
-  const target = new aws_events_targets.SnsTopic( topic, {
-    deadLetterQueue: dlq
-  } )
+    //Create DLQ
+    const dlq = EventBridgeHelper.createDlq(
+      this.scope,
+      this.props.naming,
+      `${domainName}-opensearch-events`,
+      domainKmsKey,
+    );
 
-  //Add Target
-  rule.addTarget( target )
-}
+    //Create Target
+    const target = new aws_events_targets.SnsTopic(topic, {
+      deadLetterQueue: dlq,
+    });
+
+    //Add Target
+    rule.addTarget(target);
+  }
 
   private createOpensearchDomainKMSKey(): MdaaKmsKey {
-  const kmsKey = new MdaaKmsKey( this.scope, 'opensearch-domain-key', {
-    alias: "opensearch-domain",
-    naming: this.props.naming,
-    keyAdminRoleIds: [ this.dataAdminRole.id() ],
-  } )
+    const kmsKey = new MdaaKmsKey(this.scope, 'opensearch-domain-key', {
+      alias: 'opensearch-domain',
+      naming: this.props.naming,
+      keyAdminRoleIds: [this.dataAdminRole.id()],
+    });
 
+    const AllowOpensearchLogGroupEncryption = new PolicyStatement({
+      sid: 'AllowOpensearchLogGroupEncryption',
+      effect: Effect.ALLOW,
+      resources: ['*'],
+      actions: ['kms:Encrypt*', 'kms:Decrypt*', 'kms:ReEncrypt*', 'kms:GenerateDataKey*', 'kms:Describe*'],
+      principals: [new ServicePrincipal(`logs.${this.region}.amazonaws.com`)],
+      conditions: {
+        ArnLike: {
+          'kms:EncryptionContext:aws:logs:arn': `arn:${this.partition}:logs:${this.region}:${this.account}:*`,
+        },
+      },
+    });
 
-  const AllowOpensearchLogGroupEncryption = new PolicyStatement( {
-    sid: "AllowOpensearchLogGroupEncryption",
-    effect: Effect.ALLOW,
-    resources: [ "*" ],
-    actions: [
-      "kms:Encrypt*",
-      "kms:Decrypt*",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:Describe*"
-    ],
-    principals: [
-      new ServicePrincipal( `logs.${ this.region }.amazonaws.com` ),
-    ],
-    conditions: {
-      "ArnLike": {
-        "kms:EncryptionContext:aws:logs:arn": `arn:${ this.partition }:logs:${ this.region }:${ this.account }:*`
-      }
-    }
-  } )
+    kmsKey.addToResourcePolicy(AllowOpensearchLogGroupEncryption);
 
-  kmsKey.addToResourcePolicy( AllowOpensearchLogGroupEncryption )
-
-  return kmsKey
-}
-
-  private createLogGroup( encryptionKey: MdaaKmsKey, opensearchDomainName: string, naming: IMdaaResourceNaming ): MdaaLogGroup {
-  const logGroupProps = {
-    encryptionKey: encryptionKey,
-    logGroupNamePathPrefix: '/aws/opensearch-logs/',
-    logGroupName: opensearchDomainName,
-    retention: RetentionDays.INFINITE,
-    naming: naming
+    return kmsKey;
   }
 
-  const logGroup = new MdaaLogGroup( this.scope, `cloudwatch-log-group-${ opensearchDomainName }`, logGroupProps )
+  private createLogGroup(
+    encryptionKey: MdaaKmsKey,
+    opensearchDomainName: string,
+    naming: IMdaaResourceNaming,
+  ): MdaaLogGroup {
+    const logGroupProps = {
+      encryptionKey: encryptionKey,
+      logGroupNamePathPrefix: '/aws/opensearch-logs/',
+      logGroupName: opensearchDomainName,
+      retention: RetentionDays.INFINITE,
+      naming: naming,
+    };
 
-  return logGroup
-}
+    return new MdaaLogGroup(this.scope, `cloudwatch-log-group-${opensearchDomainName}`, logGroupProps);
+  }
 }
