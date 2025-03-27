@@ -20,7 +20,21 @@ MDAA may be deployed using a number of patterns:
 
 ### Node Installation
 
-Install a version of Node.js using a method appropriate to your system. **MDAA requires nodejs 16.x and npm/npx version 8.x or greater.**
+Install a version of Node.js using a method appropriate to your system.
+
+**MDAA requires nodejs 22.x and npm/npx version 8.x or greater.**
+
+### Docker Installation
+
+Some MDAA modules make use of Docker both for building deployable code assets, as well as for building Docker images.
+
+Install a version of Docker CLI (or suitable alternative) using a method appropriate to your system. MDAA has been tested with both Docker CLI and Finch.
+If using a Docker alternative, be sure to set `CDK_DOCKER` to the correct path.
+
+### PIP Installation
+
+Where Docker is not available, some MDAA modules may attempt to package code assets directly using Pip.
+Install a version of Python3.1x using a method appropriate to your system.
 
 ### Environment Setup
 
@@ -38,9 +52,9 @@ As of MDAA 0.40, deployment from locally cloned MDAA source code is the preferre
 
 1. Clone MDAA repo.
 2. Run `<path_to_cloned_repo>/bin/mdaa -c <path_to_mdaa_yaml> <cdk action>`
-   * MDAA will run npm install at the root of the cloned repo to install CDK and all necessary third-party dependencies.
-   * MDAA will locate its own modules within the local source code repo
-   * **Note that specifying specific MDAA versions in local_mode will result in NPM packages being installed**
+   - MDAA will run npm install at the root of the cloned repo to install CDK and all necessary third-party dependencies.
+   - MDAA will locate its own modules within the local source code repo
+   - **Note that specifying specific MDAA versions in local_mode will result in NPM packages being installed**
 
 Additional MDAA CLI commands:
 
@@ -110,7 +124,7 @@ Any CLI params not recognized by MDAA CLI will be pushed down to the CDK/Terrafo
 <path_to_cloned_repo>/bin/mdaa deploy --no-rollback
 ```
 
-***
+---
 
 ### Deployment from Published NPM Packages
 
@@ -144,7 +158,7 @@ MDAA commands can then be run within the local directory using NPX.
 npx mdaa -h
 ```
 
-***
+---
 
 ## Deployment of MDAA Modules/CDK Apps using CDK CLI
 
@@ -169,14 +183,14 @@ cdk synth -c org="sample-org" -c env="dev" -c domain="mdaa1" -c module_configs="
 
 The following context values are required for all modules. Note that additional context values may be required if context is referenced from within the module/app config.
 
-* **org** - Name of the organization
+- **org** - Name of the organization
 
-* **env** - Name of the target environment (ie. dev/test/prod)
+- **env** - Name of the target environment (ie. dev/test/prod)
 
-* **domain** - Name of the deployment domain (allows multiple deployments in same org/env/account)
+- **domain** - Name of the deployment domain (allows multiple deployments in same org/env/account)
 
-* **module_name** - Name of the MDAA module (allows multiple deployments of the same CDK app within same org/domain/env)
+- **module_name** - Name of the MDAA module (allows multiple deployments of the same CDK app within same org/domain/env)
 
-* **module_configs** - Comma separated list of paths to one or more app config files (see Configuration). Multiple config files will be merged, with later-listed config files taking precedence over earlier-listed config files.
+- **module_configs** - Comma separated list of paths to one or more app config files (see Configuration). Multiple config files will be merged, with later-listed config files taking precedence over earlier-listed config files.
 
-* **tag_configs** - Comma separated list of paths to one or more tag config files (see Configuration). Multiple config files will be merged, with later-listed config files taking precedence over earlier-listed config files.
+- **tag_configs** - Comma separated list of paths to one or more tag config files (see Configuration). Multiple config files will be merged, with later-listed config files taking precedence over earlier-listed config files.

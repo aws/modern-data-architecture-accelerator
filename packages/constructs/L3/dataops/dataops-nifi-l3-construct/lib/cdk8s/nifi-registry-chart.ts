@@ -82,7 +82,7 @@ export class NifiRegistryChart extends cdk8s.Chart {
     // nosemgrep
     const crypto = require('crypto');
     // nosemgrep
-    const hash = crypto
+    const hash = crypto //NOSONAR not used in senstive context
       .createHash('sha1') //NOSONAR not used in senstive context
       .update(stableJson)
       .digest('hex');
