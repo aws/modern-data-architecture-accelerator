@@ -100,9 +100,9 @@ export class CompliantKubectlProvider extends NestedStack implements IKubectlPro
 
     const memorySize = cluster.kubectlMemory ? cluster.kubectlMemory.toMebibytes() : 1024;
 
-    const handler = new Function(this, 'Handler', {
-      //NOSONAR false positive
-      code: Code.fromAsset(path.join(__dirname, 'kubectl-handler')),
+    // prettier-ignore
+    const handler = new Function(this, 'Handler', { //NOSONAR false positive
+      code: Code.fromAsset(path.join(__dirname, 'kubectl-handler')), //NOSONAR false positive
       runtime: Runtime.PYTHON_3_13,
       handler: 'index.handler',
       timeout: Duration.minutes(15),

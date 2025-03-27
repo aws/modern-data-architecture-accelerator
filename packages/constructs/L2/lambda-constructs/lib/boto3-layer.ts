@@ -4,40 +4,36 @@
  */
 
 import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
-import { Code, LayerVersion, LayerVersionProps } from 'aws-cdk-lib/aws-lambda';
+import { LayerVersion, LayerVersionProps } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
+import { MdaaPythonCodeAsset } from './code-asset';
 
-export type Boto3Version = '1.36.11';
-
-/**
- * Properties for creating a Boto3 Lambda Layer
- */
-export interface MdaaBoto3LayerVersionProps extends MdaaConstructProps {
-  readonly boto3Version?: Boto3Version;
+interface MdaaBoto3LayerVersionProps extends MdaaConstructProps {
+  readonly layerPath?: string;
 }
 
 /**
  * Construct for creating a Boto3 Lambda Layer
  */
 export class MdaaBoto3LayerVersion extends LayerVersion {
-  public static readonly BOTO3_LATEST_VERSION: Boto3Version = '1.36.11';
-  private static setProps(props: MdaaBoto3LayerVersionProps): LayerVersionProps {
-    const boto3Version: Boto3Version = props.boto3Version || MdaaBoto3LayerVersion.BOTO3_LATEST_VERSION;
+  private static setProps(props: MdaaBoto3LayerVersionProps, scope: Construct): LayerVersionProps {
+    const codeAsset = new MdaaPythonCodeAsset(scope, 'python-code-asset', {
+      pythonRequirementsPath: `${__dirname}/../src/boto3-layer/requirements.txt`,
+    });
     const overrideProps = {
-      layerVersionName: props.naming.resourceName(`boto3-${boto3Version.replace(/\W/g, '_')}`),
-      code: Code.fromAsset(`${__dirname}/../src/${boto3Version}.zip`),
+      layerVersionName: props.naming.resourceName(`boto3`),
+      code: codeAsset.code,
     };
     return { ...props, ...overrideProps };
   }
-  constructor(scope: Construct, id: string, props: MdaaBoto3LayerVersionProps) {
-    super(scope, id, MdaaBoto3LayerVersion.setProps(props));
+  constructor(scope: Construct, id: string, props: MdaaConstructProps) {
+    super(scope, id, MdaaBoto3LayerVersion.setProps(props, scope));
 
     new MdaaParamAndOutput(
       this,
       {
         ...{
           resourceType: 'layer-version',
-          resourceId: props.boto3Version,
           name: 'arn',
           value: this.layerVersionArn,
         },

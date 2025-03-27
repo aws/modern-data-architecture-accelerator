@@ -12,10 +12,10 @@
     "url": "https://aws.amazon.com/solutions"
   },
   "scripts": {
-    "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references && cd ./lib/shared/layers/common/ && ./bundle_shared_libraries.sh",
+    "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references",
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
-    "test": "touch ./lib/shared/layers/common/common_layer.zip && jest --passWithNoTests --coverage",
+    "test": "jest --passWithNoTests --coverage",
     "lint": "eslint --fix --max-warnings 0 -c ../../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" ",
     "test-coverage": "jest --passWithNoTests --coverage"
   },

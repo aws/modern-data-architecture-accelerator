@@ -14,10 +14,10 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references && cd ./src && ./bundle_libraries.sh",
+    "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references",
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
-    "test": "touch ./src/1.36.11.zip  && jest --passWithNoTests --coverage",
+    "test": "jest --passWithNoTests --coverage",
     "lint": "eslint --fix --max-warnings 0 -c ../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" ",
     "test-coverage": "jest --passWithNoTests --coverage"
   },
@@ -42,12 +42,16 @@
     "aws-cdk-lib": "2.181.1",
     "@types/babel__traverse": "7.18.2"
   },
+  "bundledDependencies": [
+    "command-exists"
+  ],
   "dependencies": {
-    "@aws-mdaa/construct": "^0.45.0",
-    "@aws-mdaa/iam-constructs": "^0.45.0",
-    "@aws-mdaa/naming": "^0.45.0",
+    "@aws-mdaa/construct": "0.45.0",
+    "@aws-mdaa/iam-constructs": "0.45.0",
+    "@aws-mdaa/naming": "0.45.0",
     "aws-cdk-lib": "2.181.1",
     "cdk-nag": "2.35.25",
+    "command-exists": "^1.2.9",
     "constructs": "10.0.96"
   },
   "peerDependencies": {

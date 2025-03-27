@@ -91,15 +91,10 @@ export class Shared extends Construct {
 
     const powerToolsLayer = lambda.LayerVersion.fromLayerVersionArn(this, 'PowertoolsLayer', powerToolsArn);
 
-    const commonLayerPath =
-      props.config?.codeOverwrites?.commonLibsLayerCodeZipPath !== undefined
-        ? props.config.codeOverwrites.commonLibsLayerCodeZipPath
-        : path.join(__dirname, './layers/common');
-
     const commonLayer = new Layer(this, 'CommonLayer', {
       runtime: pythonRuntime,
       architecture: lambdaArchitecture,
-      path: commonLayerPath,
+      assetOverridePath: props.config.codeOverwrites?.commonLibsLayerCodeZipPath,
     });
 
     const pythonSDKLayerPath =
