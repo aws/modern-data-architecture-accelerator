@@ -1,0 +1,6 @@
+---
+id: SO0320
+name: modern-data-architecture-accelerator
+version: v1.0.0
+build_environment:
+  build_image: "aws/codebuild/standard:7.0"
