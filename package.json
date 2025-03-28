@@ -46,6 +46,7 @@
         "tar": "6.2.1",
         "glob": "9.3.5",
         "follow-redirects": "1.15.6",
+        "@types/babel__traverse":"7.20.6",
         "cdk8s@>=2.68.32": {
             "backport": "9.4.3",
             "follow-redirects": "1.15.6"
