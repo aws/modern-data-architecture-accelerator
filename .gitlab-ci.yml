@@ -18,6 +18,9 @@ include:
   - project: $CI_PROJECT_NAMESPACE/caef-delivery
     ref: main
     file: "/aws-solutions/viperlight.yaml"
+  - project: $CI_PROJECT_NAMESPACE/caef-testing
+    ref: main
+    file: "/gitlab-ci/mdaa-testing.yaml"
 
 sast:
   stage: prebuild
@@ -146,6 +149,13 @@ feature_merge_sonarqube:
   script:
     - ./scripts/sonarqube.sh
 
+feature_merge_smoke_test:
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+    
 feature_version:
   tags:
     - arch:amd64
