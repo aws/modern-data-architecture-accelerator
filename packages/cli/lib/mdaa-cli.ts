@@ -526,8 +526,8 @@ export class MdaaDeploy {
 
     console.log(`Module ${logPrefix}: Package ${npmPackageNoVersion} found in local codebase. Running build.`);
     const buildCmd = `npx lerna run build --scope ${npmPackageNoVersion} --loglevel warn`;
-    const fullBuildCmd = `cd '${__dirname}/../../../';${buildCmd} > /dev/null;cd '${this.cwd}'`;
-    // console.debug( `Running Lerna Build: ${ fullBuildCmd }` )
+    const fullBuildCmd = `cd '${__dirname}/../../../';${buildCmd} ;cd '${this.cwd}'`;
+    console.log( `Running Lerna Build: ${ fullBuildCmd }` )
     this.execCmd(fullBuildCmd);
 
     return prefix;
