@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as mdaa_construct from '@aws-mdaa/construct';
+import * as mdaa_construct from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Fn, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -17,7 +17,7 @@ import {
   Inventory,
   LifecycleRule,
 } from 'aws-cdk-lib/aws-s3';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
@@ -142,7 +142,7 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
 
     this.policy?.applyRemovalPolicy(RemovalPolicy.RETAIN);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this,
       [
         {

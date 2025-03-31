@@ -11,7 +11,7 @@ import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CfnJob } from 'aws-cdk-lib/aws-glue';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import * as path from 'path';
 import { SnsTopic } from 'aws-cdk-lib/aws-events-targets';
@@ -212,7 +212,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
         }
       }
 
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         this.scope,
         [
           { id: 'AwsSolutions-L1', reason: 'Function is used only as custom resource during CDK deployment.' },
@@ -309,7 +309,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     //CDK S3 Deployment automatically adds inline policy to project deployment role.
     this.scope.node.children.forEach(child => {
       if (child.node.id.startsWith('deployment-role')) {
-        NagSuppressions.addResourceSuppressions(
+        MdaaNagSuppressions.addCodeResourceSuppressions(
           child,
           [
             { id: 'AwsSolutions-IAM5', reason: 'Inline policy used only for deployment.' },

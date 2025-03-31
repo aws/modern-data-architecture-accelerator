@@ -6,7 +6,7 @@
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Template } from 'aws-cdk-lib/assertions';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaLambdaFunction, MdaaLambdaRole, MdaaLambdaFunctionProps } from '../lib';
 
 describe('MDAA Construct Compliance Tests', () => {
@@ -28,7 +28,7 @@ describe('MDAA Construct Compliance Tests', () => {
   };
 
   const testConstruct = new MdaaLambdaFunction(testApp.testStack, 'test-construct', testContstructProps);
-  NagSuppressions.addResourceSuppressions(
+  MdaaNagSuppressions.addCodeResourceSuppressions(
     testConstruct,
     [
       { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Compliance not enforced in construct' },

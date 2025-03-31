@@ -1,5 +1,5 @@
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaSqsDeadLetterQueue } from '@aws-mdaa/sqs-constructs';
 import * as cdk from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -9,7 +9,7 @@ import * as rds from 'aws-cdk-lib/aws-rds';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import * as path from 'path';
 import { Shared } from '../../shared';
@@ -95,7 +95,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
       },
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       websiteParserFunction,
       [
         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Function will be throttled by upstream services.' },
@@ -237,7 +237,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
       }),
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       websiteParserRole,
       [
         {
@@ -257,7 +257,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       websiteParserFunction,
       [
         {
@@ -277,7 +277,7 @@ export class WebsiteCrawlingWorkflow extends Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       stateMachine,
       [
         {

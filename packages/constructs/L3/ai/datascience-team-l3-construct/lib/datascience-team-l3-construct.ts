@@ -24,7 +24,7 @@ import {
 import { Effect, IRole, ManagedPolicy, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export const CENTRAL_SM_REPO_ACCT = '341280168497';
@@ -286,7 +286,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['ssm:GetParameter', 'ssm:GetParameterHistory', 'ssm:GetParameters', 'ssm:GetParametersByPath'],
     });
     teamManagedPolicy.addStatements(teamSSMStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       teamManagedPolicy,
       [
         {
@@ -315,7 +315,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['sagemaker:Search'],
     });
     sagemakerReadonlyManagedPolicy.addStatements(sagemakerSearchStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerReadonlyManagedPolicy,
       [
         {
@@ -335,7 +335,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['sagemaker:List*'],
     });
     sagemakerReadonlyManagedPolicy.addStatements(sagemakerListStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerReadonlyManagedPolicy,
       [
         {
@@ -356,7 +356,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['sagemaker:Describe*', 'sagemaker:BatchDescribe*', 'sagemaker:Get*', 'sagemaker:BatchGet*'],
     });
     sagemakerReadonlyManagedPolicy.addStatements(sagemakerDescribeGetStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerReadonlyManagedPolicy,
       [
         {
@@ -383,7 +383,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['logs:GetLogEvents', 'logs:DescribeLogGroups', 'logs:DescribeLogStreams', 'logs:FilterLogEvents'],
     });
     sagemakerReadonlyManagedPolicy.addStatements(cloudwatchStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerReadonlyManagedPolicy,
       [
         {
@@ -443,7 +443,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       ],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerJobStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -458,7 +458,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       ],
       true,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -490,7 +490,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       ],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerModelMonitoringStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -511,7 +511,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['sagemaker:CreateModelCard', 'sagemaker:DeleteModelCard', 'sagemaker:UpdateModelCard'],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerModelCardStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -542,7 +542,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       ],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerPipelineStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -562,7 +562,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['sagemaker:CreateModel', 'sagemaker:DeleteModel'],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerModelStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -595,7 +595,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       ],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerModelPackageStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -619,7 +619,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['sagemaker:CreateProject', 'sagemaker:DeleteProject', 'sagemaker:UpdateProject'],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerProjectStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -661,7 +661,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       ],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerEndpointStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -694,7 +694,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       ],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerTrialStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -723,7 +723,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerNotebookStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -751,7 +751,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerNotebookLifecycleStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -789,7 +789,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       },
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerCreateOnlineFeatureGroupStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -819,7 +819,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       },
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerCreateOfflineFeatureGroupStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -840,7 +840,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['sagemaker:DeleteFeatureGroup', 'sagemaker:UpdateFeatureGroup', 'sagemaker:UpdateFeatureMetadata'],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerManageFeatureGroupStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -861,7 +861,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['sagemaker:CreateExperiment', 'sagemaker:DeleteExperiment', 'sagemaker:UpdateExperiment'],
     });
     sagemakerWriteManagedPolicy1.addStatements(sagemakerExperimentStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy1,
       [
         {
@@ -882,7 +882,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['sagemaker:AddTags', 'sagemaker:DeleteTags'],
     });
     sagemakerWriteManagedPolicy2.addStatements(sagemakerAddDeleteTagsStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy2,
       [
         {
@@ -915,7 +915,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       ],
     });
     sagemakerWriteManagedPolicy2.addStatements(sagemakerEc2Statement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy2,
       [
         {
@@ -936,7 +936,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
     });
 
     sagemakerWriteManagedPolicy2.addStatements(sagemakerEcrStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy2,
       [
         {
@@ -959,7 +959,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       actions: ['logs:CreateLogGroup', 'logs:CreateLogStream', 'logs:PutLogEvents'],
     });
     sagemakerWriteManagedPolicy2.addStatements(cloudwatchStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       sagemakerWriteManagedPolicy2,
       [
         {

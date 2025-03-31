@@ -7,7 +7,7 @@ import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { AuditHelper } from '@aws-mdaa/s3-audit-helper';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface AuditTrailProps {
@@ -51,7 +51,7 @@ export class AuditTrailL3Construct extends MdaaL3Construct {
       's3-audit',
       this.props.trail.includeManagementEvents,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       auditTrail,
       [
         {

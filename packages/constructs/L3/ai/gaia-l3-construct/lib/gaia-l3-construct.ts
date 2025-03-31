@@ -17,7 +17,7 @@ import { RagEngines } from './rag-engines';
 import { Shared } from './shared';
 import { Direction, ModelInterface, SystemConfig } from './shared/types';
 import { Stack } from 'aws-cdk-lib';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
@@ -143,7 +143,7 @@ export class GAIAL3Construct extends MdaaL3Construct {
       }
     }
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this,
       [{ id: 'AwsSolutions-L1', reason: 'GAIA designed for Python 3.11.' }],
       true,
@@ -159,7 +159,7 @@ export class GAIAL3Construct extends MdaaL3Construct {
         child.node.id.includes('LogRetention')
       ) {
         console.log(child.node.id);
-        NagSuppressions.addResourceSuppressions(
+        MdaaNagSuppressions.addCodeResourceSuppressions(
           child,
           [
             { id: 'AwsSolutions-L1', reason: 'Function is used only as custom resource during CDK deployment.' },

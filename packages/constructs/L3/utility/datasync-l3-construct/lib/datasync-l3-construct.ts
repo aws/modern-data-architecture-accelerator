@@ -4,7 +4,7 @@
  */
 
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
-import { MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import {
   MdaaDataSyncAgent,
   MdaaDataSyncAgentProps,
@@ -43,7 +43,7 @@ import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { ILogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface VpcProps {
@@ -620,7 +620,7 @@ export class DataSyncL3Construct extends MdaaL3Construct {
       secretObjectValue: initialValue,
     });
     console.log(`Generated empty Secret for ${locationName}: ${this.props.naming.resourceName(locationName)}`);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       secret,
       [
         {

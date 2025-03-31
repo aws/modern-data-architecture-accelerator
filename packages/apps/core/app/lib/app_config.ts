@@ -13,7 +13,7 @@ import {
   MdaaConfigRefValueTransformerProps,
   MdaaConfigSSMValueTransformer,
   MdaaConfigTransformer,
-  MdaaNagSuppressions,
+  MdaaNagSuppressionConfigs,
   MdaaServiceCatalogProductConfig,
 } from '@aws-mdaa/config';
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
@@ -30,7 +30,7 @@ export interface MdaaBaseConfigContents {
   /**
    * Nag suppressions
    */
-  readonly nag_suppressions?: MdaaNagSuppressions;
+  readonly nag_suppressions?: MdaaNagSuppressionConfigs;
 }
 
 /**
@@ -57,7 +57,7 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
   private readonly stack: Stack;
 
   public readonly serviceCatalogConfig?: MdaaServiceCatalogProductConfig;
-  public readonly nagSuppressions?: MdaaNagSuppressions;
+  public readonly nagSuppressions?: MdaaNagSuppressionConfigs;
   /**
    * Initializes IAM Role Resolver and performs standard config transformations.
    * @param stack

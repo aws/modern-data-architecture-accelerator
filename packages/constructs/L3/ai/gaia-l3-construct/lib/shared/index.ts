@@ -12,7 +12,7 @@ import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { Effect, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { MdaaLambdaFunction } from '@aws-mdaa/lambda-constructs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import * as iam from 'aws-cdk-lib/aws-iam';
 
 const pythonRuntime = lambda.Runtime.PYTHON_3_11;
@@ -143,7 +143,7 @@ export class Shared extends Construct {
       vpcSubnets: { subnets: this.appSubnets },
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       secretRotationLambda,
       [
         {
@@ -199,7 +199,7 @@ export class Shared extends Construct {
       stringValue: xOriginVerifySecret.secretArn,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       secretRotationLambdaRole,
       [
         {
@@ -227,7 +227,7 @@ export class Shared extends Construct {
       secretObjectValue: {},
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       apiKeysSecret,
       [
         {

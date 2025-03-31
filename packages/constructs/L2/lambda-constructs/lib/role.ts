@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaRole, MdaaRoleProps, IMdaaRole } from '@aws-mdaa/iam-constructs';
 import { Duration, Stack } from 'aws-cdk-lib';
 import { IManagedPolicy, PolicyDocument, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface MdaaLambdaRoleProps extends MdaaConstructProps {
@@ -140,7 +140,7 @@ export class MdaaLambdaRole extends MdaaRole {
       actions: ['logs:CreateLogGroup'],
     });
     this.addToPolicy(logGroupStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this,
       [
         {

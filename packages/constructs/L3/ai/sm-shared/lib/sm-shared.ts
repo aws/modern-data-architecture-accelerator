@@ -7,7 +7,7 @@ import { Fn, Stack } from 'aws-cdk-lib';
 import { IRole } from 'aws-cdk-lib/aws-iam';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface LifecycleScriptProps {
@@ -78,7 +78,7 @@ export class LifeCycleConfigHelper {
 
     // BucketDeployment adds an inline policy to asset deployment role
     // permitting the copy of assets from cdk depoy bucket to destination bucket.
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       assetDeployment.assetDeploymentRole,
       [
         { id: 'AwsSolutions-IAM5', reason: 'Inline policy used only for deployment.' },
@@ -93,7 +93,7 @@ export class LifeCycleConfigHelper {
     // from CDK Deployment bucket to destination bucket.
     Stack.of(assetDeployment.scope).node.children.forEach(child => {
       if (child.node.id.includes('Custom::CDKBucketDeployment')) {
-        NagSuppressions.addResourceSuppressions(
+        MdaaNagSuppressions.addCodeResourceSuppressions(
           child,
           [
             { id: 'AwsSolutions-L1', reason: 'Function is used only as custom resource during CDK deployment.' },

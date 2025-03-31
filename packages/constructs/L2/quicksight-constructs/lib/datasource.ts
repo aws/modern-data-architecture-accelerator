@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { CfnDataSource, CfnDataSourceProps } from 'aws-cdk-lib/aws-quicksight';
 import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';

@@ -18,7 +18,7 @@ import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Provider } from 'aws-cdk-lib/custom-resources';
 import { AwsCliLayer } from 'aws-cdk-lib/lambda-layer-awscli';
 
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import * as path from 'path';
 
@@ -134,7 +134,7 @@ export class CompliantKubectlProvider extends NestedStack implements IKubectlPro
 
     this.serviceToken = provider.serviceToken;
     this.roleArn = cluster.kubectlRole.roleArn;
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this,
       [
         {

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
-import { NagPackSuppression, NagSuppressions } from 'cdk-nag';
+import { NagPackSuppression } from 'cdk-nag';
 import { Construct } from 'constructs';
 import {
   AuroraMysqlEngineVersion,
@@ -254,9 +254,9 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
         scope,
       );
     }
-    NagSuppressions.addResourceSuppressions(this, suppressions);
+    MdaaNagSuppressions.addCodeResourceSuppressions(this, suppressions);
     // Children specific nag suppressions to avoid bloating template:
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this,
       [
         {

@@ -28,7 +28,7 @@ import {
   Transition,
 } from 'aws-cdk-lib/aws-s3';
 import { Provider } from 'aws-cdk-lib/custom-resources';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface InventoryDefinition {
@@ -308,7 +308,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       naming: naming,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       bucket,
       [
         { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
@@ -580,7 +580,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       createParams: false,
       createOutputs: false,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       datalakeFolderLambda,
       [
         {
@@ -642,7 +642,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       role: folderCrProviderRole,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       folderCrProviderRole,
       [
         {
@@ -660,7 +660,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       ],
       true,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       datalakeFolderProvider,
       [
         { id: 'AwsSolutions-L1', reason: 'Lambda function Runtime set by CDK Provider Framework' },

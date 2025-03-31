@@ -4,7 +4,7 @@
  */
 
 import { MdaaLogGroup, MdaaLogGroupProps } from '@aws-mdaa/cloudwatch-constructs';
-import { MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
@@ -41,7 +41,7 @@ import {
   CfnWebACLAssociation,
   CfnWebACLProps,
 } from 'aws-cdk-lib/aws-wafv2';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface M2MApiProps {
@@ -198,7 +198,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
       accountRecovery: AccountRecovery.NONE,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       userPool,
       [
         {
@@ -290,7 +290,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
                 `),
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       postAuthLogFn,
       [
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function only logs to stdout. DLQ is not required.' },
@@ -384,7 +384,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
       reservedConcurrentExecutions: this.props.m2mApiProps.concurrencyLimit,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       s3UrlGenLambda,
       [
         {
@@ -463,7 +463,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
       },
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       restApi,
       [
         {
@@ -498,7 +498,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
         ),
       );
 
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         cloudwatchRole,
         [
           {
@@ -605,7 +605,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
       }),
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       restApiRole,
       [
         { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy is specific to this role and function.' },

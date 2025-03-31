@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { MdaaBoto3LayerVersion } from '@aws-mdaa/lambda-constructs';
 import { Duration } from 'aws-cdk-lib';

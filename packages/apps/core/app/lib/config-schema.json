@@ -93,7 +93,7 @@
             ],
             "type": "object"
         },
-        "MdaaNagSuppressions": {
+        "MdaaNagSuppressionConfigs": {
             "properties": {
                 "by_path": {
                     "items": {
@@ -206,7 +206,7 @@
     },
     "properties": {
         "nag_suppressions": {
-            "$ref": "#/definitions/MdaaNagSuppressions",
+            "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Nag suppressions"
         },
         "service_catalog_product_config": {

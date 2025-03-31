@@ -21,7 +21,7 @@ import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs'
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaSqsDeadLetterQueue, MdaaSqsQueue } from '@aws-mdaa/sqs-constructs';
 import { MdaaDDBTable } from '@aws-mdaa/ddb-constructs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { MdaaLogGroup, MdaaLogGroupProps } from '@aws-mdaa/cloudwatch-constructs';
@@ -265,7 +265,7 @@ export class WebSocketApi extends MdaaL3Construct {
       }),
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       incomingMessageHandlerFunctionRole,
       [
         {
@@ -280,7 +280,7 @@ export class WebSocketApi extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       outgoingMessageHandlerFunctionRole,
       [
         {
@@ -295,7 +295,7 @@ export class WebSocketApi extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       webSocketApi,
       [{ id: 'AwsSolutions-APIG4', reason: 'API guarded with Cognito Auth and an Authorizer lambda' }],
       true,
@@ -333,7 +333,7 @@ export class WebSocketApi extends MdaaL3Construct {
       },
       reservedConcurrentExecutions: this.props.config?.concurrency?.websocketConcurrentLambdas || 1,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       outgoingMessageHandlerFunction,
       [
         {
@@ -408,7 +408,7 @@ export class WebSocketApi extends MdaaL3Construct {
       },
       reservedConcurrentExecutions: this.props.config?.concurrency?.websocketConcurrentLambdas || 1,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       incomingMessageHandlerFunction,
       [
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
@@ -464,7 +464,7 @@ export class WebSocketApi extends MdaaL3Construct {
       },
       reservedConcurrentExecutions: this.props.config?.concurrency?.websocketConcurrentLambdas || 1,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       authorizerFunction,
       [
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
@@ -493,7 +493,7 @@ export class WebSocketApi extends MdaaL3Construct {
     );
 
     this.props.userPool.grant(authorizerFunctionRole, 'cognito-idp:GetUser');
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       authorizerFunctionRole,
       [
         { id: 'AwsSolutions-IAM5', reason: 'X-Ray actions only support wildcard.' },
@@ -570,7 +570,7 @@ export class WebSocketApi extends MdaaL3Construct {
       },
       reservedConcurrentExecutions: this.props.config?.concurrency?.websocketConcurrentLambdas || 1,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       connectionHandlerFunction,
       [
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
@@ -597,7 +597,7 @@ export class WebSocketApi extends MdaaL3Construct {
       ],
       true,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       connectionHandlerFunctionRole,
       [
         {

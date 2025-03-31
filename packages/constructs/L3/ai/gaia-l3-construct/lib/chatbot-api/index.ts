@@ -14,7 +14,7 @@ import { WebSocketApi } from './websocket-api';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaDDBTable } from '@aws-mdaa/ddb-constructs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 
 export interface ChatBotApiProps extends MdaaL3ConstructProps {
@@ -52,7 +52,7 @@ export class ChatBotApi extends MdaaL3Construct {
       createOutputs: false,
       transferAcceleration: true,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       chatFilesBucket,
       [
         { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },

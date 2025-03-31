@@ -9,8 +9,8 @@ import * as logs from 'aws-cdk-lib/aws-logs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
-import { MdaaConstructProps } from '@aws-mdaa/construct';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 
 export interface FileImportWorkflowProps extends MdaaConstructProps {
@@ -139,7 +139,7 @@ export class FileImportWorkflow extends Construct {
       }),
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       stateMachine,
       [
         {

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { ILogGroup, LogGroup, LogGroupProps, RetentionDays } from 'aws-cdk-lib/aws-logs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface MdaaLogGroupProps extends MdaaConstructProps {
@@ -61,7 +61,7 @@ export class MdaaLogGroup extends LogGroup implements IMdaaLogGroup {
     super(scope, id, MdaaLogGroup.setProps(props));
 
     if (props.retention == RetentionDays.INFINITE) {
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         this,
         [
           {

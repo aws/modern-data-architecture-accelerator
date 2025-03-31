@@ -7,7 +7,7 @@ import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Template } from 'aws-cdk-lib/assertions';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Match } from 'aws-cdk-lib/assertions';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaBucket, MdaaBucketProps } from '../lib';
 import { Arn } from 'aws-cdk-lib';
 
@@ -27,7 +27,7 @@ describe('MDAA Construct Mandatory Prop Compliance Tests', () => {
   };
 
   const testConstruct = new MdaaBucket(testApp.testStack, 'test-construct', testContstructProps);
-  NagSuppressions.addResourceSuppressions(
+  MdaaNagSuppressions.addCodeResourceSuppressions(
     testConstruct,
     [
       { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
@@ -181,7 +181,7 @@ describe('MDAA Construct Optional Prop Compliance Tests', () => {
   };
 
   const testConstruct = new MdaaBucket(testApp.testStack, 'test-construct', testContstructProps);
-  NagSuppressions.addResourceSuppressions(
+  MdaaNagSuppressions.addCodeResourceSuppressions(
     testConstruct,
     [
       { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },

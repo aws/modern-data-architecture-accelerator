@@ -22,7 +22,7 @@ import {
   Wait,
   WaitTime,
 } from 'aws-cdk-lib/aws-stepfunctions';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface StepFunctionProps {
@@ -101,7 +101,7 @@ export class StepFunctionL3Construct extends MdaaL3Construct {
 
       const logGroup = this.createLogGroup(stepfunctionDefinition);
       if (stepfunctionDefinition.suppressions) {
-        NagSuppressions.addResourceSuppressions(logGroup, stepfunctionDefinition.suppressions);
+        MdaaNagSuppressions.addConfigResourceSuppressions(logGroup, stepfunctionDefinition.suppressions);
       }
 
       const stepfunction = this.createStepFunctionFromDefinition(stepfunctionDefinition, logGroup);
@@ -205,7 +205,7 @@ export class StepFunctionL3Construct extends MdaaL3Construct {
       EventBridgeHelper.createEventBridgeRuleForTarget(this.scope, this.props.naming, target, ruleName, ruleProps);
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       stepFunction,
       [
         {

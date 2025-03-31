@@ -28,7 +28,7 @@ import {
   LayerVersion,
   Runtime,
 } from 'aws-cdk-lib/aws-lambda';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface VpcConfigProps {
@@ -314,7 +314,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     //and remove the inline policy here.
     role.node.tryRemoveChild('Policy');
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       lambdaFunction,
       [
         { id: 'NIST.800.53.R5-LambdaConcurrency', reason: 'Concurrency Limits not required.' },

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { ClusterParameterGroup, ClusterParameterGroupProps } from '@aws-cdk/aws-redshift-alpha';
 import { Construct } from 'constructs';
 

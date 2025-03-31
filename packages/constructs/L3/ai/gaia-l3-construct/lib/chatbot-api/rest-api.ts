@@ -16,7 +16,7 @@ import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs'
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { Effect, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaLogGroup, MdaaLogGroupProps } from '@aws-mdaa/cloudwatch-constructs';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import {
@@ -74,7 +74,7 @@ export class RestApi extends MdaaL3Construct {
     const chatBotApi = this.createChatbotApi();
 
     if (this.props.config?.skipApiGatewayDefaultWaf) {
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         chatBotApi.deploymentStage.restApi,
         [
           {
@@ -117,7 +117,7 @@ export class RestApi extends MdaaL3Construct {
       },
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       apiHandlerRole,
       [
         { id: 'AwsSolutions-IAM4', reason: 'Standard Lambda Execution Managed Policy' },
@@ -133,7 +133,7 @@ export class RestApi extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       chatBotApi,
       [
         {
@@ -272,7 +272,7 @@ export class RestApi extends MdaaL3Construct {
         ),
       );
 
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         cloudwatchRole,
         [
           {
@@ -602,7 +602,7 @@ export class RestApi extends MdaaL3Construct {
       });
     }
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       apiHandler,
       [
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },

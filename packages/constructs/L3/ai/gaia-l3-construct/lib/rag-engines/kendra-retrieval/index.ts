@@ -10,7 +10,7 @@ import * as kendra from 'aws-cdk-lib/aws-kendra';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 
 export interface KendraRetrievalProps extends MdaaL3ConstructProps {
@@ -51,7 +51,7 @@ export class KendraRetrieval extends MdaaL3Construct {
         });
       }
 
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         dataBucket,
         [
           { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
@@ -156,7 +156,7 @@ export class KendraRetrieval extends MdaaL3Construct {
         }),
       );
 
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         kendraRole,
         [
           {

@@ -50,7 +50,7 @@ import { ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
 import { readFileSync } from 'fs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Duration } from 'aws-cdk-lib';
 import { MdaaConfigRefValueTransformer, MdaaConfigRefValueTransformerProps } from '@aws-mdaa/config';
 
@@ -858,7 +858,7 @@ export class Ec2L3Construct extends MdaaL3Construct {
         naming: this.props.naming,
       };
       this.instances[instanceName] = new MdaaEC2Instance(this, instanceName + 'instance', createInstanceProps);
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         this.instances[instanceName].role,
         [
           {

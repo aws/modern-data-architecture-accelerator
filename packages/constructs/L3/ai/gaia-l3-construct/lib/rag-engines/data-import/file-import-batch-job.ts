@@ -11,7 +11,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import * as path from 'node:path';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
@@ -155,7 +155,7 @@ export class FileImportBatchJob extends MdaaL3Construct {
       }
     }
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       computeEnvironment,
       [
         {
@@ -166,7 +166,7 @@ export class FileImportBatchJob extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       fileImportJobRole,
       [
         {
@@ -197,7 +197,7 @@ export class FileImportBatchJob extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       fileImportContainer,
       [
         {
@@ -212,7 +212,7 @@ export class FileImportBatchJob extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       fileImportJob,
       [
         {

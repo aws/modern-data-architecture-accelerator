@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import {
   Domain,
@@ -18,7 +18,7 @@ import {
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
 
@@ -122,7 +122,7 @@ export class MdaaOpensearchDomain extends Domain {
       if (child.node.id.includes('ESLogGroupPolicy')) {
         child.node.children.forEach(child2 => {
           if (child2.node.id.includes('CustomResourcePolicy')) {
-            NagSuppressions.addResourceSuppressions(child2, [
+            MdaaNagSuppressions.addCodeResourceSuppressions(child2, [
               {
                 id: 'AwsSolutions-IAM5',
                 reason:
@@ -146,7 +146,7 @@ export class MdaaOpensearchDomain extends Domain {
       }
 
       if (child.node.id.startsWith('Resource')) {
-        NagSuppressions.addResourceSuppressions(child, [
+        MdaaNagSuppressions.addCodeResourceSuppressions(child, [
           {
             id: 'AwsSolutions-OS3',
             reason:
@@ -163,7 +163,7 @@ export class MdaaOpensearchDomain extends Domain {
       if (child.node.id.startsWith('AccessPolicy')) {
         child.node.children.forEach(child2 => {
           if (child2.node.id.includes('CustomResourcePolicy')) {
-            NagSuppressions.addResourceSuppressions(child2, [
+            MdaaNagSuppressions.addCodeResourceSuppressions(child2, [
               {
                 id: 'NIST.800.53.R5-IAMNoInlinePolicy',
                 reason: 'Role is for Custom Resource Provider. Inline policy automatically added.',
@@ -184,7 +184,7 @@ export class MdaaOpensearchDomain extends Domain {
 
     this.stack.node.children.forEach(child => {
       if (child.node.id.startsWith('AWS')) {
-        NagSuppressions.addResourceSuppressions(child, [
+        MdaaNagSuppressions.addCodeResourceSuppressions(child, [
           { id: 'AwsSolutions-L1', reason: 'Lambda function Runtime set by CDK Provider Framework' },
           {
             id: 'NIST.800.53.R5-LambdaDLQ',
@@ -228,7 +228,7 @@ export class MdaaOpensearchDomain extends Domain {
         ]);
         child.node.children.forEach(child2 => {
           if (child2.node.id.includes('ServiceRole')) {
-            NagSuppressions.addResourceSuppressions(child2, [
+            MdaaNagSuppressions.addCodeResourceSuppressions(child2, [
               {
                 id: 'AwsSolutions-IAM4',
                 reason:
@@ -238,7 +238,7 @@ export class MdaaOpensearchDomain extends Domain {
           }
           child2.node.children.forEach(child3 => {
             if (child3.node.id.includes('DefaultPolicy')) {
-              NagSuppressions.addResourceSuppressions(child3, [
+              MdaaNagSuppressions.addCodeResourceSuppressions(child3, [
                 {
                   id: 'AwsSolutions-IAM5',
                   reason: 'Role is for Custom Resource Provider Lambda Function. KMS policy added is least privilege.',

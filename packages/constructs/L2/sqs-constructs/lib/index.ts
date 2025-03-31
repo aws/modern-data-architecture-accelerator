@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -15,7 +15,7 @@ import {
   QueueEncryption,
   QueueProps,
 } from 'aws-cdk-lib/aws-sqs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
@@ -240,6 +240,10 @@ export class MdaaSqsQueue extends Queue {
 export class MdaaSqsDeadLetterQueue extends MdaaSqsQueue {
   constructor(scope: Construct, id: string, props: MdaaSqsQueueProps) {
     super(scope, id, props);
-    NagSuppressions.addResourceSuppressions(this, [{ id: 'AwsSolutions-SQS3', reason: 'Queue is a DLQ.' }], true);
+    MdaaNagSuppressions.addCodeResourceSuppressions(
+      this,
+      [{ id: 'AwsSolutions-SQS3', reason: 'Queue is a DLQ.' }],
+      true,
+    );
   }
 }

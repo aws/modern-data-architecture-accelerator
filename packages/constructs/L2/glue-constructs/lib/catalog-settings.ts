@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { CfnDataCatalogEncryptionSettings, CfnDataCatalogEncryptionSettingsProps } from 'aws-cdk-lib/aws-glue';
 import { Construct } from 'constructs';

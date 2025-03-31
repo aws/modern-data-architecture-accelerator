@@ -54,7 +54,7 @@ import { CfnPrincipalPermissions, CfnResource } from 'aws-cdk-lib/aws-lakeformat
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { ConfigurationElement } from '@aws-mdaa/config';
 
@@ -499,7 +499,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       ],
     });
 
-    NagSuppressions.addResourceSuppressions(manageAccessRole, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(manageAccessRole, [
       {
         id: 'AwsSolutions-IAM4',
         reason: 'Permissions are restricted to one DataZone Domain and to one AWS Account.',
@@ -753,7 +753,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       ],
     });
     userPolicy.addStatements(accessGlueResourceStatement);
-    NagSuppressions.addResourceSuppressions(userPolicy, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(userPolicy, [
       {
         id: 'AwsSolutions-IAM5',
         reason: 'Fine-grained permissions enforced via LakeFormation.',
@@ -1247,7 +1247,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       projectBucket,
       [
         {

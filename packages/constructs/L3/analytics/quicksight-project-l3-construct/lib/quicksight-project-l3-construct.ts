@@ -9,7 +9,7 @@ import { Effect, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { CustomResource, Duration } from 'aws-cdk-lib';
 import { Provider } from 'aws-cdk-lib/custom-resources';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { MdaaQuickSightDataSource } from '@aws-mdaa/quicksight-constructs';
 import { ConfigurationElement } from '@aws-mdaa/config';
@@ -320,7 +320,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
     });
     qsFoldersCrManagedPolicy.addStatements(qsFoldersPolicyStatement2);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       qsFoldersCrManagedPolicy,
       [
         {
@@ -345,7 +345,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
       role: qsFoldersCrRole,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       quicksightFoldersCrLambda,
       [
         {
@@ -404,7 +404,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
       onEventHandler: quicksightFoldersCrLambda,
       role: qsFoldersCrProviderRole,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       qsFoldersCrProviderRole,
       [
         {
@@ -423,7 +423,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       qsFoldersCrProvider,
       [
         {
