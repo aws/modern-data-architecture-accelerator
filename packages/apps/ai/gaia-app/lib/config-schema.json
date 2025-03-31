@@ -531,7 +531,7 @@
             ],
             "type": "object"
         },
-        "MdaaNagSuppressions": {
+        "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
             "properties": {
                 "by_path": {
@@ -867,7 +867,7 @@
             "$ref": "#/definitions/GAIAProps"
         },
         "nag_suppressions": {
-            "$ref": "#/definitions/MdaaNagSuppressions",
+            "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Nag suppressions"
         },
         "service_catalog_product_config": {

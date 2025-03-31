@@ -36,6 +36,7 @@
     "@aws-mdaa/l3-construct": "^0.45.0",
     "@aws-mdaa/lambda-constructs": "^0.45.0",
     "@aws-mdaa/naming": "^0.45.0",
+    "@aws-mdaa/construct": "^0.45.0",
     "ajv": "8.17.1",
     "aws-cdk-lib": "2.181.1",
     "cdk-nag": "2.35.25",

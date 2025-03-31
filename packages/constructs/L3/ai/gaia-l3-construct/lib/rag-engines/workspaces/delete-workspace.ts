@@ -16,7 +16,7 @@ import { Effect } from 'aws-cdk-lib/aws-iam';
 import { MdaaSqsDeadLetterQueue } from '@aws-mdaa/sqs-constructs';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
 import * as logs from 'aws-cdk-lib/aws-logs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 
@@ -92,7 +92,7 @@ export class DeleteWorkspace extends MdaaL3Construct {
         DEFAULT_KENDRA_S3_DATA_SOURCE_BUCKET_NAME: props.kendraRetrieval?.kendraS3DataSourceBucket?.bucketName ?? '',
       },
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       deleteFunction,
       [
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },
@@ -198,7 +198,7 @@ export class DeleteWorkspace extends MdaaL3Construct {
 
     props.encryptionKey.grantEncryptDecrypt(stateMachine);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       deleteFunctionRole,
       [
         {
@@ -213,7 +213,7 @@ export class DeleteWorkspace extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       stateMachine,
       [
         {

@@ -41,9 +41,9 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
-import { NagSuppressions } from 'cdk-nag';
 import { Construct, IConstruct } from 'constructs';
 import * as configSchema from './config-schema.json';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 
 export interface ValidateStageCommands {
   readonly install?: string[];
@@ -134,7 +134,7 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
       encryptionKey: kmsKey,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       devOpsBucket,
       [
         {
@@ -243,7 +243,7 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
       }),
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       codeBuildActionPolicy,
       [
         { id: 'AwsSolutions-IAM5', reason: 'Permissions are scoped least privilege for deployment time.' },
@@ -296,7 +296,7 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
       assumeActionRoleGrant.applyBefore(pipeline);
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       pipelineRole,
       [
         { id: 'AwsSolutions-IAM5', reason: 'Permissions are scoped least privilege for deployment time.' },
@@ -306,7 +306,7 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
       ],
       true,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       codeBuildActionRole,
       [
         { id: 'AwsSolutions-IAM4', reason: 'AWSCloudFormationReadOnlyAccess is Read Only Access' },
@@ -317,7 +317,7 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
       ],
       true,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       codeCommitActionRole,
       [
         { id: 'AwsSolutions-IAM5', reason: 'Permissions are scoped least privilege for deployment time.' },
@@ -327,7 +327,7 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
       ],
       true,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       codeCommitEventRole,
       [
         { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' },
@@ -408,7 +408,7 @@ export class MdaaPipeline extends Pipeline {
       ],
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       codeBuildActionPolicy,
       [
         { id: 'NIST.800.53.R5-IAMNoInlinePolicy', reason: 'Inline policy appropriate.' },
@@ -614,7 +614,7 @@ export class MdaaPipeline extends Pipeline {
 class FixCdkBuildProject implements IAspect {
   public visit(construct: IConstruct): void {
     if (construct.node.id.startsWith('codebuild-project')) {
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         construct,
         [
           { id: 'HIPAA.Security-CodeBuildProjectSourceRepoUrl', reason: 'Pipeline source is CodeCommit.' },

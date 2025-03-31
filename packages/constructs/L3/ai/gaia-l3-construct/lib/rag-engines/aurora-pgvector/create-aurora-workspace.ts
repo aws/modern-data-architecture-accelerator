@@ -7,7 +7,7 @@ import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import * as path from 'path';
 import { Shared } from '../../shared';
@@ -76,7 +76,7 @@ export class CreateAuroraWorkspace extends MdaaL3Construct {
         WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME: props.ragDynamoDBTables.workspacesByObjectTypeIndexName,
       },
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       createFunction,
       [
         {
@@ -120,7 +120,7 @@ export class CreateAuroraWorkspace extends MdaaL3Construct {
     props.dbCluster.connections.allowDefaultPortFrom(createFunction);
     props.ragDynamoDBTables.workspacesTable.grantReadWriteData(createFunctionRole);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       createFunctionRole,
       [
         { id: 'AwsSolutions-IAM4', reason: 'Standard Lambda Execution Managed Policy' },
@@ -228,7 +228,7 @@ export class CreateAuroraWorkspace extends MdaaL3Construct {
       },
     });
     props.encryptionKey.grantEncryptDecrypt(stateMachine.role);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       stateMachine,
       [
         {

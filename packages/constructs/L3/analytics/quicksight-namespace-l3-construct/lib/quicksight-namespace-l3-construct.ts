@@ -11,7 +11,7 @@ import { Rule } from 'aws-cdk-lib/aws-events';
 import { Effect, FederatedPrincipal, IRole, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Function as LambdaFunction, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Provider } from 'aws-cdk-lib/custom-resources';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export type QSUserType = 'READER' | 'AUTHOR';
@@ -202,7 +202,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
       actions: ['quicksight:DeleteUser'],
     });
     managedPolicy.addStatements(deleteUserStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       managedPolicy,
       [
         {
@@ -244,7 +244,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
       role: namespaceLambdaUserRole,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       quicksightNamespaceUserLambda,
       [
         { id: 'NIST.800.53.R5-LambdaInsideVPC', reason: 'Function will interact only with QuickSight APIs.' },
@@ -317,7 +317,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
     });
     namespaceCrManagedPolicy.addStatements(dsPolicyStatement2);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       namespaceCrManagedPolicy,
       [
         {
@@ -349,7 +349,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
       role: namespaceCrRole,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       quicksightNamespaceCrLambda,
       [
         {
@@ -408,7 +408,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
       onEventHandler: quicksightNamespaceCrLambda,
       role: namespaceCrProviderRole,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       namespaceCrProviderRole,
       [
         {
@@ -427,7 +427,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       namespaceCrProvider,
       [
         { id: 'AwsSolutions-L1', reason: 'Lambda function Runtime set by CDK Provider Framework' },
@@ -498,7 +498,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
     });
     managedPolicy.addStatements(accessQuickSightCreateReaderStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       managedPolicy,
       [
         {
@@ -572,7 +572,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
       resources: ['*'],
     });
     managedPolicy.addStatements(accessLakeFormationStatement);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       managedPolicy,
       [
         {
@@ -690,7 +690,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
     });
     managedPolicy.addStatements(accessQuickSightCreateUserStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       managedPolicy,
       [
         {
@@ -740,7 +740,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
     });
     gluePolicy.addStatements(accessGlueStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       gluePolicy,
       [
         {

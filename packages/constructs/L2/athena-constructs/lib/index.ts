@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { IMdaaBucket } from '@aws-mdaa/s3-constructs';
 import { IResolvable, CfnTag } from 'aws-cdk-lib';

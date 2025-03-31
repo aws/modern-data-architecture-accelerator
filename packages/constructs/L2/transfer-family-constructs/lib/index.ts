@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaRole } from '@aws-mdaa/iam-constructs';
 import { CfnTag, IResolvable } from 'aws-cdk-lib';
 import { CfnServer, CfnServerProps } from 'aws-cdk-lib/aws-transfer';

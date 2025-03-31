@@ -6,7 +6,7 @@
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Template } from 'aws-cdk-lib/assertions';
 import { MdaaBoto3LayerVersion } from '../lib/boto3-layer';
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 
 describe('MDAA Construct Compliance Tests', () => {
   const testApp = new MdaaTestApp();

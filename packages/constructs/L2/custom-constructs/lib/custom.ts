@@ -3,16 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { CustomResource, CustomResourceProps, Duration, Stack } from 'aws-cdk-lib';
 import { Policy, PolicyDocument, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
 import { Code, ILayerVersion, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Provider } from 'aws-cdk-lib/custom-resources';
-import { NagPackSuppression, NagSuppressions } from 'cdk-nag';
+
 import { Construct } from 'constructs';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
 import { ConfigurationElement } from '@aws-mdaa/config';
+import { NagPackSuppression } from 'cdk-nag';
+
 // nosemgrep
 const _ = require('lodash');
 
@@ -64,7 +66,7 @@ export class MdaaCustomResource extends CustomResource {
       handlerPolicy.addStatements(...props.handlerRolePolicyStatements);
     } else {
       handlerRole.attachInlinePolicy(handlerPolicy);
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         handlerPolicy,
         [
           {
@@ -105,7 +107,7 @@ export class MdaaCustomResource extends CustomResource {
 
     this.handlerFunctionPlaceHolder.node.addDependency(handlerPolicy);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this.handlerFunctionPlaceHolder,
       [
         {
@@ -156,7 +158,7 @@ export class MdaaCustomResource extends CustomResource {
           createOutputs: false,
         });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       providerRole,
       [
         {
@@ -184,7 +186,7 @@ export class MdaaCustomResource extends CustomResource {
           providerFunctionName: providerFunctionName,
         });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       provider,
       [
         {

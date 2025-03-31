@@ -4,7 +4,7 @@ import { Construct } from 'constructs';
 
 import { SageMakerModelProps, ModelPackageConfig } from './types';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 
 export function deployPackageModel(scope: Construct, props: SageMakerModelProps, modelConfig: ModelPackageConfig) {
   const { region, encryptionKey } = props;
@@ -56,7 +56,7 @@ export function deployPackageModel(scope: Construct, props: SageMakerModelProps,
   });
 
   if (encryptionKey === undefined) {
-    NagSuppressions.addResourceSuppressions(endpointConfig, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(endpointConfig, [
       {
         id: 'NIST.800.53.R5-SageMakerEndpointConfigurationKMSKeyConfigured',
         reason:
@@ -84,7 +84,7 @@ export function deployPackageModel(scope: Construct, props: SageMakerModelProps,
 
   endpoint.addDependency(endpointConfig);
 
-  NagSuppressions.addResourceSuppressions(
+  MdaaNagSuppressions.addCodeResourceSuppressions(
     executionRole,
     [{ id: 'AwsSolutions-IAM4', reason: 'Role only used during deployment' }],
     true,

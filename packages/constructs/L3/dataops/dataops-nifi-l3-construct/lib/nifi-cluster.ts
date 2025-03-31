@@ -3,12 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  MdaaSecurityGroup,
-  MdaaSecurityGroupProps,
-  MdaaSecurityGroupRuleProps,
-  NagSuppressionProps,
-} from '@aws-mdaa/ec2-constructs';
+import { MdaaSecurityGroup, MdaaSecurityGroupProps, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
 import { KubernetesCmd, KubernetesCmdProps, MdaaEKSCluster } from '@aws-mdaa/eks-constructs';
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import { CfnJson } from 'aws-cdk-lib';
@@ -28,7 +23,7 @@ import {
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
-import { NagSuppressions } from 'cdk-nag';
+import { NagPackSuppression } from 'cdk-nag';
 import * as cdk8s from 'cdk8s';
 import { Construct } from 'constructs';
 import { NifiClusterChart, NodeResources } from './cdk8s/nifi-cluster-chart';
@@ -39,6 +34,7 @@ import {
   NifiNetworkOptions,
   NodeSize,
 } from './nifi-options';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 
 export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthorizationOptions, NifiNetworkOptions {
   readonly eksCluster: MdaaEKSCluster;
@@ -187,7 +183,7 @@ export class NifiCluster extends Construct {
     this.props.clusterRoleAwsManagedPolicies?.forEach(managedPolicySpec => {
       const managedPolicy = ManagedPolicy.fromAwsManagedPolicyName(managedPolicySpec.policyName);
       clusterServiceRole.addManagedPolicy(managedPolicy);
-      NagSuppressions.addResourceSuppressions(clusterServiceRole, [
+      MdaaNagSuppressions.addCodeResourceSuppressions(clusterServiceRole, [
         {
           id: 'AwsSolutions-IAM4',
           reason: managedPolicySpec.suppressionReason,
@@ -207,7 +203,7 @@ export class NifiCluster extends Construct {
     const nodeSize = NifiCluster.nodeSizeMap[this.props.nodeSize || 'SMALL'];
 
     this.props.nifiManagerImage.repository.grantPull(props.fargateProfile.podExecutionRole);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       props.fargateProfile.podExecutionRole,
       [
         { id: 'AwsSolutions-IAM5', reason: 'ecr:GetAuthorizationToken does not accept a resource.' },
@@ -410,7 +406,7 @@ export class NifiCluster extends Construct {
       statements: efsStatements,
     });
 
-    NagSuppressions.addResourceSuppressions(efsManagedPolicy, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(efsManagedPolicy, [
       {
         id: 'AwsSolutions-IAM5',
         reason: 'Access Point Names not known at deployment time. Permissions restricted by condition.',
@@ -431,7 +427,7 @@ export class NifiCluster extends Construct {
       encrypted: true,
       kmsKey: createEfsPvsProps.kmsKey,
     });
-    NagSuppressions.addResourceSuppressions(efs, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(efs, [
       {
         id: 'NIST.800.53.R5-EFSInBackupPlan',
         reason: 'MDAA does not enforce NIST.800.53.R5-EFSInBackupPlan on EFS volume.',
@@ -481,7 +477,7 @@ export class NifiCluster extends Construct {
       },
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       nifiSensitivePropSecret,
       [
         { id: 'AwsSolutions-SMG4', reason: 'Nifi does not support rotation of this secret' },
@@ -532,7 +528,7 @@ export class NifiCluster extends Construct {
     namespaceName: string,
     eksCluster: MdaaEKSCluster,
     statements?: PolicyStatement[],
-    policyNagSuppressions?: NagSuppressionProps[],
+    policyMdaaNagSuppressions?: NagPackSuppression[],
   ): IRole {
     const serviceRole = new Role(scope, `${id}-service-role`, {
       roleName: roleName,
@@ -552,8 +548,8 @@ export class NifiCluster extends Construct {
         statements: statements,
       });
 
-      if (policyNagSuppressions) {
-        NagSuppressions.addResourceSuppressions(policy, policyNagSuppressions, true);
+      if (policyMdaaNagSuppressions) {
+        MdaaNagSuppressions.addCodeResourceSuppressions(policy, policyMdaaNagSuppressions, true);
       }
     }
 

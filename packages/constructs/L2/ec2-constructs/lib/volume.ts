@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { RemovalPolicy, Size } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { Volume, VolumeProps, EbsDeviceVolumeType } from 'aws-cdk-lib/aws-ec2';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 
 /**
  * Properties for creating a Compliance EC2 instance
@@ -71,7 +71,7 @@ export class MdaaEC2Volume extends Volume {
   constructor(scope: Construct, id: string, props: MdaaEC2VolumeProps) {
     super(scope, id, MdaaEC2Volume.setProps(props));
 
-    NagSuppressions.addResourceSuppressions(this, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(this, [
       {
         id: 'NIST.800.53.R5-EC2EBSInBackupPlan',
         reason: 'MDAA does not enforce NIST.800.53.R5-EC2EBSInBackupPlan on EBS volume.',

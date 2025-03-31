@@ -13,7 +13,7 @@ import { Shared } from '../../shared';
 import { SystemConfig } from '../../shared/types';
 import { RagDynamoDBTables } from '../rag-dynamodb-tables';
 import { CreateAuroraWorkspace } from './create-aurora-workspace';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaSecurityGroup } from '@aws-mdaa/ec2-constructs';
 
@@ -38,7 +38,7 @@ export class AuroraPgVector extends MdaaL3Construct {
       managedPolicies: [ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonRDSEnhancedMonitoringRole')],
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       monitoringRole,
       [
         {
@@ -123,7 +123,7 @@ export class AuroraPgVector extends MdaaL3Construct {
       resourceType: 'DatabaseSetupFunction',
       runtime: props.shared.pythonRuntime,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       dbSetupResource,
       [
         { id: 'AwsSolutions-L1', reason: 'Only run during deployment.' },

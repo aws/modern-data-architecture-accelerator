@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { CfnNotebookInstance, CfnNotebookInstanceProps } from 'aws-cdk-lib/aws-sagemaker';
 import { Construct } from 'constructs';
 import { IResolvable } from 'aws-cdk-lib';

@@ -25,7 +25,7 @@ import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 
 import { CfnDomain, CfnUserProfile } from 'aws-cdk-lib/aws-sagemaker';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 
 import { Construct } from 'constructs';
 
@@ -507,7 +507,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
     });
     basicExecutionPolicy.addStatements(studioCloudwatchStreamStatement);
 
-    NagSuppressions.addResourceSuppressions(basicExecutionPolicy, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(basicExecutionPolicy, [
       {
         id: 'AwsSolutions-IAM5',
         reason:
@@ -626,7 +626,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       domainBucket,
       [
         { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },

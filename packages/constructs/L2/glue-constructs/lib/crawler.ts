@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { IResolvable } from 'aws-cdk-lib';
 import { CfnCrawler, CfnCrawlerProps } from 'aws-cdk-lib/aws-glue';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { TagElement } from '@aws-mdaa/config';
 
@@ -108,7 +108,7 @@ export class MdaaCfnCrawler extends CfnCrawler {
   }
   constructor(scope: Construct, id: string, props: MdaaCfnCrawlerProps) {
     super(scope, id, MdaaCfnCrawler.setProps(props));
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this,
       [{ id: 'AwsSolutions-GL1', reason: 'Log encryption configured via SecurityConfiguration' }],
       true,

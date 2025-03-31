@@ -14,7 +14,7 @@ import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, ServiceP
 import { Code, LayerVersion, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { CfnVPCConnection, CfnVPCConnectionProps } from 'aws-cdk-lib/aws-quicksight';
 import { Provider } from 'aws-cdk-lib/custom-resources';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface AccountWithNameProps extends AccountProps {
@@ -230,7 +230,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
     });
     accountCrManagedPolicy.addStatements(accountPolicyStatement3);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       accountCrManagedPolicy,
       [
         {
@@ -268,7 +268,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
       layers: [this.boto3Layer],
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       accountCrLambda,
       [
         {
@@ -327,7 +327,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
       onEventHandler: accountCrLambda,
       role: accountCrProviderRole,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       accountCrProviderRole,
       [
         {
@@ -346,7 +346,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       accountCrProvider,
       [
         {
@@ -553,7 +553,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
     });
     quickSightServiceManagedPolicy.addStatements(vpcCreateStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       quickSightServiceManagedPolicy,
       [
         {

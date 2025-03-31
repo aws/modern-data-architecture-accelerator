@@ -402,7 +402,7 @@ export interface MdaaCustomNaming {
   readonly naming_props?: ConfigurationElement;
 }
 
-export interface MdaaNagSuppressions {
+export interface MdaaNagSuppressionConfigs {
   readonly by_path: MdaaNagSuppressionByPath[];
 }
 

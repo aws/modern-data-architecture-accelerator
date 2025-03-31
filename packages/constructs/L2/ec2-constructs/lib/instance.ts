@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaParamAndOutput, MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaRole } from '@aws-mdaa/iam-constructs';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -25,7 +25,7 @@ import {
   LaunchTemplate,
 } from 'aws-cdk-lib/aws-ec2';
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
@@ -239,7 +239,7 @@ export class MdaaEC2Instance extends Instance {
 
     new MdaaCustomResource(this, 'volume-check-cr', crProps);
 
-    NagSuppressions.addResourceSuppressions(this, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(this, [
       {
         id: 'AwsSolutions-EC29',
         reason: 'Remediated through property override.',

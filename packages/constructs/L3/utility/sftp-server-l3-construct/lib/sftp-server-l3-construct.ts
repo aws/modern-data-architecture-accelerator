@@ -10,7 +10,7 @@ import { MdaaSFTPServer } from '@aws-mdaa/transfer-family-constructs';
 import { CfnSecurityGroup, CfnEIP } from 'aws-cdk-lib/aws-ec2';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { CfnServer } from 'aws-cdk-lib/aws-transfer';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface ServerProps {
@@ -103,7 +103,7 @@ export class SftpServerL3Construct extends MdaaL3Construct {
 
     loggingRole.addToPolicy(cloudwatchPolicyStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       loggingRole,
       [
         {

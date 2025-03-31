@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';

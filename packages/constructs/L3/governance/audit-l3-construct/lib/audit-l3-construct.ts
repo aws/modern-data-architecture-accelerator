@@ -11,7 +11,7 @@ import { RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
 import { InventoryHelper } from '@aws-mdaa/s3-inventory-helper';
 import { Database } from '@aws-cdk/aws-glue-alpha';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 
@@ -139,7 +139,7 @@ export class AuditL3Construct extends MdaaL3Construct {
       auditBucket.addToResourcePolicy(inventoryStatement);
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       auditBucket,
       [
         {

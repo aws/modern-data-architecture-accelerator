@@ -37,7 +37,7 @@ import { CfnSecret, ISecret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { ConfigurationElement } from '@aws-mdaa/config';
 
@@ -332,7 +332,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
     enforceSslStatement.addAnyPrincipal();
     topic.addToResourcePolicy(enforceSslStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       topic,
       [
         {
@@ -517,7 +517,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
     });
 
     if (!loggingBucket) {
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         cluster,
         [
           {
@@ -600,7 +600,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
 
       this.scope.node.children.forEach(child => {
         if (child.node.id.startsWith('Query Redshift Database') || child.node.id.startsWith('redshiftdbserviceuser-')) {
-          NagSuppressions.addResourceSuppressions(
+          MdaaNagSuppressions.addCodeResourceSuppressions(
             child,
             [
               { id: 'AwsSolutions-IAM4', reason: 'Role is for Custom Resource Provider.' },
@@ -754,7 +754,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
     );
     redshiftPolicy.addStatements(joinGroupStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       redshiftPolicy,
       [{ id: 'AwsSolutions-IAM5', reason: 'Wildcard is for group names dynamically generated via SAML federation.' }],
       true,
@@ -780,7 +780,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
       additionalKmsKeyArns: this.props.additionalBucketKmsKeyArns,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       warehouseBucket,
       [
         {
@@ -846,7 +846,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       enforceSSL: true,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       loggingBucket,
       [
         { id: 'AwsSolutions-S1', reason: 'Server access logs do not support KMS on targets.' },

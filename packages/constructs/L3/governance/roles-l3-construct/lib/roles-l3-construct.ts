@@ -23,7 +23,7 @@ import {
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { resolve } from 'path';
 import { parse } from 'yaml';
@@ -228,7 +228,7 @@ export class RolesL3Construct extends MdaaL3Construct {
       });
       generatedPolicies[policyProps.name] = policy;
       if (policyProps.suppressions) {
-        NagSuppressions.addResourceSuppressions(policy, policyProps.suppressions, true);
+        MdaaNagSuppressions.addConfigResourceSuppressions(policy, policyProps.suppressions, true);
       }
     });
     return generatedPolicies;
@@ -274,7 +274,7 @@ export class RolesL3Construct extends MdaaL3Construct {
 
         // Add Suppression
         if (managedPolicyProps.suppressions) {
-          NagSuppressions.addResourceSuppressions(mdaaPolicy, managedPolicyProps.suppressions, true);
+          MdaaNagSuppressions.addCodeResourceSuppressions(mdaaPolicy, managedPolicyProps.suppressions, true);
         }
         mdaaGeneratedPolicies[name] = mdaaPolicy;
       }
@@ -348,7 +348,7 @@ export class RolesL3Construct extends MdaaL3Construct {
       }
 
       if (generateRole.suppressions) {
-        NagSuppressions.addResourceSuppressions(role, generateRole.suppressions, true);
+        MdaaNagSuppressions.addConfigResourceSuppressions(role, generateRole.suppressions, true);
       }
 
       new StringParameter(role, `${generateRole.name}-ssm-generated-role-arn`, {

@@ -9,7 +9,7 @@ import { Duration } from 'aws-cdk-lib';
 import { PolicyDocument, PolicyStatement, ManagedPolicy } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Provider } from 'aws-cdk-lib/custom-resources';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { MdaaResolvableRole } from './resolvablerole';
 import { MdaaRoleRef, MdaaResolvableRoleRef } from './roleref';
@@ -151,7 +151,7 @@ export class MdaaRoleHelper {
       roles: [crLambdaRole],
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       iamPolicy,
       [{ id: 'AwsSolutions-IAM5', reason: 'iam:ListRoles does not take a resource.' }],
       true,
@@ -170,7 +170,7 @@ export class MdaaRoleHelper {
       createOutputs: false,
     });
     resolveRoleLambda.node.addDependency(iamPolicy);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       resolveRoleLambda,
       [
         {
@@ -230,7 +230,7 @@ export class MdaaRoleHelper {
       role: resolveRoleCrProviderRole,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       resolveRoleCrProviderRole,
       [
         {
@@ -248,7 +248,7 @@ export class MdaaRoleHelper {
       ],
       true,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       resolveRoleProvider,
       [
         { id: 'AwsSolutions-L1', reason: 'Lambda function Runtime set by CDK Provider Framework' },

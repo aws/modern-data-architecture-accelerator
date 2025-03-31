@@ -130,7 +130,7 @@
                 },
                 "suppressions": {
                     "items": {
-                        "$ref": "#/definitions/NagSuppressionProps"
+                        "$ref": "#/definitions/NagPackSuppression"
                     },
                     "type": "array"
                 },
@@ -176,7 +176,7 @@
             ],
             "type": "object"
         },
-        "MdaaNagSuppressions": {
+        "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
             "properties": {
                 "by_path": {
@@ -208,7 +208,7 @@
                 },
                 "suppressions": {
                     "items": {
-                        "$ref": "#/definitions/NagSuppressionProps"
+                        "$ref": "#/definitions/NagPackSuppression"
                     },
                     "type": "array"
                 },
@@ -270,7 +270,7 @@
                 },
                 "suppressions": {
                     "items": {
-                        "$ref": "#/definitions/NagSuppressionProps"
+                        "$ref": "#/definitions/NagPackSuppression"
                     },
                     "type": "array"
                 },
@@ -410,13 +410,23 @@
             ],
             "type": "object"
         },
-        "NagSuppressionProps": {
+        "NagPackSuppression": {
             "additionalProperties": false,
+            "description": "Interface for creating a rule suppression",
             "properties": {
+                "appliesTo": {
+                    "description": "Rule specific granular suppressions",
+                    "items": {
+                        "$ref": "#/definitions/NagPackSuppressionAppliesTo"
+                    },
+                    "type": "array"
+                },
                 "id": {
+                    "description": "The id of the rule to ignore",
                     "type": "string"
                 },
                 "reason": {
+                    "description": "The reason to ignore the rule (minimum 10 characters)",
                     "type": "string"
                 }
             },
@@ -425,6 +435,17 @@
                 "reason"
             ],
             "type": "object"
+        },
+        "NagPackSuppressionAppliesTo": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/RegexAppliesTo"
+                },
+                {
+                    "type": "string"
+                }
+            ],
+            "description": "A granular suppression"
         },
         "NamedAssetProps": {
             "additionalProperties": {
@@ -543,6 +564,20 @@
                 "$ref": "#/definitions/NotebookProps"
             },
             "type": "object"
+        },
+        "RegexAppliesTo": {
+            "additionalProperties": false,
+            "description": "A regular expression to apply to matching findings",
+            "properties": {
+                "regex": {
+                    "description": "An ECMA-262 regex string",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "regex"
+            ],
+            "type": "object"
         }
     },
     "properties": {
@@ -556,7 +591,7 @@
             "$ref": "#/definitions/NamedLifecycleConfigProps"
         },
         "nag_suppressions": {
-            "$ref": "#/definitions/MdaaNagSuppressions",
+            "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Nag suppressions"
         },
         "notebooks": {

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { Token } from 'aws-cdk-lib';
 import {
   CfnSecurityGroupEgress,
@@ -17,8 +17,9 @@ import {
   SecurityGroup,
   SecurityGroupProps,
 } from 'aws-cdk-lib/aws-ec2';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
+import { NagPackSuppression } from 'cdk-nag';
 
 export interface MdaaSecurityGroupRuleProps {
   readonly ipv4?: MdaaCidrPeer[];
@@ -26,17 +27,12 @@ export interface MdaaSecurityGroupRuleProps {
   readonly prefixList?: MdaaPrefixListPeer[];
 }
 
-export interface NagSuppressionProps {
-  readonly id: string;
-  readonly reason: string;
-}
-
 export interface MdaaPeer {
   readonly port?: number;
   readonly toPort?: number;
   readonly protocol: string;
   readonly description?: string;
-  readonly suppressions?: NagSuppressionProps[];
+  readonly suppressions?: NagPackSuppression[];
 }
 
 export interface MdaaPrefixListPeer extends MdaaPeer {
@@ -238,7 +234,7 @@ export class MdaaSecurityGroup extends SecurityGroup {
     connection: Port,
     description?: string,
     remoteRule?: boolean,
-    suppressions?: NagSuppressionProps[],
+    suppressions?: NagPackSuppression[],
   ) {
     if (description === undefined) {
       description = `from ${peer.uniqueId}:${connection}`;
@@ -255,7 +251,7 @@ export class MdaaSecurityGroup extends SecurityGroup {
         description,
       });
       if (suppressions) {
-        NagSuppressions.addResourceSuppressions(ingress, suppressions, true);
+        MdaaNagSuppressions.addConfigResourceSuppressions(ingress, suppressions, true);
       }
     }
   }
@@ -265,7 +261,7 @@ export class MdaaSecurityGroup extends SecurityGroup {
     connection: Port,
     description?: string,
     remoteRule?: boolean,
-    suppressions?: NagSuppressionProps[],
+    suppressions?: NagPackSuppression[],
   ) {
     if (description === undefined) {
       description = `to ${peer.uniqueId}:${connection}`;
@@ -282,7 +278,7 @@ export class MdaaSecurityGroup extends SecurityGroup {
         description,
       });
       if (suppressions) {
-        NagSuppressions.addResourceSuppressions(egress, suppressions, true);
+        MdaaNagSuppressions.addConfigResourceSuppressions(egress, suppressions, true);
       }
     }
   }

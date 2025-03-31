@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import {
   MdaaEC2Instance,
   MdaaEC2InstanceProps,
@@ -54,7 +54,7 @@ import {
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { ILayerVersion } from 'aws-cdk-lib/aws-lambda';
 import { LogGroup, LogGroupProps, RetentionDays } from 'aws-cdk-lib/aws-logs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import * as cdk8s from 'cdk8s';
 import { Construct } from 'constructs';
 import * as k8s from '../imports/k8s';
@@ -329,7 +329,7 @@ export class MdaaEKSCluster extends Cluster {
       retention: RetentionDays.INFINITE,
     };
     const podLogGroup = new LogGroup(this, 'pod-log-group', podLogGroupProps);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       podLogGroup,
       [
         {
@@ -370,7 +370,7 @@ export class MdaaEKSCluster extends Cluster {
       ],
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this.podExecutionRolePolicy,
       [{ id: 'AwsSolutions-IAM5', reason: 'Log stream name not known at deployment time.' }],
       true,
@@ -412,13 +412,13 @@ export class MdaaEKSCluster extends Cluster {
     );
     awsObservabilityChart.node.addDependency(awsObservabilityNamespace);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this.role,
       [{ id: 'AwsSolutions-IAM4', reason: 'AmazonEKSClusterPolicy is required for proper cluster function.' }],
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this.adminRole,
       [
         {
@@ -442,7 +442,7 @@ export class MdaaEKSCluster extends Cluster {
     );
 
     if (this.kubectlLambdaRole) {
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         this.kubectlLambdaRole,
         [
           {
@@ -466,7 +466,7 @@ export class MdaaEKSCluster extends Cluster {
 
     const clusterResourceProvider = Stack.of(this).node.tryFindChild('@aws-cdk--aws-eks.ClusterResourceProvider');
     if (clusterResourceProvider) {
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         clusterResourceProvider,
         [
           {
@@ -538,7 +538,7 @@ export class MdaaEKSCluster extends Cluster {
 
     const kubeCtlProvider = Stack.of(this).node.tryFindChild('@aws-cdk--aws-eks.KubectlProvider');
     if (kubeCtlProvider) {
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         kubeCtlProvider,
         [
           {
@@ -651,7 +651,7 @@ export class MdaaEKSCluster extends Cluster {
       managedPolicyName: 'cluster-mgmt',
       statements: [eksStatment, ssmStatement, ...(props.mgmtInstance?.mgmtPolicyStatements || [])],
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       mgmtPolicy,
       [
         {
@@ -746,7 +746,7 @@ export class MdaaEKSCluster extends Cluster {
       }),
       managedPolicies: [ManagedPolicy.fromAwsManagedPolicyName('AmazonEKSFargatePodExecutionRolePolicy')],
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       podExecutionRole,
       [
         {
@@ -784,7 +784,7 @@ export class MdaaEKSCluster extends Cluster {
       this.clusterSecurityGroup.connections.allowFrom(securityGroup, Port.allTraffic());
       this.clusterSecurityGroup.connections.allowTo(securityGroup, Port.allTraffic());
 
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         securityGroup,
         [
           {
@@ -802,7 +802,7 @@ export class MdaaEKSCluster extends Cluster {
         ],
         true,
       );
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         this.clusterSecurityGroup,
         [
           {

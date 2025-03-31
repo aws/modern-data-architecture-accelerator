@@ -21,7 +21,7 @@ import { Key } from 'aws-cdk-lib/aws-kms';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Provider } from 'aws-cdk-lib/custom-resources';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 const GLUE_READ_ACTIONS: string[] = ['glue:Get*', 'glue:List*'];
@@ -324,7 +324,7 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
     });
     catalogCrFunctionRole.addToPolicy(queryRamStatement);
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       catalogCrFunctionRole,
       [
         {
@@ -348,7 +348,7 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
       createParams: false,
       createOutputs: false,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       catalogResourcePolicyLambda,
       [
         {
@@ -410,7 +410,7 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
       role: catalogCrProviderRole,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       catalogCrProviderRole,
       [
         {
@@ -420,7 +420,7 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
       ],
       true,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       catalogResourcePolicyProvider,
       [
         { id: 'AwsSolutions-L1', reason: 'Lambda function Runtime set by CDK Provider Framework' },

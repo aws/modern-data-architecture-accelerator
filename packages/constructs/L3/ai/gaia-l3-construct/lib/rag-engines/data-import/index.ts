@@ -21,7 +21,7 @@ import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaSqsDeadLetterQueue, MdaaSqsQueue } from '@aws-mdaa/sqs-constructs';
 import { MdaaLambdaFunction } from '@aws-mdaa/lambda-constructs';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 
 export interface DataImportProps extends MdaaL3ConstructProps {
@@ -84,7 +84,7 @@ export class DataImportWorkflows extends MdaaL3Construct {
       createOutputs: false,
       transferAcceleration: true,
     });
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       uploadBucket,
       [
         { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
@@ -113,7 +113,7 @@ export class DataImportWorkflows extends MdaaL3Construct {
       createOutputs: false,
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       processingBucket,
       [
         { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
@@ -216,7 +216,7 @@ export class DataImportWorkflows extends MdaaL3Construct {
       },
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       uploadHandler,
       [
         {
@@ -264,7 +264,7 @@ export class DataImportWorkflows extends MdaaL3Construct {
 
     uploadHandler.addEventSource(new lambdaEventSources.SqsEventSource(ingestionQueue));
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       uploadHandlerRole,
       [
         {

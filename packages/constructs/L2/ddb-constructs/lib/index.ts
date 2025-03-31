@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as mdaa_construct from '@aws-mdaa/construct';
+import * as mdaa_construct from '@aws-mdaa/construct'; //NOSONAR
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import {
   Attribute,
@@ -17,7 +17,7 @@ import {
 import { IStream } from 'aws-cdk-lib/aws-kinesis';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
@@ -158,7 +158,7 @@ export class MdaaDDBTable extends Table {
   constructor(scope: Construct, id: string, props: MdaaDDBTableProps) {
     super(scope, id, MdaaDDBTable.setProps(props));
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       this,
       [
         { id: 'HIPAA.Security-DynamoDBInBackupPlan', reason: 'MDAA does not enforce use of AWS Backup' },

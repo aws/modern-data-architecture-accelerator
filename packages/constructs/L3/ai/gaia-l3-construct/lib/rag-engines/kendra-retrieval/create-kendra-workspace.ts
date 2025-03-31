@@ -5,7 +5,7 @@ import { Shared } from '../../shared';
 import { RagDynamoDBTables } from '../rag-dynamodb-tables';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
@@ -98,7 +98,7 @@ export class CreateKendraWorkspace extends Construct {
       },
     });
     props.encryptionKey.grantEncryptDecrypt(stateMachine);
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       stateMachine,
       [
         {

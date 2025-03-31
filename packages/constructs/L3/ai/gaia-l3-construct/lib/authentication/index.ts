@@ -6,8 +6,8 @@ import { AdvancedSecurityMode } from 'aws-cdk-lib/aws-cognito'; //NOSONAR
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { SupportedAuthTypes, SystemConfig } from '../shared/types';
-import { NagSuppressions } from 'cdk-nag';
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 
 export interface AuthenticationProps extends MdaaConstructProps {
   readonly config: SystemConfig;
@@ -154,7 +154,7 @@ export class Authentication extends Construct {
       },
     });
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       userPool,
       [
         {

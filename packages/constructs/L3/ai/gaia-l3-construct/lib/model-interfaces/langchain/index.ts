@@ -16,7 +16,7 @@ import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs'
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaSqsDeadLetterQueue, MdaaSqsQueue } from '@aws-mdaa/sqs-constructs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 
 interface LangChainInterfaceProps extends MdaaL3ConstructProps {
@@ -82,7 +82,7 @@ export class LangChainInterface extends MdaaL3Construct {
 
     requestHandler.addEventSource(new lambdaEventSources.SqsEventSource(queue));
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       requestHandlerRole,
       [
         { id: 'AwsSolutions-IAM4', reason: 'Standard Lambda Execution Managed Policy' },
@@ -98,7 +98,7 @@ export class LangChainInterface extends MdaaL3Construct {
       true,
     );
 
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       requestHandler,
       [
         { id: 'NIST.800.53.R5-LambdaDLQ', reason: 'Function is API implementation and will be invoked synchronously.' },

@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps } from '@aws-mdaa/construct';
+import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaCustomResourceProps, MdaaCustomResource } from '@aws-mdaa/custom-constructs';
 import { Duration, RemovalPolicy, SecretValue, Stack } from 'aws-cdk-lib';
 import { Effect, PolicyStatement, PrincipalBase } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Secret, SecretProps } from 'aws-cdk-lib/aws-secretsmanager';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
@@ -83,7 +83,7 @@ export class MdaaEC2SecretKeyPair extends Construct {
       this.secret.addToResourcePolicy(secretAccessStatement);
     }
 
-    NagSuppressions.addResourceSuppressions(this.secret, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(this.secret, [
       {
         id: 'AwsSolutions-SMG4',
         reason: 'Secret is for EC2 Key Pair, which does not support rotation.',

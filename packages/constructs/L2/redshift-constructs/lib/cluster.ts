@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import {
   Cluster,
@@ -17,7 +17,7 @@ import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SecurityGroup, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
 import { IRole } from 'aws-cdk-lib/aws-iam';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { MdaaRedshiftClusterParameterGroup } from './parameter-group';
 import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
@@ -183,7 +183,7 @@ export class MdaaRedshiftCluster extends Cluster {
 
   constructor(scope: Construct, id: string, props: MdaaRedshiftClusterProps) {
     super(scope, id, MdaaRedshiftCluster.setProps(props));
-    NagSuppressions.addResourceSuppressions(this, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(this, [
       {
         id: 'CdkNagValidationFailure',
         reason: 'Some cluster properties will reference intrinsic functions.',
@@ -238,7 +238,7 @@ export class MdaaRedshiftCluster extends Cluster {
         scope,
       );
     }
-    NagSuppressions.addResourceSuppressions(this, [
+    MdaaNagSuppressions.addCodeResourceSuppressions(this, [
       {
         id: 'NIST.800.53.R5-RedshiftEnhancedVPCRoutingEnabled',
         reason: 'Remediated through property override.',

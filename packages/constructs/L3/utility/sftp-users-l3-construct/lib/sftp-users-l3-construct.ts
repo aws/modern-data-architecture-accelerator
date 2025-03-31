@@ -8,7 +8,7 @@ import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 
 import { Effect, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { CfnUser } from 'aws-cdk-lib/aws-transfer';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 const kmsIamStatement = function (kmsKeyArn: string): PolicyStatement {
@@ -122,7 +122,7 @@ export class SftpUsersL3Construct extends MdaaL3Construct {
         s3IamStatement(userConfig.homeBucketName, this._formatS3Prefix(userConfig.homeDirectory), this.partition),
       );
       userRole.addToPolicy(kmsIamStatement(userConfig.homeBucketKmsKeyArn));
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         userRole,
         [
           {

@@ -23,13 +23,14 @@ import {
   CloudFormationTemplate,
   Portfolio,
 } from 'aws-cdk-lib/aws-servicecatalog';
-import { AwsSolutionsChecks, HIPAASecurityChecks, NagSuppressions, NIST80053R5Checks, PCIDSS321Checks } from 'cdk-nag';
+import { AwsSolutionsChecks, HIPAASecurityChecks, NIST80053R5Checks, PCIDSS321Checks } from 'cdk-nag';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'yaml';
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from './app_config';
 import * as configSchema from './config-schema.json';
 import { MdaaProductStack, MdaaProductStackProps, MdaaStack } from './stack';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 // nosemgrep
 import assert = require('assert');
 
@@ -352,7 +353,7 @@ export abstract class MdaaCdkApp extends App {
       'provisioning-macro-function',
       provisioningMacroFunctionProps,
     );
-    NagSuppressions.addResourceSuppressions(
+    MdaaNagSuppressions.addCodeResourceSuppressions(
       provisioningMacroFunction,
       [
         {
@@ -410,7 +411,7 @@ export abstract class MdaaCdkApp extends App {
     allStacks.forEach(stack => {
       this.baseConfigParser.nagSuppressions?.by_path?.forEach(suppression => {
         try {
-          NagSuppressions.addResourceSuppressionsByPath(stack, suppression.path, suppression.suppressions);
+          MdaaNagSuppressions.addConfigResourceSuppressionsByPath(stack, suppression.path, suppression.suppressions);
         } catch (error) {
           console.log(`Error adding suppression for path ${suppression.path} to stack ${stack.stackName}`);
         }

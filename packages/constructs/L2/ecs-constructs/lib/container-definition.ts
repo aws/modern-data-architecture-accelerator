@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { Duration } from 'aws-cdk-lib';
 import {
   ContainerDefinition,
@@ -20,7 +20,7 @@ import {
   Ulimit,
 } from 'aws-cdk-lib/aws-ecs';
 import { ILogGroup } from 'aws-cdk-lib/aws-logs';
-import { NagSuppressions } from 'cdk-nag';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 /**
@@ -336,7 +336,7 @@ export class MdaaECSContainerDefinition extends ContainerDefinition {
     super(scope, id, MdaaECSContainerDefinition.setProps(props));
 
     if (this.taskDefinition.executionRole) {
-      NagSuppressions.addResourceSuppressions(
+      MdaaNagSuppressions.addCodeResourceSuppressions(
         this.taskDefinition.executionRole,
         [
           {
