@@ -31,6 +31,14 @@
                     "description": "Indicates whether Multi-AZ with Standby deployment option is enabled.\nFor more information, see [Multi-AZ with\nStandby](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-multiaz.html#managedomains-za-standby)",
                     "type": "boolean"
                 },
+                "nodeOptions": {
+                    "default": "- no additional node options",
+                    "description": "Additional node options for the domain",
+                    "items": {
+                        "$ref": "#/definitions/NodeOptions"
+                    },
+                    "type": "array"
+                },
                 "warmInstanceType": {
                     "default": "- ultrawarm1.medium.search",
                     "description": "The instance type for your UltraWarm node, such as `ultrawarm1.medium.search`.\nFor valid values, see [UltraWarm Storage\nLimits](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#limits-ultrawarm)\nin the Amazon OpenSearch Service Developer Guide.",
@@ -362,6 +370,48 @@
                 "name",
                 "owner",
                 "portfolio_arn"
+            ],
+            "type": "object"
+        },
+        "NodeConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for a specific node type in OpenSearch domain",
+            "properties": {
+                "count": {
+                    "default": "- 1",
+                    "description": "The number of nodes of this type",
+                    "type": "number"
+                },
+                "enabled": {
+                    "default": "- false",
+                    "description": "Whether this node type is enabled",
+                    "type": "boolean"
+                },
+                "type": {
+                    "default": "- m5.large.search",
+                    "description": "The instance type for the nodes",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "NodeOptions": {
+            "additionalProperties": false,
+            "description": "Configuration for node options in OpenSearch domain",
+            "properties": {
+                "nodeConfig": {
+                    "$ref": "#/definitions/NodeConfig",
+                    "description": "Configuration for the node type"
+                },
+                "nodeType": {
+                    "const": "coordinator",
+                    "description": "The type of node. Currently only 'coordinator' is supported.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "nodeConfig",
+                "nodeType"
             ],
             "type": "object"
         },

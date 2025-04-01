@@ -36,9 +36,9 @@
     "overrides": {
         "semver": "7.5.2",
         "axios": "1.8.2",
-        "aws-cdk-lib": "2.181.1",
-        "@aws-cdk/aws-redshift-alpha": "2.181.1-alpha.0",
-        "@aws-cdk/aws-glue-alpha": "2.181.1-alpha.0",
+        "aws-cdk-lib": "2.186.0",
+        "@aws-cdk/aws-redshift-alpha": "2.186.0-alpha.0",
+        "@aws-cdk/aws-glue-alpha": "2.186.0-alpha.0",
         "cross-spawn": "7.0.5",
         "@octokit/request": "9.2.1",
         "cdk-nag": "2.35.25",
