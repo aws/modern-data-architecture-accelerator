@@ -52,6 +52,7 @@ export interface DomainProps {
   readonly singleSignOnType: string;
   readonly userAssignment: string;
   readonly associatedAccounts?: NamedAssociatedAccounts;
+  readonly sagemakerUnifiedDomain?: boolean;
 }
 export interface NamedDomainsProps {
   /** @jsii ignore */

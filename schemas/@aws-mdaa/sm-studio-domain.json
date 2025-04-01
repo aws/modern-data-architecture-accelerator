@@ -98,7 +98,7 @@
                             "type": "array"
                         }
                     ],
-                    "description": "A list of custom SageMaker AI images that are configured to run as a KernelGateway app."
+                    "description": "A list of custom SageMaker AI images that are configured to run as a KernelGateway app.\n\nThe maximum number of custom images are as follows.\n\n- On a domain level: 200\n- On a space level: 5\n- On a user profile level: 5"
                 },
                 "defaultResourceSpec": {
                     "anyOf": [

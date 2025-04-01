@@ -71,7 +71,7 @@ describe('MDAA Compliance Stack Tests', () => {
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
 
-  // console.log( JSON.stringify( template, undefined, 2 ) )
+  // console.log(JSON.stringify(template, undefined, 2));
 
   test('Validate resource counts', () => {
     template.resourceCountIs('AWS::OpenSearchService::Domain', 1);
@@ -232,6 +232,14 @@ describe('MDAA Compliance Stack Tests', () => {
             },
             Resource: '*',
             Sid: 'AllowOpensearchLogGroupEncryption',
+          },
+          {
+            Action: ['kms:Decrypt', 'kms:GenerateDataKey*'],
+            Effect: 'Allow',
+            Principal: {
+              Service: 'events.amazonaws.com',
+            },
+            Resource: '*',
           },
         ],
         Version: '2012-10-17',
