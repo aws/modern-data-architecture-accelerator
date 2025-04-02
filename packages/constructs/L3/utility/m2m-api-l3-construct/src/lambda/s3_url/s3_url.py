@@ -8,8 +8,15 @@ import os
 import uuid as uid
 import logging
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("S3 presigned url")
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 s3 = boto3.client('s3')
 presigned_url_expiry_seconds = os.environ['EXPIRY_TIME_SECONDS']
@@ -50,7 +57,6 @@ def create_metadata(uuid4, data):
             'statusCode': 400,
             'body': json.dumps({'Error': "Error generating Metadata"})
         }
-
 
 def handler(event, context):
 

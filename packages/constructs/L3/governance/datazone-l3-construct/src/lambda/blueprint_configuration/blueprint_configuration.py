@@ -4,17 +4,24 @@
 import json
 import time
 import boto3
-import logging
 import os
 from botocore.exceptions import ClientError
+import logging
 
 datazone_client = boto3.client('datazone')
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 
+logger = logging.getLogger("Blueprint configuration")
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 def lambda_handler(event, context):
-    logger.info("Starting")
+    logger.info("Starting the function")
     logger.debug(json.dumps(event, indent=2))
     logger.info("Sleeping 30 seconds to allow for IAM permission propagation")
     # nosemgrep
@@ -47,7 +54,7 @@ def handle_create_update(event, context):
         enabledRegions=enabledRegions
     )
 
-    # logger.info(json.dumps(update_response, indent=2))
+    # logger.debug(json.dumps(update_response, indent=2))
 
     return {
         "Status": "200",

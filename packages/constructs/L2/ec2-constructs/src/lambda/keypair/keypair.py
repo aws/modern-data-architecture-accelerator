@@ -2,15 +2,24 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import os
 import boto3
 import time
 
-logger = logging.getLogger(__name__)
 ec2 = boto3.client('ec2')
+logger = logging.getLogger("Keypair")
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 
 def lambda_handler(event, context):
-    logger.info("Starting")
+    logger.info("Starting the function")
     logger.info("Sleeping 30 seconds to allow for IAM permission propagation")
     # nosemgrep
     time.sleep(30)

@@ -32,6 +32,7 @@ export interface MdaaCustomResourceProps extends MdaaConstructProps {
   readonly vpc?: IVpc;
   readonly subnet?: SubnetSelection;
   readonly securityGroup?: ISecurityGroup;
+  readonly environment?: { [key: string]: string; };
 }
 
 export class MdaaCustomResource extends CustomResource {
@@ -103,6 +104,7 @@ export class MdaaCustomResource extends CustomResource {
           vpc: props.vpc,
           vpcSubnets: props.subnet,
           securityGroups: props.securityGroup ? [props.securityGroup] : undefined,
+          environment: props.environment
         });
 
     this.handlerFunctionPlaceHolder.node.addDependency(handlerPolicy);

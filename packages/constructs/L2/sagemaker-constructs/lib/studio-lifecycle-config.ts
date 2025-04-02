@@ -63,6 +63,9 @@ export class MdaaStudioLifecycleConfig extends Construct {
       handlerProps: handlerProps,
       naming: props.naming,
       handlerTimeout: Duration.seconds(120),
+      environment:{
+        LOG_LEVEL: 'INFO',
+      }
     };
 
     const cr = new MdaaCustomResource(this, 'custom-resource', crProps);

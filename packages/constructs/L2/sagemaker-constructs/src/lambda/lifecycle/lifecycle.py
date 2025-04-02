@@ -1,17 +1,24 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+import os
 import time
 import boto3
-import logging
 from botocore.exceptions import ClientError
 import hashlib
+import logging
 
 sagemaker_client = boto3.client('sagemaker')
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
+logger = logging.getLogger("Studio lifecycle")
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 def lambda_handler(event, context):
     logger.info("Starting")
@@ -80,10 +87,10 @@ def handle_delete(event, context):
         )
     except ClientError as e:
         if e.response['Error']['Code'] == 'ResourceInUse':
-            logger.warn(
+            logger.warning(
                 f"Failed to delete lifecycle config because it is in use. Leaving in place.")
         elif e.response['Error']['Code'] == 'ResourceNotFound':
-            logger.warn(
+            logger.warning(
                 f"Failed to delete lifecycle config because it does not exist.")
         else:
             logger.error(f"Failed to delete lifecycle config: {e}")

@@ -491,6 +491,9 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       pascalCaseProperties: false,
       handlerLayers: [new MdaaBoto3LayerVersion(scope, 'boto3-layer', { naming: this.props.naming })],
       handlerTimeout: Duration.seconds(120),
+      environment:{
+        LOG_LEVEL: 'INFO'
+      }
     };
 
     return new MdaaCustomResource(scope, 'env-blueprint-config-cr', crProps);
