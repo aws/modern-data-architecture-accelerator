@@ -380,6 +380,7 @@ export class M2MApiL3Construct extends MdaaL3Construct {
         TARGET_PREFIX: this.props.m2mApiProps.targetPrefix,
         METADATA_TARGET_PREFIX: this.props.m2mApiProps.metadataTargetPrefix || this.props.m2mApiProps.targetPrefix,
         EVENT_METADATA_MAPPINGS: JSON.stringify(this.props.m2mApiProps.eventMetadataMappings || {}),
+        LOG_LEVEL: 'INFO',
       },
       reservedConcurrentExecutions: this.props.m2mApiProps.concurrencyLimit,
     });

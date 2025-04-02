@@ -108,7 +108,10 @@ export class CompliantKubectlProvider extends NestedStack implements IKubectlPro
       timeout: Duration.minutes(15),
       description: 'onEvent handler for EKS kubectl resource provider',
       memorySize,
-      environment: cluster.kubectlEnvironment,
+      environment: {
+        ...cluster.kubectlEnvironment,
+        LOG_LEVEL: 'INFO',
+      },
       role: cluster.kubectlLambdaRole,
 
       // defined only when using private access

@@ -235,6 +235,9 @@ export class MdaaEC2Instance extends Instance {
       handlerPolicySuppressions: [
         { id: 'AwsSolutions-IAM5', reason: 'ec2:DescribeImages and ec2:DescribeVolumes do not accept a resource' },
       ],
+      environment: {
+        LOG_LEVEL: 'INFO',
+      }
     };
 
     new MdaaCustomResource(this, 'volume-check-cr', crProps);

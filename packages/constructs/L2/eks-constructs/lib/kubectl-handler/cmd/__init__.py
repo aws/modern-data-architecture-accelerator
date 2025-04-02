@@ -1,11 +1,9 @@
 import json
-import logging
 import os
 import subprocess
 import time
+import logging
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 # these are coming from the kubectl layer
 os.environ['PATH'] = '/opt/kubectl:/opt/awscli:' + os.environ['PATH']
@@ -14,9 +12,18 @@ os.environ['PATH'] = '/opt/kubectl:/opt/awscli:' + os.environ['PATH']
 outdir = os.environ.get('TEST_OUTDIR', '/tmp')
 kubeconfig = os.path.join(outdir, 'kubeconfig')
 
+logger = logging.getLogger("Kubernetes")
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 def cmd_handler(event, context):
-    logger.info(json.dumps(dict(event, ResponseURL='...')))
+    logger.debug(json.dumps(dict(event, ResponseURL='...')))
 
     request_type = event['RequestType']
     props = event['ResourceProperties']
@@ -71,7 +78,7 @@ def wait_for_output(args, expected_output, timeout_seconds):
                     logger.info(error)
         except Exception as e:
             error = str(e)
-            logger.warn(f"Output Exception: {error}")
+            logger.warning(f"Output Exception: {error}")
             # also a recoverable error
             if 'NotFound' in error:
                 pass
@@ -96,7 +103,7 @@ def kubectl(args):
                 logger.info("kubectl timed out, retries left: %s" % retry)
                 retry = retry - 1
             else:
-                logger.warn(f"KubeCtl Exception: {output}")
+                logger.warning(f"KubeCtl Exception: {output}")
                 raise Exception(output)
         else:
             return output

@@ -1,6 +1,7 @@
 import os
 import json
 import boto3
+import logging
 import genai_core.types
 import genai_core.chunks
 import genai_core.documents
@@ -15,17 +16,26 @@ INPUT_OBJECT_KEY = os.environ.get("INPUT_OBJECT_KEY")
 PROCESSING_BUCKET_NAME = os.environ.get("PROCESSING_BUCKET_NAME")
 PROCESSING_OBJECT_KEY = os.environ.get("PROCESSING_OBJECT_KEY")
 
+logger = logging.getLogger("File Import Batch Job")
+logger.setLevel(logging.INFO)
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
+
 s3_client = boto3.client("s3")
 
 
 def main():
-    print("Starting file converter batch job")
-    print("Workspace ID: {}".format(WORKSPACE_ID))
-    print("Document ID: {}".format(DOCUMENT_ID))
-    print("Input bucket name: {}".format(INPUT_BUCKET_NAME))
-    print("Input object key: {}".format(INPUT_OBJECT_KEY))
-    print("Output bucket name: {}".format(PROCESSING_BUCKET_NAME))
-    print("Output object key: {}".format(PROCESSING_OBJECT_KEY))
+    logger.info("Starting file converter batch job")
+    logger.info("Workspace ID: {}".format(WORKSPACE_ID))
+    logger.info("Document ID: {}".format(DOCUMENT_ID))
+    logger.info("Input bucket name: {}".format(INPUT_BUCKET_NAME))
+    logger.info("Input object key: {}".format(INPUT_OBJECT_KEY))
+    logger.info("Output bucket name: {}".format(PROCESSING_BUCKET_NAME))
+    logger.info("Output object key: {}".format(PROCESSING_OBJECT_KEY))
 
     workspace = genai_core.workspaces.get_workspace(WORKSPACE_ID)
     if not workspace:
@@ -88,7 +98,7 @@ def main():
                 )
         else:
             loader = S3FileLoader(INPUT_BUCKET_NAME, INPUT_OBJECT_KEY)
-            print(f"loader: {loader}")
+            logger.info(f"loader: {loader}")
             docs = loader.load()
             content = docs[0].page_content
 
@@ -103,7 +113,7 @@ def main():
             add_chunks(workspace, document, content)
     except Exception as error:
         genai_core.documents.set_status(WORKSPACE_ID, DOCUMENT_ID, "error")
-        print(error)
+        logger.error(error)
         raise error
 
 

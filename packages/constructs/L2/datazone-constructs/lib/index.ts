@@ -136,6 +136,9 @@ export class MdaaDatazoneProject extends Construct {
       naming: naming,
       pascalCaseProperties: false,
       handlerTimeout: Duration.seconds(120),
+      environment: {
+        LOG_LEVEL: 'INFO',
+      }
     };
 
     return new MdaaCustomResource(scope, 'domain-config-cr', crProps);

@@ -167,6 +167,9 @@ export class MdaaStudioDomain extends CfnDomain {
       pascalCaseProperties: true,
       handlerLayers: [new MdaaBoto3LayerVersion(this, 'boto3-layer', { naming: props.naming })],
       handlerTimeout: Duration.seconds(120),
+      environment:{
+        LOG_LEVEL: 'INFO'
+      }
     };
 
     new MdaaCustomResource(this, 'update-domain-cr', crProps);

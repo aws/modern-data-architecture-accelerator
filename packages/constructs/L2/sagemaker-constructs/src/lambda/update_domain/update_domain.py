@@ -4,14 +4,21 @@
 import json
 import time
 import boto3
-import logging
 import os
 from botocore.exceptions import ClientError
+import logging
 
 sagemaker_client = boto3.client('sagemaker')
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
+logger = logging.getLogger("Sagemaker Update domain")
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 def lambda_handler(event, context):
     logger.info("Starting")

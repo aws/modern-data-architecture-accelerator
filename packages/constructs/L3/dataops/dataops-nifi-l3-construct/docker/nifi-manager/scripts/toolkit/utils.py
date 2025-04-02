@@ -1,16 +1,22 @@
-import logging
 import os
 import time
 import pexpect
+import logging
 
 nifi_toolkit_cli = f"{os.environ['NIFI_TOOLKIT_HOME']}/bin/cli.sh"
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("Authorizations")
-logger.setLevel(logging.INFO)
-
 toolkit_child = None
 toolkit_child_timestamp = time.time()
+
+logger = logging.getLogger("Authorizations")
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 def get_toolkit_process():
     global toolkit_child,toolkit_child_timestamp
@@ -34,11 +40,11 @@ def nifi_toolkit_pexpect(nifi_app, cmd):
     toolkit_process.sendline(sendline)
     toolkit_process.expect('#>*')
     before = toolkit_process.before
-    # print(f"RAW: \n------\n{before}\n------\n")
-    # print(f"Raw Decoded: \n------\n{before.decode('ascii')}\n------\n")
+    # logger.info(f"RAW: \n------\n{before}\n------\n")
+    # logger.info(f"Raw Decoded: \n------\n{before.decode('ascii')}\n------\n")
     output = before.decode(
         'ascii').strip(sendline).strip()
-    # print(f"Output: \n------\n{output}\n------\n")
+    # logger.info(f"Output: \n------\n{output}\n------\n")
     return output
 
 

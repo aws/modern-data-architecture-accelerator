@@ -1,16 +1,22 @@
-import logging
 import os
 import json
 import time
 import socket
 import manager.common
 import toolkit.utils
+import logging
 
 hostname = socket.gethostname()
 manager_config_filename = os.environ['MANAGER_CONFIG']
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Authorizations")
-logger.setLevel(logging.INFO)
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 
 def load_existing_identities(existing_policies):
@@ -118,8 +124,8 @@ def update_registry_client(manager_config):
             # Create client
             toolkit.utils.nifi_toolkit("nifi", ["create-reg-client","--registryClientName",registry_client_config_name,"--registryClientUrl",registry_client_config['url']])
         else:
-            print(existing_client['registry']['uri'])
-            print(registry_client_config['url'])
+            logger.info(existing_client['registry']['uri'])
+            logger.info(registry_client_config['url'])
             if existing_client['registry']['uri'] != registry_client_config['url']:
                 logger.info(f"Registry client {registry_client_config_name} url doesn't match. Updating.")
                 toolkit.utils.nifi_toolkit("nifi", ["update-reg-client","--registryClientId",existing_client['id'],"--registryClientUrl",registry_client_config['url']])

@@ -1,13 +1,19 @@
-import logging
 import os
 import json
 import re
 import toolkit.utils
+import logging
 
-logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger("Authorizations")
-logger.setLevel(logging.INFO)
-
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 min_update_time = os.environ.get('NIFI_UPDATE_MIN_TIME', 10)
 
@@ -132,10 +138,10 @@ def create_group(nifi_app, group_name, configured_group_members, user_identities
     if len(group_user_ids) > 0:
         group_id = toolkit.utils.nifi_toolkit(nifi_app, ["create-user-group", "--userGroupName",
                                            f"'{group_name}'", "-uil", ','.join(group_user_ids)])
-        print(f"Created Group: {group_id}")
+        logger.info(f"Created Group: {group_id}")
         return group_id
     else:
-        logger.warn(f"Not creating empty group {group_name}")
+        logger.warning(f"Not creating empty group {group_name}")
 
 
 def update_group(nifi_app, group_name, group_id, configured_group_members, existing_group_members, user_identities):

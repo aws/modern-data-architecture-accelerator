@@ -1,14 +1,20 @@
+import os
 import boto3
 import time
 from pathlib import Path
 import logging
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("AWS Creds")
-logger.setLevel(logging.INFO)
 
 session = boto3.Session()
-
+logger = logging.getLogger("AWS Creds")
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+logger.setFormatter(logging.Formatter(
+    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
+    "| Function: %(funcName)s | "
+    "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+))
 
 def write_creds(session_creds):
     creds_profile = ["[default]"]
