@@ -42,17 +42,22 @@ export interface NamedAssociatedAccounts {
   [name: string]: AsscociatedAccount;
 }
 
-export interface DomainProps {
-  /**
-   * List of data admin role ids which will administer project resources
-   */
+export interface NamedBaseDomainsProps {
+  /** @jsii ignore */
+  readonly [name: string]: BaseDomainProps;
+}
+export interface BaseDomainProps {
   readonly dataAdminRole: MdaaRoleRef;
   readonly additionalAdminUsers?: NamedAdminUsers;
   readonly description?: string;
-  readonly singleSignOnType: string;
-  readonly userAssignment: string;
+  readonly userAssignment: 'MANUAL' | 'AUTOMATIC';
   readonly associatedAccounts?: NamedAssociatedAccounts;
   readonly sagemakerUnifiedDomain?: boolean;
+}
+
+export interface DomainProps extends BaseDomainProps {
+  readonly domainVersion?: 'V1' | 'V2';
+  readonly singleSignOnType: 'DISABLED' | 'IAM_IDC';
 }
 export interface NamedDomainsProps {
   /** @jsii ignore */
@@ -94,7 +99,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     });
 
     // Resolve Execution Role
-    const executionRole = this.createExecutionRole(`${domainName}-execution-role`, kmsKey.keyArn);
+    const executionRole = this.createExecutionRole(`${domainName}-execution-role`, kmsKey, domainProps.domainVersion);
 
     const singleSignOn: CfnDomain.SingleSignOnProperty = {
       type: domainProps.singleSignOnType ?? DEFAULT_SSO_TYPE,
@@ -107,6 +112,8 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       kmsKeyIdentifier: kmsKey.keyArn,
       description: domainProps.description,
       singleSignOn: singleSignOn,
+      domainVersion: domainProps.domainVersion,
+      serviceRole: domainProps.domainVersion == 'V2' ? this.createServiceRole('service', kmsKey).roleArn : undefined,
     };
 
     // Create domain
@@ -178,6 +185,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       domain,
       adminUserProfile,
       customEnvBlueprintConfig.getAttString('id'),
+      domain.domainVersion ?? 'V1',
     );
 
     if (domainProps.associatedAccounts) {
@@ -276,6 +284,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     domain: CfnDomain,
     adminUserProfile: CfnUserProfile,
     customEnvBlueprintConfigId: string,
+    domainVersion: string,
   ): MdaaParamAndOutput {
     return new MdaaParamAndOutput(this, {
       resourceType: 'domain',
@@ -287,6 +296,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
         domainArn: domain.attrArn,
         adminUserProfileId: adminUserProfile.attrId,
         datalakeEnvBlueprintId: customEnvBlueprintConfigId,
+        domainVersion: domainVersion,
       }),
       ...this.props,
     });
@@ -328,7 +338,59 @@ export class DataZoneL3Construct extends MdaaL3Construct {
    * @param kmsArn KMS key ARN created for the domain
    * @returns a Role
    */
-  private createExecutionRole(roleName: string, kmsArn: string): IRole {
+  private createServiceRole(roleName: string, kmsKey: IKey): IRole {
+    const serviceRoleConditions: Conditions = {
+      StringEquals: {
+        'aws:SourceAccount': this.account,
+      },
+    };
+
+    const serviceRole = new MdaaRole(this, roleName, {
+      naming: this.props.naming,
+      roleName: roleName,
+      assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions(serviceRoleConditions),
+      // managedPolicies: [
+      //   MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneDomainExecutionRolePolicy'),
+      // ],
+    });
+
+    serviceRole.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['kms:Decrypt', 'kms:GenerateDataKey'],
+        resources: [kmsKey.keyArn],
+      }),
+    );
+
+    MdaaNagSuppressions.addCodeResourceSuppressions(
+      serviceRole,
+      [
+        {
+          id: 'NIST.800.53.R5-IAMNoInlinePolicy',
+          reason: 'Permission to use Key for DataZone. No other role requires this.',
+        },
+        {
+          id: 'HIPAA.Security-IAMNoInlinePolicy',
+          reason: 'Permission to use Key for DataZone. No other role requires this.',
+        },
+        {
+          id: 'PCI.DSS.321-IAMNoInlinePolicy',
+          reason: 'Permission to use Key for DataZone. No other role requires this.',
+        },
+      ],
+      true,
+    );
+
+    return serviceRole;
+  }
+
+  /**
+   * Creates an Execution Role for a DataZone Domain
+   * @param roleName name to use for the role
+   * @param kmsArn KMS key ARN created for the domain
+   * @returns a Role
+   */
+  private createExecutionRole(roleName: string, kmsKey: IKey, domainVersion?: string): IRole {
     const executionRoleCondition: Conditions = {
       StringEquals: {
         'aws:SourceAccount': this.account,
@@ -343,7 +405,9 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       roleName: roleName,
       assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions(executionRoleCondition),
       managedPolicies: [
-        MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneDomainExecutionRolePolicy'),
+        domainVersion == 'V2'
+          ? MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/SageMakerStudioDomainExecutionRolePolicy')
+          : MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneDomainExecutionRolePolicy'),
       ],
     });
 
@@ -358,7 +422,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['kms:Decrypt', 'kms:GenerateDataKey'],
-        resources: [kmsArn],
+        resources: [kmsKey.keyArn],
       }),
     );
 

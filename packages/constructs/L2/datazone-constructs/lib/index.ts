@@ -16,6 +16,7 @@ import { Construct } from 'constructs';
  * Properties for creating a compliant Mdaa Datazone Project
  */
 export interface MdaaDatazoneProjectProps extends MdaaConstructProps {
+  readonly domainVersion?: string;
   // The unique name of the job.
   readonly name?: string;
   readonly domainConfigSSMParam?: string;
@@ -36,6 +37,7 @@ export class MdaaDatazoneProject extends Construct {
   public readonly datalakeManagementRoleArn: string;
   public readonly project: CfnProject;
   public readonly adminUserProfileId: string;
+  public readonly domainVersion: string;
 
   constructor(scope: Construct, id: string, props: MdaaDatazoneProjectProps) {
     super(scope, id);
@@ -47,6 +49,11 @@ export class MdaaDatazoneProject extends Construct {
     const domainArn = props.domainArn || domainConfigParser?.getAttString('domainArn');
     if (!domainArn) throw new Error('domainArn must either be defined directly in props, or via domainConfigSSMParam');
     this.domainArn = domainArn;
+
+    const domainVersion = props.domainVersion || domainConfigParser?.getAttString('domainVersion');
+    if (!domainVersion)
+      throw new Error('domainVersion must either be defined directly in props, or via domainConfigSSMParam');
+    this.domainVersion = domainVersion;
 
     const domainId = props.domainId || domainConfigParser?.getAttString('domainId');
     if (!domainId) throw new Error('domainId must either be defined directly in props, or via domainConfigSSMParam');

@@ -43,6 +43,38 @@
             ],
             "type": "object"
         },
+        "BaseDomainProps": {
+            "additionalProperties": false,
+            "properties": {
+                "additionalAdminUsers": {
+                    "$ref": "#/definitions/NamedAdminUsers"
+                },
+                "associatedAccounts": {
+                    "$ref": "#/definitions/NamedAssociatedAccounts"
+                },
+                "dataAdminRole": {
+                    "$ref": "#/definitions/MdaaRoleRef"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "sagemakerUnifiedDomain": {
+                    "type": "boolean"
+                },
+                "userAssignment": {
+                    "enum": [
+                        "AUTOMATIC",
+                        "MANUAL"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "dataAdminRole",
+                "userAssignment"
+            ],
+            "type": "object"
+        },
         "CfnParameterProps": {
             "additionalProperties": false,
             "properties": {
@@ -104,53 +136,6 @@
                     "type": "string"
                 }
             },
-            "type": "object"
-        },
-        "DomainProps": {
-            "additionalProperties": false,
-            "properties": {
-                "additionalAdminUsers": {
-                    "$ref": "#/definitions/NamedAdminUsers"
-                },
-                "associatedAccounts": {
-                    "$ref": "#/definitions/NamedAssociatedAccounts"
-                },
-                "dataAdminRole": {
-                    "$ref": "#/definitions/MdaaRoleRef"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "domainVersion": {
-                    "enum": [
-                        "V1",
-                        "V2"
-                    ],
-                    "type": "string"
-                },
-                "sagemakerUnifiedDomain": {
-                    "type": "boolean"
-                },
-                "singleSignOnType": {
-                    "enum": [
-                        "DISABLED",
-                        "IAM_IDC"
-                    ],
-                    "type": "string"
-                },
-                "userAssignment": {
-                    "enum": [
-                        "AUTOMATIC",
-                        "MANUAL"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "dataAdminRole",
-                "singleSignOnType",
-                "userAssignment"
-            ],
             "type": "object"
         },
         "MdaaNagSuppressionByPath": {
@@ -345,16 +330,16 @@
             },
             "type": "object"
         },
-        "NamedDomainsProps": {
+        "NamedBaseDomainsProps": {
             "additionalProperties": {
-                "$ref": "#/definitions/DomainProps"
+                "$ref": "#/definitions/BaseDomainProps"
             },
             "type": "object"
         }
     },
     "properties": {
         "domains": {
-            "$ref": "#/definitions/NamedDomainsProps"
+            "$ref": "#/definitions/NamedBaseDomainsProps"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
