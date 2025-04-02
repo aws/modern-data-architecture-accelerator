@@ -116,16 +116,33 @@
                     "$ref": "#/definitions/NamedAssociatedAccounts"
                 },
                 "dataAdminRole": {
-                    "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "List of data admin role ids which will administer project resources"
+                    "$ref": "#/definitions/MdaaRoleRef"
                 },
                 "description": {
                     "type": "string"
                 },
+                "domainVersion": {
+                    "enum": [
+                        "V1",
+                        "V2"
+                    ],
+                    "type": "string"
+                },
+                "sagemakerUnifiedDomain": {
+                    "type": "boolean"
+                },
                 "singleSignOnType": {
+                    "enum": [
+                        "DISABLED",
+                        "IAM_IDC"
+                    ],
                     "type": "string"
                 },
                 "userAssignment": {
+                    "enum": [
+                        "AUTOMATIC",
+                        "MANUAL"
+                    ],
                     "type": "string"
                 }
             },
