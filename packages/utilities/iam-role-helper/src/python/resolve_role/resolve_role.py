@@ -2,14 +2,20 @@
 # SPDX - License - Identifier: Apache - 2.0
 
 import json
+import os
 import boto3
 import logging
 import re
 from botocore.exceptions import ClientError
-
 client = boto3.client('iam')
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
+logger = logging.getLogger("IAM Role Helper")
+
 
 role_id_map = {}
 role_name_map = {}
@@ -35,7 +41,7 @@ get_roles()
 
 def lambda_handler(event, context):
     logger.info("**Starting")
-    logger.info(json.dumps(event, indent=2))
+    logger.debug(json.dumps(event, indent=2))
     resource_config = event['ResourceProperties']
     role_ref = resource_config.get('roleRef', None)
     if(role_ref is None):
@@ -57,9 +63,9 @@ def resolve_role_ref(role_ref):
         if sso:
             role = None
             regex = "^AWSReservedSSO_" + resourceId +"_[0-9a-zA-Z]{16}$"
-            print(regex)
+            logger.info(regex)
             for role_name,check_role in role_name_map.items():
-                print(role_name)
+                logger.info(role_name)
                 if re.match(regex,role_name):
                     if role is not None:
                         raise Exception(f"Ambiguous role resolution: {role_name}/{resourceId}")

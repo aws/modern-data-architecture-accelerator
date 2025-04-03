@@ -347,6 +347,9 @@ export abstract class MdaaCdkApp extends App {
       functionName: 'provisioningMacro',
       role: provisioningMacroFunctionRole,
       naming: this.naming,
+      environment: {
+        LOG_LEVEL: 'INFO',
+      },
     };
     const provisioningMacroFunction = new MdaaLambdaFunction(
       stack,

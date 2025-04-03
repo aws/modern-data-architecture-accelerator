@@ -4,16 +4,13 @@ import re
 import toolkit.utils
 import logging
 
-
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
 logger = logging.getLogger("Authorizations")
-log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
-logger.setLevel(getattr(logging, log_level, logging.INFO))
-logger.setFormatter(logging.Formatter(
-    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
-    "| Function: %(funcName)s | "
-    "%(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
-))
+
 
 min_update_time = os.environ.get('NIFI_UPDATE_MIN_TIME', 10)
 

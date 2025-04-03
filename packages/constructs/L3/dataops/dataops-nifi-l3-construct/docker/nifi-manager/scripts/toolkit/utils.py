@@ -8,15 +8,13 @@ nifi_toolkit_cli = f"{os.environ['NIFI_TOOLKIT_HOME']}/bin/cli.sh"
 toolkit_child = None
 toolkit_child_timestamp = time.time()
 
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
 logger = logging.getLogger("Authorizations")
-log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
-logger.setLevel(getattr(logging, log_level, logging.INFO))
-logger.setFormatter(logging.Formatter(
-    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
-    "| Function: %(funcName)s | "
-    "%(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
-))
+
 
 def get_toolkit_process():
     global toolkit_child,toolkit_child_timestamp

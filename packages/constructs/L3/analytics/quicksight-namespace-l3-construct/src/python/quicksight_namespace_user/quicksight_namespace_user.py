@@ -10,8 +10,13 @@ import os
 from botocore.exceptions import ClientError
 
 quicksight_client = boto3.client('quicksight')
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
+logger = logging.getLogger('Quicksight Namespace user')
 
 ACCOUNT_ID = os.environ["ACCOUNT_ID"]
 NAMESPACE = os.environ["NAMESPACE"]
@@ -80,7 +85,7 @@ def get_default_namespace_user_email(user_name, role_name):
         return email
 
     except quicksight_client.exceptions.ResourceNotFoundException:
-        logger.warn(
+        logger.warning(
             f"User {user_name} doesn't exist in QuickSight default namespace. Skipping.")
         return {
             "status": 200
@@ -110,7 +115,7 @@ def delete_default_namespace_user(user_name, role_name):
                 "status": 500
             }
     except quicksight_client.exceptions.ResourceNotFoundException:
-        logger.warn(
+        logger.warning(
             f"User {user_name} doesn't exist in QuickSight default namespace. Skipping.")
         return {
             "status": 200

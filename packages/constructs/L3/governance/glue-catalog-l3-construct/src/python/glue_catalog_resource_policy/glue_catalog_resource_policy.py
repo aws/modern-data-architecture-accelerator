@@ -3,6 +3,7 @@
 
 import json
 import logging
+import os
 
 import boto3
 from botocore.exceptions import ClientError
@@ -10,8 +11,13 @@ from botocore.exceptions import ClientError
 glue_client = boto3.client("glue")
 ram_client = boto3.client("ram")
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
+logger = logging.getLogger("Glue Catalog")
+
 
 
 def lambda_handler(event, context):
@@ -34,7 +40,7 @@ def handle_create(event, context):
     # see: https://docs.aws.amazon.com/lake-formation/latest/dg/hybrid-cross-account.html
     ram_res = ram_client.list_resources(resourceOwner="SELF")
     hybrid = "glue:Catalog" in set(map(lambda r: r["type"], ram_res["resources"]))
-    print("EnableHybrid is set to True")
+    logger.info("EnableHybrid is set to True")
 
     response = glue_client.put_resource_policy(
         PolicyInJson=json.dumps(policy_json), EnableHybrid="TRUE" if hybrid else "FALSE"

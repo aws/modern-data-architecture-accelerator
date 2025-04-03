@@ -12,15 +12,13 @@ os.environ['PATH'] = '/opt/kubectl:/opt/awscli:' + os.environ['PATH']
 outdir = os.environ.get('TEST_OUTDIR', '/tmp')
 kubeconfig = os.path.join(outdir, 'kubeconfig')
 
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
 logger = logging.getLogger("Kubernetes")
-log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
-logger.setLevel(getattr(logging, log_level, logging.INFO))
-logger.setFormatter(logging.Formatter(
-    "%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s"
-    "| Function: %(funcName)s | "
-    "%(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
-))
+
 
 def cmd_handler(event, context):
     logger.debug(json.dumps(dict(event, ResponseURL='...')))

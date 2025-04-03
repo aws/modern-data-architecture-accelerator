@@ -341,6 +341,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
       timeout: Duration.seconds(120),
       environment: {
         ACCOUNT_ID: this.account,
+          LOG_LEVEL: 'INFO',
       },
       role: qsFoldersCrRole,
     });
