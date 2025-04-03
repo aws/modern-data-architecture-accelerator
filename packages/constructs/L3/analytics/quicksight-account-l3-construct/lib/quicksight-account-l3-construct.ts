@@ -155,6 +155,9 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
       },
       naming: this.props.naming,
       handlerLayers: [this.boto3Layer],
+      environment: {
+        LOG_LEVEL: 'INFO',
+      },
     };
     return new MdaaCustomResource(this, 'update-ip-restrictions-cr', crProps);
   }
@@ -263,6 +266,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
       timeout: Duration.seconds(300),
       environment: {
         ACCOUNT_ID: this.account,
+        LOG_LEVEL: 'INFO',
       },
       role: accountCrRole,
       layers: [this.boto3Layer],

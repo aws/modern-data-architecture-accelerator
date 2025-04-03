@@ -168,6 +168,9 @@ export class MdaaRoleHelper {
       naming: this.naming,
       createParams: false,
       createOutputs: false,
+      environment: {
+        LOG_LEVEL: 'INFO',
+      },
     });
     resolveRoleLambda.node.addDependency(iamPolicy);
     MdaaNagSuppressions.addCodeResourceSuppressions(

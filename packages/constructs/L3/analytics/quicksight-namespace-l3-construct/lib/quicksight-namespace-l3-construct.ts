@@ -240,6 +240,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
             return `${namespace}-${qsGroupName}`;
           })
           .toString(),
+        LOG_LEVEL: 'INFO',
       },
       role: namespaceLambdaUserRole,
     });
@@ -345,6 +346,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
       environment: {
         ACCOUNT_ID: this.account,
         IDENTITY_STORE: 'QUICKSIGHT',
+        LOG_LEVEL: 'INFO',
       },
       role: namespaceCrRole,
     });

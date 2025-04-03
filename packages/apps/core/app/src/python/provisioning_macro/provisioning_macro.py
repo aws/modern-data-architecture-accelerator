@@ -3,13 +3,18 @@
 
 import json
 import logging
+import os
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
+logger = logging.getLogger("Provisioning macro")
 
 def lambda_handler(event, context):
-    logger.info(json.dumps(event, indent=2))
+    logger.info("**Starting")
+    logger.debug(json.dumps(event, indent=2))
     provisioned_id = event['templateParameterValues']['PROVISIONEDID']
     template = event['fragment']
     template_string = json.dumps(template)

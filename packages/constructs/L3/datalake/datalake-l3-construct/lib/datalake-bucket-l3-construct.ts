@@ -579,6 +579,9 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
       createParams: false,
       createOutputs: false,
+      environment: {
+        LOG_LEVEL: 'INFO',
+      },
     });
     MdaaNagSuppressions.addCodeResourceSuppressions(
       datalakeFolderLambda,

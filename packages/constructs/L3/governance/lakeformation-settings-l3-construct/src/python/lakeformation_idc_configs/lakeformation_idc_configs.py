@@ -3,13 +3,20 @@
 
 import json
 import logging
+import os
 
 import boto3
 from botocore.exceptions import ClientError
 
 lf_client = boto3.client('lakeformation')
+
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+
 
 
 def lambda_handler(event, context):

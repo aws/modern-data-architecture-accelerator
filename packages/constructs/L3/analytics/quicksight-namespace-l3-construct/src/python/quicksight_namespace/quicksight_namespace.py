@@ -9,15 +9,20 @@ import os
 from botocore.exceptions import ClientError
 
 quicksight_client = boto3.client('quicksight')
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
+logger = logging.getLogger("Quicksight namespace")
 
 ACCOUNT_ID = os.environ["ACCOUNT_ID"]
 IDENTITY_STORE = os.environ["IDENTITY_STORE"]
 
 
 def lambda_handler(event, context):
-    logger.info(json.dumps(event, indent=2))
+    logger.debug(json.dumps(event, indent=2))
     if event['RequestType'] == 'Create':
         return handle_create(event, context)
     elif event['RequestType'] == 'Update':

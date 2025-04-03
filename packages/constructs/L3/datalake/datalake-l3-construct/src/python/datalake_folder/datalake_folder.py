@@ -9,9 +9,13 @@ import os
 from botocore.exceptions import ClientError
 
 s3_client = boto3.client('s3')
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
+logger = logging.getLogger("Datalake folder")
 
 def lambda_handler(event, context):
     logger.info(json.dumps(event, indent=2))
@@ -41,7 +45,7 @@ def handle_create(event, context):
                 "PhysicalResourceId": f"{bucket_name}:{folder_name}"
             }
         except Exception as e:
-            logger.warn(f"Error creating folder: {e}")
+            logger.warning(f"Error creating folder: {e}")
             if(retryCount >= 6):
                 raise e
         retryCount = retryCount + 1

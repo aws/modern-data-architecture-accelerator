@@ -2,16 +2,22 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import os
 import boto3
 import json
 
 quicksight_client = boto3.client('quicksight')
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+
+logging.basicConfig(
+    format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
+logger = logging.getLogger("IP Restrictions")
 
 
 def lambda_handler(event, context):
-    logger.info(json.dumps(event, indent=2))
+    logger.debug(json.dumps(event, indent=2))
 
     if event['RequestType'] == 'Create' or event['RequestType'] == 'Update':
         return handle_create_update(event, context)
