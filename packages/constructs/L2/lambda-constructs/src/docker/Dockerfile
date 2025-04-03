@@ -1,4 +1,4 @@
-FROM amazonlinux:2023
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
 # Install necessary packages
 RUN yum install -y python3.12 python3.12-pip zip
