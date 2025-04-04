@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
+import { MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR //NOSONAR
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
@@ -52,7 +52,6 @@ export interface BaseDomainProps {
   readonly description?: string;
   readonly userAssignment: 'MANUAL' | 'AUTOMATIC';
   readonly associatedAccounts?: NamedAssociatedAccounts;
-  readonly sagemakerUnifiedDomain?: boolean;
 }
 
 export interface DomainProps extends BaseDomainProps {
@@ -491,9 +490,9 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       pascalCaseProperties: false,
       handlerLayers: [new MdaaBoto3LayerVersion(scope, 'boto3-layer', { naming: this.props.naming })],
       handlerTimeout: Duration.seconds(120),
-      environment:{
-        LOG_LEVEL: 'INFO'
-      }
+      environment: {
+        LOG_LEVEL: 'INFO',
+      },
     };
 
     return new MdaaCustomResource(scope, 'env-blueprint-config-cr', crProps);
