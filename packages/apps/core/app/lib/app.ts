@@ -15,6 +15,7 @@ import { MdaaLambdaFunction, MdaaLambdaFunctionProps, MdaaLambdaRole } from '@aw
 import { IMdaaResourceNaming, MdaaDefaultResourceNaming } from '@aws-mdaa/naming';
 import { App, AppProps, Aspects, CfnMacro, Stack, Tags } from 'aws-cdk-lib';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import {
   CfnLaunchRoleConstraint,
   CfnLaunchRoleConstraintProps,
@@ -44,6 +45,11 @@ export interface MdaaPackageNameVersion {
   readonly version: string;
 }
 
+interface IMdaaConfig {
+  solutionID: string;
+  solutionName: string;
+}
+
 /**
  * Base class for MDAA CDK Apps. Provides consistent app behaviours in
  * configuration parsing, stack generation, resource naming,
@@ -58,6 +64,9 @@ export abstract class MdaaCdkApp extends App {
   private readonly org: string;
   private readonly env: string;
   private readonly domain: string;
+  private readonly solutionId: string;
+  private readonly solutionName: string;
+  private readonly solutionVersion: string;
   protected readonly deployRegion?: string;
   protected readonly deployAccount?: string;
   private readonly useBootstrap: boolean;
@@ -86,8 +95,17 @@ export abstract class MdaaCdkApp extends App {
     this.domain = this.node.tryGetContext('domain').toLowerCase();
     this.moduleName = this.node.tryGetContext('module_name').toLowerCase();
 
+    const configPath = path.join(__dirname, './../../../../../mdaaConstants.json');
+    const config: IMdaaConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const mdaaApplicationConstants = Object.freeze(config);
+
+    // Solution Details
+    this.solutionId = mdaaApplicationConstants.solutionID;
+    this.solutionName = mdaaApplicationConstants.solutionName;
+
     const packageName = packageNameVersion?.name.replace('@aws-mdaa/', '') ?? 'unknown';
     const packageVersion = packageNameVersion?.version ?? 'unknown';
+    this.solutionVersion = packageVersion;
 
     console.log(`Running MDAA Module ${packageName} Version: ${packageVersion}`);
     if (this.node.tryGetContext('@aws-mdaa/legacyCaefTags')) {
@@ -314,15 +332,24 @@ export abstract class MdaaCdkApp extends App {
 
   private createEmptyStack(): MdaaStack {
     const stackName = this.naming.stackName();
+    const stackDescription = `(${this.solutionId}-${this.moduleName}) ${this.solutionName}. Version ${this.solutionVersion}`
     const stackProps = {
       naming: this.naming,
+      description: stackDescription,
       useBootstrap: this.useBootstrap,
       env: {
         region: this.deployRegion,
         account: this.deployAccount,
       },
     };
-    return new MdaaStack(this, stackName, stackProps);
+    const stack = new MdaaStack(this, stackName, stackProps);
+    new StringParameter(stack, 'StackDescriptionParameter', {
+      parameterName:  this.naming.ssmPath('aws-solution'),
+      stringValue: stackDescription,
+      description: 'Stack description parameter to update on version changes',
+    });
+
+    return stack;
   }
 
   private createEmptyProductStack(stack: MdaaStack): MdaaProductStack {
