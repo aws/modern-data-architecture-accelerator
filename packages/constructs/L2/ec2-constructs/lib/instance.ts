@@ -237,7 +237,7 @@ export class MdaaEC2Instance extends Instance {
       ],
       environment: {
         LOG_LEVEL: 'INFO',
-      }
+      },
     };
 
     new MdaaCustomResource(this, 'volume-check-cr', crProps);

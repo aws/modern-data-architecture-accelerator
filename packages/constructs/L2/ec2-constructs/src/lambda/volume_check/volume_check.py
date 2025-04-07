@@ -17,8 +17,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger("Volume Check")
 
-
-@logger.inject_lambda_context
 def lambda_handler(event, context):
     logger.info("Starting")
     logger.info("Sleeping 30 seconds to allow for IAM permission propagation")

@@ -527,7 +527,7 @@ export class MdaaDeploy {
     console.log(`Module ${logPrefix}: Package ${npmPackageNoVersion} found in local codebase. Running build.`);
     const buildCmd = `npx lerna run build --scope ${npmPackageNoVersion} --loglevel warn`;
     const fullBuildCmd = `cd '${__dirname}/../../../';${buildCmd} ;cd '${this.cwd}'`;
-    console.log( `Running Lerna Build: ${ fullBuildCmd }` )
+    console.log(`Running Lerna Build: ${fullBuildCmd}`);
     this.execCmd(fullBuildCmd);
 
     return prefix;
@@ -731,6 +731,7 @@ export class MdaaDeploy {
     /* istanbul ignore next */
     if (this.config.contents.region && this.config.contents.region.toLowerCase() != 'default') {
       cdkEnv.push(`export CDK_DEPLOY_REGION=${this.config.contents.region}`);
+      cdkEnv.push(`export AWS_DEFAULT_REGION=${this.config.contents.region}`);
     }
     /* istanbul ignore next */
     if (moduleEffectiveConfig.deployAccount && moduleEffectiveConfig.deployAccount.toLowerCase() != 'default') {

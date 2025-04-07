@@ -20,6 +20,10 @@
                     "description": "Specifies the maximum number of instances that AWS CloudFormation updates.",
                     "type": "number"
                 },
+                "minActiveInstancesPercent": {
+                    "description": "Specifies the percentage of instances in an Auto Scaling group that must remain in service while AWS CloudFormation\nupdates old instances. You can specify a value from 0 to 100. AWS CloudFormation rounds to the nearest tenth of a percent.\nFor example, if you update five instances with a minimum active percentage of 50, three instances must remain in service.",
+                    "type": "number"
+                },
                 "minInstancesInService": {
                     "description": "Specifies the minimum number of instances that must be in service within the Auto Scaling group while AWS\nCloudFormation updates old instances.",
                     "type": "number"

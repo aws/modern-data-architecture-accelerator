@@ -42,6 +42,9 @@
       "path": "../../governance/datazone-l3-construct"
     },
     {
+      "path": "../../../L2/datazone-constructs"
+    },
+    {
       "path": "../../../L2/ec2-constructs"
     },
     {

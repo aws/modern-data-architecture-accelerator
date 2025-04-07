@@ -1,4 +1,4 @@
-import * as cognitoIdentityPool from '@aws-cdk/aws-cognito-identitypool-alpha';
+import * as cognitoIdentityPool from 'aws-cdk-lib/aws-cognito-identitypool';
 import * as cdk from 'aws-cdk-lib';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 

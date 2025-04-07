@@ -128,9 +128,6 @@
                     ],
                     "type": "string"
                 },
-                "sagemakerUnifiedDomain": {
-                    "type": "boolean"
-                },
                 "singleSignOnType": {
                     "enum": [
                         "DISABLED",
