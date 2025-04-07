@@ -58,9 +58,6 @@
                 "description": {
                     "type": "string"
                 },
-                "sagemakerUnifiedDomain": {
-                    "type": "boolean"
-                },
                 "userAssignment": {
                     "enum": [
                         "AUTOMATIC",

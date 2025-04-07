@@ -98,7 +98,7 @@
         },
         "IPrincipal": {
             "additionalProperties": false,
-            "description": "Represents a logical IAM principal.\n\nAn IPrincipal describes a logical entity that can perform AWS API calls\nagainst sets of resources, optionally under certain conditions.\n\nExamples of simple principals are IAM objects that you create, such\nas Users or Roles.\n\nAn example of a more complex principals is a `ServicePrincipal` (such as\n`new ServicePrincipal(\"sns.amazonaws.com\")`, which represents the Simple\nNotifications Service).\n\nA single logical Principal may also map to a set of physical principals.\nFor example, `new OrganizationPrincipal('o-1234')` represents all\nidentities that are part of the given AWS Organization.",
+            "description": "Represents a logical IAM principal.\n\nAn IPrincipal describes a logical entity that can perform AWS API calls\nagainst sets of resources, optionally under certain conditions.\n\nExamples of simple principals are IAM objects that you create, such\nas Users or Roles.\n\nAn example of a more complex principals is a `ServicePrincipal` (such as\n`new ServicePrincipal(\"sns.amazonaws.com\")`, which represents the Simple\nNotifications Service).\n\nA single logical Principal may also map to a set of physical principals.\nFor example, `new OrganizationPrincipal('o-12345abcde')` represents all\nidentities that are part of the given AWS Organization.",
             "properties": {
                 "assumeRoleAction": {
                     "description": "When this Principal is used in an AssumeRole policy, the action to use.",
