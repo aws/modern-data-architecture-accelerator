@@ -34,6 +34,7 @@ import { MdaaProductStack, MdaaProductStackProps, MdaaStack } from './stack';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 // nosemgrep
 import assert = require('assert');
+const pjson = require('../package.json');
 
 export interface MdaaAppProps extends AppProps {
   readonly appConfigRaw?: ConfigurationElement;
@@ -43,11 +44,6 @@ export interface MdaaAppProps extends AppProps {
 export interface MdaaPackageNameVersion {
   readonly name: string;
   readonly version: string;
-}
-
-interface IMdaaConfig {
-  solutionID: string;
-  solutionName: string;
 }
 
 /**
@@ -95,17 +91,13 @@ export abstract class MdaaCdkApp extends App {
     this.domain = this.node.tryGetContext('domain').toLowerCase();
     this.moduleName = this.node.tryGetContext('module_name').toLowerCase();
 
-    const configPath = path.join(__dirname, './../../../../../mdaaConstants.json');
-    const config: IMdaaConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    const mdaaApplicationConstants = Object.freeze(config);
-
     // Solution Details
-    this.solutionId = mdaaApplicationConstants.solutionID;
-    this.solutionName = mdaaApplicationConstants.solutionName;
+    this.solutionId = pjson.solution_id;
+    this.solutionName = pjson.solution_name;
+    this.solutionVersion = pjson.version;
 
     const packageName = packageNameVersion?.name.replace('@aws-mdaa/', '') ?? 'unknown';
     const packageVersion = packageNameVersion?.version ?? 'unknown';
-    this.solutionVersion = packageVersion;
 
     console.log(`Running MDAA Module ${packageName} Version: ${packageVersion}`);
     if (this.node.tryGetContext('@aws-mdaa/legacyCaefTags')) {

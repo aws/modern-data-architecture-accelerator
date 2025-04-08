@@ -2,8 +2,13 @@ import boto3
 import os
 from langchain.schema.messages import BaseMessage
 from genai_core.langchain import DynamoDBChatMessageHistory
+from botocore import config
 
-client = boto3.client('bedrock-agent-runtime', region_name="us-east-1")
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
+
+client = boto3.client('bedrock-agent-runtime', region_name="us-east-1", config=config)
 
 def get_chat_history(session_id, user_id):
     return DynamoDBChatMessageHistory(

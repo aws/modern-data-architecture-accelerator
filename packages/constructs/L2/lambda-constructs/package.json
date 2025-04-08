@@ -3,6 +3,8 @@
   "version": "0.45.0",
   "description": "MDAA Lambda Constructs",
   "license": "Apache-2.0",
+  "solution_id": "SO0320",
+  "solution_name":"Modern Data Architecture Accelerator",
   "author": {
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"

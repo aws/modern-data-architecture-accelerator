@@ -7,8 +7,13 @@ from aws_lambda_powertools.utilities.batch import BatchProcessor, EventType
 from aws_lambda_powertools.utilities.batch.exceptions import BatchProcessingError
 from aws_lambda_powertools.utilities.data_classes.sqs_event import SQSRecord
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from botocore import config
 
-dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
+
+dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"], config=config)
 table = dynamodb.Table(os.environ["CONNECTIONS_TABLE_NAME"])
 
 processor = BatchProcessor(event_type=EventType.SQS)
@@ -17,7 +22,8 @@ logger = Logger()
 
 api_gateway_management_api = boto3.client(
     "apigatewaymanagementapi",
-    endpoint_url=os.environ["WEBSOCKET_API_ENDPOINT"],
+    endpoint_url=os.environ["WEBSOCKET_API_ENDPOINT"], 
+    config=config
 )
 
 

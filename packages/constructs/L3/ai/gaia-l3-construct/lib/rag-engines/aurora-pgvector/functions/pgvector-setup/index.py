@@ -1,13 +1,19 @@
 import json
+import os
 import boto3
 import psycopg2
 import cfnresponse
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pgvector.psycopg2 import register_vector
+from botocore import config
+
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
 
 logger = Logger()
-secretsmanager_client = boto3.client("secretsmanager")
+secretsmanager_client = boto3.client("secretsmanager", config=config)
 
 
 @logger.inject_lambda_context(log_event=True)

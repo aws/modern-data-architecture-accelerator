@@ -37,6 +37,8 @@ import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import { IMdaaLambdaRole } from './role';
 
+const pjson = require('../package.json');
+
 export interface MdaaDockerImageFunctionProps extends MdaaLambdaFunctionOptions {
   /**
    * The source code of your Lambda function. You can point to a file in an
@@ -432,8 +434,13 @@ export interface MdaaLambdaFunctionOptions extends MdaaConstructProps {
  */
 export class MdaaLambdaFunction extends Function {
   private static setProps(props: MdaaLambdaFunctionProps): FunctionProps {
+
     const overrideProps = {
       functionName: props.naming.resourceName(props.functionName, 64),
+      environment: {
+        ...props.environment,
+        USER_AGENT_STRING: `AWSSOLUTION/${pjson.solution_id}/v${pjson.version}`
+      },
     };
     return { ...props, ...overrideProps };
   }

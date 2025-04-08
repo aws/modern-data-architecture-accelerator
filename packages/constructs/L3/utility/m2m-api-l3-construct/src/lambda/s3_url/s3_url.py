@@ -7,6 +7,11 @@ import boto3
 import os
 import uuid as uid
 import logging
+from botocore import config
+
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
 
 logging.basicConfig(
     format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
@@ -16,7 +21,7 @@ logging.basicConfig(
 logger = logging.getLogger("S3 presigned url")
 
 
-s3 = boto3.client('s3')
+s3 = boto3.client('s3', config=config)
 presigned_url_expiry_seconds = os.environ['EXPIRY_TIME_SECONDS']
 target_bucket = os.environ['TARGET_BUCKET']
 target_prefix = os.environ['TARGET_PREFIX']
@@ -195,7 +200,7 @@ def handler(event, context):
         upload_id = query_string_params['upload_id']
         object_key = f"{target_prefix}/{uuid}"
         # body = json.loads(event['body'])
-        s3_r = boto3.resource('s3')
+        s3_r = boto3.resource('s3', config=config)
         # Complete multipart upload
         try:
             mpu = s3_r.MultipartUpload(target_bucket, object_key, upload_id)

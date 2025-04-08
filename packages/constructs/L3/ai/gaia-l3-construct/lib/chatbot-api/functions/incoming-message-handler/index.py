@@ -4,14 +4,20 @@ import json
 from datetime import datetime
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from botocore import config
+
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
 
 tracer = Tracer()
 logger = Logger(log_uncaught_exceptions=True)
-sns = boto3.client("sns", region_name=os.environ["AWS_REGION"])
+sns = boto3.client("sns", region_name=os.environ["AWS_REGION"], config=config)
 
 api_gateway_management_api = boto3.client(
     "apigatewaymanagementapi",
     endpoint_url=os.environ["WEBSOCKET_API_ENDPOINT"],
+    config=config
 )
 
 

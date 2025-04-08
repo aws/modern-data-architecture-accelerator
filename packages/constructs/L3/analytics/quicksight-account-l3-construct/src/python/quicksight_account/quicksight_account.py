@@ -9,6 +9,13 @@ import json
 import os
 import os.path
 import sys
+from botocore import config
+
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
+
+
 
 
 # Below 3 lines are added to add boto3 custom version 1.26.0 to Lambda Function
@@ -17,7 +24,7 @@ print("sys.path:"+str(sys.path))
 sys.path.insert(0, envLambdaTaskRoot+"/quicksight_acount")
 print(boto3.__version__)
 
-quicksight_client = boto3.client('quicksight')
+quicksight_client = boto3.client('quicksight', config=config)
 
 logging.basicConfig(
     format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",
