@@ -3,9 +3,13 @@ import boto3
 import time
 from pathlib import Path
 import logging
+from botocore import config
 
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
 
-session = boto3.Session()
+session = boto3.Session(config=config)
 
 logging.basicConfig(
     format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",

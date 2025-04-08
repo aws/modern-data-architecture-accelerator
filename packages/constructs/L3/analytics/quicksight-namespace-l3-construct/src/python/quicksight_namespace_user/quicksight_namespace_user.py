@@ -8,8 +8,13 @@ import boto3
 import logging
 import os
 from botocore.exceptions import ClientError
+from botocore import config
 
-quicksight_client = boto3.client('quicksight')
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
+quicksight_client = boto3.client('quicksight', config=config)
+
 
 logging.basicConfig(
     format="%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(process)d >>> %(message)s | Function: %(funcName)s | %(message)s",

@@ -36,5 +36,5 @@ test-template.json
 .terraform*
 **/*.drawio.bkp
 *.zip
-**/python/*
+# **/python/*
 !**/python/.gitkeep

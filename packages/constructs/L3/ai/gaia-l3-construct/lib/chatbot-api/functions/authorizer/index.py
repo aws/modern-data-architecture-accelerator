@@ -4,11 +4,16 @@ import boto3
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ClientError
+from botocore import config
+
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
 
 tracer = Tracer()
 logger = Logger(log_uncaught_exceptions=True)
 
-cognito_client = boto3.client("cognito-idp", region_name=os.environ["AWS_REGION"])
+cognito_client = boto3.client("cognito-idp", region_name=os.environ["AWS_REGION"], config=config)
 
 
 @tracer.capture_lambda_handler

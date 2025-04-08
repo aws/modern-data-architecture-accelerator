@@ -6,7 +6,12 @@ import os
 import boto3
 import time
 import logging
+from botocore import config
 
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
+ec2 = boto3.client('ec2', config=config)
 
 ec2 = boto3.client('ec2')
 

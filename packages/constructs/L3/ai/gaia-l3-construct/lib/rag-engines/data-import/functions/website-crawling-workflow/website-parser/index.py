@@ -5,10 +5,15 @@ import genai_core.utils.json
 import genai_core.websites.crawler
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from botocore import config
+
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
 
 logger = Logger()
 
-s3_client = boto3.client("s3")
+s3_client = boto3.client("s3", config=config)
 PROCESSING_BUCKET_NAME = os.environ["PROCESSING_BUCKET_NAME"]
 
 

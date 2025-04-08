@@ -1,9 +1,15 @@
 import json
+import os
 import boto3
 import random
 import string
+from botocore import config
 
-secrets_manager_client = boto3.client('secretsmanager')
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
+
+secrets_manager_client = boto3.client('secretsmanager', config=config)
 
 def handler(event, context):
 

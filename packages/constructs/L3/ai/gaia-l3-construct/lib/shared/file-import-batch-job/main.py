@@ -8,6 +8,11 @@ import genai_core.documents
 import genai_core.workspaces
 import genai_core.aurora.create
 from langchain.document_loaders import S3FileLoader
+from botocore import config
+
+solution_identifier = os.getenv("USER_AGENT_STRING")
+user_agent_extra_param = { "user_agent_extra": solution_identifier }
+config = config.Config(**user_agent_extra_param)
 
 WORKSPACE_ID = os.environ.get("WORKSPACE_ID")
 DOCUMENT_ID = os.environ.get("DOCUMENT_ID")
@@ -25,7 +30,7 @@ logger.setFormatter(logging.Formatter(
     datefmt="%Y-%m-%d %H:%M:%S"
 ))
 
-s3_client = boto3.client("s3")
+s3_client = boto3.client("s3", config=config)
 
 
 def main():
