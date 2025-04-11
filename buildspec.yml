@@ -1,0 +1,53 @@
+version: 0.2
+env:
+  variables:
+    NODE_OPTIONS: "--max_old_space_size=8192"
+phases:
+  install:
+    runtime-versions:
+      nodejs: 22
+    commands:
+      -  echo "nothing to do in install"
+  pre_build:
+    commands:
+      - echo "Installing dependencies and executing unit tests in - `pwd`"
+      - npm install
+      - chmod +x ./scripts/build_test.sh && ./scripts/build_test.sh
+      - echo "Installing dependencies and executing unit tests completed `date`"
+  build:
+    commands:
+      - echo "Starting build `date` in `pwd`"
+      - cd deployment
+      - chmod +x ./build-s3-dist.sh && ./build-s3-dist.sh $DIST_OUTPUT_BUCKET $SOLUTION_NAME $VERSION
+      - echo "Build completed `date`"
+      - echo "Starting open-source-dist `date` in `pwd`"
+      - chmod +x ./build-open-source-dist.sh && ./build-open-source-dist.sh $SOLUTION_NAME
+      - echo "Open Source Dist completed `date`"
+      - echo "Build and executing unit tests completed `date`"
+  post_build:
+    commands:
+      - echo "Post build completed on `date`"
+
+artifacts:
+  files:
+    - package.json
+    - lerna.json
+    - packages/**/*
+    - target/**/*
+    - schemas/**/*
+    - scripts/**/*
+    - .gitignore
+    - sonar-project.properties
+    - README.md
+    - LICENSE.txt
+    - NOTICE.txt
+    - CODE_OF_CONDUCT.md
+    - CONTRIBUTING.md
+    - buildspec.yml
+    - CHANGELOG.md
+    - SECURITY.md
+    - .viperlightignore
+    - solution-manifest.yaml
+  exclude-paths:
+    - '**/node_modules/**'
+    - "packages/**/node_modules/"

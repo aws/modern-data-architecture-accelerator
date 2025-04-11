@@ -2,7 +2,6 @@ terraform.tfstate
 tempfile
 codescan*
 .viperlightrc
-deployment
 .DS_Store
 *.js
 !jest.config.js
