@@ -1,3 +1,8 @@
+/*!
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { Stack } from 'aws-cdk-lib';
 import { NagPackSuppression, NagSuppressions } from 'cdk-nag';
 import { IConstruct } from 'constructs';
