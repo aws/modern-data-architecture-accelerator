@@ -35,7 +35,7 @@
     "@aws-mdaa/kms-constructs": "^0.45.0",
     "@aws-mdaa/naming": "^0.45.0",
     "@aws-mdaa/s3-constructs": "^0.45.0",
-    "aws-cdk-lib": "2.188.0",
+    "aws-cdk-lib": "2.189.0",
     "cdk-nag": "2.35.25",
     "constructs": "10.0.96"
   },
