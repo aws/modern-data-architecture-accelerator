@@ -1,26 +1,17 @@
 #!/bin/bash
+set -e
 cwd=`pwd`
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
-cd "$parent_path/../"
+sh "$parent_path/../packages/cli/scripts/check_node_version.sh"
 echo ""
 echo "Running NPM Install for MDAA Repo"
-npm install --no-save --quiet > /dev/null
+cd "$parent_path/../"
+npm install --no-save --quiet
 echo ""
 echo "Building MDAA CLI"
 echo ""
 export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1
-npx lerna run build --scope "@aws-mdaa/cli" --loglevel warn > /dev/null
-
-echo ""
-echo "Checking for pip availability..."
-which pip
-if [[ $? -eq 0 ]]; then
-    echo "Installing Python Packages with Pip"
-    pip install -q -r requirements.txt
-else
-    echo "Pip not found. Skipping Python package installation. Terraform functionality might be limited."
-fi
-
-echo ""
+npx lerna run build --scope "@aws-mdaa/cli" --loglevel warn
 cd "$cwd"
-"$parent_path/../packages/cli/bin/mdaa" $@
+echo ""
+node "$parent_path/../packages/cli/lib/mdaa" $@

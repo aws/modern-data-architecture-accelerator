@@ -1,9 +1,10 @@
 #Exclude coverage reports for bundled deps
 node_modules/**/coverage/*
 # Exclude typescript source and config
-*.ts
-tsconfig.json
+#*.ts
+#tsconfig.json
 
 # Include javascript files and typescript declarations
 !*.js
 !*.d.ts
+!requirements.txt

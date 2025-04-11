@@ -106,6 +106,12 @@ const optionDefinitions = [
     description: 'Increase CDK cli verbosity',
   },
   {
+    name: 'nofail',
+    alias: 'f',
+    type: Boolean,
+    description: 'Continue execution after failure',
+  },
+  {
     name: 'help',
     alias: 'h',
     type: Boolean,

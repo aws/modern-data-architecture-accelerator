@@ -28,6 +28,7 @@
     "@aws-mdaa/iam-role-helper": "0.45.0",
     "@aws-mdaa/l3-construct": "0.45.0",
     "@aws-mdaa/lakeformation-access-control-l3-construct": "0.45.0",
+    "@aws-mdaa/athena-workgroup-l3-construct": "0.45.0",
     "@aws-mdaa/naming": "0.45.0",
     "@aws-mdaa/testing": "^0.45.0",
     "@types/jest": "29.5.0",
@@ -53,6 +54,7 @@
     "@aws-mdaa/iam-role-helper": "0.45.0",
     "@aws-mdaa/l3-construct": "0.45.0",
     "@aws-mdaa/lakeformation-access-control-l3-construct": "0.45.0",
+    "@aws-mdaa/athena-workgroup-l3-construct": "0.45.0",
     "@aws-mdaa/naming": "0.45.0",
     "aws-cdk-lib": "2.188.0",
     "constructs": "10.0.96"
@@ -65,6 +67,7 @@
     "@aws-cdk/aws-glue-alpha": "2.188.0-alpha.0",
     "@aws-mdaa/construct": "^0.45.0",
     "@aws-mdaa/datazone-l3-construct": "^0.45.0",
+    "@aws-mdaa/athena-workgroup-l3-construct": "^0.45.0",
     "@aws-mdaa/datazone-constructs": "^0.45.0",
     "@aws-mdaa/ec2-constructs": "^0.45.0",
     "@aws-mdaa/ec2-l3-construct": "^0.45.0",

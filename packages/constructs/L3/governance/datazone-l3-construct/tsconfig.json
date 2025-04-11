@@ -48,6 +48,9 @@
       "path": "../../core/l3-construct"
     },
     {
+      "path": "../../../L2/custom-constructs"
+    },
+    {
       "path": "../../../../utilities/mdaa-naming"
     },
     {

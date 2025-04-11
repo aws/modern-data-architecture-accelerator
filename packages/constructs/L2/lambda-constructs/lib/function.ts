@@ -439,7 +439,7 @@ export class MdaaLambdaFunction extends Function {
       functionName: props.naming.resourceName(props.functionName, 64),
       environment: {
         ...props.environment,
-        USER_AGENT_STRING: `AWSSOLUTION/${pjson.solution_id}/v${pjson.version}`
+        USER_AGENT_STRING: `AWSSOLUTION/${pjson.solution_id}/v${pjson.version}`,
       },
     };
     return { ...props, ...overrideProps };

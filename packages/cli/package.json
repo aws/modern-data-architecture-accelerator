@@ -39,6 +39,7 @@
   "dependencies": {
     "@aws-mdaa/config": "^0.45.0",
     "@aws-mdaa/devops": "^0.45.0",
+    "command-exists": "^1.2.9",
     "ajv": "8.17.1",
     "command-line-args": "5.2.1",
     "yaml": "1.10.2"
