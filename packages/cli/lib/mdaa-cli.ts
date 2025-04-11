@@ -53,6 +53,7 @@ export class MdaaDeploy {
   private readonly cdkPushdown?: string[];
   private readonly cdkVerbose?: boolean;
   private readonly testMode: boolean;
+  private readonly noFail: boolean;
 
   private static readonly TF_ACTION_MAPPINGS: { [key: string]: string } = {
     list: 'validate',
@@ -69,6 +70,7 @@ export class MdaaDeploy {
     if (!this.action) {
       throw new Error('MDAA action must be specified on command line: mdaa <action>');
     }
+    this.noFail = this.booleanOption(options, 'nofail');
     this.testMode = this.booleanOption(options, 'testing');
     this.cwd = process.cwd();
     this.mdaaVersion = options['mdaa_version'];
@@ -79,6 +81,7 @@ export class MdaaDeploy {
     this.npmTag = options['tag'];
     // nosemgrep
     this.workingDir = options['working_dir'] ? path.resolve(options['working_dir']) : path.resolve('./.mdaa_working');
+    console.log(`Set MDAA working directory to ${this.workingDir}`);
     this.npmDebug = this.booleanOption(options, 'npm_debug');
 
     this.devopsMode = this.booleanOption(options, 'devops');
@@ -94,14 +97,30 @@ export class MdaaDeploy {
 
     /* istanbul ignore next */
     if (options['clear']) {
-      console.log(`Removing all previously installed packages from ${this.workingDir}/packages`);
-      this.execCmd(`rm -rf '${this.workingDir}/packages'`);
+      console.log(`Removing all previously installed Node.JS packages from ${this.workingDir}/nodejs`);
+      this.execCmd(`rm -rf '${this.workingDir}/nodejs'`);
+      console.log(`Removing all previously installed Python packages from ${this.workingDir}/python`);
+      this.execCmd(`rm -rf '${this.workingDir}/python'`);
     }
 
     this.localPackages = this.loadLocalPackages();
 
     if (this.devopsMode) {
       console.log('Running MDAA in devops mode.');
+    }
+
+    this.installPython();
+  }
+
+  private installPython() {
+    const commandExists = require('command-exists');
+    const pipCommandExists = commandExists.sync('pip');
+    if (pipCommandExists) {
+      const pipCmd = `pip install --upgrade -q -r ${__dirname}/../requirements.txt -t ${this.workingDir}/python`;
+      console.log(`Found pip. Installing python with cmd: ${pipCmd}`);
+      this.execCmd(pipCmd);
+    } else {
+      throw new Error('pip not availalable');
     }
   }
 
@@ -417,9 +436,7 @@ export class MdaaDeploy {
       throw new Error("module_path must be specified if module_type is 'tf'");
     }
 
-    try {
-      this.execCmd('which checkov');
-    } catch (error) {
+    if (!fs.existsSync(`${this.workingDir}/python/bin/checkov`) && !this.testMode) {
       console.log('Cannot locate checkov on path. Terraform modules cannot deploy. Check Python/Pip installation.');
       process.exit(1);
     }
@@ -450,8 +467,13 @@ export class MdaaDeploy {
 
     this.createTerraformOverride(moduleConfig);
     const tfCmds: string[] = [];
+    if (this.config.contents.region && this.config.contents.region.toLowerCase() != 'default') {
+      tfCmds.push(`export AWS_DEFAULT_REGION=${this.config.contents.region}`);
+    }
     tfCmds.push(`terraform init `);
-    const checkovCmd: string[] = [`checkov -d ${moduleConfig.modulePath}`];
+    const checkovCmd: string[] = [
+      `export PYTHONPATH=${this.workingDir}/python && ${this.workingDir}/python/bin/checkov -d ${moduleConfig.modulePath}`,
+    ];
     checkovCmd.push('--summary-position bottom');
     checkovCmd.push('--quiet');
     checkovCmd.push('--compact');
@@ -459,18 +481,27 @@ export class MdaaDeploy {
     tfCmds.push(checkovCmd.join(' \\\n\t'));
     if (tfAction == 'plan') {
       const tfPlanCmd: string[] = [];
+      if (this.config.contents.region && this.config.contents.region.toLowerCase() != 'default') {
+        tfPlanCmd.push(`export AWS_DEFAULT_REGION=${this.config.contents.region}`);
+      }
       tfPlanCmd.push('terraform plan');
       tfPlanCmd.push(...this.createTerraformPlanApplyCmdArgs(moduleConfig));
       tfPlanCmd.push(`--out ${moduleConfig.modulePath}/tfplan.binary`);
       tfCmds.push(tfPlanCmd.join(' \\\n\t'));
     } else if (tfAction == 'apply') {
       const tfApplyCmd: string[] = [];
+      if (this.config.contents.region && this.config.contents.region.toLowerCase() != 'default') {
+        tfApplyCmd.push(`export AWS_DEFAULT_REGION=${this.config.contents.region}`);
+      }
       tfApplyCmd.push('terraform apply');
       tfApplyCmd.push('-auto-approve');
       tfApplyCmd.push(...this.createTerraformPlanApplyCmdArgs(moduleConfig));
       tfCmds.push(tfApplyCmd.join(' \\\n\t'));
     } else {
       const tfCmd: string[] = [];
+      if (this.config.contents.region && this.config.contents.region.toLowerCase() != 'default') {
+        tfCmd.push(`export AWS_DEFAULT_REGION=${this.config.contents.region}`);
+      }
       tfCmd.push(`terraform ${tfAction}`);
       tfCmds.push(tfCmd.join(' \\\n\t'));
     }
@@ -486,6 +517,8 @@ export class MdaaDeploy {
       tfCmd.push(`-var module_name="${moduleConfig.moduleName}"`);
       if (this.config.contents.region && this.config.contents.region.toLowerCase() != 'default') {
         tfCmd.push(`-var region="${this.config.contents.region}"`);
+      } else {
+        tfCmd.push('-var region="${AWS_DEFAULT_REGION}"');
       }
     }
     const transformRefsProps: MdaaConfigParamRefValueTransformerProps = {
@@ -526,7 +559,7 @@ export class MdaaDeploy {
 
     console.log(`Module ${logPrefix}: Package ${npmPackageNoVersion} found in local codebase. Running build.`);
     const buildCmd = `npx lerna run build --scope ${npmPackageNoVersion} --loglevel warn`;
-    const fullBuildCmd = `cd '${__dirname}/../../../';${buildCmd} ;cd '${this.cwd}'`;
+    const fullBuildCmd = `cd '${__dirname}/../../../' && ${buildCmd} && cd '${this.cwd}'`;
     console.log(`Running Lerna Build: ${fullBuildCmd}`);
     this.execCmd(fullBuildCmd);
 
@@ -535,7 +568,7 @@ export class MdaaDeploy {
 
   private installPackage(logPrefix: string, npmPackage: string, npmPackageNoVersion: string): string {
     const prefix = path.resolve(
-      `${this.workingDir}/packages/${MdaaDeploy.hashCodeHex(npmPackage, this.npmTag || 'latest').replace(/^-/, '')}`,
+      `${this.workingDir}/nodejs/${MdaaDeploy.hashCodeHex(npmPackage, this.npmTag || 'latest').replace(/^-/, '')}`,
     );
     console.log(`Module ${logPrefix}: Prepping NPM Package ${npmPackage}`);
 
@@ -851,7 +884,18 @@ export class MdaaDeploy {
   private execCmd(cmd: string) {
     // nosemgrep
     if (!this.testMode) {
-      require('child_process').execSync(cmd, { stdio: 'inherit' });
+      try {
+        require('child_process').execSync(cmd, { stdio: 'inherit' });
+      } catch (error: unknown) {
+        if (this.noFail) {
+          console.warn(`Child process raised exception: ${error}`);
+          if (error instanceof Error) {
+            console.error(error.stack);
+          }
+        } else {
+          throw error;
+        }
+      }
     } else {
       console.log(`Testing Mode:\n ${cmd}`);
     }

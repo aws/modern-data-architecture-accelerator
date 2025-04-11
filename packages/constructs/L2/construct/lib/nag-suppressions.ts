@@ -25,7 +25,8 @@ export class MdaaNagSuppressions {
       ?.split('\n')[2]
       .replace(/.*\(/, '') //NOSONAR
       .replace(/\).*/, '')
-      .replace(/.*\/packages\//, 'packages/'); //NOSONAR
+      .replace(/.*\/constructs\/L./, '@aws-mdaa') //NOSONAR
+      .replace(/.*@aws-mdaa/, '@aws-mdaa'); //NOSONAR
     Error.stackTraceLimit = oldLimit;
     Error.stackTraceLimit = oldLimit;
     const suppressionsWithSource = suppressions.map(x => {

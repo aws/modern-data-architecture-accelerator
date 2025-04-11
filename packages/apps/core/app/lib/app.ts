@@ -324,7 +324,7 @@ export abstract class MdaaCdkApp extends App {
 
   private createEmptyStack(): MdaaStack {
     const stackName = this.naming.stackName();
-    const stackDescription = `(${this.solutionId}-${this.moduleName}) ${this.solutionName}. Version ${this.solutionVersion}`
+    const stackDescription = `(${this.solutionId}-${this.moduleName}) ${this.solutionName}. Version ${this.solutionVersion}`;
     const stackProps = {
       naming: this.naming,
       description: stackDescription,
@@ -336,7 +336,7 @@ export abstract class MdaaCdkApp extends App {
     };
     const stack = new MdaaStack(this, stackName, stackProps);
     new StringParameter(stack, 'StackDescriptionParameter', {
-      parameterName:  this.naming.ssmPath('aws-solution'),
+      parameterName: this.naming.ssmPath('aws-solution'),
       stringValue: stackDescription,
       description: 'Stack description parameter to update on version changes',
     });
