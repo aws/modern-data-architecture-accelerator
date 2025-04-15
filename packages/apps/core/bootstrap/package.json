@@ -40,7 +40,7 @@
     "@aws-mdaa/iam-role-helper": "^0.45.0",
     "@aws-mdaa/l3-construct": "^0.45.0",
     "ajv": "8.17.1",
-    "aws-cdk-lib": "2.188.0",
+    "aws-cdk-lib": "2.189.1",
     "cdk-nag": "2.35.25",
     "constructs": "10.0.96",
     "source-map-support": "0.5.21",
