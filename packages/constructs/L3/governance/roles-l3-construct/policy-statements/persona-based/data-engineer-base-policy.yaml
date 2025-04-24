@@ -1,0 +1,165 @@
+statements:   
+    -   Sid: ListLogsAccess
+        Action:
+            - 'logs:DescribeLogGroups'
+        Resource: '*'
+        Effect: Allow
+    -   Sid: EMRReadOnly
+        Action:
+            - 'elasticmapreduce:List*'
+            - 'elasticmapreduce:Desc*'
+        Resource: '*'
+        Effect: Allow
+    -   Sid: IAMViewRolePermissions
+        Effect: Allow
+        Action:
+            - 'iam:GetRole'
+            - 'iam:ListSAMLProviders'
+            - 'iam:ListRoleTags'
+            - 'iam:ListSAMLProviderTags'
+            - 'iam:ListRoles'
+            - 'iam:ListRolePolicies'
+            - 'iam:GetRolePolicy'
+            - 'iam:GetSAMLProvider'
+        Resource: '*'
+    -   Sid: GlueCatalogAccess
+        Effect: Allow
+        Action:
+            - 'glue:BatchGetPartition'
+            - 'glue:DeleteColumnStatisticsForPartition'
+            - 'glue:DeleteColumnStatisticsForTable'
+            - 'glue:Get*'
+            - 'glue:SearchTables'
+            - 'glue:UpdateColumnStatisticsForPartition'
+            - 'glue:UpdateColumnStatisticsForTable'
+        Resource:
+            - 'arn:aws:glue:*:*:catalog'
+    -   Sid: GlueJobAccess
+        Effect: Allow
+        Action:
+            - 'glue:BatchStopJobRun'
+            - 'glue:GetJob'
+            - 'glue:GetJobRun'
+            - 'glue:GetJobRuns'
+            - 'glue:StartJobRun'
+        Resource:
+            - 'arn:aws:glue:*:*:job/*'
+    -   Sid: GlueTriggerAccess
+        Effect: Allow
+        Action:
+            - 'glue:BatchGetTriggers'
+            - 'glue:GetTrigger*'
+            - 'glue:StartTrigger'
+            - 'glue:StopTrigger'
+        Resource:
+            - 'arn:aws:glue:*:*:trigger/*'
+    -   Sid: GlueCrawlerAccess
+        Effect: Allow
+        Action:
+            - 'glue:BatchGetCrawlers'
+            - 'glue:StartCrawler'
+            - 'glue:StopCrawler'
+        Resource:
+            - 'arn:aws:glue:*:*:crawler/*'
+    -   Sid: GlueWorkflowAccess
+        Effect: Allow
+        Action:
+            - 'glue:BatchGetWorkflows'
+            - 'glue:GetWorkflow'
+            - 'glue:GetWorkflowRun'
+            - 'glue:GetWorkflowRunProperties'
+            - 'glue:GetWorkflowRuns'
+            - 'glue:ListWorkflows'
+            - 'glue:NotifyEvent'
+            - 'glue:ResumeWorkflowRun'
+            - 'glue:StartWorkflowRun'
+            - 'glue:StopWorkflowRun'
+        Resource:
+            - 'arn:aws:glue:*:*:workflow/*'
+    -   Sid: GlueBlueprintsAccess
+        Effect: Allow
+        Action:
+            - 'glue:BatchGetBlueprints'
+            - 'glue:GetBlueprint'
+            - 'glue:GetBlueprintRun'
+            - 'glue:GetBlueprintRuns'
+            - 'glue:StartBlueprintRun'
+        Resource:
+            - 'arn:aws:glue:*:*:blueprint/*'
+    -   Sid: LakeFormationAccess
+        Effect: Allow
+        Action:
+            - 'lakeformation:CancelTransaction'
+            - 'lakeformation:CommitTransaction'
+            - 'lakeformation:ExtendTransaction'
+            - 'lakeformation:StartQueryPlanning'
+        Resource:
+            - '*'
+    -   Sid: CodeCommitReadAccess
+        Effect: Allow
+        Action:
+            - 'codecommit:BatchGetCommits'
+            - 'codecommit:BatchGetPullRequests'
+            - 'codecommit:BatchGetRepositories'
+            - 'codecommit:BatchDescribeMergeConflicts'
+            - 'codecommit:DescribeMergeConflicts'
+            - 'codecommit:DescribePullRequestEvents'
+            - 'codecommit:EvaluatePullRequestApprovalRules'
+            - 'codecommit:GitPull'
+            - 'codecommit:ListAssociatedApprovalRuleTemplatesForRepository'
+            - 'codecommit:ListBranches'
+            - 'codecommit:ListPullRequests'
+            - 'codecommit:ListTagsForResource'
+        Resource:
+            - 'arn:aws:codecommit:*:*:*'
+    -   Sid: DmsReplicationTaskAccess
+        Effect: Allow
+        Action:
+            -  'dms:DeleteReplicationTask'        # Grants permission to delete the specified replication task
+            -  'dms:DescribeReplicationTaskAssessmentResults'        # Grants permission to return the latest task assessment results from Amazon S3
+            -  'dms:DescribeTableStatistics'        # Grants permission to return table statistics on the database migration task, including table name, rows inserted, rows updated, and rows deleted
+            -  'dms:ModifyReplicationTask'        # Grants permission to modify the specified replication task
+            -  'dms:ReloadTables'        # Grants permission to reload the target database table with the source data
+            -  'dms:StartReplicationTask'        # Grants permission to start the replication task
+            -  'dms:StartReplicationTaskAssessment'        # Grants permission to start the replication task assessment for unsupported data types in the source database
+            -  'dms:StartReplicationTaskAssessmentRun'        # Grants permission to start a new premigration assessment run for one or more individual assessments of a migration task
+            -  'dms:StopReplicationTask'        # Grants permission to stop the replication task
+        Resource: 'arn:aws:dms:*:*:task:*'
+    -   Sid: DmsReplicationInstanceReadAccess
+        Effect: Allow
+        Action:
+            - 'dms:TestConnection'
+            - 'dms:DescribeApplicableIndividualAssessments'
+            - 'dms:DescribeReplicationInstanceTaskLogs'
+            
+        Resource: 'arn:aws:dms:*:*:rep:*'
+    -   Sid: DmsTaskAssessmentReadAccess
+        Effect: Allow
+        Action:
+            - 'dms:DescribeReplicationTaskAssessmentRuns'       # Grants permission to return a paginated list of premigration assessment runs based on filter settings
+        Resource: 
+            -   'arn:aws:dms:*:*:rep:*'
+            -   'arn:aws:dms:*:*:assessment-run:*'
+            -   'arn:aws:dms:*:*:task:*'
+
+    -   Sid: DmsIndividualAssessmentReadAccess
+        Effect: Allow
+        Action:
+            -  'dms:DescribeReplicationTaskIndividualAssessments'        # Grants permission to return a paginated list of individual assessments based on filter settings
+        Resource: 
+            -   'arn:aws:dms:*:*:individual-assessment:*'
+            -   'arn:aws:dms:*:*:assessment-run:*'
+            -   'arn:aws:dms:*:*:task:*'
+
+    -   Sid: DmsEndpointReadAccess
+        Effect: Allow
+        Action:
+            -  'dms:DescribeRefreshSchemasStatus'        # Grants permission to returns the status of the RefreshSchemas operation
+            -  'dms:DescribeSchemas'        # Grants permission to return information about the schema for the specified endpoint
+            -  'dms:TestConnection'        # Grants permission to test the connection between the replication instance and the endpoint
+        Resource: 'arn:aws:dms:*:*:endpoint:*'
+
+
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: "Minimum permission provided to Data Engineer persona"

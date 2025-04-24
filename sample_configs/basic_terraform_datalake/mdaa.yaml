@@ -1,0 +1,47 @@
+# All resources will be deployed to the default region specified in the environment or AWS configurations.
+# Can optional specify a specific AWS Region Name.
+region: <your-aws-region-name>
+
+## Pre-Deployment Instructions
+
+# TODO: Set an appropriate, unique organization name
+# Failure to do so may resulting in global naming conflicts.
+organization: <your-org-name>
+
+# TODO: If using an S3 Terraform backend, uncomment these lines and set the backend S3 bucket and DynamoDB table names.
+# If not configured, local state tracking will be used.
+terraform:
+  override:
+    terraform:
+      backend:
+        s3:
+          bucket: <your-tf-state-bucket-name>
+          dynamodb_table: <your-tf-state-lock-ddb-table>
+
+# One or more domains may be specified. Domain name will be incorporated by default naming implementation
+# to prefix all resource names.
+domains:
+  # The named of the domain. In this case, we are building a 'shared' domain.
+  shared:
+    # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
+    environments:
+      # The environment name will be incorporated into resource name by the default naming implementation.
+      dev:
+        use_bootstrap: false
+        # The target deployment account can be specified per environment.
+        # If 'default' or not specified, the account configured in the environment will be assumed.
+        account: default
+        # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
+        # specifies a deployment configuration file if required.
+        modules:
+          # This module will deploy the S3 data lake buckets.
+          # Coarse grained access may be granted directly to S3 for certain roles.
+          glue-catalog:
+            module_type: tf
+            module_path: ./glue-catalog/
+          # This module will deploy the S3 data lake buckets.
+          # Coarse grained access may be granted directly to S3 for certain roles.
+          datalake1:
+            module_type: tf
+            module_path: ./datalake/
+            mdaa_compliant: true

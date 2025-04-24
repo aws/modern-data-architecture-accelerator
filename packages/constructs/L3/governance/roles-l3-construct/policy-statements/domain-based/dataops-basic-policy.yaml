@@ -1,0 +1,105 @@
+##++++++++++++++++++++++++++++++++++++++++++++##
+# dataops
+#   - glue
+#   - databrew
+#   - dms
+##++++++++++++++++++++++++++++++++++++++++++++##
+
+statements:
+  - Sid: GlueAccessNoResourceReadAccess
+    Effect: Allow
+    Action:
+      -  'glue:CheckSchemaVersionValidity'        # Grants permission to retrieve a check the validity of schema version
+      -  'glue:DeregisterDataPreview'        # Grants permission to terminate Glue Studio Notebook session
+      -  'glue:GetClassifier*'        # Grants permission to retrieve a classifier/all classifiers
+      -  'glue:GetCrawlerMetrics'        # Grants permission to retrieve metrics about crawlers
+      -  'glue:GetCrawlers'        # Grants permission to retrieve all crawlers
+      -  'glue:GetDataPreviewStatement'        # Grants permission to get Data Preview Statement
+      -  'glue:GetDataflowGraph'        # Grants permission to transform a script into a directed acyclic graph (DAG)
+      -  'glue:GetDevEndpoints'        # Grants permission to retrieve all development endpoints
+      -  'glue:GetJobBookmark'        # Grants permission to retrieve a job bookmark
+      -  'glue:GetJobs'        # Grants permission to retrieve all current jobs
+      -  'glue:GetMapping'        # Grants permission to create a mapping
+      -  'glue:GetNotebookInstanceStatus'        # Grants permission to retrieve Glue Studio Notebooks session status
+      -  'glue:GetPlan'        # Grants permission to retrieve a mapping for a script
+      -  'glue:GetSecurityConfiguration*'        # Grants permission to retrieve a security configuration
+      -  'glue:GetTriggers'        # Grants permission to retrieve the triggers associated with a job
+      -  'glue:GlueNotebookAuthorize'        # Grants permission to access Glue Studio Notebooks
+      -  'glue:GlueNotebookRefreshCredentials'        # Grants permission to refresh Glue Studio Notebooks credentials
+      -  'glue:ListBlueprints'        # Grants permission to retrieve all blueprints
+      -  'glue:ListCrawlers'        # Grants permission to retrieve all crawlers
+      -  'glue:ListCrawls'        # Grants permission to retrieve crawl run history for a crawler
+      -  'glue:ListCustomEntityTypes'        # Grants permission to retrieve all Custom Entity Types
+      -  'glue:ListDevEndpoints'        # Grants permission to retrieve all development endpoints
+      -  'glue:ListJobs'        # Grants permission to retrieve all current jobs
+      -  'glue:ListRegistries'        # Grants permission to retrieve a list of schema registries
+      -  'glue:ListSessions'        # Grants permission to retrieve a list of interactive session
+      -  'glue:ListTriggers'        # Grants permission to retrieve all triggers
+      -  'glue:ListWorkflows'        # Grants permission to retrieve all workflows
+      -  'glue:RunDataPreviewStatement'        # Grants permission to run Data Preview Statement
+      -  'glue:StartNotebook'        # Grants permission to start Glue Studio Notebooks
+      -  'glue:TerminateNotebook'        # Grants permission to terminate Glue Studio Notebooks
+      -  'glue:TestConnection'        # Grants permission to test connection in Glue Studio
+      -  'glue:UseGlueStudio'        # Grants permission to use Glue Studio and access its internal APIs
+    Resource:
+      - '*'
+
+  - Sid: GlueDataBrewNoResourceReadAccess
+    Effect: Allow
+    Action:
+      -  'databrew:ListDatasets'        # Grants permission to list datasets in your account
+      -  'databrew:ListJobs'        # Grants permission to list jobs in your account
+      -  'databrew:ListProjects'        # Grants permission to list projects in your account
+      -  'databrew:ListRecipes'        # Grants permission to list recipes in your account
+      -  'databrew:ListRulesets'        # Grants permission to list rulesets in your account
+      -  'databrew:ListSchedules'        # Grants permission to list schedules in your account
+    Resource:
+      - '*'
+  - Sid: GlueDataBrewNoResourceWriteAccess
+    Action:
+      -  'databrew:CreateDataset'        # Grants permission to create a dataset
+      -  'databrew:CreateProfileJob'        # Grants permission to create a profile job
+      -  'databrew:CreateProject'        # Grants permission to create a project
+      -  'databrew:CreateRecipe'        # Grants permission to create a recipe
+      -  'databrew:CreateRecipeJob'        # Grants permission to create a recipe job
+      -  'databrew:CreateRuleset'        # Grants permission to create a ruleset
+      -  'databrew:CreateSchedule'        # Grants permission to create a schedule
+    Resource:
+      - '*'
+  - Sid: DmsNoResourceReadAccess
+    Effect: Allow
+    Action:
+      -  'dms:Describe*'        # Grants permission to Describe* AWS DMS attributes for a customer account
+      -  'dms:ListTagsForResource'    # Grants permission to list all tags for an AWS DMS resource
+    Resource: '*'
+
+  - Sid: DmsNoResourceWriteAccess
+    Effect: Allow
+    Action:
+      -  'dms:BatchStartRecommendations'        # Grants permission to start the analysis of up to 20 source databases to recommend target engines for each source database
+      -  'dms:CreateDataProvider'        # Grants permission to create an data provider using the provided settings
+      -  'dms:CreateEndpoint'        # Grants permission to create an endpoint using the provided settings
+      -  'dms:CreateEventSubscription'        # Grants permission to create an AWS DMS event notification subscription
+      -  'dms:CreateFleetAdvisorCollector'        # Grants permission to create a Fleet Advisor collector using the specified parameters
+      -  'dms:CreateInstanceProfile'        # Grants permission to create an instance profile using the provided settings
+      -  'dms:CreateReplicationInstance'        # Grants permission to create a replication instance using the specified parameters
+      -  'dms:CreateReplicationSubnetGroup'        # Grants permission to create a replication subnet group given a list of the subnet IDs in a VPC
+      -  'dms:ImportCertificate'        # Grants permission to upload the specified certificate
+      -  'dms:ModifyEventSubscription'        # Grants permission to modify an existing AWS DMS event notification subscription
+      -  'dms:ModifyFleetAdvisorCollector'        # Grants permission to modify the name and description of the specified Fleet Advisor collector
+      -  'dms:ModifyFleetAdvisorCollectorStatuses'        # Grants permission to modify the status of the specified Fleet Advisor collector
+      -  'dms:ModifyReplicationSubnetGroup'        # Grants permission to modify the settings for the specified replication subnet group
+      -  'dms:RunFleetAdvisorLsaAnalysis'        # Grants permission to run a large-scale assessment (LSA) analysis on every Fleet Advisor collector in your account
+      -  'dms:StartRecommendations'        # Grants permission to start the analysis of your source database to provide recommendations of target engines
+      -  'dms:UpdateSubscriptionsToEventBridge'        # Grants permission to migrate DMS subcriptions to Eventbridge
+      -  'dms:UploadFileMetadataList'        # Grants permission to upload files to your Amazon S3 bucket
+    Resource: '*'
+
+suppressions:
+  - id: "AwsSolutions-IAM5"
+    reason: " - GlueAccessNoResource: Policy actions do not require Resource!
+              - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource!
+              - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource!
+              - DmsNoResourceReadAccess: Policy actions do not require Resource
+              - DmsNoResourceWriteAccess: Policy actions do not require Resource    
+            "  

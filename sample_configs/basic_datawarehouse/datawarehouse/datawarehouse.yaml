@@ -1,0 +1,47 @@
+# Specify the admin username to be created on the cluster. A secret will
+# be automatically generated containing the admin password.
+adminUsername: admin
+
+# The admin password will be automatically rotated after this many days
+adminPasswordRotationDays: 30
+
+# This is a set of Role/Principal Arns which will be granted access to the Warehouse S3 bucket
+dataAdminRoles:
+  - id: generated-role-id:data-admin
+
+# The VPC and subnets on which the cluster will be deployed. If automatic cluster relocation is required,
+# at least one subnet per AZ should be specified.
+vpcId: "{{context:vpc_id}}"
+subnetIds: ["{{context:subnet_id}}"]
+
+# Port the cluster will listen on (defaults to 54390)
+clusterPort: 54390
+
+#A preferred maintenance window day/time range. Should be specified as a range ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC).
+preferredMaintenanceWindow: Sun:23:45-Mon:00:15
+
+# Ingress rules to be added to the cluster security group.
+# All other traffic will be blocked
+# Can reference other security groups (prefix sg:) or ipv4 CIDR sources (prefix ipv4:)
+securityGroupIngress:
+  ipv4:
+    - "{{context:redshift_client_cidr_range}}"
+
+# The node type and initial number of nodes
+nodeType: DC2_LARGE
+numberOfNodes: 2
+
+# Controls whether or not the cluster logs user audit activity to S3
+# Note that enabling this will result in a new S3 bucket being created
+# specifically for user audit logs. Due to Redshift limitations, this
+# S3 bucket will use S3/AES-256 encryption instead of KMS CMK.
+enableAuditLoggingToS3: true
+
+# The list of scheduled actions to pause and/or resume cluster
+scheduledActions:
+  - name: pause-cluster
+    enable: True
+    # Target Action must be either of: "pauseCluster" or "resumeCluster". resizeCluster is not supported yet.
+    targetAction: pauseCluster
+    # Specify the action schedule in cron format cron(Minutes Hours Day-of-month Month Day-of-week Year).
+    schedule: cron(0 22 ? * * *)

@@ -1,0 +1,69 @@
+statements:
+  - Sid: DmsNoResourceReadAccess
+    Effect: Allow
+    Action:
+      -  'dms:DescribeAccountAttributes'        # Grants permission to list all of the AWS DMS attributes for a customer account
+      -  'dms:DescribeCertificates'        # Grants permission to provide a description of the certificate
+      -  'dms:DescribeConnections'        # Grants permission to describe the status of the connections that have been made between the replication instance and an endpoint
+      -  'dms:DescribeDataMigrations'        # Grants permission to return information about database migrations for your account in the specified region
+      -  'dms:DescribeEndpointSettings'        # Grants permission to return the possible endpoint settings available when you create an endpoint for a specific database engine
+      -  'dms:DescribeEndpointTypes'        # Grants permission to return information about the type of endpoints available
+      -  'dms:DescribeEndpoints'        # Grants permission to return information about the endpoints for your account in the current region
+      -  'dms:DescribeEngineVersions'        # Grants permission to return information about the available versions for DMS replication instances
+      -  'dms:DescribeEventCategories'        # Grants permission to list categories for all event source types, or, if specified, for a specified source type
+      -  'dms:DescribeEventSubscriptions'        # Grants permission to list all the event subscriptions for a customer account
+      -  'dms:DescribeEvents'        # Grants permission to list events for a given source identifier and source type
+      -  'dms:DescribeFleetAdvisorCollectors'        # Grants permission to return a paginated list of Fleet Advisor collectors in your account based on filter settings
+      -  'dms:DescribeFleetAdvisorDatabases'        # Grants permission to return a paginated list of Fleet Advisor databases in your account based on filter settings
+      -  'dms:DescribeFleetAdvisorLsaAnalysis'        # Grants permission to return a paginated list of descriptions of large-scale assessment (LSA) analyses produced by your Fleet Advisor collectors
+      -  'dms:DescribeFleetAdvisorSchemaObjectSummary'        # Grants permission to return a paginated list of descriptions of schemas discovered by your Fleet Advisor collectors based on filter settings
+      -  'dms:DescribeFleetAdvisorSchemas'        # Grants permission to return a paginated list of schemas discovered by your Fleet Advisor collectors based on filter settings
+      -  'dms:DescribeOrderableReplicationInstances'        # Grants permission to return information about the replication instance types that can be created in the specified region
+      -  'dms:DescribePendingMaintenanceActions'        # Grants permission to return information about pending maintenance actions
+      -  'dms:DescribeRecommendationLimitations'        # Grants permission to return a paginated list of descriptions of limitations for recommendations of target AWS engines
+      -  'dms:DescribeRecommendations'        # Grants permission to return a paginated list of descriptions of target engine recommendations for your source databases
+      -  'dms:DescribeReplicationConfigs'        # Grants permission to describe replication configs
+      -  'dms:DescribeReplicationInstances'        # Grants permission to return information about replication instances for your account in the current region
+      -  'dms:DescribeReplicationSubnetGroups'        # Grants permission to return information about the replication subnet groups
+      -  'dms:DescribeReplicationTasks'        # Grants permission to return information about replication tasks for your account in the current region
+      -  'dms:DescribeReplications'        # Grants permission to describe replications
+    Resource: '*'
+
+  - Sid: DmsNoResourceWriteAccess
+    Effect: Allow
+    Action:
+      -  'dms:BatchStartRecommendations'        # Grants permission to start the analysis of up to 20 source databases to recommend target engines for each source database
+      -  'dms:CreateDataProvider'        # Grants permission to create an data provider using the provided settings
+      -  'dms:CreateEndpoint'        # Grants permission to create an endpoint using the provided settings
+      -  'dms:CreateEventSubscription'        # Grants permission to create an AWS DMS event notification subscription
+      -  'dms:CreateFleetAdvisorCollector'        # Grants permission to create a Fleet Advisor collector using the specified parameters
+      -  'dms:CreateInstanceProfile'        # Grants permission to create an instance profile using the provided settings
+      -  'dms:CreateReplicationInstance'        # Grants permission to create a replication instance using the specified parameters
+      -  'dms:CreateReplicationSubnetGroup'        # Grants permission to create a replication subnet group given a list of the subnet IDs in a VPC
+      -  'dms:ImportCertificate'        # Grants permission to upload the specified certificate
+      -  'dms:ModifyEventSubscription'        # Grants permission to modify an existing AWS DMS event notification subscription
+      -  'dms:ModifyFleetAdvisorCollector'        # Grants permission to modify the name and description of the specified Fleet Advisor collector
+      -  'dms:ModifyFleetAdvisorCollectorStatuses'        # Grants permission to modify the status of the specified Fleet Advisor collector
+      -  'dms:ModifyReplicationSubnetGroup'        # Grants permission to modify the settings for the specified replication subnet group
+      -  'dms:RunFleetAdvisorLsaAnalysis'        # Grants permission to run a large-scale assessment (LSA) analysis on every Fleet Advisor collector in your account
+      -  'dms:StartRecommendations'        # Grants permission to start the analysis of your source database to provide recommendations of target engines
+      -  'dms:UpdateSubscriptionsToEventBridge'        # Grants permission to migrate DMS subcriptions to Eventbridge
+      -  'dms:UploadFileMetadataList'        # Grants permission to upload files to your Amazon S3 bucket
+    Resource: '*'
+
+  # TODO: Brainstorm if this should move to Data practitioner's policy directly
+  - Sid: DmsListTagsForResources
+    Effect: Allow
+    Action:
+      - 'dms:ListTagsForResource'       # Grants permission to list all tags for an AWS DMS resource
+    Resource:
+      - 'arn:aws:dms:*:*:rep:*'
+      - 'arn:aws:dms:*:*:task:*'
+      - 'arn:aws:dms:*:*:endpoint:*'
+      - 'arn:aws:dms:*:*:cert:*'
+      - 'arn:aws:dms:*:*:es:*'
+      - 'arn:aws:dms:*:*:subgrp:*'
+
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: "Policy actions do not require Resource!" 

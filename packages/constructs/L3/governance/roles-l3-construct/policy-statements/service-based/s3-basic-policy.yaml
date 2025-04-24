@@ -1,0 +1,17 @@
+statements:  
+  - Sid: BasicS3NoResourceAccess
+    Effect: Allow
+    Action:
+        - 's3:GetAccessPoint'
+        - 's3:GetAccountPublicAccessBlock'
+        - 's3:ListAccessPoints'
+        - 's3:ListAccessPointsForObjectLambda'
+        - 's3:ListAllMyBuckets'
+        - 's3:ListJobs'
+        - 's3:ListMultiRegionAccessPoints'
+        - 's3:ListStorageLensConfigurations'
+    Resource: '*'
+
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: "Policy actions do not require Resource!"   

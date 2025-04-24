@@ -1,0 +1,4 @@
+[bandit]
+exclude = packages/constructs/L2/eks-constructs/lib/kubectl-handler/cmd/__init__.py,packages/constructs/L2/sagemaker-constructs/src/lambda/lifecycle/lifecycle.py,packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/hf-custom-script-model/build-script/script.py
+# tests = B201,B301
+# skips = B101,B601

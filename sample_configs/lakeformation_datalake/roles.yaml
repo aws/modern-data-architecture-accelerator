@@ -1,0 +1,230 @@
+generatePolicies:
+  DataScienceAdminPolicy:
+    policyDocument:
+      Statement:
+        # Provides basic SageMaker Studio admin permissions.
+        # Suitable for managing user profiles (except for creation, which should be MDAA-managed).
+        - Sid: StudioAdminAccess
+          Effect: Allow
+          Action:
+            - sagemaker:ListUserProfiles
+            - sagemaker:DescribeUserProfile
+            - sagemaker:UpdateUserProfile
+            - sagemaker:DeleteUserProfile
+            - sagemaker:ListApps
+            - sagemaker:DeleteApp
+            - sagemaker:DescribeDomain
+            - sagemaker:ListDomains
+            - sagemaker:GetSagemakerServicecatalogPortfolioStatus
+            - license-manager:ListReceivedLicenses
+            - servicecatalog:ListAcceptedPortfolioShares
+            - servicecatalog:DisassociatePrincipalFromPortfolio
+            - iam:ListRoles
+            - sagemaker:ListTags
+            - sagemaker:AddTags
+            - sagemaker:DeleteTags
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+  DataScienceUserPolicy:
+    policyDocument:
+      Statement:
+        # Provides basic S3 access for interactions via console.
+        # Does not provide access to buckets/data
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets
+            - s3:GetAccountPublicAccessBlock
+            - s3:GetBucketPublicAccessBlock
+            - s3:GetBucketPolicyStatus
+            - s3:GetBucketAcl
+            - s3:ListAccessPoints
+            - s3:GetBucketLocation
+          Resource: "*"
+
+        # Allows basic listing of KMS keys
+        - Sid: BasicKMSAccess
+          Effect: Allow
+          Action:
+            - kms:ListAliases
+          Resource: "*"
+
+        # Provides readonly access to Glue Catalog resources.
+        # Does not provide access to underlying data.
+        - Sid: BasicGlueAccess
+          Effect: Allow
+          Action:
+            - glue:GetTable
+            - glue:GetTables
+            - glue:GetDatabase
+            - glue:GetDataBases
+            - glue:GetPartitions
+            - glue:SearchTables
+          Resource:
+            - "arn:aws:glue:{{region}}:{{account}}:catalog"
+            - "arn:aws:glue:{{region}}:{{account}}:database/*"
+            - "arn:aws:glue:{{region}}:{{account}}:table/*"
+
+        # Provides basic Athena access to facilitate
+        # interactions via console.
+        - Sid: BasicAthenaAccess
+          Effect: Allow
+          Action:
+            - athena:ListWorkGroups
+            - athena:ListDataCatalogs
+            - athena:ListDatabases
+            - athena:ListTableMetadata
+            - athena:GetDataCatalog
+            - athena:GetDatabase
+            - athena:GetTableMetadata
+          Resource: "*"
+
+        # Provides users access to launch their own Studio
+        # user profile. Each user profile has a 'userid' tag
+        # associated which specifies which user owns the profile.
+        - Sid: SageMakerLaunchProfileAccess
+          Effect: Allow
+          Action:
+            - sagemaker:CreatePresignedDomainUrl
+          Resource: "*"
+          Condition:
+            StringEquals:
+              "sagemaker:ResourceTag/userid": "${aws:userid}"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+
+  GlueJobPolicy:
+    policyDocument:
+      Statement:
+        - SID: GlueCloudwatch
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws-glue/*"
+          Action:
+            - logs:CreateLogStream
+            - logs:AssociateKmsKey
+            - logs:CreateLogGroup
+            - logs:PutLogEvents
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "Glue log group name not known at deployment time."
+
+  DataAdminPolicy:
+    policyDocument:
+      Statement:
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets
+            - s3:GetAccountPublicAccessBlock
+            - s3:GetBucketPublicAccessBlock
+            - s3:GetBucketPolicyStatus
+            - s3:GetBucketAcl
+            - s3:ListAccessPoints
+            - s3:GetBucketLocation
+          Resource: "*"
+
+        # Allows basic listing of KMS keys (required for up)
+        - Sid: BasicKMSAccess
+          Effect: Allow
+          Action:
+            - kms:ListAliases
+          Resource: "*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+  DataUserPolicy:
+    policyDocument:
+      Statement:
+        # This statement allows coarse-grained access to Glue catalog resources, but does not itself grant any access to data.
+        # Effective permissions are the intersection between IAM Glue Permissions and LF Grants. By establishing broad, coarse-grained permissions here,
+        # we are effectively concentrating effective permissions management in LF Grants.
+        - SID: GlueCoarseGrainedAccess
+          Effect: Allow
+          Resource:
+            - arn:{{partition}}:glue:{{region}}:{{account}}:catalog
+            - arn:{{partition}}:glue:{{region}}:{{account}}:database/*
+            - arn:{{partition}}:glue:{{region}}:{{account}}:table/*
+          Action:
+            - glue:GetDatabase
+            - glue:GetDatabases
+            - glue:GetCatalogImportStatus
+            - glue:GetTable
+            - glue:GetTables
+            - glue:GetPartition
+            - glue:GetPartitions
+            - glue:SearchTables
+
+        # This statement allows the usage of LakeFormation, but does not itself grant any access to data.
+        # For data access, an explicit LF Grant is required.
+        - SID: LakeFormationGetDataAccess
+          Effect: Allow
+          Action:
+            - lakeformation:GetDataAccess
+          Resource: "*"
+
+        # This statement allows the basic listing of Athena workgroups
+        # Specific Athena accesses are granted by the Athena Workgroup module itself.
+        - SID: BasicAthenaAccess
+          Effect: Allow
+          Action:
+            - athena:ListWorkGroups
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+# The list of roles which will be generated
+generateRoles:
+  glue-etl:
+    trustedPrincipal: service:glue.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    awsManagedPolicies:
+      - service-role/AWSGlueServiceRole
+    generatedPolicies:
+      - GlueJobPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueServiceRole approved for usage"
+
+  data-admin:
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - AWSGlueConsoleFullAccess
+      - AWSLakeFormationDataAdmin
+      - AWSLakeFormationCrossAccountManager
+    generatedPolicies:
+      - DataUserPolicy
+      - DataAdminPolicy
+      - DataScienceUserPolicy
+      - DataScienceAdminPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueConsoleFullAccess, AWSLakeFormationDataAdmin, AWSLakeFormationCrossAccountManager approved for usage"
+
+  data-user:
+    trustedPrincipal: this_account
+    generatedPolicies:
+      - DataUserPolicy
+      - DataScienceUserPolicy
+
+  # A role which will be used to launch SageMaker resources
+  # on behalf of data science team members.
+  team-execution:
+    trustedPrincipal: service:sagemaker.amazonaws.com
+    additionalTrustedPrincipals:
+      - trustedPrincipal: service:ec2.amazonaws.com
+      - trustedPrincipal: service:elasticmapreduce.amazonaws.com
+      - trustedPrincipal: service:sagemaker.amazonaws.com
+        additionalTrustedActions: ["sts:SetSourceIdentity"]
+    generatedPolicies:
+      - DataScienceUserPolicy

@@ -1,0 +1,7 @@
+# Arns for IAM roles which will be provided to the Workgroup's resources (IE results bucket)
+dataAdminRoles:
+  - id: generated-role-id:data-admin
+
+# List of roles which will be provided usage access to the Workgroup Resources
+athenaUserRoles:
+  - id: generated-role-id:data-user

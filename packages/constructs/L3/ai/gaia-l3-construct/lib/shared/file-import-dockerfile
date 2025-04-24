@@ -1,0 +1,33 @@
+FROM quay.io/unstructured-io/unstructured:0.10.19
+
+# define arguments
+ARG USERNAME=worker
+ARG USER_UID=1001
+ARG USER_GID=$USER_UID
+ARG USER_HOME=$USERNAME
+
+USER root
+
+# Create the user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+
+RUN pip install --upgrade pip
+
+# below required for installing requirements file
+RUN mkdir -p /home/notebook-user/.local/bin
+RUN chown -R $USERNAME:$USERNAME /home/notebook-user/
+
+# non-root installation and run
+
+USER $USERNAME
+WORKDIR /home/worker
+RUN pwd
+COPY --chown=$USERNAME:$USERNAME file-import-batch-job/requirements.txt requirements.txt
+RUN pip install --user -r requirements.txt
+ENV PATH="/home/worker/.local/bin:${PATH}"
+
+COPY --chown=$USERNAME:$USERNAME layers/python-sdk/python/ .
+COPY --chown=$USERNAME:$USERNAME file-import-batch-job/main.py ./main.py
+
+CMD ["python3", "main.py"]

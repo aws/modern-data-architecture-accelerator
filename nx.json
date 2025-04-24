@@ -1,0 +1,55 @@
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "test"
+        ]
+      }
+    }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/bin/*.ts",
+        "{projectRoot}/lib/*.ts",
+        "{projectRoot}/lib/*.py",
+        "{projectRoot}/lib/*.sh",
+        "{projectRoot}/src/*.py",
+        "{projectRoot}/src/*.sh",
+        "{projectRoot}/test/*.ts"
+      ],
+      "outputs": [
+        "{projectRoot}/bin/*.d.ts",
+        "{projectRoot}/bin/*.js",
+        "{projectRoot}/lib/*.d.ts",
+        "{projectRoot}/lib/*.js",
+        "{projectRoot}/test/*.d.ts",
+        "{projectRoot}/test/*.js",
+        "{projectRoot}/lib/*.zip",
+        "{projectRoot}/src/*.zip"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "build",
+        "^test"
+      ],
+      "inputs": [
+        "{projectRoot}/bin/*.ts",
+        "{projectRoot}/lib/*.ts",
+        "{projectRoot}/test/*.ts",
+        "{projectRoot}/test/*.yaml"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage"
+      ]
+    }
+  }
+}

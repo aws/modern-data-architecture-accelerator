@@ -1,0 +1,11 @@
+# List of event buses to be created
+eventBuses:
+  # The event bus name (must be unique)
+  test-event-bus:
+    # Optional - the number of days for which events will be archived
+    archiveRetention: 100
+    # Optional - the list of principals (arn or service-based) which will be granted PutEvent access
+    # to the event bus
+    principals:
+      - arn: some-arn
+      - service: some-service.amazonaws.com

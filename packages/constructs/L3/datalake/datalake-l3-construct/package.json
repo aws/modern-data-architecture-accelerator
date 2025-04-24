@@ -1,0 +1,95 @@
+{
+  "name": "@aws-mdaa/datalake-l3-construct",
+  "version": "1.0.0",
+  "description": "MDAA DataLake L3 Construct",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com/solutions"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://aws.amazon.com/solutions"
+  },
+  "scripts": {
+    "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references",
+    "watch": "jsii -w  --project-references",
+    "package": "jsii-pacmak --npmignore=false",
+    "test": "jest --passWithNoTests --coverage",
+    "lint": "eslint --fix --max-warnings 0 -c ../../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" ",
+    "test-coverage": "jest --passWithNoTests --coverage"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "devDependencies": {
+    "@aws-mdaa/construct": "1.0.0",
+    "@aws-mdaa/iam-role-helper": "1.0.0",
+    "@aws-mdaa/l3-construct": "1.0.0",
+    "@aws-mdaa/testing": "^1.0.0",
+    "@types/jest": "29.5.0",
+    "@types/node": "17.0.23",
+    "@types/prettier": "2.6.0",
+    "aws-cdk-lib": "2.190.0",
+    "constructs": "10.0.96",
+    "jest": "29.5.0",
+    "source-map-support": "0.5.21",
+    "ts-jest": "29.1.0",
+    "ts-node": "10.9.1",
+    "typescript": "4.6.3",
+    "typescript-json-schema": "0.63.0"
+  },
+  "bundledDependencies": [
+    "@aws-mdaa/s3-audit-helper",
+    "@aws-mdaa/s3-bucketpolicy-helper",
+    "@aws-mdaa/s3-inventory-helper",
+    "@aws-mdaa/config"
+  ],
+  "peerDependencies": {
+    "@aws-mdaa/construct": "1.0.0",
+    "@aws-mdaa/iam-role-helper": "1.0.0",
+    "@aws-mdaa/l3-construct": "1.0.0",
+    "aws-cdk-lib": "2.190.0",
+    "constructs": "10.0.96"
+  },
+  "overrides": {
+    "aws-cdk-lib": "2.190.0",
+    "@types/babel__traverse": "7.18.2"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-glue-alpha": "2.190.0-alpha.0",
+    "@aws-mdaa/config": "^1.0.0",
+    "@aws-mdaa/construct": "^1.0.0",
+    "@aws-mdaa/iam-constructs": "^1.0.0",
+    "@aws-mdaa/iam-role-helper": "^1.0.0",
+    "@aws-mdaa/kms-constructs": "^1.0.0",
+    "@aws-mdaa/l3-construct": "^1.0.0",
+    "@aws-mdaa/lambda-constructs": "^1.0.0",
+    "@aws-mdaa/naming": "^1.0.0",
+    "@aws-mdaa/s3-audit-helper": "^1.0.0",
+    "@aws-mdaa/s3-bucketpolicy-helper": "^1.0.0",
+    "@aws-mdaa/s3-constructs": "^1.0.0",
+    "@aws-mdaa/s3-inventory-helper": "^1.0.0",
+    "aws-cdk-lib": "2.190.0",
+    "cdk-nag": "2.35.25",
+    "constructs": "10.0.96"
+  },
+  "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
+  "stability": "experimental",
+  "jsii": {
+    "outdir": "jsii-dist",
+    "versionFormat": "full",
+    "targets": {
+      "java_disabled": {
+        "package": "software.amazon.awsmdaa.l3-construct.datalake",
+        "maven": {
+          "groupId": "software.amazon.awsmdaa.l3-construct",
+          "artifactId": "datalake"
+        }
+      },
+      "python_disabled": {
+        "distName": "aws-mdaa.datalake-l3-construct",
+        "module": "aws_mdaa.datalake_l3_construct"
+      }
+    }
+  }
+}

@@ -1,0 +1,883 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "AuroraEngineProps": {
+            "additionalProperties": false,
+            "properties": {
+                "createSeparateSecurityGroup": {
+                    "type": "boolean"
+                },
+                "maxCapacity": {
+                    "type": "number"
+                },
+                "minCapacity": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "AuthProps": {
+            "additionalProperties": false,
+            "properties": {
+                "authType": {
+                    "$ref": "#/definitions/SupportedAuthTypes"
+                },
+                "cognitoDomain": {
+                    "type": "string"
+                },
+                "existingPoolClientId": {
+                    "type": "string"
+                },
+                "existingPoolDomain": {
+                    "type": "string"
+                },
+                "existingPoolId": {
+                    "type": "string"
+                },
+                "idpSamlEmailClaimParamPath": {
+                    "type": "string"
+                },
+                "idpSamlMetadataUrlOrFileParamPath": {
+                    "type": "string"
+                },
+                "oAuthRedirectUrl": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "authType"
+            ],
+            "type": "object"
+        },
+        "BackendApisProps": {
+            "additionalProperties": false,
+            "properties": {
+                "hostedZoneName": {
+                    "type": "string"
+                },
+                "restApiDomainName": {
+                    "type": "string"
+                },
+                "socketApiDomainName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "hostedZoneName",
+                "restApiDomainName",
+                "socketApiDomainName"
+            ],
+            "type": "object"
+        },
+        "BedrockProps": {
+            "additionalProperties": false,
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "region": {
+                    "$ref": "#/definitions/SupportedRegion"
+                },
+                "roleArn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "enabled",
+                "region"
+            ],
+            "type": "object"
+        },
+        "CfnParameterProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedPattern": {
+                    "default": "- No constraints on patterns allowed for parameter.",
+                    "description": "A regular expression that represents the patterns to allow for String types.",
+                    "type": "string"
+                },
+                "allowedValues": {
+                    "default": "- No constraints on values allowed for parameter.",
+                    "description": "An array containing the list of values allowed for the parameter.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "constraintDescription": {
+                    "default": "- No description with customized error message when user specifies invalid values.",
+                    "description": "A string that explains a constraint when the constraint is violated.\nFor example, without a constraint description, a parameter that has an allowed\npattern of [A-Za-z0-9]+ displays the following error message when the user specifies\nan invalid value:",
+                    "type": "string"
+                },
+                "default": {
+                    "default": "- No default value for parameter.",
+                    "description": "A value of the appropriate type for the template to use if no value is specified\nwhen a stack is created. If you define constraints for the parameter, you must specify\na value that adheres to those constraints."
+                },
+                "description": {
+                    "default": "- No description for the parameter.",
+                    "description": "A string of up to 4000 characters that describes the parameter.",
+                    "type": "string"
+                },
+                "maxLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the largest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "maxValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the largest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "minLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the smallest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "minValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the smallest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "noEcho": {
+                    "default": "- Parameter values are not masked.",
+                    "description": "Whether to mask the parameter value when anyone makes a call that describes the stack.\nIf you set the value to ``true``, the parameter value is masked with asterisks (``*****``).",
+                    "type": "boolean"
+                },
+                "type": {
+                    "default": "String",
+                    "description": "The data type for the parameter (DataType).",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CodeOverwritesProps": {
+            "additionalProperties": false,
+            "properties": {
+                "commonLibsLayerCodeZipPath": {
+                    "type": "string"
+                },
+                "createAuroraWorkspaceCodePath": {
+                    "type": "string"
+                },
+                "dataImportUploadHandlerCodePath": {
+                    "type": "string"
+                },
+                "deleteWorkspaceHandlerCodePath": {
+                    "type": "string"
+                },
+                "fileImportBatchJobDockerFilePath": {
+                    "type": "string"
+                },
+                "genAiCoreLayerCodePath": {
+                    "type": "string"
+                },
+                "langchainInterfaceHandlerCodePath": {
+                    "type": "string"
+                },
+                "pgVectorDbSetupCodePath": {
+                    "type": "string"
+                },
+                "ragEnginesInferenceCodePath": {
+                    "type": "string"
+                },
+                "restApiHandlerCodePath": {
+                    "type": "string"
+                },
+                "webSocketAuthorizerFunctionCodePath": {
+                    "type": "string"
+                },
+                "webSocketConnectionHandlerCodePath": {
+                    "type": "string"
+                },
+                "webSocketIncomingMessageHandlerCodePath": {
+                    "type": "string"
+                },
+                "webSocketOutgoingMessageHandlerCodePath": {
+                    "type": "string"
+                },
+                "websiteParserCodePath": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ConcurrencyProps": {
+            "additionalProperties": false,
+            "properties": {
+                "modelInterfaceConcurrentLambdas": {
+                    "type": "number"
+                },
+                "restApiConcurrentLambdas": {
+                    "type": "number"
+                },
+                "websocketConcurrentLambdas": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "CrossEncoderModelProps": {
+            "additionalProperties": false,
+            "properties": {
+                "isDefault": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "provider": {
+                    "$ref": "#/definitions/ModelProvider"
+                }
+            },
+            "required": [
+                "name",
+                "provider"
+            ],
+            "type": "object"
+        },
+        "EngineProps": {
+            "additionalProperties": false,
+            "properties": {
+                "aurora": {
+                    "$ref": "#/definitions/AuroraEngineProps"
+                },
+                "kendra": {
+                    "$ref": "#/definitions/KendraEngineProps"
+                },
+                "knowledgeBase": {
+                    "$ref": "#/definitions/KnowledgeBaseProps"
+                },
+                "sagemaker": {
+                    "$ref": "#/definitions/SagemakerRagProps"
+                }
+            },
+            "type": "object"
+        },
+        "ExternalKnowledgeBaseProps": {
+            "additionalProperties": false,
+            "properties": {
+                "kbId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "region": {
+                    "enum": [
+                        "af-south-1",
+                        "ap-east-1",
+                        "ap-northeast-1",
+                        "ap-northeast-2",
+                        "ap-northeast-3",
+                        "ap-south-1",
+                        "ap-south-2",
+                        "ap-southeast-1",
+                        "ap-southeast-2",
+                        "ap-southeast-3",
+                        "ap-southeast-4",
+                        "ca-central-1",
+                        "eu-central-1",
+                        "eu-central-2",
+                        "eu-north-1",
+                        "eu-south-1",
+                        "eu-south-2",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3",
+                        "il-central-1",
+                        "me-central-1",
+                        "me-south-1",
+                        "sa-east-1",
+                        "us-east-1",
+                        "us-east-2",
+                        "us-west-1",
+                        "us-west-2"
+                    ],
+                    "type": "string"
+                },
+                "roleArn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "kbId",
+                "name"
+            ],
+            "type": "object"
+        },
+        "GAIAProps": {
+            "additionalProperties": false,
+            "properties": {
+                "api": {
+                    "$ref": "#/definitions/BackendApisProps"
+                },
+                "auth": {
+                    "$ref": "#/definitions/AuthProps"
+                },
+                "bedrock": {
+                    "$ref": "#/definitions/BedrockProps"
+                },
+                "codeOverwrites": {
+                    "$ref": "#/definitions/CodeOverwritesProps"
+                },
+                "concurrency": {
+                    "$ref": "#/definitions/ConcurrencyProps"
+                },
+                "dataAdminRoles": {
+                    "description": "List of admin roles which will be provided access to team resources (like KMS/Bucket)",
+                    "items": {
+                        "$ref": "#/definitions/MdaaRoleRef"
+                    },
+                    "type": "array"
+                },
+                "llms": {
+                    "$ref": "#/definitions/LlmsProps"
+                },
+                "mainDomain": {
+                    "type": "string"
+                },
+                "powertoolsDevLogging": {
+                    "enum": [
+                        "false",
+                        "true"
+                    ],
+                    "type": "string"
+                },
+                "prefix": {
+                    "type": "string"
+                },
+                "rag": {
+                    "$ref": "#/definitions/RagProps"
+                },
+                "setApiGateWayAccountCloudwatchRole": {
+                    "type": "boolean"
+                },
+                "skipApiGatewayDefaultWaf": {
+                    "type": "boolean"
+                },
+                "vpc": {
+                    "$ref": "#/definitions/VpcProps"
+                }
+            },
+            "required": [
+                "auth",
+                "dataAdminRoles",
+                "llms",
+                "prefix",
+                "vpc"
+            ],
+            "type": "object"
+        },
+        "KendraEngineProps": {
+            "additionalProperties": false,
+            "properties": {
+                "createIndex": {
+                    "type": "boolean"
+                },
+                "external": {
+                    "items": {
+                        "$ref": "#/definitions/KendraExternalProps"
+                    },
+                    "type": "array"
+                },
+                "s3DataSourceConfig": {
+                    "$ref": "#/definitions/KendraS3DataSourceConfigProps"
+                }
+            },
+            "required": [
+                "createIndex"
+            ],
+            "type": "object"
+        },
+        "KendraExternalProps": {
+            "additionalProperties": false,
+            "properties": {
+                "kendraId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "region": {
+                    "enum": [
+                        "af-south-1",
+                        "ap-east-1",
+                        "ap-northeast-1",
+                        "ap-northeast-2",
+                        "ap-northeast-3",
+                        "ap-south-1",
+                        "ap-south-2",
+                        "ap-southeast-1",
+                        "ap-southeast-2",
+                        "ap-southeast-3",
+                        "ap-southeast-4",
+                        "ca-central-1",
+                        "eu-central-1",
+                        "eu-central-2",
+                        "eu-north-1",
+                        "eu-south-1",
+                        "eu-south-2",
+                        "eu-west-1",
+                        "eu-west-2",
+                        "eu-west-3",
+                        "il-central-1",
+                        "me-central-1",
+                        "me-south-1",
+                        "sa-east-1",
+                        "us-east-1",
+                        "us-east-2",
+                        "us-west-1",
+                        "us-west-2"
+                    ],
+                    "type": "string"
+                },
+                "roleArn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "kendraId",
+                "name"
+            ],
+            "type": "object"
+        },
+        "KendraS3DataSourceConfigProps": {
+            "additionalProperties": false,
+            "properties": {
+                "bucketName": {
+                    "type": "string"
+                },
+                "includedDirectories": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kmsKeyArn": {
+                    "type": "string"
+                },
+                "metadataDirectory": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "bucketName",
+                "includedDirectories",
+                "kmsKeyArn"
+            ],
+            "type": "object"
+        },
+        "KnowledgeBaseProps": {
+            "additionalProperties": false,
+            "properties": {
+                "external": {
+                    "items": {
+                        "$ref": "#/definitions/ExternalKnowledgeBaseProps"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "LlmsProps": {
+            "additionalProperties": false,
+            "properties": {
+                "huggingFaceApiToken": {
+                    "type": "string"
+                },
+                "sagemaker": {
+                    "items": {
+                        "$ref": "#/definitions/SagemakerLlmModelConfig"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "sagemaker"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressionByPath": {
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "reason"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "path",
+                "suppressions"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressionConfigs": {
+            "additionalProperties": false,
+            "properties": {
+                "by_path": {
+                    "items": {
+                        "$ref": "#/definitions/MdaaNagSuppressionByPath"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "by_path"
+            ],
+            "type": "object"
+        },
+        "MdaaRoleRef": {
+            "additionalProperties": false,
+            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "properties": {
+                "arn": {
+                    "description": "Reference role by arn",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Reference role by id",
+                    "type": "string"
+                },
+                "immutable": {
+                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Reference role by name",
+                    "type": "string"
+                },
+                "refId": {
+                    "description": "A string which uniquely identifies the MdaaRoleRef within a scope.",
+                    "type": "string"
+                },
+                "sso": {
+                    "description": "If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "rules"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleAssertionConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assert": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assert",
+                "description"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleCondititionConfig": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assertions": {
+                    "items": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                }
+            },
+            "required": [
+                "assertions",
+                "condition"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogParameterConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "constraints": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                },
+                "props": {
+                    "$ref": "#/definitions/CfnParameterProps"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogProductConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "launch_role_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "portfolio_arn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "owner",
+                "portfolio_arn"
+            ],
+            "type": "object"
+        },
+        "ModelProps": {
+            "additionalProperties": false,
+            "properties": {
+                "dimensions": {
+                    "type": "number"
+                },
+                "isDefault": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "provider": {
+                    "$ref": "#/definitions/ModelProvider"
+                }
+            },
+            "required": [
+                "dimensions",
+                "name",
+                "provider"
+            ],
+            "type": "object"
+        },
+        "ModelProvider": {
+            "enum": [
+                "bedrock",
+                "openai",
+                "sagemaker"
+            ],
+            "type": "string"
+        },
+        "RagProps": {
+            "additionalProperties": false,
+            "properties": {
+                "crossEncoderModels": {
+                    "items": {
+                        "$ref": "#/definitions/CrossEncoderModelProps"
+                    },
+                    "type": "array"
+                },
+                "embeddingsModels": {
+                    "items": {
+                        "$ref": "#/definitions/ModelProps"
+                    },
+                    "type": "array"
+                },
+                "engines": {
+                    "$ref": "#/definitions/EngineProps"
+                }
+            },
+            "required": [
+                "crossEncoderModels",
+                "embeddingsModels",
+                "engines"
+            ],
+            "type": "object"
+        },
+        "SagemakerLlmModelConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "initialInstanceCount": {
+                    "type": "number"
+                },
+                "instanceType": {
+                    "type": "string"
+                },
+                "maximumInstanceCount": {
+                    "type": "number"
+                },
+                "minimumInstanceCount": {
+                    "type": "number"
+                },
+                "model": {
+                    "$ref": "#/definitions/SupportedSageMakerModels"
+                }
+            },
+            "required": [
+                "model"
+            ],
+            "type": "object"
+        },
+        "SagemakerRagProps": {
+            "additionalProperties": false,
+            "properties": {
+                "initialInstanceCount": {
+                    "type": "number"
+                },
+                "instanceType": {
+                    "type": "string"
+                },
+                "maxInstanceCount": {
+                    "type": "number"
+                },
+                "minInstanceCount": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "SupportedAuthTypes": {
+            "enum": [
+                "email_pass",
+                "ad",
+                "existing"
+            ],
+            "type": "string"
+        },
+        "SupportedRegion": {
+            "enum": [
+                "af-south-1",
+                "ap-east-1",
+                "ap-northeast-1",
+                "ap-northeast-2",
+                "ap-northeast-3",
+                "ap-south-1",
+                "ap-south-2",
+                "ap-southeast-1",
+                "ap-southeast-2",
+                "ap-southeast-3",
+                "ap-southeast-4",
+                "ca-central-1",
+                "eu-central-1",
+                "eu-central-2",
+                "eu-north-1",
+                "eu-south-1",
+                "eu-south-2",
+                "eu-west-1",
+                "eu-west-2",
+                "eu-west-3",
+                "il-central-1",
+                "me-central-1",
+                "me-south-1",
+                "sa-east-1",
+                "us-east-1",
+                "us-east-2",
+                "us-west-1",
+                "us-west-2"
+            ],
+            "type": "string"
+        },
+        "SupportedSageMakerModels": {
+            "enum": [
+                "FalconLite",
+                "Llama2_13b_Chat",
+                "Mistral7b_Instruct2"
+            ],
+            "type": "string"
+        },
+        "VpcProps": {
+            "additionalProperties": false,
+            "properties": {
+                "appSecurityGroupId": {
+                    "type": "string"
+                },
+                "appSubnets": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "dataSecurityGroupId": {
+                    "type": "string"
+                },
+                "dataSubnets": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "vpcId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "appSecurityGroupId",
+                "appSubnets",
+                "dataSecurityGroupId",
+                "dataSubnets",
+                "vpcId"
+            ],
+            "type": "object"
+        }
+    },
+    "properties": {
+        "gaia": {
+            "$ref": "#/definitions/GAIAProps"
+        },
+        "nag_suppressions": {
+            "$ref": "#/definitions/MdaaNagSuppressionConfigs",
+            "description": "Nag suppressions"
+        },
+        "service_catalog_product_config": {
+            "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
+            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+        }
+    },
+    "required": [
+        "gaia"
+    ],
+    "type": "object"
+}
+

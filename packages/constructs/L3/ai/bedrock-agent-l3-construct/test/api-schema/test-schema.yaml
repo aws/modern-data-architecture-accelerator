@@ -1,0 +1,30 @@
+openapi: 3.0.0
+info:
+    title: Insurance Claims Automation API
+    version: 1.0.0
+    description: 'APIs for managing insurance claims by pulling list of open claims, identifying outstanding paperwork for each claim, identifying all claim details, and sending reminders to policy holders.'
+paths:
+    /open-items:
+        get:
+            summary: Gets the list of all open insurance claims
+            description: Gets the list of all open insurance claims. Returns all claimIds that are open.
+            operationId: getAllOpenClaims
+            responses:
+                '200':
+                    description: Gets the list of all open insurance claims for policy holders
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        claimId:
+                                            type: string
+                                            description: Unique ID of the claim.
+                                        policyHolderId:
+                                            type: string
+                                            description: Unique ID of the policy holder who has filed the claim.
+                                        claimStatus:
+                                            type: string
+                                            description: The status of the claim. Claim can be in Open or Closed state.

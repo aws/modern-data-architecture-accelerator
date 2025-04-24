@@ -1,0 +1,22 @@
+# The name of the dataops project this crawler will be created within.
+# The dataops project name is the MDAA module name for the project.
+projectName: dataops-project
+crawlers:
+  crawler-a:
+    executionRoleArn: generated-role-arn:glue-etl
+    # (required) Reference back to the database name in the 'databases:' section of the crawler.yaml
+    databaseName: project:databaseName/<your-glue-catalog-database-name-for-raw-datasets>
+    # (required) Description of the crawler
+    description: Example for a Crawler
+    # (required) At least one target definition.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-targets.html
+    targets:
+      # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
+      s3Targets:
+        - path: s3://{{context:datalake_bucket_name}}/<your-s3-directory-prefix-containing-raw-datasets-to-crawl>
+    recrawlBehavior: CRAWL_EVERYTHING
+    # Extra crawler configuration options
+    extraConfiguration:
+      Version: 1
+      CrawlerOutput:
+        Partitions:
+          AddOrUpdateBehavior: InheritFromTable

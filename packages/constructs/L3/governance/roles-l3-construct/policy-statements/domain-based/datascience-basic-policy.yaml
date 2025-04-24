@@ -1,0 +1,83 @@
+##++++++++++++++++++++++++++++++++++++++++++++##
+# datascience
+#   - sagemaker
+#   - service catalog
+##++++++++++++++++++++++++++++++++++++++++++++##
+
+statements:
+  - Sid: SagemakerNoResourceAccessPolicy
+    Action: 
+      -  'sagemaker:DescribeLineageGroup'        # Grants permission to describe a lineage group
+      -  'sagemaker:GetLineageGroupPolicy'        # Grants permission to retreive a lineage group policy
+      -  'sagemaker:GetSagemakerServicecatalogPortfolioStatus'        # Grants permission to get a SageMaker Service Catalog Portfolio
+      -  'sagemaker:GetSearchSuggestions'        # Grants permission to get search suggestions when provided with a keyword
+      -  'sagemaker:List*'      # Grants permission to various list permissions
+      -  'sagemaker:Search'        # Grants permission to search for SageMaker objects
+    Resource: '*'
+    Effect: Allow
+
+  - Sid: ServiceCatalogNoResourceReadAccess
+    Effect: Allow
+    Action:
+      -  'servicecatalog:DescribeConstraint'        # Grants permission to describe a constraint
+      -  'servicecatalog:DescribeCopyProductStatus'        # Grants permission to get the status of the specified copy product operation
+      -  'servicecatalog:DescribeProductView'             # Grants permission to describe a product as an end-user
+      -  'servicecatalog:DescribePortfolioShareStatus'        # Grants permission to get the status of the specified portfolio share operation
+      -  'servicecatalog:DescribeRecord'        # Grants permission to describe a record and lists any outputs
+      -  'servicecatalog:DescribeServiceAction'        # Grants permission to describe a self-service action
+      -  'servicecatalog:DescribeServiceActionExecutionParameters'        # Grants permission to get the default parameters if you executed the specified Service Action on the specified Provisioned Product
+      -  'servicecatalog:DescribeTagOption'        # Grants permission to get information about the specified TagOption
+      -  'servicecatalog:GetProvisionedProductOutputs'        # Grants permission to get the provisioned product output with either provisioned product id or name
+      -  'servicecatalog:ListAcceptedPortfolioShares'        # Grants permission to list the portfolios that have been shared with you and you have accepted
+      -  'servicecatalog:ListApplications'        # Grants permission to list your applications
+      -  'servicecatalog:ListAttributeGroups'        # Grants permission to list your attribute groups
+      -  'servicecatalog:ListBudgetsForResource'        # Grants permission to list all the budgets associated to a resource
+      -  'servicecatalog:ListConstraintsForPortfolio'        # Grants permission to list constraints associated with a given portfolio
+      -  'servicecatalog:ListPortfolios'        # Grants permission to list the portfolios in your account
+      -  'servicecatalog:ListProvisioningArtifactsForServiceAction'        # Grants permission to list all provisioning artifacts for the specified self-service action
+      -  'servicecatalog:ListResourcesForTagOption'        # Grants permission to list the resources associated with the specified TagOption
+      -  'servicecatalog:ListServiceActions'        # Grants permission to list all self-service actions
+      -  'servicecatalog:ListStackInstancesForProvisionedProduct'        # Grants permission to list account, region and status of each stack instances that are associated with a CFN_STACKSET type provisioned product
+      -  'servicecatalog:ListTagOptions'        # Grants permission to list the specified TagOptions or all TagOptions
+      -  'servicecatalog:SearchProducts'        # Grants permission to list the products available to you as an end-user           
+    Resource: '*'
+      
+  - Sid: DeployNotebooksFromServiceCatalog
+    Effect: Allow
+    Action:
+      - 'servicecatalog:DescribeProvisioningParameters'   # Grants permission to describe the parameters that you need to specify to successfully provision a specified provisioning artifact
+      - 'servicecatalog:ListLaunchPaths'      # Grants permission to list the different ways to launch a given product as an end-user
+      - 'servicecatalog:ListServiceActionsForProvisioningArtifact'      # Grants permission to list all the service actions associated with the specified provisioning artifact in your account
+      - 'servicecatalog:DescribeProduct'    # Grants permission to describe a product as an end-user
+      - 'servicecatalog:ProvisionProduct'   # Grants permission to provision a product with a specified provisioning artifact and launch parameters
+    Resource:
+      - '*'
+     
+      
+  - Sid: ModifySelfCreatedCatalogProducts
+    Effect: Allow
+    Action:
+      -  'servicecatalog:DescribeProvisionedProduct*'        # Grants permission to describe a provisioned product/product plan
+      -  'servicecatalog:ExecuteProvisionedProduct*'        # Grants permission to execute a provisioned product plan
+      -  'servicecatalog:ListProvisionedProductPlans'        # Grants permission to list the provisioned product plans
+      -  'servicecatalog:ListStackInstancesForProvisionedProduct'        # Grants permission to list account, region and status of each stack instances that are associated with a CFN_STACKSET type provisioned product
+      -  'servicecatalog:ScanProvisionedProducts'        # Grants permission to list all the provisioned products in your account
+      -  'servicecatalog:TerminateProvisionedProduct'        # Grants permission to terminate an existing provisioned product
+      -  'servicecatalog:UpdateProvisionedProduct'        # Grants permission to update an existing provisioned product
+      -  'servicecatalog:SearchProvisionedProducts'      # Grants permission to list all the provisioned products in your account
+      -  'servicecatalog:ListRecordHistory'        # Grants permission to list all the records in your account or all the records related to a given provisioned product 
+      -  'servicecatalog:NotifyTerminateProvisionedProductEngineWorkflowResult'        # Grants permission to notify the result of the terminate engine execution
+      -  'servicecatalog:NotifyUpdateProvisionedProductEngineWorkflowResult'        # Grants permission to notify the result of the update engine execution   
+    Resource: '*'
+    Condition:
+      StringEquals:
+        'servicecatalog:userLevel': self  # Restricted to self created products
+      
+suppressions:
+  - id: "AwsSolutions-IAM5"
+    reason: " - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource!
+              - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource!
+              - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource!
+              - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog
+              - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product   
+            "   

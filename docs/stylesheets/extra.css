@@ -1,0 +1,11 @@
+/* Maximum space for text block */
+.md-grid {
+    max-width: 100%;
+    /* or 100%, if you want to stretch to full-width */
+}
+
+img {
+    display: block;
+    margin: 0 auto;
+
+}

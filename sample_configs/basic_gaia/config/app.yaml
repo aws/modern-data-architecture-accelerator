@@ -1,0 +1,46 @@
+gaia:
+  dataAdminRoles: []
+  prefix: "{{org}}-{{domain}}-{{env}}"
+  bedrock:
+    enabled: true
+    region: ca-central-1
+  llms:
+    sagemaker: []
+  rag:
+    engines:
+      sagemaker:
+        instanceType: ml.inf1.xlarge
+      aurora:
+        minCapacity: 0.5
+        maxCapacity: 4
+      knowledgeBase: {}
+    embeddingsModels: [
+      {
+        provider: "bedrock",
+        name: "amazon.titan-embed-text-v2:0",
+        dimensions: 1024,
+        isDefault: true
+      }
+    ]
+    crossEncoderModels: []
+  # this block must not be enabled on first deployment of
+  # the system.
+  #   concurrency:
+  #     modelInterfaceConcurrentLambdas: 10
+  #     restApiConcurrentLambdas: 5
+  #     websocketConcurrentLambdas: 2
+  auth:
+    authType: email_pass
+    cognitoDomain: "{{org}}-{{domain}}-{{env}}"
+  setApiGateWayAccountCloudwatchRole: true
+  skipApiGatewayDefaultWaf: true
+  vpc:
+    vpcId: "{{resolve:ssm:/path/to/vpc-id}}"
+    appSecurityGroupId: "{{resolve:ssm:/path/to/app-sg/id}}"
+    appSubnets:
+      - "{{resolve:ssm:/path/to/app-subnet-1}}"
+      - "{{resolve:ssm:/path/to/app-subnet-2}}"
+    dataSecurityGroupId: "{{resolve:ssm:/path/to/data-sg/id}}"
+    dataSubnets:
+      - "{{resolve:ssm:/path/to/data-subnet-1}}"
+      - "{{resolve:ssm:/path/to/data-subnet-2}}"

@@ -1,0 +1,5 @@
+
+
+# Include javascript files and typescript declarations
+!*.js
+!*.d.ts

@@ -1,0 +1,84 @@
+# All resources will be deployed to the default region specified in the environment or AWS configurations.
+# Can optional specify a specific AWS Region Name.
+region: default
+
+# One or more tag files containing tags which will be applied to all deployed resources
+tag_configs:
+  - ./tags.yaml
+
+## Pre-Deployment Instructions
+
+# TODO: Set an appropriate, unique organization name, likely matching the org name used in other MDAA configs.
+# Failure to do so may resulting in global naming conflicts.
+organization: <unique-org-name>
+
+# One or more domains may be specified. Domain name will be incorporated by default naming implementation
+# to prefix all resource names.
+domains:  
+  # Where resources may be shared across multiple domains, and domain name of 'shared' may be appropriate.
+  # The domain name can be referenced within MDAA CDK App configs via the inline {{domain}} syntax.
+  <your-domain-name>:
+    # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
+    environments:
+      # The environment name will be incorporated into resource name by the default naming implementation.
+      dev:
+        # The target deployment account can be specified per environment.
+        # If 'default' or not specified, the account configured in the environment will be assumed.
+        account: default
+        #TODO: Set context values appropriate to your env
+        context:
+          # The arn of a role which will be provided admin privileges to dataops resources
+          data_admin_role_arn : <your-data-admin-role-arn>
+          # The arn of a role which will be provided read-write privileges to dataops resources
+          data_engineer_role_arn: <your-data-admin-role-arn>
+          # The name of the datalake S3 bucket where the csv files will be uploaded
+          datalake_src_bucket_name: <your-src-datalake-bucket-name>
+          # The prefix on the datalake S3 bucket where the csv files will be uploaded
+          datalake_src_prefix: <your/path/to/csv>
+          # The name of the datalake S3 bucket where the parquet files will be written
+          datalake_dest_bucket_name: <your-dest-datalake-bucket-name>
+          # The prefix on the datalake S3 bucket where the parquet files will be written
+          datalake_dest_prefix: <your/path/to/parquet>
+          # The arn of the KMS key used to encrypt the datalake bucket
+          datalake_kms_arn: <your-datalake-kms-key-arn>
+          # The arn of the KMS key used to encrypt the Glue Catalog
+          glue_catalog_kms_arn: <your-datalake-kms-key-arn>
+          # ID of VPC in which data ops resources will be configured to run
+          vpc_id: <your-vpc-id>
+          # ID of security group in which DWH database is deployed. Egress rules to this SG will be defined on dataops security group
+          database_security_group: <your-dwh-security-group-id>
+          # Subnet ID in which glue job connection will be setup
+          subnet_1_id: <your-subnet-id>
+          # Name of Datalake Bucket that contains raw and curated datasets
+          datalake_bucket_name: <your-datalake-bucket-name>
+        # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
+        # specifies a deployment configuration file if required.
+        modules:
+          # This module will create all of the roles required for the GLUE ETL Job
+          roles:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
+              - ./basic_etl_pipeline/roles.yaml
+          # This module will create DataOps Project resources which can be shared
+          # across multiple DataOps modules
+          dataops-project:
+            module_path: "@aws-mdaa/dataops-project"
+            module_configs:
+              - ./basic_etl_pipeline/project.yaml
+          crawler:
+            module_path: "@aws-mdaa/dataops-crawler"
+            module_configs:
+              - ./basic_etl_pipeline/crawler.yaml
+          # This module will create the csv to parquet GLUE ETL Job
+          jobs:
+            module_path: "@aws-mdaa/dataops-job"
+            module_configs:
+              - ./basic_etl_pipeline/jobs.yaml
+          # This module will create an AWS Glue Workflow which will schedule the csv to parquet GLUE ETL Job
+          workflow:
+             module_path: "@aws-caef/dataops-workflow"
+             tag_configs:
+               - ./tags.yaml
+             module_configs:
+               - ./basic_etl_pipeline/workflow.yaml
+

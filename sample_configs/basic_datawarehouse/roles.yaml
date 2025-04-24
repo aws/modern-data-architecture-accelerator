@@ -1,0 +1,44 @@
+generatePolicies:
+  DataAdminPolicy:
+    policyDocument:
+      Statement:
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets
+            - s3:GetAccountPublicAccessBlock
+            - s3:GetBucketPublicAccessBlock
+            - s3:GetBucketPolicyStatus
+            - s3:GetBucketAcl
+            - s3:ListAccessPoints
+            - s3:GetBucketLocation
+          Resource: "*"
+
+        # Allows basic listing of KMS keys
+        - Sid: BasicKMSAccess
+          Effect: Allow
+          Action:
+            - kms:ListAliases
+          Resource: "*"
+
+        # Allows basic listing of Secrets
+        - Sid: BasicSecretsAccess
+          Effect: Allow
+          Action:
+            - secretsmanager:ListSecrets
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+generateRoles:
+  data-admin:
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - AmazonRedshiftFullAccess
+    generatedPolicies:
+      - DataAdminPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AmazonRedshiftFullAccess approved for usage"
