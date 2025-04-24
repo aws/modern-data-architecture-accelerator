@@ -1,0 +1,35 @@
+# CDK files - files produced/installed by CDK
+# js files produced by npm
+.*.js
+# jest.config
+.*.d.ts
+.*/node_modules/
+.cdk.staging
+.*/package-lock.json
+.*/coverage/
+target/
+.*/cdk.out/
+.*/.mdaa_working/
+.*node_modules/
+packages/apps/dataops/dataops-lambda-app/test/src/lambda/test-layer.zip # Empty test file
+packages/constructs/L3/dataops/dataops-lambda-l3-construct/test/src/lambda/test-layer.zip # Empty test file
+packages/constructs/L2/lambda-constructs/src/python/boto3_layer/1.36.11.zip # Boto 3 layer package
+sample_blueprints/stepfunction_orchestrator/stepfunctions/lambda.yaml:12 # Service account for lambda layer
+sample_blueprints/lambda_csv_parquet/lambda_csv_parquet/lambda.yaml
+packages/constructs/L3/ai/gaia-l3-construct/lib/shared/layers/common/common_layer.zip # GAIA common layer package
+THIRD-PARTY-NOTICE.md # Content is verbatim third-party Licenses
+packages/constructs/L3/ai/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1006 # SageMaker Central Account ID
+packages/constructs/L3/ai/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:1023 # SageMaker Central Account ID
+packages/constructs/L3/ai/datascience-team-l3-construct/test/team.compliance.test.ts:501 # SageMaker Central Account ID
+packages/constructs/L2/eks-constructs/lib/cluster.ts:386 # Construct ID
+packages/constructs/L2/eks-constructs/lib/cluster.ts:413 # Construct ID
+packages/constructs/L3/dataops/dataops-nifi-l3-construct/base_conf/nifi/nifi.properties:370 #False positive
+packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/image-repository-mapping.ts # Known SageMaker Public Accounts
+packages/constructs/L3/ai/gaia-l3-construct/lib/models/index.ts # Known SageMaker Public Accounts
+packages/constructs/L3/ai/gaia-l3-construct/lib/shared/index.ts # Known Lambda service account
+packages/constructs/L3/ai/gaia-l3-construct/lib/sagemaker-model/hf-custom-script-model/build-script/script.py:63 # runs in deployment once, command string fully controlled by script code and not inputs
+packages/constructs/L3/ai/bedrock-agent-l3-construct/test/lambda/test-layer.zip # Empty test file
+packages/constructs/L2/eks-constructs/lib/cluster.ts:468 # it's not an email address!
+packages/constructs/L2/eks-constructs/lib/cluster.ts:540 # it's not an email address!
+packages/constructs/L3/ai/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:30 # public ECR account
+.github/workflows/docs.yml:57 # Email address for GitHub workflow

@@ -1,0 +1,66 @@
+# Arns for IAM role which will be authoring code within the project
+dataEngineerRoles:
+  - arn: "{{context:data_engineer_role_arn}}"
+
+# Arns for IAM roles which will be provided to the projects's resources (IE bucket)
+dataAdminRoles:
+  - arn: "{{context:data_admin_role_arn}}"
+
+projectExecutionRoles:
+  - id: generated-role-id:glue-etl
+
+# failure notifications.
+# For glue jobs, this includes state changes of "FAILED", "TIMEOUT", and "STOPPED".
+# For crawlers, this includes state changes of "Failed".
+failureNotifications:
+  email:
+    - user1@example.com
+    - distribution-list@example.com
+
+# A list of security groups which will be created for
+# use by various project resources (such as Lambda functions, Glue jobs, etc)
+securityGroupConfigs:
+  dataops-project-security-group:
+    # The id of the VPC on which the SG will be used
+    vpcId: "{{context:vpc_id}}"
+    # Optional - The list of custom egress rules which will be added to the SG.
+    # If not specified, the SG will allow all egress traffic by default.
+    securityGroupEgressRules:
+      sg:
+        - sgId: "{{context:database_security_group}}"
+          protocol: TCP
+          port: 443
+
+# The ID of the KMS key which will encrypt all S3 outputs of Jobs run under this project
+s3OutputKmsKeyArn: "{{context:datalake_kms_arn}}"
+
+# The Arn of the KMS key used to encrypt the Glue Catalog. Specific access to this key
+# will be granted to Glue executor roles for the purpose of decrypting
+# Glue connections.
+glueCatalogKmsKeyArn: "{{context:glue_catalog_kms_arn}}"
+
+# (optional)  Definitions for crawler connections. Referred to by name in the crawler configuration files.
+connections:
+  # (optional)  Example of a Network Connection which uses the SG produced in the project config
+  connectionVpcWithProjectSG:
+    connectionType: NETWORK
+    description: VPC Connection using DataOps Project Security Group
+    physicalConnectionRequirements:
+      availabilityZone: "{{region}}a"
+      subnetId: {{context:subnet_1_id}}
+      projectSecurityGroupNames:
+        - dataops-project-security-group
+
+
+# (Optional) List of Databases to create. Referred to by name in the crawler configuration files.
+databases:
+  <your-glue-catalog-database-name-for-raw-datasets>:
+    description: Database for raw datasets landed from upstream systems
+    locationBucketName: {{context:datalake_bucket_name}}
+    locationPrefix: <your-s3-directory-prefix-containing-raw-datasets>
+
+  # Condensed DB config
+  <your-glue-catalog-database-name-for-curated-datasets>:
+    description: Database for curated datasets produced by ETL process
+    locationBucketName: {{context:datalake_bucket_name}}
+    locationPrefix: <your-s3-directory-prefix-containing-curated-datasets>

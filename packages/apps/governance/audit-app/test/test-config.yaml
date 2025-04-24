@@ -1,0 +1,16 @@
+# Roles which will be provided read access to the audit logs via bucket policy.
+# Roles within the target account may be referenced by id, arn, and/or name.
+readRoles:
+  - arn: arn:{{partition}}:iam::{{account}}:role/Admin
+  - id: ssm:/sample-org/domain1/generated-role/test-role/id
+  - id: testing_id
+
+# Additional source accounts from which audit logs and s3 inventories will be accepted to the bucket.
+# The local account is provided access automatically.
+sourceAccounts:
+  - "111111111111"
+
+# Additional source regions from which audit logs and s3 inventories will be accepted to the bucket.
+# The local regions is provided access automatically.
+sourceRegions:
+  - us-east-1

@@ -1,0 +1,1954 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "CfnAutoScalingReplacingUpdate": {
+            "additionalProperties": false,
+            "description": "Specifies whether an Auto Scaling group and the instances it contains are replaced during an update. During replacement,\nAWS CloudFormation retains the old group until it finishes creating the new one. If the update fails, AWS CloudFormation\ncan roll back to the old Auto Scaling group and delete the new Auto Scaling group.\n\nWhile AWS CloudFormation creates the new group, it doesn't detach or attach any instances. After successfully creating\nthe new Auto Scaling group, AWS CloudFormation deletes the old Auto Scaling group during the cleanup process.\n\nWhen you set the WillReplace parameter, remember to specify a matching CreationPolicy. If the minimum number of\ninstances (specified by the MinSuccessfulInstancesPercent property) don't signal success within the Timeout period\n(specified in the CreationPolicy policy), the replacement update fails and AWS CloudFormation rolls back to the old\nAuto Scaling group.",
+            "properties": {
+                "willReplace": {
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "CfnAutoScalingRollingUpdate": {
+            "additionalProperties": false,
+            "description": "To specify how AWS CloudFormation handles rolling updates for an Auto Scaling group, use the AutoScalingRollingUpdate\npolicy. Rolling updates enable you to specify whether AWS CloudFormation updates instances that are in an Auto Scaling\ngroup in batches or all at once.",
+            "properties": {
+                "maxBatchSize": {
+                    "description": "Specifies the maximum number of instances that AWS CloudFormation updates.",
+                    "type": "number"
+                },
+                "minActiveInstancesPercent": {
+                    "description": "Specifies the percentage of instances in an Auto Scaling group that must remain in service while AWS CloudFormation\nupdates old instances. You can specify a value from 0 to 100. AWS CloudFormation rounds to the nearest tenth of a percent.\nFor example, if you update five instances with a minimum active percentage of 50, three instances must remain in service.",
+                    "type": "number"
+                },
+                "minInstancesInService": {
+                    "description": "Specifies the minimum number of instances that must be in service within the Auto Scaling group while AWS\nCloudFormation updates old instances.",
+                    "type": "number"
+                },
+                "minSuccessfulInstancesPercent": {
+                    "description": "Specifies the percentage of instances in an Auto Scaling rolling update that must signal success for an update to succeed.\nYou can specify a value from 0 to 100. AWS CloudFormation rounds to the nearest tenth of a percent. For example, if you\nupdate five instances with a minimum successful percentage of 50, three instances must signal success.\n\nIf an instance doesn't send a signal within the time specified in the PauseTime property, AWS CloudFormation assumes\nthat the instance wasn't updated.\n\nIf you specify this property, you must also enable the WaitOnResourceSignals and PauseTime properties.",
+                    "type": "number"
+                },
+                "pauseTime": {
+                    "description": "The amount of time that AWS CloudFormation pauses after making a change to a batch of instances to give those instances\ntime to start software applications. For example, you might need to specify PauseTime when scaling up the number of\ninstances in an Auto Scaling group.\n\nIf you enable the WaitOnResourceSignals property, PauseTime is the amount of time that AWS CloudFormation should wait\nfor the Auto Scaling group to receive the required number of valid signals from added or replaced instances. If the\nPauseTime is exceeded before the Auto Scaling group receives the required number of signals, the update fails. For best\nresults, specify a time period that gives your applications sufficient time to get started. If the update needs to be\nrolled back, a short PauseTime can cause the rollback to fail.\n\nSpecify PauseTime in the ISO8601 duration format (in the format PT#H#M#S, where each # is the number of hours, minutes,\nand seconds, respectively). The maximum PauseTime is one hour (PT1H).",
+                    "type": "string"
+                },
+                "suspendProcesses": {
+                    "description": "Specifies the Auto Scaling processes to suspend during a stack update. Suspending processes prevents Auto Scaling from\ninterfering with a stack update. For example, you can suspend alarming so that Auto Scaling doesn't execute scaling\npolicies associated with an alarm. For valid values, see the ScalingProcesses.member.N parameter for the SuspendProcesses\naction in the Auto Scaling API Reference.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "waitOnResourceSignals": {
+                    "description": "Specifies whether the Auto Scaling group waits on signals from new instances during an update. Use this property to\nensure that instances have completed installing and configuring applications before the Auto Scaling group update proceeds.\nAWS CloudFormation suspends the update of an Auto Scaling group after new EC2 instances are launched into the group.\nAWS CloudFormation must receive a signal from each new instance within the specified PauseTime before continuing the update.\nTo signal the Auto Scaling group, use the cfn-signal helper script or SignalResource API.\n\nTo have instances wait for an Elastic Load Balancing health check before they signal success, add a health-check\nverification by using the cfn-init helper script. For an example, see the verify_instance_health command in the Auto Scaling\nrolling updates sample template.",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "CfnAutoScalingScheduledAction": {
+            "additionalProperties": false,
+            "description": "With scheduled actions, the group size properties of an Auto Scaling group can change at any time. When you update a\nstack with an Auto Scaling group and scheduled action, AWS CloudFormation always sets the group size property values of\nyour Auto Scaling group to the values that are defined in the AWS::AutoScaling::AutoScalingGroup resource of your template,\neven if a scheduled action is in effect.\n\nIf you do not want AWS CloudFormation to change any of the group size property values when you have a scheduled action in\neffect, use the AutoScalingScheduledAction update policy to prevent AWS CloudFormation from changing the MinSize, MaxSize,\nor DesiredCapacity properties unless you have modified these values in your template.\\",
+            "properties": {
+                "ignoreUnmodifiedGroupSizeProperties": {
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "CfnClassifier.GrokClassifierProperty": {
+            "additionalProperties": false,
+            "description": "A classifier that uses `grok` patterns.",
+            "properties": {
+                "classification": {
+                    "description": "An identifier of the data format that the classifier matches, such as Twitter, JSON, Omniture logs, and so on.",
+                    "type": "string"
+                },
+                "customPatterns": {
+                    "description": "Optional custom grok patterns defined by this classifier.\n\nFor more information, see custom patterns in [Writing Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html) .",
+                    "type": "string"
+                },
+                "grokPattern": {
+                    "description": "The grok pattern applied to a data store by this classifier.\n\nFor more information, see built-in patterns in [Writing Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html) .",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the classifier.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "classification",
+                "grokPattern"
+            ],
+            "type": "object"
+        },
+        "CfnClassifier.JsonClassifierProperty": {
+            "additionalProperties": false,
+            "description": "A classifier for `JSON` content.",
+            "properties": {
+                "jsonPath": {
+                    "description": "A `JsonPath` string defining the JSON data for the classifier to classify.\n\nAWS Glue supports a subset of `JsonPath` , as described in [Writing JsonPath Custom Classifiers](https://docs.aws.amazon.com/glue/latest/dg/custom-classifier.html#custom-classifier-json) .",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the classifier.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "jsonPath"
+            ],
+            "type": "object"
+        },
+        "CfnClassifier.XMLClassifierProperty": {
+            "additionalProperties": false,
+            "description": "A classifier for `XML` content.",
+            "properties": {
+                "classification": {
+                    "description": "An identifier of the data format that the classifier matches.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the classifier.",
+                    "type": "string"
+                },
+                "rowTag": {
+                    "description": "The XML tag designating the element that contains each record in an XML document being parsed.\n\nThis can't identify a self-closing element (closed by `/>` ). An empty row element that contains only attributes can be parsed as long as it ends with a closing tag (for example, `<row item_a=\"A\" item_b=\"B\"></row>` is okay, but `<row item_a=\"A\" item_b=\"B\" />` is not).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "classification",
+                "rowTag"
+            ],
+            "type": "object"
+        },
+        "CfnCodeDeployLambdaAliasUpdate": {
+            "additionalProperties": false,
+            "description": "To perform an AWS CodeDeploy deployment when the version changes on an AWS::Lambda::Alias resource,\nuse the CodeDeployLambdaAliasUpdate update policy.",
+            "properties": {
+                "afterAllowTrafficHook": {
+                    "description": "The name of the Lambda function to run after traffic routing completes.",
+                    "type": "string"
+                },
+                "applicationName": {
+                    "description": "The name of the AWS CodeDeploy application.",
+                    "type": "string"
+                },
+                "beforeAllowTrafficHook": {
+                    "description": "The name of the Lambda function to run before traffic routing starts.",
+                    "type": "string"
+                },
+                "deploymentGroupName": {
+                    "description": "The name of the AWS CodeDeploy deployment group. This is where the traffic-shifting policy is set.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "applicationName",
+                "deploymentGroupName"
+            ],
+            "type": "object"
+        },
+        "CfnCondition": {
+            "additionalProperties": false,
+            "description": "Represents a CloudFormation condition, for resources which must be conditionally created and\nthe determination must be made at deploy time.",
+            "properties": {
+                "_logicalIdLocked": {
+                    "description": "If the logicalId is locked then it can no longer be overridden.\nThis is needed for cases where the logicalId is consumed prior to synthesis\n(i.e. Stack.exportValue)."
+                },
+                "_logicalIdOverride": {
+                    "description": "An explicit logical ID provided by `overrideLogicalId`."
+                },
+                "creationStack": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "expression": {
+                    "$ref": "#/definitions/ICfnConditionExpression",
+                    "description": "The condition statement."
+                },
+                "logicalId": {
+                    "description": "The logical ID for this CloudFormation stack element. The logical ID of the element\nis calculated from the path of the resource node in the construct tree.\n\nTo override this value, use `overrideLogicalId(newLogicalId)`.",
+                    "type": "string"
+                },
+                "node": {
+                    "$ref": "#/definitions/Node",
+                    "description": "The tree node."
+                },
+                "stack": {
+                    "$ref": "#/definitions/Stack",
+                    "description": "The stack in which this element is defined. CfnElements must be defined within a stack scope (directly or indirectly)."
+                },
+                "synthesizeLogicalId": {
+                    "description": "Called during synthesize to render the logical ID of this element. If\n`overrideLogicalId` was it will be used, otherwise, we will allocate the\nlogical ID through the stack."
+                }
+            },
+            "required": [
+                "creationStack",
+                "logicalId",
+                "node",
+                "stack",
+                "synthesizeLogicalId"
+            ],
+            "type": "object"
+        },
+        "CfnCreationPolicy": {
+            "additionalProperties": false,
+            "description": "Associate the CreationPolicy attribute with a resource to prevent its status from reaching create complete until\nAWS CloudFormation receives a specified number of success signals or the timeout period is exceeded. To signal a\nresource, you can use the cfn-signal helper script or SignalResource API. AWS CloudFormation publishes valid signals\nto the stack events so that you track the number of signals sent.\n\nThe creation policy is invoked only when AWS CloudFormation creates the associated resource. Currently, the only\nAWS CloudFormation resources that support creation policies are AWS::AutoScaling::AutoScalingGroup, AWS::EC2::Instance,\nAWS::CloudFormation::WaitCondition and AWS::AppStream::Fleet.\n\nUse the CreationPolicy attribute when you want to wait on resource configuration actions before stack creation proceeds.\nFor example, if you install and configure software applications on an EC2 instance, you might want those applications to\nbe running before proceeding. In such cases, you can add a CreationPolicy attribute to the instance, and then send a success\nsignal to the instance after the applications are installed and configured. For a detailed example, see Deploying Applications\non Amazon EC2 with AWS CloudFormation.",
+            "properties": {
+                "autoScalingCreationPolicy": {
+                    "$ref": "#/definitions/CfnResourceAutoScalingCreationPolicy",
+                    "description": "For an Auto Scaling group replacement update, specifies how many instances must signal success for the\nupdate to succeed."
+                },
+                "resourceSignal": {
+                    "$ref": "#/definitions/CfnResourceSignal",
+                    "description": "When AWS CloudFormation creates the associated resource, configures the number of required success signals and\nthe length of time that AWS CloudFormation waits for those signals."
+                },
+                "startFleet": {
+                    "description": "For an AppStream Fleet creation, specifies that the fleet is started after creation.",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "CfnParameterProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedPattern": {
+                    "default": "- No constraints on patterns allowed for parameter.",
+                    "description": "A regular expression that represents the patterns to allow for String types.",
+                    "type": "string"
+                },
+                "allowedValues": {
+                    "default": "- No constraints on values allowed for parameter.",
+                    "description": "An array containing the list of values allowed for the parameter.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "constraintDescription": {
+                    "default": "- No description with customized error message when user specifies invalid values.",
+                    "description": "A string that explains a constraint when the constraint is violated.\nFor example, without a constraint description, a parameter that has an allowed\npattern of [A-Za-z0-9]+ displays the following error message when the user specifies\nan invalid value:",
+                    "type": "string"
+                },
+                "default": {
+                    "default": "- No default value for parameter.",
+                    "description": "A value of the appropriate type for the template to use if no value is specified\nwhen a stack is created. If you define constraints for the parameter, you must specify\na value that adheres to those constraints."
+                },
+                "description": {
+                    "default": "- No description for the parameter.",
+                    "description": "A string of up to 4000 characters that describes the parameter.",
+                    "type": "string"
+                },
+                "maxLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the largest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "maxValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the largest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "minLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the smallest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "minValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the smallest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "noEcho": {
+                    "default": "- Parameter values are not masked.",
+                    "description": "Whether to mask the parameter value when anyone makes a call that describes the stack.\nIf you set the value to ``true``, the parameter value is masked with asterisks (``*****``).",
+                    "type": "boolean"
+                },
+                "type": {
+                    "default": "String",
+                    "description": "The data type for the parameter (DataType).",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnResource": {
+            "additionalProperties": false,
+            "description": "Represents a CloudFormation resource.",
+            "properties": {
+                "_cfnProperties": {
+                    "description": "AWS CloudFormation resource properties.\n\nThis object is returned via cfnProperties"
+                },
+                "_logicalIdLocked": {
+                    "description": "If the logicalId is locked then it can no longer be overridden.\nThis is needed for cases where the logicalId is consumed prior to synthesis\n(i.e. Stack.exportValue)."
+                },
+                "_logicalIdOverride": {
+                    "description": "An explicit logical ID provided by `overrideLogicalId`."
+                },
+                "cfnOptions": {
+                    "$ref": "#/definitions/ICfnResourceOptions",
+                    "description": "Options for this resource, such as condition, update policy etc."
+                },
+                "cfnProperties": {
+                    "additionalProperties": {},
+                    "type": "object"
+                },
+                "cfnResourceType": {
+                    "description": "AWS resource type.",
+                    "type": "string"
+                },
+                "creationStack": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "dependsOn": {
+                    "description": "Logical IDs of dependencies.\n\nIs filled during prepare()."
+                },
+                "logicalId": {
+                    "description": "The logical ID for this CloudFormation stack element. The logical ID of the element\nis calculated from the path of the resource node in the construct tree.\n\nTo override this value, use `overrideLogicalId(newLogicalId)`.",
+                    "type": "string"
+                },
+                "node": {
+                    "$ref": "#/definitions/Node",
+                    "description": "The tree node."
+                },
+                "rawOverrides": {
+                    "description": "An object to be merged on top of the entire resource definition."
+                },
+                "ref": {
+                    "description": "Return a string that will be resolved to a CloudFormation `{ Ref }` for this element.\n\nIf, by any chance, the intrinsic reference of a resource is not a string, you could\ncoerce it to an IResolvable through `Lazy.any({ produce: resource.ref })`.",
+                    "type": "string"
+                },
+                "stack": {
+                    "$ref": "#/definitions/Stack",
+                    "description": "The stack in which this element is defined. CfnElements must be defined within a stack scope (directly or indirectly)."
+                },
+                "synthesizeLogicalId": {
+                    "description": "Called during synthesize to render the logical ID of this element. If\n`overrideLogicalId` was it will be used, otherwise, we will allocate the\nlogical ID through the stack."
+                },
+                "updatedProperites": {
+                    "additionalProperties": {},
+                    "description": "Deprecated",
+                    "type": "object"
+                },
+                "updatedProperties": {
+                    "additionalProperties": {},
+                    "description": "Return properties modified after initiation\n\nResources that expose mutable properties should override this function to\ncollect and return the properties object for this resource.",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "_cfnProperties",
+                "cfnOptions",
+                "cfnProperties",
+                "cfnResourceType",
+                "creationStack",
+                "dependsOn",
+                "logicalId",
+                "node",
+                "rawOverrides",
+                "ref",
+                "stack",
+                "synthesizeLogicalId",
+                "updatedProperites",
+                "updatedProperties"
+            ],
+            "type": "object"
+        },
+        "CfnResourceAutoScalingCreationPolicy": {
+            "additionalProperties": false,
+            "description": "For an Auto Scaling group replacement update, specifies how many instances must signal success for the\nupdate to succeed.",
+            "properties": {
+                "minSuccessfulInstancesPercent": {
+                    "description": "Specifies the percentage of instances in an Auto Scaling replacement update that must signal success for the\nupdate to succeed. You can specify a value from 0 to 100. AWS CloudFormation rounds to the nearest tenth of a percent.\nFor example, if you update five instances with a minimum successful percentage of 50, three instances must signal success.\nIf an instance doesn't send a signal within the time specified by the Timeout property, AWS CloudFormation assumes that the\ninstance wasn't created.",
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "CfnResourceSignal": {
+            "additionalProperties": false,
+            "description": "When AWS CloudFormation creates the associated resource, configures the number of required success signals and\nthe length of time that AWS CloudFormation waits for those signals.",
+            "properties": {
+                "count": {
+                    "description": "The number of success signals AWS CloudFormation must receive before it sets the resource status as CREATE_COMPLETE.\nIf the resource receives a failure signal or doesn't receive the specified number of signals before the timeout period\nexpires, the resource creation fails and AWS CloudFormation rolls the stack back.",
+                    "type": "number"
+                },
+                "timeout": {
+                    "description": "The length of time that AWS CloudFormation waits for the number of signals that was specified in the Count property.\nThe timeout period starts after AWS CloudFormation starts creating the resource, and the timeout expires no sooner\nthan the time you specify but can occur shortly thereafter. The maximum time that you can specify is 12 hours.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CfnUpdatePolicy": {
+            "additionalProperties": false,
+            "description": "Use the UpdatePolicy attribute to specify how AWS CloudFormation handles updates to the AWS::AutoScaling::AutoScalingGroup\nresource. AWS CloudFormation invokes one of three update policies depending on the type of change you make or whether a\nscheduled action is associated with the Auto Scaling group.",
+            "properties": {
+                "autoScalingReplacingUpdate": {
+                    "$ref": "#/definitions/CfnAutoScalingReplacingUpdate",
+                    "description": "Specifies whether an Auto Scaling group and the instances it contains are replaced during an update. During replacement,\nAWS CloudFormation retains the old group until it finishes creating the new one. If the update fails, AWS CloudFormation\ncan roll back to the old Auto Scaling group and delete the new Auto Scaling group."
+                },
+                "autoScalingRollingUpdate": {
+                    "$ref": "#/definitions/CfnAutoScalingRollingUpdate",
+                    "description": "To specify how AWS CloudFormation handles rolling updates for an Auto Scaling group, use the AutoScalingRollingUpdate\npolicy. Rolling updates enable you to specify whether AWS CloudFormation updates instances that are in an Auto Scaling\ngroup in batches or all at once."
+                },
+                "autoScalingScheduledAction": {
+                    "$ref": "#/definitions/CfnAutoScalingScheduledAction",
+                    "description": "To specify how AWS CloudFormation handles updates for the MinSize, MaxSize, and DesiredCapacity properties when\nthe AWS::AutoScaling::AutoScalingGroup resource has an associated scheduled action, use the AutoScalingScheduledAction\npolicy."
+                },
+                "codeDeployLambdaAliasUpdate": {
+                    "$ref": "#/definitions/CfnCodeDeployLambdaAliasUpdate",
+                    "description": "To perform an AWS CodeDeploy deployment when the version changes on an AWS::Lambda::Alias resource,\nuse the CodeDeployLambdaAliasUpdate update policy."
+                },
+                "enableVersionUpgrade": {
+                    "description": "To upgrade an Amazon ES domain to a new version of Elasticsearch rather than replacing the entire\nAWS::Elasticsearch::Domain resource, use the EnableVersionUpgrade update policy.",
+                    "type": "boolean"
+                },
+                "useOnlineResharding": {
+                    "description": "To modify a replication group's shards by adding or removing shards, rather than replacing the entire\nAWS::ElastiCache::ReplicationGroup resource, use the UseOnlineResharding update policy.",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "ClassifierConfigProps": {
+            "additionalProperties": false,
+            "properties": {
+                "csvClassifier": {
+                    "$ref": "#/definitions/ClassifierCsvProps",
+                    "description": "CSV Classifier Props.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-csvclassifier.html"
+                },
+                "grokClassifier": {
+                    "$ref": "#/definitions/CfnClassifier.GrokClassifierProperty",
+                    "description": "Grok Classifier Props.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-grokclassifier.html"
+                },
+                "jsonClassifier": {
+                    "$ref": "#/definitions/CfnClassifier.JsonClassifierProperty",
+                    "description": "JSON Classifier Props.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-jsonclassifier.html"
+                },
+                "xmlClassifier": {
+                    "$ref": "#/definitions/CfnClassifier.XMLClassifierProperty",
+                    "description": "XML Classifier Props.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-xmlclassifier.html"
+                }
+            },
+            "type": "object"
+        },
+        "ClassifierCsvProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowSingleColumn": {
+                    "type": "boolean"
+                },
+                "containsHeader": {
+                    "type": "string"
+                },
+                "delimiter": {
+                    "type": "string"
+                },
+                "disableValueTrimming": {
+                    "type": "boolean"
+                },
+                "header": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "quoteSymbol": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ClassifierProps": {
+            "additionalProperties": false,
+            "properties": {
+                "classifierType": {
+                    "$ref": "#/definitions/ClassifierType",
+                    "description": "Custom Classifier type"
+                },
+                "configuration": {
+                    "$ref": "#/definitions/ClassifierConfigProps",
+                    "description": "Custom Classifier configuration to use for the type.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-classifier.html"
+                }
+            },
+            "required": [
+                "classifierType",
+                "configuration"
+            ],
+            "type": "object"
+        },
+        "ClassifierType": {
+            "enum": [
+                "csv",
+                "grok",
+                "json",
+                "xml"
+            ],
+            "type": "string"
+        },
+        "ConnectionPhysical": {
+            "additionalProperties": false,
+            "properties": {
+                "availabilityZone": {
+                    "description": "Availability zone to use (eg test-regiona)",
+                    "type": "string"
+                },
+                "projectSecurityGroupNames": {
+                    "description": "List of names of security groups generated within the project config",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "securityGroupIdList": {
+                    "description": "List of security groups to use when connecting to the VPC.  Assure they are in the VPC matching the SecurityGroupIds",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "subnetId": {
+                    "description": "Subnet ID within the Availability Zone chosen above.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ConnectionProps": {
+            "additionalProperties": false,
+            "properties": {
+                "connectionProperties": {
+                    "additionalProperties": {},
+                    "description": "Connection properties key value pairs.  See: https://docs.aws.amazon.com/glue/latest/webapi/API_Connection.html",
+                    "type": "object"
+                },
+                "connectionType": {
+                    "$ref": "#/definitions/ConnectionType",
+                    "description": "Connection type to create (\"JDBC\" | \"KAFKA\" | \"MONGODB\" | \"NETWORK\")"
+                },
+                "description": {
+                    "description": "Connection Description",
+                    "type": "string"
+                },
+                "matchCriteria": {
+                    "description": "A list of criteria that can be used in selecting this connection.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "physicalConnectionRequirements": {
+                    "$ref": "#/definitions/ConnectionPhysical",
+                    "description": "VPC Definition for this to connect to.  see: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-connection-physicalconnectionrequirements.html"
+                }
+            },
+            "required": [
+                "connectionType"
+            ],
+            "type": "object"
+        },
+        "ConnectionType": {
+            "enum": [
+                "JDBC",
+                "KAFKA",
+                "MONGODB",
+                "NETWORK"
+            ],
+            "type": "string"
+        },
+        "Construct": {
+            "additionalProperties": false,
+            "description": "Represents the building block of the construct graph.\n\nAll constructs besides the root construct must be created within the scope of\nanother construct.",
+            "properties": {
+                "node": {
+                    "$ref": "#/definitions/Node",
+                    "description": "The tree node."
+                }
+            },
+            "required": [
+                "node"
+            ],
+            "type": "object"
+        },
+        "CustomResource": {
+            "additionalProperties": false,
+            "description": "Instantiation of a custom resource, whose implementation is provided a Provider\n\nThis class is intended to be used by construct library authors. Application\nbuilder should not be able to tell whether or not a construct is backed by\na custom resource, and so the use of this class should be invisible.\n\nInstead, construct library authors declare a custom construct that hides the\nchoice of provider, and accepts a strongly-typed properties object with the\nproperties your provider accepts.\n\nYour custom resource provider (identified by the `serviceToken` property)\ncan be one of 4 constructs:\n\n- If you are authoring a construct library or application, we recommend you\n  use the `Provider` class in the `custom-resources` module.\n- If you are authoring a construct for the CDK's AWS Construct Library,\n  you should use the `CustomResourceProvider` construct in this package.\n- If you want full control over the provider, you can always directly use\n  a Lambda Function or SNS Topic by passing the ARN into `serviceToken`.",
+            "properties": {
+                "_allowCrossEnvironment": {},
+                "_physicalName": {},
+                "env": {
+                    "$ref": "#/definitions/ResourceEnvironment",
+                    "description": "The environment this resource belongs to.\nFor resources that are created and managed by the CDK\n(generally, those created by creating new class instances like Role, Bucket, etc.),\nthis is always the same as the environment of the stack they belong to;\nhowever, for imported resources\n(those obtained from static methods like fromRoleArn, fromBucketName, etc.),\nthat might be different than the stack they were imported into."
+                },
+                "node": {
+                    "$ref": "#/definitions/Node",
+                    "description": "The tree node."
+                },
+                "physicalName": {
+                    "description": "Returns a string-encoded token that resolves to the physical name that\nshould be passed to the CloudFormation resource.\n\nThis value will resolve to one of the following:\n- a concrete value (e.g. `\"my-awesome-bucket\"`)\n- `undefined`, when a name should be generated by CloudFormation\n- a concrete name generated automatically during synthesis, in\n  cross-environment scenarios.",
+                    "type": "string"
+                },
+                "ref": {
+                    "description": "The physical name of this custom resource.",
+                    "type": "string"
+                },
+                "resource": {},
+                "stack": {
+                    "$ref": "#/definitions/Stack",
+                    "description": "The stack in which this resource is defined."
+                }
+            },
+            "required": [
+                "_allowCrossEnvironment",
+                "_physicalName",
+                "env",
+                "node",
+                "physicalName",
+                "ref",
+                "resource",
+                "stack"
+            ],
+            "type": "object"
+        },
+        "DatabaseGrantProps": {
+            "additionalProperties": false,
+            "properties": {
+                "databasePermissions": {
+                    "description": "Permissions to Grant on database.  Must be 'read', 'write', or 'super'. Defaults to 'read'.",
+                    "enum": [
+                        "read",
+                        "super",
+                        "write"
+                    ],
+                    "type": "string"
+                },
+                "principalArns": {
+                    "$ref": "#/definitions/NamedPrincipalArnProps",
+                    "description": "Mapping of principal names to arns. Can be used as short hand for principals"
+                },
+                "principals": {
+                    "$ref": "#/definitions/NamedPrincipalProps",
+                    "description": "Array of strings representing principals to grant permissions to.  These must exist in the 'principals:' section."
+                },
+                "tablePermissions": {
+                    "description": "Permissions to Grant on tables.  Must be 'read', 'write', or 'super'. Defaults to 'read'.",
+                    "enum": [
+                        "read",
+                        "super",
+                        "write"
+                    ],
+                    "type": "string"
+                },
+                "tables": {
+                    "description": "List of tables for which to create grants. Tables must exist before grants can be created.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "DatabaseLakeFormationProps": {
+            "additionalProperties": false,
+            "properties": {
+                "createCrossAccountResourceLinkAccounts": {
+                    "description": "List of account numbers for which cross account Resource Links will be created.\nAdditional stacks will be created for each account.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "createCrossAccountResourceLinkName": {
+                    "description": "Name of the resource link to be created\nIf not specified, defaults to the database name",
+                    "type": "string"
+                },
+                "createReadGrantsForDataEngineerRoles": {
+                    "description": "If true (default: false), will automatically add read LF grants for data engineer roles\n to database",
+                    "type": "boolean"
+                },
+                "createReadWriteGrantsForProjectExecutionRoles": {
+                    "description": "If true (default: false), will automatically add read/write LF grants for project execution role\n to databases and their s3 locations.",
+                    "type": "boolean"
+                },
+                "createSuperGrantsForDataAdminRoles": {
+                    "description": "If true (default: false), will automatically add read/write/super LF grants for data admin roles\n to database",
+                    "type": "boolean"
+                },
+                "grants": {
+                    "$ref": "#/definitions/NamedDatabaseGrantProps",
+                    "description": "LF Grants to be added to the database"
+                }
+            },
+            "type": "object"
+        },
+        "DatabaseProps": {
+            "additionalProperties": false,
+            "properties": {
+                "createDatazoneDatasource": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "description": "General description of the database",
+                    "type": "string"
+                },
+                "lakeFormation": {
+                    "$ref": "#/definitions/DatabaseLakeFormationProps"
+                },
+                "locationBucketName": {
+                    "description": "S3 Bucket under which all data for this database will be stored",
+                    "type": "string"
+                },
+                "locationPrefix": {
+                    "description": "S3 prefix under which all data for this database will be stored",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description"
+            ],
+            "type": "object"
+        },
+        "DatazoneProjectProps": {
+            "additionalProperties": false,
+            "properties": {
+                "domainConfigSSMParam": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "domainConfigSSMParam"
+            ],
+            "type": "object"
+        },
+        "DatazoneProps": {
+            "additionalProperties": false,
+            "properties": {
+                "project": {
+                    "$ref": "#/definitions/DatazoneProjectProps"
+                }
+            },
+            "type": "object"
+        },
+        "FailureNotificationsProps": {
+            "additionalProperties": false,
+            "properties": {
+                "email": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "ICfnConditionExpression": {
+            "additionalProperties": false,
+            "description": "Represents a CloudFormation element that can be used within a Condition.\n\nYou can use intrinsic functions, such as ``Fn.conditionIf``,\n``Fn.conditionEquals``, and ``Fn.conditionNot``, to conditionally create\nstack resources. These conditions are evaluated based on input parameters\nthat you declare when you create or update a stack. After you define all your\nconditions, you can associate them with resources or resource properties in\nthe Resources and Outputs sections of a template.\n\nYou define all conditions in the Conditions section of a template except for\n``Fn.conditionIf`` conditions. You can use the ``Fn.conditionIf`` condition\nin the metadata attribute, update policy attribute, and property values in\nthe Resources section and Outputs sections of a template.\n\nYou might use conditions when you want to reuse a template that can create\nresources in different contexts, such as a test environment versus a\nproduction environment. In your template, you can add an EnvironmentType\ninput parameter, which accepts either prod or test as inputs. For the\nproduction environment, you might include Amazon EC2 instances with certain\ncapabilities; however, for the test environment, you want to use less\ncapabilities to save costs. With conditions, you can define which resources\nare created and how they're configured for each environment type.\n\nYou can use `toString` when you wish to embed a condition expression\nin a property value that accepts a `string`. For example:\n\n```ts\nnew sqs.Queue(this, 'MyQueue', {\n  queueName: Fn.conditionIf('Condition', 'Hello', 'World').toString()\n});\n```",
+            "properties": {
+                "creationStack": {
+                    "description": "The creation stack of this resolvable which will be appended to errors\nthrown during resolution.\n\nThis may return an array with a single informational element indicating how\nto get this property populated, if it was skipped for performance reasons.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "typeHint": {
+                    "description": "The type that this token will likely resolve to.",
+                    "enum": [
+                        "number",
+                        "string",
+                        "string-list"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "creationStack"
+            ],
+            "type": "object"
+        },
+        "ICfnResourceOptions": {
+            "additionalProperties": false,
+            "properties": {
+                "condition": {
+                    "$ref": "#/definitions/CfnCondition",
+                    "description": "A condition to associate with this resource. This means that only if the condition evaluates to 'true' when the stack\nis deployed, the resource will be included. This is provided to allow CDK projects to produce legacy templates, but normally\nthere is no need to use it in CDK projects."
+                },
+                "creationPolicy": {
+                    "$ref": "#/definitions/CfnCreationPolicy",
+                    "description": "Associate the CreationPolicy attribute with a resource to prevent its status from reaching create complete until\nAWS CloudFormation receives a specified number of success signals or the timeout period is exceeded. To signal a\nresource, you can use the cfn-signal helper script or SignalResource API. AWS CloudFormation publishes valid signals\nto the stack events so that you track the number of signals sent."
+                },
+                "deletionPolicy": {
+                    "description": "With the DeletionPolicy attribute you can preserve or (in some cases) backup a resource when its stack is deleted.\nYou specify a DeletionPolicy attribute for each resource that you want to control. If a resource has no DeletionPolicy\nattribute, AWS CloudFormation deletes the resource by default. Note that this capability also applies to update operations\nthat lead to resources being removed.",
+                    "enum": [
+                        "Delete",
+                        "Retain",
+                        "RetainExceptOnCreate",
+                        "Snapshot"
+                    ],
+                    "type": "string"
+                },
+                "description": {
+                    "description": "The description of this resource.\nUsed for informational purposes only, is not processed in any way\n(and stays with the CloudFormation template, is not passed to the underlying resource,\neven if it does have a 'description' property).",
+                    "type": "string"
+                },
+                "metadata": {
+                    "additionalProperties": {},
+                    "description": "Metadata associated with the CloudFormation resource. This is not the same as the construct metadata which can be added\nusing construct.addMetadata(), but would not appear in the CloudFormation template automatically.",
+                    "type": "object"
+                },
+                "updatePolicy": {
+                    "$ref": "#/definitions/CfnUpdatePolicy",
+                    "description": "Use the UpdatePolicy attribute to specify how AWS CloudFormation handles updates to the AWS::AutoScaling::AutoScalingGroup\nresource. AWS CloudFormation invokes one of three update policies depending on the type of change you make or whether a\nscheduled action is associated with the Auto Scaling group."
+                },
+                "updateReplacePolicy": {
+                    "description": "Use the UpdateReplacePolicy attribute to retain or (in some cases) backup the existing physical instance of a resource\nwhen it is replaced during a stack update operation.",
+                    "enum": [
+                        "Delete",
+                        "Retain",
+                        "RetainExceptOnCreate",
+                        "Snapshot"
+                    ],
+                    "type": "string"
+                },
+                "version": {
+                    "description": "The version of this resource.\nUsed only for custom CloudFormation resources.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "IConstruct": {
+            "additionalProperties": false,
+            "description": "Represents a construct.",
+            "properties": {
+                "node": {
+                    "$ref": "#/definitions/Node",
+                    "description": "The tree node."
+                }
+            },
+            "required": [
+                "node"
+            ],
+            "type": "object"
+        },
+        "IMdaaResourceNaming": {
+            "additionalProperties": false,
+            "description": "Interface specification for a MDAA naming implementation.\nCan be implemented in any way, but should ensure that naming\nsemantics support deployment of multiple domains/envs/modules\nwithin the same account, otherwise resource naming collisions may occur.",
+            "properties": {
+                "props": {
+                    "$ref": "#/definitions/MdaaResourceNamingConfig"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "IResolvable": {
+            "additionalProperties": false,
+            "description": "Interface for values that can be resolvable later\n\nTokens are special objects that participate in synthesis.",
+            "properties": {
+                "creationStack": {
+                    "description": "The creation stack of this resolvable which will be appended to errors\nthrown during resolution.\n\nThis may return an array with a single informational element indicating how\nto get this property populated, if it was skipped for performance reasons.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "typeHint": {
+                    "description": "The type that this token will likely resolve to.",
+                    "enum": [
+                        "number",
+                        "string",
+                        "string-list"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "creationStack"
+            ],
+            "type": "object"
+        },
+        "IStackSynthesizer": {
+            "additionalProperties": false,
+            "description": "Encodes information how a certain Stack should be deployed",
+            "properties": {
+                "bootstrapQualifier": {
+                    "default": "- no qualifier",
+                    "description": "The qualifier used to bootstrap this stack",
+                    "type": "string"
+                },
+                "lookupRole": {
+                    "default": "- no role",
+                    "description": "The role used to lookup for this stack",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ITemplateOptions": {
+            "additionalProperties": false,
+            "description": "CloudFormation template options for a stack.",
+            "properties": {
+                "description": {
+                    "description": "Gets or sets the description of this stack.\nIf provided, it will be included in the CloudFormation template's \"Description\" attribute.",
+                    "type": "string"
+                },
+                "metadata": {
+                    "additionalProperties": {},
+                    "description": "Metadata associated with the CloudFormation template.",
+                    "type": "object"
+                },
+                "templateFormatVersion": {
+                    "description": "Gets or sets the AWSTemplateFormatVersion field of the CloudFormation template.",
+                    "type": "string"
+                },
+                "transforms": {
+                    "description": "Gets or sets the top-level template transform(s) for this stack (e.g. `[\"AWS::Serverless-2016-10-31\"]`).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "MdaaCidrPeer": {
+            "additionalProperties": false,
+            "properties": {
+                "cidr": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "$ref": "#/definitions/NagPackSuppression"
+                    },
+                    "type": "array"
+                },
+                "toPort": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "cidr",
+                "protocol"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressionByPath": {
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "reason"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "path",
+                "suppressions"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressionConfigs": {
+            "additionalProperties": false,
+            "properties": {
+                "by_path": {
+                    "items": {
+                        "$ref": "#/definitions/MdaaNagSuppressionByPath"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "by_path"
+            ],
+            "type": "object"
+        },
+        "MdaaPrefixListPeer": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "prefixList": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "$ref": "#/definitions/NagPackSuppression"
+                    },
+                    "type": "array"
+                },
+                "toPort": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "prefixList",
+                "protocol"
+            ],
+            "type": "object"
+        },
+        "MdaaResolvableRole": {
+            "additionalProperties": false,
+            "description": "A role for which Role ID, Arn, or Name can be resolved using a custom resource. If one of these\nproperties is requested of the object and is not already populated, then a custom Cfn resource\nwill be created to facilitate the lookup.",
+            "properties": {
+                "roleCr": {
+                    "$ref": "#/definitions/CustomResource",
+                    "description": "Instantiation of a custom resource, whose implementation is provided a Provider\n\nThis class is intended to be used by construct library authors. Application\nbuilder should not be able to tell whether or not a construct is backed by\na custom resource, and so the use of this class should be invisible.\n\nInstead, construct library authors declare a custom construct that hides the\nchoice of provider, and accepts a strongly-typed properties object with the\nproperties your provider accepts.\n\nYour custom resource provider (identified by the `serviceToken` property)\ncan be one of 4 constructs:\n\n- If you are authoring a construct library or application, we recommend you\n  use the `Provider` class in the `custom-resources` module.\n- If you are authoring a construct for the CDK's AWS Construct Library,\n  you should use the `CustomResourceProvider` construct in this package.\n- If you want full control over the provider, you can always directly use\n  a Lambda Function or SNS Topic by passing the ARN into `serviceToken`."
+                },
+                "roleHelper": {
+                    "$ref": "#/definitions/MdaaRoleHelper"
+                },
+                "roleRef": {
+                    "$ref": "#/definitions/MdaaResolvableRoleRef"
+                },
+                "scope": {
+                    "$ref": "#/definitions/Construct"
+                }
+            },
+            "required": [
+                "roleHelper",
+                "roleRef",
+                "scope"
+            ],
+            "type": "object"
+        },
+        "MdaaResolvableRoleRef": {
+            "additionalProperties": false,
+            "description": "A MdaaRoleRef which can be resolved within a scope.",
+            "properties": {
+                "arn": {
+                    "description": "Reference role by arn",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Reference role by id",
+                    "type": "string"
+                },
+                "immutable": {
+                    "description": "Reference role by id",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Reference role by name",
+                    "type": "string"
+                },
+                "refId": {
+                    "description": "A string which uniquely identifies the MdaaRoleRef within a scope.",
+                    "type": "string"
+                },
+                "sso": {
+                    "description": "If true, role name will be resolved to an SSO auto-generated role",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "refId"
+            ],
+            "type": "object"
+        },
+        "MdaaResourceNamingConfig": {
+            "additionalProperties": false,
+            "description": "Basic config for a MDAA naming implementation.\nStandard config properties are passed directly, while\nadditional config values can be pulled from CDK context using\nthe provided cdkNode.tryGetContext()",
+            "properties": {
+                "cdkNode": {
+                    "$ref": "#/definitions/Node",
+                    "description": "A CDK node on which tryGetContext()\ncan be used to obtain additional naming config context\nfor use in non-default implementations"
+                },
+                "domain": {
+                    "description": "'domain' from the MDAA config",
+                    "type": "string"
+                },
+                "env": {
+                    "description": "'env' from the MDAA config",
+                    "type": "string"
+                },
+                "moduleName": {
+                    "description": "'module_name' from the MDAA config",
+                    "type": "string"
+                },
+                "org": {
+                    "description": "'org' from the MDAA config",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cdkNode",
+                "domain",
+                "env",
+                "moduleName",
+                "org"
+            ],
+            "type": "object"
+        },
+        "MdaaRoleHelper": {
+            "additionalProperties": false,
+            "description": "A Helper class which can be used to resolve MdaaRoleRefs using CustomResources.",
+            "properties": {
+                "naming": {
+                    "$ref": "#/definitions/IMdaaResourceNaming"
+                },
+                "providerServiceToken": {
+                    "type": "string"
+                },
+                "resolveArnCache": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaResolvableRole"
+                    },
+                    "type": "object"
+                },
+                "resolveIdCache": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaResolvableRole"
+                    },
+                    "type": "object"
+                },
+                "resolveNameCache": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaResolvableRole"
+                    },
+                    "type": "object"
+                },
+                "resolveRefCache": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaResolvableRole"
+                    },
+                    "type": "object"
+                },
+                "scope": {
+                    "$ref": "#/definitions/Construct"
+                }
+            },
+            "required": [
+                "naming",
+                "resolveArnCache",
+                "resolveIdCache",
+                "resolveNameCache",
+                "resolveRefCache",
+                "scope"
+            ],
+            "type": "object"
+        },
+        "MdaaRoleRef": {
+            "additionalProperties": false,
+            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "properties": {
+                "arn": {
+                    "description": "Reference role by arn",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Reference role by id",
+                    "type": "string"
+                },
+                "immutable": {
+                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Reference role by name",
+                    "type": "string"
+                },
+                "refId": {
+                    "description": "A string which uniquely identifies the MdaaRoleRef within a scope.",
+                    "type": "string"
+                },
+                "sso": {
+                    "description": "If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "MdaaSecurityGroupPeer": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "sgId": {
+                    "type": "string"
+                },
+                "suppressions": {
+                    "items": {
+                        "$ref": "#/definitions/NagPackSuppression"
+                    },
+                    "type": "array"
+                },
+                "toPort": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "protocol",
+                "sgId"
+            ],
+            "type": "object"
+        },
+        "MdaaSecurityGroupRuleProps": {
+            "additionalProperties": false,
+            "properties": {
+                "ipv4": {
+                    "items": {
+                        "$ref": "#/definitions/MdaaCidrPeer"
+                    },
+                    "type": "array"
+                },
+                "prefixList": {
+                    "items": {
+                        "$ref": "#/definitions/MdaaPrefixListPeer"
+                    },
+                    "type": "array"
+                },
+                "sg": {
+                    "items": {
+                        "$ref": "#/definitions/MdaaSecurityGroupPeer"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "rules"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleAssertionConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assert": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assert",
+                "description"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleCondititionConfig": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "assertions": {
+                    "items": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                }
+            },
+            "required": [
+                "assertions",
+                "condition"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogParameterConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "constraints": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                },
+                "props": {
+                    "$ref": "#/definitions/CfnParameterProps"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogProductConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "launch_role_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
+                    },
+                    "type": "object"
+                },
+                "portfolio_arn": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "owner",
+                "portfolio_arn"
+            ],
+            "type": "object"
+        },
+        "MetadataEntry": {
+            "additionalProperties": false,
+            "description": "An entry in the construct metadata table.",
+            "properties": {
+                "data": {
+                    "description": "The data."
+                },
+                "trace": {
+                    "default": "- no trace information",
+                    "description": "Stack trace at the point of adding the metadata.\n\nOnly available if `addMetadata()` is called with `stackTrace: true`.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "type": {
+                    "description": "The metadata entry type.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "data",
+                "type"
+            ],
+            "type": "object"
+        },
+        "NagPackSuppression": {
+            "additionalProperties": false,
+            "description": "Interface for creating a rule suppression",
+            "properties": {
+                "appliesTo": {
+                    "description": "Rule specific granular suppressions",
+                    "items": {
+                        "$ref": "#/definitions/NagPackSuppressionAppliesTo"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "The id of the rule to ignore",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "The reason to ignore the rule (minimum 10 characters)",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "reason"
+            ],
+            "type": "object"
+        },
+        "NagPackSuppressionAppliesTo": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/RegexAppliesTo"
+                },
+                {
+                    "type": "string"
+                }
+            ],
+            "description": "A granular suppression"
+        },
+        "NamedClassifierProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/ClassifierProps"
+            },
+            "type": "object"
+        },
+        "NamedConnectionProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/ConnectionProps"
+            },
+            "type": "object"
+        },
+        "NamedDatabaseGrantProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/DatabaseGrantProps"
+            },
+            "type": "object"
+        },
+        "NamedDatabaseProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/DatabaseProps"
+            },
+            "type": "object"
+        },
+        "NamedPrincipalArnProps": {
+            "additionalProperties": {
+                "type": "string"
+            },
+            "type": "object"
+        },
+        "NamedPrincipalProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/PrincipalProps"
+            },
+            "type": "object"
+        },
+        "NamedSecurityGroupConfigProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/SecurityGroupConfigProps"
+            },
+            "type": "object"
+        },
+        "Node": {
+            "additionalProperties": false,
+            "description": "Represents the construct node in the scope tree.",
+            "properties": {
+                "_addr": {},
+                "_children": {},
+                "_context": {},
+                "_defaultChild": {},
+                "_dependencies": {},
+                "_locked": {},
+                "_metadata": {},
+                "_validations": {},
+                "addChild": {
+                    "description": "Adds a child construct to this node."
+                },
+                "addr": {
+                    "description": "Returns an opaque tree-unique address for this construct.\n\nAddresses are 42 characters hexadecimal strings. They begin with \"c8\"\nfollowed by 40 lowercase hexadecimal characters (0-9a-f).\n\nAddresses are calculated using a SHA-1 of the components of the construct\npath.\n\nTo enable refactorings of construct trees, constructs with the ID `Default`\nwill be excluded from the calculation. In those cases constructs in the\nsame tree may have the same addreess.",
+                    "type": "string"
+                },
+                "children": {
+                    "description": "All direct children of this construct.",
+                    "items": {
+                        "$ref": "#/definitions/IConstruct"
+                    },
+                    "type": "array"
+                },
+                "defaultChild": {
+                    "$ref": "#/definitions/IConstruct",
+                    "description": "Returns the child construct that has the id `Default` or `Resource\"`.\nThis is usually the construct that provides the bulk of the underlying functionality.\nUseful for modifications of the underlying construct that are not available at the higher levels.\nOverride the defaultChild property.\n\nThis should only be used in the cases where the correct\ndefault child is not named 'Resource' or 'Default' as it\nshould be.\n\nIf you set this to undefined, the default behavior of finding\nthe child named 'Resource' or 'Default' will be used."
+                },
+                "dependencies": {
+                    "description": "Return all dependencies registered on this node (non-recursive).",
+                    "items": {
+                        "$ref": "#/definitions/IConstruct"
+                    },
+                    "type": "array"
+                },
+                "host": {},
+                "id": {
+                    "description": "The id of this construct within the current scope.\n\nThis is a a scope-unique id. To obtain an app-unique id for this construct, use `addr`.",
+                    "type": "string"
+                },
+                "locked": {
+                    "description": "Returns true if this construct or the scopes in which it is defined are\nlocked.",
+                    "type": "boolean"
+                },
+                "metadata": {
+                    "description": "An immutable array of metadata objects associated with this construct.\nThis can be used, for example, to implement support for deprecation notices, source mapping, etc.",
+                    "items": {
+                        "$ref": "#/definitions/MetadataEntry"
+                    },
+                    "type": "array"
+                },
+                "path": {
+                    "description": "The full, absolute path of this construct in the tree.\n\nComponents are separated by '/'.",
+                    "type": "string"
+                },
+                "root": {
+                    "$ref": "#/definitions/IConstruct",
+                    "description": "Returns the root of the construct tree."
+                },
+                "scope": {
+                    "$ref": "#/definitions/IConstruct",
+                    "description": "Returns the scope in which this construct is defined.\n\nThe value is `undefined` at the root of the construct scope tree."
+                },
+                "scopes": {
+                    "description": "All parent scopes of this construct.",
+                    "items": {
+                        "$ref": "#/definitions/IConstruct"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "_children",
+                "_context",
+                "_defaultChild",
+                "_dependencies",
+                "_locked",
+                "_metadata",
+                "_validations",
+                "addChild",
+                "addr",
+                "children",
+                "dependencies",
+                "host",
+                "id",
+                "locked",
+                "metadata",
+                "path",
+                "root",
+                "scopes"
+            ],
+            "type": "object"
+        },
+        "PrincipalProps": {
+            "additionalProperties": false,
+            "properties": {
+                "account": {
+                    "description": "Optionally, the principal account can be specified for cases where the account cannot be\ndetermined from the role arn",
+                    "type": "string"
+                },
+                "federatedGroup": {
+                    "description": "Federated group name for the grant.",
+                    "type": "string"
+                },
+                "federatedUser": {
+                    "description": "Federated user name for the grant.",
+                    "type": "string"
+                },
+                "federationProviderArn": {
+                    "description": "Arn of the IAM Federation provider that Active Directory uses to federate into the environment.",
+                    "type": "string"
+                },
+                "role": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/MdaaRoleRef"
+                        },
+                        {
+                            "$ref": "#/definitions/MdaaResolvableRole"
+                        }
+                    ],
+                    "description": "Arn of an IAM principal for the grant."
+                }
+            },
+            "type": "object"
+        },
+        "RegexAppliesTo": {
+            "additionalProperties": false,
+            "description": "A regular expression to apply to matching findings",
+            "properties": {
+                "regex": {
+                    "description": "An ECMA-262 regex string",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "regex"
+            ],
+            "type": "object"
+        },
+        "ResourceEnvironment": {
+            "additionalProperties": false,
+            "description": "Represents the environment a given resource lives in.\nUsed as the return value for the `IResource.env` property.",
+            "properties": {
+                "account": {
+                    "description": "The AWS account ID that this resource belongs to.\nSince this can be a Token\n(for example, when the account is CloudFormation's AWS::AccountId intrinsic),\nmake sure to use Token.compareStrings()\ninstead of just comparing the values for equality.",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "The AWS region that this resource belongs to.\nSince this can be a Token\n(for example, when the region is CloudFormation's AWS::Region intrinsic),\nmake sure to use Token.compareStrings()\ninstead of just comparing the values for equality.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "account",
+                "region"
+            ],
+            "type": "object"
+        },
+        "SecurityGroupConfigProps": {
+            "additionalProperties": false,
+            "properties": {
+                "securityGroupEgressRules": {
+                    "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
+                    "description": "List of egress rules to be added to the function SG"
+                },
+                "vpcId": {
+                    "description": "The ID of the VPC on which the Lambda will be deployed",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "vpcId"
+            ],
+            "type": "object"
+        },
+        "Stack": {
+            "additionalProperties": false,
+            "description": "A root construct which represents a single CloudFormation stack.",
+            "properties": {
+                "_crossRegionReferences": {
+                    "description": "Whether cross region references are enabled for this stack",
+                    "type": "boolean"
+                },
+                "_logicalIds": {
+                    "description": "Logical ID generation strategy"
+                },
+                "_missingContext": {
+                    "description": "Lists all missing contextual information.\nThis is returned when the stack is synthesized under the 'missing' attribute\nand allows tooling to obtain the context and re-synthesize."
+                },
+                "_notificationArns": {
+                    "description": "SNS Notification ARNs to receive stack events.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "_stackDependencies": {
+                    "description": "Other stacks this stack depends on"
+                },
+                "_stackName": {},
+                "_suppressTemplateIndentation": {
+                    "default": "- the value of `@aws-cdk/core:suppressTemplateIndentation`, or `false` if that is not set.",
+                    "description": "Enable this flag to suppress indentation in generated\nCloudFormation templates.\n\nIf not specified, the value of the `@aws-cdk/core:suppressTemplateIndentation`\ncontext key will be used. If that is not specified, then the\ndefault value `false` will be used."
+                },
+                "_terminationProtection": {},
+                "_versionReportingEnabled": {
+                    "description": "Whether version reporting is enabled for this stack\n\nControls whether the CDK Metadata resource is injected",
+                    "type": "boolean"
+                },
+                "account": {
+                    "description": "The AWS account into which this stack will be deployed.\n\nThis value is resolved according to the following rules:\n\n1. The value provided to `env.account` when the stack is defined. This can\n   either be a concrete account (e.g. `585695031111`) or the\n   `Aws.ACCOUNT_ID` token.\n3. `Aws.ACCOUNT_ID`, which represents the CloudFormation intrinsic reference\n   `{ \"Ref\": \"AWS::AccountId\" }` encoded as a string token.\n\nPreferably, you should use the return value as an opaque string and not\nattempt to parse it to implement your logic. If you do, you must first\ncheck that it is a concrete value an not an unresolved token. If this\nvalue is an unresolved token (`Token.isUnresolved(stack.account)` returns\n`true`), this implies that the user wishes that this stack will synthesize\ninto an **account-agnostic template**. In this case, your code should either\nfail (throw an error, emit a synth error using `Annotations.of(construct).addError()`) or\nimplement some other account-agnostic behavior.",
+                    "type": "string"
+                },
+                "addPermissionsBoundaryAspect": {
+                    "description": "Adds an aspect to the stack that will apply the permissions boundary.\nThis will only add the aspect if the permissions boundary has been set"
+                },
+                "artifactId": {
+                    "description": "The ID of the cloud assembly artifact for this stack.",
+                    "type": "string"
+                },
+                "availabilityZones": {
+                    "description": "Returns the list of AZs that are available in the AWS environment\n(account/region) associated with this stack.\n\nIf the stack is environment-agnostic (either account and/or region are\ntokens), this property will return an array with 2 tokens that will resolve\nat deploy-time to the first two availability zones returned from CloudFormation's\n`Fn::GetAZs` intrinsic function.\n\nIf they are not available in the context, returns a set of dummy values and\nreports them as missing, and let the CLI resolve them by calling EC2\n`DescribeAvailabilityZones` on the target environment.\n\nTo specify a different strategy for selecting availability zones override this method.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "bundlingRequired": {
+                    "description": "Indicates whether the stack requires bundling or not",
+                    "type": "boolean"
+                },
+                "dependencies": {
+                    "description": "Return the stacks this stack depends on",
+                    "items": {
+                        "$ref": "#/definitions/Stack"
+                    },
+                    "type": "array"
+                },
+                "environment": {
+                    "description": "The environment coordinates in which this stack is deployed. In the form\n`aws://account/region`. Use `stack.account` and `stack.region` to obtain\nthe specific values, no need to parse.\n\nYou can use this value to determine if two stacks are targeting the same\nenvironment.\n\nIf either `stack.account` or `stack.region` are not concrete values (e.g.\n`Aws.ACCOUNT_ID` or `Aws.REGION`) the special strings `unknown-account` and/or\n`unknown-region` will be used respectively to indicate this stack is\nregion/account-agnostic.",
+                    "type": "string"
+                },
+                "generateStackArtifactId": {
+                    "description": "The artifact ID for this stack\n\nStack artifact ID is unique within the App's Cloud Assembly."
+                },
+                "generateStackId": {
+                    "description": "Generate an ID with respect to the given container construct."
+                },
+                "generateStackName": {
+                    "description": "Calculate the stack name based on the construct path\n\nThe stack name is the name under which we'll deploy the stack,\nand incorporates containing Stage names by default.\n\nGenerally this looks a lot like how logical IDs are calculated.\nThe stack name is calculated based on the construct root path,\nas follows:\n\n- Path is calculated with respect to containing App or Stage (if any)\n- If the path is one component long just use that component, otherwise\n  combine them with a hash.\n\nSince the hash is quite ugly and we'd like to avoid it if possible -- but\nwe can't anymore in the general case since it has been written into legacy\nstacks. The introduction of Stages makes it possible to make this nicer however.\nWhen a Stack is nested inside a Stage, we use the path components below the\nStage, and prefix the path components of the Stage before it."
+                },
+                "maxResources": {
+                    "description": "Maximum number of resources in the stack\n\nSet to 0 to mean \"unlimited\"."
+                },
+                "nested": {
+                    "description": "Indicates if this is a nested stack, in which case `parentStack` will include a reference to it's parent.",
+                    "type": "boolean"
+                },
+                "nestedStackParent": {
+                    "$ref": "#/definitions/Stack",
+                    "description": "If this is a nested stack, returns it's parent stack."
+                },
+                "nestedStackResource": {
+                    "$ref": "#/definitions/CfnResource",
+                    "description": "If this is a nested stack, this represents its `AWS::CloudFormation::Stack`\nresource. `undefined` for top-level (non-nested) stacks."
+                },
+                "node": {
+                    "$ref": "#/definitions/Node",
+                    "description": "The tree node."
+                },
+                "notificationArns": {
+                    "description": "Returns the list of notification Amazon Resource Names (ARNs) for the current stack.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "parseEnvironment": {
+                    "description": "Determine the various stack environment attributes."
+                },
+                "partition": {
+                    "description": "The partition in which this stack is defined",
+                    "type": "string"
+                },
+                "permissionsBoundaryArn": {
+                    "description": "If a permissions boundary has been applied on this scope or any parent scope\nthen this will return the ARN of the permissions boundary.\n\nThis will return the permissions boundary that has been applied to the most\nspecific scope.\n\nFor example:\n\nconst stage = new Stage(app, 'stage', {\n  permissionsBoundary: PermissionsBoundary.fromName('stage-pb'),\n});\n\nconst stack = new Stack(stage, 'Stack', {\n  permissionsBoundary: PermissionsBoundary.fromName('some-other-pb'),\n});\n\n Stack.permissionsBoundaryArn === 'arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/some-other-pb';"
+                },
+                "region": {
+                    "description": "The AWS region into which this stack will be deployed (e.g. `us-west-2`).\n\nThis value is resolved according to the following rules:\n\n1. The value provided to `env.region` when the stack is defined. This can\n   either be a concrete region (e.g. `us-west-2`) or the `Aws.REGION`\n   token.\n3. `Aws.REGION`, which is represents the CloudFormation intrinsic reference\n   `{ \"Ref\": \"AWS::Region\" }` encoded as a string token.\n\nPreferably, you should use the return value as an opaque string and not\nattempt to parse it to implement your logic. If you do, you must first\ncheck that it is a concrete value an not an unresolved token. If this\nvalue is an unresolved token (`Token.isUnresolved(stack.region)` returns\n`true`), this implies that the user wishes that this stack will synthesize\ninto a **region-agnostic template**. In this case, your code should either\nfail (throw an error, emit a synth error using `Annotations.of(construct).addError()`) or\nimplement some other region-agnostic behavior.",
+                    "type": "string"
+                },
+                "resolveExportedValue": {},
+                "stackDependencyReasons": {
+                    "description": "Check whether this stack has a (transitive) dependency on another stack\n\nReturns the list of reasons on the dependency path, or undefined\nif there is no dependency."
+                },
+                "stackId": {
+                    "description": "The ID of the stack",
+                    "type": "string"
+                },
+                "stackName": {
+                    "description": "The concrete CloudFormation physical stack name.\n\nThis is either the name defined explicitly in the `stackName` prop or\nallocated based on the stack's location in the construct tree. Stacks that\nare directly defined under the app use their construct `id` as their stack\nname. Stacks that are defined deeper within the tree will use a hashed naming\nscheme based on the construct path to ensure uniqueness.\n\nIf you wish to obtain the deploy-time AWS::StackName intrinsic,\nyou can use `Aws.STACK_NAME` directly.",
+                    "type": "string"
+                },
+                "synthesizer": {
+                    "$ref": "#/definitions/IStackSynthesizer",
+                    "description": "Synthesis method for this stack"
+                },
+                "tags": {
+                    "$ref": "#/definitions/TagManager",
+                    "description": "Tags to be applied to the stack."
+                },
+                "templateFile": {
+                    "description": "The name of the CloudFormation template file emitted to the output\ndirectory during synthesis.\n\nExample value: `MyStack.template.json`",
+                    "type": "string"
+                },
+                "templateOptions": {
+                    "$ref": "#/definitions/ITemplateOptions",
+                    "description": "Options for CloudFormation template (like version, transform, description)."
+                },
+                "terminationProtection": {
+                    "description": "Whether termination protection is enabled for this stack.",
+                    "type": "boolean"
+                },
+                "urlSuffix": {
+                    "description": "The Amazon domain suffix for the region in which this stack is defined",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "_crossRegionReferences",
+                "_logicalIds",
+                "_missingContext",
+                "_stackDependencies",
+                "_stackName",
+                "_suppressTemplateIndentation",
+                "_terminationProtection",
+                "_versionReportingEnabled",
+                "account",
+                "addPermissionsBoundaryAspect",
+                "artifactId",
+                "availabilityZones",
+                "bundlingRequired",
+                "dependencies",
+                "environment",
+                "generateStackArtifactId",
+                "generateStackId",
+                "generateStackName",
+                "maxResources",
+                "nested",
+                "node",
+                "notificationArns",
+                "parseEnvironment",
+                "partition",
+                "permissionsBoundaryArn",
+                "region",
+                "resolveExportedValue",
+                "stackDependencyReasons",
+                "stackId",
+                "stackName",
+                "synthesizer",
+                "tags",
+                "templateFile",
+                "templateOptions",
+                "terminationProtection",
+                "urlSuffix"
+            ],
+            "type": "object"
+        },
+        "TagManager": {
+            "additionalProperties": false,
+            "description": "TagManager facilitates a common implementation of tagging for Constructs\n\nNormally, you do not need to use this class, as the CloudFormation specification\nwill indicate which resources are taggable. However, sometimes you will need this\nto make custom resources taggable. Used `tagManager.renderedTags` to obtain a\nvalue that will resolve to the tags at synthesis time.",
+            "properties": {
+                "_setTag": {},
+                "didHaveInitialTags": {},
+                "dynamicTags": {},
+                "externalTagPriority": {},
+                "parseExternalTags": {
+                    "description": "Parse external tags.\n\nSet the parseable ones into this tag manager. Save the rest (tokens, lazies) in `this.dynamicTags`."
+                },
+                "priorities": {},
+                "renderedTags": {
+                    "$ref": "#/definitions/IResolvable",
+                    "description": "A lazy value that represents the rendered tags at synthesis time\n\nIf you need to make a custom construct taggable, use the value of this\nproperty to pass to the `tags` property of the underlying construct."
+                },
+                "resourceTypeName": {},
+                "sortedTags": {},
+                "tagFormatter": {},
+                "tagPropertyName": {
+                    "description": "The property name for tag values\n\nNormally this is `tags` but some resources choose a different name. Cognito\nUserPool uses UserPoolTags",
+                    "type": "string"
+                },
+                "tags": {}
+            },
+            "required": [
+                "_setTag",
+                "didHaveInitialTags",
+                "externalTagPriority",
+                "parseExternalTags",
+                "priorities",
+                "renderedTags",
+                "resourceTypeName",
+                "sortedTags",
+                "tagFormatter",
+                "tagPropertyName",
+                "tags"
+            ],
+            "type": "object"
+        }
+    },
+    "properties": {
+        "classifiers": {
+            "$ref": "#/definitions/NamedClassifierProps",
+            "description": "Custom Classifiers to create for your crawlers (optional)"
+        },
+        "connections": {
+            "$ref": "#/definitions/NamedConnectionProps",
+            "description": "Connections to use for your Crwalers."
+        },
+        "dataAdminRoles": {
+            "items": {
+                "$ref": "#/definitions/MdaaRoleRef"
+            },
+            "type": "array"
+        },
+        "dataEngineerRoles": {
+            "items": {
+                "$ref": "#/definitions/MdaaRoleRef"
+            },
+            "type": "array"
+        },
+        "databases": {
+            "$ref": "#/definitions/NamedDatabaseProps",
+            "description": "Glue Database definitions to create (required)"
+        },
+        "datazone": {
+            "$ref": "#/definitions/DatazoneProps"
+        },
+        "failureNotifications": {
+            "$ref": "#/definitions/FailureNotificationsProps",
+            "description": "Failure notifactions for glue jobs ."
+        },
+        "glueCatalogKmsKeyArn": {
+            "type": "string"
+        },
+        "nag_suppressions": {
+            "$ref": "#/definitions/MdaaNagSuppressionConfigs",
+            "description": "Nag suppressions"
+        },
+        "projectExecutionRoles": {
+            "description": "Pre-defined roles to use",
+            "items": {
+                "$ref": "#/definitions/MdaaRoleRef"
+            },
+            "type": "array"
+        },
+        "s3OutputKmsKeyArn": {
+            "type": "string"
+        },
+        "securityGroupConfigs": {
+            "$ref": "#/definitions/NamedSecurityGroupConfigProps",
+            "description": "If specified, project security groups will be created which can be shared\nby project resources"
+        },
+        "service_catalog_product_config": {
+            "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
+            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+        }
+    },
+    "required": [
+        "dataAdminRoles"
+    ],
+    "type": "object"
+}
+

@@ -1,0 +1,21 @@
+personas:
+  data-admin:
+    - persona-based/data-admin-base-policy
+    - domain-based/datalake-basic-policy
+    - domain-based/dataops-basic-policy
+    - domain-based/datascience-basic-policy
+    - domain-based/utility-basic-policy
+    - domain-based/analytics-basic-policy
+    
+    
+  data-scientist:
+    - persona-based/data-scientist-base-policy
+    - domain-based/datalake-basic-policy
+    - domain-based/datascience-basic-policy
+    
+  data-engineer:
+    - persona-based/data-engineer-base-policy
+    - domain-based/datalake-basic-policy
+    - domain-based/dataops-basic-policy
+    - domain-based/utility-basic-policy
+    - domain-based/analytics-basic-policy

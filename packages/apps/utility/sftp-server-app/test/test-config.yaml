@@ -1,0 +1,14 @@
+server:
+  # CIDR Addresses from which the SFTP server will be accessible on port 22
+  ingressCidrs:
+    - 10.0.0.0/8
+    - 192.168.0.0/16
+    - 172.16.0.0/12
+  # The VPC the server will be deployed on
+  vpcId: some-vpc-id
+  # The subnets on which the SFTP server will have interfaces deployed on
+  subnetIds:
+    - some-subnet-id1
+    - some-subnet-id2
+  # If true (default false, a publicly accessible IP address will be bound to the server)
+  internetFacing: false

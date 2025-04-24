@@ -1,0 +1,10 @@
+{
+  "name": "@aws-mdaa/schemas",
+  "description": "MDAA Config Schemas",
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com/solutions"
+  },
+  "version": "1.0.0",
+  "license": "Apache-2.0"
+}

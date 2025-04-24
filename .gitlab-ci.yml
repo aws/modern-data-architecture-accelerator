@@ -1,0 +1,952 @@
+stages:
+  - prebuild
+  - build
+  - test
+  - analyze
+  - package
+  - prerelease_publish
+  - pre_release
+  - release_publish
+  - post_release
+
+include:
+  # Gitlab built-in SAST
+  - template: Jobs/Dependency-Scanning.latest.gitlab-ci.yml
+  - template: Jobs/SAST.latest.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
+  # AWS Solutions SAST
+  - project: $CI_PROJECT_NAMESPACE/caef-delivery
+    ref: main
+    file: "/aws-solutions/viperlight.yaml"
+  - project: $CI_PROJECT_NAMESPACE/caef-testing
+    ref: main
+    file: "/gitlab-ci/mdaa-testing.yaml"
+
+sast:
+  stage: prebuild
+  after_script:
+    - mkdir reports
+    - cp gl-sast-report.json reports/$CI_JOB_NAME.json
+  artifacts:
+    paths:
+      - reports/
+
+# Exclude bulk of CDK TS under **/lib from semgrep, as it is not application code.
+# Other code (such as Lambda, application code) should typically be
+# under ./src and will be included.
+semgrep-sast:
+  stage: prebuild
+  variables:
+    SAST_EXCLUDED_PATHS: "spec, test, tests, tmp, scripts, **/lib/*.ts"
+  after_script: 
+    - echo "Analyzing GitLab SAST reports"
+    - python3 ./scripts/analyze_sast_reports.py
+
+secret_detection:
+  stage: prebuild
+
+viperlight_prebuild:
+  stage: prebuild
+
+viperlight_postbuild:
+  stage: analyze
+
+# Build image has CDK, Node/NPM, Lerna, Python, SonarQube pre installed
+image: $CAEF_BUILD_IMAGE
+
+variables:
+  VERSION_BUMP_LEVEL: minor
+  GIT_SUBMODULE_STRATEGY: recursive
+
+before_script:
+  - git config advice.addIgnoredFile false
+  - git config --global user.name "CICD"
+  - git config --global user.email "ci@example.com"
+
+feature_merge_lint:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    - merge_requests
+  stage: prebuild
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - echo "Running npm_install.sh script"
+    - ./scripts/npm_install.sh
+    - echo "Completed npm_install.sh"
+    - echo "Executing lint.sh script"
+    - ./scripts/lint.sh
+
+feature_merge_main:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    - merge_requests
+  stage: prebuild
+  artifacts:
+    paths:
+      - "*"
+    exclude:
+      - .git
+      - .git/**/*
+    untracked: false
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/merge_main.sh
+
+feature_merge_build_test:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    - merge_requests
+  stage: build
+  dependencies:
+    - feature_merge_main
+  needs:
+    - feature_merge_main
+  cache:
+    key: feature-merge-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: push
+  artifacts:
+    untracked: false
+    paths:
+      - "*"
+    exclude:
+      - "**/node_modules/**"
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/git_secrets.sh
+    - ./scripts/npm_install.sh
+    - ./scripts/build_test.sh
+
+feature_merge_sonarqube:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  allow_failure: false
+  script:
+    - ./scripts/sonarqube.sh
+
+feature_merge_smoke_test:
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+    
+feature_version:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  except:
+    refs:
+      - main
+      - tags
+  stage: prebuild
+  cache:
+    key: feature-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: push
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - target
+      - schemas
+    exclude:
+      - "**/node_modules/**"
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/version_prerelease.sh
+    - ./scripts/npm_install.sh
+
+feature_build_test:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  except:
+    refs:
+      - main
+      - tags
+  stage: build
+  cache:
+    key: feature-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  dependencies:
+    - feature_version
+  needs:
+    - feature_version
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - target
+      - schemas
+    exclude:
+      - "**/node_modules/**"
+  allow_failure: false
+  script:
+    - ./scripts/build_test.sh
+
+feature_package:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  except:
+    refs:
+      - main
+      - tags
+  stage: package
+  cache:
+    key: feature-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - lerna.json
+      - target
+      - packages/**/jsii-dist
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - feature_build_test
+  needs:
+    - feature_build_test
+  allow_failure: false
+  script:
+    - ./scripts/package.sh
+
+feature_publish_npm:
+  tags:
+    - arch:amd64
+    - size:medium
+  except:
+    refs:
+      - main
+      - tags
+  stage: prerelease_publish
+  cache:
+    key: feature-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  dependencies:
+    - feature_package
+  needs:
+    - feature_package
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/publish_npm.sh $CAEF_CODEARTIFACT_PRERELEASE_NPM_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
+
+feature_publish_pip:
+  tags:
+    - arch:amd64
+    - size:medium
+  except:
+    refs:
+      - main
+      - tags
+  stage: prerelease_publish
+  cache:
+    key: feature-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  dependencies:
+    - feature_package
+  needs:
+    - feature_package
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/publish_pip.sh $CAEF_CODEARTIFACT_PRERELEASE_PIP_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT
+
+prerelease_version:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    refs:
+      - main
+  except:
+    refs:
+      - tags
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: push
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - target
+      - schemas
+    exclude:
+      - "**/node_modules/**"
+  stage: prebuild
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/git_secrets.sh
+    - ./scripts/version_prerelease.sh
+    - ./scripts/npm_install.sh
+
+prerelease_build_test:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    refs:
+      - main
+  except:
+    refs:
+      - tags
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  stage: build
+  dependencies:
+    - prerelease_version
+  needs:
+    - prerelease_version
+  allow_failure: false
+  script:
+    - ./scripts/build_test.sh
+
+prerelease_analyze:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    refs:
+      - main
+  except:
+    refs:
+      - tags
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  stage: analyze
+  allow_failure: false
+  script:
+    - ./scripts/sonarqube.sh
+
+prerelease_package:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    refs:
+      - main
+  except:
+    refs:
+      - tags
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - prerelease_build_test
+  needs:
+    - prerelease_build_test
+  stage: package
+  allow_failure: false
+  script:
+    - ./scripts/package.sh
+
+prerelease_generate_html_docs:
+  tags:
+    - arch:amd64
+    - size:medium
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: prerelease_publish
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - target/docs_site
+    exclude:
+      - "**/node_modules/**"
+  needs:
+    - prerelease_version
+    - prerelease_analyze
+  dependencies:
+    - prerelease_version
+    - prerelease_analyze
+  allow_failure: false
+  script:
+    - ./scripts/generate_docs.sh docs_prerelease gitlab
+
+prerelease_publish_npm:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: prerelease_npm
+  only:
+    refs:
+      - main
+  except:
+    refs:
+      - tags
+  stage: prerelease_publish
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  needs:
+    - prerelease_analyze
+    - prerelease_package
+  dependencies:
+    - prerelease_package
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/publish_npm.sh $CAEF_CODEARTIFACT_PRERELEASE_NPM_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT prerelease
+
+prerelease_publish_pip:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: prerelease_pip
+  only:
+    refs:
+      - main
+  except:
+    refs:
+      - tags
+  stage: prerelease_publish
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  needs:
+    - prerelease_analyze
+    - prerelease_package
+  dependencies:
+    - prerelease_package
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/publish_pip.sh $CAEF_CODEARTIFACT_PRERELEASE_PIP_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT
+
+prerelease_publish_s3:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: prerelease_s3
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: prerelease_publish
+  cache:
+    key: prerelease-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  needs:
+    - prerelease_analyze
+    - prerelease_package
+  dependencies:
+    - prerelease_package
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/publish_s3.sh $CAEF_PRERELEASE_PACKAGE_BUCKET
+
+release_version_package:
+  when: manual
+  environment: release
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: pre_release
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: push
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - target
+      - schemas
+    exclude:
+      - "**/node_modules/**"
+  allow_failure: false
+  needs:
+    - prerelease_analyze
+  dependencies: []
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/git_secrets.sh
+    - ./scripts/npm_install.sh
+    - ./scripts/version_release.sh
+    - ./scripts/build_test.sh
+    - ./scripts/package.sh
+
+release:
+  tags:
+    - arch:amd64
+    - size:small
+  environment: release
+  when: manual
+  manual_confirmation: "Are you sure you want release a $VERSION_BUMP_LEVEL version?"
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: pre_release
+  dependencies: []
+  needs:
+    - release_version_package
+  allow_failure: false
+  script:
+    - echo "Releasing "
+
+# Publishes latest release version back to prerelease
+release_publish_npm_prerelease:
+  tags:
+    - arch:amd64
+    - size:medium
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: release_publish
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - release_version_package
+  needs:
+    - release
+    - release_version_package
+    - prerelease_analyze
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/publish_npm.sh $CAEF_CODEARTIFACT_PRERELEASE_NPM_REPO $CAEF_CODEARTIFACT_PRERELEASE_DOMAIN $CAEF_CODEARTIFACT_PRERELEASE_ACCOUNT latest
+
+release_publish_npm:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: release_npm
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: release_publish
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - release_version_package
+  needs:
+    - release
+    - release_version_package
+    - prerelease_analyze
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+  script:
+    - ./scripts/publish_npm.sh $CAEF_CODEARTIFACT_RELEASE_NPM_REPO $CAEF_CODEARTIFACT_RELEASE_DOMAIN $CAEF_CODEARTIFACT_RELEASE_ACCOUNT latest
+
+release_publish_pip:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: release_pip
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: release_publish
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - release_version_package
+  needs:
+    - release
+    - release_version_package
+    - prerelease_analyze
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+  script:
+    - ./scripts/publish_pip.sh $CAEF_CODEARTIFACT_RELEASE_NPM_REPO $CAEF_CODEARTIFACT_RELEASE_DOMAIN $CAEF_CODEARTIFACT_RELEASE_ACCOUNT
+
+release_publish_s3:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: release_s3
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: release_publish
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - release_version_package
+  needs:
+    - release
+    - release_version_package
+    - prerelease_analyze
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+  script:
+    - ./scripts/publish_s3.sh $CAEF_RELEASE_PACKAGE_BUCKET
+
+release_generate_html_docs:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: release_html_docs
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: release_publish
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - target/docs_site
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - release_version_package
+  needs:
+    - release
+    - release_version_package
+    - prerelease_analyze
+  allow_failure: false
+  script:
+    - ./scripts/generate_docs.sh docs_prerelease gitlab
+    - ./scripts/generate_docs.sh docs_release gitlab
+
+prerelease_push_git:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: prerelease_git
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: post_release
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - release_version_package
+  needs:
+    - release
+    - release_version_package
+    - release_publish_s3
+    - release_publish_pip
+    - release_publish_npm
+    - release_publish_npm_prerelease
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/push_git_prerelease.sh
+
+release_push_git:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: release_git
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: post_release
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - package.json
+      - lerna.json
+      - package-lock.json
+      - packages
+      - schemas
+      - target
+    exclude:
+      - "**/node_modules/**"
+  dependencies:
+    - release_version_package
+  needs:
+    - release
+    - release_version_package
+    - release_publish_s3
+    - release_publish_pip
+    - release_publish_npm
+    - release_publish_npm_prerelease
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+  script:
+    - ./scripts/push_git_release.sh

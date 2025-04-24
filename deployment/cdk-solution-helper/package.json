@@ -1,0 +1,15 @@
+{
+  "name": "cdk-solution-helper",
+  "version": "1.0.0",
+  "description": "Helper utility to clean up CDK-generated templates for AWS Solutions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AWS Solutions",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "glob": "^7.2.0"
+  }
+}

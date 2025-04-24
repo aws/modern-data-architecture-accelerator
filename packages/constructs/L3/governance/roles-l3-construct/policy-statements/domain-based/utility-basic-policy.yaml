@@ -1,0 +1,56 @@
+##++++++++++++++++++++++++++++++++++++++++++++##
+# utility
+#   - dms
+#   - cloudwatch
+#   - codecommit
+##++++++++++++++++++++++++++++++++++++++++++++##
+statements: 
+  - Sid: CloudWatchNoResourceReadAccess
+    Action:
+      - 'cloudwatch:List*'
+      - 'cloudwatch:Get*'
+      - 'cloudwatch:Describe*'
+    Resource: '*'
+    Effect: Allow
+
+  - Sid: CloudWatchLogsNoResourceReadAccess
+    Action:
+      -  'logs:DescribeAccountPolicies'        # Grants permission to retrieve a data protection policy attached to an account
+      -  'logs:DescribeDeliveries'        # Grants permission to retrieve a list of deliveries an account
+      -  'logs:DescribeDeliveryDestinations'        # Grants permission to retrieve a list of delivery destinations an account
+      -  'logs:DescribeDeliverySources'        # Grants permission to retrieve a list of delivery sources in an account
+      -  'logs:DescribeDestinations'        # Grants permission to return all the destinations that are associated with the AWS account making the request
+      -  'logs:DescribeExportTasks'        # Grants permission to return all the export tasks that are associated with the AWS account making the request
+      -  'logs:DescribeLogGroups'        # Grants permission to return all the log groups that are associated with the AWS account making the request
+      -  'logs:DescribeQueries'        # Grants permission to return a list of CloudWatch Logs Insights queries that are scheduled, executing, or have been executed recently in this account
+      -  'logs:DescribeQueryDefinitions'        # Grants permission to return a paginated list of your saved CloudWatch Logs Insights query definitions
+      -  'logs:DescribeResourcePolicies'        # Grants permission to return all the resource policies in this account
+      -  'logs:GetLogDelivery'        # Grants permission to get the log delivery information for specified log delivery
+      -  'logs:ListLogDeliveries'        # Grants permission to list all the log deliveries for specified account and/or log source
+      -  'logs:*LiveTail'        # Grants permission to start/stop a livetail session in CloudWatch Logs
+      -  'logs:StopQuery'        # Grants permission to stop a CloudWatch Logs Insights query that is in progress
+      -  'logs:TestMetricFilter'        # Grants permission to test the filter pattern of a metric filter against a sample of log event messages
+    Resource: '*'
+    Effect: Allow
+
+  - Sid: CodeCommitNoResourceAccess
+    Effect: Allow
+    Action:
+      -  'codecommit:CreateApprovalRuleTemplate'        # Grants permission to create an approval rule template that will automatically create approval rules in pull requests that match the conditions defined in the template; does not grant permission to create approval rules for individual pull requests
+      -  'codecommit:DeleteApprovalRuleTemplate'        # Grants permission to delete an approval rule template
+      -  'codecommit:GetApprovalRuleTemplate'        # Grants permission to return information about an approval rule template
+      -  'codecommit:ListApprovalRuleTemplates'        # Grants permission to list all approval rule templates in an AWS Region for the AWS account
+      -  'codecommit:ListRepositories'        # Grants permission to list information about AWS CodeCommit repositories in the current Region for your AWS account
+      -  'codecommit:ListRepositoriesForApprovalRuleTemplate'        # Grants permission to list repositories that are associated with an approval rule template
+      -  'codecommit:UpdateApprovalRuleTemplateContent'        # Grants permission to update the content of approval rule templates; does not grant permission to update content of approval rules created specifically for pull requests
+      -  'codecommit:UpdateApprovalRuleTemplateDescription'        # Grants permission to update the description of approval rule templates
+      -  'codecommit:UpdateApprovalRuleTemplateName'        # Grants permission to update the name of approval rule templates
+    Resource: '*'
+
+
+suppressions:
+  - id: "AwsSolutions-IAM5"
+    reason: " - CloudWatchNoResourceReadAccess: Policy actions do not require Resource
+              - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource
+              - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource
+            "

@@ -1,0 +1,38 @@
+account:
+  edition: "ENTERPRISE" #Can take 'STANDARD'|'ENTERPRISE'|'ENTERPRISE_AND_Q'
+  authenticationMethod: "IAM_AND_QUICKSIGHT" #Can take 'IAM_AND_QUICKSIGHT'|'IAM_ONLY'|'ACTIVE_DIRECTORY'
+  notificationEmail: "example@example.com"
+
+  # The VPC to which the account will be associated
+  vpcId: vpc-abcd1234
+
+  # The subnets to which the account will be associated.
+  # Note that QuickSight requires at least 2 subnets be provided.
+  subnetIds:
+    - test-subnet-id1
+    - test-subnet-id2
+
+  # (Optional) - A list of external CIDR ranges which will be provided access to the account via the QuickSight interface.
+  # If not specified, access will not be restricted by IP.
+  ipRestrictions:
+    - cidr: a.b.c.d/n
+      description: Restrict to my IP
+
+  # The peers to which the Security Group will be granted access.
+  # This controls which resources (data sources) on your VPC the QuickSight service will
+  # be able to connect to.
+  securityGroupAccess:
+    sg:
+      - sgId: sg-1234abcd
+        port: 5439
+        protocol: tcp
+    ipv4:
+      - cidr: 1.1.1.1/32
+        port: 1000
+        toPort: 2000
+        protocol: tcp
+
+  # Glue resources (databases and tables) to which the QuickSight service account will be provided basic read access
+  # This access is used to setup/validate QuickSight data sources
+  glueResourceAccess:
+    - database/some-database-name*

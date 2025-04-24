@@ -1,0 +1,34 @@
+
+statements:
+    # TODO: Review console policies if they are restricted at a cluster level 
+    -   Sid: RedshiftNoResourceConsoleReadAccess
+        Effect: Allow
+        Action:
+            -  'redshift:FetchResults'        # Grants permission to fetch query results through the Amazon Redshift console
+            -  'redshift:ListDatabases'        # Grants permission to list databases through the Amazon Redshift console
+            -  'redshift:ListSavedQueries'        # Grants permission to list saved queries through the Amazon Redshift console
+            -  'redshift:ListSchemas'        # Grants permission to list schemas through the Amazon Redshift console
+            -  'redshift:ListTables'        # Grants permission to list tables through the Amazon Redshift console
+            -  'redshift:ViewQueriesFromConsole'        # Grants permission to view query results through the Amazon Redshift console
+            -  'redshift:ViewQueriesInConsole'        # Grants permission to terminate running queries and loads through the Amazon Redshift console  
+        Resource:
+            - '*'
+    
+    # TODO: Review console policies if they are restricted at a cluster level 
+    -   Sid: RedshiftNoResourceConsoleWriteAccess
+        Effect: Allow
+        Action:
+            -  'redshift:ModifySavedQuery'        # Grants permission to modify an existing saved query through the Amazon Redshift console
+            -  'redshift:CancelQuery'        # Grants permission to cancel a query through the Amazon Redshift console
+            -  'redshift:CancelQuerySession'        # Grants permission to see queries in the Amazon Redshift console
+            -  'redshift:DeleteSavedQueries'        # Grants permission to delete saved SQL queries through the Amazon Redshift console
+            -  'redshift:DescribeSavedQueries'        # Grants permission to describe saved queries through the Amazon Redshift console
+            -  'redshift:DescribeQuery'        # Grants permission to describe a query through the Amazon Redshift console
+            -  'redshift:ExecuteQuery'        # Grants permission to execute a query through the Amazon Redshift console
+        Resource:
+            - '*'
+suppressions:
+    -   id: "AwsSolutions-IAM5"
+        reason: " - RedshiftNoResourceConsoleReadAccess: Policy actions do not require Resource
+                  - RedshiftNoResourceConsoleWriteAccess: Policy actions do not require Resource   
+                "  

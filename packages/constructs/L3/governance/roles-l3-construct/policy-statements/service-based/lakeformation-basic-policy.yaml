@@ -1,0 +1,38 @@
+## Policy applicable when glue asset access is completely goverend by LF
+
+statements: 
+  - Sid: LakeFormationNoResourceReadAccess
+    Effect: Allow
+    Action: 
+      -  'lakeformation:DescribeResource'        # Grants permission to describe a registered location
+      -  'lakeformation:DescribeTransaction'        # Grants permission to get status of the given transaction
+      -  'lakeformation:GetDataCellsFilter'        # Grants permission to retrieve a Lake Formation data cell filter
+      -  'lakeformation:GetDataLakeSettings'        # Grants permission to retrieve data lake settings such as the list of data lake administrators and database and table default permissions
+      -  'lakeformation:GetEffectivePermissionsForPath'        # Grants permission to retrieve permissions attached to resources in the given path
+      -  'lakeformation:GetLFTag'        # Grants permission to retrieve a Lake Formation tag
+      -  'lakeformation:GetQueryState'        # Grants permission to retrieve the state of the given query
+      -  'lakeformation:GetQueryStatistics'        # Grants permission to retrieve the statistics for the given query
+      -  'lakeformation:GetResourceLFTags'        # Grants permission to retrieve lakeformation tags on a catalog resource
+      -  'lakeformation:GetTableObjects'        # Grants permission to retrieve objects from a table
+      -  'lakeformation:GetWorkUnitResults'        # Grants permission to retrieve the results for the given work units
+      -  'lakeformation:GetWorkUnits'        # Grants permission to retrieve the work units for the given query
+      -  'lakeformation:ListDataCellsFilter'        # Grants permission to list cell filters
+      -  'lakeformation:ListLFTags'        # Grants permission to list Lake Formation tags
+      -  'lakeformation:ListLakeFormationOptIns'        # Retrieve the current list of resources and principals that are opt in to enforce Lake Formation permissions
+      -  'lakeformation:ListPermissions'        # Grants permission to list permissions filtered by principal or resource
+      -  'lakeformation:ListResources'        # Grants permission to List registered locations
+      -  'lakeformation:ListTableStorageOptimizers'        # Grants permission to list all the storage optimizers for the Governed table
+      -  'lakeformation:ListTransactions'        # Grants permission to list all transactions in the system
+      -  'lakeformation:SearchDatabasesByLFTags'        # Grants permission to list catalog databases with Lake Formation tags
+      -  'lakeformation:SearchTablesByLFTags'        # Grants permission to list catalog tables with Lake Formation tags
+    Resource: '*'
+    
+
+  - Sid: BasicLfDataAccess
+    Action: 'lakeformation:GetDataAccess'
+    Resource: '*'
+    Effect: Allow
+  
+suppressions:
+  - id: "AwsSolutions-IAM5"
+    reason: "AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement"

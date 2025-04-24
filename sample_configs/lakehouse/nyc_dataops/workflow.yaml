@@ -1,0 +1,233 @@
+# (Required) Name of the Data Ops Project
+# Name the the project the resources of which will be used by this workflow.
+# Other resources within the project can be referenced in the workflow config using
+# the "project:" prefix on the config value.
+projectName: project
+# List of workflow definitions
+workflowDefinitions:
+  # If eventRule is specified, this workflow will be triggered by S3 events matching this rule.
+  # Note that the source bucket is required to have EventBridge notifications enabled.
+  - eventBridge:
+      s3EventBridgeRules:
+        event_trip:
+          buckets:
+            - ssm:/{{org}}/shared/datalake/bucket/raw/name
+          prefixes:
+            - data/nyc_taxi/fact/trip_data/
+    # The rawWorkflowDef can be specified directly, or can be Json/Yaml representation of the output of the
+    # 'aws glue get-workflow --name <name> --include-graph' command. This allows workflows to be created in the Glue
+    # interface, exported, and pasted directly into this config. The parts of the command output which are not required
+    # will be ignored.
+    rawWorkflowDef:
+      Workflow:
+        Name: fact_trp_wf
+        DefaultRunProperties: {}
+        Graph:
+          Nodes:
+            - Type: TRIGGER
+              Name: Start_workflow_fact_tripdate
+              TriggerDetails:
+                Trigger:
+                  Name: Start_workflow_fact_tripdate
+                  WorkflowName: fact_trp_wf
+                  Type: EVENT
+                  Actions:
+                    - CrawlerName: project:crawler/name/fact-tripdata-crawler
+            - Type: TRIGGER
+              Name: if_fact_tripdata_crawler_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_fact_tripdata_crawler_successed
+                  WorkflowName: fact_trp_wf
+                  Type: CONDITIONAL
+                  StartOnCreation: True
+                  Actions:
+                    - JobName: project:job/name/fact_tripdata_csv_parquet
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        CrawlerName: project:crawler/name/fact-tripdata-crawler
+                        CrawlState: SUCCEEDED
+            - Type: TRIGGER
+              Name: if_fact_tripdata_csv_parquet_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_fact_tripdata_csv_parquet_successed
+                  WorkflowName: fact_trp_wf
+                  Type: CONDITIONAL
+                  StartOnCreation: True
+                  Actions:
+                    - JobName: project:job/name/fact_tripdata_curate
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        JobName: project:job/name/fact_tripdata_csv_parquet
+                        State: SUCCEEDED
+            - Type: TRIGGER
+              Name: if_fact_tripdate_curated_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_fact_tripdate_curated_successed
+                  WorkflowName: fact_trp_wf
+                  Type: CONDITIONAL
+                  StartOnCreation: True
+                  Actions:
+                    - JobName: project:job/name/fact_tripdata_load_redshift
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        JobName: project:job/name/fact_tripdata_curate
+                        State: SUCCEEDED
+
+  - eventBridge:
+      s3EventBridgeRules:
+        event_vendor:
+          buckets:
+            - ssm:/{{org}}/shared/datalake/bucket/raw/name
+          prefixes:
+            - data/nyc_taxi/dim/vendor/
+    # The rawWorkflowDef can be specified directly, or can be Json/Yaml representation of the output of the
+    # 'aws glue get-workflow --name <name> --include-graph' command. This allows workflows to be created in the Glue
+    # interface, exported, and pasted directly into this config. The parts of the command output which are not required
+    # will be ignored.
+    rawWorkflowDef:
+      Workflow:
+        Name: dim_vndr_wf
+        DefaultRunProperties: {}
+        Graph:
+          Nodes:
+            - Type: TRIGGER
+              Name: Start_workflow_dim_vendor
+              TriggerDetails:
+                Trigger:
+                  Name: Start_workflow_dim_vendor
+                  WorkflowName: dlake_dim_vendor_wf
+                  Type: EVENT
+                  Actions:
+                    - CrawlerName: project:crawler/name/dim-vendor-crawler
+            - Type: TRIGGER
+              Name: if_dim_vendor_crawler_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_dim_vendor_crawler_successed
+                  WorkflowName: dlake_dim_vendor_wf
+                  Type: CONDITIONAL
+                  StartOnCreation: True
+                  Actions:
+                    - JobName: project:job/name/dim_vendor_csv_parquet
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        CrawlerName: project:crawler/name/dim-vendor-crawler
+                        CrawlState: SUCCEEDED
+            - Type: TRIGGER
+              Name: if_dim_vendor_csv_parquet_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_dim_vendor_csv_parquet_successed
+                  WorkflowName: dlake_dim_vendor_wf
+                  Type: CONDITIONAL
+                  StartOnCreation: True
+                  Actions:
+                    - JobName: project:job/name/dim_vendor_curate
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        JobName: project:job/name/dim_vendor_csv_parquet
+                        State: SUCCEEDED
+            - Type: TRIGGER
+              Name: if_dim_vendor_curated_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_dim_vendor_curated_successed
+                  WorkflowName: dlake_dim_vendor_wf
+                  Type: CONDITIONAL
+                  StartOnCreation: True
+                  Actions:
+                    - JobName: project:job/name/dim_vendor_load_redshift
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        JobName: project:job/name/dim_vendor_curate
+                        State: SUCCEEDED
+
+  - eventBridge:
+      s3EventBridgeRules:
+        event_payment:
+          buckets:
+            - ssm:/{{org}}/shared/datalake/bucket/raw/name
+          prefixes:
+            - data/nyc_taxi/dim/payment/
+    # The rawWorkflowDef can be specified directly, or can be Json/Yaml representation of the output of the
+    # 'aws glue get-workflow --name <name> --include-graph' command. This allows workflows to be created in the Glue
+    # interface, exported, and pasted directly into this config. The parts of the command output which are not required
+    # will be ignored.
+    rawWorkflowDef:
+      Workflow:
+        Name: dim_pymt_wf
+        DefaultRunProperties: {}
+        Graph:
+          Nodes:
+            - Type: TRIGGER
+              Name: Start_workflow_dim_payment
+              TriggerDetails:
+                Trigger:
+                  Name: Start_workflow_dim_payment
+                  WorkflowName: dlake_dim_payment_wf
+                  Type: EVENT
+                  Actions:
+                    - CrawlerName: project:crawler/name/dim-payment-crawler
+            - Type: TRIGGER
+              Name: if_dim_payment_crawler_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_dim_payment_crawler_successed
+                  WorkflowName: dlake_dim_payment_wf
+                  Type: CONDITIONAL
+                  StartOnCreation: True
+                  Actions:
+                    - JobName: project:job/name/dim_payment_csv_parquet
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        CrawlerName: project:crawler/name/dim-payment-crawler
+                        CrawlState: SUCCEEDED
+            - Type: TRIGGER
+              Name: if_dim_payment_csv_parquet_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_dim_payment_csv_parquet_successed
+                  WorkflowName: dlake_dim_payment_wf
+                  Type: CONDITIONAL
+                  StartOnCreation: True
+                  Actions:
+                    - JobName: project:job/name/dim_payment_curate
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        JobName: project:job/name/dim_payment_csv_parquet
+                        State: SUCCEEDED
+            - Type: TRIGGER
+              Name: if_dim_payment_curated_successed
+              TriggerDetails:
+                Trigger:
+                  Name: if_dim_payment_curated_successed
+                  WorkflowName: dlake_dim_payment_wf
+                  Type: CONDITIONAL
+                  StartOnCreation: True
+                  Actions:
+                    - JobName: project:job/name/dim_payment_load_redshift
+                  Predicate:
+                    Logical: ANY
+                    Conditions:
+                      - LogicalOperator: EQUALS
+                        JobName: project:job/name/dim_payment_curate
+                        State: SUCCEEDED

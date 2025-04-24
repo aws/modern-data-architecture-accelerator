@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+sh "$parent_path/../scripts/check_node_version.sh"
+echo ""
+node "$parent_path/../lib/mdaa" $@

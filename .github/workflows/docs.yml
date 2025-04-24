@@ -1,0 +1,85 @@
+# GitHub Actions workflow for generating and publishing project documentation to GitHub Pages.
+# Triggered on release publication, this workflow:
+# - Generates JSON schema documentation
+# - Creates TypeDoc API documentation
+# - Builds MkDocs site with Material theme
+# - Deploys consolidated documentation to GitHub Pages
+# Documentation is versioned using mike and accessible via GitHub Pages.
+
+name: Publish Documentation
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            mkdocs-material \
+            mike \
+            mdx_truly_sane_lists \
+            mkdocs-awesome-pages-plugin \
+            pymdown-extensions \
+            json-schema-for-humans
+          npm ci
+          npm install -g typedoc
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Build MDAA
+        run: |
+          lerna run build
+
+      - name: Generate documentation
+        run: |
+          chmod +x ./scripts/generate_docs.sh
+          ./scripts/generate_docs.sh gh-pages github
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './target/docs_site'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

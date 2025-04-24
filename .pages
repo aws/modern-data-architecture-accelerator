@@ -1,0 +1,19 @@
+nav:
+        - Home: "README.md"
+        - Security: "SECURITY.md"
+        - Getting Started:
+                  - Architecture and Design: "ARCHITECTURES.md"
+                  - Configuration: CONFIGURATION.md
+                  - (Optional) Customization: CUSTOMIZATION.md
+                  - Predeployment Preparation: PREDEPLOYMENT.md
+                  - DEPLOYMENT.md
+        - Sample Architectures and Configurations: sample_configs
+        - Sample DataOps Blueprints: sample_blueprints
+        - packages
+        - Development:
+                  - CONTRIBUTING.md
+                  - CODE_OF_CONDUCT.md
+                  - DEVELOPMENT.md
+        - CHANGELOG.md
+        - THIRD-PARTY-NOTICE.md
+        - TypeScript Docs: "./typedocs/index.html"

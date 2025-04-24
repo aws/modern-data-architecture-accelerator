@@ -1,0 +1,28 @@
+# (Required) Name of the Data Ops Project
+# Name the the project the resources of which will be used by this workflow.
+# Other resources within the project can be referenced in the workflow config using
+# the "project:" prefix on the config value.
+projectName: project
+# List of workflow definitions
+workflowDefinitions:
+# The rawWorkflowDef can be specified directly, or can be Json/Yaml representation of the output of the
+    # 'aws glue get-workflow --name <name> --include-graph' command. This allows workflows to be created in the Glue
+    # interface, exported, and pasted directly into this config. The parts of the command output which are not required
+    # will be ignored.
+
+  - rawWorkflowDef:
+      Workflow:
+        Name: glue_csv_parquet
+        Graph:
+          Nodes:
+            - Type: TRIGGER
+              Name: Start_wf-with-schedule-5am-utc
+              TriggerDetails:
+                Trigger:
+                  Name: Start_wf-with-schedule-1am-utc
+                  WorkflowName: glue_csv_parquet
+                  Type: SCHEDULED
+                  Schedule: "cron(0 7 * * ? *)"
+                  State: ACTIVATED
+                  Actions:
+                    - JobName: project:job/name/glue_csv_parquet

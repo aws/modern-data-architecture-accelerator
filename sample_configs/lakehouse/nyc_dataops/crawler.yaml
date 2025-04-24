@@ -1,0 +1,44 @@
+# (required) Name of the Data Ops Project this Crawler will run within.
+# Resources provided by the Project, such as security configuration, encryption keys, and execution roles
+# will automatically be wired into the Crawler config. Other resources provided by the project can
+# be optionally referenced by the Crawler config using a "project:" prefix on the config value.
+projectName: project
+crawlers:
+  fact-tripdata-crawler:
+    # (required) Reference back to the database name in the 'databases:' section of the crawler.yaml
+    databaseName: project:databaseName/taxi-raw
+    # (required) Description of the crawler
+    description: Crawler for trip data
+    # (required) At least one target definition.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-targets.html
+    targets:
+      # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
+      s3Targets:
+        - path: "s3://{{resolve:ssm:/{{org}}/shared/datalake/bucket/raw/name}}/data/nyc_taxi/fact/trip_data/"
+    tablePrefix: raw_
+    executionRoleArn: ssm:/{{org}}/shared/generated-role/glue-etl/arn
+
+  dim-vendor-crawler:
+    # (required) Reference back to the database name in the 'databases:' section of the crawler.yaml
+    databaseName: project:databaseName/taxi-raw
+    # (required) Description of the crawler
+    description: Crawler for vendor data
+    # (required) At least one target definition.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-targets.html
+    targets:
+      # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
+      s3Targets:
+        - path: "s3://{{resolve:ssm:/{{org}}/shared/datalake/bucket/raw/name}}/data/nyc_taxi/dim/vendor/"
+    tablePrefix: raw_
+    executionRoleArn: ssm:/{{org}}/shared/generated-role/glue-etl/arn
+
+  dim-payment-crawler:
+    # (required) Reference back to the database name in the 'databases:' section of the crawler.yaml
+    databaseName: project:databaseName/taxi-raw
+    # (required) Description of the crawler
+    description: Crawler for payment data
+    # (required) At least one target definition.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-targets.html
+    targets:
+      # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
+      s3Targets:
+        - path: "s3://{{resolve:ssm:/{{org}}/shared/datalake/bucket/raw/name}}/data/nyc_taxi/dim/payment/"
+    tablePrefix: raw_
+    executionRoleArn: ssm:/{{org}}/shared/generated-role/glue-etl/arn

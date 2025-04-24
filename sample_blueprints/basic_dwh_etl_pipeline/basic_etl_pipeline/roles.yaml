@@ -1,0 +1,29 @@
+# The list of roles which will be generated
+generatePolicies:
+  GlueJobPolicy:
+    policyDocument:
+      Statement:
+        - SID: GlueCloudwatch
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws-glue/*"
+          Action:
+            - logs:CreateLogStream
+            - logs:AssociateKmsKey
+            - logs:CreateLogGroup
+            - logs:PutLogEvents
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "Glue log group name not known at deployment time."
+
+generateRoles:
+  glue-etl:
+    trustedPrincipal: service:glue.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    awsManagedPolicies:
+      - service-role/AWSGlueServiceRole
+    generatedPolicies:
+      - GlueJobPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueServiceRole approved for usage"

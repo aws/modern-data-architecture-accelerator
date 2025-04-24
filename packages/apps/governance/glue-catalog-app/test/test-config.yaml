@@ -1,0 +1,12 @@
+# An optional list of consumer accounts which will be provided read access to the catalog in the deployment account.
+consumerAccounts:
+  node1: "1234567890"
+  node2: "0987654321"
+# An optional list of consumer accounts which will be provided read access to the catalog KMS Key only in the deployment account.
+kmsKeyConsumerAccounts:
+  node3: "5678901234"
+# A optional list of producer accounts for which additional Athena catalogs will be created in the deployment account.
+producerAccounts:
+  node1: "1234567890"
+  node2: "0987654321"
+  node3: "5678901234"
