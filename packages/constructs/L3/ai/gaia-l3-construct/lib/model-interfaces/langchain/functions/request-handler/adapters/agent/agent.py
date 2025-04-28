@@ -8,7 +8,7 @@ solution_identifier = os.getenv("USER_AGENT_STRING")
 user_agent_extra_param = { "user_agent_extra": solution_identifier }
 config = config.Config(**user_agent_extra_param)
 
-client = boto3.client('bedrock-agent-runtime', region_name="us-east-1", config=config)
+client = boto3.client('bedrock-agent-runtime', region_name=(os.environ.get('BEDROCK_REGION')), config=config)
 
 def get_chat_history(session_id, user_id):
     return DynamoDBChatMessageHistory(

@@ -298,6 +298,7 @@ export class LangChainInterface extends MdaaL3Construct {
       POWERTOOLS_METRICS_NAMESPACE: 'chatbot-model-interface',
       CONFIG_PARAMETER_NAME: this.props.shared.configParameter.parameterName,
       SESSIONS_TABLE_NAME: this.props.sessionsTable.tableName,
+      BEDROCK_REGION: this.props.config.bedrock?.region ?? 'us-east-1',
       SESSIONS_BY_USER_ID_INDEX_NAME: this.props.byUserIdIndex,
       API_KEYS_SECRETS_ARN: this.props.shared.apiKeysSecret.secretArn,
       MESSAGES_TOPIC_ARN: this.props.messagesTopic.topicArn,
