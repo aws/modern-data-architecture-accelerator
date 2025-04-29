@@ -1008,14 +1008,7 @@ export class Ec2L3Construct extends MdaaL3Construct {
       effect: Effect.ALLOW,
       // Use of * mirrors what is done in the CDK methods for adding policy helpers.
       resources: ['*'],
-      actions: [
-        ...DECRYPT_ACTIONS,
-        ...ENCRYPT_ACTIONS,
-        'kms:GenerateDataKeyWithoutPlaintext',
-        'kms:CreateGrant',
-        'kms:DescribeKey',
-        'kms:ListAliases',
-      ],
+      actions: [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS, 'kms:CreateGrant', 'kms:DescribeKey', 'kms:ListAliases'],
     });
     kmsEncryptDecryptPolicy.addArnPrincipal(roleArn);
     this.getKmsKey().addToResourcePolicy(kmsEncryptDecryptPolicy);

@@ -218,7 +218,16 @@ describe('MDAA Compliance Stack Tests', () => {
             Resource: '*',
           },
           {
-            Action: ['kms:Decrypt', 'kms:Encrypt', 'kms:ReEncrypt*', 'kms:GenerateDataKey*'],
+            Action: [
+              'kms:Decrypt',
+              'kms:Encrypt',
+              'kms:ReEncryptFrom',
+              'kms:ReEncryptTo',
+              'kms:GenerateDataKey',
+              'kms:GenerateDataKeyWithoutPlaintext',
+              'kms:GenerateDataKeyPair',
+              'kms:GenerateDataKeyPairWithoutPlaintext',
+            ],
             Condition: {
               StringLike: {
                 'aws:userId': ['admin-role-id:*'],
@@ -290,9 +299,12 @@ describe('MDAA Compliance Stack Tests', () => {
             Action: [
               'kms:Decrypt',
               'kms:Encrypt',
-              'kms:ReEncrypt*',
-              'kms:GenerateDataKey*',
+              'kms:ReEncryptFrom',
+              'kms:ReEncryptTo',
+              'kms:GenerateDataKey',
               'kms:GenerateDataKeyWithoutPlaintext',
+              'kms:GenerateDataKeyPair',
+              'kms:GenerateDataKeyPairWithoutPlaintext',
               'kms:CreateGrant',
               'kms:DescribeKey',
               'kms:ListAliases',

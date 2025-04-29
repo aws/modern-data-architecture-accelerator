@@ -221,7 +221,16 @@ describe('MDAA Compliance Stack Tests', () => {
       KeyPolicy: {
         Statement: Match.arrayWith([
           Match.objectLike({
-            Action: ['kms:Decrypt', 'kms:Encrypt', 'kms:ReEncrypt*', 'kms:GenerateDataKey*'],
+            Action: [
+              'kms:Decrypt',
+              'kms:Encrypt',
+              'kms:ReEncryptFrom',
+              'kms:ReEncryptTo',
+              'kms:GenerateDataKey',
+              'kms:GenerateDataKeyWithoutPlaintext',
+              'kms:GenerateDataKeyPair',
+              'kms:GenerateDataKeyPairWithoutPlaintext',
+            ],
             Condition: {
               StringLike: {
                 'aws:userId': [

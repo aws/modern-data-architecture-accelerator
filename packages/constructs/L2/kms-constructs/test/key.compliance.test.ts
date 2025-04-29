@@ -73,7 +73,16 @@ describe('MDAA Construct Compliance Tests', () => {
       KeyPolicy: {
         Statement: Match.arrayWith([
           {
-            Action: ['kms:Decrypt', 'kms:Encrypt', 'kms:ReEncrypt*', 'kms:GenerateDataKey*'],
+            Action: [
+              'kms:Decrypt',
+              'kms:Encrypt',
+              'kms:ReEncryptFrom',
+              'kms:ReEncryptTo',
+              'kms:GenerateDataKey',
+              'kms:GenerateDataKeyWithoutPlaintext',
+              'kms:GenerateDataKeyPair',
+              'kms:GenerateDataKeyPairWithoutPlaintext',
+            ],
             Condition: {
               StringLike: {
                 'aws:userId': ['test-user-id1:*', 'test-user-id2:*'],

@@ -56,7 +56,16 @@ describe('MDAA Compliance Stack Tests', () => {
             Resource: '*',
           }),
           Match.objectLike({
-            Action: ['kms:Decrypt', 'kms:Encrypt', 'kms:ReEncrypt*', 'kms:GenerateDataKey*'],
+            Action: [
+              'kms:Decrypt',
+              'kms:Encrypt',
+              'kms:ReEncryptFrom',
+              'kms:ReEncryptTo',
+              'kms:GenerateDataKey',
+              'kms:GenerateDataKeyWithoutPlaintext',
+              'kms:GenerateDataKeyPair',
+              'kms:GenerateDataKeyPairWithoutPlaintext',
+            ],
             Condition: {
               StringLike: {
                 'aws:userId': ['test-data-admin-role:*'],
@@ -70,7 +79,15 @@ describe('MDAA Compliance Stack Tests', () => {
             Sid: 'test-org-test-env-test-domain-test-module-usage-stmt',
           }),
           Match.objectLike({
-            Action: ['kms:Encrypt', 'kms:ReEncrypt*', 'kms:GenerateDataKey*'],
+            Action: [
+              'kms:Encrypt',
+              'kms:ReEncryptFrom',
+              'kms:ReEncryptTo',
+              'kms:GenerateDataKey',
+              'kms:GenerateDataKeyWithoutPlaintext',
+              'kms:GenerateDataKeyPair',
+              'kms:GenerateDataKeyPairWithoutPlaintext',
+            ],
             Effect: 'Allow',
             Principal: {
               Service: 's3.amazonaws.com',

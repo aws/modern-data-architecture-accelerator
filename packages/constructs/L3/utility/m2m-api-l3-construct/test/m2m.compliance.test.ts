@@ -55,7 +55,16 @@ describe('Mandatory Prop Tests', () => {
               Resource: '*',
             },
             {
-              Action: ['kms:Decrypt', 'kms:Encrypt', 'kms:ReEncrypt*', 'kms:GenerateDataKey*'],
+              Action: [
+                'kms:Decrypt',
+                'kms:Encrypt',
+                'kms:ReEncryptFrom',
+                'kms:ReEncryptTo',
+                'kms:GenerateDataKey',
+                'kms:GenerateDataKeyWithoutPlaintext',
+                'kms:GenerateDataKeyPair',
+                'kms:GenerateDataKeyPairWithoutPlaintext',
+              ],
               Condition: {
                 StringLike: {
                   'aws:userId': ['test-role-id:*'],
@@ -98,7 +107,16 @@ describe('Mandatory Prop Tests', () => {
               Sid: 'test-org-test-env-test-domain-test-module-usage-stmt',
             },
             {
-              Action: ['kms:Decrypt', 'kms:Encrypt', 'kms:ReEncrypt*', 'kms:GenerateDataKey*'],
+              Action: [
+                'kms:Decrypt',
+                'kms:Encrypt',
+                'kms:ReEncryptFrom',
+                'kms:ReEncryptTo',
+                'kms:GenerateDataKey',
+                'kms:GenerateDataKeyWithoutPlaintext',
+                'kms:GenerateDataKeyPair',
+                'kms:GenerateDataKeyPairWithoutPlaintext',
+              ],
               Condition: {
                 ArnEquals: {
                   'kms:EncryptionContext:aws:logs:arn': 'arn:test-partition:logs:test-region:test-account:log-group:*',

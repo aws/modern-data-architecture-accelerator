@@ -35,6 +35,7 @@ import {
   NodeSize,
 } from './nifi-options';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
+import { USER_ACTIONS } from '@aws-mdaa/kms-constructs';
 
 export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthorizationOptions, NifiNetworkOptions {
   readonly eksCluster: MdaaEKSCluster;
@@ -379,14 +380,7 @@ export class NifiCluster extends Construct {
     const efsKmsKeyStatement = new PolicyStatement({
       sid: 'AllowEfsKms',
       effect: Effect.ALLOW,
-      actions: [
-        'kms:Encrypt',
-        'kms:Decrypt',
-        'kms:ReEncrypt*',
-        'kms:GenerateDataKey*',
-        'kms:CreateGrant',
-        'kms:DescribeKey',
-      ],
+      actions: [...USER_ACTIONS, 'kms:CreateGrant', 'kms:DescribeKey', 'kms:ListAliases'],
       resources: [kmsKey.keyArn],
     });
     const describeEFSStatement = new PolicyStatement({

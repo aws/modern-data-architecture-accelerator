@@ -26,9 +26,19 @@ export const ADMIN_ACTIONS = [
   'kms:CancelKeyDeletion',
 ];
 
-export const ENCRYPT_ACTIONS = ['kms:Encrypt', 'kms:ReEncrypt*', 'kms:GenerateDataKey*'];
+export const ENCRYPT_ACTIONS = [
+  'kms:Encrypt',
+  'kms:ReEncryptFrom',
+  'kms:ReEncryptTo',
+  'kms:GenerateDataKey',
+  'kms:GenerateDataKeyWithoutPlaintext',
+  'kms:GenerateDataKeyPair',
+  'kms:GenerateDataKeyPairWithoutPlaintext',
+];
 
 export const DECRYPT_ACTIONS = ['kms:Decrypt'];
+
+export const USER_ACTIONS = [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS];
 
 export interface MdaaKmsKeyProps extends MdaaConstructProps {
   /**
