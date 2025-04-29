@@ -2,5 +2,8 @@
 id: SO0320
 name: modern-data-architecture-accelerator
 version: v1.0.0
+cloudformation_templates:
+  - template: MdaaInstallerStack.template
+    main_template: true
 build_environment:
   build_image: "aws/codebuild/standard:7.0"
