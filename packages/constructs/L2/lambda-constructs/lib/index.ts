@@ -6,3 +6,4 @@
 export * from './role';
 export * from './function';
 export * from './boto3-layer';
+export * from './python-requirements-layer';

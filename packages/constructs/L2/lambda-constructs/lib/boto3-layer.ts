@@ -4,39 +4,31 @@
  */
 
 import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
-import { LayerVersion, LayerVersionProps } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
-import { MdaaPythonCodeAsset } from './code-asset';
-
-interface MdaaBoto3LayerVersionProps extends MdaaConstructProps {
-  readonly layerPath?: string;
-}
+import {
+  MdaaPythonRequirementsLayerVersion,
+  MdaaPythonRequirementsLayerVersionProps,
+} from './python-requirements-layer';
 
 /**
  * Construct for creating a Boto3 Lambda Layer
  */
-export class MdaaBoto3LayerVersion extends LayerVersion {
-  private static setProps(props: MdaaBoto3LayerVersionProps, scope: Construct): LayerVersionProps {
-    const codeAsset = new MdaaPythonCodeAsset(scope, 'python-code-asset', {
-      pythonRequirementsPath: `${__dirname}/../src/boto3-layer/requirements.txt`,
-    });
+export class MdaaBoto3LayerVersion extends MdaaPythonRequirementsLayerVersion {
+  private static setBoto3Props(props: MdaaConstructProps): MdaaPythonRequirementsLayerVersionProps {
     const overrideProps = {
-      layerVersionName: props.naming.resourceName(`boto3`),
-      code: codeAsset.code,
+      pythonRequirementsPath: `${__dirname}/../src/boto3-layer/requirements.txt`,
+      layerVersionName: 'boto3',
     };
     return { ...props, ...overrideProps };
   }
   constructor(scope: Construct, id: string, props: MdaaConstructProps) {
-    super(scope, id, MdaaBoto3LayerVersion.setProps(props, scope));
-
+    super(scope, id, MdaaBoto3LayerVersion.setBoto3Props(props));
     new MdaaParamAndOutput(
       this,
       {
-        ...{
-          resourceType: 'layer-version',
-          name: 'arn',
-          value: this.layerVersionArn,
-        },
+        resourceType: 'layer-version',
+        name: 'arn',
+        value: this.layerVersionArn,
         ...props,
       },
       scope,
