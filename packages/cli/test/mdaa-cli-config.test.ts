@@ -6,7 +6,7 @@
 import { MdaaCliConfig, MdaaConfigContents } from '../lib/mdaa-cli-config-parser';
 
 test('ConfigParseTest', () => {
-  expect(() => new MdaaCliConfig({ filename: 'test/mdaa.yaml' })).not.toThrow();
+  expect(() => new MdaaCliConfig({ filename: 'test/resources/mdaa.yaml' })).not.toThrow();
 });
 
 test('BadOrgNameTest', () => {

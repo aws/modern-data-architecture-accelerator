@@ -1,0 +1,157 @@
+mdaa_version: "test_global_version"
+log_suppressions: true
+# All resources will be deployed to the default region specified in the environment or AWS configurations.
+# Can optional specify a specific AWS Region Name.
+region: default
+
+# Path to a custom naming module implementation and class name
+# naming_module: ../custom-naming
+# naming_class: ExtendedDefaultNaming
+
+# One or more tag files containing tags which will be applied to all deployed resources
+tag_configs:
+  - tags.yaml
+
+# Will be injected into CDK context as 'org', and will be used by default naming implementation
+# to prefix all resource names with the org name.
+organization: sample-org
+
+# (Optional) Custom Aspects which will be applied to all resources produced by MDAA apps
+custom_aspects:
+  - aspect_module: ./some_local_module
+    aspect_class: SomeAspectClass
+    aspect_props:
+      prop1: propvalue1
+      prop2:
+        prop2prop1: propvalue2
+
+# Env templates can be defined for use across domains/envs
+env_templates:
+  example_global_env_template:
+    modules:
+      roles:
+        module_path: "@aws-mdaa/roles"
+        module_configs:
+          - ./roles.yaml
+      datalake:
+        module_path: "@aws-mdaa/datalake"
+        module_configs:
+          - ./datalake.yaml
+      athena-workgroup:
+        module_path: "@aws-mdaa/athena-workgroup"
+        module_configs:
+          - ./athena-workgroup.yaml
+      dataops-project-test:
+        module_path: "@aws-mdaa/dataops-project"
+        module_configs:
+          - ./dataops/dataops-project.yaml
+      dataops-crawler-test:
+        module_path: "@aws-mdaa/dataops-crawler"
+        module_configs:
+          - ./dataops/dataops-crawler.yaml
+
+# One or more domains may be specified. Domain name will be incorporated by default naming implementation
+# to prefix all resource names. This allows for multiple MDAA deployments into the same account
+# for separate purposes (such as a centralized data lake account hosting separate lines of business.)
+domains:
+  shared-domain: # An example domain for modules which will be shared at the account level.
+    # One or more tag files containing tags which will be applied to all deployed resources for this domain
+    tag_configs:
+      - tags.yaml
+    environments:
+      dev:
+        mdaa_version: "test_env_version"
+        account: default
+        # One or more tag files containing tags which will be applied to all deployed resources for this env
+        tag_configs:
+          - tags.yaml
+        modules:
+          audit:
+            mdaa_version: "test_module_version"
+            module_path: "@aws-mdaa/audit"
+            # One or more tag files containing tags which will be applied to all deployed resources for this env
+            tag_configs:
+              - tags.yaml
+            module_configs:
+              - ./audit.yaml
+          audit-trail:
+            module_path: "@aws-mdaa/audit-trail@test_spec_version"
+            module_configs:
+              - ./audit-trail.yaml
+          glue-catalog:
+            module_path: "@aws-mdaa/glue-catalog"
+          datawarehouse:
+            module_path: "@aws-mdaa/datawarehouse"
+            module_configs:
+              - ./datawarehouse.yaml
+      test:
+        mdaa_version: "test_env_version"
+        account: default
+        # One or more tag files containing tags which will be applied to all deployed resources for this env
+        tag_configs:
+          - tags.yaml
+        modules:
+          audit:
+            mdaa_version: "test_module_version"
+            module_path: "@aws-mdaa/audit"
+            # One or more tag files containing tags which will be applied to all deployed resources for this env
+            tag_configs:
+              - tags.yaml
+            module_configs:
+              - ./audit.yaml
+          audit-trail:
+            module_path: "@aws-mdaa/audit-trail@test_spec_version"
+            module_configs:
+              - ./audit-trail.yaml
+          glue-catalog:
+            module_path: "@aws-mdaa/glue-catalog"
+          datawarehouse:
+            module_path: "@aws-mdaa/datawarehouse"
+            module_configs:
+              - ./datawarehouse.yaml
+
+  domain1: # Example of a specific domain name.
+    environments:
+      # Example of envs that uses a global environment template
+      dev:
+        account: dev_acct_num
+        template: example_global_env_template
+      test:
+        account: test_acct_num
+        template: example_global_env_template
+
+
+  domain2:
+    environments:
+      # Example of an env that uses a global environment template
+      dev:
+        account: default
+        template: example_global_env_template
+        modules:
+          # This env will deploy this module in addition to those defined in the template
+          additional-module:
+            module_path: "@aws-mdaa/dataops-job"
+            module_configs:
+              - ./dataops/dataops-job.yaml
+
+  domain3:
+    # Env templates can also be defined per domain.
+    env_templates:
+      example_domain_env_template:
+        modules:
+          roles:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
+              - ./roles.yaml
+          datalake:
+            module_path: "@aws-mdaa/datalake"
+            module_configs:
+              - ./datalake.yaml
+    environments:
+      # Example of envs that use a domain-specific environment template
+      dev:
+        account: default
+        template: example_domain_env_template
+      test:
+        account: default
+        template: example_domain_env_template

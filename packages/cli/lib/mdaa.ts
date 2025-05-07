@@ -133,4 +133,5 @@ if (options['help']) {
 }
 
 const mdaa = new MdaaDeploy(options, options['_unknown']);
+mdaa.sanityCheck();
 mdaa.deploy();

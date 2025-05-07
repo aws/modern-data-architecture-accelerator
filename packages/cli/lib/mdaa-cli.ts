@@ -21,6 +21,7 @@ import {
   MdaaModuleConfig,
   TerraformConfig,
 } from './mdaa-cli-config-parser';
+import { DuplicateAccountLevelModulesException } from './exceptions';
 import {
   DomainEffectiveConfig,
   EffectiveConfig,
@@ -28,7 +29,8 @@ import {
   ModuleDeploymentConfig,
   ModuleEffectiveConfig,
 } from './config-types';
-import { generateContextCdkParams } from './utils';
+import { getMdaaConfig } from './module-service';
+import { findDuplicates, generateContextCdkParams, isBoolean } from './utils';
 
 export interface DeployStageMap {
   [key: string]: ModuleDeploymentConfig[];
@@ -108,8 +110,6 @@ export class MdaaDeploy {
     if (this.devopsMode) {
       console.log('Running MDAA in devops mode.');
     }
-
-    this.installPython();
   }
 
   private installPython() {
@@ -120,7 +120,7 @@ export class MdaaDeploy {
       console.log(`Found pip. Installing python with cmd: ${pipCmd}`);
       this.execCmd(pipCmd);
     } else {
-      throw new Error('pip not availalable');
+      throw new Error('pip not available');
     }
   }
 
@@ -173,24 +173,43 @@ export class MdaaDeploy {
     return localPackages;
   }
 
-  public deploy() {
-    const globalEffectiveConfig: EffectiveConfig = {
-      effectiveContext: this.config.contents.context || {},
-      effectiveTagConfig: this.config.contents.tag_config_data || {},
-      tagConfigFiles: this.config.contents.tag_configs || [],
-      effectiveMdaaVersion: this.config.contents.mdaa_version || this.mdaaVersion,
-      customAspects: this.config.contents.custom_aspects || [],
-      customNaming:
-        this.config.contents.naming_module && this.config.contents.naming_class
-          ? {
-              naming_module: this.config.contents.naming_module,
-              naming_class: this.config.contents.naming_class,
-              naming_props: this.config.contents.naming_props,
+  public sanityCheck() {
+    const accountLevelModuleCountMap: Record<string, Record<string, number>> = {};
+    const globalEffectiveConfig = this.createGlobalEffectiveConfig();
+    Object.entries(this.config.contents.domains).forEach(([domainName, domain]) => {
+      const domainEffectiveConfig: DomainEffectiveConfig = this.computeDomainEffectiveConfig(
+        domainName,
+        domain,
+        globalEffectiveConfig,
+      );
+      return Object.entries(domain.environments).forEach(([envName, env]) => {
+        const [envMergedConfig, envEffectiveConfig] = this.determineEnvEffectiveConfig(
+          env,
+          envName,
+          domainEffectiveConfig,
+        );
+        const account = envMergedConfig.account ?? 'default';
+        return Object.entries(envMergedConfig.modules ?? {}).forEach(([moduleName, module]) => {
+          const moduleEffectiveConfig = this.computeModuleEffectiveConfig(moduleName, module, envEffectiveConfig);
+          console.log(module.module_configs);
+          if (getMdaaConfig(moduleEffectiveConfig, 'ACCOUNT_LEVEL_MODULE', isBoolean)) {
+            if (accountLevelModuleCountMap[account] == null) {
+              accountLevelModuleCountMap[account] = {};
             }
-          : undefined,
-      envTemplates: this.config.contents.env_templates || {},
-      terraform: this.config.contents.terraform,
-    };
+            const moduleCountMap = accountLevelModuleCountMap[account];
+            moduleCountMap[moduleName] = (moduleCountMap[moduleName] ?? 0) + 1;
+          }
+        });
+      });
+    });
+    const duplicates = findDuplicates(accountLevelModuleCountMap);
+    if (duplicates.length > 0) throw new DuplicateAccountLevelModulesException(duplicates);
+  }
+
+  public deploy() {
+    this.installPython();
+
+    const globalEffectiveConfig: EffectiveConfig = this.createGlobalEffectiveConfig();
     this.deployDomains(globalEffectiveConfig);
     if (this.devopsMode) {
       this.deployDevOps(globalEffectiveConfig);
@@ -233,6 +252,8 @@ export class MdaaDeploy {
   }
 
   public deployDomain(domain: MdaaDomainConfig, domainEffectiveConfig: DomainEffectiveConfig) {
+    this.installPython();
+
     if (!this.devopsMode) {
       console.log(`-----------------------------------------------------------`);
       console.log(`Domain ${domainEffectiveConfig.domainName}: Running ${this.action}`);
@@ -507,6 +528,7 @@ export class MdaaDeploy {
     }
     return tfCmds;
   }
+
   private createTerraformPlanApplyCmdArgs(moduleConfig: ModuleEffectiveConfig): string[] {
     const tfCmd: string[] = [];
     tfCmd.push('-input=false');
@@ -539,6 +561,7 @@ export class MdaaDeploy {
     });
     return tfCmd;
   }
+
   private createTerraformOverride(moduleConfig: ModuleEffectiveConfig) {
     if (moduleConfig.terraform?.override) {
       this.execCmd(`rm -rf ${moduleConfig.modulePath}/mdaa_override.tf.json `);
@@ -841,6 +864,7 @@ export class MdaaDeploy {
       terraform: this.computeEffectiveTerraformConfig(envEffectiveConfig, mdaaModule.terraform),
     };
   }
+
   private computeEffectiveTerraformConfig(
     parent: EffectiveConfig,
     child?: TerraformConfig,
@@ -848,12 +872,14 @@ export class MdaaDeploy {
     const _ = require('lodash');
     return _.mergeWith(child, parent.terraform);
   }
+
   private computeEffectiveCustomNaming(
     parent: EffectiveConfig,
     child?: MdaaCustomNaming,
   ): MdaaCustomNaming | undefined {
     return child || parent.customNaming;
   }
+
   private computeEffectiveCustomAspects(parent: EffectiveConfig, child?: MdaaCustomAspect[]): MdaaCustomAspect[] {
     return [...(parent.customAspects || []), ...(child || [])];
   }
@@ -907,5 +933,41 @@ export class MdaaDeploy {
       for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
     });
     return h.toString(16);
+  }
+
+  private createGlobalEffectiveConfig(): EffectiveConfig {
+    return {
+      effectiveContext: this.config.contents.context || {},
+      effectiveTagConfig: this.config.contents.tag_config_data || {},
+      tagConfigFiles: this.config.contents.tag_configs || [],
+      effectiveMdaaVersion: this.config.contents.mdaa_version || this.mdaaVersion,
+      customAspects: this.config.contents.custom_aspects || [],
+      customNaming:
+        this.config.contents.naming_module && this.config.contents.naming_class
+          ? {
+              naming_module: this.config.contents.naming_module,
+              naming_class: this.config.contents.naming_class,
+              naming_props: this.config.contents.naming_props,
+            }
+          : undefined,
+      envTemplates: this.config.contents.env_templates || {},
+      terraform: this.config.contents.terraform,
+    };
+  }
+
+  private determineEnvEffectiveConfig(
+    env: MdaaEnvironmentConfig,
+    envName: string,
+    domainEffectiveConfig: DomainEffectiveConfig,
+  ): [MdaaEnvironmentConfig, EnvEffectiveConfig] {
+    if (env.template && (!domainEffectiveConfig.envTemplates || !domainEffectiveConfig.envTemplates[env.template])) {
+      throw new Error(`Environment "${envName}" references invalid template name: ${env.template}.`);
+    }
+    const template =
+      env.template && domainEffectiveConfig.envTemplates ? domainEffectiveConfig.envTemplates[env.template] : {};
+    // nosemgrep
+    const ld = require('lodash');
+    const envMergedConfig = ld.mergeWith(env, template);
+    return [envMergedConfig, this.computeEnvEffectiveConfig(envName, envMergedConfig, domainEffectiveConfig)];
   }
 }

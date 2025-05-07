@@ -5,6 +5,18 @@
 
 import { EffectiveConfig } from './config-types';
 
+export function isBoolean(value: unknown): value is boolean {
+  return typeof value === 'boolean';
+}
+
+export function findDuplicates(keyCounts: Record<string, Record<string, number>>): Array<[string, string]> {
+  return Object.entries(keyCounts).flatMap(([accountName, moduleMap]) =>
+    Object.entries(moduleMap)
+      .filter(([, count]) => count > 1)
+      .map(([moduleName]) => [accountName, moduleName] as [string, string]),
+  );
+}
+
 export function generateContextCdkParams(moduleEffectiveConfig: EffectiveConfig): string[] {
   return Object.entries(moduleEffectiveConfig.effectiveContext).map(contextEntry => {
     const contextKey = contextEntry[0];

@@ -1,0 +1,100 @@
+mdaa_version: "test_global_version"
+log_suppressions: true
+region: default
+
+tag_configs:
+  - tags.yaml
+
+organization: sample-org
+
+domains:
+  shared-domain:
+    environments:
+      dev:
+        mdaa_version: "test_env_version"
+        account: dev_acct_num
+        modules:
+          mod1:
+            mdaa_version: "test_modv1"
+            module_path: "@aws-mdaa/mod1"
+            module_configs:
+              - ./mod1.yaml
+          mod2:
+            mdaa_version: "test_modv2"
+            module_path: "@aws-mdaa/mod2"
+            module_configs:
+              - ./mod2.yaml
+
+  domain1:
+    environments:
+      dev:
+        account: dev_acct_num
+        modules:
+          mod3:
+            mdaa_version: "test_modv3"
+            module_path: "@aws-mdaa/mod3"
+            module_configs:
+              - ./mod3.yaml
+          mod4:
+            mdaa_version: "test_modv4"
+            module_path: "@aws-mdaa/mod4"
+            module_configs:
+              - ./mod4.yaml
+      test:
+        account: test_acct_num
+        modules:
+          mod1:
+            mdaa_version: "test_modv1"
+            module_path: "@aws-mdaa/mod1"
+            module_configs:
+              - ./mod1.yaml
+          mod2:
+            mdaa_version: "test_modv2"
+            module_path: "@aws-mdaa/mod2"
+            module_configs:
+              - ./mod2.yaml
+
+  domain2:
+    environments:
+      dev:
+        account: dev_acct_num
+        modules:
+          mod5:
+            mdaa_version: "test_modv5"
+            module_path: "@aws-mdaa/mod5"
+            module_configs:
+              - ./mod5.yaml
+          mod6:
+            mdaa_version: "test_modv6"
+            module_path: "@aws-mdaa/mod6"
+            module_configs:
+              - ./mod6.yaml
+
+  domain3:
+    environments:
+      dev:
+        account: dev_acct_num
+        modules:
+          mod1:
+            mdaa_version: "test_modv7"
+            module_path: "@aws-mdaa/mod7"
+            module_configs:
+              - ./mod7.yaml
+          mod2:
+            mdaa_version: "test_modv7"
+            module_path: "@aws-mdaa/mod7"
+            module_configs:
+              - ./mod7.yaml
+      test:
+        account: test_acct_num
+        modules:
+          mod3:
+            mdaa_version: "test_modv3"
+            module_path: "@aws-mdaa/mod3"
+            module_configs:
+              - ./mod3.yaml
+          mod4:
+            mdaa_version: "test_modv4"
+            module_path: "@aws-mdaa/mod4"
+            module_configs:
+              - ./mod4.yaml

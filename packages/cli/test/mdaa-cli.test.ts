@@ -5,9 +5,15 @@
 
 import { MdaaDeploy } from '../lib/mdaa-cli';
 import * as fs from 'fs';
+const commandExists = require('command-exists');
+
+jest.mock('command-exists', () => ({
+  sync: jest.fn(),
+}));
+(commandExists.sync as jest.Mock).mockReturnValue(true);
 
 test('Default Config File Test', () => {
-  fs.copyFileSync('./test/mdaa.yaml', './mdaa.yaml');
+  fs.copyFileSync('./test/resources/mdaa.yaml', './mdaa.yaml');
   const options = {
     testing: 'true',
     action: 'synth',
@@ -20,7 +26,7 @@ test('Default Config File Test', () => {
 });
 
 test('Default CAEF Config File Test', () => {
-  fs.copyFileSync('./test/mdaa.yaml', './caef.yaml');
+  fs.copyFileSync('./test/resources/mdaa.yaml', './caef.yaml');
   const options = {
     testing: 'true',
     action: 'synth',
@@ -64,7 +70,7 @@ test('LocalMode', () => {
     action: 'synth',
     npm_debug: 'true',
     working_dir: 'test/test_working',
-    config: './test/mdaa_local.yaml',
+    config: './test/resources/mdaa_local.yaml',
     local_mode: 'true',
   };
   const mdaa = new MdaaDeploy(options, ['test-extra-cdk-param']);
@@ -325,7 +331,7 @@ test('Config File Test', () => {
     npm_debug: 'true',
     working_dir: 'test/test_working',
     tag: 'testtag',
-    config: './test/mdaa.yaml',
+    config: './test/resources/mdaa.yaml',
   };
   const mdaa = new MdaaDeploy(options, ['test-extra-cdk-param']);
   mdaa.deploy();
@@ -453,5 +459,20 @@ describe('Terraform', () => {
     };
     const mdaa = new MdaaDeploy(cmdOptions, undefined, configContents);
     mdaa.deploy();
+  });
+});
+
+describe('sanity check', () => {
+  const options = {
+    testing: 'true',
+    action: 'synth',
+    npm_debug: 'true',
+    working_dir: 'test/test_working',
+    config: './test/resources/mdaa_local.yaml',
+    local_mode: 'true',
+  };
+  test('no account level modules', () => {
+    const mdaa = new MdaaDeploy(options);
+    mdaa.sanityCheck();
   });
 });
