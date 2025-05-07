@@ -9,7 +9,7 @@
     "prettier": "lerna run prettier --stream"
   },
   "lint-staged": {
-    "*.{ts,tsx}": "eslint --fix --max-warnings 0 -c .eslintrc.json --ignore-pattern \"*.d.ts\""
+    "*.{ts,tsx}": "eslint --max-warnings 0 -c .eslintrc.json --ignore-pattern \"*.d.ts\""
   },
   "devDependencies": {
     "@types/jest": "29.5.0",

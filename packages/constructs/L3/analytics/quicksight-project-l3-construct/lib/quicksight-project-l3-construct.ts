@@ -15,6 +15,7 @@ import { MdaaQuickSightDataSource } from '@aws-mdaa/quicksight-constructs';
 import { ConfigurationElement } from '@aws-mdaa/config';
 //Interfaces for Shared Folders
 export type FolderActions = 'READER_FOLDER' | 'AUTHOR_FOLDER';
+
 export interface SharedFoldersPermissionsProps {
   /**
    * List of Principals
@@ -25,6 +26,7 @@ export interface SharedFoldersPermissionsProps {
    */
   readonly actions: FolderActions;
 }
+
 export interface SharedFoldersProps {
   /**
    * Permissions to be tied to the folder
@@ -35,18 +37,22 @@ export interface SharedFoldersProps {
    */
   readonly folders?: { [key: string]: SharedFoldersProps };
 }
+
 interface FolderDetailPermissionsProps {
   readonly Principal?: string;
   readonly Actions?: string[];
 }
+
 interface FolderDetailProps {
   readonly folderName: string;
   readonly folderPermissions: FolderDetailPermissionsProps[];
   readonly folderNameWithParentName: string;
   readonly parentFolderArn?: string;
 }
+
 //Interfaces for DataSource
 export type DataSourceActions = 'READER_DATA_SOURCE' | 'AUTHOR_DATA_SOURCE';
+
 export interface DataSourcePermissionsProps {
   /**
    * Either "READER_DATA_SOURCE" or "AUTHOR_DATA_SOURCE"
@@ -57,6 +63,7 @@ export interface DataSourcePermissionsProps {
    */
   readonly principal: string;
 }
+
 export interface DataSourcePermissions2Props {
   /**
    * API Actions for "READER_DATA_SOURCE" or "AUTHOR_DATA_SOURCE"
@@ -67,6 +74,7 @@ export interface DataSourcePermissions2Props {
    */
   readonly principal: string;
 }
+
 export interface DataSourceErrorInfoProps {
   /**
    * Error message(Optional)
@@ -78,6 +86,7 @@ export interface DataSourceErrorInfoProps {
    */
   readonly type?: string;
 }
+
 export interface DataSourceCredentialPairProps {
   /**
    * Password
@@ -98,6 +107,7 @@ export interface DataSourceCredentialPairProps {
     },
   ];
 }
+
 export interface DataSourceCredentialsProps {
   /**
    * The Amazon Resource Name (ARN) of a data source that has the credential pair that you want to use.
@@ -112,6 +122,7 @@ export interface DataSourceCredentialsProps {
    */
   readonly secretArn?: string;
 }
+
 export type DataSourceTypeProps =
   | 'ADOBE_ANALYTICS'
   | 'AMAZON_ELASTICSEARCH'
@@ -139,18 +150,21 @@ export type DataSourceTypeProps =
   | 'TERADATA'
   | 'TIMESTREAM'
   | 'TWITTER';
+
 export interface DataSourceSSLProps {
   /**
    * Enable to Disable SSL: Default value is false(SSL is enabled)
    */
   readonly disableSsl: boolean;
 }
+
 export interface DataSourceVPCProps {
   /**
    * QuickSight VPC(created in QS) ARN
    */
   readonly vpcConnectionArn: string;
 }
+
 export interface DataSourceProps {
   readonly dataSourceSpecificParameters: ConfigurationElement;
   /**
@@ -196,6 +210,7 @@ export interface DataSourceProps {
    */
   readonly vpcConnectionProperties?: DataSourceVPCProps;
 }
+
 export interface DataSourceWithIdAndTypeProps extends DataSourceProps {
   /**
    * Type of Data Source. ADOBE_ANALYTICS | AMAZON_ELASTICSEARCH | AMAZON_OPENSEARCH | ATHENA | AURORA | AURORA_POSTGRESQL | AWS_IOT_ANALYTICS | DATABRICKS | EXASOL | GITHUB | JIRA | MARIADB | MYSQL | ORACLE | POSTGRESQL | PRESTO | REDSHIFT | S3 | SALESFORCE | SERVICENOW | SNOWFLAKE | SPARK | SQLSERVER | TERADATA | TIMESTREAM | TWITTER
@@ -210,6 +225,7 @@ export interface DataSourceWithIdAndTypeProps extends DataSourceProps {
    */
   readonly dataSourceId: string;
 }
+
 export interface QuickSightProjectL3ConstructProps extends MdaaL3ConstructProps {
   /**
    *(Required) Details about the Data Sources to be created
@@ -224,6 +240,7 @@ export interface QuickSightProjectL3ConstructProps extends MdaaL3ConstructProps 
    */
   readonly sharedFolders?: { [key: string]: SharedFoldersProps };
 }
+
 export class QuickSightProjectL3Construct extends MdaaL3Construct {
   protected readonly props: QuickSightProjectL3ConstructProps;
 
@@ -256,6 +273,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
       'quicksight:UpdateDataSourcePermissions',
     ],
   };
+
   constructor(scope: Construct, id: string, props: QuickSightProjectL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
@@ -271,6 +289,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
       this.createQSFolders(qsFolderProvider, arraySharedFolders);
     }
   }
+
   // Creates Custom Resource per Shared Folder - Handles OnCreate, OnUpdate, OnDelete Stack Events
   private createQSFoldersCr(qsFolderProvider: Provider, folderDetail: FolderDetailProps): CustomResource {
     return new CustomResource(this, `qsFolders-${folderDetail.folderNameWithParentName}`, {
@@ -341,7 +360,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
       timeout: Duration.seconds(120),
       environment: {
         ACCOUNT_ID: this.account,
-          LOG_LEVEL: 'INFO',
+        LOG_LEVEL: 'INFO',
       },
       role: qsFoldersCrRole,
     });
@@ -475,6 +494,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
     );
     return qsFoldersCrProvider;
   }
+
   //Parses Config to prepare inputs to create_folder api and recursively creates Custom Resources
   private createQSFolders(
     qsFolderProvider: Provider,
@@ -506,6 +526,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
       }
     });
   }
+
   // Creates Quicksight Data Sources
   private createQSDataSource(dataSourcesProps: DataSourceWithIdAndTypeProps[]): void {
     dataSourcesProps.forEach(dataSourceWithIdAndTypeProps => {

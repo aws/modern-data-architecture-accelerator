@@ -29,6 +29,7 @@ export interface MdaaEC2SecretKeyPairProps extends MdaaConstructProps {
 export class MdaaEC2SecretKeyPair extends Construct {
   public readonly secret: Secret;
   public readonly name: string;
+
   constructor(scope: Construct, id: string, props: MdaaEC2SecretKeyPairProps) {
     super(scope, id);
 
@@ -59,7 +60,7 @@ export class MdaaEC2SecretKeyPair extends Construct {
       handlerTimeout: Duration.seconds(120),
       environment: {
         LOG_LEVEL: 'INFO',
-      }
+      },
     };
 
     const cr = new MdaaCustomResource(this, 'custom-resource', crProps);

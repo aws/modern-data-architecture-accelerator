@@ -19,7 +19,7 @@
     "package": "jsii-pacmak --npmignore=false",
     "test": "jest --passWithNoTests --coverage",
     "test-coverage": "jest --passWithNoTests --coverage",
-    "lint": "eslint --fix --max-warnings 0 -c ../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" "
+    "lint": "eslint --max-warnings 0 -c ../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" "
   },
   "devDependencies": {
     "@aws-mdaa/construct": "1.0.0",

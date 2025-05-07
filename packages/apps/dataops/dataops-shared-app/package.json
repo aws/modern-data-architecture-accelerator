@@ -14,7 +14,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest --passWithNoTests --coverage",
-    "lint": "eslint --fix --max-warnings 0 -c ../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" "
+    "lint": "eslint --max-warnings 0 -c ../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" "
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

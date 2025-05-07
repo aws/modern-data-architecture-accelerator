@@ -16,7 +16,7 @@
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
     "test": "jest --passWithNoTests --coverage",
-    "lint": "eslint --fix --max-warnings 0 -c ../../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" ",
+    "lint": "eslint --max-warnings 0 -c ../../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" ",
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "main": "lib/index.js",

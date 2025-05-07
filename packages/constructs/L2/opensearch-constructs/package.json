@@ -17,7 +17,7 @@
     "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references",
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
-    "lint": "eslint --fix --max-warnings 0 -c ../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" ",
+    "lint": "eslint --max-warnings 0 -c ../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" ",
     "test": "jest --passWithNoTests --coverage",
     "test-coverage": "jest --passWithNoTests --coverage"
   },

@@ -191,7 +191,6 @@ export class MdaaDeploy {
         const account = envMergedConfig.account ?? 'default';
         return Object.entries(envMergedConfig.modules ?? {}).forEach(([moduleName, module]) => {
           const moduleEffectiveConfig = this.computeModuleEffectiveConfig(moduleName, module, envEffectiveConfig);
-          console.log(module.module_configs);
           if (getMdaaConfig(moduleEffectiveConfig, 'ACCOUNT_LEVEL_MODULE', isBoolean)) {
             if (accountLevelModuleCountMap[account] == null) {
               accountLevelModuleCountMap[account] = {};

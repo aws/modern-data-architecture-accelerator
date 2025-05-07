@@ -112,6 +112,7 @@ export class MdaaDatazoneProject extends Construct {
       scope,
     );
   }
+
   private static createSsmDomainConfigParser(
     scope: Construct,
     naming: IMdaaResourceNaming,
@@ -145,7 +146,7 @@ export class MdaaDatazoneProject extends Construct {
       handlerTimeout: Duration.seconds(120),
       environment: {
         LOG_LEVEL: 'INFO',
-      }
+      },
     };
 
     return new MdaaCustomResource(scope, 'domain-config-cr', crProps);

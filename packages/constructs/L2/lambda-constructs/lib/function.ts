@@ -22,8 +22,8 @@ import {
   IEventSource,
   ILayerVersion,
   LambdaInsightsVersion,
-  LogRetentionRetryOptions,
   LoggingFormat,
+  LogRetentionRetryOptions,
   ParamsAndSecretsLayerVersion,
   Runtime,
   RuntimeManagementMode,
@@ -434,7 +434,6 @@ export interface MdaaLambdaFunctionOptions extends MdaaConstructProps {
  */
 export class MdaaLambdaFunction extends Function {
   private static setProps(props: MdaaLambdaFunctionProps): FunctionProps {
-
     const overrideProps = {
       functionName: props.naming.resourceName(props.functionName, 64),
       environment: {
