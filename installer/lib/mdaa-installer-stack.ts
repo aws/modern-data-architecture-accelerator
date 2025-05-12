@@ -6,6 +6,7 @@ import * as kms from 'aws-cdk-lib/aws-kms';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
 import * as codepipeline from 'aws-cdk-lib/aws-codepipeline';
 import * as codepipeline_actions from 'aws-cdk-lib/aws-codepipeline-actions';
+import { version } from '../../package.json';
 
 export enum RepositorySources {
   GITHUB = 'github',
@@ -21,51 +22,15 @@ export class MdaaInstallerStack extends cdk.Stack {
       }),
     });
 
-    // Parameters
+    // Source selection parameter
     const repositorySource = new cdk.CfnParameter(this, 'RepositorySource', {
       type: 'String',
-      description: 'Repository source for the code.',
+      description: 'Repository source for the code (Required)',
       allowedValues: [RepositorySources.GITHUB, RepositorySources.S3],
       default: RepositorySources.GITHUB,
     });
 
-    // GitHub parameters
-    const repositoryOwner = new cdk.CfnParameter(this, 'RepositoryOwner', {
-      type: 'String',
-      description: 'The owner of the GitHub repository containing the code.',
-      default: 'aws',
-    });
-
-    const repositoryName = new cdk.CfnParameter(this, 'RepositoryName', {
-      type: 'String',
-      description: 'The name of the repository containing the code.',
-      default: 'modern-data-architecture-accelerator',
-    });
-
-    const repositoryBranchName = new cdk.CfnParameter(this, 'RepositoryBranchName', {
-      type: 'String',
-      description: 'The name of the branch to use.',
-      default: 'main',
-    });
-
-    const githubTokenSecretsManagerId = new cdk.CfnParameter(this, 'GithubTokenSecretsManagerId', {
-      type: 'String',
-      description: 'Secrets Manager secrets Id containing the GitHub oauth token',
-    });
-
-    // S3 parameters
-    const repositoryBucketName = new cdk.CfnParameter(this, 'RepositoryBucketName', {
-      type: 'String',
-      description: 'The S3 bucket containing the code. This bucket must be in the same region as the stack.',
-    });
-
-    const repositoryBucketObject = new cdk.CfnParameter(this, 'RepositoryBucketObject', {
-      type: 'String',
-      description: 'The S3 object key for the code zip file.',
-      default: 'release/latest.zip',
-    });
-
-    // Conditions
+    // Create conditions for GitHub vs S3 deployment
     const useGitHubCondition = new cdk.CfnCondition(this, 'UseGitHubCondition', {
       expression: cdk.Fn.conditionEquals(repositorySource.valueAsString, RepositorySources.GITHUB),
     });
@@ -74,7 +39,91 @@ export class MdaaInstallerStack extends cdk.Stack {
       expression: cdk.Fn.conditionEquals(repositorySource.valueAsString, RepositorySources.S3),
     });
 
-    // which sample to deploy
+    // ===== GitHub parameters =====
+    const repositoryOwner = new cdk.CfnParameter(this, 'RepositoryOwner', {
+      type: 'String',
+      description: 'The owner of the GitHub repository containing the code (Required for GitHub)',
+      default: 'aws',
+      constraintDescription: 'Repository Owner is required when GitHub is selected as the repository source',
+    });
+
+    const repositoryName = new cdk.CfnParameter(this, 'RepositoryName', {
+      type: 'String',
+      description: 'The name of the GitHub repository containing the code (Required for GitHub)',
+      default: 'modern-data-architecture-accelerator',
+      constraintDescription: 'Repository Name is required when GitHub is selected as the repository source',
+    });
+
+    const repositoryBranchName = new cdk.CfnParameter(this, 'RepositoryBranchName', {
+      type: 'String',
+      description: 'The name of the branch (e.g., "release/v1.0.0") (Required for GitHub)',
+      default: `release/v${version}`,
+      allowedPattern: '.+',
+      constraintDescription: 'Repository Branch Name is required when GitHub is selected as the repository source',
+    });
+
+    const codeConnectArn = new cdk.CfnParameter(this, 'CodeConnectArn', {
+      type: 'String',
+      description:
+        'ARN of the CodeConnect connection to GitHub (Required for GitHub). Head over to the CodePipeline->Settings->Connections to create one',
+      constraintDescription: 'CodeConnect ARN is required when GitHub is selected as the repository source',
+    });
+
+    // Add validation rules for GitHub parameters
+    new cdk.CfnRule(this, 'ValidateGitHubParameters', {
+      ruleCondition: cdk.Fn.conditionEquals(repositorySource.valueAsString, RepositorySources.GITHUB),
+      assertions: [
+        {
+          assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(repositoryOwner.valueAsString, '')),
+          assertDescription: 'Repository Owner is required when GitHub is selected as the repository source',
+        },
+        {
+          assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(repositoryName.valueAsString, '')),
+          assertDescription: 'Repository Name is required when GitHub is selected as the repository source',
+        },
+        {
+          assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(repositoryBranchName.valueAsString, '')),
+          assertDescription: 'Repository Branch Name is required when GitHub is selected as the repository source',
+        },
+        {
+          assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(codeConnectArn.valueAsString, '')),
+          assertDescription: 'CodeConnect ARN is required when GitHub is selected as the repository source',
+        },
+      ],
+    });
+
+    // ===== S3 parameters =====
+    const repositoryBucketName = new cdk.CfnParameter(this, 'RepositoryBucketName', {
+      type: 'String',
+      description:
+        'The S3 bucket containing the code. This bucket must be in the same region as the stack. (Required for S3)',
+      constraintDescription: 'Repository Bucket Name is required when S3 is selected as the repository source',
+    });
+
+    const repositoryBucketObject = new cdk.CfnParameter(this, 'RepositoryBucketObject', {
+      type: 'String',
+      description: 'The S3 object key for the code zip file (Required for S3)',
+      default: 'release/latest.zip',
+      constraintDescription: 'Repository Bucket Object is required when S3 is selected as the repository source',
+    });
+
+    // Add validation rules for S3 parameters
+    new cdk.CfnRule(this, 'ValidateS3Parameters', {
+      ruleCondition: cdk.Fn.conditionEquals(repositorySource.valueAsString, RepositorySources.S3),
+      assertions: [
+        {
+          assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(repositoryBucketName.valueAsString, '')),
+          assertDescription: 'Repository Bucket Name is required when S3 is selected as the repository source',
+        },
+        {
+          assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(repositoryBucketObject.valueAsString, '')),
+          assertDescription: 'Repository Bucket Object is required when S3 is selected as the repository source',
+        },
+      ],
+    });
+
+    // ===== Common parameters (always required) =====
+    // Sample and organization parameters
     const sampleNameParam = new cdk.CfnParameter(this, 'SampleName', {
       type: 'String',
       description: 'MDAA Sample you want to deploy',
@@ -92,16 +141,98 @@ export class MdaaInstallerStack extends cdk.Stack {
         'Org Name must start with a letter and contain only alphanumeric characters (case-sensitive) and hyphens. Maximum length is 100 characters.',
     });
 
-    // network info
+    // Add validation rule for Organization Name (always required)
+    new cdk.CfnRule(this, 'ValidateOrganizationName', {
+      assertions: [
+        {
+          assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(orgNameParam.valueAsString, '')),
+          assertDescription: 'Organization Name is required for all MDAA deployments',
+        },
+      ],
+    });
+
+    // Network parameters
     const vpcIdParam = new cdk.CfnParameter(this, 'VpcId', {
-      type: 'String',
-      description: 'The ID of the VPC to use for deployment',
+      type: 'AWS::EC2::VPC::Id',
+      description: 'The ID of the VPC to use for deployment. Required for resources that need network access.',
     });
 
     const subnetIdParam = new cdk.CfnParameter(this, 'SubnetId', {
-      type: 'String',
-      description: 'The ID of the subnet to use for deployment',
+      type: 'AWS::EC2::Subnet::Id',
+      description:
+        'The ID of the subnet to use for deployment. Must be a subnet within the selected VPC. Required for resources that need network access.',
     });
+
+    new cdk.CfnRule(this, 'ValidateNetworkParametersForDataScience', {
+      assertions: [
+        {
+          assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(vpcIdParam.valueAsString, '')),
+          assertDescription: 'VPC ID is required.',
+        },
+        {
+          assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(subnetIdParam.valueAsString, '')),
+          assertDescription: 'Subnet ID is required.',
+        },
+      ],
+    });
+
+    // Define parameter groups for better organization in the CloudFormation console
+    const parameterGroups: { Label: { default: string }; Parameters: string[] }[] = [
+      {
+        Label: { default: 'Repository Selection' },
+        Parameters: [repositorySource.logicalId],
+      },
+      {
+        Label: { default: 'Github Repository Configuration (Only if Github is selected as repository source)' },
+        Parameters: [
+          repositoryOwner.logicalId,
+          repositoryName.logicalId,
+          repositoryBranchName.logicalId,
+          codeConnectArn.logicalId,
+        ],
+      },
+      {
+        Label: { default: 'S3 Repository Configuration (Only if S3 is selected as repository source)' },
+        Parameters: [repositoryBucketName.logicalId, repositoryBucketObject.logicalId],
+      },
+      {
+        Label: { default: 'MDAA Configuration' },
+        Parameters: [sampleNameParam.logicalId, orgNameParam.logicalId],
+      },
+      {
+        Label: { default: 'Network Configuration' },
+        Parameters: [vpcIdParam.logicalId, subnetIdParam.logicalId],
+      },
+    ];
+
+    const parameterLabels = {
+      [repositorySource.logicalId]: { default: 'Repository Source' },
+      [repositoryOwner.logicalId]: { default: 'GitHub Repository Owner/Organization' },
+      [repositoryName.logicalId]: { default: 'GitHub Repository Name' },
+      [repositoryBranchName.logicalId]: { default: 'GitHub Branch Name' },
+      [codeConnectArn.logicalId]: { default: 'CodeConnect ARN' },
+      [repositoryBucketName.logicalId]: { default: 'S3 Bucket Name' },
+      [repositoryBucketObject.logicalId]: { default: 'S3 Object Key' },
+      [sampleNameParam.logicalId]: { default: 'MDAA Sample Configuration' },
+      [orgNameParam.logicalId]: { default: 'Organization Name (Required)' },
+      [vpcIdParam.logicalId]: { default: 'VPC ID' },
+      [subnetIdParam.logicalId]: { default: 'Subnet ID' },
+    };
+
+    this.templateOptions.metadata = {
+      'AWS::CloudFormation::Interface': {
+        ParameterGroups: parameterGroups,
+        ParameterLabels: parameterLabels,
+        ParameterVisibility: {
+          [repositoryOwner.logicalId]: `{{${repositorySource.logicalId} == '${RepositorySources.GITHUB}'}}`,
+          [repositoryName.logicalId]: `{{${repositorySource.logicalId} == '${RepositorySources.GITHUB}'}}`,
+          [repositoryBranchName.logicalId]: `{{${repositorySource.logicalId} == '${RepositorySources.GITHUB}'}}`,
+          [codeConnectArn.logicalId]: `{{${repositorySource.logicalId} == '${RepositorySources.GITHUB}'}}`,
+          [repositoryBucketName.logicalId]: `{{${repositorySource.logicalId} == '${RepositorySources.S3}'}}`,
+          [repositoryBucketObject.logicalId]: `{{${repositorySource.logicalId} == '${RepositorySources.S3}'}}`,
+        },
+      },
+    };
 
     // KMS Key for encryption
     const installerKey = new kms.Key(this, 'InstallerKey', {
@@ -223,14 +354,12 @@ export class MdaaInstallerStack extends cdk.Stack {
       assumedBy: new iam.ServicePrincipal('codepipeline.amazonaws.com'),
     });
 
-    // Add inline policy to the role for accessing the secret
+    // Add inline policy to the role for accessing the CodeStar connection
     githubPipelineRole.addToPolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
-        actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
-        resources: [
-          `arn:aws:secretsmanager:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:secret:${githubTokenSecretsManagerId.valueAsString}`,
-        ],
+        actions: ['codestar-connections:UseConnection'],
+        resources: [codeConnectArn.valueAsString],
       }),
     );
 
@@ -242,14 +371,15 @@ export class MdaaInstallerStack extends cdk.Stack {
         {
           stageName: 'Source',
           actions: [
-            new codepipeline_actions.GitHubSourceAction({
+            new codepipeline_actions.CodeStarConnectionsSourceAction({
               actionName: 'Source',
               owner: repositoryOwner.valueAsString,
               repo: repositoryName.valueAsString,
               branch: repositoryBranchName.valueAsString,
-              oauthToken: cdk.SecretValue.secretsManager(githubTokenSecretsManagerId.valueAsString),
+              connectionArn: codeConnectArn.valueAsString,
               output: sourceOutput,
-              trigger: codepipeline_actions.GitHubTrigger.NONE,
+              triggerOnPush: false,
+              codeBuildCloneOutput: true,
             }),
           ],
         },

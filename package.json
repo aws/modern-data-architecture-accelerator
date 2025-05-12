@@ -2,6 +2,7 @@
   "name": "@aws-mdaa/mdaa",
   "private": true,
   "bin": "./packages/cli/bin/mdaa",
+  "version": "1.0.0",
   "scripts": {
     "git-clean": "git clean -Xfd -e !development -e !development/** -e !.vscode -e !.vscode/** -e !.idea -e !.idea/**",
     "lint": "lerna run lint --stream",
