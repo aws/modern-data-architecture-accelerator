@@ -152,7 +152,7 @@ export abstract class MdaaCdkApp extends App {
     this.deployRegion = process.env.CI_SUPPLIED_TARGET_REGION || process.env.CDK_DEFAULT_REGION;
     this.additionalAccounts = this.node.tryGetContext('additional_accounts')?.split(',');
 
-    this.stack = this.createEmptyStack();
+    this.stack = this.createEmptyStack(packageName);
     this.additionalAccountStacks = Object.fromEntries(
       this.additionalAccounts?.map(account => {
         const stackName = this.naming.stackName(account);
@@ -322,9 +322,9 @@ export abstract class MdaaCdkApp extends App {
     parserProps: MdaaAppConfigParserProps,
   ): void;
 
-  private createEmptyStack(): MdaaStack {
+  private createEmptyStack(packageName: string): MdaaStack {
     const stackName = this.naming.stackName();
-    const stackDescription = `(${this.solutionId}-${this.moduleName}) ${this.solutionName}. Version ${this.solutionVersion}`;
+    const stackDescription = `(${this.solutionId}-${packageName}) ${this.solutionName}. Version ${this.solutionVersion}`;
     const stackProps = {
       naming: this.naming,
       description: stackDescription,
