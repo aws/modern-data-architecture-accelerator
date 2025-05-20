@@ -200,3 +200,37 @@ databases:
     description: Test Datazone Datasource
     locationPrefix: data/test-database3
     createDatazoneDatasource: true
+
+  # Verbatim DB Name Config
+  test-database4:
+    description: Test Database 4
+    verbatimNameFlag: true
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test4
+    lakeFormation:
+      createSuperGrantsForDataAdminRoles: true
+      createReadGrantsForDataEngineerRoles: true
+      createReadWriteGrantsForProjectExecutionRoles: true
+      createCrossAccountResourceLinkAccounts:
+        - "12312412"
+      grants:
+        example_condensed_read_grant:
+          principalArns:
+            principalA: arn:{{partition}}:iam::{{account}}:role/cross-account-role
+
+  # Iceberg Compliant DB Name Config
+  test-database5:
+    description: Test Database 5
+    icebergCompliantDbNameFlag: true
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test5
+    lakeFormation:
+      createSuperGrantsForDataAdminRoles: true
+      createReadGrantsForDataEngineerRoles: true
+      createReadWriteGrantsForProjectExecutionRoles: true
+      createCrossAccountResourceLinkAccounts:
+        - "12312412"
+      grants:
+        example_condensed_read_grant:
+          principalArns:
+            principalA: arn:{{partition}}:iam::{{account}}:role/cross-account-role

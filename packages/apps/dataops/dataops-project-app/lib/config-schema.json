@@ -709,6 +709,10 @@
                     "description": "General description of the database",
                     "type": "string"
                 },
+                "icebergCompliantDbNameFlag": {
+                    "description": "(Optional) When true, replaces hyphens with underscores in database name. Applies to verbatim db names as well.",
+                    "type": "boolean"
+                },
                 "lakeFormation": {
                     "$ref": "#/definitions/DatabaseLakeFormationProps"
                 },
@@ -719,6 +723,10 @@
                 "locationPrefix": {
                     "description": "S3 prefix under which all data for this database will be stored",
                     "type": "string"
+                },
+                "verbatimNameFlag": {
+                    "description": "(Optional) When true, create database with exact name as specified. Naming convention does not apply.",
+                    "type": "boolean"
                 }
             },
             "required": [

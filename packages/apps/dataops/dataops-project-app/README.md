@@ -200,6 +200,13 @@ datazone:
 databases:
   test-database1:
     description: Test Database 1
+        
+    # (Optional, default false) When true, create database with exact name as specified. Naming convention does not apply.
+    verbatimNameFlag: false
+
+    # (Optional, default false) When true, replaces hyphens with underscores in database name. Applies to verbatim db names as well.
+    icebergCompliantDbNameFlag: false
+    
     locationBucketName: some-bucket-name
     locationPrefix: data/test1
     lakeFormation:
@@ -275,4 +282,27 @@ databases:
     locationPrefix: data/test-database3
     createDatazoneDatasource: true
 
+# Verbatim DB Name Config
+  test-database4:
+    description: Test Database 4
+    verbatimNameFlag: true
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test4
+
+  # Iceberg Compliant DB Name Config
+  test-database5:
+    description: Test Database 5
+    icebergCompliantDbNameFlag: true
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test5
+    lakeFormation:
+      createSuperGrantsForDataAdminRoles: true
+      createReadGrantsForDataEngineerRoles: true
+      createReadWriteGrantsForProjectExecutionRoles: true
+      createCrossAccountResourceLinkAccounts:
+        - "12312412"
+      grants:
+        example_condensed_read_grant:
+          principalArns:
+            principalA: arn:{{partition}}:iam::{{account}}:role/cross-account-role
 ```

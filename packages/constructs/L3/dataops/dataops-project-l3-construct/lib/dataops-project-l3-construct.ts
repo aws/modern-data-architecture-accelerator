@@ -142,6 +142,14 @@ export interface DatabaseProps {
    */
   readonly description: string;
   /**
+   * (Optional) When true, create database with exact name as specified. Naming convention does not apply.
+   */
+  readonly verbatimNameFlag?: boolean;
+  /**
+   * (Optional) When true, replaces hyphens with underscores in database name. Applies to verbatim db names as well.
+   */
+  readonly icebergCompliantDbNameFlag?: boolean;
+  /**
    * S3 Bucket under which all data for this database will be stored
    */
   readonly locationBucketName?: string;
@@ -888,7 +896,8 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       const databaseName = entry[0];
       const databaseProps = entry[1];
 
-      const dbResourceName = this.props.naming.resourceName(databaseName);
+      const dbName = databaseProps.verbatimNameFlag ? databaseName : this.props.naming.resourceName(databaseName);
+      const dbResourceName = databaseProps.icebergCompliantDbNameFlag ? dbName.replace('-', '_') : dbName;
       const databaseBucket = databaseProps.locationBucketName
         ? MdaaBucket.fromBucketName(this, `database-bucket-${databaseName}`, databaseProps.locationBucketName)
         : projectBucket;
