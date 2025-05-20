@@ -202,10 +202,10 @@ databases:
     description: Test Database 1
         
     # (Optional, default false) When true, create database with exact name as specified. Naming convention does not apply.
-    verbatimNameFlag: false
+    verbatimName: false
 
     # (Optional, default false) When true, replaces hyphens with underscores in database name. Applies to verbatim db names as well.
-    icebergCompliantDbNameFlag: false
+    icebergCompliantName: false
     
     locationBucketName: some-bucket-name
     locationPrefix: data/test1
@@ -285,14 +285,14 @@ databases:
 # Verbatim DB Name Config
   test-database4:
     description: Test Database 4
-    verbatimNameFlag: true
+    verbatimName: true
     locationBucketName: some-bucket-name
     locationPrefix: data/test4
 
   # Iceberg Compliant DB Name Config
   test-database5:
     description: Test Database 5
-    icebergCompliantDbNameFlag: true
+    icebergCompliantName: true
     locationBucketName: some-bucket-name
     locationPrefix: data/test5
     lakeFormation:

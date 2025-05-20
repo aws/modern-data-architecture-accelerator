@@ -204,7 +204,7 @@ databases:
   # Verbatim DB Name Config
   test-database4:
     description: Test Database 4
-    verbatimNameFlag: true
+    verbatimName: true
     locationBucketName: some-bucket-name
     locationPrefix: data/test4
     lakeFormation:
@@ -221,7 +221,7 @@ databases:
   # Iceberg Compliant DB Name Config
   test-database5:
     description: Test Database 5
-    icebergCompliantDbNameFlag: true
+    icebergCompliantName: true
     locationBucketName: some-bucket-name
     locationPrefix: data/test5
     lakeFormation:

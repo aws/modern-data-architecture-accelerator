@@ -92,13 +92,13 @@ describe('MDAA Compliance Stack Tests', () => {
         locationPrefix: 'test-prefix',
       },
       test_database_verbatim: {
-        verbatimNameFlag: true,
+        verbatimName: true,
         description: 'testing_verbatim',
         locationBucketName: 'test-bucket-name',
         locationPrefix: 'test-prefix',
       },
       test_database_iceberg_compliant: {
-        icebergCompliantDbNameFlag: true,
+        icebergCompliantName: true,
         description: 'testing_nolf',
         locationBucketName: 'test-bucket-name',
         locationPrefix: 'test-prefix',

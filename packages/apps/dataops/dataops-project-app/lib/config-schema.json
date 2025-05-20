@@ -709,7 +709,7 @@
                     "description": "General description of the database",
                     "type": "string"
                 },
-                "icebergCompliantDbNameFlag": {
+                "icebergCompliantName": {
                     "description": "(Optional) When true, replaces hyphens with underscores in database name. Applies to verbatim db names as well.",
                     "type": "boolean"
                 },
@@ -724,7 +724,7 @@
                     "description": "S3 prefix under which all data for this database will be stored",
                     "type": "string"
                 },
-                "verbatimNameFlag": {
+                "verbatimName": {
                     "description": "(Optional) When true, create database with exact name as specified. Naming convention does not apply.",
                     "type": "boolean"
                 }
