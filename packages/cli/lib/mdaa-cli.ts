@@ -251,8 +251,6 @@ export class MdaaDeploy {
   }
 
   public deployDomain(domain: MdaaDomainConfig, domainEffectiveConfig: DomainEffectiveConfig) {
-    this.installPython();
-
     if (!this.devopsMode) {
       console.log(`-----------------------------------------------------------`);
       console.log(`Domain ${domainEffectiveConfig.domainName}: Running ${this.action}`);
