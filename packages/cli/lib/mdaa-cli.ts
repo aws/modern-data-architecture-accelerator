@@ -115,12 +115,18 @@ export class MdaaDeploy {
   private installPython() {
     const commandExists = require('command-exists');
     const pipCommandExists = commandExists.sync('pip');
+    const pip3CommandExists = commandExists.sync('pip3');
+    
     if (pipCommandExists) {
       const pipCmd = `pip install --upgrade -q -r ${__dirname}/../requirements.txt -t ${this.workingDir}/python`;
       console.log(`Found pip. Installing python with cmd: ${pipCmd}`);
       this.execCmd(pipCmd);
+    } else if (pip3CommandExists) {
+      const pipCmd = `pip3 install --upgrade -q -r ${__dirname}/../requirements.txt -t ${this.workingDir}/python`;
+      console.log(`Found pip3. Installing python with cmd: ${pipCmd}`);
+      this.execCmd(pipCmd);
     } else {
-      throw new Error('pip not availalable');
+      throw new Error('pip not available');
     }
   }
 
