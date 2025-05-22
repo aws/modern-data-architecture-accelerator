@@ -1,6 +1,16 @@
 #!/bin/bash
 set -e
-parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
-sh "$parent_path/../scripts/check_node_version.sh"
+
+# Resolve the real path of the script, following symlinks
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+  DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+
+echo "Running: $SCRIPT_DIR/../scripts/check_node_version.sh"
+sh "$SCRIPT_DIR/../scripts/check_node_version.sh"
 echo ""
-node "$parent_path/../lib/mdaa" $@
+node "$SCRIPT_DIR/../lib/mdaa" "$@"

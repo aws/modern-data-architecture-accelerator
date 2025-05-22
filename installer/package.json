@@ -1,6 +1,7 @@
 {
   "name": "@aws-mdaa/installer",
   "version": "0.1.0",
+  "license": "Apache-2.0",
   "bin": {
     "mdaa-installer": "bin/mdaa-installer.js"
   },
@@ -23,5 +24,9 @@
   "dependencies": {
     "aws-cdk-lib": "2.181.1",
     "constructs": "^10.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
   }
 }

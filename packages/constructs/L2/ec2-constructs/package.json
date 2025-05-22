@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://aws.amazon.com/solutions"
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -52,8 +52,12 @@
     "@aws-mdaa/naming": "^1.0.0",
     "aws-cdk-lib": "2.195.0",
     "cdk-nag": "2.35.25",
-    "constructs": "10.0.96"
+    "constructs": "10.0.96",
+    "lodash": "4.17.21"
   },
+  "bundledDependencies": [
+    "lodash"
+  ],
   "peerDependencies": {
     "@aws-mdaa/construct": "1.0.0",
     "@aws-mdaa/custom-constructs": "1.0.0",

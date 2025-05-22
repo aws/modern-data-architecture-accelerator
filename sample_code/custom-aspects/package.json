@@ -32,5 +32,9 @@
   "dependencies": {
     "aws-cdk-lib": "2.132.1"
   },
-  "gitHead": "bb9c8d94a850be6573e8a5a7b9ba705c366bf107"
+  "gitHead": "bb9c8d94a850be6573e8a5a7b9ba705c366bf107",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
+  }
 }

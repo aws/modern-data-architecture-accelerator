@@ -45,5 +45,9 @@
     "constructs": "10.0.96",
     "source-map-support": "0.5.21",
     "yaml": "1.10.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
   }
 }

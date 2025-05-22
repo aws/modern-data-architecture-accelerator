@@ -3,6 +3,7 @@
   "private": true,
   "bin": "./packages/cli/bin/mdaa",
   "version": "1.0.0",
+  "license": "Apache-2.0",
   "scripts": {
     "git-clean": "git clean -Xfd -e !development -e !development/** -e !.vscode -e !.vscode/** -e !.idea -e !.idea/**",
     "lint": "lerna run lint --stream",
@@ -72,5 +73,9 @@
     "packages/utilities/*",
     "packages/apps/*/*",
     "schemas"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
+  }
 }

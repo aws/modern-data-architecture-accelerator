@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://aws.amazon.com/solutions"
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
   },
   "scripts": {
     "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references",
@@ -44,7 +44,8 @@
   },
   "bundledDependencies": [
     "@aws-mdaa/s3-bucketpolicy-helper",
-    "@aws-mdaa/s3-inventory-helper"
+    "@aws-mdaa/s3-inventory-helper",
+    "lodash"
   ],
   "peerDependencies": {
     "@aws-mdaa/athena-workgroup-l3-construct": "1.0.0",
@@ -79,7 +80,8 @@
     "@aws-mdaa/sm-studio-domain-l3-construct": "^1.0.0",
     "aws-cdk-lib": "2.195.0",
     "cdk-nag": "2.35.25",
-    "constructs": "10.0.96"
+    "constructs": "10.0.96",
+    "lodash": "4.17.21"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
   "stability": "experimental",

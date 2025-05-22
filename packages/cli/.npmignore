@@ -1,3 +1,19 @@
+# Don't include original .ts files when doing `npm pack`
+*.ts
+*.tsbuildinfo
+.eslintrc.js
+tsconfig.json
+typedoc.json
+
+# dev-related files
+coverage
+test/
+
+# pack output
+*.tgz
+
+dist
+
 #Exclude coverage reports for bundled deps
 node_modules/**/coverage/*
 # Exclude typescript source and config
@@ -8,3 +24,5 @@ node_modules/**/coverage/*
 !*.js
 !*.d.ts
 !requirements.txt
+
+jest.config.js

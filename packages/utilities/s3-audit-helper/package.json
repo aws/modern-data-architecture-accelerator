@@ -17,6 +17,7 @@
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "devDependencies": {
+    "@aws-mdaa/testing": "1.0.0",
     "@types/jest": "29.5.0",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -39,5 +40,9 @@
     "cdk-nag": "2.35.25",
     "constructs": "10.0.96"
   },
-  "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31"
+  "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
+  }
 }

@@ -1,6 +1,23 @@
+# Don't include original .ts files when doing `npm pack`
+*.ts
+*.tsbuildinfo
+.eslintrc.js
+tsconfig.json
+typedoc.json
+
+# dev-related files
+coverage
+test/
+
+# pack output
+*.tgz
+
+dist
+
 *.ts
 !*.d.ts
 
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+jest.config.js

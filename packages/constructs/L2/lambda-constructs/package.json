@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://aws.amazon.com/solutions"
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

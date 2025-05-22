@@ -11,5 +11,9 @@
   "dependencies": {
     "fs-extra": "^10.0.0",
     "glob": "^7.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws/modern-data-architecture-accelerator"
   }
 }

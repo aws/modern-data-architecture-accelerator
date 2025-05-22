@@ -1,3 +1,19 @@
+# Don't include original .ts files when doing `npm pack`
+*.ts
+*.tsbuildinfo
+.eslintrc.js
+tsconfig.json
+typedoc.json
+
+# dev-related files
+coverage
+test/
+
+# pack output
+*.tgz
+
+dist
+
 
 #Exclude coverage reports for bundled deps
 node_modules/**/coverage/*
@@ -15,3 +31,4 @@ jsii-dist
 # Include .jsii and .jsii.gz
 !.jsii
 !.jsii.gz
+jest.config.js
