@@ -634,6 +634,7 @@ export class MdaaDeploy {
   }
 
   private computeModuleDeployStage(moduleDeployConfig: ModuleDeploymentConfig): string {
+    // First check for explicit stage in mdaa.config.json
     const moduleMdaaDeployConfigFile = `${moduleDeployConfig.modulePath}/mdaa.config.json`;
     // nosemgrep
     if (fs.existsSync(moduleMdaaDeployConfigFile)) {
@@ -647,6 +648,24 @@ export class MdaaDeploy {
         return deployStage;
       }
     }
+    
+    // Second check for module order in the YAML config
+    const domainConfig = this.config.contents.domains[moduleDeployConfig.domainName];
+    if (domainConfig) {
+      const envConfig = domainConfig.environments[moduleDeployConfig.envName];
+      if (envConfig && envConfig.modules) {
+        // Get all module names in the order they appear in the config
+        const moduleNames = Object.keys(envConfig.modules);
+        const moduleIndex = moduleNames.indexOf(moduleDeployConfig.moduleName);
+        const orderBasedStage = (moduleIndex + 1).toString();
+        console.log(
+          `Module ${moduleDeployConfig.domainName}/${moduleDeployConfig.envName}/${moduleDeployConfig.moduleName}: Set deploy stage to ${orderBasedStage} based on mdaa config order`,
+        );
+        return orderBasedStage;
+      }
+    }
+    
+    // Fall back to default stage
     console.log(
       `Module ${moduleDeployConfig.domainName}/${moduleDeployConfig.envName}/${moduleDeployConfig.moduleName}: Set deploy stage to ${MdaaDeploy.DEFAULT_DEPLOY_STAGE} by default`,
     );
