@@ -111,6 +111,7 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
     const resolvedParamsConfigContents = new MdaaConfigTransformer(paramTransformer, paramTransformer).transformConfig(
       resolvedRefsConfigContents,
     );
+    // TYPE_WARNING: not clear why this should work
     this.configContents = resolvedParamsConfigContents as unknown as T;
 
     // Confirm our provided config matches our Schema (verification of Data shape)

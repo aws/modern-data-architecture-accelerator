@@ -152,6 +152,7 @@ export class WebSocketApi extends MdaaL3Construct {
 
     const apiAccessLogGroup = new MdaaLogGroup(this, 'WebSocketApiLogGroup', apiAccessLogGroupProps);
 
+    // TYPE_WARNING: the child of a websocket stage is safely assumed to be a stage too?
     const cfnStage = stage.node.defaultChild as unknown as apigwv2.CfnStage;
     cfnStage.accessLogSettings = {
       destinationArn: apiAccessLogGroup.logGroupArn,

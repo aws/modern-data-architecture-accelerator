@@ -10,7 +10,6 @@ import {
   MdaaCustomAspect,
   MdaaCustomNaming,
   TagElement,
-  Workspace,
 } from '@aws-mdaa/config';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -31,6 +30,7 @@ import {
 } from './config-types';
 import { getMdaaConfig } from './module-service';
 import { findDuplicates, generateContextCdkParams, isBoolean } from './utils';
+import { loadLocalPackages } from './package-helper';
 
 export interface DeployStageMap {
   [key: string]: ModuleDeploymentConfig[];
@@ -105,7 +105,7 @@ export class MdaaDeploy {
       this.execCmd(`rm -rf '${this.workingDir}/python'`);
     }
 
-    this.localPackages = this.loadLocalPackages();
+    this.localPackages = loadLocalPackages();
 
     if (this.devopsMode) {
       console.log('Running MDAA in devops mode.');
@@ -152,30 +152,6 @@ export class MdaaDeploy {
         return new MdaaCliConfig({ filename: configFileName });
       }
     }
-  }
-
-  private loadLocalPackages() {
-    // nosemgrep
-    const workspaceQueryJson = require('child_process')
-      .execSync(`npm query .workspace --prefix '${__dirname}/../../../'`)
-      .toString();
-    // ISSUE-499 needs validation on the edge. We can't guarantee `Workspace` is what we are getting
-    const workspace: Workspace[] = JSON.parse(workspaceQueryJson);
-    const localPackages = Object.fromEntries(
-      workspace
-        .filter(pkgInfo => {
-          return pkgInfo['location'].startsWith('packages/apps/');
-        })
-        .map(pkgInfo => {
-          // nosemgrep
-          return [`${pkgInfo['name']}`, path.resolve(`${__dirname}/../../../${pkgInfo['location']}`)];
-        }),
-    );
-    /* istanbul ignore next */
-    if (Object.entries(localPackages).length > 0) {
-      console.log(`Loaded ${Object.entries(localPackages).length} MDAA modules from local codebase.`);
-    }
-    return localPackages;
   }
 
   public sanityCheck() {
@@ -553,11 +529,11 @@ export class MdaaDeploy {
       context: moduleConfig.effectiveContext,
     };
     const refsTransformer = new MdaaConfigRefValueTransformer(transformRefsProps);
-    Object.entries(moduleConfig.effectiveModuleConfig).forEach(configEntry => {
+    Object.entries(moduleConfig.effectiveModuleConfig).forEach(([configKey, configValue]) => {
       tfCmd.push(
-        `-var ${configEntry[0]}="${JSON.stringify(
-          // ISSUE-499 see if there is a guarantee that `configEntry` value is a string
-          JSON.stringify(refsTransformer.transformValue(configEntry[1] as string)),
+        `-var ${configKey}="${JSON.stringify(
+          // TYPE_WARNING: see if there is a guarantee that `configEntry` value is a string
+          JSON.stringify(refsTransformer.transformValue(configValue as string)),
         )}"`,
       );
     });

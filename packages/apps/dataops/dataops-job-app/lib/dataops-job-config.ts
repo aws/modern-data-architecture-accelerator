@@ -5,7 +5,7 @@
 
 import { MdaaAppConfigParserProps } from '@aws-mdaa/app';
 import { JobConfig } from '@aws-mdaa/dataops-job-l3-construct';
-import { MdaaDataOpsConfigParser, MdaaDataOpsConfigContents } from '@aws-mdaa/dataops-shared';
+import { MdaaDataOpsConfigContents, MdaaDataOpsConfigParser } from '@aws-mdaa/dataops-shared';
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
@@ -25,10 +25,7 @@ export function isObject<T>(item: unknown): item is Record<string, T> {
  * @param target
  * @param sources
  */
-export function mergeDeep(
-  target: Record<string, unknown>,
-  ...sources: Array<Record<string, unknown>>
-): Record<string, unknown> {
+export function mergeDeep<T>(target: T, ...sources: Array<T>): T {
   if (!sources.length) return target;
   const source = sources.shift();
 
@@ -36,8 +33,7 @@ export function mergeDeep(
     for (const key in source) {
       if (isObject(source[key])) {
         if (!target[key]) Object.assign(target, { [key]: {} });
-        // Sonar is wrong, you need to force type to Record since source[key] is unknown
-        mergeDeep(target[key] as Record<string, unknown>, source[key] as Record<string, unknown>); // NOSONAR
+        mergeDeep(target[key], source[key]);
       } else {
         Object.assign(target, { [key]: source[key] });
       }
@@ -76,8 +72,8 @@ export class GlueJobConfigParser extends MdaaDataOpsConfigParser<GlueJobConfigCo
         }
         const jobTemplate = configContents.templates[jobConfig.template];
         //Create a copy of the template as the merged job definition is not immutable
-        const jobTemplateCopy = JSON.parse(JSON.stringify(jobTemplate)) as ConfigurationElement;
-        jobConfig = mergeDeep(jobTemplateCopy, jobConfig as unknown as ConfigurationElement) as unknown as JobConfig;
+        const jobTemplateCopy = JSON.parse(JSON.stringify(jobTemplate)) as JobConfig;
+        jobConfig = mergeDeep(jobTemplateCopy, jobConfig);
       }
       resolvedJobConfigs = { ...resolvedJobConfigs, ...{ [jobName]: jobConfig } };
     });
@@ -91,9 +87,10 @@ export class GlueJobConfigParser extends MdaaDataOpsConfigParser<GlueJobConfigCo
     return {
       ...props,
       ...{
-        rawConfig: GlueJobConfigParser.mergeJobConfigs(
-          props.rawConfig as unknown as GlueJobConfigContents,
-        ) as unknown as ConfigurationElement,
+        rawConfig: {
+          // TYPE_WARNING: need to trust that `rawConfig` looks like GlueJobConfigContents
+          ...GlueJobConfigParser.mergeJobConfigs(props.rawConfig as unknown as GlueJobConfigContents),
+        } as ConfigurationElement,
       },
     };
   }

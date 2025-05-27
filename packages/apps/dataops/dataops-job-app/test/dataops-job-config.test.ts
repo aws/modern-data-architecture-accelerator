@@ -13,8 +13,13 @@ describe('mergeDeep', () => {
   });
 
   test('should merge simple objects', () => {
-    const target = { a: 1, b: 2 };
-    const source = { b: 3, c: 4 };
+    type TestType = {
+      a?: number;
+      b?: number;
+      c?: number;
+    };
+    const target: TestType = { a: 1, b: 2 };
+    const source: TestType = { b: 3, c: 4 };
     expect(mergeDeep(target, source)).toEqual({ a: 1, b: 3, c: 4 });
   });
 
@@ -26,30 +31,57 @@ describe('mergeDeep', () => {
   });
 
   test('should handle deeply nested objects', () => {
-    const target = { a: { b: { c: { d: 1 } } } };
-    const source = { a: { b: { c: { e: 2 } } } };
+    type TestType = {
+      a?: {
+        b?: {
+          c?: {
+            d?: number;
+            e?: number;
+          };
+        };
+      };
+    };
+    const target: TestType = { a: { b: { c: { d: 1 } } } };
+    const source: TestType = { a: { b: { c: { e: 2 } } } };
     expect(mergeDeep(target, source)).toEqual({ a: { b: { c: { d: 1, e: 2 } } } });
   });
 
   // Multiple sources tests
   test('should merge multiple sources', () => {
-    const target = { a: 1 };
-    const source1 = { b: 2 };
-    const source2 = { c: 3 };
+    type TestType = {
+      a?: number;
+      b?: number;
+      c?: number;
+    };
+    const target: TestType = { a: 1 };
+    const source1: TestType = { b: 2 };
+    const source2: TestType = { c: 3 };
     expect(mergeDeep(target, source1, source2)).toEqual({ a: 1, b: 2, c: 3 });
   });
 
   test('should merge multiple sources with overlapping properties', () => {
-    const target = { a: 1, b: 2 };
-    const source1 = { b: 3, c: 4 };
-    const source2 = { c: 5, d: 6 };
+    type TestType = {
+      a?: number;
+      b?: number;
+      c?: number;
+      d?: number;
+    };
+    const target: TestType = { a: 1, b: 2 };
+    const source1: TestType = { b: 3, c: 4 };
+    const source2: TestType = { c: 5, d: 6 };
     expect(mergeDeep(target, source1, source2)).toEqual({ a: 1, b: 3, c: 5, d: 6 });
   });
 
   // Edge cases
   test('should create new objects for missing nested properties', () => {
-    const target = { a: 1 };
-    const source = { b: { c: 2 } };
+    type TestType = {
+      a?: number;
+      b?: {
+        c?: number;
+      };
+    };
+    const target: TestType = { a: 1 };
+    const source: TestType = { b: { c: 2 } };
     expect(mergeDeep(target, source)).toEqual({ a: 1, b: { c: 2 } });
   });
 
@@ -62,14 +94,28 @@ describe('mergeDeep', () => {
   // Non-object values
   // Not clear if this is a valid expectation
   xtest('should overwrite primitive values with object values', () => {
-    const target = { a: 1 };
-    const source = { a: { b: 2 } };
+    type TestType = {
+      a?:
+        | number
+        | {
+            b?: number;
+          };
+    };
+    const target: TestType = { a: 1 };
+    const source: TestType = { a: { b: 2 } };
     expect(mergeDeep(target, source)).toEqual({ a: { b: 2 } });
   });
 
   test('should overwrite object values with primitive values', () => {
-    const target = { a: { b: 2 } };
-    const source = { a: 1 };
+    type TestType = {
+      a?:
+        | {
+            b?: number;
+          }
+        | number;
+    };
+    const target: TestType = { a: { b: 2 } };
+    const source: TestType = { a: 1 };
     expect(mergeDeep(target, source)).toEqual({ a: 1 });
   });
 
@@ -130,14 +176,26 @@ describe('mergeDeep', () => {
 
   // Null and undefined handling
   test('should handle null values', () => {
-    const target = { a: 1, b: { c: 2 } };
-    const source = { b: null };
+    type TestType = {
+      a?: number;
+      b?: null | {
+        c?: number;
+      };
+    };
+    const target: TestType = { a: 1, b: { c: 2 } };
+    const source: TestType = { b: null };
     expect(mergeDeep(target, source)).toEqual({ a: 1, b: null });
   });
 
   test('should handle undefined values', () => {
-    const target = { a: 1, b: { c: 2 } };
-    const source = { b: undefined };
+    type TestType = {
+      a?: number;
+      b?: {
+        c?: number;
+      };
+    };
+    const target: TestType = { a: 1, b: { c: 2 } };
+    const source: TestType = { b: undefined };
     expect(mergeDeep(target, source)).toEqual({ a: 1, b: undefined });
   });
 });

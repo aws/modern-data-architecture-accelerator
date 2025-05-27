@@ -14,7 +14,7 @@ import {
 import Ajv, { JSONSchemaType, ValidateFunction } from 'ajv';
 import * as fs from 'fs';
 import * as yaml from 'yaml';
-import * as configSchema from './config-schema.json';
+import * as configJsonSchema from './config-schema.json';
 import { DevOpsConfigContents } from '@aws-mdaa/devops';
 // nosemgrep
 import path = require('path');
@@ -27,7 +27,7 @@ export interface MdaaModuleConfig {
    */
   readonly module_type?: 'cdk' | 'tf';
   /**
-   * The the path to the module. If an npm package is specified, MDAA will attempt to locate the package in its local repo (in local mode) or install via NPM
+   * The path to the module. If an npm package is specified, MDAA will attempt to locate the package in its local repo (in local mode) or install via NPM
    */
   readonly module_path?: string;
   /**
@@ -235,7 +235,7 @@ export interface MdaaConfigContents {
   /**
    * A list of paths to tag configuration files.
    * Configurations will be compiled together in the order they appear,
-   * with later configuration files taking precendence over earlier configurations.
+   * with later configuration files taking precedence over earlier configurations.
    */
   readonly tag_configs?: string[];
   /**
@@ -285,10 +285,8 @@ export class MdaaCliConfig {
 
   private props: MdaaParserConfig;
 
-  // ISSUE-499 need to revisit this to make sure the types really match
-  private configSchema: JSONSchemaType<MdaaConfigContents> =
-    configSchema as unknown as JSONSchemaType<MdaaConfigContents>;
-
+  // TYPE_WARNING: need to revisit this to make sure the types really match
+  private configSchema = configJsonSchema as unknown as JSONSchemaType<MdaaConfigContents>;
   private static readonly VALIDATE_NAME_REGEXP = '^[a-z0-9\\-]+$';
 
   constructor(props: MdaaParserConfig) {
@@ -302,7 +300,7 @@ export class MdaaCliConfig {
     if (this.props.filename) {
       // nosemgrep
       const configFileContentsString = fs.readFileSync(this.props.filename, { encoding: 'utf8' });
-      let relativePathTransformedContents;
+      let relativePathTransformedContents: unknown;
       try {
         const parsedContents = yaml.parse(configFileContentsString);
         //Resolve relative paths in parsedYaml
@@ -320,7 +318,7 @@ export class MdaaCliConfig {
         );
       }
       // Config file is shaped correctly and contains required values!
-      this.contents = relativePathTransformedContents as unknown as MdaaConfigContents;
+      this.contents = relativePathTransformedContents as MdaaConfigContents;
     } else {
       if (!configShapeValidator(this.props.configContents)) {
         throw new Error(

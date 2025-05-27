@@ -28,7 +28,6 @@ import { Construct } from 'constructs';
 import { resolve } from 'path';
 import { parse } from 'yaml';
 import { readFileSync } from 'fs';
-import { ConfigurationElement } from '@aws-mdaa/config';
 
 /**
  * Define UsageProfile types
@@ -79,10 +78,12 @@ export interface GenerateManagedPolicyProps {
    */
   readonly statements?: PolicyStatement[];
 }
+
 export interface SuppressionProps {
   readonly id: string;
   readonly reason: string;
 }
+
 export interface GenerateRoleWithNameProps extends GenerateRoleProps {
   /**
    * Name of the role.
@@ -236,9 +237,7 @@ export class RolesL3Construct extends MdaaL3Construct {
 
   private createMdaaManagedPolicies(): MdaaPersonaAndManagedPolicies {
     const personaToMdaaPolicyMap: { [key: string]: string[] } = {};
-    const personaConfig = this.loadPolicyConfig(
-      '../policy-statements/persona-map.yaml',
-    ) as unknown as PersonaConfigProps;
+    const personaConfig = this.loadPolicyConfig('../policy-statements/persona-map.yaml') as PersonaConfigProps;
     const mdaaPolicySet = new Set<string>();
     Object.entries(personaConfig.personas).forEach(([basePersona, personaProps]) => {
       personaProps.forEach(policyConfigFile => {
@@ -392,8 +391,7 @@ export class RolesL3Construct extends MdaaL3Construct {
       //  Read the configuration file
       // nosemgrep
       const rawConfigFile = readFileSync(configFilePath, 'utf8');
-      const rawConfig: ConfigurationElement = parse(rawConfigFile);
-      return rawConfig;
+      return parse(rawConfigFile);
     } catch (err) {
       console.log(err);
       throw err;

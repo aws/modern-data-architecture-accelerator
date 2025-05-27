@@ -457,7 +457,7 @@ export abstract class MdaaCdkApp extends App {
   }
   /**
    *
-   * @returns Astandard set of MDAA Stack Props for use in Mdaa App Configs
+   * @returns A standard set of MDAA Stack Props for use in Mdaa App Configs
    */
   private getConfigParserProps(): MdaaAppConfigParserProps {
     return {

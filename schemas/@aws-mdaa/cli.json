@@ -364,7 +364,7 @@
                     "type": "array"
                 },
                 "module_path": {
-                    "description": "The the path to the module. If an npm package is specified, MDAA will attempt to locate the package in its local repo (in local mode) or install via NPM",
+                    "description": "The path to the module. If an npm package is specified, MDAA will attempt to locate the package in its local repo (in local mode) or install via NPM",
                     "type": "string"
                 },
                 "module_type": {
@@ -745,7 +745,7 @@
             "type": "object"
         },
         "tag_configs": {
-            "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+            "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precedence over earlier configurations.",
             "items": {
                 "type": "string"
             },
