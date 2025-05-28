@@ -6,11 +6,13 @@ This README describes the MDAA Installer pipeline and provides instructions for 
 
 The MDAA Installer pipeline is a CI/CD pipeline built using AWS CDK. It supports two source options:
 
-1. GitHub repository
+1. GitHub repository. This is done through AWS CodeConnections.
+   1. Go to the CodeDeploy page
+   2. On the left navigation, go to Settings and select "Connections" to create a connection. You will need the ARN of the created connection. 
 2. S3 bucket
     1. this must be in the same region as the deployment
     2. The key must be pointing to a zip file
-    3. the zip file contains the project. The project contains `package-lock.json` at the very top level.
+    3. the zip file contains the project. The project contains `package-lock.json` at the very top level. See the "Additional Notes" below on how to generate the zip files using `git`.
 
 The pipeline consists of two main stages:
 
@@ -22,8 +24,9 @@ For internal development, the following two methods are used. However, ultimatel
 
 ### Setup with S3 Option
 S3 is mostly for testing only in the absence of a github repo. Before using S3, the bucket needs to be set up.
-
-Note that the bucket must be in the same region as the CloudFormation stack that will create the CodePipeline in that region.
+#### Notes
+1. the bucket must be in the same region as the CloudFormation stack that will create the CodePipeline in that region.
+2. Because CDK automatically generates a default policy that uses the CodeConnect ARN, even if you're using S3 and not CodeConnect, you need to provide `*` in the CodeConnect ARN input to avoid a deployment error.
 
 1. Create verion-enabled bucket:
 ```bash
@@ -40,7 +43,7 @@ aws s3api put-bucket-versioning \
 2. Create a folder and place the zip file of mdaa repo in it. (Remember that the top level should already be the top level of the repo. The repo cannot be inside a folder!)
 3. Upload the zip file
 ```bash
-aws cp mdaa.zip s3://your-bucket-name/release/mdaa.zip
+aws s3 cp mdaa.zip s3://your-bucket-name/release/mdaa.zip
 ```
 
 
@@ -50,7 +53,7 @@ To deploy using CDK directly:
 
 1. Ensure you have the AWS CDK CLI installed and configured
 2. Clone this repository
-3. Navigate to the project directory
+3. Navigate to the `installer` folder of the project directory
 4. Install dependencies:
    ```
    npm install
@@ -132,7 +135,6 @@ From either the EC2 instance or within a bash shell of the docker container:
 
 ## Additional Notes
 
-- If using private GitHub repository, ensure the GitHub token is stored in AWS Secrets Manager with the name "github-token" before deployment
 - If working with a non-github repository, you'd use the S3 option. The simplest way to zip the whole repository is, from the top level of the local repository folder, run:
    - To zip the `HEAD`: `git archive --format=zip -o mdaa.zip HEAD`
    - To zip the current state of the local folder, including uncommitted changes: `git ls-files -c -o --exclude-standard | zip -@ ../mdaa.zip`

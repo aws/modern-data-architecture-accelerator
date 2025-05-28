@@ -448,6 +448,12 @@ export class MdaaInstallerStack extends cdk.Stack {
       }
     });
 
+    githubPipelineRole.node.findAll().forEach(child => {
+      if (child instanceof iam.CfnPolicy) {
+        child.cfnOptions.condition = useGitHubCondition;
+      }
+    });
+
     // Apply conditions to all resources related to S3 pipeline
     s3Pipeline.node.findAll().forEach(child => {
       if (child instanceof cdk.CfnResource) {
