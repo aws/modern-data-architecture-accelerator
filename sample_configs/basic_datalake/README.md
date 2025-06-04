@@ -54,8 +54,12 @@ basic_datalake
 └───dataops
 │    └───project.yaml
 │    └───crawler.yaml
+|
+└───governance
+│    └───audit.yaml
+│    └───audit-trail.yaml
 │
-└──-sample_data  
+  
 ```
 
 ***
@@ -137,11 +141,35 @@ This configuration will create Glue crawlers using the DataOps Crawler module.
 --8<-- "target/docs/sample_configs/basic_datalake/dataops/crawler.yaml"
 ```
 
+### governance/audit.yaml
+
+This configuration will be used by the MDAA audit module to deploy the resources required to define a secure S3-based bucket on AWS for use as a Cloudtrail or S3 Inventory target.
+
+
+
+```yaml
+# Contents available in governance/audit.yaml
+--8<-- "target/docs/sample_configs/basic_datalake/governance/audit.yaml"
+```
+
+### governance/audit-trail.yaml
+
+This configuration will be used by the MDAA S3 Data Lake module to deploy the resources required to define a secure S3-based Audit Trail on AWS.
+
+```yaml
+# Contents available in goveranance/audit-trail.yaml
+--8<-- "target/docs/sample_configs/basic_datalake/governance/audit-trail.yaml"
+```
+
+***
+
 ## Usage Instructions
 
 Once the MDAA deployment is complete, follow the following steps to interact with the data lake.
 
-1. Assume the `data-admin` role created by the MDAA deployment. This role is configured with AssumeRole trust to the local account by default. Note that this role is the only role configured with write access to the data lake. All other roles (including existing administrator roles in the account) will be denied write access.
+1. Check the `DATASETS.md` file in the same directory to create a sample_data folder
+
+2. Assume the `data-admin` role created by the MDAA deployment. This role is configured with AssumeRole trust to the local account by default. Note that this role is the only role configured with write access to the data lake. All other roles (including existing administrator roles in the account) will be denied write access.
 
 2. Upload the `./sample_data` folder and contents to `<transformed_bucket>/data/sample_data`
 

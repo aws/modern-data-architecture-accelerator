@@ -61,6 +61,18 @@ domains:
             module_configs:
               - ./datalake/athena.yaml
 
+          # This module will create a secure S3-based bucket for use as a Cloudtrail Inventory target.
+          audit: 
+            module_path: "@aws-mdaa/audit" 
+            module_configs:
+              - ./governance/audit.yaml 
+          
+          # This module will create a secure S3-based Audit Trail.
+          audit-trail: 
+            module_path: "@aws-mdaa/audit-trail" 
+            module_configs:
+              - ./governance/audit-trail.yaml
+
   # The named of the domain. In this case, we are building a 'dataops' domain.
   dataops:
     # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
