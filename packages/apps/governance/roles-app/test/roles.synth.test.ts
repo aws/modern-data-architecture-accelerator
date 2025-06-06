@@ -4,6 +4,8 @@
  */
 
 import { GenerateRolesCDKApp } from '../lib/roles';
+import { CloudAssembly } from 'aws-cdk-lib/cx-api';
+import { Template } from 'aws-cdk-lib/assertions';
 
 test('SynthTest', () => {
   const context = {
@@ -14,11 +16,26 @@ test('SynthTest', () => {
     module_configs: './test/test-config.yaml',
   };
   const app = new GenerateRolesCDKApp({ context: context });
-  app.generateStack();
-  expect(() =>
-    app.synth({
+  const appStack = app.generateStack();
+  const template = Template.fromStack(appStack);
+
+  // check verbatim feature
+  template.hasResourceProperties('AWS::IAM::Role', {
+    RoleName: 'test-org-test-env-test-domain-test-module-application_--65040600',
+  });
+  template.hasResourceProperties('AWS::IAM::Role', {
+    RoleName: 'test-role-verbatim',
+  });
+
+  // test the synthesis
+  let res: CloudAssembly | undefined;
+  expect(() => {
+    res = app.synth({
       force: true,
       validateOnSynthesis: true,
-    }),
-  ).not.toThrow();
+    });
+  }).not.toThrow();
+  if (res) {
+    expect(res.stacks.length).toEqual(1);
+  }
 });

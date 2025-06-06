@@ -24,7 +24,7 @@ describe('Replication Instance Compliance Tests', () => {
   );
   const replicationInstanceProps: MdaaReplicationInstanceProps = {
     kmsKey: testKey,
-    replicationInstanceClass: 'dms.t2.micro',
+    replicationInstanceClass: 'dms.t3.micro',
     naming: testApp.naming,
     replicationSubnetGroupIdentifier: subnetGroup.attrId,
   };

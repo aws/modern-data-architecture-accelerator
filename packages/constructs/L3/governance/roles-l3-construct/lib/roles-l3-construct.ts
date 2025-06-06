@@ -117,6 +117,11 @@ export interface GenerateRoleProps {
    * Conditions to apply to the assume role trust policy
    */
   readonly assumeRoleTrustConditions?: { [key: string]: Condition };
+
+  /**
+   * If true (default false), role name will be set verbatim instead of using the naming class
+   */
+  readonly verbatimRoleName?: boolean;
   /**
    * List of AWS Managed policies to associate to the role.
    */
@@ -311,6 +316,7 @@ export class RolesL3Construct extends MdaaL3Construct {
         roleName: generateRole.name,
         managedPolicies: managedPolicies,
         naming: this.props.naming,
+        verbatimRoleName: generateRole.verbatimRoleName,
       });
 
       generateRole.additionalTrustedPrincipals?.forEach(trustPrincipalProps => {

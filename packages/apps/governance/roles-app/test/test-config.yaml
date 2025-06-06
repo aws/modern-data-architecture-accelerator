@@ -60,6 +60,18 @@ generateRoles:
     suppressions:
       - id: "AwsSolutions-IAM4"
         reason: "AWSLambdaBasicExecutionRole approved for use"
+  test-role-verbatim:
+    # must use this role name
+    verbatimRoleName: true
+    # By trusting 'this_account', AssumeRoleTrust will be established with IAM root of this account
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - service-role/AWSLambdaBasicExecutionRole
+    generatedPolicies:
+      - TestPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for use"
   glue-role:
     trustedPrincipal: service:glue.amazonaws.com
     awsManagedPolicies:

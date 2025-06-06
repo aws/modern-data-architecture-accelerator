@@ -5,16 +5,15 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
-import { Match } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { PolicyDocument } from 'aws-cdk-lib/aws-iam';
 import {
+  BasePersona,
   FederationProps,
   GenerateManagedPolicyWithNameProps,
   GenerateRoleWithNameProps,
   RolesL3Construct,
   RolesL3ConstructProps,
-  BasePersona,
 } from '../lib';
 
 describe('MDAA Compliance Stack Tests', () => {
@@ -111,6 +110,11 @@ describe('MDAA Compliance Stack Tests', () => {
           reason: 'unit testing',
         },
       ],
+    },
+    {
+      name: 'test-role7',
+      trustedPrincipal: 'this_account',
+      verbatimRoleName: true,
     },
   ];
 
@@ -335,5 +339,13 @@ describe('MDAA Compliance Stack Tests', () => {
         RoleName: 'test-org-test-env-test-domain-test-module-test-usage-profile-2',
       }),
     );
+  });
+  test('Role with expected verbatim name', () => {
+    template.hasResourceProperties('AWS::IAM::Role', {
+      RoleName: 'test-org-test-env-test-domain-test-module-test-role1',
+    });
+    template.hasResourceProperties('AWS::IAM::Role', {
+      RoleName: 'test-role7',
+    });
   });
 });

@@ -62,7 +62,9 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
    * Initializes IAM Role Resolver and performs standard config transformations.
    * @param stack
    * @param props
+   * @param configSchema
    * @param configTransformers
+   * @param suppressOutputConfigContents
    */
   constructor(
     stack: Stack,
@@ -93,10 +95,10 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
       module_name: this.stack.node.tryGetContext('module_name'),
       scope: this.stack,
     };
-    const configRefValueTranformer = new MdaaConfigRefValueTransformer(configRefValueTranformerProps);
+    const configRefValueTransformer = new MdaaConfigRefValueTransformer(configRefValueTranformerProps);
     const resolvedRefsConfigContents = new MdaaConfigTransformer(
-      configRefValueTranformer,
-      configRefValueTranformer,
+      configRefValueTransformer,
+      configRefValueTransformer,
     ).transformConfig(ssmToRefResolvedConfigContents);
 
     const baseConfigContents = resolvedRefsConfigContents as MdaaBaseConfigContents;

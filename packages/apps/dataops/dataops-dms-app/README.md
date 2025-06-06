@@ -10,7 +10,7 @@ AWS Database Migration Service provides functionality to migrate data from sourc
 
 **DMS Replication Instance** - Provisioned compute which will be used to perform replication tasks. MDAA ensures these are private and encrypted.
 
-**DMS Endpoint** - Source and target data sources from/to which data will migrated. MDAA ensures that endpoint credentials are securely managed exclusively through AWS Secrets Manager, or via AWS Role credentials.
+**DMS Endpoint** - Source and target data sources from/to which data will be migrated. MDAA ensures that endpoint credentials are securely managed exclusively through AWS Secrets Manager, or via AWS Role credentials.
 
 **DMS Replication Task** - Tasks move data between DMS Endpoints, and are executed using Replication Instance compute.
 
@@ -50,14 +50,14 @@ dms:
     test-instance:
       # The instance class.
       # See https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.Types.html for options
-      instanceClass: dms.t2.micro
+      instanceClass: dms.t3.micro
       # The VPC Id on which the replication instance will be deployed
       vpcId: test_vpc_id
       # The subnets to which the replication instance will be connected.
       subnetIds:
         - test_subnet_id1
         - test_subnet_id2
-  
+
   # Endpoints which will be created by the config
   endpoints:
     # Each endpoint has a unique name
@@ -84,7 +84,7 @@ dms:
       s3Settings:
         bucketName: test_target_bucket
         serverSideEncryptionKmsKeyId: test_target_kms_key_id
-  
+
   # Replication tasks which will be created by the config.
   replicationTasks:
     # Each replication task has a unique name
@@ -100,7 +100,7 @@ dms:
       migrationType: full-load
       # Table mappings config to be used
       # Will be passed directly to the task config.
-      tableMappings: 
+      tableMappings:
         rules:
           - rule-type: selection
             rule-id: '1'

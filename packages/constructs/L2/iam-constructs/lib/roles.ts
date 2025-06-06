@@ -9,7 +9,7 @@ import { IManagedPolicy, IPrincipal, IRole, PolicyDocument, Role, RoleProps } fr
 import { Construct } from 'constructs';
 
 /**
- * Interface definging a compliant IAM Role
+ * Interface defining a compliant IAM Role
  */
 export interface MdaaRoleProps extends MdaaConstructProps {
   /**
@@ -113,6 +113,12 @@ export interface MdaaRoleProps extends MdaaConstructProps {
    * @default - No description.
    */
   readonly description?: string;
+
+  /**
+   * If specified, role names will be created using exactly as is.
+   * This is useful when certain services expect a particular role name
+   */
+  readonly verbatimRoleName?: boolean;
 }
 
 /**
@@ -126,10 +132,11 @@ export type IMdaaRole = IRole;
 export class MdaaRole extends Role {
   private static setProps(props: MdaaRoleProps): RoleProps {
     const overrideProps = {
-      roleName: props.naming.resourceName(props.roleName, 64),
+      roleName: props.verbatimRoleName ? props.roleName : props.naming.resourceName(props.roleName, 64),
     };
     return { ...props, ...overrideProps };
   }
+
   constructor(scope: Construct, id: string, props: MdaaRoleProps) {
     super(scope, id, MdaaRole.setProps(props));
 

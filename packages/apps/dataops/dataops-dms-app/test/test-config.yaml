@@ -14,7 +14,7 @@ dms:
     test-instance:
       # The instance class.
       # See https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.Types.html for options
-      instanceClass: dms.t2.micro
+      instanceClass: dms.t3.micro
       # The VPC Id on which the replication instance will be deployed
       vpcId: test_vpc_id
       # The subnets to which the replication instance will be connected.
@@ -64,7 +64,7 @@ dms:
       migrationType: full-load
       # Table mappings config to be used
       # Will be passed directly to the task config.
-      tableMappings: 
+      tableMappings:
         rules:
           - rule-type: selection
             rule-id: '1'

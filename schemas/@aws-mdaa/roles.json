@@ -156,6 +156,10 @@
                 "trustedPrincipal": {
                     "description": "The assume role trust config.",
                     "type": "string"
+                },
+                "verbatimRoleName": {
+                    "description": "If true (default false), role name will be set verbatim instead of using the naming class",
+                    "type": "boolean"
                 }
             },
             "required": [
