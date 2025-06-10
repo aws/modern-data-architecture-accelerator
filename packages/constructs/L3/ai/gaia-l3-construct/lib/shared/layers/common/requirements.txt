@@ -15,7 +15,7 @@ pydantic==2.7.4
 urllib3<2
 openai==0.28.1
 beautifulsoup4==4.12.3
-requests==2.32.3
+requests==2.32.4
 pyjwt==2.8.0
 cryptography==44.0.1
 attrs==23.1.0
