@@ -34,12 +34,16 @@
                 "cdkRoleArn": {
                     "type": "string"
                 },
+                "glueCatalogKmsKeyArn": {
+                    "type": "string"
+                },
                 "region": {
                     "type": "string"
                 }
             },
             "required": [
-                "account"
+                "account",
+                "glueCatalogKmsKeyArn"
             ],
             "type": "object"
         },
@@ -353,6 +357,9 @@
         "domains": {
             "$ref": "#/definitions/NamedDomainsProps"
         },
+        "glueCatalogKmsKeyArn": {
+            "type": "string"
+        },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Nag suppressions"
@@ -363,7 +370,8 @@
         }
     },
     "required": [
-        "domains"
+        "domains",
+        "glueCatalogKmsKeyArn"
     ],
     "type": "object"
 }

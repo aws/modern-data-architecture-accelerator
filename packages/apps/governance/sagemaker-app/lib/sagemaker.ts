@@ -21,7 +21,7 @@ export class SagemakerCDKApp extends MdaaCdkApp {
   ) {
     const appConfig = new SagemakerConfigParser(stack, parserProps);
     const constructProps: DataZoneL3ConstructProps = {
-      domains: appConfig.domains,
+      ...appConfig,
       ...l3ConstructProps,
     };
 

@@ -269,6 +269,10 @@
             "description": "If true (default false), then CDK Exec Role will be automatically added as a LF Admin",
             "type": "boolean"
         },
+        "crossAccountVersion": {
+            "description": "Cross account sharing version. If not specified, defaults to latest.",
+            "type": "string"
+        },
         "iamAllowedPrincipalsDefault": {
             "description": "If true, sets IAM_ALLOW_PRINCIPALS by default on all new databases/tables",
             "type": "boolean"

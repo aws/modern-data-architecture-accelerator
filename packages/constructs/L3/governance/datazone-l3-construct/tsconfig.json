@@ -42,6 +42,9 @@
       "path": "../../../L2/custom-constructs"
     },
     {
+      "path": "../../../L2/datazone-constructs"
+    },
+    {
       "path": "../../../../utilities/iam-role-helper"
     },
     {

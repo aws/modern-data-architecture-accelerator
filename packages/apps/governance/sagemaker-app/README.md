@@ -32,6 +32,8 @@ sagemaker: # Module Name can be customized
 [Config Schema Docs](SCHEMA.md)
 
 ```yaml
+# The arn of the KMS key used to encrypt the glue catalog in this account
+glueCatalogKmsKeyArn: test-glue-catalog-key-arn
 # List of domains to create
 domains:
   # domain's name (must be unique)
@@ -40,7 +42,7 @@ domains:
     dataAdminRole:
       name: Admin
     # Required - Description to give to the domain
-    description: SageMaker Domain Description
+    description: DataZone Domain Description
 
     # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
     userAssignment: MANUAL
@@ -52,6 +54,8 @@ domains:
         # The AWS account number fo the associated account.
         # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
         account: '1234567890'
+        # The arn of the KMS key used to encrypt the glue catalog in this associated account
+        glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         # Optional -Admin users which will be added from the associated account for this domain.
         # These users will be able to administer the domain from within the associated account
         adminUsers:

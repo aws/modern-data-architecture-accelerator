@@ -12,12 +12,15 @@ import * as configSchema from './config-schema.json';
 
 export interface SagemakerConfigContents extends MdaaBaseConfigContents {
   readonly domains: NamedBaseDomainsProps;
+  readonly glueCatalogKmsKeyArn: string;
 }
 
 export class SagemakerConfigParser extends MdaaAppConfigParser<SagemakerConfigContents> {
   public domains: NamedDomainsProps;
+  public glueCatalogKmsKeyArn: string;
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
+    this.glueCatalogKmsKeyArn = this.configContents.glueCatalogKmsKeyArn;
     this.domains = Object.fromEntries(
       Object.entries(this.configContents.domains).map(entry => {
         return [

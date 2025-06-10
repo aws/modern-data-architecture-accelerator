@@ -62,7 +62,7 @@ describe('MDAA Compliance Stack Tests', () => {
           },
         ],
         Parameters: {
-          CROSS_ACCOUNT_VERSION: '3',
+          CROSS_ACCOUNT_VERSION: '4',
         },
       },
     });

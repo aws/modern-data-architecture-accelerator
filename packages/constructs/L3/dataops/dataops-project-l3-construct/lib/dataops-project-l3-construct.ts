@@ -367,6 +367,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const projectDeploymentRole = this.createProjectDeploymentRole();
     const lakeFormationRole = this.createLakeFormationRole();
     const datazoneUserRole = this.createDatazoneUserRole();
+
     const projectKmsKey = this.createProjectKmsKey([projectDeploymentRole, datazoneUserRole, lakeFormationRole]);
 
     const s3OutputKmsKey = props.s3OutputKmsKeyArn
@@ -433,13 +434,15 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       keyAccessPolicy.addStatements(keyAccessStatement);
     }
   }
-  private createAthenaWorkgroup(datazoneUserRole: IRole, projectBucket: IBucket, datazoneEnv?: CfnEnvironment) {
+  private createAthenaWorkgroup(datazoneUserRole: Role, projectBucket: IBucket, datazoneEnv?: CfnEnvironment) {
     const athenaWgProps: AthenaWorkgroupL3ConstructProps = {
       dataAdminRoles: this.props.dataAdminRoleRefs,
       athenaUserRoles: [
         {
           refId: 'dz-user-role',
           arn: datazoneUserRole.roleArn,
+          id: datazoneUserRole.roleId,
+          name: datazoneUserRole.roleName,
         },
         ...this.props.dataEngineerRoleRefs,
       ],
@@ -462,6 +465,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       description: 'Role for accessing the data lake via LakeFormation.',
     });
   }
+
   private createDatazoneResources(projectBucket: IBucket, datazoneUserRole: IRole): DatazoneResources | undefined {
     if (this.props.datazone) {
       if (this.props.datazone?.project) {
@@ -469,9 +473,12 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
         const datazoneManageAccessRole = this.createDatazoneManageAccessRole(
           this,
-          this.account,
-          datazoneProject.domainArn,
+          datazoneProject.domainConfig.domainArn,
         );
+
+        const datazoneKmsUsagePolicy = datazoneProject.domainConfig.domainKmsUsagePolicy;
+        datazoneManageAccessRole.addManagedPolicy(datazoneKmsUsagePolicy);
+        datazoneUserRole.addManagedPolicy(datazoneKmsUsagePolicy);
         const datazoneEnv = this.createDataZoneEnvironment(
           projectBucket,
           datazoneProject,
@@ -490,14 +497,11 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     return undefined;
   }
 
-  private createDatazoneManageAccessRole(scope: Construct, account: string, domainArn: string): IRole {
+  private createDatazoneManageAccessRole(scope: Construct, domainArn: string): IRole {
     const manageAccessRole = new MdaaRole(scope, 'manage-access-role', {
       naming: this.props.naming,
       roleName: 'dz-manage-access',
       assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions({
-        StringEquals: {
-          'aws:SourceAccount': account,
-        },
         ArnEquals: {
           'aws:SourceArn': domainArn,
         },
@@ -506,7 +510,6 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneGlueManageAccessRolePolicy'),
       ],
     });
-
     MdaaNagSuppressions.addCodeResourceSuppressions(manageAccessRole, [
       {
         id: 'AwsSolutions-IAM4',
@@ -527,7 +530,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
   private createDataZoneEnvironment(
     projectBucket: IBucket,
-    mdaaProject: MdaaDatazoneProject,
+    dzProject: MdaaDatazoneProject,
     datazoneManageAccessRole: IRole,
     datazoneUserRole: IRole,
   ): CfnEnvironment {
@@ -548,16 +551,16 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     };
 
     const dataLakeEnvProps: CfnEnvironmentProps = {
-      domainIdentifier: mdaaProject.project.domainIdentifier,
+      domainIdentifier: dzProject.project.domainIdentifier,
       environmentProfileIdentifier: '',
       name: this.props.naming.resourceName(),
-      projectIdentifier: mdaaProject.project.attrId,
+      projectIdentifier: dzProject.project.attrId,
     };
 
     const datazoneEnv = new CfnEnvironment(this, 'datalake-env', dataLakeEnvProps);
     datazoneEnv.addPropertyOverride('EnvironmentAccountIdentifier', this.account);
     datazoneEnv.addPropertyOverride('EnvironmentAccountRegion', this.region);
-    datazoneEnv.addPropertyOverride('EnvironmentBlueprintId', mdaaProject.domainCustomEnvBlueprintId);
+    datazoneEnv.addPropertyOverride('EnvironmentBlueprintId', dzProject.domainConfig.domainCustomEnvBlueprintId);
     datazoneEnv.addPropertyOverride('EnvironmentRoleArn', datazoneUserRole.roleArn);
 
     this.createDatabaseLakeFormationConstruct(
@@ -573,7 +576,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const athenaActionProps: CfnEnvironmentActionsProps = {
       name: 'Query data',
       description: 'Amazon Athena',
-      domainIdentifier: mdaaProject.project.domainIdentifier,
+      domainIdentifier: dzProject.project.domainIdentifier,
       environmentIdentifier: datazoneEnv.attrId,
       parameters: {
         // uri: `https://${this.region}.console.aws.amazon.com/athena/home#/query-editor/domain/${datazoneEnv.attrDomainId}/domainRegion/${this.region}/environment/${datazoneEnv.attrId}`
@@ -585,7 +588,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const glueEtlActionProps: CfnEnvironmentActionsProps = {
       name: 'View Glue ETL jobs',
       description: 'AWS Glue ETL',
-      domainIdentifier: mdaaProject.project.domainIdentifier,
+      domainIdentifier: dzProject.project.domainIdentifier,
       environmentIdentifier: datazoneEnv.attrId,
       parameters: {
         uri: `https://${this.region}.console.aws.amazon.com/gluestudio/home?region=${this.region}#/jobs`,
@@ -596,7 +599,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const glueCatalogActionProps: CfnEnvironmentActionsProps = {
       name: 'View Glue Catalogs',
       description: 'AWS Glue Catalog',
-      domainIdentifier: mdaaProject.project.domainIdentifier,
+      domainIdentifier: dzProject.project.domainIdentifier,
       environmentIdentifier: datazoneEnv.attrId,
       parameters: {
         uri: `https://${this.region}.console.aws.amazon.com/glue/home?region=${this.region}#/v2/data-catalog/tables`,
@@ -607,7 +610,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const s3BucketActionProps: CfnEnvironmentActionsProps = {
       name: 'Project S3 Data',
       description: 'Amazon S3',
-      domainIdentifier: mdaaProject.project.domainIdentifier,
+      domainIdentifier: dzProject.project.domainIdentifier,
       environmentIdentifier: datazoneEnv.attrId,
       parameters: {
         uri: `https://${this.region}.console.aws.amazon.com/s3/buckets/${projectBucket}/data/`,
@@ -618,7 +621,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const consoleActionProps: CfnEnvironmentActionsProps = {
       name: 'View AWS Console',
       description: 'AWS Console',
-      domainIdentifier: mdaaProject.project.domainIdentifier,
+      domainIdentifier: dzProject.project.domainIdentifier,
       environmentIdentifier: datazoneEnv.attrId,
       parameters: {
         uri: 'https://console.aws.amazon.com/',
@@ -630,7 +633,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
     this.createDatazoneSubscriptionTarget(
       datazoneEnv,
-      mdaaProject,
+      dzProject,
       datazoneUserRole,
       datazoneManageAccessRole,
       subDatabaseName,
@@ -754,10 +757,10 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         'glue:GetColumnStatistics*',
       ],
       resources: [
-        `arn:${this.partition}:glue:${this.region}:${this.account}:catalog`,
-        `arn:${this.partition}:glue:${this.region}:${this.account}:database/*`,
-        `arn:${this.partition}:glue:${this.region}:${this.account}:table/*`,
-        `arn:${this.partition}:glue:${this.region}:${this.account}:tableVersion/*`,
+        `arn:${this.partition}:glue:${this.region}:*:catalog`,
+        `arn:${this.partition}:glue:${this.region}:*:database/*`,
+        `arn:${this.partition}:glue:${this.region}:*:table/*`,
+        `arn:${this.partition}:glue:${this.region}:*:tableVersion/*`,
       ],
     });
     userPolicy.addStatements(accessGlueResourceStatement);

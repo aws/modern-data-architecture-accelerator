@@ -11,6 +11,8 @@ import * as configSchema from './config-schema.json';
 import { IdentityCenterConfig } from '@aws-mdaa/lakeformation-settings-l3-construct';
 
 export interface LakeFormationSettingsConfigContents extends MdaaBaseConfigContents {
+  /** Cross account sharing version. If not specified, defaults to latest. */
+  readonly crossAccountVersion?: string;
   /**
    * An array of role references to Lake Formation admin roles
    */
@@ -35,6 +37,8 @@ export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeF
   public readonly createCdkLFAdmin?: boolean;
   public readonly iamAllowedPrincipalsDefault: boolean;
   public readonly iamIdentityCenter?: IdentityCenterConfig;
+  /** Cross account sharing version. If not specified, defaults to latest. */
+  public readonly crossAccountVersion?: string;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
@@ -43,5 +47,6 @@ export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeF
     this.iamAllowedPrincipalsDefault = this.configContents.iamAllowedPrincipalsDefault;
     this.createCdkLFAdmin = this.configContents.createCdkLFAdmin;
     this.iamIdentityCenter = this.configContents.iamIdentityCenter;
+    this.crossAccountVersion = this.configContents.crossAccountVersion;
   }
 }

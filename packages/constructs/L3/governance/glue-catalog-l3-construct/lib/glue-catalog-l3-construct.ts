@@ -266,7 +266,7 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
       accountKeyUsagePolicyStatement.addAnyPrincipal();
       accountKeyUsagePolicyStatement.addCondition('StringEquals', {
         'kms:CallerAccount': account,
-        'kms:ViaService': `glue.${this.region}.amazonaws.com`,
+        'kms:ViaService': [`glue.${this.region}.amazonaws.com`, `datazone.${this.region}.amazonaws.com`],
       });
       catalogKmsKey.addToResourcePolicy(accountKeyUsagePolicyStatement);
     });

@@ -39,17 +39,24 @@ def handle_create_update(event, context):
     domainIdentifier = resource_config.get('domainIdentifier', None)
     if (domainIdentifier is None):
         raise Exception("Unable to parse domainIdentifier from event.")
-    
-    environmentBlueprintIdentifier = resource_config.get(
-        'environmentBlueprintIdentifier', None)
-    if (environmentBlueprintIdentifier is None):
-        raise Exception(
-            "Unable to parse environmentBlueprintIdentifier from event.")
-    
+
     enabledRegions = resource_config.get(
         'enabledRegions', None)
     if (enabledRegions is None):
         raise Exception("Unable to parse enabledRegions from event.")
+
+
+    list_env_bp_response = datazone_client.list_environment_blueprints(
+        domainIdentifier=domainIdentifier,
+        managed=True,
+        name='CustomAwsService'
+    )
+    
+    if len(list_env_bp_response['items']) != 1:
+        print(json.dumps(list_env_bp_response, indent=4, sort_keys=True, default=str))
+        raise Exception("Unexected number of CustomAwsService Environment Blueprints")
+    
+    environmentBlueprintIdentifier = list_env_bp_response['items'][0]['id']
 
     update_response = datazone_client.put_environment_blueprint_configuration(
         domainIdentifier=domainIdentifier,

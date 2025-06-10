@@ -12,5 +12,5 @@ pydantic==2.3.0
 urllib3<2
 openai==0.28.0
 beautifulsoup4==4.12.2
-requests==2.32.3
+requests==2.32.4
 attrs==23.1.0

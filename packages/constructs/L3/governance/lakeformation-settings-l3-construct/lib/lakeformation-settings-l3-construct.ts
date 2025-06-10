@@ -13,6 +13,8 @@ import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
 export interface LakeFormationSettingsL3ConstructProps extends MdaaL3ConstructProps {
+  /** Cross account sharing version. If not specified, defaults to latest. */
+  readonly crossAccountVersion?: string;
   /**
    * If true (default false), IAMAllowedPrincipal grants will automatically be added to all new databases and tables
    */
@@ -39,6 +41,7 @@ export interface IdentityCenterConfig {
 
 export class LakeFormationSettingsL3Construct extends MdaaL3Construct {
   protected readonly props: LakeFormationSettingsL3ConstructProps;
+  static readonly LATEST_CROSS_ACCOUNT_VERSION = '4';
 
   constructor(scope: Construct, id: string, props: LakeFormationSettingsL3ConstructProps) {
     super(scope, id, props);
@@ -198,7 +201,8 @@ export class LakeFormationSettingsL3Construct extends MdaaL3Construct {
           CreateDatabaseDefaultPermissions: [defaultPermissions],
           CreateTableDefaultPermissions: [defaultPermissions],
           Parameters: {
-            CROSS_ACCOUNT_VERSION: '3',
+            CROSS_ACCOUNT_VERSION:
+              this.props.crossAccountVersion || LakeFormationSettingsL3Construct.LATEST_CROSS_ACCOUNT_VERSION,
           },
         },
       },

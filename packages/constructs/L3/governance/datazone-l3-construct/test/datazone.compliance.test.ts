@@ -14,6 +14,7 @@ describe('MDAA Compliance Stack Tests', () => {
   const stack = testApp.testStack;
 
   const constructProps: DataZoneL3ConstructProps = {
+    glueCatalogKmsKeyArn: 'test-key-arn',
     crossAccountStacks: {
       '12312421': new Stack(testApp, 'testextrastack'),
     },
@@ -44,6 +45,7 @@ describe('MDAA Compliance Stack Tests', () => {
         associatedAccounts: {
           test1: {
             account: '12312421',
+            glueCatalogKmsKeyArn: 'test-associated-key-arn',
           },
         },
       },
