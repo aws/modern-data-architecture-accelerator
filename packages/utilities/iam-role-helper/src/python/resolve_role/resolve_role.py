@@ -50,7 +50,9 @@ def lambda_handler(event, context):
     role_ref = resource_config.get('roleRef', None)
     if(role_ref is None):
         raise Exception(f"Missing roleRef in request: {resource_config}")
-    return resolve_role_ref(role_ref)
+    
+    if event['RequestType'] == 'Create' or event['RequestType'] == 'Update':  
+        return resolve_role_ref(role_ref)
 
 
 def resolve_role_ref(role_ref):
@@ -84,6 +86,7 @@ def resolve_role_ref(role_ref):
     else:
         return {
             "Status": "200",
+            "PhysicalResourceId": role['RoleId'],
             "Data": {
                 "arn": role['Arn'],
                 "name": role['RoleName'],
