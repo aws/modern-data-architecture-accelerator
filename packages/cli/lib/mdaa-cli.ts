@@ -216,19 +216,19 @@ export class MdaaDeploy {
       console.log(`Filtering for domain(s) ${this.domainFilter}`);
     }
 
-    Object.keys(this.config.contents.domains)
-      .filter(
+    this.reverse(
+      Object.keys(this.config.contents.domains).filter(
         domainName => this.devopsMode || this.domainFilter == undefined || this.domainFilter?.includes(domainName),
-      )
-      .forEach(domainName => {
-        const domain = this.config.contents.domains[domainName];
-        const domainEffectiveConfig: DomainEffectiveConfig = this.computeDomainEffectiveConfig(
-          domainName,
-          domain,
-          globalEffectiveConfig,
-        );
-        this.deployDomain(domain, domainEffectiveConfig);
-      });
+      ),
+    ).forEach(domainName => {
+      const domain = this.config.contents.domains[domainName];
+      const domainEffectiveConfig: DomainEffectiveConfig = this.computeDomainEffectiveConfig(
+        domainName,
+        domain,
+        globalEffectiveConfig,
+      );
+      this.deployDomain(domain, domainEffectiveConfig);
+    });
   }
 
   public deployDomain(domain: MdaaDomainConfig, domainEffectiveConfig: DomainEffectiveConfig) {
@@ -240,28 +240,27 @@ export class MdaaDeploy {
     if (this.envFilter && !this.devopsMode) {
       console.log(`Domain ${domainEffectiveConfig.domainName}: Filtering for env ${this.envFilter}`);
     }
-    Object.keys(domain.environments)
-      .filter(envName => this.devopsMode || this.envFilter == undefined || this.envFilter?.includes(envName))
-      .forEach(envName => {
-        const env = domain.environments[envName];
-        if (
-          env.template &&
-          (!domainEffectiveConfig.envTemplates || !domainEffectiveConfig.envTemplates[env.template])
-        ) {
-          throw new Error(`Environment "${envName}" references invalid template name: ${env.template}.`);
-        }
-        const template =
-          env.template && domainEffectiveConfig.envTemplates ? domainEffectiveConfig.envTemplates[env.template] : {};
-        // nosemgrep
-        const _ = require('lodash');
-        const envMergedConfig = _.mergeWith(env, template);
-        const envEffectiveConfig: EnvEffectiveConfig = this.computeEnvEffectiveConfig(
-          envName,
-          envMergedConfig,
-          domainEffectiveConfig,
-        );
-        this.deployEnv(envMergedConfig, envEffectiveConfig);
-      });
+    this.reverse(
+      Object.keys(domain.environments).filter(
+        envName => this.devopsMode || this.envFilter == undefined || this.envFilter?.includes(envName),
+      ),
+    ).forEach(envName => {
+      const env = domain.environments[envName];
+      if (env.template && (!domainEffectiveConfig.envTemplates || !domainEffectiveConfig.envTemplates[env.template])) {
+        throw new Error(`Environment "${envName}" references invalid template name: ${env.template}.`);
+      }
+      const template =
+        env.template && domainEffectiveConfig.envTemplates ? domainEffectiveConfig.envTemplates[env.template] : {};
+      // nosemgrep
+      const _ = require('lodash');
+      const envMergedConfig = _.mergeWith(env, template);
+      const envEffectiveConfig: EnvEffectiveConfig = this.computeEnvEffectiveConfig(
+        envName,
+        envMergedConfig,
+        domainEffectiveConfig,
+      );
+      this.deployEnv(envMergedConfig, envEffectiveConfig);
+    });
   }
 
   private deployEnv(env: MdaaEnvironmentConfig, envEffectiveConfig: EnvEffectiveConfig) {
@@ -336,19 +335,20 @@ export class MdaaDeploy {
       console.log(`Env ${envEffectiveConfig.domainName}/${envEffectiveConfig.envName}: Running ${this.action}`);
       console.log(`-----------------------------------------------------------`);
     }
-    const orderedStages =
-      this.action == 'destroy'
-        ? Object.keys(envDeployStages)
-            .sort((a, b) => +a - +b)
-            .reverse()
-        : Object.keys(envDeployStages).sort((a, b) => +a - +b);
-    orderedStages.forEach(stage => {
+
+    this.reverse(Object.keys(envDeployStages).sort((a, b) => +a - +b)).forEach(stage => {
       console.log(`Env ${envEffectiveConfig.domainName}/${envEffectiveConfig.envName} Running MDAA stage ${stage}`);
-      const stageApps = envDeployStages[stage];
-      stageApps.forEach(module => {
+      this.reverse(envDeployStages[stage]).forEach(module => {
         this.deployModule(module);
       });
     });
+  }
+
+  private reverse<T>(elements: T[]): T[] {
+    if (this.action == 'destroy') {
+      return [...elements.reverse()];
+    }
+    return elements;
   }
 
   private computeEnvDeployStages(moduleEffectiveConfigs: ModuleEffectiveConfig[]): DeployStageMap {
@@ -663,7 +663,7 @@ export class MdaaDeploy {
       console.log(`-----------------------------------------------------------`);
     }
 
-    moduleDeploymentConfig.moduleCmds.forEach(moduleCmd => {
+    this.reverse(moduleDeploymentConfig.moduleCmds).forEach(moduleCmd => {
       console.log(
         `Module ${moduleDeploymentConfig.domainName}/${moduleDeploymentConfig.envName}/${moduleDeploymentConfig.moduleName}: Running cmd:\n${moduleCmd}`,
       );
