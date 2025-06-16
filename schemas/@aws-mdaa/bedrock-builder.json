@@ -63,6 +63,45 @@
             ],
             "type": "object"
         },
+        "AgentGuardrailAssociation": {
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "description": "The identifier for the guardrail.",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "The version of the guardrail.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "type": "object"
+        },
+        "AgentKnowledgeBaseAssociation": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "description": "The description of the association between the agent and the knowledge base.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "The unique identifier of the association between the agent and the knowledge base.",
+                    "type": "string"
+                },
+                "knowledgeBaseState": {
+                    "description": "Specifies whether to use the knowledge base or not when sending an [InvokeAgent](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeAgent.html) request.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description",
+                "id"
+            ],
+            "type": "object"
+        },
         "BedrockAgentProps": {
             "additionalProperties": false,
             "properties": {
@@ -89,8 +128,8 @@
                     "description": "The foundation model used for orchestration by the agent",
                     "type": "string"
                 },
-                "guardrailConfiguration": {
-                    "$ref": "#/definitions/CfnAgent.GuardrailConfigurationProperty",
+                "guardrail": {
+                    "$ref": "#/definitions/AgentGuardrailAssociation",
                     "description": "Configuration information for a guardrail that you use with the Converse operation\nSee also: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-bedrock-agent-guardrailconfiguration.html"
                 },
                 "idleSessionTtlInSeconds": {
@@ -104,18 +143,86 @@
                 "knowledgeBases": {
                     "description": "The knowledge bases associated with the agent.",
                     "items": {
-                        "$ref": "#/definitions/CfnAgent.AgentKnowledgeBaseProperty"
+                        "$ref": "#/definitions/AgentKnowledgeBaseAssociation"
                     },
                     "type": "array"
                 },
                 "promptOverrideConfiguration": {
                     "$ref": "#/definitions/CfnAgent.PromptOverrideConfigurationProperty",
                     "description": "Contains configurations to override prompt templates in different parts of an agent sequence"
+                },
+                "role": {
+                    "$ref": "#/definitions/MdaaRoleRef",
+                    "description": "Reference to role which will be used as execution role on all agent(s).\nThe role must have assume role trust with bedrock.amazonaws.com."
                 }
             },
             "required": [
                 "foundationModel",
-                "instruction"
+                "instruction",
+                "role"
+            ],
+            "type": "object"
+        },
+        "BedrockGuardrailProps": {
+            "additionalProperties": false,
+            "properties": {
+                "blockedInputMessaging": {
+                    "description": "Custom message to display when input is blocked by the guardrail\nIf not provided, a default message will be used",
+                    "type": "string"
+                },
+                "blockedOutputsMessaging": {
+                    "description": "Custom message to display when output is blocked by the guardrail\nIf not provided, a default message will be used",
+                    "type": "string"
+                },
+                "contentFilters": {
+                    "$ref": "#/definitions/ContentFilters",
+                    "description": "Array of content filters to apply to the guardrail\nEach filter specifies a type (e.g., HATE, SEXUAL, VIOLENCE) and strength settings"
+                },
+                "contextualGroundingFilters": {
+                    "$ref": "#/definitions/GroundingFilters",
+                    "description": "Configuration for contextual grounding filters"
+                },
+                "description": {
+                    "description": "Optional description for the guardrail",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "contentFilters"
+            ],
+            "type": "object"
+        },
+        "BedrockKnowledgeBaseProps": {
+            "additionalProperties": false,
+            "properties": {
+                "chunkingConfiguration": {
+                    "$ref": "#/definitions/ChunkingConfiguration"
+                },
+                "embeddingModel": {
+                    "description": "Embedding model ID to use for generating vector embeddings.\nExample: \"amazon.titan-embed-text-v1\"",
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/MdaaRoleRef",
+                    "description": "Reference to role which will be used as execution role on knowledge base.\nThe role must have assume role trust with bedrock.amazonaws.com\nand access to S3 data sources granted within MDAA bucket config"
+                },
+                "s3DataSources": {
+                    "$ref": "#/definitions/NamedS3DataSource",
+                    "description": "Array of S3 data sources to be used for the knowledge base\nEach data source specifies a bucket and optional prefix"
+                },
+                "vectorFieldSize": {
+                    "description": "Field size where the vector embeddings will be stored",
+                    "type": "number"
+                },
+                "vectorStore": {
+                    "description": "Configuration for the vector store database",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "embeddingModel",
+                "role",
+                "vectorStore"
             ],
             "type": "object"
         },
@@ -132,29 +239,6 @@
                     "type": "string"
                 }
             },
-            "type": "object"
-        },
-        "CfnAgent.AgentKnowledgeBaseProperty": {
-            "additionalProperties": false,
-            "description": "Contains details about a knowledge base that is associated with an agent.",
-            "properties": {
-                "description": {
-                    "description": "The description of the association between the agent and the knowledge base.",
-                    "type": "string"
-                },
-                "knowledgeBaseId": {
-                    "description": "The unique identifier of the association between the agent and the knowledge base.",
-                    "type": "string"
-                },
-                "knowledgeBaseState": {
-                    "description": "Specifies whether to use the knowledge base or not when sending an [InvokeAgent](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_InvokeAgent.html) request.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "description",
-                "knowledgeBaseId"
-            ],
             "type": "object"
         },
         "CfnAgent.FunctionProperty": {
@@ -219,21 +303,6 @@
             "required": [
                 "functions"
             ],
-            "type": "object"
-        },
-        "CfnAgent.GuardrailConfigurationProperty": {
-            "additionalProperties": false,
-            "description": "Configuration information for a guardrail that you use with the [Converse](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html) operation.",
-            "properties": {
-                "guardrailIdentifier": {
-                    "description": "The identifier for the guardrail.",
-                    "type": "string"
-                },
-                "guardrailVersion": {
-                    "description": "The version of the guardrail.",
-                    "type": "string"
-                }
-            },
             "type": "object"
         },
         "CfnAgent.InferenceConfigurationProperty": {
@@ -424,6 +493,79 @@
             },
             "type": "object"
         },
+        "ChunkingConfiguration": {
+            "additionalProperties": false,
+            "properties": {
+                "chunkingStrategy": {
+                    "description": "The chunking strategy to use for processing documents\nFIXED_SIZE - Split documents into chunks of specified size\nHIERARCHICAL - Split documents into parent and child chunks\nSEMANTIC - Split documents based on semantic meaning\nNONE - Treat each file as a single chunk",
+                    "enum": [
+                        "FIXED_SIZE",
+                        "HIERARCHICAL",
+                        "NONE",
+                        "SEMANTIC"
+                    ],
+                    "type": "string"
+                },
+                "fixedSizeChunkingConfiguration": {
+                    "$ref": "#/definitions/FixedSizeChunking",
+                    "description": "Configuration for fixed-size chunking"
+                },
+                "hierarchicalChunkingConfiguration": {
+                    "$ref": "#/definitions/HierarchicalChunking",
+                    "description": "Configuration for hierarchical chunking"
+                },
+                "semanticChunkingConfiguration": {
+                    "$ref": "#/definitions/SemanticChunking",
+                    "description": "Configuration for semantic chunking"
+                }
+            },
+            "required": [
+                "chunkingStrategy"
+            ],
+            "type": "object"
+        },
+        "ContentFilterConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "inputStrength": {
+                    "$ref": "#/definitions/Strength",
+                    "description": "The strength of the filter for user inputs (LOW, MEDIUM, HIGH)"
+                },
+                "outputStrength": {
+                    "$ref": "#/definitions/Strength",
+                    "description": "The strength of the filter for model outputs (LOW, MEDIUM, HIGH)"
+                }
+            },
+            "required": [
+                "inputStrength",
+                "outputStrength"
+            ],
+            "type": "object"
+        },
+        "ContentFilters": {
+            "additionalProperties": false,
+            "properties": {
+                "hate": {
+                    "$ref": "#/definitions/ContentFilterConfig"
+                },
+                "insults": {
+                    "$ref": "#/definitions/ContentFilterConfig"
+                },
+                "misconduct": {
+                    "$ref": "#/definitions/ContentFilterConfig"
+                },
+                "promptAttack": {
+                    "$ref": "#/definitions/ContentFilterConfig"
+                },
+                "sexual": {
+                    "$ref": "#/definitions/ContentFilterConfig"
+                },
+                "violence": {
+                    "$ref": "#/definitions/ContentFilterConfig"
+                }
+            },
+            "type": "object"
+        },
         "EventBridgeProps": {
             "additionalProperties": false,
             "properties": {
@@ -550,6 +692,24 @@
             },
             "type": "object"
         },
+        "FixedSizeChunking": {
+            "additionalProperties": false,
+            "properties": {
+                "maxTokens": {
+                    "description": "Maximum tokens per chunk",
+                    "type": "number"
+                },
+                "overlapPercentage": {
+                    "description": "Percentage of overlap between chunks",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "maxTokens",
+                "overlapPercentage"
+            ],
+            "type": "object"
+        },
         "FunctionProps": {
             "additionalProperties": false,
             "properties": {
@@ -646,6 +806,43 @@
                 "functionName",
                 "roleArn",
                 "srcDir"
+            ],
+            "type": "object"
+        },
+        "GroundingFilters": {
+            "additionalProperties": false,
+            "properties": {
+                "grounding": {
+                    "description": "Threshold for grounding (0.0 to 1.0)\nHigher values enforce stricter grounding to source material",
+                    "type": "number"
+                },
+                "relevance": {
+                    "description": "Threshold for relevance (0.0 to 1.0)\nHigher values enforce stricter relevance to the query",
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "HierarchicalChunking": {
+            "additionalProperties": false,
+            "properties": {
+                "maxTokensForChild": {
+                    "description": "Maximum tokens for child chunks",
+                    "type": "number"
+                },
+                "maxTokensForParent": {
+                    "description": "Maximum tokens for parent chunks",
+                    "type": "number"
+                },
+                "overlapTokens": {
+                    "description": "Number of tokens to overlap between chunks",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "maxTokensForChild",
+                "maxTokensForParent",
+                "overlapTokens"
             ],
             "type": "object"
         },
@@ -1051,15 +1248,45 @@
             ],
             "description": "A granular suppression"
         },
+        "NamedAgentProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/BedrockAgentProps"
+            },
+            "type": "object"
+        },
         "NamedEventBridgeRuleProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/EventBridgeRuleProps"
             },
             "type": "object"
         },
+        "NamedGuardrailProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/BedrockGuardrailProps"
+            },
+            "type": "object"
+        },
+        "NamedKnowledgeBaseProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/BedrockKnowledgeBaseProps"
+            },
+            "type": "object"
+        },
+        "NamedS3DataSource": {
+            "additionalProperties": {
+                "$ref": "#/definitions/S3DataSource"
+            },
+            "type": "object"
+        },
         "NamedS3EventBridgeRuleProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/S3EventBridgeRuleProps"
+            },
+            "type": "object"
+        },
+        "NamedVectorStoreProps": {
+            "additionalProperties": {
+                "$ref": "#/definitions/VectorStoreProps"
             },
             "type": "object"
         },
@@ -1078,6 +1305,23 @@
             },
             "required": [
                 "regex"
+            ],
+            "type": "object"
+        },
+        "S3DataSource": {
+            "additionalProperties": false,
+            "properties": {
+                "bucketName": {
+                    "description": "The name of the S3 bucket containing the data",
+                    "type": "string"
+                },
+                "prefix": {
+                    "description": "Optional prefix to limit which objects in the bucket are included",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "bucketName"
             ],
             "type": "object"
         },
@@ -1105,6 +1349,66 @@
             },
             "required": [
                 "buckets"
+            ],
+            "type": "object"
+        },
+        "SemanticChunking": {
+            "additionalProperties": false,
+            "properties": {
+                "breakpointPercentileThreshold": {
+                    "description": "Breakpoint percentile threshold",
+                    "type": "number"
+                },
+                "bufferSize": {
+                    "description": "Buffer size (number of surrounding sentences)",
+                    "type": "number"
+                },
+                "maxTokens": {
+                    "description": "Maximum tokens per chunk",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "breakpointPercentileThreshold",
+                "bufferSize",
+                "maxTokens"
+            ],
+            "type": "object"
+        },
+        "Strength": {
+            "enum": [
+                "HIGH",
+                "LOW",
+                "MEDIUM"
+            ],
+            "type": "string"
+        },
+        "VectorStoreProps": {
+            "additionalProperties": false,
+            "properties": {
+                "engineVersion": {
+                    "description": "Optional Aurora PostgreSQL engine version",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "Optional port number for the database connection (default: 5432)",
+                    "type": "number"
+                },
+                "subnetIds": {
+                    "description": "subnet selection for the vector store",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "vpcId": {
+                    "description": "VPC where the vector store will be deployed",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subnetIds",
+                "vpcId"
             ],
             "type": "object"
         },
@@ -1144,15 +1448,8 @@
             "type": "string"
         },
         "agents": {
-            "additionalProperties": {
-                "$ref": "#/definitions/BedrockAgentProps"
-            },
-            "description": "Bedrock Agents",
-            "type": "object"
-        },
-        "bedrockAgentExecutionRole": {
-            "$ref": "#/definitions/MdaaRoleRef",
-            "description": "Reference to role which will be used as execution role on all agent(s).\nThe role must have assume role trust with bedrock.amazonaws.com. Additional managed polies\nmay be added to the role to grant it access to agent resources and relevant services."
+            "$ref": "#/definitions/NamedAgentProps",
+            "description": "Bedrock Agents"
         },
         "dataAdminRoles": {
             "description": "List of admin roles which will be provided access to agent resources (like KMS/Bucket)",
@@ -1161,9 +1458,17 @@
             },
             "type": "array"
         },
+        "guardrails": {
+            "$ref": "#/definitions/NamedGuardrailProps",
+            "description": "(Optional) Guardrails configuration"
+        },
         "kmsKeyArn": {
-            "description": "(Optional)\nThe Amazon Resource Name (ARN) of the AWS KMS key that encrypts the agent resources.\nIf not provided, a customer managed key will be created",
+            "description": "(Optional) The Amazon Resource Name (ARN) of the AWS KMS key that encrypts the agent resources.\nIf not provided, a customer managed key will be created",
             "type": "string"
+        },
+        "knowledgeBases": {
+            "$ref": "#/definitions/NamedKnowledgeBaseProps",
+            "description": "(Optional) Knowledge Bases configuration"
         },
         "lambdaFunctions": {
             "$ref": "#/definitions/LambdaFunctionProps",
@@ -1176,11 +1481,13 @@
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
             "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+        },
+        "vectorStores": {
+            "$ref": "#/definitions/NamedVectorStoreProps",
+            "description": "(Optional) Knowledge Bases Vector Store configs"
         }
     },
     "required": [
-        "agents",
-        "bedrockAgentExecutionRole",
         "dataAdminRoles"
     ],
     "type": "object"

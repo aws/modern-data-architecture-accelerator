@@ -1,3 +1,8 @@
+/*!
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { MdaaConstructProps } from '@aws-mdaa/construct';
 import { MdaaCustomResourceProps, MdaaCustomResource } from '@aws-mdaa/custom-constructs';
 import { Stack, Duration } from 'aws-cdk-lib';

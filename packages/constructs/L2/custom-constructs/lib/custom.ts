@@ -25,6 +25,7 @@ export interface MdaaCustomResourceProps extends MdaaConstructProps {
   readonly handler: string;
   readonly handlerRolePolicyStatements: PolicyStatement[];
   readonly handlerPolicySuppressions?: NagPackSuppression[];
+  readonly handlerFunctionSuppressions?: NagPackSuppression[];
   readonly handlerProps: ConfigurationElement;
   readonly handlerLayers?: ILayerVersion[];
   readonly pascalCaseProperties?: boolean;
@@ -113,6 +114,7 @@ export class MdaaCustomResource extends CustomResource {
     MdaaNagSuppressions.addCodeResourceSuppressions(
       this.handlerFunctionPlaceHolder,
       [
+        ...(props.handlerFunctionSuppressions || []),
         {
           id: 'NIST.800.53.R5-LambdaDLQ',
           reason: 'Function is for custom resource and error handling will be handled by CloudFormation.',
@@ -202,7 +204,7 @@ export class MdaaCustomResource extends CustomResource {
         },
         {
           id: 'NIST.800.53.R5-LambdaInsideVPC',
-          reason: 'Function is for custom resource and will interact only with QuickSight APIs.',
+          reason: 'Function is for custom resource.',
         },
         {
           id: 'NIST.800.53.R5-LambdaConcurrency',
@@ -215,7 +217,7 @@ export class MdaaCustomResource extends CustomResource {
         },
         {
           id: 'HIPAA.Security-LambdaInsideVPC',
-          reason: 'Function is for custom resource and will interact only with QuickSight APIs.',
+          reason: 'Function is for custom resource.',
         },
         {
           id: 'HIPAA.Security-LambdaConcurrency',
@@ -228,7 +230,7 @@ export class MdaaCustomResource extends CustomResource {
         },
         {
           id: 'PCI.DSS.321-LambdaInsideVPC',
-          reason: 'Function is for custom resource and will interact only with QuickSight APIs.',
+          reason: 'Function is for custom resource.',
         },
         {
           id: 'PCI.DSS.321-LambdaConcurrency',

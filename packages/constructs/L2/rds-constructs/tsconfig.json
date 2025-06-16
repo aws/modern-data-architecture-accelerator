@@ -42,6 +42,9 @@
       "path": "../iam-constructs"
     },
     {
+      "path": "../custom-constructs"
+    },
+    {
       "path": "../kms-constructs"
     },
     {

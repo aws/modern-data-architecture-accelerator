@@ -1,3 +1,8 @@
+/*!
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import Ajv, { JSONSchemaType } from 'ajv';
 import { Workspace } from '@aws-mdaa/config';
 import * as path from 'node:path';

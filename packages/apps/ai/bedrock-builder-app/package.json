@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@aws-mdaa/app": "^1.0.0",
-    "@aws-mdaa/bedrock-agent-l3-construct": "^1.0.0",
+    "@aws-mdaa/bedrock-builder-l3-construct": "^1.0.0",
     "@aws-mdaa/config": "^1.0.0",
     "@aws-mdaa/iam-role-helper": "^1.0.0",
     "@aws-mdaa/l3-construct": "^1.0.0",

@@ -7,6 +7,7 @@ import { CustomResource } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { MdaaResolvableRoleRef } from '.';
 import { MdaaRoleHelper } from './rolehelper';
+import { IRole, Role } from 'aws-cdk-lib/aws-iam';
 
 /**
  * A role for which Role ID, Arn, or Name can be resolved using a custom resource. If one of these
@@ -81,6 +82,10 @@ export class MdaaResolvableRole {
   public name(): string {
     const name = this.roleRef.name ? this.roleRef.name : this.getCr().getAttString('name');
     return name;
+  }
+
+  public role(id: string): IRole {
+    return Role.fromRoleArn(this.scope, id, this.arn());
   }
 
   private getCr(): CustomResource {

@@ -145,7 +145,7 @@ export class MdaaKmsKey extends Key implements IMdaaKmsKey {
         effect: Effect.ALLOW,
         // Use of * mirrors what is done in the CDK methods for adding policy helpers.
         resources: ['*'],
-        actions: [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS],
+        actions: [...USER_ACTIONS],
       });
       // We're including a condition with a stringlike condition that prevents this from being overly broad
       KeyUserPolicyStatement.addAnyPrincipal();

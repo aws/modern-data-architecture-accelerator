@@ -18,11 +18,10 @@ import {
   DatabaseClusterEngine,
   DatabaseClusterProps,
   IParameterGroup,
-  ISubnetGroup,
   ServerlessScalingOptions,
 } from 'aws-cdk-lib/aws-rds';
 import { SecretRotationApplication } from 'aws-cdk-lib/aws-secretsmanager';
-import { MdaaRole } from '@aws-mdaa/iam-constructs';
+import { IRole } from 'aws-cdk-lib/aws-iam';
 
 /**
  * Properties for creating a compliant RDS Serverless Cluster
@@ -41,7 +40,7 @@ export interface MdaaRdsServerlessClusterProps extends MdaaConstructProps {
    * Monitoring Role.
    *
    */
-  readonly monitoringRole: MdaaRole;
+  readonly monitoringRole: IRole;
   /**
    * The number of days during which automatic DB snapshots are retained.
    * Automatic backup retention cannot be disabled on serverless clusters.
@@ -115,21 +114,15 @@ export interface MdaaRdsServerlessClusterProps extends MdaaConstructProps {
   readonly encryptionKey: IMdaaKmsKey;
 
   /**
-   * Existing subnet group for the cluster
-   * @default: a new subnet group is created if vpc was provided. If the vpc property was not provided, no subnet group will be associated with the DB cluster
-   */
-  readonly subnetGroup?: ISubnetGroup;
-
-  /**
    * The VPC that this Aurora Serverless cluster should be created.
    */
-  readonly vpc?: IVpc;
+  readonly vpc: IVpc;
 
   /**
    * Where to place the instances within the VPC. If provided, the vpc property must also be specified.
    * @default: the VPC default strategy if not specified
    */
-  readonly vpcSubnets?: SubnetSelection;
+  readonly vpcSubnets: SubnetSelection;
 
   /**
    * The removal policy to apply when the cluster and its instances are removed from the stack or replaced during an update.

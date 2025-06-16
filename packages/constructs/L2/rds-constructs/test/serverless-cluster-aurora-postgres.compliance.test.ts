@@ -6,9 +6,9 @@
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Template } from 'aws-cdk-lib/assertions';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
-import { SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import * as rds from 'aws-cdk-lib/aws-rds';
-import { MdaaRdsServerlessCluster, MdaaRdsServerlessClusterProps } from '../lib';
+import { MdaaRdsServerlessCluster, MdaaRdsServerlessClusterProps } from '../lib/serverless-cluster';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
@@ -27,7 +27,7 @@ describe('Aurora Postgres: MDAA Construct Compliance Tests', () => {
     availabilityZones: ['test-az'],
     privateSubnetIds: ['test-subnet-id'],
   });
-
+  const testSubnet = Subnet.fromSubnetId(testApp.testStack, 'test-subnet', 'test-subnet-id');
   const testSecurityGroup = new SecurityGroup(testApp.testStack, 'test-security-group', { vpc: testVpc });
   const monitoringRole = new MdaaRole(testApp.testStack, `aurora-postgres-enhanced-monitoring-role`, {
     naming: testApp.naming,
@@ -46,6 +46,7 @@ describe('Aurora Postgres: MDAA Construct Compliance Tests', () => {
     encryptionKey: testKey,
     vpc: testVpc,
     securityGroups: [testSecurityGroup],
+    vpcSubnets: { subnets: [testSubnet] },
     port: 15530,
     adminPasswordRotationDays: 60,
   };

@@ -51,6 +51,9 @@
       "path": "../../core/l3-construct"
     },
     {
+      "path": "../../../L2/cloudwatch-constructs"
+    },
+    {
       "path": "../../../../utilities/mdaa-naming"
     },
     {

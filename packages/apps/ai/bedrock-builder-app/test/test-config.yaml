@@ -1,28 +1,79 @@
 # List of admin roles which will be provided access to agent resources (like KMS/Bucket)
 dataAdminRoles:
-  - name: "Admin"
+  - name: 'Admin'
 
-bedrockAgentExecutionRole: 
-    id: generated-role-id:agent-execution-role
+lambdaFunctions:
+  # List of Lambda layers to create
+  layers:
+    - layerName: test-layer
+      src: ./src/layer/
+      description: 'test layer'
+
+  # List of functions definitions as produced by 'aws glue get-functions --name <name> --include-graph'
+  functions:
+    - functionName: test-action-group
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.13
+      roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
+      description: For testing action groups
 
 # Bedrock Agent Configuration
 agents:
-  test-agent: 
-    agentAliasName: "test-alias"
-    foundationModel: "anthropic.claude-3-sonnet-20240229-v1:0"
-    
+  test-agent:
+    agentAliasName: test-alias
+    role:
+      id: generated-role-id:agent-execution-role
+    foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0'
+
     # (Optional parameters)
-    description: "This is a Test Agent"
-    # Specifies whether to automatically update the DRAFT version of the agent after making changes to the agent
-    autoPrepare: true                     # Default: false
-    # Instructions that tell the agent what it should do and how it should interact with users
+    description: 'This is a Test Agent'
+    autoPrepare: true # Default: false
     instruction: |
       You are a helpful assistant
-      You are allow to use associated Knowledge base to answer the questions
-      Provide responses in markdown format. Provide source citations used in your response
-    # The number of seconds for which Amazon Bedrock keeps information about a user's conversation with the agent
+      You are allowed to use associated Knowledge Base to answer questions
+      Provide responses in markdown format with source citations
     idleSessionTtlInSeconds: 400
-    # Configuration information for a guardrail that you use with the Converse operation
-    guardrailConfiguration:
-      guardrailIdentifier: "arn:aws:bedrock:{{region}}:{{account}}:guardrail/<guardrail-id>"
-      guardrailVersion: "1"
+    guardrail:
+      id: 'arn:aws:bedrock:{{region}}:{{account}}:guardrail/test-guardrail'
+      version: '1'
+
+vectorStores:
+  test-vector-store:
+    vpcId: test-vpc-id
+    subnetIds:
+      - 'test-subnet-id'
+
+# Knowledge Base Configuration
+knowledgeBases:
+  test-knowledge-base:
+    embeddingModel: 'arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1'
+    vectorStore: test-vector-store
+    role:
+      id: generated-role-id:kb-execution-role
+    s3DataSources:
+      test-s3-ds:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents/'
+
+    vectorFieldSize: 1536
+    # chunkingConfiguration:
+    #   chunkingStrategy: "FIXED_SIZE"
+    #   fixedSizeChunkingConfiguration:
+    #     maxTokens: 512
+    #     overlapPercentage: 20
+
+# Guardrails Configuration
+guardrails:
+  enterprise-guardrail:
+    description: 'Enterprise content safety guardrail'
+    contentFilters:
+      hate:
+        inputStrength: 'MEDIUM'
+        outputStrength: 'MEDIUM'
+    blockedInputMessaging: 'Your input contains restricted content'
+    blockedOutputsMessaging: 'Response blocked due to policy restrictions'
+
+    contextualGroundingFilters:
+      grounding: 0.95
+      relevance: 0.90
