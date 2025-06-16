@@ -87,9 +87,11 @@ export class DataZoneL3Construct extends MdaaL3Construct {
   private createDomain(domainName: string, domainProps: DomainProps) {
     const dataAdminRole = this.props.roleHelper.resolveRoleRefWithRefId(domainProps.dataAdminRole, 'admin');
 
+    const domainVersion = domainProps.domainVersion ?? 'V1';
+
     const kmsKey = this.createDomainKmsKey(domainName, domainProps, dataAdminRole);
 
-    const executionRole = this.createExecutionRole(`${domainName}-execution-role`, kmsKey, domainProps.domainVersion);
+    const executionRole = this.createExecutionRole(`${domainName}-execution-role`, kmsKey, domainVersion);
 
     const singleSignOn: CfnDomain.SingleSignOnProperty = {
       type: domainProps.singleSignOnType ?? DEFAULT_SSO_TYPE,
@@ -102,8 +104,8 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       kmsKeyIdentifier: kmsKey.keyArn,
       description: domainProps.description,
       singleSignOn: singleSignOn,
-      domainVersion: domainProps.domainVersion,
-      serviceRole: domainProps.domainVersion == 'V2' ? this.createServiceRole('service', kmsKey).roleArn : undefined,
+      domainVersion: domainVersion,
+      serviceRole: domainVersion == 'V2' ? this.createServiceRole('service', kmsKey).roleArn : undefined,
     };
 
     // Create domain
@@ -161,24 +163,22 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       tier: ParameterTier.ADVANCED,
     });
 
-    const customEnvBlueprintConfig = this.createCustomBlueprintConfig(
-      this,
-      domain.attrId,
-      [this.region],
-      kmsKey.keyArn,
-    );
+    const customEnvBlueprintConfig =
+      domainVersion == 'V1'
+        ? this.createCustomBlueprintConfig(this, domain.attrId, [this.region], kmsKey.keyArn)
+        : undefined;
 
     const configParam = this.createDomainConfigParam(
       domainName,
       domain,
       adminUserProfile,
-      customEnvBlueprintConfig.getAttString('id'),
-      domain.domainVersion ?? 'V1',
+      domainVersion,
       {
         domainKmsKeyArn: kmsKey.keyArn,
         glueCatalogKmsKeyArns: glueCatalogKmsKeyArns,
         domainKmsUsagePolicyName: domainKmsUsagePolicyName,
       },
+      customEnvBlueprintConfig?.getAttString('id'),
     );
 
     if (domainProps.associatedAccounts) {
@@ -213,7 +213,6 @@ export class DataZoneL3Construct extends MdaaL3Construct {
             accountCdkUserProfileProps,
           );
 
-          //Monitor resource share associations
           associatedAccountCdkUserProfile.node.addDependency(associatedAccountRamShare);
 
           this.createAssociatedAccountStackResources(
@@ -262,12 +261,14 @@ export class DataZoneL3Construct extends MdaaL3Construct {
         );
 
         //Enable custom blueprints in the target account for this domain
-        this.createCustomBlueprintConfig(
-          crossAccountStack,
-          domainConfigParser.parsedConfig.domainId,
-          [region || this.region],
-          domainConfigParser.parsedConfig.domainKmsKeyArn,
-        );
+        if (domainConfigParser.parsedConfig.domainVersion == 'V1') {
+          this.createCustomBlueprintConfig(
+            crossAccountStack,
+            domainConfigParser.parsedConfig.domainId,
+            [region || this.region],
+            domainConfigParser.parsedConfig.domainKmsKeyArn,
+          );
+        }
       } else {
         console.warn(
           `Cross account stack not defined for associated account ${associatedAccountName}/${associatedAccountNum} on domain ${domainName}. Cross account association will not work.`,
@@ -357,13 +358,13 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     domainName: string,
     domain: CfnDomain,
     adminUserProfile: CfnUserProfile,
-    customEnvBlueprintConfigId: string,
     domainVersion: string,
     domainKmsConfig: {
       domainKmsKeyArn: string;
       glueCatalogKmsKeyArns: string[];
       domainKmsUsagePolicyName: string;
     },
+    customEnvBlueprintConfigId?: string,
   ): MdaaParamAndOutput {
     return new MdaaParamAndOutput(this, {
       resourceType: 'domain',
