@@ -27,7 +27,7 @@ import { Construct } from 'constructs';
 
 export interface StepFunctionProps {
   /**
-   * StepFunction defintion exported as JSON from Step Functions console
+   * StepFunction definition exported as JSON from Step Functions console
    */
   readonly stateMachineName: string;
   /**
@@ -35,7 +35,7 @@ export interface StepFunctionProps {
    */
   readonly stateMachineType: string;
   /**
-   * StepFunction defintion exported as JSON from Step Functions console
+   * StepFunction definition exported as JSON from Step Functions console
    */
   readonly stateMachineExecutionRole: string;
   /**
@@ -51,7 +51,7 @@ export interface StepFunctionProps {
    */
   readonly logExecutionData: boolean;
   /**
-   * StepFunction defintion exported as JSON from Step Functions console
+   * StepFunction definition exported as JSON from Step Functions console
    */
   readonly rawStepFunctionDef: { [key: string]: unknown };
   /**
@@ -132,15 +132,13 @@ export class StepFunctionL3Construct extends MdaaL3Construct {
       logGroupRetentionDays = RetentionDays.TWO_YEARS;
     }
 
-    const logGroup: LogGroup = new MdaaLogGroup(this, `${stepfunctionProps.stateMachineName}-loggroup`, {
+    return new MdaaLogGroup(this, `${stepfunctionProps.stateMachineName}-loggroup`, {
       naming: this.props.naming,
       logGroupName: stepfunctionProps.stateMachineName,
       logGroupNamePathPrefix: `/aws/stepfunction/`,
       encryptionKey: this.projectKmsKey,
       retention: logGroupRetentionDays,
     });
-
-    return logGroup;
   }
 
   private createStepFunctionFromDefinition(stepfunctionProps: StepFunctionProps, logGroup: LogGroup): StateMachine {

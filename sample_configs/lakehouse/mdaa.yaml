@@ -16,11 +16,11 @@ organization: <unique-org-name>
 
 # TODO: Set appropriate context values for your environment.
 context:
-  vpc_id: vpc-0c8d74b7c977391e0
+  vpc_id: <your vpc id>
   availability_zone: "{{region}}b"
-  subnet_id: subnet-082ae448380744350
-  # The CIDR range from which the Redshift cluster should be accessible
-  redshift_client_cidr_range: 10.0.0.0/24
+  subnet_id: <your subnet id>
+  # The CIDR range from which the Redshift cluster should be accessible, eg: 10.0.0.0/24
+  redshift_client_cidr_range: <cidr range for redshift client>
 
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names.
@@ -37,7 +37,7 @@ domains:
         # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
         # specifies a deployment configuration file if required.
         modules:
-          # This module will create all of the roles required for the datalake, as well as dataops layers running on top
+          # This module will create all the roles required for the datalake, as well as dataops layers running on top
           roles: # The module name (ie 'roles') will be incorporated into resource name by the default naming implementation.
             module_path: "@aws-mdaa/roles"
             module_configs:

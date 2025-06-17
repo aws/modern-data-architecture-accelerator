@@ -48,6 +48,10 @@ jobs:
     defaultArguments:
       --Input: s3://some-bucket/some-location1
     allocatedCapacity: 2
+    continuousLogging:
+      # For allowed values, refer https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.RetentionDays.html
+      # Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0.
+      logGroupRetentionDays: 3
 
   JobTwo:
     template: "ExampleTemplate" # Reference a job template.
@@ -63,5 +67,5 @@ jobs:
     # from core import core_function1, core_function2;
     # from helper_etl import helper_function1, helper_function2;
     additionalScripts:
-      - ./src/glue/helper_etl.py    
-      - ./src/glue/utils/core.py    
+      - ./src/glue/helper_etl.py
+      - ./src/glue/utils/core.py

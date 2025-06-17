@@ -36,6 +36,12 @@ templates:
     # Use maxCapacity or WorkerType.  Not both.
     # workerType: "G.1X"
     executionRoleArn: generated-role-arn:glue-etl
+    # Viewing real-time logs provides you with a better perspective on the running job.
+    # https://docs.aws.amazon.com/glue/latest/dg/monitor-continuous-logging.html
+    continuousLogging:
+      # For allowed values, refer https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.RetentionDays.html
+      # Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0.
+      logGroupRetentionDays: 14
 
 jobs:
   glue_csv_parquet:

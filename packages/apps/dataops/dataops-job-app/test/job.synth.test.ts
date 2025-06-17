@@ -4,6 +4,7 @@
  */
 
 import { GlueJobCDKApp } from '../lib/dataops-job';
+import { Template } from 'aws-cdk-lib/assertions';
 
 test('SynthTest', () => {
   const context = {
@@ -14,11 +15,15 @@ test('SynthTest', () => {
     module_configs: './test/test-config.yaml',
   };
   const app = new GlueJobCDKApp({ context: context });
-  app.generateStack();
+  const stack = app.generateStack();
   expect(() =>
     app.synth({
       force: true,
       validateOnSynthesis: true,
     }),
   ).not.toThrow();
+
+  const template = Template.fromStack(stack);
+  // only one of the two jobs has continuous logging enabled
+  template.resourceCountIs('AWS::Logs::LogGroup', 1);
 });

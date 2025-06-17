@@ -21,6 +21,7 @@ export class GlueJobCDKApp extends MdaaCdkApp {
     const appConfig = new GlueJobConfigParser(stack, parserProps);
     const constructProps: GlueJobL3ConstructProps = {
       ...{
+        projectKMSArn: appConfig.kmsArn,
         deploymentRoleArn: appConfig.deploymentRole,
         projectBucketName: appConfig.projectBucket,
         jobConfigs: appConfig.jobConfigs,

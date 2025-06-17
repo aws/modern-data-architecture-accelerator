@@ -3,18 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
-import { RemovalPolicy } from 'aws-cdk-lib';
+import { MdaaConstructProps, MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { ILogGroup, LogGroup, LogGroupProps, RetentionDays } from 'aws-cdk-lib/aws-logs';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
+import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
+import { updateProps } from './utils';
 
 export interface MdaaLogGroupProps extends MdaaConstructProps {
   /**
    * The KMS customer managed key to encrypt the log group with.
    *
-   * @default Server-side encrpytion managed by the CloudWatch Logs service
+   * @default Server-side encryption managed by the CloudWatch Logs service
    */
   readonly encryptionKey: IKey;
   /**
@@ -46,19 +45,8 @@ export type IMdaaLogGroup = ILogGroup;
  * Construct for a compliant CloudWatch Log Group
  */
 export class MdaaLogGroup extends LogGroup implements IMdaaLogGroup {
-  private static setProps(props: MdaaLogGroupProps): LogGroupProps {
-    const pathPrefix = props.logGroupNamePathPrefix.endsWith('/')
-      ? props.logGroupNamePathPrefix
-      : props.logGroupNamePathPrefix + '/';
-    const overrideProps = {
-      logGroupName: pathPrefix + props.naming.resourceName(props.logGroupName),
-      removalPolicy: RemovalPolicy.RETAIN,
-    };
-    return { ...props, ...overrideProps };
-  }
-
   constructor(scope: Construct, id: string, props: MdaaLogGroupProps) {
-    super(scope, id, MdaaLogGroup.setProps(props));
+    super(scope, id, updateProps(props));
 
     if (props.retention == RetentionDays.INFINITE) {
       MdaaNagSuppressions.addCodeResourceSuppressions(

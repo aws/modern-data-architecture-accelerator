@@ -19,9 +19,24 @@ import { MdaaSnsTopic } from '@aws-mdaa/sns-constructs';
 import { Rule } from 'aws-cdk-lib/aws-events';
 import { Fn } from 'aws-cdk-lib';
 import { ConfigurationElement } from '@aws-mdaa/config';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
+import { IKey, Key } from 'aws-cdk-lib/aws-kms';
+import { updateProps } from '@aws-mdaa/cloudwatch-constructs/lib/utils';
 
 export type JobCommandPythonVersion = '2' | '3' | undefined;
 export type JobCommandName = 'glueetl' | 'pythonshell';
+
+export interface LoggingConfig {
+  /**
+   * Optional. Number of days the Logs will be retained in Cloudwatch.
+   * For allowed values, refer https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.RetentionDays.html
+   * Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0.
+   * If you specify 0, the events in the log group are always retained and never expire.
+   * Default, if property not specified, is 731 days.
+   */
+  readonly logGroupRetentionDays: number;
+}
 
 export interface JobCommand {
   /**
@@ -106,6 +121,11 @@ export interface JobConfig {
    * Relative path to Additional Glue scripts
    */
   readonly additionalScripts?: string[];
+
+  /**
+   * Enables real-time monitoring and troubleshooting of AWS Glue jobs by streaming logs to CloudWatch Logs while the job is running
+   */
+  readonly continuousLogging?: LoggingConfig;
 }
 
 export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
@@ -134,10 +154,16 @@ export interface GlueJobL3ConstructProps extends MdaaL3ConstructProps {
    * Notification topic Arn
    */
   readonly notificationTopicArn: string;
+
+  /**
+   * Dataops project KMS key ARN.
+   */
+  readonly projectKMSArn: string;
 }
 
 export class GlueJobL3Construct extends MdaaL3Construct {
   protected readonly props: GlueJobL3ConstructProps;
+  private readonly projectKmsKey: IKey;
 
   constructor(scope: Construct, id: string, props: GlueJobL3ConstructProps) {
     super(scope, id, props);
@@ -145,6 +171,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
 
     const deploymentRole = MdaaRole.fromRoleArn(this.scope, `deployment-role`, this.props.deploymentRoleArn);
     const projectBucket = MdaaBucket.fromBucketName(this.scope, `project-bucket`, this.props.projectBucketName);
+    this.projectKmsKey = Key.fromKeyArn(this, this.props.projectName, this.props.projectKMSArn);
 
     // Build our jobs!
     const allJobs = this.props.jobConfigs;
@@ -268,6 +295,19 @@ export class GlueJobL3Construct extends MdaaL3Construct {
 
       defaultArguments['--TempDir'] = `s3://${this.props.projectBucketName}/temp/jobs/${jobName}`;
 
+      // add continuous logging unless explicitly disabled
+      if (jobConfig.continuousLogging) {
+        const logGroupName = jobName;
+        const logGroupNamePathPrefix = '/aws/glue';
+        defaultArguments['--continuous-log-logGroup'] = this.createLogGroup(
+          logGroupNamePathPrefix,
+          logGroupName,
+          jobConfig.continuousLogging,
+        );
+      } else {
+        console.log(`Continuous logging not enabled for job: ${jobName}`);
+      }
+
       const job = new MdaaCfnJob(this.scope, `${jobName}-job`, {
         command: {
           name: jobConfig.command.name,
@@ -322,6 +362,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       }
     });
   }
+
   private createJobMonitoringEventRule(ruleName: string, jobNames: string[]): Rule {
     return EventBridgeHelper.createGlueMonitoringEventRule(
       this.scope,
@@ -333,5 +374,26 @@ export class GlueJobL3Construct extends MdaaL3Construct {
         state: ['FAILED', 'TIMEOUT', 'STOPPED'],
       },
     );
+  }
+
+  private createLogGroup(logGroupNamePathPrefix: string, logGroupName: string, loggingConfig: LoggingConfig): string {
+    let logGroupRetentionDays: RetentionDays;
+
+    if (loggingConfig.logGroupRetentionDays != 0) {
+      logGroupRetentionDays = loggingConfig.logGroupRetentionDays;
+    } else {
+      logGroupRetentionDays = RetentionDays.INFINITE;
+    }
+
+    const logProps = {
+      naming: this.props.naming,
+      logGroupName: logGroupName,
+      logGroupNamePathPrefix: logGroupNamePathPrefix,
+      encryptionKey: this.projectKmsKey,
+      retention: logGroupRetentionDays,
+    };
+    new MdaaLogGroup(this, logGroupName, logProps);
+    // `updateProps` always returns a prop with a logGroupName
+    return updateProps(logProps).logGroupName!;
   }
 }

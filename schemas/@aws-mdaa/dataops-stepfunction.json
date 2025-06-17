@@ -396,15 +396,15 @@
                 },
                 "rawStepFunctionDef": {
                     "additionalProperties": {},
-                    "description": "StepFunction defintion exported as JSON from Step Functions console",
+                    "description": "StepFunction definition exported as JSON from Step Functions console",
                     "type": "object"
                 },
                 "stateMachineExecutionRole": {
-                    "description": "StepFunction defintion exported as JSON from Step Functions console",
+                    "description": "StepFunction definition exported as JSON from Step Functions console",
                     "type": "string"
                 },
                 "stateMachineName": {
-                    "description": "StepFunction defintion exported as JSON from Step Functions console",
+                    "description": "StepFunction definition exported as JSON from Step Functions console",
                     "type": "string"
                 },
                 "stateMachineType": {

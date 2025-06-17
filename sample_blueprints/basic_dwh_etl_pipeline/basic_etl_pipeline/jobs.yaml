@@ -34,6 +34,12 @@ templates:
     # (optional) Worker type to use.  Any of: "Standard" | "G.1X" | "G.2X"
     # Use maxCapacity or WorkerType.  Not both.
     workerType: "G.2X"
+    # Viewing real-time logs provides you with a better perspective on the running job.
+    # https://docs.aws.amazon.com/glue/latest/dg/monitor-continuous-logging.html
+    continuousLogging:
+      # For allowed values, refer https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.RetentionDays.html
+      # Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0.
+      logGroupRetentionDays: 14
 
   RedshiftLoadJobTemplate:
     # (required) the role used to execute the job
