@@ -163,6 +163,39 @@
             ],
             "type": "object"
         },
+        "BedrockDataAutomationConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "parsingModality": {
+                    "const": "MULTIMODAL",
+                    "description": "Specifies whether to enable parsing of multimodal data, including both text and/or images.\nAllowed value: MULTIMODAL",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "BedrockFoundationModelConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "modelArn": {
+                    "description": "The ARN of the foundation model to use for parsing",
+                    "type": "string"
+                },
+                "parsingModality": {
+                    "const": "MULTIMODAL",
+                    "description": "Specifies whether to enable parsing of multimodal data, including both text and/or images.\nAllowed value: MULTIMODAL",
+                    "type": "string"
+                },
+                "parsingPromptText": {
+                    "description": "Optional parsing instructions for the foundation model",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "modelArn"
+            ],
+            "type": "object"
+        },
         "BedrockGuardrailProps": {
             "additionalProperties": false,
             "properties": {
@@ -195,9 +228,6 @@
         "BedrockKnowledgeBaseProps": {
             "additionalProperties": false,
             "properties": {
-                "chunkingConfiguration": {
-                    "$ref": "#/definitions/ChunkingConfiguration"
-                },
                 "embeddingModel": {
                     "description": "Embedding model ID to use for generating vector embeddings.\nExample: \"amazon.titan-embed-text-v1\"",
                     "type": "string"
@@ -209,6 +239,10 @@
                 "s3DataSources": {
                     "$ref": "#/definitions/NamedS3DataSource",
                     "description": "Array of S3 data sources to be used for the knowledge base\nEach data source specifies a bucket and optional prefix"
+                },
+                "supplementalBucketName": {
+                    "description": "Name of the S3 bucket for supplemental data storage.\nRequired when using advanced parsing strategies like BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL.",
+                    "type": "string"
                 },
                 "vectorFieldSize": {
                     "description": "Field size where the vector embeddings will be stored",
@@ -826,13 +860,12 @@
         "HierarchicalChunking": {
             "additionalProperties": false,
             "properties": {
-                "maxTokensForChild": {
-                    "description": "Maximum tokens for child chunks",
-                    "type": "number"
-                },
-                "maxTokensForParent": {
-                    "description": "Maximum tokens for parent chunks",
-                    "type": "number"
+                "levelConfigurations": {
+                    "description": "Level configurations for hierarchical chunking",
+                    "items": {
+                        "$ref": "#/definitions/HierarchicalChunkingLevelConfig"
+                    },
+                    "type": "array"
                 },
                 "overlapTokens": {
                     "description": "Number of tokens to overlap between chunks",
@@ -840,9 +873,21 @@
                 }
             },
             "required": [
-                "maxTokensForChild",
-                "maxTokensForParent",
+                "levelConfigurations",
                 "overlapTokens"
+            ],
+            "type": "object"
+        },
+        "HierarchicalChunkingLevelConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "maxTokens": {
+                    "description": "Maximum tokens for this level",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "maxTokens"
             ],
             "type": "object"
         },
@@ -1290,6 +1335,31 @@
             },
             "type": "object"
         },
+        "ParsingConfiguration": {
+            "additionalProperties": false,
+            "properties": {
+                "bedrockDataAutomationConfiguration": {
+                    "$ref": "#/definitions/BedrockDataAutomationConfig",
+                    "description": "Configuration for Bedrock Data Automation parsing\nOptional when parsingStrategy is BEDROCK_DATA_AUTOMATION"
+                },
+                "bedrockFoundationModelConfiguration": {
+                    "$ref": "#/definitions/BedrockFoundationModelConfig",
+                    "description": "Configuration for foundation model parsing\nRequired when parsingStrategy is BEDROCK_FOUNDATION_MODEL"
+                },
+                "parsingStrategy": {
+                    "description": "The parsing strategy to use for processing documents\nBEDROCK_DATA_AUTOMATION - Use Bedrock Data Automation for parsing\nBEDROCK_FOUNDATION_MODEL - Use foundation model for parsing",
+                    "enum": [
+                        "BEDROCK_DATA_AUTOMATION",
+                        "BEDROCK_FOUNDATION_MODEL"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "parsingStrategy"
+            ],
+            "type": "object"
+        },
         "Record<string,IResolvable|CfnAgent.ParameterDetailProperty>": {
             "additionalProperties": false,
             "type": "object"
@@ -1318,6 +1388,10 @@
                 "prefix": {
                     "description": "Optional prefix to limit which objects in the bucket are included",
                     "type": "string"
+                },
+                "vectorIngestionConfiguration": {
+                    "$ref": "#/definitions/VectorIngestionConfiguration",
+                    "description": "Vector ingestion configuration for this data source"
                 }
             },
             "required": [
@@ -1382,6 +1456,20 @@
                 "MEDIUM"
             ],
             "type": "string"
+        },
+        "VectorIngestionConfiguration": {
+            "additionalProperties": false,
+            "properties": {
+                "chunkingConfiguration": {
+                    "$ref": "#/definitions/ChunkingConfiguration",
+                    "description": "Configuration for document chunking"
+                },
+                "parsingConfiguration": {
+                    "$ref": "#/definitions/ParsingConfiguration",
+                    "description": "Configuration for document parsing"
+                }
+            },
+            "type": "object"
         },
         "VectorStoreProps": {
             "additionalProperties": false,

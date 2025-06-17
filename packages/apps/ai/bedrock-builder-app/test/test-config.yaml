@@ -51,17 +51,41 @@ knowledgeBases:
     vectorStore: test-vector-store
     role:
       id: generated-role-id:kb-execution-role
+    # For Multimodal documents, its mandatory to provide location to store the images extracted from your data source
+    supplementalBucketName: 'supplemental-image-storage-bucket'
     s3DataSources:
-      test-s3-ds:
+      test-ds-default-parsing:
         bucketName: 'customer-docs-bucket'
         prefix: 'support-documents/'
+      test-ds-bda-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-2/'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          # (Optional) Allows customized chunking strategy for the data source.
+          # The chunking strategy cannot be modified after a data source has been created
+          chunkingConfiguration:
+            chunkingStrategy: 'FIXED_SIZE'
+            fixedSizeChunkingConfiguration:
+              maxTokens: 512
+              overlapPercentage: 20
+              
+      test-ds-foundation-model-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-3/'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_FOUNDATION_MODEL'
+            bedrockFoundationModelConfiguration:
+              modelArn: 'anthropic.claude-3-sonnet-20240229-v1:0'
+              parsingModality: 'MULTIMODAL'
+              parsingPromptText: 'Extract key information from this document'
 
     vectorFieldSize: 1536
-    # chunkingConfiguration:
-    #   chunkingStrategy: "FIXED_SIZE"
-    #   fixedSizeChunkingConfiguration:
-    #     maxTokens: 512
-    #     overlapPercentage: 20
+
 
 # Guardrails Configuration
 guardrails:

@@ -268,6 +268,173 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(Object.keys(guardrailResources).length).toBe(0);
     });
   });
+
+  describe('Bedrock Builder L3 Construct with Vector Ingestion Configuration', () => {
+    const testApp = new MdaaTestApp();
+    // Knowledge Base Properties with Vector Ingestion Configuration
+    const vectorStore: VectorStoreProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['test-subnet'],
+    };
+
+    const knowledgeBase: BedrockKnowledgeBaseProps = {
+      role: kbRoleRef,
+      vectorStore: 'test-vector-store',
+      supplementalBucketName: 'test-supplemental-bucket',
+      s3DataSources: {
+        testDataAutomation: {
+          bucketName: 'test-docs-bucket-1',
+          prefix: 'test-prefix-1/',
+          vectorIngestionConfiguration: {
+            parsingConfiguration: {
+              parsingStrategy: 'BEDROCK_DATA_AUTOMATION',
+              bedrockDataAutomationConfiguration: {
+                parsingModality: 'MULTIMODAL',
+              },
+            },
+            chunkingConfiguration: {
+              chunkingStrategy: 'FIXED_SIZE',
+              fixedSizeChunkingConfiguration: {
+                maxTokens: 500,
+                overlapPercentage: 20,
+              },
+            },
+          },
+        },
+        testFoundationModel: {
+          bucketName: 'test-docs-bucket-2',
+          prefix: 'test-prefix-2/',
+          vectorIngestionConfiguration: {
+            parsingConfiguration: {
+              parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
+              bedrockFoundationModelConfiguration: {
+                modelArn: 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
+                parsingModality: 'MULTIMODAL',
+                parsingPromptText: 'Extract key information from this document',
+              },
+            },
+            chunkingConfiguration: {
+              chunkingStrategy: 'HIERARCHICAL',
+              hierarchicalChunkingConfiguration: {
+                levelConfigurations: [{ maxTokens: 1000 }],
+                overlapTokens: 50,
+              },
+            },
+          },
+        },
+        testSemanticChunking: {
+          bucketName: 'test-docs-bucket-3',
+          prefix: 'test-prefix-3/',
+          vectorIngestionConfiguration: {
+            chunkingConfiguration: {
+              chunkingStrategy: 'SEMANTIC',
+              semanticChunkingConfiguration: {
+                maxTokens: 800,
+                bufferSize: 5,
+                breakpointPercentileThreshold: 0.5,
+              },
+            },
+          },
+        },
+      },
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorFieldSize: 1024,
+    };
+
+    const template = generateTemplateFromTestInput(
+      testApp,
+      dataAdminRoleRef,
+      { 'test-agent-vector': agent },
+      { 'test-vector-store': vectorStore },
+      { 'test-kb-vector': knowledgeBase },
+      { 'test-guardrail-vector': guardrail },
+      lambdaFunctions,
+    );
+    console.log(JSON.stringify(template.findResources('AWS::Bedrock::KnowledgeBase', {}), null, 2));
+
+    test('Test Data Source with BEDROCK_DATA_AUTOMATION Parsing Strategy', () => {
+      template.hasResourceProperties('AWS::Bedrock::DataSource', {
+        Name: 'testDataAutomation',
+        VectorIngestionConfiguration: {
+          ParsingConfiguration: {
+            ParsingStrategy: 'BEDROCK_DATA_AUTOMATION',
+            BedrockDataAutomationConfiguration: {
+              ParsingModality: 'MULTIMODAL',
+            },
+          },
+          ChunkingConfiguration: {
+            ChunkingStrategy: 'FIXED_SIZE',
+            FixedSizeChunkingConfiguration: {
+              MaxTokens: 500,
+              OverlapPercentage: 20,
+            },
+          },
+        },
+      });
+    });
+
+    test('Test Data Source with BEDROCK_FOUNDATION_MODEL Parsing Strategy', () => {
+      template.hasResourceProperties('AWS::Bedrock::DataSource', {
+        Name: 'testFoundationModel',
+        VectorIngestionConfiguration: {
+          ParsingConfiguration: {
+            ParsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
+            BedrockFoundationModelConfiguration: {
+              ModelArn: 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
+              ParsingModality: 'MULTIMODAL',
+              ParsingPrompt: {
+                ParsingPromptText: 'Extract key information from this document',
+              },
+            },
+          },
+          ChunkingConfiguration: {
+            ChunkingStrategy: 'HIERARCHICAL',
+            HierarchicalChunkingConfiguration: {
+              LevelConfigurations: [{ MaxTokens: 1000 }],
+              OverlapTokens: 50,
+            },
+          },
+        },
+      });
+    });
+
+    test('Test Knowledge Base with Supplemental Data Storage Configuration', () => {
+      template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
+        KnowledgeBaseConfiguration: {
+          Type: 'VECTOR',
+          VectorKnowledgeBaseConfiguration: {
+            EmbeddingModelArn: 'arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
+            SupplementalDataStorageConfiguration: {
+              SupplementalDataStorageLocations: [
+                {
+                  SupplementalDataStorageLocationType: 'S3',
+                  S3Location: {
+                    URI: 's3://test-supplemental-bucket',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      });
+    });
+
+    test('Test Data Source with SEMANTIC Chunking Strategy', () => {
+      template.hasResourceProperties('AWS::Bedrock::DataSource', {
+        Name: 'testSemanticChunking',
+        VectorIngestionConfiguration: {
+          ChunkingConfiguration: {
+            ChunkingStrategy: 'SEMANTIC',
+            SemanticChunkingConfiguration: {
+              MaxTokens: 800,
+              BufferSize: 5,
+              BreakpointPercentileThreshold: 0.5,
+            },
+          },
+        },
+      });
+    });
+  });
 });
 
 function generateTemplateFromTestInput(

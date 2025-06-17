@@ -172,6 +172,65 @@ export interface BedrockAgentProps {
   readonly role: MdaaRoleRef;
 }
 
+export interface BedrockDataAutomationConfig {
+  /**
+   * Specifies whether to enable parsing of multimodal data, including both text and/or images.
+   * Allowed value: MULTIMODAL
+   */
+  readonly parsingModality?: 'MULTIMODAL';
+}
+
+export interface BedrockFoundationModelConfig {
+  /**
+   * The ARN of the foundation model to use for parsing
+   */
+  readonly modelArn: string;
+
+  /**
+   * Optional parsing instructions for the foundation model
+   */
+  readonly parsingPromptText?: string;
+
+  /**
+   * Specifies whether to enable parsing of multimodal data, including both text and/or images.
+   * Allowed value: MULTIMODAL
+   */
+  readonly parsingModality?: 'MULTIMODAL';
+}
+
+export interface ParsingConfiguration {
+  /**
+   * The parsing strategy to use for processing documents
+   * BEDROCK_DATA_AUTOMATION - Use Bedrock Data Automation for parsing
+   * BEDROCK_FOUNDATION_MODEL - Use foundation model for parsing
+   */
+  readonly parsingStrategy: 'BEDROCK_DATA_AUTOMATION' | 'BEDROCK_FOUNDATION_MODEL';
+
+  /**
+   * Configuration for Bedrock Data Automation parsing
+   * Optional when parsingStrategy is BEDROCK_DATA_AUTOMATION
+   */
+  readonly bedrockDataAutomationConfiguration?: BedrockDataAutomationConfig;
+
+  /**
+   * Configuration for foundation model parsing
+   * Required when parsingStrategy is BEDROCK_FOUNDATION_MODEL
+   */
+  readonly bedrockFoundationModelConfiguration?: BedrockFoundationModelConfig;
+}
+
+export interface VectorIngestionConfiguration {
+  /**
+   * Configuration for document parsing
+   */
+  readonly parsingConfiguration?: ParsingConfiguration;
+
+  /**
+   * Configuration for document chunking
+   */
+  readonly chunkingConfiguration?: ChunkingConfiguration;
+}
+
 export interface S3DataSource {
   /**
    * The name of the S3 bucket containing the data
@@ -181,6 +240,10 @@ export interface S3DataSource {
    * Optional prefix to limit which objects in the bucket are included
    */
   readonly prefix?: string;
+  /**
+   * Vector ingestion configuration for this data source
+   */
+  readonly vectorIngestionConfiguration?: VectorIngestionConfiguration;
 }
 
 export interface VectorStoreProps {
@@ -214,16 +277,18 @@ export interface FixedSizeChunking {
   readonly overlapPercentage: number;
 }
 
+export interface HierarchicalChunkingLevelConfig {
+  /**
+   * Maximum tokens for this level
+   */
+  readonly maxTokens: number;
+}
+
 export interface HierarchicalChunking {
   /**
-   * Maximum tokens for parent chunks
+   * Level configurations for hierarchical chunking
    */
-  readonly maxTokensForParent: number;
-
-  /**
-   * Maximum tokens for child chunks
-   */
-  readonly maxTokensForChild: number;
+  readonly levelConfigurations: HierarchicalChunkingLevelConfig[];
 
   /**
    * Number of tokens to overlap between chunks
@@ -303,7 +368,11 @@ export interface BedrockKnowledgeBaseProps {
    * Field size where the vector embeddings will be stored
    */
   readonly vectorFieldSize?: number;
-  readonly chunkingConfiguration?: ChunkingConfiguration;
+  /**
+   * Name of the S3 bucket for supplemental data storage.
+   * Required when using advanced parsing strategies like BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL.
+   */
+  readonly supplementalBucketName?: string;
   /**
    * Reference to role which will be used as execution role on knowledge base.
    * The role must have assume role trust with bedrock.amazonaws.com
@@ -758,6 +827,20 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
             type: 'VECTOR',
             vectorKnowledgeBaseConfiguration: {
               embeddingModelArn: embeddingModelArn,
+              // If Supplemental Data storage to multimodal data parsing strategies
+              ...(kbConfig.supplementalBucketName && {
+                supplementalDataStorageConfiguration: {
+                  supplementalDataStorageLocations: [
+                    {
+                      supplementalDataStorageLocationType: 'S3',
+                      s3Location: {
+                        // The S3 URI for supplemental data storage does not support sub-folder(s)
+                        uri: `s3://${kbConfig.supplementalBucketName}`,
+                      },
+                    },
+                  ],
+                },
+              }),
             },
           },
           storageConfiguration: {
@@ -828,26 +911,8 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         cfnDelivery.addDependency(kbLogSource);
 
         // Create data sources for the knowledge base
-        Object.entries(kbConfig.s3DataSources || {}).forEach(entry => {
-          const dsName = entry[0];
-          const dsProps = entry[1];
-          const bucket = s3.Bucket.fromBucketName(this, `${kbName}-ImportBucket-${dsName}`, dsProps.bucketName);
-
-          new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, {
-            knowledgeBaseId: knowledgeBase.attrKnowledgeBaseId,
-            name: dsName,
-            dataSourceConfiguration: {
-              type: 'S3',
-              s3Configuration: {
-                bucketArn: bucket.bucketArn,
-                inclusionPrefixes: dsProps.prefix ? [dsProps.prefix] : undefined,
-              },
-            },
-            // Add server-side encryption with the KMS key for data source
-            serverSideEncryptionConfiguration: {
-              kmsKeyArn: kmsKey.keyArn,
-            },
-          });
+        Object.entries(kbConfig.s3DataSources || {}).forEach(([dsName, dsProps]) => {
+          this.createBedrockDataSource(knowledgeBase.attrKnowledgeBaseId, kbName, dsName, dsProps, kmsKey);
         });
 
         const kbPolicyProps: MdaaManagedPolicyProps = {
@@ -912,6 +977,162 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       `CREATE INDEX IF NOT EXISTS idx_${customMetadataField} ON ${tableName} USING gin (${customMetadataField});`,
     ];
     return baseIndexStatements;
+  }
+
+  private createChunkingConfigurationProperty(
+    config: ChunkingConfiguration,
+  ): bedrock.CfnDataSource.ChunkingConfigurationProperty {
+    let chunkingConfig: bedrock.CfnDataSource.ChunkingConfigurationProperty;
+
+    if (config.chunkingStrategy === 'FIXED_SIZE' && config.fixedSizeChunkingConfiguration) {
+      chunkingConfig = {
+        chunkingStrategy: config.chunkingStrategy,
+        fixedSizeChunkingConfiguration: {
+          maxTokens: config.fixedSizeChunkingConfiguration.maxTokens,
+          overlapPercentage: config.fixedSizeChunkingConfiguration.overlapPercentage,
+        },
+      };
+    } else if (config.chunkingStrategy === 'HIERARCHICAL' && config.hierarchicalChunkingConfiguration) {
+      chunkingConfig = {
+        chunkingStrategy: config.chunkingStrategy,
+        hierarchicalChunkingConfiguration: {
+          levelConfigurations: config.hierarchicalChunkingConfiguration.levelConfigurations,
+          overlapTokens: config.hierarchicalChunkingConfiguration.overlapTokens,
+        },
+      };
+    } else if (config.chunkingStrategy === 'SEMANTIC' && config.semanticChunkingConfiguration) {
+      chunkingConfig = {
+        chunkingStrategy: config.chunkingStrategy,
+        semanticChunkingConfiguration: {
+          maxTokens: config.semanticChunkingConfiguration.maxTokens,
+          bufferSize: config.semanticChunkingConfiguration.bufferSize,
+          breakpointPercentileThreshold: config.semanticChunkingConfiguration.breakpointPercentileThreshold,
+        },
+      };
+    } else {
+      chunkingConfig = {
+        chunkingStrategy: config.chunkingStrategy,
+      };
+    }
+
+    return chunkingConfig;
+  }
+
+  /**
+   * Creates a Bedrock data source for a knowledge base
+   * @param knowledgeBaseId - The ID of the knowledge base
+   * @param kbName - The name of the knowledge base
+   * @param dsName - The name of the data source
+   * @param dsProps - The data source properties
+   * @param kmsKey - The KMS key for encryption
+   */
+  private createBedrockDataSource(
+    knowledgeBaseId: string,
+    kbName: string,
+    dsName: string,
+    dsProps: S3DataSource,
+    kmsKey: IKey,
+  ): bedrock.CfnDataSource {
+    // Import the S3 bucket
+    const bucket = s3.Bucket.fromBucketName(this, `${kbName}-ImportBucket-${dsName}`, dsProps.bucketName);
+
+    // Prepare data source configuration
+    const dataSourceConfig: bedrock.CfnDataSource.DataSourceConfigurationProperty = {
+      type: 'S3',
+      s3Configuration: {
+        bucketArn: bucket.bucketArn,
+        inclusionPrefixes: dsProps.prefix ? [dsProps.prefix] : undefined,
+      },
+    };
+
+    // Prepare base CfnDataSource properties
+    const baseDataSourceProps: bedrock.CfnDataSourceProps = {
+      knowledgeBaseId: knowledgeBaseId,
+      name: dsName,
+      dataSourceConfiguration: dataSourceConfig,
+      serverSideEncryptionConfiguration: {
+        kmsKeyArn: kmsKey.keyArn,
+      },
+    };
+
+    // Add vector ingestion configuration if provided
+    if (dsProps.vectorIngestionConfiguration) {
+      // Create vector ingestion configuration
+      const vectorIngestionConfig = this.createVectorIngestionConfiguration(dsProps.vectorIngestionConfiguration);
+
+      // Return data source with vector ingestion configuration
+      return new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, {
+        ...baseDataSourceProps,
+        vectorIngestionConfiguration: vectorIngestionConfig,
+      });
+    }
+
+    // Return data source without vector ingestion configuration
+    return new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, baseDataSourceProps);
+  }
+
+  /**
+   * Creates a vector ingestion configuration from the provided configuration
+   * @param config - The vector ingestion configuration
+   */
+  private createVectorIngestionConfiguration(
+    config: VectorIngestionConfiguration,
+  ): bedrock.CfnDataSource.VectorIngestionConfigurationProperty {
+    const result: bedrock.CfnDataSource.VectorIngestionConfigurationProperty = {};
+    return {
+      ...result,
+      ...(config.chunkingConfiguration && {
+        chunkingConfiguration: this.createChunkingConfigurationProperty(config.chunkingConfiguration),
+      }),
+      ...(config.parsingConfiguration && {
+        parsingConfiguration: this.createParsingConfigurationProperty(config.parsingConfiguration),
+      }),
+    };
+  }
+
+  /**
+   * Creates a parsing configuration property from the provided configuration
+   * @param parsingConfig - The parsing configuration
+   */
+  private createParsingConfigurationProperty(
+    parsingConfig: ParsingConfiguration,
+  ): bedrock.CfnDataSource.ParsingConfigurationProperty {
+    // Handle BEDROCK_DATA_AUTOMATION strategy
+    if (
+      parsingConfig.parsingStrategy === 'BEDROCK_DATA_AUTOMATION' &&
+      parsingConfig.bedrockDataAutomationConfiguration
+    ) {
+      return {
+        parsingStrategy: parsingConfig.parsingStrategy,
+        bedrockDataAutomationConfiguration: {
+          parsingModality: parsingConfig.bedrockDataAutomationConfiguration.parsingModality,
+        },
+      };
+    }
+
+    // Handle BEDROCK_FOUNDATION_MODEL strategy
+    if (
+      parsingConfig.parsingStrategy === 'BEDROCK_FOUNDATION_MODEL' &&
+      parsingConfig.bedrockFoundationModelConfiguration
+    ) {
+      return {
+        parsingStrategy: parsingConfig.parsingStrategy,
+        bedrockFoundationModelConfiguration: {
+          modelArn: parsingConfig.bedrockFoundationModelConfiguration.modelArn,
+          parsingModality: parsingConfig.bedrockFoundationModelConfiguration.parsingModality,
+          ...(parsingConfig.bedrockFoundationModelConfiguration.parsingPromptText && {
+            parsingPrompt: {
+              parsingPromptText: parsingConfig.bedrockFoundationModelConfiguration.parsingPromptText,
+            },
+          }),
+        },
+      };
+    }
+
+    // Default case
+    return {
+      parsingStrategy: parsingConfig.parsingStrategy,
+    };
   }
 
   // ---------------------------------------------
