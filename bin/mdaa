@@ -6,7 +6,7 @@ sh "$parent_path/../packages/cli/scripts/check_node_version.sh"
 echo ""
 echo "Running NPM Install for MDAA Repo"
 cd "$parent_path/../"
-npm ci --no-save --quiet
+npm install --no-save --quiet
 echo ""
 echo "Building MDAA CLI"
 echo ""
