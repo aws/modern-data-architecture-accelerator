@@ -36,6 +36,16 @@ def lambda_handler(event, context):
 def handle_create_update(event, context):
 
     resource_config = event['ResourceProperties']
+
+    domainVersion = resource_config.get('domainVersion', None)
+    if(domainVersion != 'V1'):
+        return {
+                "Status": "200",
+                "Data": {
+                    'id': "sagemaker_domain"
+                }
+            }
+
     domainIdentifier = resource_config.get('domainIdentifier', None)
     if (domainIdentifier is None):
         raise Exception("Unable to parse domainIdentifier from event.")

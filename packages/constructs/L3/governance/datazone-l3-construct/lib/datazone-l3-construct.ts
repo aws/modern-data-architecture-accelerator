@@ -104,7 +104,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       kmsKeyIdentifier: kmsKey.keyArn,
       description: domainProps.description,
       singleSignOn: singleSignOn,
-      domainVersion: domainVersion,
+      domainVersion: domainProps.domainVersion,
       serviceRole: domainVersion == 'V2' ? this.createServiceRole('service', kmsKey).roleArn : undefined,
     };
 
@@ -163,10 +163,13 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       tier: ParameterTier.ADVANCED,
     });
 
-    const customEnvBlueprintConfig =
-      domainVersion == 'V1'
-        ? this.createCustomBlueprintConfig(this, domain.attrId, [this.region], kmsKey.keyArn)
-        : undefined;
+    const customEnvBlueprintConfig = this.createCustomBlueprintConfig(
+      this,
+      domain.attrId,
+      [this.region],
+      kmsKey.keyArn,
+      domainVersion,
+    );
 
     const configParam = this.createDomainConfigParam(
       domainName,
@@ -261,14 +264,13 @@ export class DataZoneL3Construct extends MdaaL3Construct {
         );
 
         //Enable custom blueprints in the target account for this domain
-        if (domainConfigParser.parsedConfig.domainVersion == 'V1') {
-          this.createCustomBlueprintConfig(
-            crossAccountStack,
-            domainConfigParser.parsedConfig.domainId,
-            [region || this.region],
-            domainConfigParser.parsedConfig.domainKmsKeyArn,
-          );
-        }
+        this.createCustomBlueprintConfig(
+          crossAccountStack,
+          domainConfigParser.parsedConfig.domainId,
+          [region || this.region],
+          domainConfigParser.parsedConfig.domainKmsKeyArn,
+          domainConfigParser.parsedConfig.domainVersion,
+        );
       } else {
         console.warn(
           `Cross account stack not defined for associated account ${associatedAccountName}/${associatedAccountNum} on domain ${domainName}. Cross account association will not work.`,
@@ -540,6 +542,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     domainId: string,
     regions: string[],
     domainKmsKeyArn: string,
+    domainVersion: string,
   ): MdaaCustomResource {
     const envBlueprintConfigsStatements = [
       new PolicyStatement({
@@ -568,6 +571,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       handlerProps: {
         domainIdentifier: domainId,
         enabledRegions: regions,
+        domainVersion: domainVersion,
       },
       naming: this.props.naming,
       pascalCaseProperties: false,
