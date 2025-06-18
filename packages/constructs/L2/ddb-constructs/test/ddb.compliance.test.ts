@@ -19,7 +19,7 @@ describe('MDAA Construct Mandatory Prop Compliance Tests', () => {
     'arn:test-partition:kms:test-region:test-account:key/test-key',
   );
 
-  const testContstructProps: MdaaDDBTableProps = {
+  const testConstructProps: MdaaDDBTableProps = {
     naming: testApp.naming,
     tableName: 'test-table',
     encryptionKey: testKey,
@@ -35,7 +35,7 @@ describe('MDAA Construct Mandatory Prop Compliance Tests', () => {
     stream: StreamViewType.KEYS_ONLY,
   };
 
-  new MdaaDDBTable(testApp.testStack, 'test-construct', testContstructProps);
+  new MdaaDDBTable(testApp.testStack, 'test-construct', testConstructProps);
 
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);

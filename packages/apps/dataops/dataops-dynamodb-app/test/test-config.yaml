@@ -1,0 +1,32 @@
+# (Required) Name of the Data Ops Project
+# Name the project the resources of which can be used by this dynamodb app.
+# Other resources within the project can be referenced in the dynamodb config using
+# the "project:" prefix on the config value.
+projectName: dataops-project-sample
+# List of dynamodb definitions
+tableDefinitions:
+  table-complex:
+    # Partition key, required
+    partitionKey:
+      name: pk1
+      type: S
+    # Sort key, optional
+    sortKey:
+      name: sk1
+      type: S
+    # Optional. If missing, will assume PAY_PER_REQUEST. if PROVISIONED will need to indicate the read and write capacities
+    billingMode: PROVISIONED
+    # Required only for PROVISIONED billing mode: for an item up to 4 KB, one read capacity unit (RCU) represents one strongly consistent read operation per second, or two eventually consistent read operations per second
+    readCapacity: 2
+    # Required only for PROVISIONED billing mode: A write capacity unit (WCU) represents one write per second for an item up to 1 KB
+    writeCapacity: 1
+    # a specific attribute to store the TTL expiration timestamp, see https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html
+    timeToLiveAttribute: ttl
+  table-simple:
+    # Partition key, required
+    partitionKey:
+      name: pk1
+      type: S
+    # if PAY_PER_REQUEST don't indicate read/write capacity
+    billingMode: PAY_PER_REQUEST
+
