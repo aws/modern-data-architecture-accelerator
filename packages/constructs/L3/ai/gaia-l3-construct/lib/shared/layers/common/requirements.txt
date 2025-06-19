@@ -8,11 +8,11 @@ langchain==0.3.7
 langchain-core==0.3.15
 langchain-community==0.3.3
 langchain-aws==0.2.7
-opensearch-py==2.3.1
+opensearch-py==3.0.0
 psycopg2-binary==2.9.9
 pgvector==0.3.1
 pydantic==2.7.4
-urllib3<2
+urllib3==2.5.0
 openai==0.28.1
 beautifulsoup4==4.12.3
 requests==2.32.4
