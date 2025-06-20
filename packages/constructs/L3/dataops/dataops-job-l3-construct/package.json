@@ -65,6 +65,7 @@
     "@aws-mdaa/s3-constructs": "^1.0.0",
     "@aws-mdaa/s3-inventory-helper": "^1.0.0",
     "@aws-mdaa/sns-constructs": "^1.0.0",
+    "@aws-mdaa/cloudwatch-constructs": "^1.0.0",
     "aws-cdk-lib": "2.195.0",
     "cdk-nag": "2.35.25",
     "constructs": "10.0.96",

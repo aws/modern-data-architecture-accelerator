@@ -66,6 +66,9 @@
       "path": "../../../L2/sqs-constructs"
     },
     {
+      "path": "../../../L2/ddb-constructs"
+    },
+    {
       "path": "../../../../utilities/mdaa-testing"
     }
   ],

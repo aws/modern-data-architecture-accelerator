@@ -148,7 +148,7 @@ export class StepFunctionL3Construct extends MdaaL3Construct {
     const stepFunctionProps: StateMachineProps = {
       role: role,
       stateMachineType: <StateMachineType>stepfunctionProps.stateMachineType,
-      stateMachineName: this.props.naming.resourceName(stepfunctionName),
+      stateMachineName: this.props.naming.resourceName(stepfunctionName, 80),
       tracingEnabled: true,
       logs: {
         destination: logGroup,
@@ -157,7 +157,9 @@ export class StepFunctionL3Construct extends MdaaL3Construct {
       },
       //Initially create the state machine with a placeholder definition, which we will
       //replace with the definition string using a property override.
-      definition: new Wait(this.scope, 'placeholder', { time: WaitTime.duration(Duration.seconds(1)) }),
+      definition: new Wait(this.scope, this.props.naming.resourceName(`placeholder-${stepfunctionName}`, 80), {
+        time: WaitTime.duration(Duration.seconds(1)),
+      }),
     };
     const stepFunction = new StateMachine(this.scope, `stepfunction-${stepfunctionName}`, stepFunctionProps);
 
