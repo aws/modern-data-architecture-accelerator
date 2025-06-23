@@ -7,12 +7,15 @@ import { Code } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import fs = require('fs');
 import os = require('os');
+import * as path from 'path';
 
 export type PythonVersion = '3.12' | '3.13';
 export interface MdaaPythonCodeAssetProps {
   readonly pythonRequirementsPath: string;
   readonly pythonVersion?: PythonVersion;
 }
+
+export const TEMP_DIR_PREFIX = 'lambda-asset-';
 
 export class MdaaPythonCodeAsset extends Construct {
   public readonly code: Code;
@@ -22,7 +25,7 @@ export class MdaaPythonCodeAsset extends Construct {
       throw new Error(`Python requirements file ${props.pythonRequirementsPath} does not exists`);
     }
     const pythonVersion = props.pythonVersion || '3.12';
-    const tempDir = fs.mkdtempSync(os.tmpdir());
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), TEMP_DIR_PREFIX));
     fs.copyFileSync(props.pythonRequirementsPath, `${tempDir}/requirements.txt`);
     const dockerCommand = process.env.CDK_DOCKER ?? 'docker';
     const commandExists = require('command-exists');
