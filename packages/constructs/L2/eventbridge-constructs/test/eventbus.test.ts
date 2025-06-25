@@ -26,7 +26,7 @@ describe('MDAA Construct Compliance Tests', () => {
 
   test('Event Bus Name', () => {
     template.hasResourceProperties('AWS::Events::EventBus', {
-      Name: 'test-org-test-env-test-domain-test-modu--3459ff0',
+      Name: 'test-org-test-env-test-domain-test-modu-3459ff0',
     });
   });
 
@@ -53,7 +53,7 @@ describe('MDAA Construct Compliance Tests', () => {
       SourceArn: {
         'Fn::GetAtt': ['testconstruct281AED50', 'Arn'],
       },
-      ArchiveName: 'test-org-test-env-test-domain-test-mod--5960ebfb',
+      ArchiveName: 'test-org-test-env-test-domain-test-mod-5960ebfb',
       Description: {
         'Fn::Join': [
           '',

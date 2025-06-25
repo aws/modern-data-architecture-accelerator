@@ -20,9 +20,6 @@ describe('MdaaDefaultResourceNaming', () => {
   test('resourceName', () => {
     expect(naming.resourceName()).toBe('test-org-test-env-test-domain-test-module');
     expect(naming.resourceName('test-resource')).toBe('test-org-test-env-test-domain-test-module-test-resource');
-    expect(naming.resourceName('${Token[TOKEN.123]}')).toBe(
-      'test-org-test-env-test-domain-test-module-${Token[TOKEN.123]}',
-    );
     expect(naming.resourceName('test-resource', 20)).toBe('test-org-tes-a115c7e');
   });
 

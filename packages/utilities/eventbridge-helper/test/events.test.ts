@@ -133,7 +133,7 @@ describe('MDAA Compliance Stack Tests', () => {
           },
         },
       },
-      Name: 'test-org-test-env-test-domain-test-module-test-glue-mo--2445aa49',
+      Name: 'test-org-test-env-test-domain-test-module-test-glue-mo-2445aa49',
       State: 'ENABLED',
     });
   });
@@ -188,7 +188,7 @@ describe('MDAA Compliance Stack Tests', () => {
           },
         },
       },
-      Name: 'test-org-test-env-test-domain-test-module-test-glue-mo--2445aa49',
+      Name: 'test-org-test-env-test-domain-test-module-test-glue-mo-2445aa49',
       State: 'ENABLED',
     });
   });

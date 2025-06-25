@@ -4,6 +4,7 @@
  */
 
 import { Node } from 'constructs';
+import { fixAndValidate } from './utils';
 
 /**
  * Basic config for a MDAA naming implementation.
@@ -95,6 +96,7 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
   constructor(props: MdaaResourceNamingConfig) {
     this.props = props;
   }
+
   /**
    * Returns this naming object but with a new moduleName
    *
@@ -121,9 +123,9 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
     }
     if (maxLength && name.length >= maxLength) {
       const hashCodeHex = MdaaDefaultResourceNaming.hashCodeHex(name);
-      return `${name.substring(0, maxLength - (hashCodeHex.length + 1))}-${hashCodeHex}`;
+      return fixAndValidate(`${name.substring(0, maxLength - (hashCodeHex.length + 1))}-${hashCodeHex}`);
     }
-    return name;
+    return fixAndValidate(name);
   }
 
   /**

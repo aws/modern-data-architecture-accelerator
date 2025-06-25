@@ -69,7 +69,6 @@ describe('QS Account Mandatory Tests', () => {
   new QuickSightAccountL3Construct(testApp.testStack, 'test-stack', constructProps);
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
-  // console.log( JSON.stringify( template, undefined, 2 ) )
 
   test('Test QS Account With Sample Config', () => {
     template.hasResourceProperties('AWS::CloudFormation::CustomResource', {

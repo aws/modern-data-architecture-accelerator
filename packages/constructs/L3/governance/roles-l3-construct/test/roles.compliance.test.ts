@@ -157,7 +157,7 @@ describe('MDAA Compliance Stack Tests', () => {
     template.hasResourceProperties(
       'AWS::IAM::ManagedPolicy',
       Match.objectLike({
-        ManagedPolicyName: 'test-org-test-env-test-domain-test-module-data-scientis--aa316df',
+        ManagedPolicyName: 'test-org-test-env-test-domain-test-module-data-scientis-aa316df',
         Roles: [
           {
             Ref: 'testusageprofile26942D4A0',

@@ -21,7 +21,7 @@ test('SynthTest', () => {
 
   // check verbatim feature
   template.hasResourceProperties('AWS::IAM::Role', {
-    RoleName: 'test-org-test-env-test-domain-test-module-application_--65040600',
+    RoleName: 'test-org-test-env-test-domain-test-module-application_-65040600',
   });
   template.hasResourceProperties('AWS::IAM::Role', {
     RoleName: 'test-role-verbatim',

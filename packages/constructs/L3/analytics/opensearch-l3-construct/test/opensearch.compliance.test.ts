@@ -302,7 +302,7 @@ describe('MDAA Compliance Stack Tests', () => {
             },
           ],
         },
-        Name: 'test-org-test-env-test-domain-test-module-testosdomain---1a19ef4',
+        Name: 'test-org-test-env-test-domain-test-module-testosdomain-1a19ef4',
         State: 'ENABLED',
         Targets: [
           {

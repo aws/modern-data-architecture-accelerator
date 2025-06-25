@@ -8,7 +8,6 @@ import { CfnTag, IResolvable } from 'aws-cdk-lib';
 import { CfnReplicationInstance, CfnReplicationInstanceProps } from 'aws-cdk-lib/aws-dms';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
-import { fixAndValidate } from './utils';
 
 export interface MdaaReplicationInstanceProps extends MdaaConstructProps {
   /**
@@ -143,9 +142,7 @@ export interface MdaaReplicationInstanceProps extends MdaaConstructProps {
 export class MdaaReplicationInstance extends CfnReplicationInstance {
   /** Overrides specific compliance-related properties. */
   private static setProps(props: MdaaReplicationInstanceProps): CfnReplicationInstanceProps {
-    const replicationInstanceIdentifier = fixAndValidate(
-      props.naming.resourceName(props.replicationInstanceIdentifier, 63),
-    );
+    const replicationInstanceIdentifier = props.naming.resourceName(props.replicationInstanceIdentifier, 63);
     const overrideProps = {
       replicationInstanceIdentifier,
       publiclyAccessible: false,

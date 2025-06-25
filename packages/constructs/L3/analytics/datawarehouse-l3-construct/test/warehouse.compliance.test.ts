@@ -5,8 +5,7 @@
 
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Match } from 'aws-cdk-lib/assertions';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import {
   DataWarehouseL3Construct,
   DataWarehouseL3ConstructProps,
@@ -70,7 +69,7 @@ describe('MDAA Compliance Stack Tests', () => {
       vpcId: 'vpcId',
       subnetIds: ['test1'],
       securityGroupIngress: securityGroupIngresProps,
-      nodeType: 'dc2.large',
+      nodeType: 'RA3_LARGE',
       numberOfNodes: 4,
       enableAuditLoggingToS3: true,
       clusterPort: 54390,
@@ -137,7 +136,7 @@ describe('MDAA Compliance Stack Tests', () => {
             ],
           ],
         },
-        NodeType: 'dc2.large',
+        NodeType: 'ra3.large',
         AllowVersionUpgrade: true,
         AutomatedSnapshotRetentionPeriod: 10,
         ClusterIdentifier: 'test-org-test-env-test-domain-test-module',

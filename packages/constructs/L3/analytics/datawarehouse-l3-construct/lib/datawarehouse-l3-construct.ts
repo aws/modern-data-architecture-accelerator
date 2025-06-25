@@ -144,7 +144,7 @@ export interface EventNotificationsProps {
 
 export interface DataWarehouseL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Set the admin user name for the cluster
+   * Set the admin username for the cluster
    */
   readonly adminUsername: string;
   /**
