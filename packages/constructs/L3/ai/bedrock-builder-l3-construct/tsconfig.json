@@ -54,6 +54,9 @@
       "path": "../../../L2/cloudwatch-constructs"
     },
     {
+      "path": "../../../L2/rds-constructs"
+    },
+    {
       "path": "../../../../utilities/mdaa-naming"
     },
     {
