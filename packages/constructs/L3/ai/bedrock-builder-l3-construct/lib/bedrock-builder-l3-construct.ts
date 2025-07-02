@@ -219,6 +219,22 @@ export interface ParsingConfiguration {
   readonly bedrockFoundationModelConfiguration?: BedrockFoundationModelConfig;
 }
 
+export interface CustomTransformationConfiguration {
+  /**
+   * Intermediate bucket to store input documents to run custom Lambda function on and to also store the output of the documents
+   */
+  readonly intermediateStorageBucket: string;
+
+  /**
+   * Intermediate bucket S3 prefix to store input documents to run custom Lambda function on and to also store the output of the documents
+   */
+  readonly intermediateStoragePrefix: string;
+
+  /**
+   * List of ARNs of Custom Transformation Lambda functions
+   */
+  readonly transformLambdaArns: string[];
+}
 export interface VectorIngestionConfiguration {
   /**
    * Configuration for document parsing
@@ -229,6 +245,11 @@ export interface VectorIngestionConfiguration {
    * Configuration for document chunking
    */
   readonly chunkingConfiguration?: ChunkingConfiguration;
+
+  /**
+   * Configuration for custom transformation
+   */
+  readonly customTransformationConfiguration?: CustomTransformationConfiguration;
 }
 
 export interface S3DataSource {
@@ -1087,6 +1108,37 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       ...(config.parsingConfiguration && {
         parsingConfiguration: this.createParsingConfigurationProperty(config.parsingConfiguration),
       }),
+      ...(config.customTransformationConfiguration && {
+        customTransformationConfiguration: this.createCustomTransformationConfiguration(
+          config.customTransformationConfiguration,
+        ),
+      }),
+    };
+  }
+
+  /**
+   * Creates a custom transformation configuration property from the provided configuration
+   * @param customTransformationConfig - The custom transformation configuration
+   */
+  private createCustomTransformationConfiguration(
+    customTransformationConfig: CustomTransformationConfiguration,
+  ): bedrock.CfnDataSource.CustomTransformationConfigurationProperty {
+    const customTransformations = customTransformationConfig.transformLambdaArns.map(arn => ({
+      stepToApply: 'POST_CHUNKING',
+      transformationFunction: {
+        transformationLambdaConfiguration: {
+          lambdaArn: arn,
+        },
+      },
+    }));
+
+    return {
+      intermediateStorage: {
+        s3Location: {
+          uri: `s3://${customTransformationConfig.intermediateStorageBucket}/${customTransformationConfig.intermediateStoragePrefix}/`,
+        },
+      },
+      transformations: customTransformations,
     };
   }
 

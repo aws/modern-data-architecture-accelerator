@@ -600,6 +600,32 @@
             },
             "type": "object"
         },
+        "CustomTransformationConfiguration": {
+            "additionalProperties": false,
+            "properties": {
+                "intermediateStorageBucket": {
+                    "description": "Intermediate bucket to store input documents to run custom Lambda function on and to also store the output of the documents",
+                    "type": "string"
+                },
+                "intermediateStoragePrefix": {
+                    "description": "Intermediate bucket S3 prefix to store input documents to run custom Lambda function on and to also store the output of the documents",
+                    "type": "string"
+                },
+                "transformLambdaArns": {
+                    "description": "List of ARNs of Custom Transformation Lambda functions",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "intermediateStorageBucket",
+                "intermediateStoragePrefix",
+                "transformLambdaArns"
+            ],
+            "type": "object"
+        },
         "EventBridgeProps": {
             "additionalProperties": false,
             "properties": {
@@ -1463,6 +1489,10 @@
                 "chunkingConfiguration": {
                     "$ref": "#/definitions/ChunkingConfiguration",
                     "description": "Configuration for document chunking"
+                },
+                "customTransformationConfiguration": {
+                    "$ref": "#/definitions/CustomTransformationConfiguration",
+                    "description": "Configuration for custom transformation"
                 },
                 "parsingConfiguration": {
                     "$ref": "#/definitions/ParsingConfiguration",

@@ -18,6 +18,13 @@ lambdaFunctions:
       roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
       description: For testing action groups
 
+    - functionName: test-custom-transformer
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.13
+      roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
+      description: For custom parsing and chunking logic
+
 # Bedrock Agent Configuration
 agents:
   test-agent:
@@ -57,6 +64,7 @@ knowledgeBases:
       test-ds-default-parsing:
         bucketName: 'customer-docs-bucket'
         prefix: 'support-documents/'
+
       test-ds-bda-parsing:
         bucketName: 'customer-docs-bucket'
         prefix: 'support-documents-2/'
@@ -83,6 +91,23 @@ knowledgeBases:
               modelArn: 'anthropic.claude-3-sonnet-20240229-v1:0'
               parsingModality: 'MULTIMODAL'
               parsingPromptText: 'Extract key information from this document'
+
+      test-ds-custom-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-4/'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          chunkingConfiguration:
+            chunkingStrategy: 'NONE'
+          customTransformationConfiguration:
+            intermediateStorageBucket: 'custom-transform-intermediate-bucket'
+            intermediateStoragePrefix: 'path/to/data/objects'
+            transformLambdaArns:
+              # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
+              - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
 
     vectorFieldSize: 1536
 

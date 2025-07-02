@@ -78,6 +78,13 @@ lambdaFunctions:
         # Provide an existing lambda layer
         AWSLambdaPowertoolsPythonV3-python312-x86_64: arn:aws:lambda:us-east-1:{{account}}:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:3
 
+    - functionName: test-custom-transformer
+      description: "This lambda function is for performing custom transformations on data while ingesting into knowledgebases"
+      # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
+      srcDir: ./lambda/src
+      handler: kb_custom_transform.lambda_handler
+      runtime: python3.13
+      roleArn: generated-role-arn:agent-lambda-role  # OR provide SSM parameter like "ssm:/path/to/agent-lambda-role/arn"
 
 # Bedrock Agent Configuration
 agents:
@@ -127,5 +134,88 @@ agents:
     autoPrepare: true                     
     knowledgeBases:
       - description: "This is a Test Knowledge Base"
-        knowledgeBaseId: "<kb-id>"        
+        knowledgeBaseId: "<kb-id>"
+
+# Vector Store Configuration 
+vectorStores:
+  test-vector-store:
+    vpcId: test-vpc-id
+    subnetIds:
+      - 'test-subnet-id'
+
+# Knowledge Base Configuration
+knowledgeBases:
+  test-knowledge-base:
+    embeddingModel: 'arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1'
+    vectorStore: test-vector-store
+    vectorFieldSize: 1536
+    role:
+      id: generated-role-id:kb-execution-role
+    # For Multimodal documents, its mandatory to provide location to store the images extracted from your data source
+    supplementalBucketName: 'supplemental-image-storage-bucket'
+    s3DataSources:
+      test-ds-default-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents/'
+
+      test-ds-bda-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-2/'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          # (Optional) Allows customized chunking strategy for the data source.
+          # The chunking strategy cannot be modified after a data source has been created
+          chunkingConfiguration:
+            chunkingStrategy: 'FIXED_SIZE'
+            fixedSizeChunkingConfiguration:
+              maxTokens: 512
+              overlapPercentage: 20
+              
+      test-ds-foundation-model-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-3/'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_FOUNDATION_MODEL'
+            bedrockFoundationModelConfiguration:
+              modelArn: 'anthropic.claude-3-sonnet-20240229-v1:0'
+              parsingModality: 'MULTIMODAL'
+              parsingPromptText: 'Extract key information from this document'
+
+      test-ds-custom-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents-4/'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          chunkingConfiguration:
+            chunkingStrategy: 'NONE'
+          # (Optional) Allows providing a lambda function to perform custom transformations on data being ingested into the Knowledgebase.
+          # # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
+          customTransformationConfiguration:
+            intermediateStorageBucket: 'custom-transform-intermediate-bucket'
+            intermediateStoragePrefix: 'path/to/data/objects'
+            transformLambdaArns:
+              - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
+
+
+# Guardrails Configuration
+guardrails:
+  enterprise-guardrail:
+    description: 'Enterprise content safety guardrail'
+    contentFilters:
+      hate:
+        inputStrength: 'MEDIUM'
+        outputStrength: 'MEDIUM'
+    blockedInputMessaging: 'Your input contains restricted content'
+    blockedOutputsMessaging: 'Response blocked due to policy restrictions'
+
+    contextualGroundingFilters:
+      grounding: 0.95
+      relevance: 0.90
 ```

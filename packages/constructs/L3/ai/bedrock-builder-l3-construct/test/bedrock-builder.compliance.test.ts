@@ -336,6 +336,30 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
             },
           },
         },
+        testCustomTransformationConfiguration: {
+          bucketName: 'test-docs-bucket-4',
+          prefix: 'test-prefix-3/',
+          vectorIngestionConfiguration: {
+            parsingConfiguration: {
+              parsingStrategy: 'BEDROCK_DATA_AUTOMATION',
+              bedrockDataAutomationConfiguration: {
+                parsingModality: 'MULTIMODAL',
+              },
+            },
+            chunkingConfiguration: {
+              chunkingStrategy: 'FIXED_SIZE',
+              fixedSizeChunkingConfiguration: {
+                maxTokens: 500,
+                overlapPercentage: 20,
+              },
+            },
+            customTransformationConfiguration: {
+              intermediateStorageBucket: 'custom-transform-intermediate-bucket',
+              intermediateStoragePrefix: 'path/to/data/objects',
+              transformLambdaArns: ['arn:aws:lambda:{{region}}:{{account}}:function:test-custom-parser'],
+            },
+          },
+        },
       },
       embeddingModel: 'amazon.titan-embed-text-v2:0',
       vectorFieldSize: 1024,
