@@ -19,7 +19,7 @@ import {
 import { aws_bedrock as bedrock, IResolvable, aws_kms as kms, aws_s3 as s3 } from 'aws-cdk-lib';
 import { CfnGuardrail, CfnKnowledgeBase } from 'aws-cdk-lib/aws-bedrock';
 import { Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { Effect, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Effect, ManagedPolicy, PolicyStatement, ServicePrincipal, ArnPrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { CfnPermission } from 'aws-cdk-lib/aws-lambda';
 import {
@@ -596,6 +596,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
           naming: this.props.naming,
           keyAdminRoleIds: dataAdminRoleIds,
         });
+
     //Allow CloudWatch logs to us the key to encrypt/decrypt log data
     const cloudwatchStatement = new PolicyStatement({
       sid: 'CloudWatchLogsEncryption',
@@ -611,6 +612,100 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       },
     });
     kmsKey.addToResourcePolicy(cloudwatchStatement);
+
+    // References:
+    // https://docs.aws.amazon.com/bedrock/latest/userguide/encryption-bda.html#encryption-bda-key-policies.title
+    // https://docs.aws.amazon.com/bedrock/latest/userguide/cmk-agent-resources.html#attach-policy-agent
+    // https://docs.aws.amazon.com/bedrock/latest/userguide/encryption-kb.html
+
+    // Allow Bedrock service to encrypt/decrypt agent resources
+    const bedrockAgentServiceStatement = new PolicyStatement({
+      sid: 'AllowBedrockServiceForAgents',
+      effect: Effect.ALLOW,
+      actions: ['kms:GenerateDataKey*', 'kms:Decrypt', 'kms:DescribeKey'],
+      principals: [new ServicePrincipal('bedrock.amazonaws.com')],
+      resources: ['*'],
+    });
+    kmsKey.addToResourcePolicy(bedrockAgentServiceStatement);
+
+    // Allow Bedrock service to create/list/revoke grants
+    const bedrockGrantStatement = new PolicyStatement({
+      sid: 'AllowBedrockServiceToManageGrants',
+      effect: Effect.ALLOW,
+      actions: ['kms:CreateGrant', 'kms:ListGrants', 'kms:RevokeGrant'],
+      principals: [new ServicePrincipal('bedrock.amazonaws.com')],
+      resources: ['*'],
+      conditions: {
+        Bool: {
+          'kms:GrantIsForAWSResource': 'true',
+        },
+        StringEquals: {
+          'aws:SourceAccount': this.account,
+          'kms:ViaService': `bedrock.${this.region}.amazonaws.com`,
+        },
+      },
+    });
+    kmsKey.addToResourcePolicy(bedrockGrantStatement);
+
+    // Collect execution roles
+    const executionRoleArnsSet = new Set<string>();
+
+    if (props.agents) {
+      Object.values(props.agents).forEach(agentConfig => {
+        if (agentConfig.role) {
+          const roleResolved = props.roleHelper.resolveRoleRefWithRefId(agentConfig.role, 'agent-execution-role');
+          executionRoleArnsSet.add(roleResolved.arn());
+        }
+      });
+    }
+
+    if (props.knowledgeBases) {
+      Object.values(props.knowledgeBases).forEach(kbConfig => {
+        if (kbConfig.role) {
+          const roleResolved = props.roleHelper.resolveRoleRefWithRefId(kbConfig.role, 'kb-execution-role');
+          executionRoleArnsSet.add(roleResolved.arn());
+        }
+      });
+    }
+
+    if (executionRoleArnsSet.size > 0) {
+      const executionRolePrincipals = Array.from(executionRoleArnsSet).map(arn => new ArnPrincipal(arn));
+
+      // Consolidated statement for execution roles with encryption contexts
+      const executionRoleStatement = new PolicyStatement({
+        sid: 'AllowExecutionRolesToUseKeyWithContext',
+        effect: Effect.ALLOW,
+        actions: ['kms:GenerateDataKey*', 'kms:Decrypt', 'kms:DescribeKey'],
+        principals: executionRolePrincipals,
+        resources: ['*'],
+        conditions: {
+          StringLike: {
+            'kms:ViaService': `bedrock.${this.region}.amazonaws.com`,
+          },
+        },
+      });
+      kmsKey.addToResourcePolicy(executionRoleStatement);
+
+      // Grant creation permissions
+      const grantStatement = new PolicyStatement({
+        sid: 'AllowCreateGrantForBedrockResources',
+        effect: Effect.ALLOW,
+        actions: ['kms:CreateGrant', 'kms:DescribeKey'],
+        principals: executionRolePrincipals,
+        resources: ['*'],
+        conditions: {
+          StringLike: {
+            'kms:ViaService': `bedrock.${this.region}.amazonaws.com`,
+          },
+          StringEquals: {
+            'kms:GrantOperations': ['Decrypt', 'GenerateDataKey*', 'DescribeKey'],
+            'aws:SourceAccount': this.account,
+          },
+        },
+      });
+      kmsKey.addToResourcePolicy(grantStatement);
+    }
+
     return kmsKey;
   }
 
@@ -936,16 +1031,43 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
           this.createBedrockDataSource(knowledgeBase.attrKnowledgeBaseId, kbName, dsName, dsProps, kmsKey);
         });
 
+        // Collect foundation model ARNs used in parsing configurations
+        const parsingModelArns = new Set<string>();
+        Object.values(kbConfig.s3DataSources || {}).forEach(dsProps => {
+          if (dsProps.vectorIngestionConfiguration?.parsingConfiguration) {
+            const parsingConfig = dsProps.vectorIngestionConfiguration.parsingConfiguration;
+            if (
+              parsingConfig.parsingStrategy === 'BEDROCK_FOUNDATION_MODEL' &&
+              parsingConfig.bedrockFoundationModelConfiguration?.modelArn
+            ) {
+              parsingModelArns.add(parsingConfig.bedrockFoundationModelConfiguration.modelArn);
+            }
+          }
+        });
+
+        // Create policy statements for foundation model access
+        const foundationModelResources = [embeddingModelArn, ...Array.from(parsingModelArns)];
         const kbPolicyProps: MdaaManagedPolicyProps = {
           naming: this.props.naming,
           managedPolicyName: `kb-${kbName}`,
           roles: [kbRole],
           statements: [
             new PolicyStatement({
-              sid: 'InvokeEmbeddingModel',
+              sid: 'InvokeFoundationModels',
               effect: Effect.ALLOW,
-              resources: [embeddingModelArn],
+              resources: foundationModelResources,
               actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
+            }),
+            new PolicyStatement({
+              sid: 'BedrockKms',
+              effect: Effect.ALLOW,
+              resources: [kmsKey.keyArn],
+              actions: [...USER_ACTIONS, 'kms:DescribeKey', 'kms:CreateGrant'],
+              conditions: {
+                StringLike: {
+                  'kms:ViaService': `bedrock.${this.region}.amazonaws.com`,
+                },
+              },
             }),
           ],
         };
