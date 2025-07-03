@@ -1522,6 +1522,14 @@
                 "vpcId": {
                     "description": "VPC where the vector store will be deployed",
                     "type": "string"
+                },
+                "minCapacity": {
+                    "description": "Optional minimum Aurora Serverless Capacity Units (ACUs). See https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.setting-capacity.html",
+                    "type": "number"
+                },
+                "maxCapacity": {
+                    "description": "Optional maximum Aurora Serverless Capacity Units (ACUs). See https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.setting-capacity.html",
+                    "type": "number"
                 }
             },
             "required": [

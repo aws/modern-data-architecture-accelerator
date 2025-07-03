@@ -142,6 +142,13 @@ vectorStores:
     vpcId: test-vpc-id
     subnetIds:
       - 'test-subnet-id'
+    # (Optional) 
+    port: 1234
+    # (Optional) 
+    engineVersion: 17.5
+    # (Optional) min and max Aurora Serverless Capacity Units
+    minCapacity: 1.5
+    maxCapacity: 8
 
 # Knowledge Base Configuration
 knowledgeBases:

@@ -16,12 +16,13 @@ import {
   MdaaRdsDataResource,
   MdaaRdsDataResourceProps,
 } from '@aws-mdaa/rds-constructs';
-import { aws_bedrock as bedrock, IResolvable, aws_kms as kms, aws_s3 as s3 } from 'aws-cdk-lib';
+import { aws_bedrock as bedrock, aws_kms as kms, IResolvable, aws_s3 as s3 } from 'aws-cdk-lib';
 import { CfnGuardrail, CfnKnowledgeBase } from 'aws-cdk-lib/aws-bedrock';
 import { Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, ManagedPolicy, PolicyStatement, ServicePrincipal, ArnPrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { CfnPermission } from 'aws-cdk-lib/aws-lambda';
+import { AuroraCapacityUnit } from 'aws-cdk-lib/aws-rds';
 import {
   CfnDelivery,
   CfnDeliveryDestination,
@@ -284,6 +285,14 @@ export interface VectorStoreProps {
    * Optional Aurora PostgreSQL engine version
    */
   readonly engineVersion?: string;
+  /**
+   * Optional minimum Aurora Capacity Units
+   */
+  readonly minCapacity?: AuroraCapacityUnit;
+  /**
+   * Optional maximum Aurora Capacity Units
+   */
+  readonly maxCapacity?: AuroraCapacityUnit;
 }
 
 export interface FixedSizeChunking {
@@ -796,22 +805,22 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     kmsKey: IKey,
   ): { [name: string]: [MdaaAuroraPgVector, ManagedPolicy] } {
     return Object.fromEntries(
-      Object.entries(namedVectorStoreProps).map(([vectoreStoreName, vectoreStoreProps]) => {
-        const vpc = Vpc.fromVpcAttributes(this, `vpc-import-vectorestore-${vectoreStoreName}`, {
-          vpcId: vectoreStoreProps.vpcId,
+      Object.entries(namedVectorStoreProps).map(([vectorStoreName, vectorStoreProps]) => {
+        const vpc = Vpc.fromVpcAttributes(this, `vpc-import-vectorstore-${vectorStoreName}`, {
+          vpcId: vectorStoreProps.vpcId,
           availabilityZones: ['a'],
           publicSubnetIds: ['a'],
         });
-        const vectorStoreSg = new MdaaSecurityGroup(this, `${vectoreStoreName}-vector-store-sg`, {
+        const vectorStoreSg = new MdaaSecurityGroup(this, `${vectorStoreName}-vector-store-sg`, {
           naming: this.props.naming,
-          securityGroupName: vectoreStoreName,
+          securityGroupName: vectorStoreName,
           vpc: vpc,
           allowAllOutbound: true,
           addSelfReferenceRule: true,
         });
 
-        const subnets = vectoreStoreProps.subnetIds.map(id =>
-          Subnet.fromSubnetId(this, `kb-import-subnet-${vectoreStoreName}-${id}`, id),
+        const subnets = vectorStoreProps.subnetIds.map(id =>
+          Subnet.fromSubnetId(this, `kb-import-subnet-${vectorStoreName}-${id}`, id),
         );
 
         const pgVectorProps: MdaaAuroraPgVectorProps = {
@@ -821,15 +830,17 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
           subnets: { subnets: subnets },
           dbSecurityGroup: vectorStoreSg,
           encryptionKey: kmsKey,
+          minCapacity: vectorStoreProps.minCapacity,
+          maxCapacity: vectorStoreProps.maxCapacity,
           naming: this.props.naming,
           enableDataApi: true,
-          clusterIdentifier: vectoreStoreName,
+          clusterIdentifier: vectorStoreName,
         };
 
-        const pgVectorStore = new MdaaAuroraPgVector(this, `pgvector-${vectoreStoreName}`, pgVectorProps);
-        const managedPolicy = new MdaaManagedPolicy(this, `bedrock-knowledge-base-access-${vectoreStoreName}`, {
+        const pgVectorStore = new MdaaAuroraPgVector(this, `pgvector-${vectorStoreName}`, pgVectorProps);
+        const managedPolicy = new MdaaManagedPolicy(this, `bedrock-knowledge-base-access-${vectorStoreName}`, {
           naming: this.props.naming,
-          managedPolicyName: `kb-access-${vectoreStoreName}`,
+          managedPolicyName: `kb-access-${vectorStoreName}`,
           statements: [
             new PolicyStatement({
               sid: 'DBSecretAccess',
@@ -851,7 +862,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
             }),
           ],
         });
-        return [vectoreStoreName, [pgVectorStore, managedPolicy]];
+        return [vectorStoreName, [pgVectorStore, managedPolicy]];
       }),
     );
   }
@@ -892,7 +903,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         const [vectorStore, vectorStorePolicy] = vectorStores[kbConfig.vectorStore];
 
         if (!vectorStore) {
-          throw new Error(`KnowledgeBase ${kbName} references invalid vectore store: ${kbConfig.vectorStore}`);
+          throw new Error(`KnowledgeBase ${kbName} references invalid vector store: ${kbConfig.vectorStore}`);
         }
 
         const createDbProps: MdaaRdsDataResourceProps = {
@@ -921,7 +932,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
           ],
           naming: this.props.naming,
         };
-        const createTable = new MdaaRdsDataResource(this, `create-tableß-${kbName}-${tableName}`, createTableProps);
+        const createTable = new MdaaRdsDataResource(this, `create-table-${kbName}-${tableName}`, createTableProps);
         createTable.node.addDependency(createDb);
 
         const kbRole = this.props.roleHelper

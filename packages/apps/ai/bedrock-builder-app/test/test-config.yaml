@@ -50,6 +50,9 @@ vectorStores:
     vpcId: test-vpc-id
     subnetIds:
       - 'test-subnet-id'
+    # (Optional) min and max Aurora Serverless Capacity Units
+    minCapacity: 1
+    maxCapacity: 8
 
 # Knowledge Base Configuration
 knowledgeBases:
