@@ -37,13 +37,11 @@ import {
   CfnReplicationTaskProps,
 } from 'aws-cdk-lib/aws-dms';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
-import { Effect, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct';
-import { SuppressionProps } from '@aws-mdaa/roles-l3-construct';
 
 export interface EndpointProps {
   /**
@@ -320,7 +318,6 @@ export interface NamedReplicationTaskProps {
 
 export interface DMSProps {
   readonly dmsRoleArn?: string;
-  readonly createDmsVpcRole?: boolean;
   readonly replicationInstances?: NamedReplicationInstanceProps;
   readonly endpoints?: NamedEndpointProps;
   readonly replicationTasks?: NamedReplicationTaskProps;
@@ -385,9 +382,6 @@ export class DMSL3Construct extends MdaaL3Construct {
     const dmsRole = props.dms.dmsRoleArn
       ? Role.fromRoleArn(this, 'dms-role', props.dms.dmsRoleArn)
       : this.createDmsRole();
-    if (props.dms.createDmsVpcRole === true) {
-      this.createDmsVpcRole();
-    }
     const replicationInstances = this.createReplicationInstances();
     const endpoints = this.createEndpoints(dmsRole);
     this.createReplicationTasks(replicationInstances, endpoints);
@@ -434,24 +428,6 @@ export class DMSL3Construct extends MdaaL3Construct {
       roleName: 'dms',
       assumedBy: new ServicePrincipal(`dms.${this.region}.amazonaws.com`),
     });
-  }
-
-  private createDmsVpcRole(): IRole {
-    const role = new MdaaRole(this, 'dms-vpc-role', {
-      naming: this.props.naming,
-      roleName: 'dms-vpc-role',
-      verbatimRoleName: true,
-      assumedBy: new ServicePrincipal('dms.amazonaws.com'),
-      managedPolicies: [ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDMSVPCManagementRole')],
-    });
-    const suppressions: SuppressionProps[] = [
-      {
-        id: 'AwsSolutions-IAM4',
-        reason: 'AmazonDMSVPCManagementRole approved',
-      },
-    ];
-    MdaaNagSuppressions.addConfigResourceSuppressions(role, suppressions, true);
-    return role;
   }
 
   private createEndpoints(dmsRole: IRole): { [name: string]: CfnEndpoint } {
