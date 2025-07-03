@@ -194,6 +194,11 @@ export interface LambdaFunctionL3ConstructProps extends MdaaL3ConstructProps {
    * List of function definitions
    */
   readonly functions?: FunctionProps[];
+  /**
+   * Option to override the scope to current construct of parent's construct
+   * @default false
+   */
+  readonly overrideScope?: boolean;
 }
 
 export class LambdaFunctionL3Construct extends MdaaL3Construct {
@@ -205,7 +210,11 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     super(scope, id, props);
     this.props = props;
 
-    this.projectKmsKey = MdaaKmsKey.fromKeyArn(this.scope, 'project-kms', this.props.kmsArn);
+    this.projectKmsKey = MdaaKmsKey.fromKeyArn(
+      props.overrideScope ? this : this.scope,
+      'project-kms',
+      this.props.kmsArn,
+    );
 
     const generatedLayers = Object.fromEntries(
       this.props.layers?.map(layerProps => {
@@ -221,7 +230,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     //Remove unneeded inline policies which CDK automatically adds to execution role
     //We add a resource policy to the DLQ which allows the execution role to write to it.
     //This avoids hitting NIST.800.53.R5-IAMNoInlinePolicy and HIPAA.Security-IAMNoInlinePolicy
-    this.scope.node.children.forEach(child => {
+    (this.props.overrideScope ? this : this.scope).node.children.forEach(child => {
       if (child.node.id.startsWith('LambdaRole')) {
         this.node.tryRemoveChild(child.node.id);
       }
@@ -229,7 +238,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
   }
 
   private createLambdaLayer(layerProps: LayerProps): LayerVersion {
-    return new LayerVersion(this.scope, `layer-${layerProps.layerName}`, {
+    return new LayerVersion(this.props.overrideScope ? this : this.scope, `layer-${layerProps.layerName}`, {
       code: Code.fromAsset(layerProps.src),
       layerVersionName: this.props.naming.resourceName(layerProps.layerName, 64),
       description: layerProps.description,
@@ -242,7 +251,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     generatedLayersByName: { [name: string]: LayerVersion },
   ): LambdaFunction {
     const role = MdaaLambdaRole.fromRoleArn(
-      this.scope,
+      this.props.overrideScope ? this : this.scope,
       `lambda-role-${functionProps.functionName}`,
       functionProps.roleArn,
     );
@@ -280,7 +289,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     }
 
     const dlq = EventBridgeHelper.createDlq(
-      this.scope,
+      this.props.overrideScope ? this : this.scope,
       this.props.naming,
       functionProps.functionName,
       this.projectKmsKey,
@@ -343,7 +352,11 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
         ...lambdaOptions,
         code: DockerImageCode.fromImageAsset(functionProps.srcDir),
       };
-      return new MdaaDockerImageFunction(this.scope, functionProps.functionName, lambdaProps);
+      return new MdaaDockerImageFunction(
+        this.props.overrideScope ? this : this.scope,
+        functionProps.functionName,
+        lambdaProps,
+      );
     } else {
       if (!functionProps.runtime) {
         throw new Error('Function runtime must be defined for non-docker functions');
@@ -352,7 +365,11 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
         throw new Error('Function handler must be defined for non-docker functions');
       }
       const existingLayers = Object.entries(functionProps.layerArns || {}).map(entry =>
-        LayerVersion.fromLayerVersionArn(this.scope, `${functionProps.functionName}-${entry[0]}`, entry[1]),
+        LayerVersion.fromLayerVersionArn(
+          this.props.overrideScope ? this : this.scope,
+          `${functionProps.functionName}-${entry[0]}`,
+          entry[1],
+        ),
       );
 
       const generatedLayers = functionProps.generatedLayerNames?.map(generatedLayerName => {
@@ -370,7 +387,11 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
         layers: [...(generatedLayers || []), ...existingLayers],
       };
 
-      return new MdaaLambdaFunction(this.scope, functionProps.functionName, lambdaProps);
+      return new MdaaLambdaFunction(
+        this.props.overrideScope ? this : this.scope,
+        functionProps.functionName,
+        lambdaProps,
+      );
     }
   }
 
@@ -399,7 +420,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     lambdaFunction: IFunction,
   ) {
     const dlq = EventBridgeHelper.createDlq(
-      this.scope,
+      this.props.overrideScope ? this : this.scope,
       this.props.naming,
       `${functionName}-events`,
       this.projectKmsKey,
@@ -418,7 +439,13 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
         retryAttempts: eventBridgeProps.retryAttempts,
         event: RuleTargetInput.fromObject(ruleProps.input),
       });
-      EventBridgeHelper.createEventBridgeRuleForTarget(this.scope, this.props.naming, target, ruleName, ruleProps);
+      EventBridgeHelper.createEventBridgeRuleForTarget(
+        this.props.overrideScope ? this : this.scope,
+        this.props.naming,
+        target,
+        ruleName,
+        ruleProps,
+      );
     });
   }
 }

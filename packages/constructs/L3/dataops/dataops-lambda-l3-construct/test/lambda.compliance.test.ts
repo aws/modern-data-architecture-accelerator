@@ -336,3 +336,65 @@ describe('Bad function config', () => {
     }).toThrow();
   });
 });
+
+describe('MDAA test with override scope', () => {
+  const testApp = new MdaaTestApp();
+  const stack = testApp.testStack;
+
+  const layerProps: LayerProps = {
+    layerName: 'ovryd-layer',
+    src: './test/src/lambda/test',
+    description: 'override layer testing',
+  };
+
+  const functionProps: FunctionProps = {
+    functionName: 'ovryd-function',
+    srcDir: './test/src/lambda/test',
+    handler: 'test_handler',
+    roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role',
+    runtime: 'python3.13',
+  };
+
+  const constructPropsWithOverride: LambdaFunctionL3ConstructProps = {
+    roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+    naming: testApp.naming,
+    kmsArn: 'arn:test-partition:kms:test-region:test-acct:key/test-key-id',
+    functions: [functionProps],
+    layers: [layerProps],
+    overrideScope: true,
+  };
+
+  new LambdaFunctionL3Construct(stack, 'ovryd-teststack', constructPropsWithOverride);
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Validate function created with override scope', () => {
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      FunctionName: 'test-org-test-env-test-domain-test-module-ovryd-function',
+      Role: 'arn:test-partition:iam::test-acct:role/test-lambda-role',
+    });
+  });
+
+  test('Validate layer created with override scope', () => {
+    template.hasResourceProperties('AWS::Lambda::LayerVersion', {
+      LayerName: 'test-org-test-env-test-domain-test-module-ovryd-layer',
+      Description: 'override layer testing',
+    });
+  });
+
+  test('Validate KMS key reference with override scope', () => {
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      KmsKeyArn: 'arn:test-partition:kms:test-region:test-acct:key/test-key-id',
+    });
+  });
+
+  test('Validate DLQ created with override scope', () => {
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      DeadLetterConfig: {
+        TargetArn: {
+          'Fn::GetAtt': [Match.stringLikeRegexp('ovrydteststackdlqovrydfunction.*'), 'Arn'],
+        },
+      },
+    });
+  });
+});
