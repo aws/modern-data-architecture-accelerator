@@ -23,7 +23,7 @@ export class BedrockBuilderApp extends MdaaCdkApp {
       ...appConfig,
       ...l3ConstructProps,
     };
-    new BedrockBuilderL3Construct(stack, 'bedrock-agent', constructProps);
+    new BedrockBuilderL3Construct(stack, 'bedrock-builder', constructProps);
     return [stack];
   }
 }
