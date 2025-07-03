@@ -68,6 +68,9 @@
         "DMSProps": {
             "additionalProperties": false,
             "properties": {
+                "createDmsVpcRole": {
+                    "type": "boolean"
+                },
                 "dmsRoleArn": {
                     "type": "string"
                 },
