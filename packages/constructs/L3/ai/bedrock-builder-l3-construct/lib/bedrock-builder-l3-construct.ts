@@ -34,9 +34,9 @@ import {
 } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { readFileSync } from 'fs';
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { parse, stringify } from 'yaml';
-import { MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { MdaaParamAndOutput, MdaaNagSuppressions } from '@aws-mdaa/construct';
 
 export interface LambdaFunctionProps {
   /**
@@ -266,6 +266,11 @@ export interface S3DataSource {
    * Vector ingestion configuration for this data source
    */
   readonly vectorIngestionConfiguration?: VectorIngestionConfiguration;
+  /**
+   * Enable automatic sync when S3 objects are created/updated
+   * @default false
+   */
+  readonly enableSync?: boolean;
 }
 
 export interface VectorStoreProps {
@@ -406,7 +411,10 @@ export interface BedrockKnowledgeBaseProps {
   /**
    * Reference to role which will be used as execution role on knowledge base.
    * The role must have assume role trust with bedrock.amazonaws.com
-   * and access to S3 data sources granted within MDAA bucket config
+   * The role must have access to S3 data sources granted within MDAA bucket config
+   * Optionally:
+   * a) Role must have assume role trust with lambda.amazonaws.com to enable sync functionality for datasources
+   * b) If datasource is configured with BedrockDataAutomation or Foundation Model Parsing, Role must have access to the Root of a supplementalBucket
    */
   readonly role: MdaaRoleRef;
 }
@@ -1039,7 +1047,24 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
 
         // Create data sources for the knowledge base
         Object.entries(kbConfig.s3DataSources || {}).forEach(([dsName, dsProps]) => {
-          this.createBedrockDataSource(knowledgeBase.attrKnowledgeBaseId, kbName, dsName, dsProps, kmsKey);
+          const dataSource = this.createBedrockDataSource(
+            knowledgeBase.attrKnowledgeBaseId,
+            kbName,
+            dsName,
+            dsProps,
+            kmsKey,
+          );
+          if (dsProps.enableSync) {
+            this.createDataSourceSyncLambda(
+              kbName,
+              dsName,
+              knowledgeBase.attrKnowledgeBaseId,
+              dataSource.attrDataSourceId,
+              dsProps,
+              kbRole.roleArn,
+              kmsKey,
+            );
+          }
         });
 
         // Collect foundation model ARNs used in parsing configurations
@@ -1051,7 +1076,11 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
               parsingConfig.parsingStrategy === 'BEDROCK_FOUNDATION_MODEL' &&
               parsingConfig.bedrockFoundationModelConfiguration?.modelArn
             ) {
-              parsingModelArns.add(parsingConfig.bedrockFoundationModelConfiguration.modelArn);
+              parsingModelArns.add(
+                parsingConfig.bedrockFoundationModelConfiguration.modelArn.startsWith('arn')
+                  ? parsingConfig.bedrockFoundationModelConfiguration.modelArn
+                  : `arn:${this.partition}:bedrock:${this.region}::foundation-model/${parsingConfig.bedrockFoundationModelConfiguration.modelArn}`,
+              );
             }
           }
         });
@@ -1080,10 +1109,28 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
                 },
               },
             }),
+            new PolicyStatement({
+              sid: 'DataSourceSync',
+              effect: Effect.ALLOW,
+              resources: [
+                `arn:${this.partition}:bedrock:${this.region}:${this.account}:knowledge-base/${knowledgeBase.attrKnowledgeBaseId}/*`,
+              ],
+              actions: ['bedrock:StartIngestionJob', 'bedrock:GetIngestionJob', 'bedrock:ListIngestionJobs'],
+            }),
           ],
         };
 
-        new MdaaManagedPolicy(this, `bedrock-knowledge-base-policy-${kbName}`, kbPolicyProps);
+        const kbManagedPolicy = new MdaaManagedPolicy(this, `bedrock-knowledge-base-policy-${kbName}`, kbPolicyProps);
+        MdaaNagSuppressions.addCodeResourceSuppressions(
+          kbManagedPolicy,
+          [
+            {
+              id: 'AwsSolutions-IAM5',
+              reason: 'Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity',
+            },
+          ],
+          true,
+        );
 
         // Store the knowledge base in the class property
         return [kbName, knowledgeBase];
@@ -1226,6 +1273,62 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   }
 
   /**
+   * Creates a Lambda function for automatic data source synchronization
+   *
+   * This method creates a Lambda function that is triggered by S3 EventBridge notifications
+   * to automatically start ingestion jobs when objects are created/updated in the data source bucket.
+   *
+   * @param kbName - Name of the knowledge base
+   * @param dsName - Name of the data source
+   * @param knowledgeBaseId - ID of the knowledge base
+   * @param dataSourceId - ID of the data source
+   * @param dsProps - Data source properties containing bucket and prefix information
+   * @param roleArn - The ARN of the role to be used for Lambda execution
+   * @param kmsKey - KMS key for encryption
+   */
+  private createDataSourceSyncLambda(
+    kbName: string,
+    dsName: string,
+    knowledgeBaseId: string,
+    dataSourceId: string,
+    dsProps: S3DataSource,
+    roleArn: string,
+    kmsKey: IKey,
+  ): void {
+    const syncFunctionProps: FunctionProps = {
+      functionName: `${kbName}-${dsName}-sync`,
+      description: `Auto-sync data source ${dsName} for knowledge base ${kbName}`,
+      srcDir: join(__dirname, 'lambda-functions/datasource'),
+      handler: 'datasource_sync.lambda_handler',
+      runtime: 'python3.13',
+      roleArn: roleArn,
+      timeoutSeconds: 300,
+      environment: {
+        KNOWLEDGE_BASE_ID: knowledgeBaseId,
+        DATA_SOURCE_ID: dataSourceId,
+      },
+      eventBridge: {
+        retryAttempts: 3,
+        maxEventAgeSeconds: 3600,
+        s3EventBridgeRules: {
+          [`${kbName}-${dsName}-sync-rule`]: {
+            buckets: [dsProps.bucketName],
+            prefixes: dsProps.prefix ? [dsProps.prefix] : undefined,
+          },
+        },
+      },
+    };
+
+    new LambdaFunctionL3Construct(this, `${kbName}-${dsName}-sync-lambda`, {
+      kmsArn: kmsKey.keyArn,
+      roleHelper: this.props.roleHelper,
+      naming: this.props.naming,
+      functions: [syncFunctionProps],
+      overrideScope: true,
+    });
+  }
+
+  /**
    * Creates a vector ingestion configuration from the provided configuration
    * @param config - The vector ingestion configuration
    */
@@ -1300,10 +1403,13 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       parsingConfig.parsingStrategy === 'BEDROCK_FOUNDATION_MODEL' &&
       parsingConfig.bedrockFoundationModelConfiguration
     ) {
+      const modelArn: string = parsingConfig.bedrockFoundationModelConfiguration.modelArn.startsWith('arn:')
+        ? parsingConfig.bedrockFoundationModelConfiguration.modelArn
+        : `arn:${this.partition}:bedrock:${this.region}::foundation-model/${parsingConfig.bedrockFoundationModelConfiguration.modelArn}`;
       return {
         parsingStrategy: parsingConfig.parsingStrategy,
         bedrockFoundationModelConfiguration: {
-          modelArn: parsingConfig.bedrockFoundationModelConfiguration.modelArn,
+          modelArn: modelArn,
           parsingModality: parsingConfig.bedrockFoundationModelConfiguration.parsingModality,
           ...(parsingConfig.bedrockFoundationModelConfiguration.parsingPromptText && {
             parsingPrompt: {

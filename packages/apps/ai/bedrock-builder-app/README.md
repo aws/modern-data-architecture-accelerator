@@ -164,6 +164,7 @@ knowledgeBases:
       test-ds-default-parsing:
         bucketName: 'customer-docs-bucket'
         prefix: 'support-documents/'
+        enableSync: true 
 
       test-ds-bda-parsing:
         bucketName: 'customer-docs-bucket'

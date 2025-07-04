@@ -285,6 +285,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         testDataAutomation: {
           bucketName: 'test-docs-bucket-1',
           prefix: 'test-prefix-1/',
+          enableSync: true,
           vectorIngestionConfiguration: {
             parsingConfiguration: {
               parsingStrategy: 'BEDROCK_DATA_AUTOMATION',
@@ -309,6 +310,27 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
               parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
               bedrockFoundationModelConfiguration: {
                 modelArn: 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
+                parsingModality: 'MULTIMODAL',
+                parsingPromptText: 'Extract key information from this document',
+              },
+            },
+            chunkingConfiguration: {
+              chunkingStrategy: 'HIERARCHICAL',
+              hierarchicalChunkingConfiguration: {
+                levelConfigurations: [{ maxTokens: 1000 }],
+                overlapTokens: 50,
+              },
+            },
+          },
+        },
+        testFoundationModelWithModelId: {
+          bucketName: 'test-docs-bucket-2',
+          prefix: 'test-prefix-2/',
+          vectorIngestionConfiguration: {
+            parsingConfiguration: {
+              parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
+              bedrockFoundationModelConfiguration: {
+                modelArn: 'anthropic.claude-3-sonnet-20240229-v1:0',
                 parsingModality: 'MULTIMODAL',
                 parsingPromptText: 'Extract key information from this document',
               },
@@ -374,8 +396,27 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       { 'test-guardrail-vector': guardrail },
       lambdaFunctions,
     );
-    console.log(JSON.stringify(template.findResources('AWS::Bedrock::KnowledgeBase', {}), null, 2));
+    // console.log(JSON.stringify(template, null, 2));
+    // console.log(JSON.stringify(template.findResources('AWS::Bedrock::KnowledgeBase', {}), null, 2));
 
+    test('Test EnableSync Creates DataSource Lambda Function', () => {
+      template.hasResourceProperties('AWS::Lambda::Function', {
+        Description: 'Auto-sync data source testDataAutomation for knowledge base test-kb-vector',
+        Environment: {
+          Variables: {
+            DATA_SOURCE_ID: {
+              'Fn::GetAtt': ['testconstructtestkbvectorDataSourcetestDataAutomationA4A19559', 'DataSourceId'],
+            },
+            KNOWLEDGE_BASE_ID: {
+              'Fn::GetAtt': ['testconstructtestkbvectorKnowledgeBase7B693F67', 'KnowledgeBaseId'],
+            },
+          },
+        },
+        FunctionName: 'test-org-test-env-test-domain-test-module-test-kb-vect-610b16ef',
+        Handler: 'datasource_sync.lambda_handler',
+        KmsKeyArn: { 'Fn::GetAtt': ['bedrockcmk710EFABC', 'Arn'] },
+      });
+    });
     test('Test Data Source with BEDROCK_DATA_AUTOMATION Parsing Strategy', () => {
       template.hasResourceProperties('AWS::Bedrock::DataSource', {
         Name: 'testDataAutomation',
@@ -421,7 +462,24 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         },
       });
     });
-
+    test('Test Data Source with BEDROCK_FOUNDATION_MODEL Parsing Strategy with Model ID', () => {
+      template.hasResourceProperties('AWS::Bedrock::DataSource', {
+        Name: 'testFoundationModelWithModelId',
+        VectorIngestionConfiguration: {
+          ParsingConfiguration: {
+            ParsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
+            BedrockFoundationModelConfiguration: {
+              ModelArn:
+                'arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
+              ParsingModality: 'MULTIMODAL',
+              ParsingPrompt: {
+                ParsingPromptText: 'Extract key information from this document',
+              },
+            },
+          },
+        },
+      });
+    });
     test('Test Knowledge Base with Supplemental Data Storage Configuration', () => {
       template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
         KnowledgeBaseConfiguration: {
