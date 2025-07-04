@@ -1508,6 +1508,40 @@
                     "description": "Optional Aurora PostgreSQL engine version",
                     "type": "string"
                 },
+                "maxCapacity": {
+                    "description": "Optional maximum Aurora Capacity Units",
+                    "enum": [
+                        1,
+                        128,
+                        16,
+                        192,
+                        2,
+                        256,
+                        32,
+                        384,
+                        4,
+                        64,
+                        8
+                    ],
+                    "type": "number"
+                },
+                "minCapacity": {
+                    "description": "Optional minimum Aurora Capacity Units",
+                    "enum": [
+                        1,
+                        128,
+                        16,
+                        192,
+                        2,
+                        256,
+                        32,
+                        384,
+                        4,
+                        64,
+                        8
+                    ],
+                    "type": "number"
+                },
                 "port": {
                     "description": "Optional port number for the database connection (default: 5432)",
                     "type": "number"
@@ -1522,14 +1556,6 @@
                 "vpcId": {
                     "description": "VPC where the vector store will be deployed",
                     "type": "string"
-                },
-                "minCapacity": {
-                    "description": "Optional minimum Aurora Serverless Capacity Units (ACUs). See https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.setting-capacity.html",
-                    "type": "number"
-                },
-                "maxCapacity": {
-                    "description": "Optional maximum Aurora Serverless Capacity Units (ACUs). See https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.setting-capacity.html",
-                    "type": "number"
                 }
             },
             "required": [
