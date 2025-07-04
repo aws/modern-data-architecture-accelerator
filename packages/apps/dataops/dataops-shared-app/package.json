@@ -30,7 +30,7 @@
     "typescript-json-schema": "0.63.0"
   },
   "overrides": {
-    "aws-cdk-lib": "2.195.0",
+    "aws-cdk-lib": "2.201.0",
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
@@ -40,7 +40,7 @@
     "@aws-mdaa/naming": "^1.0.0",
     "@aws-mdaa/sqs-constructs": "^1.0.0",
     "ajv": "8.17.1",
-    "aws-cdk-lib": "2.195.0",
+    "aws-cdk-lib": "2.201.0",
     "cdk-nag": "2.35.25",
     "constructs": "10.0.96",
     "source-map-support": "0.5.21",

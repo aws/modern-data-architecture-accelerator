@@ -150,6 +150,7 @@ export abstract class MdaaCdkApp extends App {
 
     this.deployAccount = process.env.CDK_DEPLOY_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT;
     this.deployRegion = process.env.CI_SUPPLIED_TARGET_REGION || process.env.CDK_DEFAULT_REGION;
+
     this.additionalAccounts = this.node.tryGetContext('additional_accounts')?.split(',');
 
     this.stack = this.createEmptyStack(packageName);

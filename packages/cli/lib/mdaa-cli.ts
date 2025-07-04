@@ -116,6 +116,7 @@ export class MdaaDeploy {
     const commandExists = require('command-exists');
     const pipCommandExists = commandExists.sync('pip');
     const pip3CommandExists = commandExists.sync('pip3');
+    /* istanbul ignore next */
     if (pipCommandExists) {
       const pipCmd = `pip install --upgrade -q -r ${__dirname}/../requirements.txt -t ${this.workingDir}/python`;
       console.log(`Found pip. Installing python with cmd: ${pipCmd}`);
@@ -744,7 +745,7 @@ export class MdaaDeploy {
 
   private addOptionalCdkContextStringParam(cdkCmd: string[], context_key: string, context_value?: string) {
     if (context_value) {
-      cdkCmd.push(`-c '${context_key}=${context_value}'`);
+      cdkCmd.push(`-c '${context_key}="${context_value}"'`);
     }
   }
 
