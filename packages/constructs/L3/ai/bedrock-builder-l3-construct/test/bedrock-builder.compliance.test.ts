@@ -166,7 +166,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
     test('Test Bedrock Guardrail Resource', () => {
       template.hasResourceProperties('AWS::Bedrock::Guardrail', {
-        Name: 'test-org-test-env-test-domain-test-modul-3f712ad5',
+        Name: 'test-org-test-env-test-domain-test-modul--3f712ad5',
         Description: 'Test guardrail for content filtering',
         ContentPolicyConfig: {
           FiltersConfig: [
@@ -412,7 +412,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
             },
           },
         },
-        FunctionName: 'test-org-test-env-test-domain-test-module-test-kb-vect-610b16ef',
+        FunctionName: 'test-org-test-env-test-domain-test-module-test-kb-vect--610b16ef',
         Handler: 'datasource_sync.lambda_handler',
         KmsKeyArn: { 'Fn::GetAtt': ['bedrockcmk710EFABC', 'Arn'] },
       });

@@ -223,7 +223,7 @@ describe('MDAA Construct Optional Prop Compliance Tests', () => {
                 },
               ],
             },
-            '-test-org-test-env-test-domain-test-3cab3e5a',
+            '-test-org-test-env-test-domain-test--3cab3e5a',
           ],
         ],
       },

@@ -4,7 +4,7 @@
  */
 
 export function fixAndValidate(input: string): string {
-  const normalized = input.replace(/-+/g, '-');
+  const normalized = input;
 
   // Handle single character case separately
   if (normalized.length === 1) {

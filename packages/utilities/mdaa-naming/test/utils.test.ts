@@ -8,11 +8,6 @@ describe('fixAndValidate', () => {
     expect(fixAndValidate('a-b-c-1')).toBe('a-b-c-1');
   });
 
-  it('should normalize hyphens before validation', () => {
-    expect(fixAndValidate('a--b--c')).toBe('a-b-c');
-    expect(fixAndValidate('a---b----c')).toBe('a-b-c');
-  });
-
   it('should reject invalid patterns', () => {
     // Test invalid start characters
     expect(() => fixAndValidate('-abc')).toThrow();
