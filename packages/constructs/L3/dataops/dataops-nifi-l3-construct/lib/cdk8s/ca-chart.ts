@@ -29,7 +29,7 @@ export class CaIssuerChart extends cdk8s.Chart {
       ...props,
     });
 
-    const keystorePasswordSecretTargetName = 'ca-keystore-secret';
+    const keystorePasswordSecretTargetName = 'ca-keystore-secret'; //NOSONAR
     const keystorePasswordExternalSecret = new cdk8s.ApiObject(this, 'ca-external-secret', {
       apiVersion: 'external-secrets.io/v1beta1',
       kind: 'ExternalSecret',

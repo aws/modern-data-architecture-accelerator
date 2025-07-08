@@ -1,0 +1,4952 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MdaaInstallerStack Snapshots BuildSpec snapshot: buildspec.json 1`] = `
+"{
+  "version": "0.2",
+  "phases": {
+    "install": {
+      "runtime-versions": {
+        "nodejs": 22
+      },
+      "commands": [
+        "ls -lt",
+        "npm ci",
+        "npm install -g aws-cdk"
+      ]
+    },
+    "build": {
+      "commands": [
+        "set -e",
+        "echo \\"Starting build phase...\\"",
+        "export CDK_DEFAULT_REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].RegionName')",
+        "export CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query 'Account' --output text)",
+        "export CDK_NEW_BOOTSTRAP=1 && aws cloudformation describe-stacks --stack-name CDKToolkit || npx cdk bootstrap aws://\${CDK_DEFAULT_ACCOUNT}/\${CDK_DEFAULT_REGION}",
+        "echo \\"org: \${ORG_NAME}\\"",
+        "echo \\"Replacing org-name place holder\\"",
+        "echo using sample: sample_configs/\${SAMPLE_NAME}/mdaa.yaml",
+        "sed -i 's/<unique[- ]org[- ]name>/'\\"$ORG_NAME\\"'/g' sample_configs/\${SAMPLE_NAME}/mdaa.yaml",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<your vpc id>/'\\"$VPC_ID\\"'/g' {} \\\\;",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<your subnet id>/'\\"$SUBNET_ID\\"'/g' {} \\\\;",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<data scientist user id>/'\\"$ORG_NAME\\"'-datascientist/g' {} \\\\;",
+        "./bin/mdaa -c sample_configs/\${SAMPLE_NAME}/mdaa.yaml deploy",
+        "echo \\"Deployment completed successfully\\""
+      ]
+    }
+  },
+  "cache": {
+    "paths": [
+      "node_modules/**/*"
+    ]
+  }
+}"
+`;
+
+exports[`MdaaInstallerStack Snapshots CodeBuild resources snapshot: codebuild-resources.json 1`] = `
+{
+  "BuildProject097C5DB7": {
+    "Properties": {
+      "Artifacts": {
+        "Type": "CODEPIPELINE",
+      },
+      "Cache": {
+        "Type": "NO_CACHE",
+      },
+      "EncryptionKey": {
+        "Fn::GetAtt": [
+          "InstallerKey2A6A8C6D",
+          "Arn",
+        ],
+      },
+      "Environment": {
+        "ComputeType": "BUILD_GENERAL1_SMALL",
+        "EnvironmentVariables": [
+          {
+            "Name": "REPOSITORY_SOURCE",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositorySource",
+            },
+          },
+          {
+            "Name": "REPOSITORY_OWNER",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryOwner",
+            },
+          },
+          {
+            "Name": "REPOSITORY_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryName",
+            },
+          },
+          {
+            "Name": "REPOSITORY_BRANCH_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryBranchName",
+            },
+          },
+          {
+            "Name": "REPOSITORY_BUCKET_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryBucketName",
+            },
+          },
+          {
+            "Name": "REPOSITORY_BUCKET_OBJECT",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryBucketObject",
+            },
+          },
+          {
+            "Name": "SAMPLE_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "SampleName",
+            },
+          },
+          {
+            "Name": "ORG_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "OrgName",
+            },
+          },
+          {
+            "Name": "VPC_ID",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "VpcId",
+            },
+          },
+          {
+            "Name": "SUBNET_ID",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "SubnetId",
+            },
+          },
+        ],
+        "Image": "aws/codebuild/standard:7.0",
+        "ImagePullCredentialsType": "CODEBUILD",
+        "PrivilegedMode": true,
+        "Type": "LINUX_CONTAINER",
+      },
+      "ServiceRole": {
+        "Fn::GetAtt": [
+          "BuildRole41B77417",
+          "Arn",
+        ],
+      },
+      "Source": {
+        "BuildSpec": "{
+  "version": "0.2",
+  "phases": {
+    "install": {
+      "runtime-versions": {
+        "nodejs": 22
+      },
+      "commands": [
+        "ls -lt",
+        "npm ci",
+        "npm install -g aws-cdk"
+      ]
+    },
+    "build": {
+      "commands": [
+        "set -e",
+        "echo \\"Starting build phase...\\"",
+        "export CDK_DEFAULT_REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].RegionName')",
+        "export CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query 'Account' --output text)",
+        "export CDK_NEW_BOOTSTRAP=1 && aws cloudformation describe-stacks --stack-name CDKToolkit || npx cdk bootstrap aws://\${CDK_DEFAULT_ACCOUNT}/\${CDK_DEFAULT_REGION}",
+        "echo \\"org: \${ORG_NAME}\\"",
+        "echo \\"Replacing org-name place holder\\"",
+        "echo using sample: sample_configs/\${SAMPLE_NAME}/mdaa.yaml",
+        "sed -i 's/<unique[- ]org[- ]name>/'\\"$ORG_NAME\\"'/g' sample_configs/\${SAMPLE_NAME}/mdaa.yaml",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<your vpc id>/'\\"$VPC_ID\\"'/g' {} \\\\;",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<your subnet id>/'\\"$SUBNET_ID\\"'/g' {} \\\\;",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<data scientist user id>/'\\"$ORG_NAME\\"'-datascientist/g' {} \\\\;",
+        "./bin/mdaa -c sample_configs/\${SAMPLE_NAME}/mdaa.yaml deploy",
+        "echo \\"Deployment completed successfully\\""
+      ]
+    }
+  },
+  "cache": {
+    "paths": [
+      "node_modules/**/*"
+    ]
+  }
+}",
+        "Type": "CODEPIPELINE",
+      },
+    },
+    "Type": "AWS::CodeBuild::Project",
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots CodePipeline resources snapshot: codepipeline-resources.json 1`] = `
+{
+  "GitHubPipeline7B79E906": {
+    "Condition": "UseGitHubCondition",
+    "DependsOn": [
+      "GitHubPipelineRoleDefaultPolicyD82457D6",
+      "GitHubPipelineRole6F4DEF1B",
+    ],
+    "Properties": {
+      "ArtifactStore": {
+        "EncryptionKey": {
+          "Id": {
+            "Fn::GetAtt": [
+              "InstallerKey2A6A8C6D",
+              "Arn",
+            ],
+          },
+          "Type": "KMS",
+        },
+        "Location": {
+          "Ref": "ArtifactBucket7410C9EF",
+        },
+        "Type": "S3",
+      },
+      "Name": "MDAA-GitHubPipeline",
+      "RoleArn": {
+        "Fn::GetAtt": [
+          "GitHubPipelineRole6F4DEF1B",
+          "Arn",
+        ],
+      },
+      "Stages": [
+        {
+          "Actions": [
+            {
+              "ActionTypeId": {
+                "Category": "Source",
+                "Owner": "AWS",
+                "Provider": "CodeStarSourceConnection",
+                "Version": "1",
+              },
+              "Configuration": {
+                "BranchName": {
+                  "Ref": "RepositoryBranchName",
+                },
+                "ConnectionArn": {
+                  "Ref": "CodeConnectArn",
+                },
+                "DetectChanges": false,
+                "FullRepositoryId": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "RepositoryOwner",
+                      },
+                      "/",
+                      {
+                        "Ref": "RepositoryName",
+                      },
+                    ],
+                  ],
+                },
+                "OutputArtifactFormat": "CODEBUILD_CLONE_REF",
+              },
+              "Name": "Source",
+              "OutputArtifacts": [
+                {
+                  "Name": "Artifact_Source_Source",
+                },
+              ],
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+                  "Arn",
+                ],
+              },
+              "RunOrder": 1,
+            },
+          ],
+          "Name": "Source",
+        },
+        {
+          "Actions": [
+            {
+              "ActionTypeId": {
+                "Category": "Build",
+                "Owner": "AWS",
+                "Provider": "CodeBuild",
+                "Version": "1",
+              },
+              "Configuration": {
+                "ProjectName": {
+                  "Ref": "BuildProject097C5DB7",
+                },
+              },
+              "InputArtifacts": [
+                {
+                  "Name": "Artifact_Source_Source",
+                },
+              ],
+              "Name": "Build",
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "GitHubPipelineRole6F4DEF1B",
+                  "Arn",
+                ],
+              },
+              "RunOrder": 1,
+            },
+          ],
+          "Name": "Build",
+        },
+      ],
+    },
+    "Type": "AWS::CodePipeline::Pipeline",
+  },
+  "S3Pipeline01611002": {
+    "Condition": "UseS3Condition",
+    "DependsOn": [
+      "S3PipelineRoleDefaultPolicyC2B43EF9",
+      "S3PipelineRole6AAD3BD6",
+    ],
+    "Properties": {
+      "ArtifactStore": {
+        "EncryptionKey": {
+          "Id": {
+            "Fn::GetAtt": [
+              "InstallerKey2A6A8C6D",
+              "Arn",
+            ],
+          },
+          "Type": "KMS",
+        },
+        "Location": {
+          "Ref": "ArtifactBucket7410C9EF",
+        },
+        "Type": "S3",
+      },
+      "Name": "MDAA-S3Pipeline",
+      "RoleArn": {
+        "Fn::GetAtt": [
+          "S3PipelineRole6AAD3BD6",
+          "Arn",
+        ],
+      },
+      "Stages": [
+        {
+          "Actions": [
+            {
+              "ActionTypeId": {
+                "Category": "Source",
+                "Owner": "AWS",
+                "Provider": "S3",
+                "Version": "1",
+              },
+              "Configuration": {
+                "S3Bucket": {
+                  "Ref": "RepositoryBucketName",
+                },
+                "S3ObjectKey": {
+                  "Ref": "RepositoryBucketObject",
+                },
+              },
+              "Name": "Source",
+              "OutputArtifacts": [
+                {
+                  "Name": "Artifact_Source_Source",
+                },
+              ],
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "S3PipelineRole6AAD3BD6",
+                  "Arn",
+                ],
+              },
+              "RunOrder": 1,
+            },
+          ],
+          "Name": "Source",
+        },
+        {
+          "Actions": [
+            {
+              "ActionTypeId": {
+                "Category": "Build",
+                "Owner": "AWS",
+                "Provider": "CodeBuild",
+                "Version": "1",
+              },
+              "Configuration": {
+                "ProjectName": {
+                  "Ref": "BuildProject097C5DB7",
+                },
+              },
+              "InputArtifacts": [
+                {
+                  "Name": "Artifact_Source_Source",
+                },
+              ],
+              "Name": "Build",
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "S3PipelineRole6AAD3BD6",
+                  "Arn",
+                ],
+              },
+              "RunOrder": 1,
+            },
+          ],
+          "Name": "Build",
+        },
+      ],
+    },
+    "Type": "AWS::CodePipeline::Pipeline",
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Conditional resources snapshot: conditional-resources.json 1`] = `
+{
+  "GitHubPipeline7B79E906": {
+    "condition": "UseGitHubCondition",
+    "type": "AWS::CodePipeline::Pipeline",
+  },
+  "GitHubPipelineRoleDefaultPolicyD82457D6": {
+    "condition": "UseGitHubCondition",
+    "type": "AWS::IAM::Policy",
+  },
+  "GitHubPipelineSourceCodePipelineActionRoleB98AA867": {
+    "condition": "UseGitHubCondition",
+    "type": "AWS::IAM::Role",
+  },
+  "GitHubPipelineSourceCodePipelineActionRoleDefaultPolicyF6B56DEC": {
+    "condition": "UseGitHubCondition",
+    "type": "AWS::IAM::Policy",
+  },
+  "S3Pipeline01611002": {
+    "condition": "UseS3Condition",
+    "type": "AWS::CodePipeline::Pipeline",
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Conditions section snapshot: conditions.json 1`] = `
+{
+  "UseGitHubCondition": {
+    "Fn::Equals": [
+      {
+        "Ref": "RepositorySource",
+      },
+      "github",
+    ],
+  },
+  "UseS3Condition": {
+    "Fn::Equals": [
+      {
+        "Ref": "RepositorySource",
+      },
+      "s3",
+    ],
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Environment variables snapshot: environment-variables.json 1`] = `
+[
+  {
+    "Name": "REPOSITORY_SOURCE",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "RepositorySource",
+    },
+  },
+  {
+    "Name": "REPOSITORY_OWNER",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "RepositoryOwner",
+    },
+  },
+  {
+    "Name": "REPOSITORY_NAME",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "RepositoryName",
+    },
+  },
+  {
+    "Name": "REPOSITORY_BRANCH_NAME",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "RepositoryBranchName",
+    },
+  },
+  {
+    "Name": "REPOSITORY_BUCKET_NAME",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "RepositoryBucketName",
+    },
+  },
+  {
+    "Name": "REPOSITORY_BUCKET_OBJECT",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "RepositoryBucketObject",
+    },
+  },
+  {
+    "Name": "SAMPLE_NAME",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "SampleName",
+    },
+  },
+  {
+    "Name": "ORG_NAME",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "OrgName",
+    },
+  },
+  {
+    "Name": "VPC_ID",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "VpcId",
+    },
+  },
+  {
+    "Name": "SUBNET_ID",
+    "Type": "PLAINTEXT",
+    "Value": {
+      "Ref": "SubnetId",
+    },
+  },
+]
+`;
+
+exports[`MdaaInstallerStack Snapshots Full CloudFormation template snapshot: full-template.json 1`] = `
+{
+  "Conditions": {
+    "UseGitHubCondition": {
+      "Fn::Equals": [
+        {
+          "Ref": "RepositorySource",
+        },
+        "github",
+      ],
+    },
+    "UseS3Condition": {
+      "Fn::Equals": [
+        {
+          "Ref": "RepositorySource",
+        },
+        "s3",
+      ],
+    },
+  },
+  "Metadata": {
+    "AWS::CloudFormation::Interface": {
+      "ParameterGroups": [
+        {
+          "Label": {
+            "default": "Repository Selection",
+          },
+          "Parameters": [
+            "RepositorySource",
+          ],
+        },
+        {
+          "Label": {
+            "default": "Github Repository Configuration (Only if Github is selected as repository source)",
+          },
+          "Parameters": [
+            "RepositoryOwner",
+            "RepositoryName",
+            "RepositoryBranchName",
+            "CodeConnectArn",
+          ],
+        },
+        {
+          "Label": {
+            "default": "S3 Repository Configuration (Only if S3 is selected as repository source)",
+          },
+          "Parameters": [
+            "RepositoryBucketName",
+            "RepositoryBucketObject",
+          ],
+        },
+        {
+          "Label": {
+            "default": "MDAA Configuration",
+          },
+          "Parameters": [
+            "SampleName",
+            "OrgName",
+          ],
+        },
+        {
+          "Label": {
+            "default": "Network Configuration",
+          },
+          "Parameters": [
+            "VpcId",
+            "SubnetId",
+          ],
+        },
+      ],
+      "ParameterLabels": {
+        "CodeConnectArn": {
+          "default": "CodeConnect ARN",
+        },
+        "OrgName": {
+          "default": "Organization Name (Required)",
+        },
+        "RepositoryBranchName": {
+          "default": "GitHub Branch Name",
+        },
+        "RepositoryBucketName": {
+          "default": "S3 Bucket Name",
+        },
+        "RepositoryBucketObject": {
+          "default": "S3 Object Key",
+        },
+        "RepositoryName": {
+          "default": "GitHub Repository Name",
+        },
+        "RepositoryOwner": {
+          "default": "GitHub Repository Owner/Organization",
+        },
+        "RepositorySource": {
+          "default": "Repository Source",
+        },
+        "SampleName": {
+          "default": "MDAA Sample Configuration",
+        },
+        "SubnetId": {
+          "default": "Subnet ID",
+        },
+        "VpcId": {
+          "default": "VPC ID",
+        },
+      },
+      "ParameterVisibility": {
+        "CodeConnectArn": "{{RepositorySource == 'github'}}",
+        "RepositoryBranchName": "{{RepositorySource == 'github'}}",
+        "RepositoryBucketName": "{{RepositorySource == 's3'}}",
+        "RepositoryBucketObject": "{{RepositorySource == 's3'}}",
+        "RepositoryName": "{{RepositorySource == 'github'}}",
+        "RepositoryOwner": "{{RepositorySource == 'github'}}",
+      },
+    },
+  },
+  "Parameters": {
+    "CodeConnectArn": {
+      "ConstraintDescription": "CodeConnect ARN is required when GitHub is selected as the repository source",
+      "Description": "ARN of the CodeConnect connection to GitHub (Required for GitHub). Head over to the CodePipeline->Settings->Connections to create one",
+      "Type": "String",
+    },
+    "OrgName": {
+      "AllowedPattern": "^[a-zA-Z][a-zA-Z0-9-]{0,99}$",
+      "ConstraintDescription": "Org Name must start with a letter and contain only alphanumeric characters (case-sensitive) and hyphens. Maximum length is 100 characters.",
+      "Description": "An MDAA deployment requires an Org Name (must start with a letter, contain only alphanumeric characters and hyphens, and be 100 characters or less)",
+      "Type": "String",
+    },
+    "RepositoryBranchName": {
+      "AllowedPattern": ".+",
+      "ConstraintDescription": "Repository Branch Name is required when GitHub is selected as the repository source",
+      "Default": "release/v1.0.0",
+      "Description": "The name of the branch (e.g., "release/v1.0.0") (Required for GitHub)",
+      "Type": "String",
+    },
+    "RepositoryBucketName": {
+      "ConstraintDescription": "Repository Bucket Name is required when S3 is selected as the repository source",
+      "Description": "The S3 bucket containing the code. This bucket must be in the same region as the stack. (Required for S3)",
+      "Type": "String",
+    },
+    "RepositoryBucketObject": {
+      "ConstraintDescription": "Repository Bucket Object is required when S3 is selected as the repository source",
+      "Default": "release/latest.zip",
+      "Description": "The S3 object key for the code zip file (Required for S3)",
+      "Type": "String",
+    },
+    "RepositoryName": {
+      "ConstraintDescription": "Repository Name is required when GitHub is selected as the repository source",
+      "Default": "modern-data-architecture-accelerator",
+      "Description": "The name of the GitHub repository containing the code (Required for GitHub)",
+      "Type": "String",
+    },
+    "RepositoryOwner": {
+      "ConstraintDescription": "Repository Owner is required when GitHub is selected as the repository source",
+      "Default": "aws",
+      "Description": "The owner of the GitHub repository containing the code (Required for GitHub)",
+      "Type": "String",
+    },
+    "RepositorySource": {
+      "AllowedValues": [
+        "github",
+        "s3",
+      ],
+      "Default": "github",
+      "Description": "Repository source for the code (Required)",
+      "Type": "String",
+    },
+    "SampleName": {
+      "AllowedValues": [
+        "basic_datalake",
+        "basic_datascience_platform",
+      ],
+      "Default": "basic_datalake",
+      "Description": "MDAA Sample you want to deploy",
+      "Type": "String",
+    },
+    "SubnetId": {
+      "Description": "The ID of the subnet to use for deployment. Must be a subnet within the selected VPC. Required for resources that need network access.",
+      "Type": "AWS::EC2::Subnet::Id",
+    },
+    "VpcId": {
+      "Description": "The ID of the VPC to use for deployment. Required for resources that need network access.",
+      "Type": "AWS::EC2::VPC::Id",
+    },
+  },
+  "Resources": {
+    "AccessLogsBucket83982689": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "OwnershipControls": {
+          "Rules": [
+            {
+              "ObjectOwnership": "ObjectWriter",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "AccessLogsBucketPolicy7F77476F": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "AccessLogsBucket83982689",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "AccessLogsBucket83982689",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "AccessLogsBucket83982689",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "ArtifactBucket7410C9EF": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "InstallerKey2A6A8C6D",
+                    "Arn",
+                  ],
+                },
+                "SSEAlgorithm": "aws:kms",
+              },
+            },
+          ],
+        },
+        "LoggingConfiguration": {
+          "DestinationBucketName": {
+            "Ref": "AccessLogsBucket83982689",
+          },
+          "LogFilePrefix": "artifact-bucket-logs/",
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ArtifactBucketPolicy4B4B7752": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "ArtifactBucket7410C9EF",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "BuildProject097C5DB7": {
+      "Properties": {
+        "Artifacts": {
+          "Type": "CODEPIPELINE",
+        },
+        "Cache": {
+          "Type": "NO_CACHE",
+        },
+        "EncryptionKey": {
+          "Fn::GetAtt": [
+            "InstallerKey2A6A8C6D",
+            "Arn",
+          ],
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_SMALL",
+          "EnvironmentVariables": [
+            {
+              "Name": "REPOSITORY_SOURCE",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "RepositorySource",
+              },
+            },
+            {
+              "Name": "REPOSITORY_OWNER",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "RepositoryOwner",
+              },
+            },
+            {
+              "Name": "REPOSITORY_NAME",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "RepositoryName",
+              },
+            },
+            {
+              "Name": "REPOSITORY_BRANCH_NAME",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "RepositoryBranchName",
+              },
+            },
+            {
+              "Name": "REPOSITORY_BUCKET_NAME",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "RepositoryBucketName",
+              },
+            },
+            {
+              "Name": "REPOSITORY_BUCKET_OBJECT",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "RepositoryBucketObject",
+              },
+            },
+            {
+              "Name": "SAMPLE_NAME",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "SampleName",
+              },
+            },
+            {
+              "Name": "ORG_NAME",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "OrgName",
+              },
+            },
+            {
+              "Name": "VPC_ID",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "VpcId",
+              },
+            },
+            {
+              "Name": "SUBNET_ID",
+              "Type": "PLAINTEXT",
+              "Value": {
+                "Ref": "SubnetId",
+              },
+            },
+          ],
+          "Image": "aws/codebuild/standard:7.0",
+          "ImagePullCredentialsType": "CODEBUILD",
+          "PrivilegedMode": true,
+          "Type": "LINUX_CONTAINER",
+        },
+        "ServiceRole": {
+          "Fn::GetAtt": [
+            "BuildRole41B77417",
+            "Arn",
+          ],
+        },
+        "Source": {
+          "BuildSpec": "{
+  "version": "0.2",
+  "phases": {
+    "install": {
+      "runtime-versions": {
+        "nodejs": 22
+      },
+      "commands": [
+        "ls -lt",
+        "npm ci",
+        "npm install -g aws-cdk"
+      ]
+    },
+    "build": {
+      "commands": [
+        "set -e",
+        "echo \\"Starting build phase...\\"",
+        "export CDK_DEFAULT_REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].RegionName')",
+        "export CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query 'Account' --output text)",
+        "export CDK_NEW_BOOTSTRAP=1 && aws cloudformation describe-stacks --stack-name CDKToolkit || npx cdk bootstrap aws://\${CDK_DEFAULT_ACCOUNT}/\${CDK_DEFAULT_REGION}",
+        "echo \\"org: \${ORG_NAME}\\"",
+        "echo \\"Replacing org-name place holder\\"",
+        "echo using sample: sample_configs/\${SAMPLE_NAME}/mdaa.yaml",
+        "sed -i 's/<unique[- ]org[- ]name>/'\\"$ORG_NAME\\"'/g' sample_configs/\${SAMPLE_NAME}/mdaa.yaml",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<your vpc id>/'\\"$VPC_ID\\"'/g' {} \\\\;",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<your subnet id>/'\\"$SUBNET_ID\\"'/g' {} \\\\;",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<data scientist user id>/'\\"$ORG_NAME\\"'-datascientist/g' {} \\\\;",
+        "./bin/mdaa -c sample_configs/\${SAMPLE_NAME}/mdaa.yaml deploy",
+        "echo \\"Deployment completed successfully\\""
+      ]
+    }
+  },
+  "cache": {
+    "paths": [
+      "node_modules/**/*"
+    ]
+  }
+}",
+          "Type": "CODEPIPELINE",
+        },
+      },
+      "Type": "AWS::CodeBuild::Project",
+    },
+    "BuildRole41B77417": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AdministratorAccess",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BuildRoleDefaultPolicy05D1D9FE": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:us-east-1:xxxxxx:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "BuildProject097C5DB7",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:us-east-1:xxxxxx:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "BuildProject097C5DB7",
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":codebuild:us-east-1:xxxxxx:report-group/",
+                    {
+                      "Ref": "BuildProject097C5DB7",
+                    },
+                    "-*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": "codestar-connections:UseConnection",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "CodeConnectArn",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BuildRoleDefaultPolicy05D1D9FE",
+        "Roles": [
+          {
+            "Ref": "BuildRole41B77417",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GitHubPipeline7B79E906": {
+      "Condition": "UseGitHubCondition",
+      "DependsOn": [
+        "GitHubPipelineRoleDefaultPolicyD82457D6",
+        "GitHubPipelineRole6F4DEF1B",
+      ],
+      "Properties": {
+        "ArtifactStore": {
+          "EncryptionKey": {
+            "Id": {
+              "Fn::GetAtt": [
+                "InstallerKey2A6A8C6D",
+                "Arn",
+              ],
+            },
+            "Type": "KMS",
+          },
+          "Location": {
+            "Ref": "ArtifactBucket7410C9EF",
+          },
+          "Type": "S3",
+        },
+        "Name": "MDAA-GitHubPipeline",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "GitHubPipelineRole6F4DEF1B",
+            "Arn",
+          ],
+        },
+        "Stages": [
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Source",
+                  "Owner": "AWS",
+                  "Provider": "CodeStarSourceConnection",
+                  "Version": "1",
+                },
+                "Configuration": {
+                  "BranchName": {
+                    "Ref": "RepositoryBranchName",
+                  },
+                  "ConnectionArn": {
+                    "Ref": "CodeConnectArn",
+                  },
+                  "DetectChanges": false,
+                  "FullRepositoryId": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        {
+                          "Ref": "RepositoryOwner",
+                        },
+                        "/",
+                        {
+                          "Ref": "RepositoryName",
+                        },
+                      ],
+                    ],
+                  },
+                  "OutputArtifactFormat": "CODEBUILD_CLONE_REF",
+                },
+                "Name": "Source",
+                "OutputArtifacts": [
+                  {
+                    "Name": "Artifact_Source_Source",
+                  },
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+                    "Arn",
+                  ],
+                },
+                "RunOrder": 1,
+              },
+            ],
+            "Name": "Source",
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1",
+                },
+                "Configuration": {
+                  "ProjectName": {
+                    "Ref": "BuildProject097C5DB7",
+                  },
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "Artifact_Source_Source",
+                  },
+                ],
+                "Name": "Build",
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "GitHubPipelineRole6F4DEF1B",
+                    "Arn",
+                  ],
+                },
+                "RunOrder": 1,
+              },
+            ],
+            "Name": "Build",
+          },
+        ],
+      },
+      "Type": "AWS::CodePipeline::Pipeline",
+    },
+    "GitHubPipelineRole6F4DEF1B": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codepipeline.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GitHubPipelineRoleDefaultPolicyD82457D6": {
+      "Condition": "UseGitHubCondition",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "codestar-connections:UseConnection",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "CodeConnectArn",
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "GitHubPipelineRole6F4DEF1B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BuildProject097C5DB7",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GitHubPipelineRoleDefaultPolicyD82457D6",
+        "Roles": [
+          {
+            "Ref": "GitHubPipelineRole6F4DEF1B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GitHubPipelineSourceCodePipelineActionRoleB98AA867": {
+      "Condition": "UseGitHubCondition",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::xxxxxx:root",
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GitHubPipelineSourceCodePipelineActionRoleDefaultPolicyF6B56DEC": {
+      "Condition": "UseGitHubCondition",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "codestar-connections:UseConnection",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "CodeConnectArn",
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:PutObjectAcl",
+                "s3:PutObjectVersionAcl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ArtifactBucket7410C9EF",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GitHubPipelineSourceCodePipelineActionRoleDefaultPolicyF6B56DEC",
+        "Roles": [
+          {
+            "Ref": "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "InstallerKey2A6A8C6D": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "Description": "Key used for encryption of pipeline artifacts",
+        "EnableKeyRotation": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::xxxxxx:root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "S3Pipeline01611002": {
+      "Condition": "UseS3Condition",
+      "DependsOn": [
+        "S3PipelineRoleDefaultPolicyC2B43EF9",
+        "S3PipelineRole6AAD3BD6",
+      ],
+      "Properties": {
+        "ArtifactStore": {
+          "EncryptionKey": {
+            "Id": {
+              "Fn::GetAtt": [
+                "InstallerKey2A6A8C6D",
+                "Arn",
+              ],
+            },
+            "Type": "KMS",
+          },
+          "Location": {
+            "Ref": "ArtifactBucket7410C9EF",
+          },
+          "Type": "S3",
+        },
+        "Name": "MDAA-S3Pipeline",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "S3PipelineRole6AAD3BD6",
+            "Arn",
+          ],
+        },
+        "Stages": [
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Source",
+                  "Owner": "AWS",
+                  "Provider": "S3",
+                  "Version": "1",
+                },
+                "Configuration": {
+                  "S3Bucket": {
+                    "Ref": "RepositoryBucketName",
+                  },
+                  "S3ObjectKey": {
+                    "Ref": "RepositoryBucketObject",
+                  },
+                },
+                "Name": "Source",
+                "OutputArtifacts": [
+                  {
+                    "Name": "Artifact_Source_Source",
+                  },
+                ],
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "S3PipelineRole6AAD3BD6",
+                    "Arn",
+                  ],
+                },
+                "RunOrder": 1,
+              },
+            ],
+            "Name": "Source",
+          },
+          {
+            "Actions": [
+              {
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Provider": "CodeBuild",
+                  "Version": "1",
+                },
+                "Configuration": {
+                  "ProjectName": {
+                    "Ref": "BuildProject097C5DB7",
+                  },
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "Artifact_Source_Source",
+                  },
+                ],
+                "Name": "Build",
+                "RoleArn": {
+                  "Fn::GetAtt": [
+                    "S3PipelineRole6AAD3BD6",
+                    "Arn",
+                  ],
+                },
+                "RunOrder": 1,
+              },
+            ],
+            "Name": "Build",
+          },
+        ],
+      },
+      "Type": "AWS::CodePipeline::Pipeline",
+    },
+    "S3PipelineRole6AAD3BD6": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codepipeline.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "S3PipelineRoleDefaultPolicyC2B43EF9": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "RepositoryBucketName",
+                    },
+                    "/",
+                    {
+                      "Ref": "RepositoryBucketObject",
+                    },
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "S3PipelineRole6AAD3BD6",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "RepositoryBucketName",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "RepositoryBucketName",
+                      },
+                      "/",
+                      {
+                        "Ref": "RepositoryBucketObject",
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:Decrypt",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BuildProject097C5DB7",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "S3PipelineRoleDefaultPolicyC2B43EF9",
+        "Roles": [
+          {
+            "Ref": "S3PipelineRole6AAD3BD6",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+  "Rules": {
+    "ValidateGitHubParameters": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "RepositoryOwner",
+                  },
+                  "",
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "Repository Owner is required when GitHub is selected as the repository source",
+        },
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "RepositoryName",
+                  },
+                  "",
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "Repository Name is required when GitHub is selected as the repository source",
+        },
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "RepositoryBranchName",
+                  },
+                  "",
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "Repository Branch Name is required when GitHub is selected as the repository source",
+        },
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "CodeConnectArn",
+                  },
+                  "",
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CodeConnect ARN is required when GitHub is selected as the repository source",
+        },
+      ],
+      "RuleCondition": {
+        "Fn::Equals": [
+          {
+            "Ref": "RepositorySource",
+          },
+          "github",
+        ],
+      },
+    },
+    "ValidateNetworkParametersForDataScience": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "VpcId",
+                  },
+                  "",
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "VPC ID is required.",
+        },
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "SubnetId",
+                  },
+                  "",
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "Subnet ID is required.",
+        },
+      ],
+    },
+    "ValidateOrganizationName": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "OrgName",
+                  },
+                  "",
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "Organization Name is required for all MDAA deployments",
+        },
+      ],
+    },
+    "ValidateS3Parameters": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "RepositoryBucketName",
+                  },
+                  "",
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "Repository Bucket Name is required when S3 is selected as the repository source",
+        },
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Equals": [
+                  {
+                    "Ref": "RepositoryBucketObject",
+                  },
+                  "",
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "Repository Bucket Object is required when S3 is selected as the repository source",
+        },
+      ],
+      "RuleCondition": {
+        "Fn::Equals": [
+          {
+            "Ref": "RepositorySource",
+          },
+          "s3",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots IAM resources snapshot: iam-resources.json 1`] = `
+{
+  "policies": {
+    "BuildRoleDefaultPolicy05D1D9FE": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:us-east-1:xxxxxx:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "BuildProject097C5DB7",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:us-east-1:xxxxxx:log-group:/aws/codebuild/",
+                      {
+                        "Ref": "BuildProject097C5DB7",
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":codebuild:us-east-1:xxxxxx:report-group/",
+                    {
+                      "Ref": "BuildProject097C5DB7",
+                    },
+                    "-*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": "codestar-connections:UseConnection",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "CodeConnectArn",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BuildRoleDefaultPolicy05D1D9FE",
+        "Roles": [
+          {
+            "Ref": "BuildRole41B77417",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GitHubPipelineRoleDefaultPolicyD82457D6": {
+      "Condition": "UseGitHubCondition",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "codestar-connections:UseConnection",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "CodeConnectArn",
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "GitHubPipelineRole6F4DEF1B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BuildProject097C5DB7",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GitHubPipelineRoleDefaultPolicyD82457D6",
+        "Roles": [
+          {
+            "Ref": "GitHubPipelineRole6F4DEF1B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GitHubPipelineSourceCodePipelineActionRoleDefaultPolicyF6B56DEC": {
+      "Condition": "UseGitHubCondition",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "codestar-connections:UseConnection",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "CodeConnectArn",
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:PutObjectAcl",
+                "s3:PutObjectVersionAcl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ArtifactBucket7410C9EF",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GitHubPipelineSourceCodePipelineActionRoleDefaultPolicyF6B56DEC",
+        "Roles": [
+          {
+            "Ref": "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "S3PipelineRoleDefaultPolicyC2B43EF9": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "RepositoryBucketName",
+                    },
+                    "/",
+                    {
+                      "Ref": "RepositoryBucketObject",
+                    },
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "S3PipelineRole6AAD3BD6",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "RepositoryBucketName",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "RepositoryBucketName",
+                      },
+                      "/",
+                      {
+                        "Ref": "RepositoryBucketObject",
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:Decrypt",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BuildProject097C5DB7",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "S3PipelineRoleDefaultPolicyC2B43EF9",
+        "Roles": [
+          {
+            "Ref": "S3PipelineRole6AAD3BD6",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+  "roles": {
+    "BuildRole41B77417": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AdministratorAccess",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GitHubPipelineRole6F4DEF1B": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codepipeline.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GitHubPipelineSourceCodePipelineActionRoleB98AA867": {
+      "Condition": "UseGitHubCondition",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::xxxxxx:root",
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "S3PipelineRole6AAD3BD6": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codepipeline.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots KMS resources snapshot: kms-resources.json 1`] = `
+{
+  "aliases": {},
+  "keys": {
+    "InstallerKey2A6A8C6D": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "Description": "Key used for encryption of pipeline artifacts",
+        "EnableKeyRotation": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::xxxxxx:root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Metadata section snapshot: metadata.json 1`] = `
+{
+  "AWS::CloudFormation::Interface": {
+    "ParameterGroups": [
+      {
+        "Label": {
+          "default": "Repository Selection",
+        },
+        "Parameters": [
+          "RepositorySource",
+        ],
+      },
+      {
+        "Label": {
+          "default": "Github Repository Configuration (Only if Github is selected as repository source)",
+        },
+        "Parameters": [
+          "RepositoryOwner",
+          "RepositoryName",
+          "RepositoryBranchName",
+          "CodeConnectArn",
+        ],
+      },
+      {
+        "Label": {
+          "default": "S3 Repository Configuration (Only if S3 is selected as repository source)",
+        },
+        "Parameters": [
+          "RepositoryBucketName",
+          "RepositoryBucketObject",
+        ],
+      },
+      {
+        "Label": {
+          "default": "MDAA Configuration",
+        },
+        "Parameters": [
+          "SampleName",
+          "OrgName",
+        ],
+      },
+      {
+        "Label": {
+          "default": "Network Configuration",
+        },
+        "Parameters": [
+          "VpcId",
+          "SubnetId",
+        ],
+      },
+    ],
+    "ParameterLabels": {
+      "CodeConnectArn": {
+        "default": "CodeConnect ARN",
+      },
+      "OrgName": {
+        "default": "Organization Name (Required)",
+      },
+      "RepositoryBranchName": {
+        "default": "GitHub Branch Name",
+      },
+      "RepositoryBucketName": {
+        "default": "S3 Bucket Name",
+      },
+      "RepositoryBucketObject": {
+        "default": "S3 Object Key",
+      },
+      "RepositoryName": {
+        "default": "GitHub Repository Name",
+      },
+      "RepositoryOwner": {
+        "default": "GitHub Repository Owner/Organization",
+      },
+      "RepositorySource": {
+        "default": "Repository Source",
+      },
+      "SampleName": {
+        "default": "MDAA Sample Configuration",
+      },
+      "SubnetId": {
+        "default": "Subnet ID",
+      },
+      "VpcId": {
+        "default": "VPC ID",
+      },
+    },
+    "ParameterVisibility": {
+      "CodeConnectArn": "{{RepositorySource == 'github'}}",
+      "RepositoryBranchName": "{{RepositorySource == 'github'}}",
+      "RepositoryBucketName": "{{RepositorySource == 's3'}}",
+      "RepositoryBucketObject": "{{RepositorySource == 's3'}}",
+      "RepositoryName": "{{RepositorySource == 'github'}}",
+      "RepositoryOwner": "{{RepositorySource == 'github'}}",
+    },
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Parameter groups and labels snapshot: parameter-interface.json 1`] = `
+{
+  "parameterGroups": [
+    {
+      "Label": {
+        "default": "Repository Selection",
+      },
+      "Parameters": [
+        "RepositorySource",
+      ],
+    },
+    {
+      "Label": {
+        "default": "Github Repository Configuration (Only if Github is selected as repository source)",
+      },
+      "Parameters": [
+        "RepositoryOwner",
+        "RepositoryName",
+        "RepositoryBranchName",
+        "CodeConnectArn",
+      ],
+    },
+    {
+      "Label": {
+        "default": "S3 Repository Configuration (Only if S3 is selected as repository source)",
+      },
+      "Parameters": [
+        "RepositoryBucketName",
+        "RepositoryBucketObject",
+      ],
+    },
+    {
+      "Label": {
+        "default": "MDAA Configuration",
+      },
+      "Parameters": [
+        "SampleName",
+        "OrgName",
+      ],
+    },
+    {
+      "Label": {
+        "default": "Network Configuration",
+      },
+      "Parameters": [
+        "VpcId",
+        "SubnetId",
+      ],
+    },
+  ],
+  "parameterLabels": {
+    "CodeConnectArn": {
+      "default": "CodeConnect ARN",
+    },
+    "OrgName": {
+      "default": "Organization Name (Required)",
+    },
+    "RepositoryBranchName": {
+      "default": "GitHub Branch Name",
+    },
+    "RepositoryBucketName": {
+      "default": "S3 Bucket Name",
+    },
+    "RepositoryBucketObject": {
+      "default": "S3 Object Key",
+    },
+    "RepositoryName": {
+      "default": "GitHub Repository Name",
+    },
+    "RepositoryOwner": {
+      "default": "GitHub Repository Owner/Organization",
+    },
+    "RepositorySource": {
+      "default": "Repository Source",
+    },
+    "SampleName": {
+      "default": "MDAA Sample Configuration",
+    },
+    "SubnetId": {
+      "default": "Subnet ID",
+    },
+    "VpcId": {
+      "default": "VPC ID",
+    },
+  },
+  "parameterVisibility": {
+    "CodeConnectArn": "{{RepositorySource == 'github'}}",
+    "RepositoryBranchName": "{{RepositorySource == 'github'}}",
+    "RepositoryBucketName": "{{RepositorySource == 's3'}}",
+    "RepositoryBucketObject": "{{RepositorySource == 's3'}}",
+    "RepositoryName": "{{RepositorySource == 'github'}}",
+    "RepositoryOwner": "{{RepositorySource == 'github'}}",
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Parameters section snapshot: parameters.json 1`] = `
+{
+  "CodeConnectArn": {
+    "ConstraintDescription": "CodeConnect ARN is required when GitHub is selected as the repository source",
+    "Description": "ARN of the CodeConnect connection to GitHub (Required for GitHub). Head over to the CodePipeline->Settings->Connections to create one",
+    "Type": "String",
+  },
+  "OrgName": {
+    "AllowedPattern": "^[a-zA-Z][a-zA-Z0-9-]{0,99}$",
+    "ConstraintDescription": "Org Name must start with a letter and contain only alphanumeric characters (case-sensitive) and hyphens. Maximum length is 100 characters.",
+    "Description": "An MDAA deployment requires an Org Name (must start with a letter, contain only alphanumeric characters and hyphens, and be 100 characters or less)",
+    "Type": "String",
+  },
+  "RepositoryBranchName": {
+    "AllowedPattern": ".+",
+    "ConstraintDescription": "Repository Branch Name is required when GitHub is selected as the repository source",
+    "Default": "release/v1.0.0",
+    "Description": "The name of the branch (e.g., "release/v1.0.0") (Required for GitHub)",
+    "Type": "String",
+  },
+  "RepositoryBucketName": {
+    "ConstraintDescription": "Repository Bucket Name is required when S3 is selected as the repository source",
+    "Description": "The S3 bucket containing the code. This bucket must be in the same region as the stack. (Required for S3)",
+    "Type": "String",
+  },
+  "RepositoryBucketObject": {
+    "ConstraintDescription": "Repository Bucket Object is required when S3 is selected as the repository source",
+    "Default": "release/latest.zip",
+    "Description": "The S3 object key for the code zip file (Required for S3)",
+    "Type": "String",
+  },
+  "RepositoryName": {
+    "ConstraintDescription": "Repository Name is required when GitHub is selected as the repository source",
+    "Default": "modern-data-architecture-accelerator",
+    "Description": "The name of the GitHub repository containing the code (Required for GitHub)",
+    "Type": "String",
+  },
+  "RepositoryOwner": {
+    "ConstraintDescription": "Repository Owner is required when GitHub is selected as the repository source",
+    "Default": "aws",
+    "Description": "The owner of the GitHub repository containing the code (Required for GitHub)",
+    "Type": "String",
+  },
+  "RepositorySource": {
+    "AllowedValues": [
+      "github",
+      "s3",
+    ],
+    "Default": "github",
+    "Description": "Repository source for the code (Required)",
+    "Type": "String",
+  },
+  "SampleName": {
+    "AllowedValues": [
+      "basic_datalake",
+      "basic_datascience_platform",
+    ],
+    "Default": "basic_datalake",
+    "Description": "MDAA Sample you want to deploy",
+    "Type": "String",
+  },
+  "SubnetId": {
+    "Description": "The ID of the subnet to use for deployment. Must be a subnet within the selected VPC. Required for resources that need network access.",
+    "Type": "AWS::EC2::Subnet::Id",
+  },
+  "VpcId": {
+    "Description": "The ID of the VPC to use for deployment. Required for resources that need network access.",
+    "Type": "AWS::EC2::VPC::Id",
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Pipeline stages snapshot: pipeline-stages.json 1`] = `
+[
+  {
+    "name": "MDAA-GitHubPipeline",
+    "stages": [
+      {
+        "Actions": [
+          {
+            "ActionTypeId": {
+              "Category": "Source",
+              "Owner": "AWS",
+              "Provider": "CodeStarSourceConnection",
+              "Version": "1",
+            },
+            "Configuration": {
+              "BranchName": {
+                "Ref": "RepositoryBranchName",
+              },
+              "ConnectionArn": {
+                "Ref": "CodeConnectArn",
+              },
+              "DetectChanges": false,
+              "FullRepositoryId": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Ref": "RepositoryOwner",
+                    },
+                    "/",
+                    {
+                      "Ref": "RepositoryName",
+                    },
+                  ],
+                ],
+              },
+              "OutputArtifactFormat": "CODEBUILD_CLONE_REF",
+            },
+            "Name": "Source",
+            "OutputArtifacts": [
+              {
+                "Name": "Artifact_Source_Source",
+              },
+            ],
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+                "Arn",
+              ],
+            },
+            "RunOrder": 1,
+          },
+        ],
+        "Name": "Source",
+      },
+      {
+        "Actions": [
+          {
+            "ActionTypeId": {
+              "Category": "Build",
+              "Owner": "AWS",
+              "Provider": "CodeBuild",
+              "Version": "1",
+            },
+            "Configuration": {
+              "ProjectName": {
+                "Ref": "BuildProject097C5DB7",
+              },
+            },
+            "InputArtifacts": [
+              {
+                "Name": "Artifact_Source_Source",
+              },
+            ],
+            "Name": "Build",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "GitHubPipelineRole6F4DEF1B",
+                "Arn",
+              ],
+            },
+            "RunOrder": 1,
+          },
+        ],
+        "Name": "Build",
+      },
+    ],
+  },
+  {
+    "name": "MDAA-S3Pipeline",
+    "stages": [
+      {
+        "Actions": [
+          {
+            "ActionTypeId": {
+              "Category": "Source",
+              "Owner": "AWS",
+              "Provider": "S3",
+              "Version": "1",
+            },
+            "Configuration": {
+              "S3Bucket": {
+                "Ref": "RepositoryBucketName",
+              },
+              "S3ObjectKey": {
+                "Ref": "RepositoryBucketObject",
+              },
+            },
+            "Name": "Source",
+            "OutputArtifacts": [
+              {
+                "Name": "Artifact_Source_Source",
+              },
+            ],
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "S3PipelineRole6AAD3BD6",
+                "Arn",
+              ],
+            },
+            "RunOrder": 1,
+          },
+        ],
+        "Name": "Source",
+      },
+      {
+        "Actions": [
+          {
+            "ActionTypeId": {
+              "Category": "Build",
+              "Owner": "AWS",
+              "Provider": "CodeBuild",
+              "Version": "1",
+            },
+            "Configuration": {
+              "ProjectName": {
+                "Ref": "BuildProject097C5DB7",
+              },
+            },
+            "InputArtifacts": [
+              {
+                "Name": "Artifact_Source_Source",
+              },
+            ],
+            "Name": "Build",
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "S3PipelineRole6AAD3BD6",
+                "Arn",
+              ],
+            },
+            "RunOrder": 1,
+          },
+        ],
+        "Name": "Build",
+      },
+    ],
+  },
+]
+`;
+
+exports[`MdaaInstallerStack Snapshots Resource dependencies snapshot: resource-dependencies.json 1`] = `
+{
+  "GitHubPipeline7B79E906": [
+    "GitHubPipelineRoleDefaultPolicyD82457D6",
+    "GitHubPipelineRole6F4DEF1B",
+  ],
+  "S3Pipeline01611002": [
+    "S3PipelineRoleDefaultPolicyC2B43EF9",
+    "S3PipelineRole6AAD3BD6",
+  ],
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Resources section snapshot: resources.json 1`] = `
+{
+  "AccessLogsBucket83982689": {
+    "DeletionPolicy": "Retain",
+    "Properties": {
+      "AccessControl": "LogDeliveryWrite",
+      "BucketEncryption": {
+        "ServerSideEncryptionConfiguration": [
+          {
+            "ServerSideEncryptionByDefault": {
+              "SSEAlgorithm": "AES256",
+            },
+          },
+        ],
+      },
+      "OwnershipControls": {
+        "Rules": [
+          {
+            "ObjectOwnership": "ObjectWriter",
+          },
+        ],
+      },
+      "PublicAccessBlockConfiguration": {
+        "BlockPublicAcls": true,
+        "BlockPublicPolicy": true,
+        "IgnorePublicAcls": true,
+        "RestrictPublicBuckets": true,
+      },
+    },
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Retain",
+  },
+  "AccessLogsBucketPolicy7F77476F": {
+    "Properties": {
+      "Bucket": {
+        "Ref": "AccessLogsBucket83982689",
+      },
+      "PolicyDocument": {
+        "Statement": [
+          {
+            "Action": "s3:*",
+            "Condition": {
+              "Bool": {
+                "aws:SecureTransport": "false",
+              },
+            },
+            "Effect": "Deny",
+            "Principal": {
+              "AWS": "*",
+            },
+            "Resource": [
+              {
+                "Fn::GetAtt": [
+                  "AccessLogsBucket83982689",
+                  "Arn",
+                ],
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "AccessLogsBucket83982689",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            ],
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+    },
+    "Type": "AWS::S3::BucketPolicy",
+  },
+  "ArtifactBucket7410C9EF": {
+    "DeletionPolicy": "Retain",
+    "Properties": {
+      "BucketEncryption": {
+        "ServerSideEncryptionConfiguration": [
+          {
+            "ServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": {
+                "Fn::GetAtt": [
+                  "InstallerKey2A6A8C6D",
+                  "Arn",
+                ],
+              },
+              "SSEAlgorithm": "aws:kms",
+            },
+          },
+        ],
+      },
+      "LoggingConfiguration": {
+        "DestinationBucketName": {
+          "Ref": "AccessLogsBucket83982689",
+        },
+        "LogFilePrefix": "artifact-bucket-logs/",
+      },
+      "PublicAccessBlockConfiguration": {
+        "BlockPublicAcls": true,
+        "BlockPublicPolicy": true,
+        "IgnorePublicAcls": true,
+        "RestrictPublicBuckets": true,
+      },
+    },
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Retain",
+  },
+  "ArtifactBucketPolicy4B4B7752": {
+    "Properties": {
+      "Bucket": {
+        "Ref": "ArtifactBucket7410C9EF",
+      },
+      "PolicyDocument": {
+        "Statement": [
+          {
+            "Action": "s3:*",
+            "Condition": {
+              "Bool": {
+                "aws:SecureTransport": "false",
+              },
+            },
+            "Effect": "Deny",
+            "Principal": {
+              "AWS": "*",
+            },
+            "Resource": [
+              {
+                "Fn::GetAtt": [
+                  "ArtifactBucket7410C9EF",
+                  "Arn",
+                ],
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ArtifactBucket7410C9EF",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            ],
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+    },
+    "Type": "AWS::S3::BucketPolicy",
+  },
+  "BuildProject097C5DB7": {
+    "Properties": {
+      "Artifacts": {
+        "Type": "CODEPIPELINE",
+      },
+      "Cache": {
+        "Type": "NO_CACHE",
+      },
+      "EncryptionKey": {
+        "Fn::GetAtt": [
+          "InstallerKey2A6A8C6D",
+          "Arn",
+        ],
+      },
+      "Environment": {
+        "ComputeType": "BUILD_GENERAL1_SMALL",
+        "EnvironmentVariables": [
+          {
+            "Name": "REPOSITORY_SOURCE",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositorySource",
+            },
+          },
+          {
+            "Name": "REPOSITORY_OWNER",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryOwner",
+            },
+          },
+          {
+            "Name": "REPOSITORY_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryName",
+            },
+          },
+          {
+            "Name": "REPOSITORY_BRANCH_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryBranchName",
+            },
+          },
+          {
+            "Name": "REPOSITORY_BUCKET_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryBucketName",
+            },
+          },
+          {
+            "Name": "REPOSITORY_BUCKET_OBJECT",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "RepositoryBucketObject",
+            },
+          },
+          {
+            "Name": "SAMPLE_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "SampleName",
+            },
+          },
+          {
+            "Name": "ORG_NAME",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "OrgName",
+            },
+          },
+          {
+            "Name": "VPC_ID",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "VpcId",
+            },
+          },
+          {
+            "Name": "SUBNET_ID",
+            "Type": "PLAINTEXT",
+            "Value": {
+              "Ref": "SubnetId",
+            },
+          },
+        ],
+        "Image": "aws/codebuild/standard:7.0",
+        "ImagePullCredentialsType": "CODEBUILD",
+        "PrivilegedMode": true,
+        "Type": "LINUX_CONTAINER",
+      },
+      "ServiceRole": {
+        "Fn::GetAtt": [
+          "BuildRole41B77417",
+          "Arn",
+        ],
+      },
+      "Source": {
+        "BuildSpec": "{
+  "version": "0.2",
+  "phases": {
+    "install": {
+      "runtime-versions": {
+        "nodejs": 22
+      },
+      "commands": [
+        "ls -lt",
+        "npm ci",
+        "npm install -g aws-cdk"
+      ]
+    },
+    "build": {
+      "commands": [
+        "set -e",
+        "echo \\"Starting build phase...\\"",
+        "export CDK_DEFAULT_REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].RegionName')",
+        "export CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query 'Account' --output text)",
+        "export CDK_NEW_BOOTSTRAP=1 && aws cloudformation describe-stacks --stack-name CDKToolkit || npx cdk bootstrap aws://\${CDK_DEFAULT_ACCOUNT}/\${CDK_DEFAULT_REGION}",
+        "echo \\"org: \${ORG_NAME}\\"",
+        "echo \\"Replacing org-name place holder\\"",
+        "echo using sample: sample_configs/\${SAMPLE_NAME}/mdaa.yaml",
+        "sed -i 's/<unique[- ]org[- ]name>/'\\"$ORG_NAME\\"'/g' sample_configs/\${SAMPLE_NAME}/mdaa.yaml",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<your vpc id>/'\\"$VPC_ID\\"'/g' {} \\\\;",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<your subnet id>/'\\"$SUBNET_ID\\"'/g' {} \\\\;",
+        "find sample_configs/\${SAMPLE_NAME}/ -type f \\\\( -name \\"*.yaml\\" -o -name \\"*.yml\\" \\\\) -exec sed -i 's/<data scientist user id>/'\\"$ORG_NAME\\"'-datascientist/g' {} \\\\;",
+        "./bin/mdaa -c sample_configs/\${SAMPLE_NAME}/mdaa.yaml deploy",
+        "echo \\"Deployment completed successfully\\""
+      ]
+    }
+  },
+  "cache": {
+    "paths": [
+      "node_modules/**/*"
+    ]
+  }
+}",
+        "Type": "CODEPIPELINE",
+      },
+    },
+    "Type": "AWS::CodeBuild::Project",
+  },
+  "BuildRole41B77417": {
+    "Properties": {
+      "AssumeRolePolicyDocument": {
+        "Statement": [
+          {
+            "Action": "sts:AssumeRole",
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "codebuild.amazonaws.com",
+            },
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+      "ManagedPolicyArns": [
+        {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":iam::aws:policy/AdministratorAccess",
+            ],
+          ],
+        },
+      ],
+    },
+    "Type": "AWS::IAM::Role",
+  },
+  "BuildRoleDefaultPolicy05D1D9FE": {
+    "Properties": {
+      "PolicyDocument": {
+        "Statement": [
+          {
+            "Action": [
+              "logs:CreateLogGroup",
+              "logs:CreateLogStream",
+              "logs:PutLogEvents",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:us-east-1:xxxxxx:log-group:/aws/codebuild/",
+                    {
+                      "Ref": "BuildProject097C5DB7",
+                    },
+                  ],
+                ],
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:us-east-1:xxxxxx:log-group:/aws/codebuild/",
+                    {
+                      "Ref": "BuildProject097C5DB7",
+                    },
+                    ":*",
+                  ],
+                ],
+              },
+            ],
+          },
+          {
+            "Action": [
+              "codebuild:CreateReportGroup",
+              "codebuild:CreateReport",
+              "codebuild:UpdateReport",
+              "codebuild:BatchPutTestCases",
+              "codebuild:BatchPutCodeCoverages",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":codebuild:us-east-1:xxxxxx:report-group/",
+                  {
+                    "Ref": "BuildProject097C5DB7",
+                  },
+                  "-*",
+                ],
+              ],
+            },
+          },
+          {
+            "Action": [
+              "kms:Decrypt",
+              "kms:Encrypt",
+              "kms:ReEncrypt*",
+              "kms:GenerateDataKey*",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "InstallerKey2A6A8C6D",
+                "Arn",
+              ],
+            },
+          },
+          {
+            "Action": [
+              "s3:GetObject*",
+              "s3:GetBucket*",
+              "s3:List*",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+              {
+                "Fn::GetAtt": [
+                  "ArtifactBucket7410C9EF",
+                  "Arn",
+                ],
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ArtifactBucket7410C9EF",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            ],
+          },
+          {
+            "Action": [
+              "kms:Decrypt",
+              "kms:DescribeKey",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "InstallerKey2A6A8C6D",
+                "Arn",
+              ],
+            },
+          },
+          {
+            "Action": "codestar-connections:UseConnection",
+            "Effect": "Allow",
+            "Resource": {
+              "Ref": "CodeConnectArn",
+            },
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+      "PolicyName": "BuildRoleDefaultPolicy05D1D9FE",
+      "Roles": [
+        {
+          "Ref": "BuildRole41B77417",
+        },
+      ],
+    },
+    "Type": "AWS::IAM::Policy",
+  },
+  "GitHubPipeline7B79E906": {
+    "Condition": "UseGitHubCondition",
+    "DependsOn": [
+      "GitHubPipelineRoleDefaultPolicyD82457D6",
+      "GitHubPipelineRole6F4DEF1B",
+    ],
+    "Properties": {
+      "ArtifactStore": {
+        "EncryptionKey": {
+          "Id": {
+            "Fn::GetAtt": [
+              "InstallerKey2A6A8C6D",
+              "Arn",
+            ],
+          },
+          "Type": "KMS",
+        },
+        "Location": {
+          "Ref": "ArtifactBucket7410C9EF",
+        },
+        "Type": "S3",
+      },
+      "Name": "MDAA-GitHubPipeline",
+      "RoleArn": {
+        "Fn::GetAtt": [
+          "GitHubPipelineRole6F4DEF1B",
+          "Arn",
+        ],
+      },
+      "Stages": [
+        {
+          "Actions": [
+            {
+              "ActionTypeId": {
+                "Category": "Source",
+                "Owner": "AWS",
+                "Provider": "CodeStarSourceConnection",
+                "Version": "1",
+              },
+              "Configuration": {
+                "BranchName": {
+                  "Ref": "RepositoryBranchName",
+                },
+                "ConnectionArn": {
+                  "Ref": "CodeConnectArn",
+                },
+                "DetectChanges": false,
+                "FullRepositoryId": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "RepositoryOwner",
+                      },
+                      "/",
+                      {
+                        "Ref": "RepositoryName",
+                      },
+                    ],
+                  ],
+                },
+                "OutputArtifactFormat": "CODEBUILD_CLONE_REF",
+              },
+              "Name": "Source",
+              "OutputArtifacts": [
+                {
+                  "Name": "Artifact_Source_Source",
+                },
+              ],
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+                  "Arn",
+                ],
+              },
+              "RunOrder": 1,
+            },
+          ],
+          "Name": "Source",
+        },
+        {
+          "Actions": [
+            {
+              "ActionTypeId": {
+                "Category": "Build",
+                "Owner": "AWS",
+                "Provider": "CodeBuild",
+                "Version": "1",
+              },
+              "Configuration": {
+                "ProjectName": {
+                  "Ref": "BuildProject097C5DB7",
+                },
+              },
+              "InputArtifacts": [
+                {
+                  "Name": "Artifact_Source_Source",
+                },
+              ],
+              "Name": "Build",
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "GitHubPipelineRole6F4DEF1B",
+                  "Arn",
+                ],
+              },
+              "RunOrder": 1,
+            },
+          ],
+          "Name": "Build",
+        },
+      ],
+    },
+    "Type": "AWS::CodePipeline::Pipeline",
+  },
+  "GitHubPipelineRole6F4DEF1B": {
+    "Properties": {
+      "AssumeRolePolicyDocument": {
+        "Statement": [
+          {
+            "Action": "sts:AssumeRole",
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "codepipeline.amazonaws.com",
+            },
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+    },
+    "Type": "AWS::IAM::Role",
+  },
+  "GitHubPipelineRoleDefaultPolicyD82457D6": {
+    "Condition": "UseGitHubCondition",
+    "Properties": {
+      "PolicyDocument": {
+        "Statement": [
+          {
+            "Action": "codestar-connections:UseConnection",
+            "Effect": "Allow",
+            "Resource": {
+              "Ref": "CodeConnectArn",
+            },
+          },
+          {
+            "Action": [
+              "s3:GetObject*",
+              "s3:GetBucket*",
+              "s3:List*",
+              "s3:DeleteObject*",
+              "s3:PutObject",
+              "s3:PutObjectLegalHold",
+              "s3:PutObjectRetention",
+              "s3:PutObjectTagging",
+              "s3:PutObjectVersionTagging",
+              "s3:Abort*",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+              {
+                "Fn::GetAtt": [
+                  "ArtifactBucket7410C9EF",
+                  "Arn",
+                ],
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ArtifactBucket7410C9EF",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            ],
+          },
+          {
+            "Action": [
+              "kms:Decrypt",
+              "kms:DescribeKey",
+              "kms:Encrypt",
+              "kms:ReEncrypt*",
+              "kms:GenerateDataKey*",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "InstallerKey2A6A8C6D",
+                "Arn",
+              ],
+            },
+          },
+          {
+            "Action": "sts:AssumeRole",
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+                "Arn",
+              ],
+            },
+          },
+          {
+            "Action": "sts:AssumeRole",
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "GitHubPipelineRole6F4DEF1B",
+                "Arn",
+              ],
+            },
+          },
+          {
+            "Action": [
+              "codebuild:BatchGetBuilds",
+              "codebuild:StartBuild",
+              "codebuild:StopBuild",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "BuildProject097C5DB7",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+      "PolicyName": "GitHubPipelineRoleDefaultPolicyD82457D6",
+      "Roles": [
+        {
+          "Ref": "GitHubPipelineRole6F4DEF1B",
+        },
+      ],
+    },
+    "Type": "AWS::IAM::Policy",
+  },
+  "GitHubPipelineSourceCodePipelineActionRoleB98AA867": {
+    "Condition": "UseGitHubCondition",
+    "Properties": {
+      "AssumeRolePolicyDocument": {
+        "Statement": [
+          {
+            "Action": "sts:AssumeRole",
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":iam::xxxxxx:root",
+                  ],
+                ],
+              },
+            },
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+    },
+    "Type": "AWS::IAM::Role",
+  },
+  "GitHubPipelineSourceCodePipelineActionRoleDefaultPolicyF6B56DEC": {
+    "Condition": "UseGitHubCondition",
+    "Properties": {
+      "PolicyDocument": {
+        "Statement": [
+          {
+            "Action": "codestar-connections:UseConnection",
+            "Effect": "Allow",
+            "Resource": {
+              "Ref": "CodeConnectArn",
+            },
+          },
+          {
+            "Action": [
+              "s3:GetObject*",
+              "s3:GetBucket*",
+              "s3:List*",
+              "s3:DeleteObject*",
+              "s3:PutObject",
+              "s3:PutObjectLegalHold",
+              "s3:PutObjectRetention",
+              "s3:PutObjectTagging",
+              "s3:PutObjectVersionTagging",
+              "s3:Abort*",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+              {
+                "Fn::GetAtt": [
+                  "ArtifactBucket7410C9EF",
+                  "Arn",
+                ],
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ArtifactBucket7410C9EF",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            ],
+          },
+          {
+            "Action": [
+              "kms:Decrypt",
+              "kms:DescribeKey",
+              "kms:Encrypt",
+              "kms:ReEncrypt*",
+              "kms:GenerateDataKey*",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "InstallerKey2A6A8C6D",
+                "Arn",
+              ],
+            },
+          },
+          {
+            "Action": [
+              "s3:PutObjectAcl",
+              "s3:PutObjectVersionAcl",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::GetAtt": [
+                      "ArtifactBucket7410C9EF",
+                      "Arn",
+                    ],
+                  },
+                  "/*",
+                ],
+              ],
+            },
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+      "PolicyName": "GitHubPipelineSourceCodePipelineActionRoleDefaultPolicyF6B56DEC",
+      "Roles": [
+        {
+          "Ref": "GitHubPipelineSourceCodePipelineActionRoleB98AA867",
+        },
+      ],
+    },
+    "Type": "AWS::IAM::Policy",
+  },
+  "InstallerKey2A6A8C6D": {
+    "DeletionPolicy": "Retain",
+    "Properties": {
+      "Description": "Key used for encryption of pipeline artifacts",
+      "EnableKeyRotation": true,
+      "KeyPolicy": {
+        "Statement": [
+          {
+            "Action": "kms:*",
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":iam::xxxxxx:root",
+                  ],
+                ],
+              },
+            },
+            "Resource": "*",
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+    },
+    "Type": "AWS::KMS::Key",
+    "UpdateReplacePolicy": "Retain",
+  },
+  "S3Pipeline01611002": {
+    "Condition": "UseS3Condition",
+    "DependsOn": [
+      "S3PipelineRoleDefaultPolicyC2B43EF9",
+      "S3PipelineRole6AAD3BD6",
+    ],
+    "Properties": {
+      "ArtifactStore": {
+        "EncryptionKey": {
+          "Id": {
+            "Fn::GetAtt": [
+              "InstallerKey2A6A8C6D",
+              "Arn",
+            ],
+          },
+          "Type": "KMS",
+        },
+        "Location": {
+          "Ref": "ArtifactBucket7410C9EF",
+        },
+        "Type": "S3",
+      },
+      "Name": "MDAA-S3Pipeline",
+      "RoleArn": {
+        "Fn::GetAtt": [
+          "S3PipelineRole6AAD3BD6",
+          "Arn",
+        ],
+      },
+      "Stages": [
+        {
+          "Actions": [
+            {
+              "ActionTypeId": {
+                "Category": "Source",
+                "Owner": "AWS",
+                "Provider": "S3",
+                "Version": "1",
+              },
+              "Configuration": {
+                "S3Bucket": {
+                  "Ref": "RepositoryBucketName",
+                },
+                "S3ObjectKey": {
+                  "Ref": "RepositoryBucketObject",
+                },
+              },
+              "Name": "Source",
+              "OutputArtifacts": [
+                {
+                  "Name": "Artifact_Source_Source",
+                },
+              ],
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "S3PipelineRole6AAD3BD6",
+                  "Arn",
+                ],
+              },
+              "RunOrder": 1,
+            },
+          ],
+          "Name": "Source",
+        },
+        {
+          "Actions": [
+            {
+              "ActionTypeId": {
+                "Category": "Build",
+                "Owner": "AWS",
+                "Provider": "CodeBuild",
+                "Version": "1",
+              },
+              "Configuration": {
+                "ProjectName": {
+                  "Ref": "BuildProject097C5DB7",
+                },
+              },
+              "InputArtifacts": [
+                {
+                  "Name": "Artifact_Source_Source",
+                },
+              ],
+              "Name": "Build",
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "S3PipelineRole6AAD3BD6",
+                  "Arn",
+                ],
+              },
+              "RunOrder": 1,
+            },
+          ],
+          "Name": "Build",
+        },
+      ],
+    },
+    "Type": "AWS::CodePipeline::Pipeline",
+  },
+  "S3PipelineRole6AAD3BD6": {
+    "Properties": {
+      "AssumeRolePolicyDocument": {
+        "Statement": [
+          {
+            "Action": "sts:AssumeRole",
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "codepipeline.amazonaws.com",
+            },
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+    },
+    "Type": "AWS::IAM::Role",
+  },
+  "S3PipelineRoleDefaultPolicyC2B43EF9": {
+    "Properties": {
+      "PolicyDocument": {
+        "Statement": [
+          {
+            "Action": [
+              "s3:GetObject",
+              "s3:GetObjectVersion",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:aws:s3:::",
+                  {
+                    "Ref": "RepositoryBucketName",
+                  },
+                  "/",
+                  {
+                    "Ref": "RepositoryBucketObject",
+                  },
+                ],
+              ],
+            },
+          },
+          {
+            "Action": [
+              "s3:GetObject*",
+              "s3:GetBucket*",
+              "s3:List*",
+              "s3:DeleteObject*",
+              "s3:PutObject",
+              "s3:PutObjectLegalHold",
+              "s3:PutObjectRetention",
+              "s3:PutObjectTagging",
+              "s3:PutObjectVersionTagging",
+              "s3:Abort*",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+              {
+                "Fn::GetAtt": [
+                  "ArtifactBucket7410C9EF",
+                  "Arn",
+                ],
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ArtifactBucket7410C9EF",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            ],
+          },
+          {
+            "Action": [
+              "kms:Decrypt",
+              "kms:DescribeKey",
+              "kms:Encrypt",
+              "kms:ReEncrypt*",
+              "kms:GenerateDataKey*",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "InstallerKey2A6A8C6D",
+                "Arn",
+              ],
+            },
+          },
+          {
+            "Action": "sts:AssumeRole",
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "S3PipelineRole6AAD3BD6",
+                "Arn",
+              ],
+            },
+          },
+          {
+            "Action": [
+              "s3:GetObject*",
+              "s3:GetBucket*",
+              "s3:List*",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":s3:::",
+                    {
+                      "Ref": "RepositoryBucketName",
+                    },
+                  ],
+                ],
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":s3:::",
+                    {
+                      "Ref": "RepositoryBucketName",
+                    },
+                    "/",
+                    {
+                      "Ref": "RepositoryBucketObject",
+                    },
+                  ],
+                ],
+              },
+            ],
+          },
+          {
+            "Action": [
+              "s3:DeleteObject*",
+              "s3:PutObject",
+              "s3:PutObjectLegalHold",
+              "s3:PutObjectRetention",
+              "s3:PutObjectTagging",
+              "s3:PutObjectVersionTagging",
+              "s3:Abort*",
+            ],
+            "Effect": "Allow",
+            "Resource": [
+              {
+                "Fn::GetAtt": [
+                  "ArtifactBucket7410C9EF",
+                  "Arn",
+                ],
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ArtifactBucket7410C9EF",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            ],
+          },
+          {
+            "Action": [
+              "kms:Encrypt",
+              "kms:ReEncrypt*",
+              "kms:GenerateDataKey*",
+              "kms:Decrypt",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "InstallerKey2A6A8C6D",
+                "Arn",
+              ],
+            },
+          },
+          {
+            "Action": [
+              "codebuild:BatchGetBuilds",
+              "codebuild:StartBuild",
+              "codebuild:StopBuild",
+            ],
+            "Effect": "Allow",
+            "Resource": {
+              "Fn::GetAtt": [
+                "BuildProject097C5DB7",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "Version": "2012-10-17",
+      },
+      "PolicyName": "S3PipelineRoleDefaultPolicyC2B43EF9",
+      "Roles": [
+        {
+          "Ref": "S3PipelineRole6AAD3BD6",
+        },
+      ],
+    },
+    "Type": "AWS::IAM::Policy",
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Rules section snapshot: rules.json 1`] = `
+{
+  "ValidateGitHubParameters": {
+    "Assertions": [
+      {
+        "Assert": {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "RepositoryOwner",
+                },
+                "",
+              ],
+            },
+          ],
+        },
+        "AssertDescription": "Repository Owner is required when GitHub is selected as the repository source",
+      },
+      {
+        "Assert": {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "RepositoryName",
+                },
+                "",
+              ],
+            },
+          ],
+        },
+        "AssertDescription": "Repository Name is required when GitHub is selected as the repository source",
+      },
+      {
+        "Assert": {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "RepositoryBranchName",
+                },
+                "",
+              ],
+            },
+          ],
+        },
+        "AssertDescription": "Repository Branch Name is required when GitHub is selected as the repository source",
+      },
+      {
+        "Assert": {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "CodeConnectArn",
+                },
+                "",
+              ],
+            },
+          ],
+        },
+        "AssertDescription": "CodeConnect ARN is required when GitHub is selected as the repository source",
+      },
+    ],
+    "RuleCondition": {
+      "Fn::Equals": [
+        {
+          "Ref": "RepositorySource",
+        },
+        "github",
+      ],
+    },
+  },
+  "ValidateNetworkParametersForDataScience": {
+    "Assertions": [
+      {
+        "Assert": {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "VpcId",
+                },
+                "",
+              ],
+            },
+          ],
+        },
+        "AssertDescription": "VPC ID is required.",
+      },
+      {
+        "Assert": {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "SubnetId",
+                },
+                "",
+              ],
+            },
+          ],
+        },
+        "AssertDescription": "Subnet ID is required.",
+      },
+    ],
+  },
+  "ValidateOrganizationName": {
+    "Assertions": [
+      {
+        "Assert": {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "OrgName",
+                },
+                "",
+              ],
+            },
+          ],
+        },
+        "AssertDescription": "Organization Name is required for all MDAA deployments",
+      },
+    ],
+  },
+  "ValidateS3Parameters": {
+    "Assertions": [
+      {
+        "Assert": {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "RepositoryBucketName",
+                },
+                "",
+              ],
+            },
+          ],
+        },
+        "AssertDescription": "Repository Bucket Name is required when S3 is selected as the repository source",
+      },
+      {
+        "Assert": {
+          "Fn::Not": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "RepositoryBucketObject",
+                },
+                "",
+              ],
+            },
+          ],
+        },
+        "AssertDescription": "Repository Bucket Object is required when S3 is selected as the repository source",
+      },
+    ],
+    "RuleCondition": {
+      "Fn::Equals": [
+        {
+          "Ref": "RepositorySource",
+        },
+        "s3",
+      ],
+    },
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots S3 resources snapshot: s3-resources.json 1`] = `
+{
+  "bucketPolicies": {
+    "AccessLogsBucketPolicy7F77476F": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "AccessLogsBucket83982689",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "AccessLogsBucket83982689",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "AccessLogsBucket83982689",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "ArtifactBucketPolicy4B4B7752": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "ArtifactBucket7410C9EF",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "ArtifactBucket7410C9EF",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "ArtifactBucket7410C9EF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+  },
+  "buckets": {
+    "AccessLogsBucket83982689": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AccessControl": "LogDeliveryWrite",
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "OwnershipControls": {
+          "Rules": [
+            {
+              "ObjectOwnership": "ObjectWriter",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ArtifactBucket7410C9EF": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "InstallerKey2A6A8C6D",
+                    "Arn",
+                  ],
+                },
+                "SSEAlgorithm": "aws:kms",
+              },
+            },
+          ],
+        },
+        "LoggingConfiguration": {
+          "DestinationBucketName": {
+            "Ref": "AccessLogsBucket83982689",
+          },
+          "LogFilePrefix": "artifact-bucket-logs/",
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;
+
+exports[`MdaaInstallerStack Snapshots Security configurations snapshot: security-configurations.json 1`] = `
+{
+  "kmsKeyRotation": [
+    true,
+  ],
+  "publicAccessBlocks": [
+    {
+      "BlockPublicAcls": true,
+      "BlockPublicPolicy": true,
+      "IgnorePublicAcls": true,
+      "RestrictPublicBuckets": true,
+    },
+    {
+      "BlockPublicAcls": true,
+      "BlockPublicPolicy": true,
+      "IgnorePublicAcls": true,
+      "RestrictPublicBuckets": true,
+    },
+  ],
+  "s3Encryption": [
+    {
+      "ServerSideEncryptionConfiguration": [
+        {
+          "ServerSideEncryptionByDefault": {
+            "SSEAlgorithm": "AES256",
+          },
+        },
+      ],
+    },
+    {
+      "ServerSideEncryptionConfiguration": [
+        {
+          "ServerSideEncryptionByDefault": {
+            "KMSMasterKeyID": {
+              "Fn::GetAtt": [
+                "InstallerKey2A6A8C6D",
+                "Arn",
+              ],
+            },
+            "SSEAlgorithm": "aws:kms",
+          },
+        },
+      ],
+    },
+  ],
+  "sslEnforcement": [
+    {
+      "Statement": [
+        {
+          "Action": "s3:*",
+          "Condition": {
+            "Bool": {
+              "aws:SecureTransport": "false",
+            },
+          },
+          "Effect": "Deny",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": [
+            {
+              "Fn::GetAtt": [
+                "AccessLogsBucket83982689",
+                "Arn",
+              ],
+            },
+            {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::GetAtt": [
+                      "AccessLogsBucket83982689",
+                      "Arn",
+                    ],
+                  },
+                  "/*",
+                ],
+              ],
+            },
+          ],
+        },
+      ],
+      "Version": "2012-10-17",
+    },
+    {
+      "Statement": [
+        {
+          "Action": "s3:*",
+          "Condition": {
+            "Bool": {
+              "aws:SecureTransport": "false",
+            },
+          },
+          "Effect": "Deny",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": [
+            {
+              "Fn::GetAtt": [
+                "ArtifactBucket7410C9EF",
+                "Arn",
+              ],
+            },
+            {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::GetAtt": [
+                      "ArtifactBucket7410C9EF",
+                      "Arn",
+                    ],
+                  },
+                  "/*",
+                ],
+              ],
+            },
+          ],
+        },
+      ],
+      "Version": "2012-10-17",
+    },
+  ],
+}
+`;
+
+exports[`MdaaInstallerStack with different configurations Repository source enum values snapshot: repository-sources.json 1`] = `
+{
+  "GITHUB": "github",
+  "S3": "s3",
+}
+`;
+
+exports[`MdaaInstallerStack with different configurations Stack with custom props snapshot: custom-stack-summary.json 1`] = `
+{
+  "conditionCount": 2,
+  "description": "Custom MDAA Installer Stack for testing",
+  "parameters": [
+    "RepositorySource",
+    "RepositoryOwner",
+    "RepositoryName",
+    "RepositoryBranchName",
+    "CodeConnectArn",
+    "RepositoryBucketName",
+    "RepositoryBucketObject",
+    "SampleName",
+    "OrgName",
+    "VpcId",
+    "SubnetId",
+  ],
+  "resourceCount": 16,
+  "ruleCount": 4,
+}
+`;

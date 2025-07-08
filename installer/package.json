@@ -9,6 +9,9 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
+    "test:unit": "jest --testPathIgnorePatterns=snapshot",
+    "test:snapshot": "jest --testPathPattern=snapshot",
+    "test:snapshot:update": "jest --config jest.config.js --updateSnapshot",
     "cdk": "cdk",
     "lint": "eslint --max-warnings 0 -c ../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" "
   },
