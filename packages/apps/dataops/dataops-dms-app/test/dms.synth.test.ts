@@ -4,6 +4,7 @@
  */
 
 import { DMSCDKApp } from '../lib/dms';
+import { Template } from 'aws-cdk-lib/assertions';
 
 test('SynthTest', () => {
   const context = {
@@ -14,11 +15,24 @@ test('SynthTest', () => {
     module_configs: './test/test-config.yaml',
   };
   const app = new DMSCDKApp({ context: context });
-  app.generateStack();
+  const stack = app.generateStack();
   expect(() =>
     app.synth({
       force: true,
       validateOnSynthesis: true,
     }),
   ).not.toThrow();
+  const template = Template.fromStack(stack);
+  template.resourceCountIs('AWS::DMS::Endpoint', 2);
+  template.hasResourceProperties('AWS::IAM::Role', {
+    RoleName: 'dms-vpc-role',
+    ManagedPolicyArns: [
+      {
+        'Fn::Join': [
+          '',
+          ['arn:', { Ref: 'AWS::Partition' }, ':iam::aws:policy/service-role/AmazonDMSVPCManagementRole'],
+        ],
+      },
+    ],
+  });
 });

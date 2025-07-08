@@ -29,6 +29,16 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
               - ./dataops-dms.yaml # Filename/path can be customized
 ```
 
+### Requiring a VPC role
+DMS requires the existence of a `dms-vpc-role` role. If this role doesn't already exist, in the first DMS module configuration you need to add the following flag:
+
+```yaml
+createDmsVpcRole: true
+```
+See its use in the full example below.
+
+For more information about this requirement, see DMS [documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html) for more details.
+
 ### Module Config (./dataops-dms.yaml)
 
 [Config Schema Docs](SCHEMA.md)
@@ -39,6 +49,8 @@ projectName: test-project
 
 # Contains all DMS related configuration
 dms:
+  # do we need to create the one-per-account role of `dms-vpc-role` that is required before DMS is created
+  createDmsVpcRole: true
   # The role DMS tasks will run as. This role will require prior access to AWS-service based endpoints.
   # Access to secrets referenced in the config will be granted automatically.
   # Role must also have an assume role trust policy to the regional DMS service name: dms.<region>.amazonaws.com
