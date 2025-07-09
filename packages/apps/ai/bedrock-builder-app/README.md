@@ -210,7 +210,7 @@ knowledgeBases:
             intermediateStoragePrefix: 'path/to/data/objects'
             transformLambdaArns:
               - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
-
+              - generated-function:test-custom-transformer
 
 # Guardrails Configuration
 guardrails:

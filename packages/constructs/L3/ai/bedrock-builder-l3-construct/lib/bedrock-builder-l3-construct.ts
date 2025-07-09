@@ -540,6 +540,7 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
 
 export class BedrockBuilderL3Construct extends MdaaL3Construct {
   protected readonly props: BedrockBuilderL3ConstructProps;
+  protected readonly generatedFunctions: { [name: string]: string } = {};
 
   private static EMBEDDING_MODEL_VECTOR_SIZE: { [model: string]: number } = {
     'amazon.titan-embed-text-v2': 1024,
@@ -560,6 +561,8 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       dataAdminRoles.map(x => x.id()),
     );
 
+    this.generatedFunctions = this.createLambdaFunctions(props, kmsKey);
+
     const vectorStores = this.createVectorStores(props.vectorStores || {}, kmsKey);
 
     const knowledgeBases = this.createKnowledgeBases(props.knowledgeBases || {}, kmsKey, vectorStores);
@@ -568,23 +571,6 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
 
     // Only create agents and resolve roles if agents are defined
     if (props.agents && Object.keys(props.agents).length > 0) {
-      // Create necessary Lambda Functions
-      const generatedFunctions: { [name: string]: string } = {};
-      if (props.lambdaFunctions) {
-        const agentLambdas = new LambdaFunctionL3Construct(this, 'agent-lambda-functions', {
-          kmsArn: kmsKey.keyArn,
-          roleHelper: props.roleHelper,
-          naming: this.props.naming,
-          functions: props.lambdaFunctions?.functions,
-          layers: props.lambdaFunctions?.layers,
-        });
-
-        // Create a map of function-name to function-arn for easy lookup
-        Object.entries(agentLambdas.functionsMap).forEach(([name, lambda]) => {
-          generatedFunctions[name] = lambda.functionArn;
-        });
-      }
-
       // Create Bedrock Agent(s)
       Object.fromEntries(
         Object.entries(props.agents).map(([agentName, agentConfig]) => {
@@ -592,7 +578,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
             agentName,
             agentConfig,
             kmsKey,
-            generatedFunctions,
+            this.generatedFunctions,
             knowledgeBases,
             guardrails,
           );
@@ -605,6 +591,29 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   // ---------------------------------------------
   // Common Methods
   // ---------------------------------------------
+
+  private createLambdaFunctions(props: BedrockBuilderL3ConstructProps, kmsKey: IKey): { [name: string]: string } {
+    // Create necessary Lambda Functions
+    const generatedFunctions: { [name: string]: string } = {};
+
+    if (props.lambdaFunctions) {
+      const agentLambdas = new LambdaFunctionL3Construct(this, 'bedrock-builder-lambda-functions', {
+        kmsArn: kmsKey.keyArn,
+        roleHelper: props.roleHelper,
+        naming: props.naming,
+        functions: props.lambdaFunctions?.functions,
+        layers: props.lambdaFunctions?.layers,
+        overrideScope: true,
+      });
+
+      // Create a map of function-name to function-arn for easy lookup
+      Object.entries(agentLambdas.functionsMap).forEach(([name, lambda]) => {
+        generatedFunctions[name] = lambda.functionArn;
+      });
+    }
+
+    return generatedFunctions;
+  }
 
   private getOrCreateKmsKey(props: BedrockBuilderL3ConstructProps, dataAdminRoleIds: string[]): IKey {
     const kmsKey = props.kmsKeyArn
@@ -1363,7 +1372,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       stepToApply: 'POST_CHUNKING',
       transformationFunction: {
         transformationLambdaConfiguration: {
-          lambdaArn: arn,
+          lambdaArn: this.getLambdaArn(arn),
         },
       },
     }));
@@ -1376,6 +1385,18 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       },
       transformations: customTransformations,
     };
+  }
+
+  private getLambdaArn(functionListItem: string): string {
+    if (functionListItem.startsWith('generated-function:')) {
+      const functionName = functionListItem.split(':')[1];
+      const lambdaArn = this.generatedFunctions[functionName.trim()];
+      if (lambdaArn) {
+        return lambdaArn;
+      } else {
+        throw new Error(`Code references non-existant Generated Lambda function: ${functionName} `);
+      }
+    } else return functionListItem;
   }
 
   /**

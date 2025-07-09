@@ -112,6 +112,7 @@ knowledgeBases:
             transformLambdaArns:
               # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
               - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
+              - generated-function:test-custom-transformer
 
     vectorFieldSize: 1536
 

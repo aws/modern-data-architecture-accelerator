@@ -219,7 +219,7 @@
                     "type": "object"
                 },
                 "tag_configs": {
-                    "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precedence over earlier configurations.",
+                    "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
                     "items": {
                         "type": "string"
                     },
@@ -745,7 +745,7 @@
             "type": "object"
         },
         "tag_configs": {
-            "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precendence over earlier configurations.",
+            "description": "A list of paths to tag configuration files.\nConfigurations will be compiled together in the order they appear,\nwith later configuration files taking precedence over earlier configurations.",
             "items": {
                 "type": "string"
             },

@@ -234,7 +234,7 @@
                 },
                 "role": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "Reference to role which will be used as execution role on knowledge base.\nThe role must have assume role trust with bedrock.amazonaws.com\nThe role must have access to S3 data sources granted within MDAA bucket config\nOptionally: \na) Role must have assume role trust with lambda.amazonaws.com to enable sync functionality for datasources\nb) If datasource is configured with BedrockDataAutomation or Foundation Model Parsing, Role must have access to the Root of a supplementalBucket"
+                    "description": "Reference to role which will be used as execution role on knowledge base.\nThe role must have assume role trust with bedrock.amazonaws.com\nThe role must have access to S3 data sources granted within MDAA bucket config\nOptionally:\na) Role must have assume role trust with lambda.amazonaws.com to enable sync functionality for datasources\nb) If datasource is configured with BedrockDataAutomation or Foundation Model Parsing, Role must have access to the Root of a supplementalBucket"
                 },
                 "s3DataSources": {
                     "$ref": "#/definitions/NamedS3DataSource",
