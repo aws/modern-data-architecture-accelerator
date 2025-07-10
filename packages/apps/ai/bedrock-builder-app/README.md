@@ -52,102 +52,81 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 ```yaml
 # List of admin roles which will be provided access to agent resources (like KMS/Bucket)
 dataAdminRoles:
-  - name: "Admin"
+  - name: 'Admin'
 
-# Execution Role for Bedrock Agent
-# Role should have necesasry permissions to other serivces/resources created outside of Agent Configuration
-# Some customer managed execution policies will be added this role
-# If external resources use KMS key to encrypt/decrypt, then necesary KMS key permissions should be provided to this role
-# If you're using KnowledgeBases, Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-permissions.html
-bedrockAgentExecutionRole: 
-    id: generated-role-id:agent-execution-role
-
-# (Optional) List of Lambda functions. Agent will be able to invoke these functions based on the action group(s)
+# (Optional) List of Lambda functions. 
+# Agent will be able to invoke these functions based on the action group(s). 
+# Knowledgebase may be able to use lambda function for custom transformations
 # Lambda function will hold the business logic. Bedrock agent will pass necessary parameters
-# You have option to define the lambda(s) as part of Agent configuration, where these functions will be deployed before creating the Agent action groups.
-# OR, you can provide lambda ARN if there is any existing one that you'd like the action group to use. 
+ 
 lambdaFunctions:
-  functions:
-    - functionName: test-agent-lambda
-      description: "This is lambda function for Bedrock Agent Action group: test-agent/test-action-group"
-      srcDir: ./lambda/src
-      handler: test_function.lambda_handler
-      runtime: python3.13
-      roleArn: generated-role-arn:agent-lambda-role  # OR provide SSM parameter like "ssm:/path/to/agent-lambda-role/arn"
-      layerArns:
-        # Provide an existing lambda layer
-        AWSLambdaPowertoolsPythonV3-python312-x86_64: arn:aws:lambda:us-east-1:{{account}}:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:3
+  # List of Lambda layers to create
+  layers:
+    - layerName: test-layer
+      src: ./src/layer/
+      description: 'test layer'
 
-    - functionName: test-custom-transformer
-      description: "This lambda function is for performing custom transformations on data while ingesting into knowledgebases"
-      # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
-      srcDir: ./lambda/src
-      handler: kb_custom_transform.lambda_handler
+  # List of functions definitions as produced by 'aws glue get-functions --name <name> --include-graph'
+  functions:
+    - functionName: test-action-group
+      description: "This is lambda function for Bedrock Agent Action group: test-agent/test-action-group"
+      srcDir: ./src/function
+      handler: test.lambda_handler
       runtime: python3.13
-      roleArn: generated-role-arn:agent-lambda-role  # OR provide SSM parameter like "ssm:/path/to/agent-lambda-role/arn"
+      roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
+    - functionName: test-custom-transformer
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.13
+      roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
+      description: For custom parsing and chunking logic
+      # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
 
 # Bedrock Agent Configuration
 agents:
-  test-agent-01:
-    foundationModel: "amazon.titan-text-premier-v1:0"
-    # Instructions that tell the agent what it should do and how it should interact with users
-    instruction: |
-      You are an agent that can handle various tasks related to insurance claims, including looking up claim 
-      details, finding what paperwork is outstanding. Only send reminders if you have been 
-      explicitly requested to do so. If an user asks about your functionality, provide guidance in natural language 
-      and do not include function names on the output.
+  test-agent:
+    agentAliasName: test-alias
+    role:
+      id: generated-role-id:agent-execution-role
+    foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0'
 
     # (Optional parameters)
-    description: "This is a Test Agent with Action Group"
-    agentAliasName: "test-alias"
-    # Specifies whether to automatically update the DRAFT version of the agent after making changes to the agent
-    autoPrepare: true                     # Default: false
-    
-    # The number of seconds for which Amazon Bedrock keeps information about a user's conversation with the agent
+    description: 'This is a Test Agent'
+    autoPrepare: true # Default: false
+    instruction: |
+      You are a helpful assistant
+      You are allowed to use associated Knowledge Base to answer questions
+      Provide responses in markdown format with source citations
     idleSessionTtlInSeconds: 400
-    # Configuration information for a guardrail that you use with the Converse operation
-    guardrailConfiguration:
-      guardrailIdentifier: "<guardrail-id>"
-      guardrailVersion: "<guardrail-version>"
+    #(Optional Knowledgebae)
+    knowledgeBases:
+      - description: "This is a Test Knowledge Base"
+        id: "<kb-id>"
+    #(Optional Guardrail)
+    guardrail:
+      id: 'arn:aws:bedrock:{{region}}:{{account}}:guardrail/test-guardrailß'
+      version: '1'
     actionGroups:
       - actionGroupName: "test-action-group"
         description: "This is a Test Action Group"
         actionGroupExecutor:
           # Option 1: Provide ARN of an existing Lambda
           # Option 2: Provide reference to Lambda function which will be generated via Configuration. refer them by generatedFunction:<function-name>
-          lambda: generated-function:test-agent-lambda   # OR arn:aws:lambda:{{region}}:{{account}}:function:existing-lambda-function
+          lambda: arn:aws:lambda:{{region}}:{{account}}:function:existing-lambda-function # OR generated-function:test-agent-lambda
         apiSchema: 
           # (Optional) 
           # 1. 'payload': Provide JSON/YAML formatted payload defining the OpenAPI schema for Action Group
           # 2. 'openApiSchemaPath': (local) relative path to YAML file
           # 3. OR 's3': Provide details about s3 object containing OpenAPI schema for Action Group
-          openApiSchemaPath: ./api-schema/test-automation-open-api.yaml
+          openApiSchemaPath: ./api-schema/test-schema.yaml
 
-  test-agent-02:
-    foundationModel: "anthropic.claude-v2:1"
-    instruction: |
-      You are an agent that can handle various tasks related to insurance claims, including looking up claim 
-      details, finding what paperwork is outstanding, and sending reminders. Only send reminders if you have been 
-      explicitly requested to do so. If an user asks about your functionality, provide guidance in natural language 
-      and do not include function names on the output.
-    description: "This is a Test Agent with Knowledge Base"
-    autoPrepare: true                     
-    knowledgeBases:
-      - description: "This is a Test Knowledge Base"
-        knowledgeBaseId: "<kb-id>"
-
-# Vector Store Configuration 
 vectorStores:
   test-vector-store:
     vpcId: test-vpc-id
     subnetIds:
       - 'test-subnet-id'
-    # (Optional) 
-    port: 1234
-    # (Optional) 
-    engineVersion: 17.5
     # (Optional) min and max Aurora Serverless Capacity Units
-    minCapacity: 1.5
+    minCapacity: 1
     maxCapacity: 8
 
 # Knowledge Base Configuration
@@ -209,6 +188,7 @@ knowledgeBases:
             intermediateStorageBucket: 'custom-transform-intermediate-bucket'
             intermediateStoragePrefix: 'path/to/data/objects'
             transformLambdaArns:
+              # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
               - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
               - generated-function:test-custom-transformer
 

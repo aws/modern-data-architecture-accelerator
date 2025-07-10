@@ -2,6 +2,11 @@
 dataAdminRoles:
   - name: 'Admin'
 
+# (Optional) List of Lambda functions. 
+# Agent will be able to invoke these functions based on the action group(s). 
+# Knowledgebase may be able to use lambda function for custom transformations
+# Lambda function will hold the business logic. Bedrock agent will pass necessary parameters
+ 
 lambdaFunctions:
   # List of Lambda layers to create
   layers:
@@ -12,18 +17,18 @@ lambdaFunctions:
   # List of functions definitions as produced by 'aws glue get-functions --name <name> --include-graph'
   functions:
     - functionName: test-action-group
+      description: "This is lambda function for Bedrock Agent Action group: test-agent/test-action-group"
       srcDir: ./src/function
       handler: test.lambda_handler
       runtime: python3.13
       roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
-      description: For testing action groups
-
     - functionName: test-custom-transformer
       srcDir: ./src/function
       handler: test.lambda_handler
       runtime: python3.13
       roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
       description: For custom parsing and chunking logic
+      # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
 
 # Bedrock Agent Configuration
 agents:
@@ -41,9 +46,27 @@ agents:
       You are allowed to use associated Knowledge Base to answer questions
       Provide responses in markdown format with source citations
     idleSessionTtlInSeconds: 400
+    #(Optional Knowledgebae)
+    knowledgeBases:
+      - description: "This is a Test Knowledge Base"
+        id: "<kb-id>"
+    #(Optional Guardrail)
     guardrail:
-      id: 'arn:aws:bedrock:{{region}}:{{account}}:guardrail/test-guardrail'
+      id: 'arn:aws:bedrock:{{region}}:{{account}}:guardrail/test-guardrailß'
       version: '1'
+    actionGroups:
+      - actionGroupName: "test-action-group"
+        description: "This is a Test Action Group"
+        actionGroupExecutor:
+          # Option 1: Provide ARN of an existing Lambda
+          # Option 2: Provide reference to Lambda function which will be generated via Configuration. refer them by generatedFunction:<function-name>
+          lambda: arn:aws:lambda:{{region}}:{{account}}:function:existing-lambda-function # OR generated-function:test-agent-lambda
+        apiSchema: 
+          # (Optional) 
+          # 1. 'payload': Provide JSON/YAML formatted payload defining the OpenAPI schema for Action Group
+          # 2. 'openApiSchemaPath': (local) relative path to YAML file
+          # 3. OR 's3': Provide details about s3 object containing OpenAPI schema for Action Group
+          openApiSchemaPath: ./api-schema/test-schema.yaml
 
 vectorStores:
   test-vector-store:
@@ -59,6 +82,7 @@ knowledgeBases:
   test-knowledge-base:
     embeddingModel: 'arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1'
     vectorStore: test-vector-store
+    vectorFieldSize: 1536
     role:
       id: generated-role-id:kb-execution-role
     # For Multimodal documents, its mandatory to provide location to store the images extracted from your data source
@@ -106,6 +130,8 @@ knowledgeBases:
               parsingModality: 'MULTIMODAL'
           chunkingConfiguration:
             chunkingStrategy: 'NONE'
+          # (Optional) Allows providing a lambda function to perform custom transformations on data being ingested into the Knowledgebase.
+          # # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
           customTransformationConfiguration:
             intermediateStorageBucket: 'custom-transform-intermediate-bucket'
             intermediateStoragePrefix: 'path/to/data/objects'
@@ -113,9 +139,6 @@ knowledgeBases:
               # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
               - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
               - generated-function:test-custom-transformer
-
-    vectorFieldSize: 1536
-
 
 # Guardrails Configuration
 guardrails:

@@ -7,19 +7,15 @@ import { FunctionProps, LayerProps } from '@aws-mdaa/dataops-lambda-l3-construct
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Template } from 'aws-cdk-lib/assertions';
+import { BedrockBuilderL3Construct, BedrockBuilderL3ConstructProps, LambdaFunctionProps } from '../lib';
+import { BedrockAgentProps, NamedAgentProps } from '@aws-mdaa/bedrock-agent-l3-construct';
 import {
-  BedrockAgentProps,
-  BedrockBuilderL3Construct,
-  BedrockBuilderL3ConstructProps,
-  BedrockGuardrailProps,
   BedrockKnowledgeBaseProps,
-  LambdaFunctionProps,
-  NamedAgentProps,
-  NamedGuardrailProps,
   NamedKnowledgeBaseProps,
   NamedVectorStoreProps,
   VectorStoreProps,
-} from '../lib';
+} from '@aws-mdaa/bedrock-knowledge-base-l3-construct';
+import { BedrockGuardrailProps, NamedGuardrailProps } from '@aws-mdaa/bedrock-guardrail-l3-construct';
 
 describe('Bedrock Builder Compliance Stack Tests', () => {
   const layerProps: LayerProps = {
@@ -78,7 +74,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         actionGroupName: 'test-action-group',
         description: 'test-action-group-description',
         apiSchema: {
-          openApiSchemaPath: '../test/api-schema/test-schema.yaml',
+          openApiSchemaPath: `${__dirname}/api-schema/test-schema.yaml`,
         },
       },
     ],
@@ -315,7 +311,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
           undefined,
           undefined,
         );
-      }).toThrow('undefined is not iterable');
+      }).toThrow('Knowledge base invalid-kb references unknown vector store: non-existent-vector-store');
     });
 
     test('Test Invalid Embedding Model', () => {
@@ -487,10 +483,13 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         Environment: {
           Variables: {
             DATA_SOURCE_ID: {
-              'Fn::GetAtt': ['testconstructtestkbvectorDataSourcetestDataAutomationA4A19559', 'DataSourceId'],
+              'Fn::GetAtt': [
+                'testconstructbedrockkbtestkbvectortestkbvectorDataSourcetestDataAutomation7A39DAF6',
+                'DataSourceId',
+              ],
             },
             KNOWLEDGE_BASE_ID: {
-              'Fn::GetAtt': ['testconstructtestkbvectorKnowledgeBase7B693F67', 'KnowledgeBaseId'],
+              'Fn::GetAtt': ['testconstructbedrockkbtestkbvectortestkbvectorKnowledgeBaseB9D7CFC0', 'KnowledgeBaseId'],
             },
           },
         },
@@ -630,7 +629,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
     test('Test Vector Store Security Group Configuration', () => {
       template.hasResourceProperties('AWS::EC2::SecurityGroup', {
-        GroupDescription: 'testing/test-construct/test-vector-store-vector-store-sg',
+        GroupDescription: 'testing/test-construct/bedrock-kb-test-kb-vector/test-vector-store-vector-store-sg',
         GroupName: 'test-org-test-env-test-domain-test-module-test-vector-store',
         VpcId: 'test-vpc-id',
       });
@@ -1354,6 +1353,129 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(() => {
         new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
       }).toThrow('Guardrail version must be specified');
+    });
+  });
+
+  describe('Error Handling Tests', () => {
+    test('Test Agent with Config Knowledge Base Reference Error', () => {
+      const testApp1 = new MdaaTestApp();
+      const agentWithInvalidKB: BedrockAgentProps = {
+        ...agent,
+        knowledgeBases: [
+          {
+            id: 'config:non-existent-kb',
+            description: 'Test KB',
+          },
+        ],
+      };
+
+      expect(() => {
+        generateTemplateFromTestInput(
+          testApp1,
+          dataAdminRoleRef,
+          { 'test-agent-error': agentWithInvalidKB },
+          undefined,
+          undefined,
+          undefined,
+          lambdaFunctions,
+        );
+      }).toThrow('Agent references unknown knowledge base from config :config:non-existent-kb');
+    });
+
+    test('Test Agent with Guardrail Missing Version Error', () => {
+      const testApp2 = new MdaaTestApp();
+      const agentWithInvalidGuardrail: BedrockAgentProps = {
+        ...agent,
+        guardrail: {
+          id: 'guardrail-67890',
+        },
+      };
+
+      expect(() => {
+        generateTemplateFromTestInput(
+          testApp2,
+          dataAdminRoleRef,
+          { 'test-agent-guardrail-error': agentWithInvalidGuardrail },
+          undefined,
+          undefined,
+          undefined,
+          lambdaFunctions,
+        );
+      }).toThrow('Guardrail version must be specified');
+    });
+  });
+
+  describe('Agent with Knowledge Base and Guardrail Integration', () => {
+    const testApp = new MdaaTestApp();
+
+    const agentWithKBAndGuardrail: BedrockAgentProps = {
+      ...agent,
+      knowledgeBases: [
+        {
+          id: 'kb-12345',
+          description: 'Test Knowledge Base',
+          knowledgeBaseState: 'ENABLED',
+        },
+      ],
+      guardrail: {
+        id: 'guardrail-67890',
+        version: '1',
+      },
+    };
+
+    const template = generateTemplateFromTestInput(
+      testApp,
+      dataAdminRoleRef,
+      { 'test-agent-full': agentWithKBAndGuardrail },
+      undefined,
+      undefined,
+      undefined,
+      lambdaFunctions,
+    );
+
+    test('Test Agent Policy Contains Guardrail Permission', () => {
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        ManagedPolicyName: 'test-org-test-env-test-domain-test-module-agent-test-agent-full',
+        PolicyDocument: {
+          Statement: [
+            {},
+            {},
+            {
+              Sid: 'AllowApplyBedrockGuardrail',
+              Effect: 'Allow',
+              Action: 'bedrock:ApplyGuardrail',
+              Resource: 'arn:aws:bedrock:test-region:test-account:guardrail/guardrail-67890',
+            },
+            {},
+          ],
+        },
+      });
+    });
+
+    test('Test Agent Policy Contains Knowledge Base Permission', () => {
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        ManagedPolicyName: 'test-org-test-env-test-domain-test-module-agent-test-agent-full',
+        PolicyDocument: {
+          Statement: [
+            {},
+            {},
+            {},
+            {
+              Sid: 'AllowBedrockKnowledgeBase',
+              Effect: 'Allow',
+              Action: 'bedrock:Retrieve',
+              Resource: 'arn:test-partition:bedrock:test-region:test-account:knowledge-base/kb-12345',
+            },
+          ],
+        },
+      });
+    });
+
+    test('Test Lambda Permission for Agent Action Group', () => {
+      template.hasResourceProperties('AWS::Lambda::Permission', {
+        Action: 'lambda:InvokeFunction',
+        Principal: 'bedrock.amazonaws.com',
+      });
     });
   });
 });

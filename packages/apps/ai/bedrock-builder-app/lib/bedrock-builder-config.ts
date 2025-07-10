@@ -6,8 +6,6 @@
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import {
-  BedrockAgentProps,
-  BedrockGuardrailProps,
   LambdaFunctionProps,
   NamedKnowledgeBaseProps,
   NamedVectorStoreProps,
@@ -68,7 +66,7 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
   /**
    * Bedrock Agent
    */
-  public readonly agents?: { [agentName: string]: BedrockAgentProps };
+  public readonly agents?: NamedAgentProps;
 
   /**
    * (Optional) KMS key ARN
@@ -98,7 +96,7 @@ export class BedrockBuilderConfigParser extends MdaaAppConfigParser<BedrockBuild
   /**
    * (Optional) Guardrails configuration
    */
-  public readonly guardrails?: { [guardrailName: string]: BedrockGuardrailProps };
+  public readonly guardrails?: NamedGuardrailProps;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);

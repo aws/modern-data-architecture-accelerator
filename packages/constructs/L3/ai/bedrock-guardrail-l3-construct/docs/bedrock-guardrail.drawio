@@ -1,0 +1,122 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15">
+  <diagram name="Page-1" id="bedrock-guardrail-architecture">
+    <mxGraphModel dx="1990" dy="1244" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="zOa1a7mkVDa6gXanQ5qZ-2" value="" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="60" width="940" height="600" as="geometry" />
+        </mxCell>
+        <mxCell id="container" value="Deployed Resources" style="rounded=1;whiteSpace=wrap;html=1;fontSize=16;fillColor=none;arcSize=2;dashed=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="250" y="110" width="710" height="490" as="geometry" />
+        </mxCell>
+        <mxCell id="guardrail" value="Bedrock Guardrail" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" parent="1" vertex="1">
+          <mxGeometry x="591" y="300" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="content-filters-container" value="Content Filters" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="280" y="200" width="250" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="hate-filter" value="Hate Speech&#xa;Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#ff6666;" parent="1" vertex="1">
+          <mxGeometry x="300" y="230" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sexual-filter" value="Sexual Content&#xa;Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#ff6666;" parent="1" vertex="1">
+          <mxGeometry x="400" y="230" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="violence-filter" value="Violence&#xa;Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#ff6666;" parent="1" vertex="1">
+          <mxGeometry x="300" y="290" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="insults-filter" value="Insults&#xa;Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#ff6666;" parent="1" vertex="1">
+          <mxGeometry x="400" y="290" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="misconduct-filter" value="Misconduct&#xa;Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#ff6666;" parent="1" vertex="1">
+          <mxGeometry x="300" y="350" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="prompt-attack-filter" value="Prompt Attack&#xa;Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#ff6666;" parent="1" vertex="1">
+          <mxGeometry x="400" y="350" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="grounding-container" value="Contextual Grounding Filters" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="740" y="230" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="grounding-filter" value="Grounding&#xa;Threshold" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6ccff;strokeColor=#9966ff;" parent="1" vertex="1">
+          <mxGeometry x="750" y="260" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="relevance-filter" value="Relevance&#xa;Threshold" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6ccff;strokeColor=#9966ff;" parent="1" vertex="1">
+          <mxGeometry x="850" y="260" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="kms" value="KMS Key" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.key_management_service;" parent="1" vertex="1">
+          <mxGeometry x="600" y="120" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="messages-container" value="Custom Messages" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="280" y="450" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="input-message" value="Blocked Input&#xa;Message" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ccffcc;strokeColor=#66cc66;" parent="1" vertex="1">
+          <mxGeometry x="300" y="480" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="output-message" value="Blocked Output&#xa;Message" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ccffcc;strokeColor=#66cc66;" parent="1" vertex="1">
+          <mxGeometry x="410" y="480" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-container" value="Filter Strengths" style="rounded=0;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="740" y="440" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="low-strength" value="LOW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffeeee;strokeColor=#ffaaaa;" parent="1" vertex="1">
+          <mxGeometry x="760" y="470" width="50" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="medium-strength" value="MEDIUM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#ff6666;" parent="1" vertex="1">
+          <mxGeometry x="820" y="470" width="60" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="high-strength" value="HIGH" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff9999;strokeColor=#ff3333;" parent="1" vertex="1">
+          <mxGeometry x="890" y="470" width="50" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="filters-to-guardrail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="content-filters-container" target="guardrail" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="filters-to-guardrail-label" value="Applied to" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="filters-to-guardrail" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="grounding-to-guardrail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="grounding-container" target="guardrail" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="grounding-to-guardrail-label" value="Applied to" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="grounding-to-guardrail" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="guardrail-to-kms" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="guardrail" target="kms" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="guardrail-to-kms-label" value="Encrypted by" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="guardrail-to-kms" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="messages-to-guardrail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="messages-container" target="guardrail" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="messages-to-guardrail-label" value="Configured with" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="messages-to-guardrail" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zOa1a7mkVDa6gXanQ5qZ-1" value="Deployment/Target&lt;br style=&quot;font-size: 20px;&quot;&gt;Account" style="outlineConnect=0;dashed=0;verticalLabelPosition=middle;verticalAlign=middle;align=left;html=1;shape=mxgraph.aws3.cloud_2;fillColor=#F58534;gradientColor=none;labelPosition=right;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="50" y="60" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zOa1a7mkVDa6gXanQ5qZ-3" value="Applied To" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="legend-container" target="guardrail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zOa1a7mkVDa6gXanQ5qZ-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="zOa1a7mkVDa6gXanQ5qZ-4" target="container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zOa1a7mkVDa6gXanQ5qZ-6" value="Deploy" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;" vertex="1" connectable="0" parent="zOa1a7mkVDa6gXanQ5qZ-5">
+          <mxGeometry x="-0.0588" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zOa1a7mkVDa6gXanQ5qZ-4" value="CAEF/CDK" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=20;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloud_development_kit;" vertex="1" parent="1">
+          <mxGeometry x="70" y="316" width="78" height="78" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

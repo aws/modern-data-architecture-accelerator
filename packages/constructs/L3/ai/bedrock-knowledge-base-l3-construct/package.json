@@ -1,7 +1,7 @@
 {
-  "name": "@aws-mdaa/bedrock-builder-l3-construct",
+  "name": "@aws-mdaa/bedrock-knowledge-base-l3-construct",
   "version": "1.0.0",
-  "description": "MDAA Bedrock Builder L3 Construct",
+  "description": "MDAA Bedrock Knowledge Base L3 Construct",
   "license": "Apache-2.0",
   "author": {
     "name": "Amazon Web Services",
@@ -23,13 +23,14 @@
   "types": "lib/index.d.ts",
   "devDependencies": {
     "@aws-mdaa/construct": "1.0.0",
+    "@aws-mdaa/cloudwatch-constructs": "^1.0.0",
     "@aws-mdaa/dataops-lambda-l3-construct": "^1.0.0",
-    "@aws-mdaa/bedrock-agent-l3-construct": "^1.0.0",
-    "@aws-mdaa/bedrock-knowledge-base-l3-construct": "^1.0.0",
-    "@aws-mdaa/bedrock-guardrail-l3-construct": "^1.0.0",
+    "@aws-mdaa/ec2-constructs": "^1.0.0",
+    "@aws-mdaa/iam-constructs": "1.0.0",
     "@aws-mdaa/iam-role-helper": "1.0.0",
+    "@aws-mdaa/kms-constructs": "1.0.0",
     "@aws-mdaa/l3-construct": "1.0.0",
-    "@aws-mdaa/s3-constructs": "1.0.0",
+    "@aws-mdaa/rds-constructs": "^1.0.0",
     "@aws-mdaa/testing": "^1.0.0",
     "@types/jest": "29.5.0",
     "@types/node": "17.0.23",
@@ -43,20 +44,16 @@
     "typescript": "4.6.3",
     "typescript-json-schema": "0.63.0"
   },
-  "bundledDependencies": [
-    "@aws-mdaa/s3-bucketpolicy-helper",
-    "lodash",
-    "yaml"
-  ],
   "peerDependencies": {
     "@aws-mdaa/construct": "1.0.0",
+    "@aws-mdaa/cloudwatch-constructs": "1.0.0",
     "@aws-mdaa/dataops-lambda-l3-construct": "1.0.0",
-    "@aws-mdaa/bedrock-agent-l3-construct": "1.0.0",
-    "@aws-mdaa/bedrock-knowledge-base-l3-construct": "1.0.0",
-    "@aws-mdaa/bedrock-guardrail-l3-construct": "1.0.0",
+    "@aws-mdaa/ec2-constructs": "1.0.0",
+    "@aws-mdaa/iam-constructs": "1.0.0",
     "@aws-mdaa/iam-role-helper": "1.0.0",
+    "@aws-mdaa/kms-constructs": "1.0.0",
     "@aws-mdaa/l3-construct": "1.0.0",
-    "@aws-mdaa/s3-constructs": "1.0.0",
+    "@aws-mdaa/rds-constructs": "1.0.0",
     "aws-cdk-lib": "2.201.0",
     "constructs": "10.0.96"
   },
@@ -66,20 +63,16 @@
   },
   "dependencies": {
     "@aws-mdaa/construct": "^1.0.0",
+    "@aws-mdaa/cloudwatch-constructs": "^1.0.0",
+    "@aws-mdaa/dataops-lambda-l3-construct": "^1.0.0",
+    "@aws-mdaa/ec2-constructs": "^1.0.0",
     "@aws-mdaa/iam-constructs": "^1.0.0",
     "@aws-mdaa/iam-role-helper": "^1.0.0",
     "@aws-mdaa/kms-constructs": "^1.0.0",
     "@aws-mdaa/l3-construct": "^1.0.0",
-    "@aws-mdaa/cloudwatch-constructs": "^1.0.0",
     "@aws-mdaa/rds-constructs": "^1.0.0",
-    "@aws-mdaa/naming": "^1.0.0",
-    "@aws-mdaa/s3-bucketpolicy-helper": "^1.0.0",
-    "@aws-mdaa/s3-constructs": "^1.0.0",
     "aws-cdk-lib": "2.201.0",
-    "cdk-nag": "2.35.25",
-    "constructs": "10.0.96",
-    "lodash": "4.17.21",
-    "yaml": "1.10.2"
+    "constructs": "10.0.96"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
   "stability": "experimental",
@@ -88,15 +81,15 @@
     "versionFormat": "full",
     "targets": {
       "java_disabled": {
-        "package": "software.amazon.awsmdaa.l3-construct.bedrock-builder",
+        "package": "software.amazon.awsmdaa.l3-construct.bedrock-knowledge-base",
         "maven": {
           "groupId": "software.amazon.awsmdaa.l3-construct",
-          "artifactId": "bedrock-builder"
+          "artifactId": "bedrock-knowledge-base"
         }
       },
       "python_disabled": {
-        "distName": "aws-mdaa.bedrock-builder-l3-construct",
-        "module": "aws_mdaa.bedrock_builder_l3_construct"
+        "distName": "aws-mdaa.bedrock-knowledge-base-l3-construct",
+        "module": "aws_mdaa.bedrock_knowledge_base_l3_construct"
       }
     }
   }
