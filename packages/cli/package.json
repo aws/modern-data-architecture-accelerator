@@ -33,7 +33,7 @@
     "typescript-json-schema": "0.63.0"
   },
   "overrides": {
-    "aws-cdk-lib": "2.195.0",
+    "aws-cdk-lib": "2.201.0",
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
