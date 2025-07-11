@@ -94,8 +94,13 @@ export interface MdaaModuleConfig {
   readonly custom_naming?: MdaaCustomNaming;
   /**
    * A list of additional accounts into which the module may deploy resources.
+   * Alternatively, use additional_stacks to target additional accounts/regions
    */
   readonly additional_accounts?: string[];
+  /**
+   * A list of additional accounts/regions into which the module may deploy resources.
+   */
+  readonly additional_stacks?: Deployment[];
   /**
    * Config properties for TF modules
    */
@@ -104,6 +109,13 @@ export interface MdaaModuleConfig {
    * If true, MDAA will expect the module to implement MDAA_compliant behaviours
    */
   readonly mdaa_compliant?: boolean;
+}
+
+export interface Deployment {
+  /** The target region. If not specified, defaults to the CDK default region. */
+  readonly region?: string;
+  /** The target account. If not specified, defaults to the CDK default account. */
+  readonly account?: string;
 }
 
 export interface TerraformConfig {
@@ -126,6 +138,10 @@ export interface MdaaEnvironmentConfig {
    * Target account for deployment
    */
   readonly account?: string;
+  /**
+   * Target region for deployment
+   */
+  readonly region?: string;
   /**
    * Arn or SSM Import (prefix with ssm:) of the environment provider
    */
@@ -205,6 +221,14 @@ export interface MdaaDomainConfig {
    * Config properties for TF modules
    */
   readonly terraform?: TerraformConfig;
+  /**
+   * A string representing the target region
+   */
+  readonly region?: string;
+  /**
+   * A string representing the target account number
+   */
+  readonly account?: string;
 }
 
 export interface MdaaConfigContents {
@@ -228,6 +252,10 @@ export interface MdaaConfigContents {
    * A string representing the target region
    */
   readonly region?: string;
+  /**
+   * A string representing the target account number
+   */
+  readonly account?: string;
   /**
    * A string representing the target region
    */

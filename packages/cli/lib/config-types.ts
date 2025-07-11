@@ -4,13 +4,7 @@
  */
 
 import { ConfigurationElement, MdaaCustomAspect, MdaaCustomNaming, TagElement } from '@aws-mdaa/config';
-import { MdaaEnvironmentConfig, TerraformConfig } from './mdaa-cli-config-parser';
-
-export interface EnvEffectiveConfig extends DomainEffectiveConfig {
-  envName: string;
-  useBootstrap: boolean;
-  deployAccount?: string;
-}
+import { Deployment, MdaaEnvironmentConfig, TerraformConfig } from './mdaa-cli-config-parser';
 
 export interface EffectiveConfig {
   effectiveContext: ConfigurationElement;
@@ -21,6 +15,8 @@ export interface EffectiveConfig {
   customNaming?: MdaaCustomNaming;
   envTemplates?: { [key: string]: MdaaEnvironmentConfig };
   terraform?: TerraformConfig;
+  deployAccount?: string;
+  deployRegion?: string;
 }
 
 export interface DomainEffectiveConfig extends EffectiveConfig {
@@ -30,15 +26,13 @@ export interface DomainEffectiveConfig extends EffectiveConfig {
 export interface EnvEffectiveConfig extends DomainEffectiveConfig {
   envName: string;
   useBootstrap: boolean;
-  deployAccount?: string;
 }
-
 export interface ModuleEffectiveConfig extends EnvEffectiveConfig {
   moduleType?: 'cdk' | 'tf';
   modulePath: string;
   moduleName: string;
   useBootstrap: boolean;
-  additionalAccounts?: string[];
+  additionalStacks?: Deployment[];
   effectiveModuleConfig: ConfigurationElement;
   moduleConfigFiles?: string[];
   mdaaCompliant?: boolean;

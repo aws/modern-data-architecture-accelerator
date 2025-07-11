@@ -88,7 +88,7 @@ describe('MdaaDeploy.sanityCheck', () => {
     const mdaaDeploy = new MdaaDeploy(options, undefined, config);
 
     const expectedInput = {
-      default: { mod1: 3 },
+      'default/default': { mod1: 3 },
     };
     (findDuplicates as jest.Mock).mockReturnValue(actualFindDuplicates(expectedInput));
     expect(() => {
@@ -123,9 +123,9 @@ describe('MdaaDeploy.sanityCheck', () => {
     const mdaaDeploy = new MdaaDeploy(options, undefined, config);
 
     const expectedInput = {
-      acct1: { mod1: 1, mod3: 1 },
-      acct2: { mod1: 1, mod3: 1 },
-      acct3: { mod1: 1 },
+      'acct1/default': { mod1: 1, mod3: 1 },
+      'acct2/default': { mod1: 1, mod3: 1 },
+      'acct3/default': { mod1: 1 },
     };
     (findDuplicates as jest.Mock).mockReturnValue(actualFindDuplicates(expectedInput));
     mdaaDeploy.sanityCheck();

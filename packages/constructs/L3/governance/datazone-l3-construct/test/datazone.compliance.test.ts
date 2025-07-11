@@ -16,7 +16,7 @@ describe('MDAA Compliance Stack Tests', () => {
   const constructProps: DataZoneL3ConstructProps = {
     glueCatalogKmsKeyArn: 'test-key-arn',
     crossAccountStacks: {
-      '12312421': new Stack(testApp, 'testextrastack'),
+      '12312421': { 'test-region': new Stack(testApp, 'testextrastack') },
     },
     roleHelper: new MdaaRoleHelper(stack, testApp.naming),
     naming: testApp.naming,

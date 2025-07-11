@@ -27,7 +27,7 @@ describe('MDAA Compliance Stack Tests', () => {
   const constructProps: TestL3ConstructProps = {
     naming: testApp.naming,
     roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
-    crossAccountStacks: { '1231241242': new Stack(testApp, 'testing-cross-account') },
+    crossAccountStacks: { '1231241242': { 'test-region': new Stack(testApp, 'testing-cross-account') } },
   };
 
   new TestL3Construct(testApp.testStack, 'test-stack', constructProps);

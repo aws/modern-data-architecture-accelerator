@@ -65,6 +65,20 @@
             },
             "type": "object"
         },
+        "Deployment": {
+            "additionalProperties": false,
+            "properties": {
+                "account": {
+                    "description": "The target account. If not specified, defaults to the CDK default account.",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "The target region. If not specified, defaults to the CDK default region.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "DevOpsConfigContents": {
             "additionalProperties": false,
             "properties": {
@@ -177,6 +191,10 @@
         "MdaaDomainConfig": {
             "additionalProperties": false,
             "properties": {
+                "account": {
+                    "description": "A string representing the target account number",
+                    "type": "string"
+                },
                 "context": {
                     "additionalProperties": {},
                     "description": "Additional CDK Context key/value pairs",
@@ -209,6 +227,10 @@
                 },
                 "mdaa_version": {
                     "description": "Override the MDAA version",
+                    "type": "string"
+                },
+                "region": {
+                    "description": "A string representing the target region",
                     "type": "string"
                 },
                 "tag_config_data": {
@@ -269,6 +291,10 @@
                     "description": "Arn or SSM Import (prefix with ssm:) of the environment provider",
                     "type": "object"
                 },
+                "region": {
+                    "description": "Target region for deployment",
+                    "type": "string"
+                },
                 "tag_config_data": {
                     "additionalProperties": {
                         "type": "string"
@@ -302,7 +328,7 @@
             "additionalProperties": false,
             "properties": {
                 "additional_accounts": {
-                    "description": "A list of additional accounts into which the module may deploy resources.",
+                    "description": "A list of additional accounts into which the module may deploy resources.\nAlternatively, use additional_stacks to target additional accounts/regions",
                     "items": {
                         "type": "string"
                     },
@@ -313,6 +339,13 @@
                         "type": "string"
                     },
                     "type": "object"
+                },
+                "additional_stacks": {
+                    "description": "A list of additional accounts/regions into which the module may deploy resources.",
+                    "items": {
+                        "$ref": "#/definitions/Deployment"
+                    },
+                    "type": "array"
                 },
                 "app_config_data": {
                     "additionalProperties": {},
@@ -678,6 +711,10 @@
         }
     },
     "properties": {
+        "account": {
+            "description": "A string representing the target account number",
+            "type": "string"
+        },
         "context": {
             "additionalProperties": {},
             "description": "Additional CDK Context key/value pairs",

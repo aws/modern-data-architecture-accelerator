@@ -14,6 +14,7 @@ import {
 import * as fs from 'fs';
 import * as path from 'path';
 import {
+  Deployment,
   MdaaCliConfig,
   MdaaDomainConfig,
   MdaaEnvironmentConfig,
@@ -171,14 +172,16 @@ export class MdaaDeploy {
           domainEffectiveConfig,
         );
         const account = envMergedConfig.account ?? 'default';
+        const region = envMergedConfig.region ?? 'default';
+        const accountRegion = `${account}/${region}`;
         return Object.entries(envMergedConfig.modules ?? {}).forEach(([moduleName, module]) => {
           const moduleEffectiveConfig = this.computeModuleEffectiveConfig(moduleName, module, envEffectiveConfig);
 
           if (getMdaaConfig(moduleEffectiveConfig, 'ACCOUNT_LEVEL_MODULE', isBoolean)) {
-            if (accountLevelModuleCountMap[account] == null) {
-              accountLevelModuleCountMap[account] = {};
+            if (accountLevelModuleCountMap[accountRegion] == null) {
+              accountLevelModuleCountMap[accountRegion] = {};
             }
-            const moduleCountMap = accountLevelModuleCountMap[account];
+            const moduleCountMap = accountLevelModuleCountMap[accountRegion];
             moduleCountMap[moduleName] = (moduleCountMap[moduleName] ?? 0) + 1;
           }
         });
@@ -711,11 +714,7 @@ export class MdaaDeploy {
       'tag_configs',
       moduleEffectiveConfig.tagConfigFiles?.map(x => path.resolve(x)).join(','),
     );
-    this.addOptionalCdkContextStringParam(
-      cdkCmd,
-      'additional_accounts',
-      moduleEffectiveConfig.additionalAccounts?.join(','),
-    );
+    this.addOptionalCdkContextObjParam(cdkCmd, 'additional_stacks', moduleEffectiveConfig.additionalStacks);
     this.addOptionalCdkContextStringParam(
       cdkCmd,
       'log_suppressions',
@@ -752,12 +751,12 @@ export class MdaaDeploy {
   private addOptionalCdkContextObjParam(
     cdkCmd: string[],
     context_key: string,
-    context_value?: MdaaCustomAspect[] | TagElement | ConfigurationElement,
+    context_value?: MdaaCustomAspect[] | TagElement | ConfigurationElement | Deployment[],
   ) {
     if (context_value) {
       if (Object.keys(context_value).length > 0) {
         const context_string_value = JSON.stringify(JSON.stringify(context_value));
-        cdkCmd.push(`-c ${context_key}=${context_string_value}`);
+        cdkCmd.push(`-c '${context_key}'=${context_string_value}`);
       }
     }
   }
@@ -765,9 +764,9 @@ export class MdaaDeploy {
   private createCdkCommandEnv(moduleEffectiveConfig: ModuleEffectiveConfig): string[] {
     const cdkEnv: string[] = [];
     /* istanbul ignore next */
-    if (this.config.contents.region && this.config.contents.region.toLowerCase() != 'default') {
-      cdkEnv.push(`export CDK_DEPLOY_REGION=${this.config.contents.region}`);
-      cdkEnv.push(`export AWS_DEFAULT_REGION=${this.config.contents.region}`);
+    if (moduleEffectiveConfig.deployRegion && moduleEffectiveConfig.deployRegion.toLowerCase() != 'default') {
+      cdkEnv.push(`export CDK_DEPLOY_REGION=${moduleEffectiveConfig.deployRegion}`);
+      cdkEnv.push(`export AWS_DEFAULT_REGION=${moduleEffectiveConfig.deployRegion}`);
     }
     /* istanbul ignore next */
     if (moduleEffectiveConfig.deployAccount && moduleEffectiveConfig.deployAccount.toLowerCase() != 'default') {
@@ -792,6 +791,8 @@ export class MdaaDeploy {
       customAspects: this.computeEffectiveCustomAspects(globalEffectiveConfig, domain.custom_aspects),
       customNaming: this.computeEffectiveCustomNaming(globalEffectiveConfig, domain.custom_naming),
       terraform: this.computeEffectiveTerraformConfig(globalEffectiveConfig, domain.terraform),
+      deployAccount: domain.account ?? globalEffectiveConfig.deployAccount,
+      deployRegion: domain.region ?? globalEffectiveConfig.deployRegion,
     };
   }
 
@@ -803,7 +804,8 @@ export class MdaaDeploy {
     return {
       ...domainEffectiveConfig,
       envName: envName,
-      deployAccount: env.account,
+      deployAccount: env.account ?? domainEffectiveConfig.deployAccount,
+      deployRegion: env.region ?? domainEffectiveConfig.deployRegion,
       useBootstrap: env.use_bootstrap == undefined || env.use_bootstrap,
       effectiveContext: this.computeEffectiveContext(domainEffectiveConfig, env.context),
       effectiveTagConfig: this.computeEffectiveTagConfig(domainEffectiveConfig, env.tag_config_data),
@@ -824,6 +826,15 @@ export class MdaaDeploy {
     if (!modulePath) {
       throw new Error('One of cdp_app or module_path must be defined');
     }
+    const additionalStacks: Deployment[] | undefined =
+      mdaaModule.additional_stacks || mdaaModule.additional_accounts
+        ? [
+            ...(mdaaModule.additional_stacks || []),
+            ...(mdaaModule.additional_accounts || []).map(account => {
+              return { account: account };
+            }),
+          ]
+        : undefined;
     return {
       ...envEffectiveConfig,
       moduleName: mdaaModuleName,
@@ -833,7 +844,7 @@ export class MdaaDeploy {
       effectiveModuleConfig: { ...(mdaaModule.app_config_data || {}), ...(mdaaModule.module_config_data || {}) }, //NOSONAR
       moduleType: mdaaModule.module_type ?? 'cdk',
       modulePath: modulePath,
-      additionalAccounts: mdaaModule.additional_accounts,
+      additionalStacks: additionalStacks,
       mdaaCompliant: mdaaModule.mdaa_compliant,
       effectiveContext: this.computeEffectiveContext(envEffectiveConfig, mdaaModule.context),
       effectiveTagConfig: this.computeEffectiveTagConfig(envEffectiveConfig, mdaaModule.tag_config_data),
@@ -842,6 +853,8 @@ export class MdaaDeploy {
       customAspects: this.computeEffectiveCustomAspects(envEffectiveConfig, mdaaModule.custom_aspects),
       customNaming: this.computeEffectiveCustomNaming(envEffectiveConfig, mdaaModule.custom_naming),
       terraform: this.computeEffectiveTerraformConfig(envEffectiveConfig, mdaaModule.terraform),
+      deployAccount: envEffectiveConfig.deployAccount,
+      deployRegion: envEffectiveConfig.deployRegion,
     };
   }
 
@@ -932,6 +945,8 @@ export class MdaaDeploy {
           : undefined,
       envTemplates: this.config.contents.env_templates || {},
       terraform: this.config.contents.terraform,
+      deployAccount: this.config.contents.account,
+      deployRegion: this.config.contents.region,
     };
   }
 

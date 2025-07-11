@@ -46,6 +46,10 @@ export interface MdaaPackageNameVersion {
   readonly version: string;
 }
 
+export interface Deployment {
+  readonly region?: string;
+  readonly account?: string;
+}
 /**
  * Base class for MDAA CDK Apps. Provides consistent app behaviours in
  * configuration parsing, stack generation, resource naming,
@@ -68,8 +72,8 @@ export abstract class MdaaCdkApp extends App {
   private readonly useBootstrap: boolean;
   private readonly stack: MdaaStack;
   private readonly baseConfigParser: MdaaAppConfigParser<MdaaBaseConfigContents>;
-  private readonly additionalAccounts?: string[];
-  private readonly additionalAccountStacks: { [AccountRecovery: string]: Stack };
+  private readonly additionalStacks?: Deployment[];
+  private readonly additionalStacksMap: { [account: string]: { [region: string]: Stack } };
   /**
    * Constructor does most of the app initialization, reading inputs from CDK context, parsing App config files, configuring resource naming, and configuring CDK Nag.
    * @param props - CDK AppProps (default empty). Not typically required if running using the CDK cli, but useful for direct instantiation.
@@ -151,22 +155,33 @@ export abstract class MdaaCdkApp extends App {
     this.deployAccount = process.env.CDK_DEPLOY_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT;
     this.deployRegion = process.env.CI_SUPPLIED_TARGET_REGION || process.env.CDK_DEFAULT_REGION;
 
-    this.additionalAccounts = this.node.tryGetContext('additional_accounts')?.split(',');
-
+    this.additionalStacks = this.node.tryGetContext('additional_stacks');
     this.stack = this.createEmptyStack(packageName);
-    this.additionalAccountStacks = Object.fromEntries(
-      this.additionalAccounts?.map(account => {
-        const stackName = this.naming.stackName(account);
+    this.additionalStacksMap = Object.fromEntries(
+      this.additionalStacks?.map(deployment => {
+        const account = deployment.account ?? this.stack.account;
+        const region = deployment.region ?? this.stack.region;
+
+        let stackName: string;
+        if (deployment.account && deployment.region) {
+          stackName = this.naming.stackName(account + '-' + region);
+        } else if (deployment.account) {
+          stackName = this.naming.stackName(account);
+        } else if (deployment.region) {
+          stackName = this.naming.stackName(region);
+        } else {
+          throw new Error('One of account or region must be specified in additional_stacks');
+        }
         const stackProps = {
           naming: this.naming,
           env: {
-            region: this.stack.region,
+            region: region,
             account: account,
           },
         };
         const additionalAccountStack = new Stack(this, stackName, stackProps);
         additionalAccountStack.addDependency(this.stack);
-        return [account, additionalAccountStack];
+        return [account, Object.fromEntries([[region, additionalAccountStack]])];
       }) || [],
     );
     this.baseConfigParser = new MdaaAppConfigParser<MdaaBaseConfigContents>(
@@ -188,19 +203,11 @@ export abstract class MdaaCdkApp extends App {
   }
 
   private loadTagConfigDataFromContext(): { [key: string]: string } {
-    const tagConfigDataFromContextString: string = this.node.tryGetContext('tag_config_data');
-    if (tagConfigDataFromContextString) {
-      return JSON.parse(tagConfigDataFromContextString);
-    }
-    return {};
+    return this.node.tryGetContext('tag_config_data') ?? {};
   }
 
   private loadAppConfigDataFromContext(): ConfigurationElement {
-    const appConfigDataFromContextString: string = this.node.tryGetContext('module_config_data');
-    if (appConfigDataFromContextString) {
-      return JSON.parse(appConfigDataFromContextString);
-    }
-    return {};
+    return this.node.tryGetContext('module_config_data') ?? {};
   }
 
   private loadTagConfigFromFiles(): TagElement {
@@ -259,11 +266,9 @@ export abstract class MdaaCdkApp extends App {
   }
 
   private applyCustomAspects() {
-    const customAspectsContextString: string = this.node.tryGetContext('custom_aspects');
-    if (customAspectsContextString) {
-      const customAspects: MdaaCustomAspect[] = JSON.parse(customAspectsContextString);
-      customAspects.forEach(customAspect => this.applyCustomAspect(customAspect));
-    }
+    const customAspects: MdaaCustomAspect[] | undefined = this.node.tryGetContext('custom_aspects');
+    console.log(typeof customAspects);
+    customAspects?.forEach(customAspect => this.applyCustomAspect(customAspect));
   }
 
   private applyCustomAspect(customAspect: MdaaCustomAspect) {
@@ -430,13 +435,16 @@ export abstract class MdaaCdkApp extends App {
   }
 
   private addTagsAndSuppressions() {
-    const allStacks = [this.stack, ...Object.entries(this.additionalAccountStacks).map(x => x[1])];
-    allStacks.forEach(stack => {
+    const allAccountStacks = [
+      this.stack,
+      ...Object.entries(this.additionalStacksMap).flatMap(x => Object.entries(x[1]).map(y => y[1])),
+    ];
+    allAccountStacks.forEach(stack => {
       this.baseConfigParser.nagSuppressions?.by_path?.forEach(suppression => {
         try {
           MdaaNagSuppressions.addConfigResourceSuppressionsByPath(stack, suppression.path, suppression.suppressions);
         } catch (error) {
-          console.log(`Error adding suppression for path ${suppression.path} to stack ${stack.stackName}`);
+          console.log(`Error adding suppression for path ${suppression.path} to stack ${stack}`);
         }
       });
       // Apply our tags
@@ -452,7 +460,7 @@ export abstract class MdaaCdkApp extends App {
     return {
       naming: this.naming,
       roleHelper: stack.roleHelper,
-      crossAccountStacks: this.additionalAccountStacks,
+      crossAccountStacks: this.additionalStacksMap,
       tags: this.tags,
     };
   }

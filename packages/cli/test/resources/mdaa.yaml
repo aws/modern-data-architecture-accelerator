@@ -1,4 +1,4 @@
-mdaa_version: "test_global_version"
+mdaa_version: 'test_global_version'
 log_suppressions: true
 # All resources will be deployed to the default region specified in the environment or AWS configurations.
 # Can optional specify a specific AWS Region Name.
@@ -30,23 +30,23 @@ env_templates:
   example_global_env_template:
     modules:
       roles:
-        module_path: "@aws-mdaa/roles"
+        module_path: '@aws-mdaa/roles'
         module_configs:
           - ./roles.yaml
       datalake:
-        module_path: "@aws-mdaa/datalake"
+        module_path: '@aws-mdaa/datalake'
         module_configs:
           - ./datalake.yaml
       athena-workgroup:
-        module_path: "@aws-mdaa/athena-workgroup"
+        module_path: '@aws-mdaa/athena-workgroup'
         module_configs:
           - ./athena-workgroup.yaml
       dataops-project-test:
-        module_path: "@aws-mdaa/dataops-project"
+        module_path: '@aws-mdaa/dataops-project'
         module_configs:
           - ./dataops/dataops-project.yaml
       dataops-crawler-test:
-        module_path: "@aws-mdaa/dataops-crawler"
+        module_path: '@aws-mdaa/dataops-crawler'
         module_configs:
           - ./dataops/dataops-crawler.yaml
 
@@ -56,36 +56,39 @@ env_templates:
 domains:
   shared-domain: # An example domain for modules which will be shared at the account level.
     # One or more tag files containing tags which will be applied to all deployed resources for this domain
+    # All resources will be deployed to the default region specified in the environment or AWS configurations.
+    # Can optional specify a specific AWS Region Name.
+    region: test-domain-specific-region
     tag_configs:
       - tags.yaml
     environments:
       dev:
-        mdaa_version: "test_env_version"
-        account: default
+        mdaa_version: 'test_env_version'
         # One or more tag files containing tags which will be applied to all deployed resources for this env
         tag_configs:
           - tags.yaml
         modules:
           audit:
-            mdaa_version: "test_module_version"
-            module_path: "@aws-mdaa/audit"
+            mdaa_version: 'test_module_version'
+            module_path: '@aws-mdaa/audit'
             # One or more tag files containing tags which will be applied to all deployed resources for this env
             tag_configs:
               - tags.yaml
             module_configs:
               - ./audit.yaml
           audit-trail:
-            module_path: "@aws-mdaa/audit-trail@test_spec_version"
+            module_path: '@aws-mdaa/audit-trail@test_spec_version'
             module_configs:
               - ./audit-trail.yaml
           glue-catalog:
-            module_path: "@aws-mdaa/glue-catalog"
+            module_path: '@aws-mdaa/glue-catalog'
           datawarehouse:
-            module_path: "@aws-mdaa/datawarehouse"
+            module_path: '@aws-mdaa/datawarehouse'
             module_configs:
               - ./datawarehouse.yaml
 
   domain1: # Example of a specific domain name.
+    region: test-env-specific-region
     environments:
       # Example of envs that uses a global environment template
       dev:
@@ -94,7 +97,6 @@ domains:
       test:
         account: test_acct_num
         template: example_global_env_template
-
 
   domain2:
     environments:
@@ -105,21 +107,22 @@ domains:
         modules:
           # This env will deploy this module in addition to those defined in the template
           additional-module:
-            module_path: "@aws-mdaa/dataops-job"
+            module_path: '@aws-mdaa/dataops-job'
             module_configs:
               - ./dataops/dataops-job.yaml
 
   domain3:
     # Env templates can also be defined per domain.
+    account: test-domain-specific-account
     env_templates:
       example_domain_env_template:
         modules:
           roles:
-            module_path: "@aws-mdaa/roles"
+            module_path: '@aws-mdaa/roles'
             module_configs:
               - ./roles.yaml
           datalake:
-            module_path: "@aws-mdaa/datalake"
+            module_path: '@aws-mdaa/datalake'
             module_configs:
               - ./datalake.yaml
     environments:

@@ -56,7 +56,7 @@ describe('MDAA Compliance Stack Tests', () => {
       testApp.naming,
       path.dirname(require.resolve('@aws-mdaa/iam-role-helper/package.json')),
     ),
-    crossAccountStacks: { 'test-cross-account': crossAccountStack },
+    crossAccountStacks: { 'test-cross-account': { 'test-region': crossAccountStack } },
     s3OutputKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/s3-output-key-id',
     glueCatalogKmsKeyArn: 'arn:test-partition:kms:test-region:test-account:key/glue-catalog-key-id',
     projectExecutionRoleRefs: [testGlueRoleRef],

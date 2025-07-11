@@ -12,7 +12,7 @@ test('SynthTest', () => {
     domain: 'test-domain',
     module_name: 'test-module',
     module_configs: './test/test-config.yaml',
-    additional_accounts: '123456789012',
+    additional_stacks: [{ account: '123456789012' }],
   };
   const app = new LakeFormationCdkApp({ context: context });
   app.generateStack();

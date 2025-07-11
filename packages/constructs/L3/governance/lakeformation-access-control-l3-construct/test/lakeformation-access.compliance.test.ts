@@ -134,7 +134,7 @@ describe('MDAA Compliance Stack Tests', () => {
     naming: testApp.naming,
 
     roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
-    crossAccountStacks: { 'test-cross-account': crossAccountStack },
+    crossAccountStacks: { 'test-cross-account': { 'test-region': crossAccountStack } },
     grants: {
       ...readResourceGrant,
       ...readWriteResourceGrant,

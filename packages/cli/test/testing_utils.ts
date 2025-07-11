@@ -18,6 +18,7 @@ export function getCliConfig(): string {
 interface EnvironmentInput {
   modules: number[];
   account?: unknown; // Optional account property that could be of any type
+  region?: unknown; // Optional account property that could be of any type
 }
 
 // Output interfaces

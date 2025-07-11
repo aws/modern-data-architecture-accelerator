@@ -241,41 +241,40 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     keyAccessAccounts: string[],
     domainName: string,
   ) {
-    if (this.props.crossAccountStacks) {
-      const crossAccountStack = this.props.crossAccountStacks[associatedAccountNum];
-      if (crossAccountStack) {
-        //The cross account stack is going to consume the domain config via RAM-shared Domain Config SSM Param created above
-        const domainConfigSsmParamArn = `arn:${this.partition}:ssm:${region}:${this.account}:parameter${configParamName}`;
+    try {
+      const crossAccountStack = this.getCrossAccountStack(associatedAccountNum);
 
-        const domainConfigParser = new MdaaDataZoneDomainSSMConfigParser(crossAccountStack, 'domain-config-parser', {
-          naming: this.props.naming,
-          domainConfigSSMParam: domainConfigSsmParamArn,
-        });
+      //The cross account stack is going to consume the domain config via RAM-shared Domain Config SSM Param created above
+      const domainConfigSsmParamArn = `arn:${this.partition}:ssm:${region}:${this.account}:parameter${configParamName}`;
 
-        //Create a managed policy which can be used to provide access to the Domain and Glue Catalog KMS keys in associated accounts
-        this.createDomainKmsUsagePolicy(
-          crossAccountStack,
-          domainKmsUsagePolicyName,
-          associatedAccountNum,
-          region,
-          keyAccessAccounts,
-          domainConfigParser.parsedConfig.domainKmsKeyArn,
-          domainConfigParser.parsedConfig.glueCatalogKmsKeyArns,
-        );
+      const domainConfigParser = new MdaaDataZoneDomainSSMConfigParser(crossAccountStack, 'domain-config-parser', {
+        naming: this.props.naming,
+        domainConfigSSMParam: domainConfigSsmParamArn,
+      });
 
-        //Enable custom blueprints in the target account for this domain
-        this.createCustomBlueprintConfig(
-          crossAccountStack,
-          domainConfigParser.parsedConfig.domainId,
-          [region || this.region],
-          domainConfigParser.parsedConfig.domainKmsKeyArn,
-          domainConfigParser.parsedConfig.domainVersion,
-        );
-      } else {
-        console.warn(
-          `Cross account stack not defined for associated account ${associatedAccountName}/${associatedAccountNum} on domain ${domainName}. Cross account association will not work.`,
-        );
-      }
+      //Create a managed policy which can be used to provide access to the Domain and Glue Catalog KMS keys in associated accounts
+      this.createDomainKmsUsagePolicy(
+        crossAccountStack,
+        domainKmsUsagePolicyName,
+        associatedAccountNum,
+        region,
+        keyAccessAccounts,
+        domainConfigParser.parsedConfig.domainKmsKeyArn,
+        domainConfigParser.parsedConfig.glueCatalogKmsKeyArns,
+      );
+
+      //Enable custom blueprints in the target account for this domain
+      this.createCustomBlueprintConfig(
+        crossAccountStack,
+        domainConfigParser.parsedConfig.domainId,
+        [region || this.region],
+        domainConfigParser.parsedConfig.domainKmsKeyArn,
+        domainConfigParser.parsedConfig.domainVersion,
+      );
+    } catch (e: unknown) {
+      console.warn(
+        `Cross account stack not defined for associated account ${associatedAccountName}/${associatedAccountNum} on domain ${domainName}. Cross account association will not work.`,
+      );
     }
   }
 

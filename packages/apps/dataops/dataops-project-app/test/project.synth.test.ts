@@ -12,7 +12,7 @@ test('SynthTest', () => {
     domain: 'test-domain',
     module_name: 'test-module',
     module_configs: './test/test-config.yaml',
-    additional_accounts: '12312412',
+    additional_stacks: [{ account: '12312412' }],
   };
   const app = new DataOpsProjectCDKApp({ context: context });
   app.generateStack();

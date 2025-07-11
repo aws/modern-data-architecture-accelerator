@@ -13,7 +13,7 @@ import { Construct } from 'constructs';
  */
 export interface MdaaL3ConstructProps extends MdaaConstructProps {
   readonly roleHelper: MdaaRoleHelper;
-  readonly crossAccountStacks?: { [account: string]: Stack };
+  readonly crossAccountStacks?: { [account: string]: { [region: string]: Stack } };
   /** Tags to be applied directly to resources. */
   readonly tags?: {
     [key: string]: string;
@@ -33,13 +33,19 @@ export abstract class MdaaL3Construct extends Construct {
     this.baseprops = baseprops;
   }
 
-  protected getCrossAccountStack(account: string): Stack {
-    if (!this.baseprops.crossAccountStacks || !this.baseprops.crossAccountStacks[account]) {
-      throw new Error(
-        `Cross account stack not available. Ensure module is configured with 'additional_accounts' containing '${account}'`,
-      );
+  protected getCrossAccountStack(account?: string, region?: string): Stack {
+    console.log(`Cross Account: ${account} : ${account ?? this.account} Region: ${region} : ${region ?? this.region}`);
+    console.log(`Stacks: ${Object.keys(this.baseprops.crossAccountStacks || {})}`);
+    if (!this.baseprops.crossAccountStacks) {
+      throw new Error(`No cross account stacks defined`);
+    } else if (!account && !region) {
+      throw new Error('Must specify either account or region');
+    } else if (!this.baseprops.crossAccountStacks[account ?? this.account]) {
+      throw new Error(`No cross account stacks defined for account ${account ?? this.account}`);
+    } else if (!this.baseprops.crossAccountStacks[account ?? this.account][region ?? this.region]) {
+      throw new Error(`No cross account stack defined for account ${account ?? this.account}/${region ?? this.region}`);
     }
-    return this.baseprops.crossAccountStacks[account];
+    return this.baseprops.crossAccountStacks[account ?? this.account][region ?? this.region];
   }
 
   protected get partition(): string {

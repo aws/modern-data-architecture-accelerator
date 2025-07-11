@@ -202,7 +202,6 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
       const resourceLinkName = resourceLinkEntry[0];
       const resourceLinkProps = resourceLinkEntry[1];
       const fromAccount = resourceLinkProps.fromAccount || this.account;
-
       const createScope = fromAccount != this.account ? this.getCrossAccountStack(fromAccount) : this;
 
       const resourceLinkDatabaseProps: CfnDatabaseProps = {
