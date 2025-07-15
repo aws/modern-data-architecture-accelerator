@@ -1,5 +1,5 @@
-# Copyright Amazon.com, Inc. or its affiliates.All Rights Reserved.
-# SPDX - License - Identifier: Apache - 2.0
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
 
 import sys
 from awsglue.utils import getResolvedOptions
@@ -7,10 +7,8 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.dynamicframe import DynamicFrame
 from awsglue.job import Job
-
-# Invoke functions from other modules to avoid duplication of code
-from core import job_metadata
-job_metadata()
+from helper_etl import display
+from core import welcomeMessage
 
 glueContext = GlueContext(SparkContext.getOrCreate())
 spark = glueContext.spark_session
@@ -18,6 +16,10 @@ spark = glueContext.spark_session
 # catalog: database and table name
 db_name = "payments"
 tbl_name = "medicare"
+
+# Test calls to functions from external libs
+display("Test call to external menthod")
+welcomeMessage()
 
 # s3 output directories
 medicare_cast = "s3://glue-sample-target/output-dir/medicare_json_cast"

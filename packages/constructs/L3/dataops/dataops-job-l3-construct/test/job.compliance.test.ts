@@ -12,14 +12,16 @@ import { Stack } from 'aws-cdk-lib';
 describe('MDAA Compliance Stack Tests', () => {
   const jobCommand: JobCommand = {
     name: 'glueetl',
-    scriptLocation: './test/src/glue/job.py',
+    scriptLocation: './test/src/glue/python/job.py',
   };
 
   const testJobProps: JobConfig = {
     executionRoleArn: 'arn:test-partition:iam:test-region:test-account:role/some-execution-role',
     command: jobCommand,
     description: 'test job',
-    additionalScripts: ['./test/src/glue/utils/core.py'],
+    additionalScripts: ['./test/src/glue/python/utils/core.py'],
+    additionalFiles: ['./test/src/glue/scala/extra_file.txt'],
+    additionalJars: ['./test/src/glue/scala/lib/extra.jar'],
   };
 
   function createConstructorProps(stack: Stack, testApp: MdaaTestApp): GlueJobL3ConstructProps {
@@ -105,7 +107,7 @@ describe('MDAA Compliance Stack Tests', () => {
 
     testApp.checkCdkNagCompliance(testApp.testStack);
     const template = Template.fromStack(testApp.testStack);
-
+    // console.log(JSON.stringify(template.toJSON(), undefined, 2));
     test('Validate resource counts', () => {
       template.resourceCountIs('AWS::Glue::Job', 1);
       template.resourceCountIs('AWS::Logs::LogGroup', 1);
@@ -115,7 +117,38 @@ describe('MDAA Compliance Stack Tests', () => {
       template.hasResourceProperties('AWS::Glue::Job', {
         Command: {
           Name: 'glueetl',
-          ScriptLocation: 's3://some-project-bucket-name/deployment/jobs/testJob/job.py',
+          ScriptLocation: {
+            'Fn::Join': [
+              '',
+              [
+                's3://',
+                {
+                  'Fn::Select': [
+                    0,
+                    {
+                      'Fn::Split': [
+                        '/',
+                        {
+                          'Fn::Select': [
+                            5,
+                            {
+                              'Fn::Split': [
+                                ':',
+                                {
+                                  'Fn::GetAtt': ['jobdeploymenttestJobCustomResource649ABC43', 'DestinationBucketArn'],
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+                '/deployment/jobs/testJob/job.py',
+              ],
+            ],
+          },
         },
       });
     });
@@ -162,12 +195,36 @@ describe('MDAA Compliance Stack Tests', () => {
             'Fn::Join': [
               '',
               [
-                's3://some-project-bucket-name/deployment/libs/testJob/',
+                's3://',
                 {
                   'Fn::Select': [
                     0,
                     {
-                      'Fn::GetAtt': ['jobdeploymenttestJobadditionalscriptCustomResource2C7973A9', 'SourceObjectKeys'],
+                      'Fn::Split': [
+                        '/',
+                        {
+                          'Fn::Select': [
+                            5,
+                            {
+                              'Fn::Split': [
+                                ':',
+                                {
+                                  'Fn::GetAtt': ['deploymentlibstestJobCustomResource0FCE45A0', 'DestinationBucketArn'],
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+                '/deployment/libs/testJob/',
+                {
+                  'Fn::Select': [
+                    0,
+                    {
+                      'Fn::GetAtt': ['deploymentlibstestJobCustomResource0FCE45A0', 'SourceObjectKeys'],
                     },
                   ],
                 },

@@ -126,6 +126,20 @@
         "JobConfig": {
             "additionalProperties": false,
             "properties": {
+                "additionalFiles": {
+                    "description": "Additional files that are being referenced in main glue etl script\nRelative path to Additional Glue scripts",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "additionalJars": {
+                    "description": "Additional Jars that are being referenced in main glue etl script\nRelative path to Additional Glue scripts",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "additionalScripts": {
                     "description": "Additional ETL scripts that are being referenced in main glue etl script\nRelative path to Additional Glue scripts",
                     "items": {

@@ -10,7 +10,7 @@ import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { CfnJob } from 'aws-cdk-lib/aws-glue';
-import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { BucketDeployment, ISource, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import * as path from 'path';
@@ -23,6 +23,8 @@ import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { updateProps } from '@aws-mdaa/cloudwatch-constructs/lib/utils';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { IRole } from 'aws-cdk-lib/aws-iam';
 
 export type JobCommandPythonVersion = '2' | '3' | undefined;
 export type JobCommandName = 'glueetl' | 'pythonshell';
@@ -123,6 +125,18 @@ export interface JobConfig {
   readonly additionalScripts?: string[];
 
   /**
+   * Additional Jars that are being referenced in main glue etl script
+   * Relative path to Additional Glue scripts
+   */
+  readonly additionalJars?: string[];
+
+  /**
+   * Additional files that are being referenced in main glue etl script
+   * Relative path to Additional Glue scripts
+   */
+  readonly additionalFiles?: string[];
+
+  /**
    * Enables real-time monitoring and troubleshooting of AWS Glue jobs by streaming logs to CloudWatch Logs while the job is running
    */
   readonly continuousLogging?: LoggingConfig;
@@ -177,174 +191,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     const allJobs = this.props.jobConfigs;
     Object.keys(allJobs).forEach(jobName => {
       const jobConfig = allJobs[jobName];
-
-      const scriptPath = path.dirname(jobConfig.command.scriptLocation.trim());
-      const scriptName = path.basename(jobConfig.command.scriptLocation.trim());
-      const scriptSource = Source.asset(scriptPath, { exclude: ['**', `!${scriptName}`] });
-      const defaultArguments = jobConfig.defaultArguments ? jobConfig.defaultArguments : {};
-
-      new BucketDeployment(this.scope, `job-deployment-${jobName}`, {
-        sources: [scriptSource],
-        destinationBucket: projectBucket,
-        destinationKeyPrefix: `deployment/jobs/${jobName}`,
-        role: deploymentRole,
-        extract: true,
-      });
-
-      if (jobConfig.additionalScripts) {
-        /**
-         * Group all scripts at parent directory level. This will allow creating zip lib assests at various directory levels
-         * ex. '/main/script1.py' , '/util/script2.py' , '/util/script3.py' will create 2 zip files representing 'main' and 'utils'
-         *  */
-        const directoryToScript: { [scriptPath: string]: string[] } = {};
-        jobConfig.additionalScripts.forEach(scriptLocation => {
-          const scriptPath = path.dirname(scriptLocation.trim());
-          if (scriptPath in directoryToScript) {
-            directoryToScript[scriptPath].push(`!${path.basename(scriptLocation.trim())}`);
-          } else {
-            directoryToScript[scriptPath] = [`!${path.basename(scriptLocation.trim())}`];
-          }
-        });
-
-        // Create Source asset for each directory
-        const additionalScriptsSources = Object.entries(directoryToScript).map(([scriptPath, scriptNames]) => {
-          return Source.asset(scriptPath, { exclude: ['**', ...scriptNames] });
-        });
-
-        // Deploy Source asset(s) to /deployment/libs/<job> location.
-        const additionalScriptDeployment = new BucketDeployment(
-          this.scope,
-          `job-deployment-${jobName}-additional-script`,
-          {
-            sources: additionalScriptsSources,
-            destinationBucket: projectBucket,
-            destinationKeyPrefix: `deployment/libs/${jobName}`,
-            role: deploymentRole,
-            extract: false, // Glue expects zip of additional scripts, hence disabling the extraction
-          },
-        );
-
-        // Extract zip name(s) for each source and create comma separated list of s3 locations
-        const libraryZipNames: string[] = [];
-        for (let i = 0; i < additionalScriptsSources.length; i++) {
-          const libName = Fn.select(i, additionalScriptDeployment.objectKeys); // Extract file name of zip containing additional scripts
-          libraryZipNames.push(`s3://${this.props.projectBucketName}/deployment/libs/${jobName}/${libName}`);
-        }
-
-        // Add comma separated list of zip file names to default arguments.
-        if (defaultArguments['--extra-py-files']) {
-          defaultArguments['--extra-py-files'] += ',' + libraryZipNames.join(',');
-        } else {
-          defaultArguments['--extra-py-files'] = libraryZipNames.join(',');
-        }
-      }
-
-      MdaaNagSuppressions.addCodeResourceSuppressions(
-        this.scope,
-        [
-          { id: 'AwsSolutions-L1', reason: 'Function is used only as custom resource during CDK deployment.' },
-          {
-            id: 'NIST.800.53.R5-LambdaConcurrency',
-            reason: 'Function is used only as custom resource during CDK deployment.',
-          },
-          {
-            id: 'NIST.800.53.R5-LambdaInsideVPC',
-            reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.',
-          },
-          {
-            id: 'NIST.800.53.R5-LambdaDLQ',
-            reason:
-              'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.',
-          },
-          {
-            id: 'HIPAA.Security-LambdaConcurrency',
-            reason: 'Function is used only as custom resource during CDK deployment.',
-          },
-          {
-            id: 'PCI.DSS.321-LambdaConcurrency',
-            reason: 'Function is used only as custom resource during CDK deployment.',
-          },
-          {
-            id: 'HIPAA.Security-LambdaInsideVPC',
-            reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.',
-          },
-          {
-            id: 'PCI.DSS.321-LambdaInsideVPC',
-            reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.',
-          },
-          {
-            id: 'HIPAA.Security-LambdaDLQ',
-            reason:
-              'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.',
-          },
-          {
-            id: 'PCI.DSS.321-LambdaDLQ',
-            reason:
-              'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.',
-          },
-        ],
-        true,
-      );
-      // Connections will require an array of references where they are defined
-      let connectionsConfigured: ConfigurationElement | undefined;
-      if (jobConfig.connections) {
-        connectionsConfigured = {
-          connections: jobConfig.connections,
-        };
-      }
-
-      defaultArguments['--TempDir'] = `s3://${this.props.projectBucketName}/temp/jobs/${jobName}`;
-
-      // add continuous logging unless explicitly disabled
-      if (jobConfig.continuousLogging) {
-        const logGroupName = jobName;
-        const logGroupNamePathPrefix = '/aws/glue';
-        defaultArguments['--continuous-log-logGroup'] = this.createLogGroup(
-          logGroupNamePathPrefix,
-          logGroupName,
-          jobConfig.continuousLogging,
-        );
-      } else {
-        console.log(`Continuous logging not enabled for job: ${jobName}`);
-      }
-
-      const job = new MdaaCfnJob(this.scope, `${jobName}-job`, {
-        command: {
-          name: jobConfig.command.name,
-          pythonVersion: jobConfig.command.pythonVersion,
-          scriptLocation: `s3://${this.props.projectBucketName}/deployment/jobs/${jobName}/${scriptName}`,
-        },
-        role: jobConfig.executionRoleArn,
-        allocatedCapacity: jobConfig.allocatedCapacity,
-        connections: connectionsConfigured,
-        defaultArguments: defaultArguments,
-        description: jobConfig.description,
-        executionProperty: jobConfig.executionProperty,
-        glueVersion: jobConfig.glueVersion,
-        maxCapacity: jobConfig.maxCapacity,
-        maxRetries: jobConfig.maxRetries,
-        name: jobName,
-        notificationProperty: jobConfig.notificationProperty,
-        numberOfWorkers: jobConfig.numberOfWorkers,
-        securityConfiguration: this.props.securityConfigurationName,
-        timeout: jobConfig.timeout,
-        workerType: jobConfig.workerType,
-        naming: this.props.naming,
-      });
-      if (job.name) {
-        DataOpsProjectUtils.createProjectSSMParam(
-          this.scope,
-          this.props.naming,
-          this.props.projectName,
-          `job/name/${jobName}`,
-          job.name,
-        );
-
-        const eventRule = this.createJobMonitoringEventRule(`${jobName}-monitor`, [job.name]);
-        eventRule.addTarget(
-          new SnsTopic(MdaaSnsTopic.fromTopicArn(this.scope, `${jobName}-topic`, this.props.notificationTopicArn)),
-        );
-      }
+      this.createJob(jobName, jobConfig, deploymentRole, projectBucket);
     });
     //CDK S3 Deployment automatically adds inline policy to project deployment role.
     this.scope.node.children.forEach(child => {
@@ -361,6 +208,288 @@ export class GlueJobL3Construct extends MdaaL3Construct {
         );
       }
     });
+  }
+
+  private deployAdditionalFiles(
+    additionalFilesSources: ISource[],
+    projectBucket: IBucket,
+    deploymentRole: IRole,
+    deploymentId: string,
+    deploymentPath: string,
+    extract: boolean,
+  ): BucketDeployment {
+    // Deploy Source asset(s) to /deployment/libs/<job> location.
+    const additionalFileDeployment = new BucketDeployment(this.scope, deploymentId, {
+      sources: additionalFilesSources,
+      destinationBucket: projectBucket,
+      destinationKeyPrefix: deploymentPath,
+      role: deploymentRole,
+      extract: extract,
+    });
+    return additionalFileDeployment;
+  }
+
+  private addAdditionalScripts(
+    jobName: string,
+    jobConfig: JobConfig,
+    projectBucket: IBucket,
+    deploymentRole: IRole,
+    defaultArguments: {
+      [key: string]: string;
+    },
+  ) {
+    if (jobConfig.additionalScripts) {
+      /**
+       * Group all files at parent directory level. This will allow creating zip lib assests at various directory levels
+       * ex. '/main/script1.py' , '/util/script2.py' , '/util/script3.py' will create 2 zip files representing 'main' and 'utils'
+       *  */
+      const directoryToFile: { [filePath: string]: string[] } = {};
+      jobConfig.additionalScripts.forEach(fileLocation => {
+        const filePath = path.dirname(fileLocation.trim());
+        if (filePath in directoryToFile) {
+          directoryToFile[filePath].push(`!${path.basename(fileLocation.trim())}`);
+        } else {
+          directoryToFile[filePath] = [`!${path.basename(fileLocation.trim())}`];
+        }
+      });
+
+      // Create Source asset for each directory
+      const additionalFilesSources = Object.entries(directoryToFile).map(([filePath, fileNames]) => {
+        return Source.asset(filePath, { exclude: ['**', ...fileNames] });
+      });
+      const deploymentPath = `deployment/libs/${jobName}`;
+      const additionalFileDeployment = this.deployAdditionalFiles(
+        additionalFilesSources,
+        projectBucket,
+        deploymentRole,
+        deploymentPath,
+        `job-deployment-${jobName}-additional-script`,
+        false, // Glue expects zip of additional scripts, hence disabling the extraction
+      );
+
+      // Extract zip name(s) for each source and create comma separated list of s3 locations
+      const libraryZipNames: string[] = [];
+
+      for (let i = 0; i < additionalFilesSources.length; i++) {
+        const libName = Fn.select(i, additionalFileDeployment.objectKeys); // Extract file name of zip containing additional scripts
+        libraryZipNames.push(`s3://${additionalFileDeployment.deployedBucket.bucketName}/${deploymentPath}/${libName}`);
+      }
+
+      // Add comma separated list of zip file names to default arguments.
+      if (defaultArguments['--extra-py-files']) {
+        defaultArguments['--extra-py-files'] += ',' + libraryZipNames.join(',');
+      } else {
+        defaultArguments['--extra-py-files'] = libraryZipNames.join(',');
+      }
+    }
+  }
+
+  private addAdditionalJars(
+    jobName: string,
+    jobConfig: JobConfig,
+    projectBucket: IBucket,
+    deploymentRole: IRole,
+    defaultArguments: {
+      [key: string]: string;
+    },
+  ) {
+    if (jobConfig.additionalJars) {
+      // Create Source asset for each directory
+      const additionalFilesSources = jobConfig.additionalJars.map(fullFileName => {
+        const filePath = path.dirname(fullFileName.trim());
+        const fileName = path.basename(fullFileName.trim());
+        const fileSource = Source.asset(filePath, { exclude: ['**', `!${fileName}`] });
+        return fileSource;
+      });
+      const deploymentPath = `deployment/libs/${jobName}`;
+
+      const additionalFileDeployment = this.deployAdditionalFiles(
+        additionalFilesSources,
+        projectBucket,
+        deploymentRole,
+        `job-deployment-${jobName}-additional-jar`,
+        deploymentPath,
+        true,
+      );
+
+      const extraJarNames = jobConfig.additionalJars.map(fullFileName => {
+        const fileName = path.basename(fullFileName.trim());
+        return `s3://${additionalFileDeployment.deployedBucket.bucketName}/${deploymentPath}/${fileName}`;
+      });
+
+      // Add comma separated list of zip file names to default arguments.
+      if (defaultArguments['--extra-jars']) {
+        defaultArguments['--extra-jars'] += ',' + extraJarNames.join(',');
+      } else {
+        defaultArguments['--extra-jars'] = extraJarNames.join(',');
+      }
+    }
+  }
+
+  private addAdditionalFiles(
+    jobName: string,
+    jobConfig: JobConfig,
+    projectBucket: IBucket,
+    deploymentRole: IRole,
+    defaultArguments: {
+      [key: string]: string;
+    },
+  ) {
+    if (jobConfig.additionalFiles) {
+      // Create Source asset for each directory
+      const additionalFilesSources = jobConfig.additionalFiles.map(fullFileName => {
+        const filePath = path.dirname(fullFileName.trim());
+        const fileName = path.basename(fullFileName.trim());
+        const fileSource = Source.asset(filePath, { exclude: ['**', `!${fileName}`] });
+        return fileSource;
+      });
+      const deploymentPath = `deployment/files/${jobName}`;
+      const additionalFileDeployment = this.deployAdditionalFiles(
+        additionalFilesSources,
+        projectBucket,
+        deploymentRole,
+        `job-deployment-${jobName}-additional-file`,
+        deploymentPath,
+        true,
+      );
+      const extraFileNames = jobConfig.additionalFiles.map(fullFileName => {
+        const fileName = path.basename(fullFileName.trim());
+        return `s3://${additionalFileDeployment.deployedBucket.bucketName}/${deploymentPath}/${fileName}`;
+      });
+
+      // Add comma separated list of zip file names to default arguments.
+      if (defaultArguments['--extra-files']) {
+        defaultArguments['--extra-files'] += ',' + extraFileNames.join(',');
+      } else {
+        defaultArguments['--extra-files'] = extraFileNames.join(',');
+      }
+    }
+  }
+
+  private createJob(jobName: string, jobConfig: JobConfig, deploymentRole: IRole, projectBucket: IBucket) {
+    const defaultArguments = jobConfig.defaultArguments ? jobConfig.defaultArguments : {};
+    const scriptPath = path.dirname(jobConfig.command.scriptLocation.trim());
+    const scriptName = path.basename(jobConfig.command.scriptLocation.trim());
+    const scriptSource = Source.asset(scriptPath, { exclude: ['**', `!${scriptName}`] });
+
+    const scriptDeploymentPath = `deployment/jobs/${jobName}`;
+    const scriptDeployment = new BucketDeployment(this.scope, `job-deployment-${jobName}`, {
+      sources: [scriptSource],
+      destinationBucket: projectBucket,
+      destinationKeyPrefix: scriptDeploymentPath,
+      role: deploymentRole,
+      extract: true,
+    });
+
+    this.addAdditionalScripts(jobName, jobConfig, projectBucket, deploymentRole, defaultArguments);
+    this.addAdditionalJars(jobName, jobConfig, projectBucket, deploymentRole, defaultArguments);
+    this.addAdditionalFiles(jobName, jobConfig, projectBucket, deploymentRole, defaultArguments);
+    MdaaNagSuppressions.addCodeResourceSuppressions(
+      this.scope,
+      [
+        { id: 'AwsSolutions-L1', reason: 'Function is used only as custom resource during CDK deployment.' },
+        {
+          id: 'NIST.800.53.R5-LambdaConcurrency',
+          reason: 'Function is used only as custom resource during CDK deployment.',
+        },
+        {
+          id: 'NIST.800.53.R5-LambdaInsideVPC',
+          reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.',
+        },
+        {
+          id: 'NIST.800.53.R5-LambdaDLQ',
+          reason:
+            'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.',
+        },
+        {
+          id: 'HIPAA.Security-LambdaConcurrency',
+          reason: 'Function is used only as custom resource during CDK deployment.',
+        },
+        {
+          id: 'PCI.DSS.321-LambdaConcurrency',
+          reason: 'Function is used only as custom resource during CDK deployment.',
+        },
+        {
+          id: 'HIPAA.Security-LambdaInsideVPC',
+          reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.',
+        },
+        {
+          id: 'PCI.DSS.321-LambdaInsideVPC',
+          reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.',
+        },
+        {
+          id: 'HIPAA.Security-LambdaDLQ',
+          reason:
+            'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.',
+        },
+        {
+          id: 'PCI.DSS.321-LambdaDLQ',
+          reason:
+            'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.',
+        },
+      ],
+      true,
+    );
+    // Connections will require an array of references where they are defined
+    let connectionsConfigured: ConfigurationElement | undefined;
+    if (jobConfig.connections) {
+      connectionsConfigured = {
+        connections: jobConfig.connections,
+      };
+    }
+
+    defaultArguments['--TempDir'] = `s3://${this.props.projectBucketName}/temp/jobs/${jobName}`;
+
+    // add continuous logging unless explicitly disabled
+    if (jobConfig.continuousLogging) {
+      const logGroupName = jobName;
+      const logGroupNamePathPrefix = '/aws/glue';
+      defaultArguments['--continuous-log-logGroup'] = this.createLogGroup(
+        logGroupNamePathPrefix,
+        logGroupName,
+        jobConfig.continuousLogging,
+      );
+    } else {
+      console.log(`Continuous logging not enabled for job: ${jobName}`);
+    }
+
+    const job = new MdaaCfnJob(this.scope, `${jobName}-job`, {
+      command: {
+        name: jobConfig.command.name,
+        pythonVersion: jobConfig.command.pythonVersion,
+        scriptLocation: `s3://${scriptDeployment.deployedBucket.bucketName}/${scriptDeploymentPath}/${scriptName}`,
+      },
+      role: jobConfig.executionRoleArn,
+      allocatedCapacity: jobConfig.allocatedCapacity,
+      connections: connectionsConfigured,
+      defaultArguments: defaultArguments,
+      description: jobConfig.description,
+      executionProperty: jobConfig.executionProperty,
+      glueVersion: jobConfig.glueVersion,
+      maxCapacity: jobConfig.maxCapacity,
+      maxRetries: jobConfig.maxRetries,
+      name: jobName,
+      notificationProperty: jobConfig.notificationProperty,
+      numberOfWorkers: jobConfig.numberOfWorkers,
+      securityConfiguration: this.props.securityConfigurationName,
+      timeout: jobConfig.timeout,
+      workerType: jobConfig.workerType,
+      naming: this.props.naming,
+    });
+    if (job.name) {
+      DataOpsProjectUtils.createProjectSSMParam(
+        this.scope,
+        this.props.naming,
+        this.props.projectName,
+        `job/name/${jobName}`,
+        job.name,
+      );
+
+      const eventRule = this.createJobMonitoringEventRule(`${jobName}-monitor`, [job.name]);
+      eventRule.addTarget(
+        new SnsTopic(MdaaSnsTopic.fromTopicArn(this.scope, `${jobName}-topic`, this.props.notificationTopicArn)),
+      );
+    }
   }
 
   private createJobMonitoringEventRule(ruleName: string, jobNames: string[]): Rule {

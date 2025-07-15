@@ -2,7 +2,7 @@
 
 The Data Ops Job CDK application is used to deploy the resources required to support and perform data operations on top of a Data Lake using Glue Jobs.
 
-***
+---
 
 ## Deployed Resources and Compliance Details
 
@@ -10,12 +10,12 @@ The Data Ops Job CDK application is used to deploy the resources required to sup
 
 **Glue Jobs** - Glue Jobs will be created for each job specification in the configs
 
-* Automatically configured to use project security config
-* Can optionally be VPC bound (via Glue connection)
-* Automatically configured to use project bucket as temp location
-* Can use job templates to promote reuse/minimize config duplication
+- Automatically configured to use project security config
+- Can optionally be VPC bound (via Glue connection)
+- Automatically configured to use project bucket as temp location
+- Can use job templates to promote reuse/minimize config duplication
 
-***
+---
 
 ## Configuration
 
@@ -24,10 +24,10 @@ The Data Ops Job CDK application is used to deploy the resources required to sup
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          dataops-job: # Module Name can be customized
-            module_path: "@aws-caef/dataops-job" # Must match module NPM package name
-            module_configs:
-              - ./dataops-job.yaml # Filename/path can be customized
+dataops-job: # Module Name can be customized
+  module_path: '@aws-caef/dataops-job' # Must match module NPM package name
+  module_configs:
+    - ./dataops-job.yaml # Filename/path can be customized
 ```
 
 ### Module Config (./dataops-job.yaml)
@@ -39,26 +39,20 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 Job configs can be templated in order to reuse job definitions across multiple jobs for which perhaps only a few parameters change (such as input/output paths). Templates can be stored separate from job configs, or stored together with job configs in the same file.
 
 ```yaml
-# (required) Name of the Data Ops Project this Job will run within. 
-# Resources provided by the Project, such as security configuration, encryption keys, 
-# temporary S3 buckets, and execution roles will automatically be wired into the Job config.
-# Other resources provided by the project can be optionally referenced 
-# by the Job config using a "project:" prefix on the config value.
 projectName: dataops-project-test
 
 templates:
   # An example job template. Can be referenced from other jobs. Will not itself be deployed.
-  ExampleTemplate:
-    # (required) the role used to execute the job
-    executionRoleArn: ssm:/sample-org/instance1/generated-role/glue-role/arn
+  ExamplePythonTemplate:
+    executionRoleArn: some-arn
     # (required) Command definition for the glue job
     command:
       # (required) Either of "glueetl" | "pythonshell"
-      name: "glueetl"
+      name: 'glueetl'
       # (optional) Python version.  Either "2" or "3"
-      pythonVersion: "3"
-      # (required) Path to a .py file containing the job code. Relative paths should be prefixed with a "./"
-      scriptLocation: ./src/glue/job.py
+      pythonVersion: '3'
+      # (required) Path to a .py file relative to the configuration.
+      scriptLocation: ./src/glue/python/job.py
     # (required) Description of the Glue Job
     description: Example of a Glue Job using an inline script
     # (optional) List of connections for the glue job to use.  Reference back to the connection name in the 'connections:' section of the project.yaml
@@ -71,7 +65,7 @@ templates:
     executionProperty:
       maxConcurrentRuns: 1
     # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
-    glueVersion: "2.0"
+    glueVersion: '2.0'
     # (optional) Maximum capacity.  See: MaxCapcity Section: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html
     # Use maxCapacity or WorkerType.  Not both.
     #maxCapacity: 1
@@ -88,28 +82,65 @@ templates:
     # Use maxCapacity or WorkerType.  Not both.
     #workerType: Standard
 
+  # An example job template. Can be referenced from other jobs. Will not itself be deployed.
+  ExampleScalaTemplate:
+    executionRoleArn: some-arn
+    # (required) Command definition for the glue job
+    # (optional) key: value pairs for the glue job to use.  see: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html
+    defaultArguments:
+      --job-language: scala
+    # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
+    glueVersion: '5.0'
+
 jobs:
   # Job definitions below
-  JobOne: # Job Name
-    template: "ExampleTemplate" # Reference a job template.
+  PythonJobOne: # Job Name
+    template: 'ExamplePythonTemplate' # Reference a job template.
     defaultArguments:
       --Input: s3://some-bucket/some-location1
     allocatedCapacity: 2
+    continuousLogging:
+      # For allowed values, refer https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.RetentionDays.html
+      # Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0.
+      logGroupRetentionDays: 3
 
-  JobTwo:
-    template: "ExampleTemplate" # Reference a job template.
+  PythonJobTwo:
+    template: 'ExamplePythonTemplate' # Reference a job template.
     defaultArguments:
       --Input: s3://some-bucket/some-location2
       --enable-spark-ui: 'true'
       --spark-event-logs-path: s3://some-bucket/spark-event-logs-path/JobTwo/
     allocatedCapacity: 20
-    # (Optional) List of all the helper scripts reference in main glue ETL script. 
-    # All these helper scripts will be grouped at immediate parent directory level, which will result in dedicated zip. 
+    # (Optional) List of all the helper scripts reference in main glue ETL script.
+    # All these helper scripts will be grouped at immediate parent directory level, which will result in dedicated zip.
     # After deployment, they will be alongside the main script. Hence, must be referenced by file names directly from main glue script
     # Example (main.py)
     # from core import core_function1, core_function2;
     # from helper_etl import helper_function1, helper_function2;
     additionalScripts:
-      - ./src/glue/helper_etl.py    
-      - ./src/glue/utils/core.py    
+      - ./src/glue/python/helper_etl.py
+      - ./src/glue/python/utils/core.py
+    # (Optional) List of additional files which will be available to the Glue Job next to the main script
+    additionalFiles:
+      - ./src/glue/scala/extra_file.txt
+
+  # Job definitions below
+  ScalaJobOne: # Job Name
+    template: 'ExampleScalaTemplate' # Reference a job template.
+    description: testing
+    defaultArguments:
+      --class: some.java.package.App
+    allocatedCapacity: 2
+    command:
+      # (required) Either of "glueetl" | "pythonshell"
+      name: 'glueetl'
+      # (required) Path to a script file relative to the configuration.
+      scriptLocation: ./src/glue/scala/App.scala
+    # (Optional) List of additional files which will be available to the Glue Job next to the main script
+    additionalFiles:
+      - ./src/glue/scala/extra_file.txt
+    # (Optional) List of additional jars which will be loaded into the Spark driver and executor JVMs for use
+    # within the Scala script
+    additionalJars:
+      - ./src/glue/scala/lib/extra.jar
 ```
