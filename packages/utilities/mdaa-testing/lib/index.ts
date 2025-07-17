@@ -4,3 +4,5 @@
  */
 
 export * from './test-app';
+export * from './snapshot-test';
+export * from './mdaa-test-helpers';

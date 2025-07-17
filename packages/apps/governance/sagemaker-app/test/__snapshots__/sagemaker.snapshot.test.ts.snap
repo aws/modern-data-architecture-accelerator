@@ -1,0 +1,4659 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
+{
+  "test-org-test-env-test-domain-test-sagemaker-main": {
+    "Description": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Mappings": {
+      "LatestNodeRuntimeMap": {
+        "af-south-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-east-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-east-2": {
+          "value": "nodejs22.x",
+        },
+        "ap-northeast-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-northeast-2": {
+          "value": "nodejs22.x",
+        },
+        "ap-northeast-3": {
+          "value": "nodejs22.x",
+        },
+        "ap-south-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-south-2": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-2": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-3": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-4": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-5": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-7": {
+          "value": "nodejs22.x",
+        },
+        "ca-central-1": {
+          "value": "nodejs22.x",
+        },
+        "ca-west-1": {
+          "value": "nodejs22.x",
+        },
+        "cn-north-1": {
+          "value": "nodejs22.x",
+        },
+        "cn-northwest-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-central-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-central-2": {
+          "value": "nodejs22.x",
+        },
+        "eu-isoe-west-1": {
+          "value": "nodejs18.x",
+        },
+        "eu-north-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-south-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-south-2": {
+          "value": "nodejs22.x",
+        },
+        "eu-west-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-west-2": {
+          "value": "nodejs22.x",
+        },
+        "eu-west-3": {
+          "value": "nodejs22.x",
+        },
+        "il-central-1": {
+          "value": "nodejs22.x",
+        },
+        "me-central-1": {
+          "value": "nodejs22.x",
+        },
+        "me-south-1": {
+          "value": "nodejs22.x",
+        },
+        "mx-central-1": {
+          "value": "nodejs22.x",
+        },
+        "sa-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-east-2": {
+          "value": "nodejs22.x",
+        },
+        "us-gov-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-gov-west-1": {
+          "value": "nodejs22.x",
+        },
+        "us-iso-east-1": {
+          "value": "nodejs18.x",
+        },
+        "us-iso-west-1": {
+          "value": "nodejs18.x",
+        },
+        "us-isob-east-1": {
+          "value": "nodejs18.x",
+        },
+        "us-isob-west-1": {
+          "value": "nodejs18.x",
+        },
+        "us-west-1": {
+          "value": "nodejs22.x",
+        },
+        "us-west-2": {
+          "value": "nodejs22.x",
+        },
+      },
+    },
+    "Outputs": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:lambda:envblueprintconfighandler:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:lambda:envblueprintconfighandler:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:admin-user:testdomain:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Id",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:testorgtestenvtestdomaintestsagemakermainkmsusagetestdomain:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:testorgtestenvtestdomaintestsagemakermainkmsusagetestdomain:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:domain:testdomain:config",
+        },
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "{"domainId":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Id",
+                ],
+              },
+              "","domainArn":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "","adminUserProfileId":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Id",
+                ],
+              },
+              "","datalakeEnvBlueprintId":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "id",
+                ],
+              },
+              "","domainVersion":"V2","domainKmsKeyArn":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "","glueCatalogKmsKeyArns":["test-associated-glue-catalog-key-arn","test-glue-catalog-key-arn"],"domainKmsUsagePolicyName":"test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain"}",
+            ],
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:role:service:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:role:service:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:role:service:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:kms:testdomain:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:kms:testdomain:id",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:role:testdomainexecutionrole:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:role:testdomainexecutionrole:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-main:role:testdomainexecutionrole:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+    },
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+    },
+    "Resources": {
+      "RoleResadmin": {
+        "DeletionPolicy": "Delete",
+        "Properties": {
+          "ServiceToken": {
+            "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "roleRef": {
+            "name": "Admin",
+            "refId": "admin",
+          },
+        },
+        "Type": "AWS::CloudFormation::CustomResource",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-sagemaker-main/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.0.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "Environment": {
+            "Variables": {
+              "LOG_LEVEL": "INFO",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee",
+          "Handler": "blueprint_configuration.lambda_handler",
+          "Role": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Runtime": "python3.13",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Timeout": 120,
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/lambda/envblueprintconfig-handler/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/lambda/envblueprintconfig-handler/name",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] PutEnvironmentBlueprintConfiguration does not take a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html ",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "datazone:PutEnvironmentBlueprintConfiguration",
+                  "datazone:ListEnvironmentBlueprints",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "EnvBlueprintConfig-handler",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "logs:PutLogEvents",
+                  "logs:CreateLogStream",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee*",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Action": "logs:CreateLogGroup",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee*",
+                    ],
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Lambda function Runtime set by CDK Provider Framework",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-sagemaker-main/custom-EnvBlueprintConfig-provider)",
+          "Environment": {
+            "Variables": {
+              "USER_ON_EVENT_FUNCTION_ARN": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd",
+          "Handler": "framework.onEvent",
+          "Role": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Runtime": {
+            "Fn::FindInMap": [
+              "LatestNodeRuntimeMap",
+              {
+                "Ref": "AWS::Region",
+              },
+              "value",
+            ],
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Timeout": 900,
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Description": "CR Role",
+          "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "logs:PutLogEvents",
+                  "logs:CreateLogStream",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd*",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Action": "logs:CreateLogGroup",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd*",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Action": "lambda:InvokeFunction",
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        {
+                          "Fn::GetAtt": [
+                            "REPLACED-CFN-LOGICAL-ID",
+                            "Arn",
+                          ],
+                        },
+                        ":*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+              {
+                "Action": "lambda:GetFunction",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/admin-user/test-domain/id",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Tier": "Advanced",
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Id",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "test-org-test-env-test-domain-test-sagemaker-main-domain-config-ssm",
+          "Principals": [
+            "1234567890",
+          ],
+          "ResourceArns": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":ssm:",
+                  {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":parameter",
+                  {
+                    "Ref": "REPLACED-CFN-LOGICAL-ID",
+                  },
+                ],
+              ],
+            },
+          ],
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::RAM::ResourceShare",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:GenerateDataKey",
+                ],
+                "Condition": {
+                  "ForAnyValue:StringEquals": {
+                    "kms:EncryptionContextKeys": "aws:datazone:domainId",
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "Sid": "DomainKmsDecrypt",
+              },
+              {
+                "Action": "kms:CreateGrant",
+                "Condition": {
+                  "Bool": {
+                    "kms:GrantIsForAWSResource": "true",
+                  },
+                  "ForAnyValue:StringEquals": {
+                    "kms:EncryptionContextKeys": "aws:datazone:domainId",
+                  },
+                  "StringLike": {
+                    "kms:CallerAccount": {
+                      "Ref": "AWS::Region",
+                    },
+                    "kms:ViaService": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "datazone.",
+                          {
+                            "Ref": "AWS::AccountId",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "Sid": "DomainKmsGrant",
+              },
+              {
+                "Action": "kms:DescribeKey",
+                "Effect": "Allow",
+                "Resource": [
+                  "test-associated-glue-catalog-key-arn",
+                  "test-glue-catalog-key-arn",
+                ],
+                "Sid": "GlueKmsDescribe",
+              },
+              {
+                "Action": "kms:Decrypt",
+                "Condition": {
+                  "StringEquals": {
+                    "kms:EncryptionContext:glue_catalog_id": [
+                      "1234567890",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": [
+                  "test-associated-glue-catalog-key-arn",
+                  "test-glue-catalog-key-arn",
+                ],
+                "Sid": "GlueKmsDecrypt",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain/name",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": {
+            "Fn::Join": [
+              "",
+              [
+                "DataZone-test-org-test-env-test-domain-test-sagemaker-main-",
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Id",
+                  ],
+                },
+              ],
+            ],
+          },
+          "PermissionArns": [
+            "arn:aws:ram::aws:permission/AWSRAMDefaultPermissionAmazonDataZoneDomain",
+          ],
+          "Principals": [
+            "1234567890",
+          ],
+          "ResourceArns": [
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          ],
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::RAM::ResourceShare",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/domain/test-domain/config",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Tier": "Advanced",
+          "Type": "String",
+          "Value": {
+            "Fn::Join": [
+              "",
+              [
+                "{"domainId":"",
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Id",
+                  ],
+                },
+                "","domainArn":"",
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "","adminUserProfileId":"",
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Id",
+                  ],
+                },
+                "","datalakeEnvBlueprintId":"",
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "id",
+                  ],
+                },
+                "","domainVersion":"V2","domainKmsKeyArn":"",
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "","glueCatalogKmsKeyArns":["test-associated-glue-catalog-key-arn","test-glue-catalog-key-arn"],"domainKmsUsagePolicyName":"test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain"}",
+              ],
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Properties": {
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "domainIdentifier": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Id",
+            ],
+          },
+          "domainVersion": "V2",
+          "enabledRegions": [
+            {
+              "Ref": "AWS::Region",
+            },
+          ],
+        },
+        "Type": "Custom::EnvBlueprintConfig",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Condition": {
+                  "StringEquals": {
+                    "aws:SourceAccount": {
+                      "Ref": "AWS::AccountId",
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "datazone.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-service",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:GenerateDataKey",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/role/service/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/role/service/id",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "RoleId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/role/service/name",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "DomainIdentifier": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Id",
+            ],
+          },
+          "Status": "ACTIVATED",
+          "UserIdentifier": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::1234567890:role/cdk-hnb659fds-cfn-exec-role-1234567890-",
+                {
+                  "Ref": "AWS::Region",
+                },
+              ],
+            ],
+          },
+          "UserType": "IAM_ROLE",
+        },
+        "Type": "AWS::DataZone::UserProfile",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "DomainIdentifier": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Id",
+            ],
+          },
+          "Status": "ACTIVATED",
+          "UserIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResadmin",
+              "arn",
+            ],
+          },
+          "UserType": "IAM_ROLE",
+        },
+        "Type": "AWS::DataZone::UserProfile",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "AliasName": "alias/test-org-test-env-test-domain-test-sagemaker-main-test-domain",
+          "TargetKeyId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::KMS::Alias",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Retain",
+        "Properties": {
+          "EnableKeyRotation": true,
+          "Enabled": true,
+          "KeyPolicy": {
+            "Statement": [
+              {
+                "Action": "kms:*",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":iam::",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":root",
+                      ],
+                    ],
+                  },
+                },
+                "Resource": "*",
+              },
+              {
+                "Action": [
+                  "kms:Create*",
+                  "kms:Describe*",
+                  "kms:Enable*",
+                  "kms:List*",
+                  "kms:Put*",
+                  "kms:Update*",
+                  "kms:Revoke*",
+                  "kms:Disable*",
+                  "kms:Get*",
+                  "kms:Delete*",
+                  "kms:TagResource",
+                  "kms:UntagResource",
+                  "kms:ScheduleKeyDeletion",
+                  "kms:CancelKeyDeletion",
+                ],
+                "Condition": {
+                  "StringLike": {
+                    "aws:userId": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            {
+                              "Fn::GetAtt": [
+                                "RoleResadmin",
+                                "id",
+                              ],
+                            },
+                            ":*",
+                          ],
+                        ],
+                      },
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "test-org-test-env-test-domain-test-sagemaker-main-usage-stmt",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                  "kms:DescribeKey",
+                  "kms:CreateGrant",
+                ],
+                "Condition": {
+                  "StringEquals": {
+                    "kms:CallerAccount": "1234567890",
+                    "kms:ViaService": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "datazone.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                  "kms:DescribeKey",
+                  "kms:CreateGrant",
+                ],
+                "Condition": {
+                  "StringEquals": {
+                    "kms:CallerAccount": {
+                      "Ref": "AWS::AccountId",
+                    },
+                    "kms:ViaService": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "datazone.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::KMS::Key",
+        "UpdateReplacePolicy": "Retain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/kms/test-domain/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/kms/test-domain/id",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "DataZone Domain Description",
+          "DomainExecutionRole": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "DomainVersion": "V2",
+          "KmsKeyIdentifier": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Name": "test-org-test-env-test-domain-test-sagemaker-main-test-domain",
+          "ServiceRole": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "SingleSignOn": {
+            "Type": "IAM_IDC",
+            "UserAssignment": "MANUAL",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::DataZone::Domain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:GenerateDataKey",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Condition": {
+                  "ForAllValues:StringLike": {
+                    "aws:TagKeys": "datazone*",
+                  },
+                  "StringEquals": {
+                    "aws:SourceAccount": {
+                      "Ref": "AWS::AccountId",
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "datazone.amazonaws.com",
+                },
+              },
+              {
+                "Action": "sts:TagSession",
+                "Condition": {
+                  "ForAllValues:StringLike": {
+                    "aws:TagKeys": "datazone*",
+                  },
+                  "StringEquals": {
+                    "aws:SourceAccount": {
+                      "Ref": "AWS::AccountId",
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "datazone.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "ManagedPolicyArns": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::aws:policy/service-role/SageMakerStudioDomainExecutionRolePolicy",
+                ],
+              ],
+            },
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+          "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-test--7016a8a2",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "sagemaker",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-sagemaker-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/role/test-domain-execution-role/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/role/test-domain-execution-role/id",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "RoleId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-main/role/test-domain-execution-role/name",
+          "Tags": {
+            "mdaa_cdk_app": "sagemaker",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+    },
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
+{
+  "Description": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Mappings": {
+    "LatestNodeRuntimeMap": {
+      "af-south-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-east-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-east-2": {
+        "value": "nodejs22.x",
+      },
+      "ap-northeast-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-northeast-2": {
+        "value": "nodejs22.x",
+      },
+      "ap-northeast-3": {
+        "value": "nodejs22.x",
+      },
+      "ap-south-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-south-2": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-2": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-3": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-4": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-5": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-7": {
+        "value": "nodejs22.x",
+      },
+      "ca-central-1": {
+        "value": "nodejs22.x",
+      },
+      "ca-west-1": {
+        "value": "nodejs22.x",
+      },
+      "cn-north-1": {
+        "value": "nodejs22.x",
+      },
+      "cn-northwest-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-central-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-central-2": {
+        "value": "nodejs22.x",
+      },
+      "eu-isoe-west-1": {
+        "value": "nodejs18.x",
+      },
+      "eu-north-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-south-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-south-2": {
+        "value": "nodejs22.x",
+      },
+      "eu-west-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-west-2": {
+        "value": "nodejs22.x",
+      },
+      "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "il-central-1": {
+        "value": "nodejs22.x",
+      },
+      "me-central-1": {
+        "value": "nodejs22.x",
+      },
+      "me-south-1": {
+        "value": "nodejs22.x",
+      },
+      "mx-central-1": {
+        "value": "nodejs22.x",
+      },
+      "sa-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-east-2": {
+        "value": "nodejs22.x",
+      },
+      "us-gov-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-gov-west-1": {
+        "value": "nodejs22.x",
+      },
+      "us-iso-east-1": {
+        "value": "nodejs18.x",
+      },
+      "us-iso-west-1": {
+        "value": "nodejs18.x",
+      },
+      "us-isob-east-1": {
+        "value": "nodejs18.x",
+      },
+      "us-isob-west-1": {
+        "value": "nodejs18.x",
+      },
+      "us-west-1": {
+        "value": "nodejs22.x",
+      },
+      "us-west-2": {
+        "value": "nodejs22.x",
+      },
+    },
+  },
+  "Outputs": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:lambda:envblueprintconfighandler:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:lambda:envblueprintconfighandler:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:admin-user:testdomain:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Id",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:testorgtestenvtestdomaintestsagemakermainkmsusagetestdomain:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:managed-policy:testorgtestenvtestdomaintestsagemakermainkmsusagetestdomain:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:domain:testdomain:config",
+      },
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "{"domainId":"",
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Id",
+              ],
+            },
+            "","domainArn":"",
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+            "","adminUserProfileId":"",
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Id",
+              ],
+            },
+            "","datalakeEnvBlueprintId":"",
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "id",
+              ],
+            },
+            "","domainVersion":"V2","domainKmsKeyArn":"",
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+            "","glueCatalogKmsKeyArns":["test-associated-glue-catalog-key-arn","test-glue-catalog-key-arn"],"domainKmsUsagePolicyName":"test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain"}",
+          ],
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:role:service:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:role:service:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "RoleId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:role:service:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:kms:testdomain:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:kms:testdomain:id",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:role:testdomainexecutionrole:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:role:testdomainexecutionrole:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "RoleId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-main:role:testdomainexecutionrole:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "RoleResadmin": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "roleRef": {
+          "name": "Admin",
+          "refId": "admin",
+        },
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-sagemaker-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.0.0",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee",
+        "Handler": "blueprint_configuration.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Timeout": 120,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/lambda/envblueprintconfig-handler/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/lambda/envblueprintconfig-handler/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] PutEnvironmentBlueprintConfiguration does not take a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html ",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "datazone:PutEnvironmentBlueprintConfiguration",
+                "datazone:ListEnvironmentBlueprints",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "EnvBlueprintConfig-handler",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Lambda function Runtime set by CDK Provider Framework",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-sagemaker-main/custom-EnvBlueprintConfig-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd",
+        "Handler": "framework.onEvent",
+        "Role": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Runtime": {
+          "Fn::FindInMap": [
+            "LatestNodeRuntimeMap",
+            {
+              "Ref": "AWS::Region",
+            },
+            "value",
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "REPLACED-CFN-LOGICAL-ID",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/admin-user/test-domain/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Id",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-sagemaker-main-domain-config-ssm",
+        "Principals": [
+          "1234567890",
+        ],
+        "ResourceArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":ssm:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ":",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":parameter",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::RAM::ResourceShare",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey",
+              ],
+              "Condition": {
+                "ForAnyValue:StringEquals": {
+                  "kms:EncryptionContextKeys": "aws:datazone:domainId",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "Sid": "DomainKmsDecrypt",
+            },
+            {
+              "Action": "kms:CreateGrant",
+              "Condition": {
+                "Bool": {
+                  "kms:GrantIsForAWSResource": "true",
+                },
+                "ForAnyValue:StringEquals": {
+                  "kms:EncryptionContextKeys": "aws:datazone:domainId",
+                },
+                "StringLike": {
+                  "kms:CallerAccount": {
+                    "Ref": "AWS::Region",
+                  },
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "datazone.",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ".amazonaws.com",
+                      ],
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "Sid": "DomainKmsGrant",
+            },
+            {
+              "Action": "kms:DescribeKey",
+              "Effect": "Allow",
+              "Resource": [
+                "test-associated-glue-catalog-key-arn",
+                "test-glue-catalog-key-arn",
+              ],
+              "Sid": "GlueKmsDescribe",
+            },
+            {
+              "Action": "kms:Decrypt",
+              "Condition": {
+                "StringEquals": {
+                  "kms:EncryptionContext:glue_catalog_id": [
+                    "1234567890",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Resource": [
+                "test-associated-glue-catalog-key-arn",
+                "test-glue-catalog-key-arn",
+              ],
+              "Sid": "GlueKmsDecrypt",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/managed-policy/test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              "DataZone-test-org-test-env-test-domain-test-sagemaker-main-",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Id",
+                ],
+              },
+            ],
+          ],
+        },
+        "PermissionArns": [
+          "arn:aws:ram::aws:permission/AWSRAMDefaultPermissionAmazonDataZoneDomain",
+        ],
+        "Principals": [
+          "1234567890",
+        ],
+        "ResourceArns": [
+          {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::RAM::ResourceShare",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/domain/test-domain/config",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Tier": "Advanced",
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "{"domainId":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Id",
+                ],
+              },
+              "","domainArn":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "","adminUserProfileId":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Id",
+                ],
+              },
+              "","datalakeEnvBlueprintId":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "id",
+                ],
+              },
+              "","domainVersion":"V2","domainKmsKeyArn":"",
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "","glueCatalogKmsKeyArns":["test-associated-glue-catalog-key-arn","test-glue-catalog-key-arn"],"domainKmsUsagePolicyName":"test-org-test-env-test-domain-test-sagemaker-main-kms-usage-test-domain"}",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "domainIdentifier": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Id",
+          ],
+        },
+        "domainVersion": "V2",
+        "enabledRegions": [
+          {
+            "Ref": "AWS::Region",
+          },
+        ],
+      },
+      "Type": "Custom::EnvBlueprintConfig",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": {
+                    "Ref": "AWS::AccountId",
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "datazone.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-service",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/role/service/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/role/service/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/role/service/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Id",
+          ],
+        },
+        "Status": "ACTIVATED",
+        "UserIdentifier": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":iam::1234567890:role/cdk-hnb659fds-cfn-exec-role-1234567890-",
+              {
+                "Ref": "AWS::Region",
+              },
+            ],
+          ],
+        },
+        "UserType": "IAM_ROLE",
+      },
+      "Type": "AWS::DataZone::UserProfile",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "DomainIdentifier": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Id",
+          ],
+        },
+        "Status": "ACTIVATED",
+        "UserIdentifier": {
+          "Fn::GetAtt": [
+            "RoleResadmin",
+            "arn",
+          ],
+        },
+        "UserType": "IAM_ROLE",
+      },
+      "Type": "AWS::DataZone::UserProfile",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-sagemaker-main-test-domain",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::KMS::Alias",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion",
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RoleResadmin",
+                              "id",
+                            ],
+                          },
+                          ":*",
+                        ],
+                      ],
+                    },
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-sagemaker-main-usage-stmt",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey",
+                "kms:CreateGrant",
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": "1234567890",
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "datazone.",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ".amazonaws.com",
+                      ],
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey",
+                "kms:CreateGrant",
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": {
+                    "Ref": "AWS::AccountId",
+                  },
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "datazone.",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ".amazonaws.com",
+                      ],
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/kms/test-domain/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/kms/test-domain/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "DataZone Domain Description",
+        "DomainExecutionRole": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "DomainVersion": "V2",
+        "KmsKeyIdentifier": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Name": "test-org-test-env-test-domain-test-sagemaker-main-test-domain",
+        "ServiceRole": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "SingleSignOn": {
+          "Type": "IAM_IDC",
+          "UserAssignment": "MANUAL",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::DataZone::Domain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "ForAllValues:StringLike": {
+                  "aws:TagKeys": "datazone*",
+                },
+                "StringEquals": {
+                  "aws:SourceAccount": {
+                    "Ref": "AWS::AccountId",
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "datazone.amazonaws.com",
+              },
+            },
+            {
+              "Action": "sts:TagSession",
+              "Condition": {
+                "ForAllValues:StringLike": {
+                  "aws:TagKeys": "datazone*",
+                },
+                "StringEquals": {
+                  "aws:SourceAccount": {
+                    "Ref": "AWS::AccountId",
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "datazone.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/SageMakerStudioDomainExecutionRolePolicy",
+              ],
+            ],
+          },
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-sagemaker-main-test--7016a8a2",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "sagemaker",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-sagemaker-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/role/test-domain-execution-role/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/role/test-domain-execution-role/id",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-main/role/test-domain-execution-role/name",
+        "Tags": {
+          "mdaa_cdk_app": "sagemaker",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

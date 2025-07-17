@@ -1,0 +1,5621 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
+{
+  "test-org-test-env-test-domain-test-lambda-main": {
+    "Description": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Outputs": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:security-group:testfunvpcsg:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "GroupId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testdockerfunctiondlq:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testdockerfunctiondlq:name",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testdockerfunctiondlq:url",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfuneventsdlq:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfuneventsdlq:name",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfuneventsdlq:url",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfundlq:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfundlq:name",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfundlq:url",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcexistingsgdlq:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcexistingsgdlq:name",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcexistingsgdlq:url",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcdlq:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcdlq:name",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcdlq:url",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testlayerfunctiondlq:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testlayerfunctiondlq:name",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:queue:testlayerfunctiondlq:url",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testdockerfunction:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testdockerfunction:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testfun:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testfun:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpcexistingsg:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpcexistingsg:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpc:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpc:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testlayerfunction:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lambda-main:lambda:testlayerfunction:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+    },
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/sample-org/instance1/generated-role/lambda/arn",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/deploymentRole/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/kmsArn/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/projectBucket/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/projectTopicArn/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/securityConfiguration/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityGroupIdtestsecuritygroupC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/securityGroupId/test-security-group",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+    },
+    "Resources": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-lambda-main/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.0.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "GroupDescription": "test-org-test-env-test-domain-test-lambda-main/construct/ec2/testfunvpc-sg",
+          "GroupName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc-sg",
+          "SecurityGroupEgress": [
+            {
+              "CidrIp": "255.255.255.255/32",
+              "Description": "Disallow all traffic",
+              "FromPort": 252,
+              "IpProtocol": "icmp",
+              "ToPort": 86,
+            },
+          ],
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "VpcId": "some-vpc-id",
+        },
+        "Type": "AWS::EC2::SecurityGroup",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/security-group/testfunvpc-sg/id",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "GroupId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "CidrIp": "10.0.0.0/8",
+          "Description": "to 10.0.0.0/8:tcp PORT 443",
+          "FromPort": 443,
+          "GroupId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "GroupId",
+            ],
+          },
+          "IpProtocol": "tcp",
+          "ToPort": 443,
+        },
+        "Type": "AWS::EC2::SecurityGroupEgress",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "to sg-12312412412:tcp PORT 443",
+          "DestinationSecurityGroupId": "sg-12312412412",
+          "FromPort": 443,
+          "GroupId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "GroupId",
+            ],
+          },
+          "IpProtocol": "tcp",
+          "ToPort": 443,
+        },
+        "Type": "AWS::EC2::SecurityGroupEgress",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "to some-prefixlist-id:tcp PORT 443",
+          "DestinationPrefixListId": "some-prefixlist-id",
+          "FromPort": 443,
+          "GroupId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "GroupId",
+            ],
+          },
+          "IpProtocol": "tcp",
+          "ToPort": 443,
+        },
+        "Type": "AWS::EC2::SecurityGroupEgress",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "QueueName": "test-org-test-env-test-domain-test-lambda-main-testdockerfunction-dlq",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::Queue",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sqs:*",
+                "Condition": {
+                  "Bool": {
+                    "aws:SecureTransport": "false",
+                  },
+                },
+                "Effect": "Deny",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "EnforceSSL",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                },
+                "Resource": "*",
+                "Sid": "SendMessage",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Queues": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::QueuePolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testdockerfunction-dlq/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testdockerfunction-dlq/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "QueueName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testdockerfunction-dlq/url",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfun-dlq",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::Queue",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sqs:*",
+                "Condition": {
+                  "Bool": {
+                    "aws:SecureTransport": "false",
+                  },
+                },
+                "Effect": "Deny",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "EnforceSSL",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                },
+                "Resource": "*",
+                "Sid": "SendMessage",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Queues": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::QueuePolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfun-events-dlq",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::Queue",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sqs:*",
+                "Condition": {
+                  "Bool": {
+                    "aws:SecureTransport": "false",
+                  },
+                },
+                "Effect": "Deny",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "EnforceSSL",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Condition": {
+                  "ArnEquals": {
+                    "aws:SourceArn": {
+                      "Fn::GetAtt": [
+                        "REPLACED-CFN-LOGICAL-ID",
+                        "Arn",
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "events.amazonaws.com",
+                },
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "Sid": "REPLACED-CFN-LOGICAL-ID",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Condition": {
+                  "ArnEquals": {
+                    "aws:SourceArn": {
+                      "Fn::GetAtt": [
+                        "REPLACED-CFN-LOGICAL-ID",
+                        "Arn",
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "events.amazonaws.com",
+                },
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "Sid": "REPLACED-CFN-LOGICAL-ID",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Condition": {
+                  "ArnEquals": {
+                    "aws:SourceArn": {
+                      "Fn::GetAtt": [
+                        "REPLACED-CFN-LOGICAL-ID",
+                        "Arn",
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "events.amazonaws.com",
+                },
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "Sid": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Queues": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::QueuePolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-events-dlq/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-events-dlq/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "QueueName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-events-dlq/url",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-dlq/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-dlq/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "QueueName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-dlq/url",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc-dlq",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::Queue",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sqs:*",
+                "Condition": {
+                  "Bool": {
+                    "aws:SecureTransport": "false",
+                  },
+                },
+                "Effect": "Deny",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "EnforceSSL",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                },
+                "Resource": "*",
+                "Sid": "SendMessage",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Queues": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::QueuePolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfunvpcexistingsg-dlq",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::Queue",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sqs:*",
+                "Condition": {
+                  "Bool": {
+                    "aws:SecureTransport": "false",
+                  },
+                },
+                "Effect": "Deny",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "EnforceSSL",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                },
+                "Resource": "*",
+                "Sid": "SendMessage",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Queues": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::QueuePolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpcexistingsg-dlq/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpcexistingsg-dlq/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "QueueName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpcexistingsg-dlq/url",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpc-dlq/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpc-dlq/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "QueueName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpc-dlq/url",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "QueueName": "test-org-test-env-test-domain-test-lambda-main-testlayerfunction-dlq",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::Queue",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sqs:*",
+                "Condition": {
+                  "Bool": {
+                    "aws:SecureTransport": "false",
+                  },
+                },
+                "Effect": "Deny",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "EnforceSSL",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                },
+                "Resource": "*",
+                "Sid": "SendMessage",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Queues": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::QueuePolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testlayerfunction-dlq/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testlayerfunction-dlq/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "QueueName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/queue/testlayerfunction-dlq/url",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "testing",
+          "EventBusName": "some-custom-name",
+          "EventPattern": {
+            "detail": {
+              "some_event_key": "some_event_value",
+            },
+            "source": [
+              "glue.amazonaws.com",
+            ],
+          },
+          "Name": "test-org-test-env-test-domain-test-lambda-main-testing--3a65ba03",
+          "State": "ENABLED",
+          "Targets": [
+            {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "DeadLetterConfig": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+              "Id": "Target0",
+              "RetryPolicy": {
+                "MaximumEventAgeInSeconds": 3600,
+                "MaximumRetryAttempts": 10,
+              },
+            },
+          ],
+        },
+        "Type": "AWS::Events::Rule",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Action": "lambda:InvokeFunction",
+          "FunctionName": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Principal": "events.amazonaws.com",
+          "SourceArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::Lambda::Permission",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Event Rule for triggering testfun-testing-event-bridge-s3 with S3 events",
+          "EventBusName": "some-custom-name",
+          "EventPattern": {
+            "detail": {
+              "bucket": {
+                "name": [
+                  "sample-org-dev-instance1-datalake-raw",
+                ],
+              },
+              "object": {
+                "key": [
+                  {
+                    "prefix": "data/test-lambda/",
+                  },
+                ],
+              },
+            },
+            "detail-type": [
+              "Object Created",
+            ],
+            "source": [
+              "aws.s3",
+            ],
+          },
+          "Name": "test-org-test-env-test-domain-test-lambda-main-testing--3bf753f0",
+          "State": "ENABLED",
+          "Targets": [
+            {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "DeadLetterConfig": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+              "Id": "Target0",
+              "RetryPolicy": {
+                "MaximumEventAgeInSeconds": 3600,
+                "MaximumRetryAttempts": 10,
+              },
+            },
+          ],
+        },
+        "Type": "AWS::Events::Rule",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Action": "lambda:InvokeFunction",
+          "FunctionName": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Principal": "events.amazonaws.com",
+          "SourceArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::Lambda::Permission",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "testing",
+          "Name": "test-org-test-env-test-domain-test-lambda-main-testing-e-6263c67",
+          "ScheduleExpression": "cron(0 20 * * ? *)",
+          "State": "ENABLED",
+          "Targets": [
+            {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "DeadLetterConfig": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+              "Id": "Target0",
+              "Input": "{"some-test-input-obj":{"some-test-input-key":"test-value"}}",
+              "RetryPolicy": {
+                "MaximumEventAgeInSeconds": 3600,
+                "MaximumRetryAttempts": 10,
+              },
+            },
+          ],
+        },
+        "Type": "AWS::Events::Rule",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Action": "lambda:InvokeFunction",
+          "FunctionName": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Principal": "events.amazonaws.com",
+          "SourceArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::Lambda::Permission",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Content": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "Description": "test layer",
+          "LayerName": "test-org-test-env-test-domain-test-lambda-main-test-layer",
+        },
+        "Type": "AWS::Lambda::LayerVersion",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "ImageUri": {
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:40294424e595f4b337d92397f1eece34292e419150c05d1111e896431b6f5140",
+            },
+          },
+          "DeadLetterConfig": {
+            "TargetArn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+          "Environment": {
+            "Variables": {
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testdock-5e6dbf4e",
+          "KmsKeyArn": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "PackageType": "Image",
+          "Role": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testdockerfunction/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testdockerfunction/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "FunctionName": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "MaximumEventAgeInSeconds": 3600,
+          "MaximumRetryAttempts": 2,
+          "Qualifier": "$LATEST",
+        },
+        "Type": "AWS::Lambda::EventInvokeConfig",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "DeadLetterConfig": {
+            "TargetArn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+          "Description": "Function descriptions",
+          "Environment": {
+            "Variables": {
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "env-var-name": "value",
+            },
+          },
+          "EphemeralStorage": {
+            "Size": 1024,
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfun",
+          "Handler": "test.lambda_handler",
+          "KmsKeyArn": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "MemorySize": 512,
+          "ReservedConcurrentExecutions": 100,
+          "Role": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "Runtime": "python3.8",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Timeout": 10,
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testfun/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testfun/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "DeadLetterConfig": {
+            "TargetArn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+          "Environment": {
+            "Variables": {
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc",
+          "Handler": "test.lambda_handler",
+          "KmsKeyArn": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "Role": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "Runtime": "python3.9",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "VpcConfig": {
+            "SecurityGroupIds": [
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "GroupId",
+                ],
+              },
+            ],
+            "SubnetIds": [
+              "some-subnet-id",
+            ],
+          },
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "DeadLetterConfig": {
+            "TargetArn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+          "Environment": {
+            "Variables": {
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunv--8d6e081",
+          "Handler": "test.lambda_handler",
+          "KmsKeyArn": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "Role": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "Runtime": "python3.9",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "VpcConfig": {
+            "SecurityGroupIds": [
+              {
+                "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityGroupIdtestsecuritygroupC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+            ],
+            "SubnetIds": [
+              "some-subnet-id",
+            ],
+          },
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpcexistingsg/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpcexistingsg/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpc/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpc/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "DeadLetterConfig": {
+            "TargetArn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+          "Environment": {
+            "Variables": {
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testlaye-5fa26813",
+          "Handler": "test.lambda_handler",
+          "KmsKeyArn": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "Layers": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+            "some-existing-layer-arn",
+          ],
+          "Role": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "Runtime": "python3.9",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-lambda",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lambda-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testlayerfunction/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lambda-main/lambda/testlayerfunction/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-lambda",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lambda-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+    },
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
+{
+  "Description": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Outputs": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:security-group:testfunvpcsg:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "GroupId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testdockerfunctiondlq:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testdockerfunctiondlq:name",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "QueueName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testdockerfunctiondlq:url",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfuneventsdlq:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfuneventsdlq:name",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "QueueName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfuneventsdlq:url",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfundlq:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfundlq:name",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "QueueName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfundlq:url",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcexistingsgdlq:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcexistingsgdlq:name",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "QueueName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcexistingsgdlq:url",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcdlq:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcdlq:name",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "QueueName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testfunvpcdlq:url",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testlayerfunctiondlq:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testlayerfunctiondlq:name",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "QueueName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:queue:testlayerfunctiondlq:url",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testdockerfunction:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testdockerfunction:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfun:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfun:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpcexistingsg:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpcexistingsg:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpc:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testfunvpc:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testlayerfunction:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lambda-main:lambda:testlayerfunction:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/sample-org/instance1/generated-role/lambda/arn",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/deploymentRole/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/kmsArn/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/projectBucket/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/projectTopicArn/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/securityConfiguration/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityGroupIdtestsecuritygroupC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/securityGroupId/test-security-group",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-lambda-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.0.0",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-lambda-main/construct/ec2/testfunvpc-sg",
+        "GroupName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc-sg",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "VpcId": "some-vpc-id",
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/security-group/testfunvpc-sg/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "CidrIp": "10.0.0.0/8",
+        "Description": "to 10.0.0.0/8:tcp PORT 443",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "to sg-12312412412:tcp PORT 443",
+        "DestinationSecurityGroupId": "sg-12312412412",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "to some-prefixlist-id:tcp PORT 443",
+        "DestinationPrefixListId": "some-prefixlist-id",
+        "FromPort": 443,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testdockerfunction-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+              },
+              "Resource": "*",
+              "Sid": "SendMessage",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testdockerfunction-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testdockerfunction-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testdockerfunction-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfun-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+              },
+              "Resource": "*",
+              "Sid": "SendMessage",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfun-events-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "Sid": "REPLACED-CFN-LOGICAL-ID",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "Sid": "REPLACED-CFN-LOGICAL-ID",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "Sid": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-events-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-events-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-events-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfun-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+              },
+              "Resource": "*",
+              "Sid": "SendMessage",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testfunvpcexistingsg-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+              },
+              "Resource": "*",
+              "Sid": "SendMessage",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpcexistingsg-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpcexistingsg-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpcexistingsg-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpc-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpc-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testfunvpc-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "QueueName": "test-org-test-env-test-domain-test-lambda-main-testlayerfunction-dlq",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+              },
+              "Resource": "*",
+              "Sid": "SendMessage",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testlayerfunction-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testlayerfunction-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/queue/testlayerfunction-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "testing",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "detail": {
+            "some_event_key": "some_event_value",
+          },
+          "source": [
+            "glue.amazonaws.com",
+          ],
+        },
+        "Name": "test-org-test-env-test-domain-test-lambda-main-testing--3a65ba03",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10,
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Event Rule for triggering testfun-testing-event-bridge-s3 with S3 events",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "detail": {
+            "bucket": {
+              "name": [
+                "sample-org-dev-instance1-datalake-raw",
+              ],
+            },
+            "object": {
+              "key": [
+                {
+                  "prefix": "data/test-lambda/",
+                },
+              ],
+            },
+          },
+          "detail-type": [
+            "Object Created",
+          ],
+          "source": [
+            "aws.s3",
+          ],
+        },
+        "Name": "test-org-test-env-test-domain-test-lambda-main-testing--3bf753f0",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10,
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "testing",
+        "Name": "test-org-test-env-test-domain-test-lambda-main-testing-e-6263c67",
+        "ScheduleExpression": "cron(0 20 * * ? *)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+            "Id": "Target0",
+            "Input": "{"some-test-input-obj":{"some-test-input-key":"test-value"}}",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10,
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Content": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "Description": "test layer",
+        "LayerName": "test-org-test-env-test-domain-test-lambda-main-test-layer",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "ImageUri": {
+            "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:40294424e595f4b337d92397f1eece34292e419150c05d1111e896431b6f5140",
+          },
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testdock-5e6dbf4e",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "PackageType": "Image",
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testdockerfunction/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testdockerfunction/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "FunctionName": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "MaximumEventAgeInSeconds": 3600,
+        "MaximumRetryAttempts": 2,
+        "Qualifier": "$LATEST",
+      },
+      "Type": "AWS::Lambda::EventInvokeConfig",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Description": "Function descriptions",
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "env-var-name": "value",
+          },
+        },
+        "EphemeralStorage": {
+          "Size": 1024,
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfun",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "MemorySize": 512,
+        "ReservedConcurrentExecutions": 100,
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "Runtime": "python3.8",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Timeout": 10,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfun/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfun/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "Runtime": "python3.9",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "VpcConfig": {
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": [
+            "some-subnet-id",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunv--8d6e081",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "Runtime": "python3.9",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "VpcConfig": {
+          "SecurityGroupIds": [
+            {
+              "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityGroupIdtestsecuritygroupC96584B6F00A464EAD1953AFF4B05118Parameter",
+            },
+          ],
+          "SubnetIds": [
+            "some-subnet-id",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpcexistingsg/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpcexistingsg/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpc/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testfunvpc/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testlaye-5fa26813",
+        "Handler": "test.lambda_handler",
+        "KmsKeyArn": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "Layers": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "some-existing-layer-arn",
+        ],
+        "Role": {
+          "Ref": "SsmParameterValuesampleorginstance1generatedrolelambdaarnC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "Runtime": "python3.9",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-lambda",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lambda-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testlayerfunction/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lambda-main/lambda/testlayerfunction/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-lambda",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lambda-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

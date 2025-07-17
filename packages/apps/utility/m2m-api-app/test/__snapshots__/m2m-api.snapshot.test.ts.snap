@@ -1,0 +1,4365 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
+{
+  "test-org-test-env-test-domain-test-m2m-main": {
+    "Description": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Outputs": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:loggroup:accesslogs:name",
+        },
+        "Value": "/test-org-test-env-test-domain-test-m2m-main-access-logs",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:cognito-userpool-domain-name:cognitouserpooldomainnameid:m2m-userpool-domain-id",
+        },
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "https://",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              ".auth.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazoncognito.com",
+            ],
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:cognito-userpool-id:m2mcognitouserpoolid:m2m-userpool-id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "ProviderName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:loggroup:defaultwaf:name",
+        },
+        "Value": "aws-waf-logs-/test-org-test-env-test-domain-test-m2m-main-default-waf",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:role:integration:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:role:integration:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:role:integration:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:kms:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:kms:id",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:lambda:logauthevent:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:lambda:logauthevent:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "https://",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              ".execute-api.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".",
+              {
+                "Ref": "AWS::URLSuffix",
+              },
+              "/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "/",
+            ],
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:rest-api-url:restapiuploadurl:rest-api-end-point-stage-url",
+        },
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "https://",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              ".execute-api.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".",
+              {
+                "Ref": "AWS::URLSuffix",
+              },
+              "/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "/prod",
+            ],
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:lambda:signeds3urlgen:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-m2m-main:lambda:signeds3urlgen:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+    },
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+    },
+    "Resources": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-m2m-main/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.0.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Retain",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+              {
+                "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+              {
+                "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsKeyId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "LogGroupName": "/test-org-test-env-test-domain-test-m2m-main-access-logs",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::Logs::LogGroup",
+        "UpdateReplacePolicy": "Retain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/loggroup/access-logs/name",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "/test-org-test-env-test-domain-test-m2m-main-access-logs",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Description": "Lambda Role for Cognito Auth Logger function",
+          "RoleName": "test-org-test-env-test-domain-test-m2m-main-cognito-auth",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "logs:PutLogEvents",
+                  "logs:CreateLogStream",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-m2m-main-log-auth-event*",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Action": "logs:CreateLogGroup",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-m2m-main-log-auth-event*",
+                    ],
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "AuthorizerResultTtlInSeconds": 0,
+          "IdentitySource": "method.request.header.Authorization",
+          "Name": "test-org-test-env-test-domain-test-m2m-main",
+          "ProviderARNs": [
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          ],
+          "RestApiId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "Type": "COGNITO_USER_POOLS",
+        },
+        "Type": "AWS::ApiGateway::Authorizer",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/cognito-userpool-domain-name/cognito-userpool-domain-name-id/m2m-userpool-domain-id",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Join": [
+              "",
+              [
+                "https://",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                ".auth.",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ".amazoncognito.com",
+              ],
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/cognito-userpool-id/m2m-cognito-userpool-id/m2m-userpool-id",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "ProviderName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "DefaultAction": {
+            "Block": {},
+          },
+          "Name": "test-org-test-env-test-domain-test-m2m-main-default-waf",
+          "Rules": [
+            {
+              "Action": {
+                "Allow": {},
+              },
+              "Name": "ipAllow",
+              "Priority": 0,
+              "Statement": {
+                "IPSetReferenceStatement": {
+                  "Arn": {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "VisibilityConfig": {
+                "CloudWatchMetricsEnabled": false,
+                "MetricName": "test-org-test-env-test-domain-test-m2m-main-ip-allow",
+                "SampledRequestsEnabled": false,
+              },
+            },
+          ],
+          "Scope": "REGIONAL",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "VisibilityConfig": {
+            "CloudWatchMetricsEnabled": true,
+            "MetricName": "test-org-test-env-test-domain-test-m2m-main",
+            "SampledRequestsEnabled": false,
+          },
+        },
+        "Type": "AWS::WAFv2::WebACL",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "ResourceArn": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                "::/restapis/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                "/stages/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "WebACLArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::WAFv2::WebACLAssociation",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "LogDestinationConfigs": [
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          ],
+          "ResourceArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::WAFv2::LoggingConfiguration",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Retain",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+              {
+                "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+              {
+                "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsKeyId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "LogGroupName": "aws-waf-logs-/test-org-test-env-test-domain-test-m2m-main-default-waf",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::Logs::LogGroup",
+        "UpdateReplacePolicy": "Retain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/loggroup/default-waf/name",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "aws-waf-logs-/test-org-test-env-test-domain-test-m2m-main-default-waf",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "apigateway.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "RoleName": "test-org-test-env-test-domain-test-m2m-main-integration",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": "lambda:InvokeFunction",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/role/integration/arn",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/role/integration/id",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "RoleId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/role/integration/name",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Addresses": [
+            "10.0.0.0/8",
+            "192.168.0.0/16",
+            "172.16.0.0/12",
+          ],
+          "IPAddressVersion": "IPV4",
+          "Name": "test-org-test-env-test-domain-test-m2m-main-ip-allow-set",
+          "Scope": "REGIONAL",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::WAFv2::IPSet",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Retain",
+        "Properties": {
+          "EnableKeyRotation": true,
+          "Enabled": true,
+          "KeyPolicy": {
+            "Statement": [
+              {
+                "Action": "kms:*",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":iam::",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":root",
+                      ],
+                    ],
+                  },
+                },
+                "Resource": "*",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                ],
+                "Condition": {
+                  "StringLike": {
+                    "aws:userId": [
+                      "test-admin-role-id:*",
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "test-org-test-env-test-domain-test-m2m-main-usage-stmt",
+              },
+              {
+                "Action": [
+                  "kms:Create*",
+                  "kms:Describe*",
+                  "kms:Enable*",
+                  "kms:List*",
+                  "kms:Put*",
+                  "kms:Update*",
+                  "kms:Revoke*",
+                  "kms:Disable*",
+                  "kms:Get*",
+                  "kms:Delete*",
+                  "kms:TagResource",
+                  "kms:UntagResource",
+                  "kms:ScheduleKeyDeletion",
+                  "kms:CancelKeyDeletion",
+                ],
+                "Condition": {
+                  "StringLike": {
+                    "aws:userId": [
+                      "test-admin-role-id:*",
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "test-org-test-env-test-domain-test-m2m-main-usage-stmt",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                ],
+                "Condition": {
+                  "ArnEquals": {
+                    "kms:EncryptionContext:aws:logs:arn": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":logs:",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ":",
+                          {
+                            "Ref": "AWS::AccountId",
+                          },
+                          ":log-group:*",
+                        ],
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "logs.",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ".amazonaws.com",
+                      ],
+                    ],
+                  },
+                },
+                "Resource": "*",
+                "Sid": "CloudWatchLogsEncryption",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::KMS::Key",
+        "UpdateReplacePolicy": "Retain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "AliasName": "alias/test-org-test-env-test-domain-test-m2m-main",
+          "TargetKeyId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::KMS::Alias",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/kms/arn",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/kms/id",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "ZipFile": "
+                const handler = async function(event) {
+                    console.log("Authentication successful");
+                    console.log("Trigger function =", event.triggerSource);
+                    console.log("User pool = ", event.userPoolId);
+                    console.log("App client ID = ", event.callerContext.clientId);
+                    console.log("User ID = ", event.userName);
+                    return event;
+                };
+                exports.handler = handler;
+                ",
+          },
+          "Environment": {
+            "Variables": {
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-m2m-main-log-auth-event",
+          "Handler": "index.handler",
+          "Role": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Runtime": "nodejs22.x",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/lambda/log-auth-event/arn",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/lambda/log-auth-event/name",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "m2mapirestapiDeployment58E38CDEba6a398e238f2487155fb959927b98fb": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-APIGWSSLEnabled",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+              },
+              {
+                "id": "HIPAA.Security-APIGWSSLEnabled",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+              },
+              {
+                "id": "PCI.DSS.321-APIGWSSLEnabled",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-APIGWCacheEnabledAndEncrypted",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+              },
+              {
+                "id": "HIPAA.Security-APIGWCacheEnabledAndEncrypted",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+              },
+              {
+                "id": "PCI.DSS.321-APIGWCacheEnabledAndEncrypted",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Description": "REST API to endpoint to proxy an S3 Signed URL generation Lambda",
+          "RestApiId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::ApiGateway::Deployment",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-APIGWSSLEnabled",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+              },
+              {
+                "id": "HIPAA.Security-APIGWSSLEnabled",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+              },
+              {
+                "id": "PCI.DSS.321-APIGWSSLEnabled",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-APIGWCacheEnabledAndEncrypted",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+              },
+              {
+                "id": "HIPAA.Security-APIGWCacheEnabledAndEncrypted",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+              },
+              {
+                "id": "PCI.DSS.321-APIGWCacheEnabledAndEncrypted",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AccessLogSetting": {
+            "DestinationArn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+            "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","user":"$context.identity.user","caller":"$context.identity.caller","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}",
+          },
+          "DeploymentId": {
+            "Ref": "m2mapirestapiDeployment58E38CDEba6a398e238f2487155fb959927b98fb",
+          },
+          "MethodSettings": [
+            {
+              "CacheDataEncrypted": false,
+              "CachingEnabled": false,
+              "DataTraceEnabled": false,
+              "HttpMethod": "*",
+              "LoggingLevel": "INFO",
+              "ResourcePath": "/*",
+            },
+          ],
+          "RestApiId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "StageName": "prod",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "TracingEnabled": true,
+        },
+        "Type": "AWS::ApiGateway::Stage",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-APIGWSSLEnabled",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+              },
+              {
+                "id": "HIPAA.Security-APIGWSSLEnabled",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+              },
+              {
+                "id": "PCI.DSS.321-APIGWSSLEnabled",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-APIGWCacheEnabledAndEncrypted",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+              },
+              {
+                "id": "HIPAA.Security-APIGWCacheEnabledAndEncrypted",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+              },
+              {
+                "id": "PCI.DSS.321-APIGWCacheEnabledAndEncrypted",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Description": "REST API to endpoint to proxy an S3 Signed URL generation Lambda",
+          "Name": "test-org-test-env-test-domain-test-m2m-main",
+          "Policy": {
+            "Statement": [
+              {
+                "Action": "execute-api:Invoke",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "execute-api:/prod/GET/upload*",
+              },
+              {
+                "Action": "execute-api:Invoke",
+                "Condition": {
+                  "NotIpAddress": {
+                    "aws:SourceIp": [
+                      "10.0.0.0/8",
+                      "192.168.0.0/16",
+                      "172.16.0.0/12",
+                    ],
+                  },
+                },
+                "Effect": "Deny",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "execute-api:/prod/GET/upload*",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::ApiGateway::RestApi",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "ParentId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "RootResourceId",
+            ],
+          },
+          "PathPart": "upload",
+          "RestApiId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::ApiGateway::Resource",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "ParentId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "PathPart": "{proxy+}",
+          "RestApiId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::ApiGateway::Resource",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "AuthorizationScopes": [
+            "m2m-api/m2m-custom",
+          ],
+          "AuthorizationType": "COGNITO_USER_POOLS",
+          "AuthorizerId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "HttpMethod": "GET",
+          "Integration": {
+            "Credentials": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+            "IntegrationHttpMethod": "POST",
+            "RequestParameters": {
+              "integration.request.querystring.test_opt_param": "method.request.querystring.test_opt_param",
+              "integration.request.querystring.test_required_param": "method.request.querystring.test_required_param",
+            },
+            "Type": "AWS_PROXY",
+            "Uri": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":apigateway:",
+                  {
+                    "Ref": "AWS::Region",
+                  },
+                  ":lambda:path/2015-03-31/functions/",
+                  {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                  "/invocations",
+                ],
+              ],
+            },
+          },
+          "RequestParameters": {
+            "method.request.querystring.test_opt_param": false,
+            "method.request.querystring.test_required_param": true,
+          },
+          "RequestValidatorId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "ResourceId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "RestApiId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::ApiGateway::Method",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Action": "lambda:InvokeFunction",
+          "FunctionName": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Principal": "apigateway.amazonaws.com",
+          "SourceArn": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":execute-api:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ":",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                "/test-invoke-stage/GET/upload/*",
+              ],
+            ],
+          },
+        },
+        "Type": "AWS::Lambda::Permission",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Action": "lambda:InvokeFunction",
+          "FunctionName": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Principal": "apigateway.amazonaws.com",
+          "SourceArn": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":execute-api:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ":",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                "/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                "/GET/upload/*",
+              ],
+            ],
+          },
+        },
+        "Type": "AWS::Lambda::Permission",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/rest-api-url/rest-api-upload-url/rest-api-end-point-stage-url",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Join": [
+              "",
+              [
+                "https://",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                ".execute-api.",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ".",
+                {
+                  "Ref": "AWS::URLSuffix",
+                },
+                "/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                "/prod",
+              ],
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "RestApiId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "ValidateRequestBody": true,
+          "ValidateRequestParameters": true,
+        },
+        "Type": "AWS::ApiGateway::RequestValidator",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "Environment": {
+            "Variables": {
+              "EVENT_METADATA_MAPPINGS": "{"Resource":"resource","Host":"headers.Host","UserAgent":"headers.User-Agent","IPForwarding":"headers.X-Forwarded-For","RequestTime":"requestContext.requestTime","queryStringParameters":"queryStringParameters"}",
+              "EXPIRY_TIME_SECONDS": "600",
+              "LOG_LEVEL": "INFO",
+              "METADATA_TARGET_PREFIX": "metadata-testing",
+              "TARGET_BUCKET": "landing-bucket-name",
+              "TARGET_PREFIX": "testing",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-m2m-main-signed-s3-url-gen",
+          "Handler": "s3_url.handler",
+          "ReservedConcurrentExecutions": 10,
+          "Role": "arn:aws:iam::test-account:role/some-lambda-role-arn",
+          "Runtime": "python3.13",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "m2m-api",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-m2m-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/lambda/signed-s3-url-gen/arn",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-m2m-main/lambda/signed-s3-url-gen/name",
+          "Tags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Domain": "test-org-test-env-test-domain-test-m2m-main",
+          "UserPoolId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::Cognito::UserPoolDomain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Retain",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-COG1",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:201:25] User Pool used only for app integration, and will not contain users or passwords.",
+              },
+              {
+                "id": "AwsSolutions-COG2",
+                "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:201:25] User Pool used only for app integration, and will not contain users.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AccountRecoverySetting": {
+            "RecoveryMechanisms": [
+              {
+                "Name": "admin_only",
+                "Priority": 1,
+              },
+            ],
+          },
+          "AdminCreateUserConfig": {
+            "AllowAdminCreateUserOnly": true,
+          },
+          "EmailVerificationMessage": "The verification code to your new account is {####}",
+          "EmailVerificationSubject": "Verify your new account",
+          "LambdaConfig": {
+            "PostAuthentication": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+          "SmsVerificationMessage": "The verification code to your new account is {####}",
+          "UserPoolAddOns": {
+            "AdvancedSecurityMode": "ENFORCED",
+          },
+          "UserPoolName": "test-org-test-env-test-domain-test-m2m-main",
+          "UserPoolTags": {
+            "mdaa_cdk_app": "m2m-api",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-m2m-main",
+            "mdaa_org": "test-org",
+          },
+          "VerificationMessageTemplate": {
+            "DefaultEmailOption": "CONFIRM_WITH_CODE",
+            "EmailMessage": "The verification code to your new account is {####}",
+            "EmailSubject": "Verify your new account",
+            "SmsMessage": "The verification code to your new account is {####}",
+          },
+        },
+        "Type": "AWS::Cognito::UserPool",
+        "UpdateReplacePolicy": "Retain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Action": "lambda:InvokeFunction",
+          "FunctionName": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Principal": "cognito-idp.amazonaws.com",
+          "SourceArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::Lambda::Permission",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "AccessTokenValidity": 24,
+          "AllowedOAuthFlows": [
+            "client_credentials",
+          ],
+          "AllowedOAuthFlowsUserPoolClient": true,
+          "AllowedOAuthScopes": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "REPLACED-CFN-LOGICAL-ID",
+                  },
+                  "/m2m-custom",
+                ],
+              ],
+            },
+          ],
+          "ClientName": "test-org-test-env-test-domain-test-m2m-main-test-client",
+          "EnableTokenRevocation": true,
+          "ExplicitAuthFlows": [
+            "ALLOW_CUSTOM_AUTH",
+            "ALLOW_REFRESH_TOKEN_AUTH",
+          ],
+          "GenerateSecret": true,
+          "IdTokenValidity": 60,
+          "PreventUserExistenceErrors": "ENABLED",
+          "RefreshTokenValidity": 1440,
+          "SupportedIdentityProviders": [
+            "COGNITO",
+          ],
+          "TokenValidityUnits": {
+            "AccessToken": "minutes",
+            "IdToken": "minutes",
+            "RefreshToken": "minutes",
+          },
+          "UserPoolId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::Cognito::UserPoolClient",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Identifier": "m2m-api",
+          "Name": "test-org-test-env-test-domain-test-m2m-main",
+          "Scopes": [
+            {
+              "ScopeDescription": "Generate URL Access",
+              "ScopeName": "m2m-custom",
+            },
+          ],
+          "UserPoolId": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::Cognito::UserPoolResourceServer",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "ResourceArn": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                "::/restapis/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                "/stages/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "WebACLArn": "test-waf-arn",
+        },
+        "Type": "AWS::WAFv2::WebACLAssociation",
+      },
+    },
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
+{
+  "Description": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Outputs": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:loggroup:accesslogs:name",
+      },
+      "Value": "/test-org-test-env-test-domain-test-m2m-main-access-logs",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:cognito-userpool-domain-name:cognitouserpooldomainnameid:m2m-userpool-domain-id",
+      },
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+            ".auth.",
+            {
+              "Ref": "AWS::Region",
+            },
+            ".amazoncognito.com",
+          ],
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:cognito-userpool-id:m2mcognitouserpoolid:m2m-userpool-id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "ProviderName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:loggroup:defaultwaf:name",
+      },
+      "Value": "aws-waf-logs-/test-org-test-env-test-domain-test-m2m-main-default-waf",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:role:integration:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:role:integration:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "RoleId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:role:integration:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:kms:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:kms:id",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:lambda:logauthevent:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:lambda:logauthevent:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region",
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+            "/",
+          ],
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:rest-api-url:restapiuploadurl:rest-api-end-point-stage-url",
+      },
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region",
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+            "/prod",
+          ],
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:lambda:signeds3urlgen:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-m2m-main:lambda:signeds3urlgen:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-m2m-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "(SO0320-m2m-api) Modern Data Architecture Accelerator. Version 1.0.0",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+            {
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+            {
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "LogGroupName": "/test-org-test-env-test-domain-test-m2m-main-access-logs",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/loggroup/access-logs/name",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "/test-org-test-env-test-domain-test-m2m-main-access-logs",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Description": "Lambda Role for Cognito Auth Logger function",
+        "RoleName": "test-org-test-env-test-domain-test-m2m-main-cognito-auth",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-m2m-main-log-auth-event*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-m2m-main-log-auth-event*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "AuthorizerResultTtlInSeconds": 0,
+        "IdentitySource": "method.request.header.Authorization",
+        "Name": "test-org-test-env-test-domain-test-m2m-main",
+        "ProviderARNs": [
+          {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        ],
+        "RestApiId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "Type": "COGNITO_USER_POOLS",
+      },
+      "Type": "AWS::ApiGateway::Authorizer",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/cognito-userpool-domain-name/cognito-userpool-domain-name-id/m2m-userpool-domain-id",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "https://",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              ".auth.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".amazoncognito.com",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/cognito-userpool-id/m2m-cognito-userpool-id/m2m-userpool-id",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "ProviderName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "DefaultAction": {
+          "Block": {},
+        },
+        "Name": "test-org-test-env-test-domain-test-m2m-main-default-waf",
+        "Rules": [
+          {
+            "Action": {
+              "Allow": {},
+            },
+            "Name": "ipAllow",
+            "Priority": 0,
+            "Statement": {
+              "IPSetReferenceStatement": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+            },
+            "VisibilityConfig": {
+              "CloudWatchMetricsEnabled": false,
+              "MetricName": "test-org-test-env-test-domain-test-m2m-main-ip-allow",
+              "SampledRequestsEnabled": false,
+            },
+          },
+        ],
+        "Scope": "REGIONAL",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "VisibilityConfig": {
+          "CloudWatchMetricsEnabled": true,
+          "MetricName": "test-org-test-env-test-domain-test-m2m-main",
+          "SampledRequestsEnabled": false,
+        },
+      },
+      "Type": "AWS::WAFv2::WebACL",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "ResourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":apigateway:",
+              {
+                "Ref": "AWS::Region",
+              },
+              "::/restapis/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "/stages/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "WebACLArn": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::WAFv2::WebACLAssociation",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "LogDestinationConfigs": [
+          {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        ],
+        "ResourceArn": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::WAFv2::LoggingConfiguration",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+            {
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+            {
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "LogGroupName": "aws-waf-logs-/test-org-test-env-test-domain-test-m2m-main-default-waf",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/loggroup/default-waf/name",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "aws-waf-logs-/test-org-test-env-test-domain-test-m2m-main-default-waf",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "apigateway.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "RoleName": "test-org-test-env-test-domain-test-m2m-main-integration",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/role/integration/arn",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/role/integration/id",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:609:25] Inline policy is specific to this role and function.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/role/integration/name",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Addresses": [
+          "10.0.0.0/8",
+          "192.168.0.0/16",
+          "172.16.0.0/12",
+        ],
+        "IPAddressVersion": "IPV4",
+        "Name": "test-org-test-env-test-domain-test-m2m-main-ip-allow-set",
+        "Scope": "REGIONAL",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::WAFv2::IPSet",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    "test-admin-role-id:*",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-m2m-main-usage-stmt",
+            },
+            {
+              "Action": [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion",
+              ],
+              "Condition": {
+                "StringLike": {
+                  "aws:userId": [
+                    "test-admin-role-id:*",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "test-org-test-env-test-domain-test-m2m-main-usage-stmt",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "kms:EncryptionContext:aws:logs:arn": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":log-group:*",
+                      ],
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "logs.",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+              "Sid": "CloudWatchLogsEncryption",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-m2m-main",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::KMS::Alias",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/kms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/kms/id",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "ZipFile": "
+                const handler = async function(event) {
+                    console.log("Authentication successful");
+                    console.log("Trigger function =", event.triggerSource);
+                    console.log("User pool = ", event.userPoolId);
+                    console.log("App client ID = ", event.callerContext.clientId);
+                    console.log("User ID = ", event.userName);
+                    return event;
+                };
+                exports.handler = handler;
+                ",
+        },
+        "Environment": {
+          "Variables": {
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-m2m-main-log-auth-event",
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/lambda/log-auth-event/arn",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function only logs to stdout. DLQ is not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging Cognito events directly to CloudWatch via stdout and is not VPC bound by design.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:293:25] Function is logging successful authentication requests. Concurrency is unbounded by design.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/lambda/log-auth-event/name",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "m2mapirestapiDeployment58E38CDEba6a398e238f2487155fb959927b98fb": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-APIGWSSLEnabled",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+            },
+            {
+              "id": "HIPAA.Security-APIGWSSLEnabled",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+            },
+            {
+              "id": "PCI.DSS.321-APIGWSSLEnabled",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-APIGWCacheEnabledAndEncrypted",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+            },
+            {
+              "id": "HIPAA.Security-APIGWCacheEnabledAndEncrypted",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+            },
+            {
+              "id": "PCI.DSS.321-APIGWCacheEnabledAndEncrypted",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Description": "REST API to endpoint to proxy an S3 Signed URL generation Lambda",
+        "RestApiId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::ApiGateway::Deployment",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-APIGWSSLEnabled",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+            },
+            {
+              "id": "HIPAA.Security-APIGWSSLEnabled",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+            },
+            {
+              "id": "PCI.DSS.321-APIGWSSLEnabled",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-APIGWCacheEnabledAndEncrypted",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+            },
+            {
+              "id": "HIPAA.Security-APIGWCacheEnabledAndEncrypted",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+            },
+            {
+              "id": "PCI.DSS.321-APIGWCacheEnabledAndEncrypted",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AccessLogSetting": {
+          "DestinationArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","user":"$context.identity.user","caller":"$context.identity.caller","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}",
+        },
+        "DeploymentId": {
+          "Ref": "m2mapirestapiDeployment58E38CDEba6a398e238f2487155fb959927b98fb",
+        },
+        "MethodSettings": [
+          {
+            "CacheDataEncrypted": false,
+            "CachingEnabled": false,
+            "DataTraceEnabled": false,
+            "HttpMethod": "*",
+            "LoggingLevel": "INFO",
+            "ResourcePath": "/*",
+          },
+        ],
+        "RestApiId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "StageName": "prod",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "TracingEnabled": true,
+      },
+      "Type": "AWS::ApiGateway::Stage",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-APIGWSSLEnabled",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+            },
+            {
+              "id": "HIPAA.Security-APIGWSSLEnabled",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+            },
+            {
+              "id": "PCI.DSS.321-APIGWSSLEnabled",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Integrations/backend are Lambda functions. Backend client certificate not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-APIGWCacheEnabledAndEncrypted",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+            },
+            {
+              "id": "HIPAA.Security-APIGWCacheEnabledAndEncrypted",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+            },
+            {
+              "id": "PCI.DSS.321-APIGWCacheEnabledAndEncrypted",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:467:25] Caching intentionally disabled.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Description": "REST API to endpoint to proxy an S3 Signed URL generation Lambda",
+        "Name": "test-org-test-env-test-domain-test-m2m-main",
+        "Policy": {
+          "Statement": [
+            {
+              "Action": "execute-api:Invoke",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "execute-api:/prod/GET/upload*",
+            },
+            {
+              "Action": "execute-api:Invoke",
+              "Condition": {
+                "NotIpAddress": {
+                  "aws:SourceIp": [
+                    "10.0.0.0/8",
+                    "192.168.0.0/16",
+                    "172.16.0.0/12",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "execute-api:/prod/GET/upload*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::ApiGateway::RestApi",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "upload",
+        "RestApiId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "ParentId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "PathPart": "{proxy+}",
+        "RestApiId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "AuthorizationScopes": [
+          "m2m-api/m2m-custom",
+        ],
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "HttpMethod": "GET",
+        "Integration": {
+          "Credentials": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "IntegrationHttpMethod": "POST",
+          "RequestParameters": {
+            "integration.request.querystring.test_opt_param": "method.request.querystring.test_opt_param",
+            "integration.request.querystring.test_required_param": "method.request.querystring.test_required_param",
+          },
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "RequestParameters": {
+          "method.request.querystring.test_opt_param": false,
+          "method.request.querystring.test_required_param": true,
+        },
+        "RequestValidatorId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "ResourceId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "RestApiId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "/test-invoke-stage/GET/upload/*",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "/GET/upload/*",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/rest-api-url/rest-api-upload-url/rest-api-end-point-stage-url",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "https://",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              ".execute-api.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".",
+              {
+                "Ref": "AWS::URLSuffix",
+              },
+              "/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "/prod",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "RestApiId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "ValidateRequestBody": true,
+        "ValidateRequestParameters": true,
+      },
+      "Type": "AWS::ApiGateway::RequestValidator",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "EVENT_METADATA_MAPPINGS": "{"Resource":"resource","Host":"headers.Host","UserAgent":"headers.User-Agent","IPForwarding":"headers.X-Forwarded-For","RequestTime":"requestContext.requestTime","queryStringParameters":"queryStringParameters"}",
+            "EXPIRY_TIME_SECONDS": "600",
+            "LOG_LEVEL": "INFO",
+            "METADATA_TARGET_PREFIX": "metadata-testing",
+            "TARGET_BUCKET": "landing-bucket-name",
+            "TARGET_PREFIX": "testing",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-m2m-main-signed-s3-url-gen",
+        "Handler": "s3_url.handler",
+        "ReservedConcurrentExecutions": 10,
+        "Role": "arn:aws:iam::test-account:role/some-lambda-role-arn",
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "m2m-api",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-m2m-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/lambda/signed-s3-url-gen/arn",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation and will be invoked syncronously. Error handling is handled by API spec. DLQ not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:388:25] Function is API implementation behind API gateway.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-m2m-main/lambda/signed-s3-url-gen/name",
+        "Tags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Domain": "test-org-test-env-test-domain-test-m2m-main",
+        "UserPoolId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolDomain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-COG1",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:201:25] User Pool used only for app integration, and will not contain users or passwords.",
+            },
+            {
+              "id": "AwsSolutions-COG2",
+              "reason": "[MDAA:@aws-mdaa/utility/m2m-api-l3-construct/lib/m2m-api-l3-construct.ts:201:25] User Pool used only for app integration, and will not contain users.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AccountRecoverySetting": {
+          "RecoveryMechanisms": [
+            {
+              "Name": "admin_only",
+              "Priority": 1,
+            },
+          ],
+        },
+        "AdminCreateUserConfig": {
+          "AllowAdminCreateUserOnly": true,
+        },
+        "EmailVerificationMessage": "The verification code to your new account is {####}",
+        "EmailVerificationSubject": "Verify your new account",
+        "LambdaConfig": {
+          "PostAuthentication": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "SmsVerificationMessage": "The verification code to your new account is {####}",
+        "UserPoolAddOns": {
+          "AdvancedSecurityMode": "ENFORCED",
+        },
+        "UserPoolName": "test-org-test-env-test-domain-test-m2m-main",
+        "UserPoolTags": {
+          "mdaa_cdk_app": "m2m-api",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-m2m-main",
+          "mdaa_org": "test-org",
+        },
+        "VerificationMessageTemplate": {
+          "DefaultEmailOption": "CONFIRM_WITH_CODE",
+          "EmailMessage": "The verification code to your new account is {####}",
+          "EmailSubject": "Verify your new account",
+          "SmsMessage": "The verification code to your new account is {####}",
+        },
+      },
+      "Type": "AWS::Cognito::UserPool",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Principal": "cognito-idp.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "AccessTokenValidity": 24,
+        "AllowedOAuthFlows": [
+          "client_credentials",
+        ],
+        "AllowedOAuthFlowsUserPoolClient": true,
+        "AllowedOAuthScopes": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                "/m2m-custom",
+              ],
+            ],
+          },
+        ],
+        "ClientName": "test-org-test-env-test-domain-test-m2m-main-test-client",
+        "EnableTokenRevocation": true,
+        "ExplicitAuthFlows": [
+          "ALLOW_CUSTOM_AUTH",
+          "ALLOW_REFRESH_TOKEN_AUTH",
+        ],
+        "GenerateSecret": true,
+        "IdTokenValidity": 60,
+        "PreventUserExistenceErrors": "ENABLED",
+        "RefreshTokenValidity": 1440,
+        "SupportedIdentityProviders": [
+          "COGNITO",
+        ],
+        "TokenValidityUnits": {
+          "AccessToken": "minutes",
+          "IdToken": "minutes",
+          "RefreshToken": "minutes",
+        },
+        "UserPoolId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolClient",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Identifier": "m2m-api",
+        "Name": "test-org-test-env-test-domain-test-m2m-main",
+        "Scopes": [
+          {
+            "ScopeDescription": "Generate URL Access",
+            "ScopeName": "m2m-custom",
+          },
+        ],
+        "UserPoolId": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolResourceServer",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "ResourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":apigateway:",
+              {
+                "Ref": "AWS::Region",
+              },
+              "::/restapis/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "/stages/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "WebACLArn": "test-waf-arn",
+      },
+      "Type": "AWS::WAFv2::WebACLAssociation",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

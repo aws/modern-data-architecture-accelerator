@@ -1,0 +1,19 @@
+# Project-specific DataOps Shared Configuration demonstrating project references
+projectName: analytics-ml-pipeline
+
+# Using project references that will be transformed by the config parser
+securityConfigurationName: project:securityConfiguration/ml-pipeline
+projectBucket: project:projectBucket/analytics-data
+projectTopicArn: project:projectTopicArn/ml-notifications
+deploymentRole: project:deploymentRole/ml-pipeline
+kmsArn: project:kmsArn/analytics-encryption
+
+testParameter: project-specific-ml-pipeline-config
+
+# Project-specific settings
+projectSettings:
+  environment: production
+  dataRetentionDays: 365
+  enableAdvancedSecurity: true
+  mlModelVersioning: true
+  dataQualityChecks: true

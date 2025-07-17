@@ -131,6 +131,36 @@ feature_merge_build_test:
     - ./scripts/npm_install.sh
     - ./scripts/build_test.sh
 
+feature_merge_snapshot_test:
+  tags:
+    - arch:amd64
+    - size:3xlarge
+  only:
+    - merge_requests
+  stage: analyze
+  dependencies:
+    - feature_merge_build_test
+  needs:
+    - feature_merge_build_test
+  cache:
+    key: feature-merge-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  artifacts:
+    untracked: false
+    paths:
+      - "*"
+    exclude:
+      - "**/node_modules/**"
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - npx lerna run build
+    - npm run test:snapshots -- --silent --reporters=default
+
 feature_merge_sonarqube:
   tags:
     - arch:amd64

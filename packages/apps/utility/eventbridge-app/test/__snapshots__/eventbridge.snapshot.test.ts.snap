@@ -1,0 +1,409 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`eventbridge Snapshot Tests Eventbridge App App Snapshot Test 1`] = `
+{
+  "test-org-test-env-test-domain-test-eventbridge-main": {
+    "Description": "(SO0320-eventbridge) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Outputs": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-eventbridge-main:eventbus:testeventbus:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-eventbridge-main:eventbus:testeventbus:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+    },
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+    },
+    "Resources": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-eventbridge-main/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "eventbridge",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-eventbridge-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-eventbridge) Modern Data Architecture Accelerator. Version 1.0.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "test-org-test-env-test-domain-test-eve--6dfaaf3a",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "eventbridge",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-eventbridge-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::Events::EventBus",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "ArchiveName": "test-org-test-env-test-domain-test-eve--1d5f1145",
+          "Description": {
+            "Fn::Join": [
+              "",
+              [
+                "Archive for ",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "EventPattern": {
+            "account": [
+              {
+                "Ref": "AWS::AccountId",
+              },
+            ],
+          },
+          "RetentionDays": 100,
+          "SourceArn": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::Events::Archive",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "EventBusName": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "Statement": {
+            "Action": "events:PutEvents",
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": "some-arn",
+              "Service": "some-service.amazonaws.com",
+            },
+            "Resource": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+            "Sid": "cdk-test-event-bus-put-events",
+          },
+          "StatementId": "cdk-test-event-bus-put-events",
+        },
+        "Type": "AWS::Events::EventBusPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-eventbridge-main/eventbus/test-event-bus/arn",
+          "Tags": {
+            "mdaa_cdk_app": "eventbridge",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-eventbridge-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-eventbridge-main/eventbus/test-event-bus/name",
+          "Tags": {
+            "mdaa_cdk_app": "eventbridge",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-eventbridge-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+    },
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`eventbridge Snapshot Tests Eventbridge Stack Snapshot Test 1`] = `
+{
+  "Description": "(SO0320-eventbridge) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Outputs": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-main:eventbus:testeventbus:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-eventbridge-main:eventbus:testeventbus:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-eventbridge-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "(SO0320-eventbridge) Modern Data Architecture Accelerator. Version 1.0.0",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-eve--6dfaaf3a",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "eventbridge",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-eventbridge-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::Events::EventBus",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "ArchiveName": "test-org-test-env-test-domain-test-eve--1d5f1145",
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Archive for ",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "EventPattern": {
+          "account": [
+            {
+              "Ref": "AWS::AccountId",
+            },
+          ],
+        },
+        "RetentionDays": 100,
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Events::Archive",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "Statement": {
+          "Action": "events:PutEvents",
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "some-arn",
+            "Service": "some-service.amazonaws.com",
+          },
+          "Resource": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Sid": "cdk-test-event-bus-put-events",
+        },
+        "StatementId": "cdk-test-event-bus-put-events",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-main/eventbus/test-event-bus/arn",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-eventbridge-main/eventbus/test-event-bus/name",
+        "Tags": {
+          "mdaa_cdk_app": "eventbridge",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-eventbridge-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

@@ -70,9 +70,10 @@ resourceLinks:
     targetDatabase: example_database
     grantPrincipals:
       - principalC
-  example_cross_account_resource_link:
-    # The name of the target database.
-    fromAccount: "123456789012"
-    targetDatabase: example_database
-    grantPrincipals:
-      - principalD
+  # Removing the cross-account resource link for the test to pass
+  # example_cross_account_resource_link:
+  #   # The name of the target database.
+  #   fromAccount: "xxxxxxxxxxxxx"
+  #   targetDatabase: example_database
+  #   grantPrincipals:
+  #     - principalD

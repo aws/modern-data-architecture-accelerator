@@ -1,0 +1,365 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dataops-crawler Snapshot Tests Glue Crawler App App Snapshot Test 1`] = `
+{
+  "test-org-test-env-test-domain-test-glue-crawler-main": {
+    "Description": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestclassifiersclassifierCsvC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/classifiers/classifierCsv",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestdatabaseNameexampledatabaseC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/databaseName/example-database",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/deploymentRole/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/kmsArn/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/projectBucket/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/projectTopicArn/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-test/securityConfiguration/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+    },
+    "Resources": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-glue-crawler-main/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-crawler",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-glue-crawler-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.0.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/dataops-project-test/crawler/name/test-crawler",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-crawler",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-glue-crawler-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "test-org-test-env-test-domain-test-glue-crawler-main-test-crawler",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Workflow Crawler failure events",
+          "EventPattern": {
+            "detail": {
+              "crawlerName": [
+                "test-org-test-env-test-domain-test-glue-crawler-main-test-crawler",
+              ],
+              "state": [
+                "Failed",
+              ],
+            },
+            "source": [
+              "aws.glue",
+            ],
+          },
+          "Name": "test-org-test-env-test-domain-test-glue-crawler-main-t--4ff29561",
+          "State": "ENABLED",
+          "Targets": [
+            {
+              "Arn": {
+                "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+              "Id": "Target0",
+            },
+          ],
+        },
+        "Type": "AWS::Events::Rule",
+      },
+      "testcrawlercrawler": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-GL1",
+                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.ts:111:25] Log encryption configured via SecurityConfiguration",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Classifiers": [
+            {
+              "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestclassifiersclassifierCsvC96584B6F00A464EAD1953AFF4B05118Parameter",
+            },
+          ],
+          "Configuration": "{"Version":1,"CrawlerOutput":{"Partitions":{"AddOrUpdateBehavior":"InheritFromTable"}}}",
+          "CrawlerSecurityConfiguration": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "DatabaseName": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestdatabaseNameexampledatabaseC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "Description": "Example for a Crawler",
+          "Name": "test-org-test-env-test-domain-test-glue-crawler-main-test-crawler",
+          "RecrawlPolicy": {
+            "RecrawlBehavior": "CRAWL_NEW_FOLDERS_ONLY",
+          },
+          "Role": "some-arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-crawler",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-glue-crawler-main",
+            "mdaa_org": "test-org",
+          },
+          "Targets": {
+            "S3Targets": [
+              {
+                "Path": "s3://some-s3-bucket/path/to/crawler/target",
+              },
+            ],
+          },
+        },
+        "Type": "AWS::Glue::Crawler",
+      },
+    },
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`dataops-crawler Snapshot Tests Glue Crawler Stack Snapshot Test 1`] = `
+{
+  "Description": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestclassifiersclassifierCsvC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/classifiers/classifierCsv",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestdatabaseNameexampledatabaseC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/databaseName/example-database",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestdeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/deploymentRole/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestkmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/kmsArn/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/projectBucket/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/projectTopicArn/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-test/securityConfiguration/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-glue-crawler-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-crawler",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-crawler-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.0.0",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/dataops-project-test/crawler/name/test-crawler",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-crawler",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-crawler-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-glue-crawler-main-test-crawler",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Workflow Crawler failure events",
+        "EventPattern": {
+          "detail": {
+            "crawlerName": [
+              "test-org-test-env-test-domain-test-glue-crawler-main-test-crawler",
+            ],
+            "state": [
+              "Failed",
+            ],
+          },
+          "source": [
+            "aws.glue",
+          ],
+        },
+        "Name": "test-org-test-env-test-domain-test-glue-crawler-main-t--4ff29561",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "testcrawlercrawler": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-GL1",
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.ts:111:25] Log encryption configured via SecurityConfiguration",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Classifiers": [
+          {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestclassifiersclassifierCsvC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Configuration": "{"Version":1,"CrawlerOutput":{"Partitions":{"AddOrUpdateBehavior":"InheritFromTable"}}}",
+        "CrawlerSecurityConfiguration": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestsecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "DatabaseName": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojecttestdatabaseNameexampledatabaseC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "Description": "Example for a Crawler",
+        "Name": "test-org-test-env-test-domain-test-glue-crawler-main-test-crawler",
+        "RecrawlPolicy": {
+          "RecrawlBehavior": "CRAWL_NEW_FOLDERS_ONLY",
+        },
+        "Role": "some-arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-crawler",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-crawler-main",
+          "mdaa_org": "test-org",
+        },
+        "Targets": {
+          "S3Targets": [
+            {
+              "Path": "s3://some-s3-bucket/path/to/crawler/target",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::Glue::Crawler",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

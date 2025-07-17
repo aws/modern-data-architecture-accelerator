@@ -1,0 +1,8 @@
+# Basic configuration for eventbridge module
+# TODO: Replace with your module's actual configuration structure
+
+# Example configuration - replace with actual structure
+eventbridgeSettings:
+  enabled: true
+  name: test-eventbridge
+  # Add your module-specific configuration here

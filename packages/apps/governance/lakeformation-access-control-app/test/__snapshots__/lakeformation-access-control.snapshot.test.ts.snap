@@ -1,0 +1,853 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lakeformation-access-control Snapshot Tests Lakeformation App App Snapshot Test 1`] = `
+{
+  "test-org-test-env-test-domain-test-lakeformation-main": {
+    "Description": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+    },
+    "Resources": {
+      "RoleResprincipalC": {
+        "DeletionPolicy": "Delete",
+        "Properties": {
+          "ServiceToken": {
+            "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "roleRef": {
+            "name": "Admin",
+            "refId": "principalC",
+          },
+        },
+        "Type": "AWS::CloudFormation::CustomResource",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-lakeformation-main/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "lakeformation-access-control",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lakeformation-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.0.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "CatalogId": {
+            "Ref": "AWS::AccountId",
+          },
+          "DatabaseInput": {
+            "Name": "example_local_resource_link",
+            "TargetDatabase": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "DatabaseName": "example_database",
+            },
+          },
+        },
+        "Type": "AWS::Glue::Database",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":saml-provider/test-provider:group/test-group1",
+                ],
+              ],
+            },
+          },
+          "Resource": {
+            "Database": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Name": "example_database",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":saml-provider/test-provider:user/test-user@example.com",
+                ],
+              ],
+            },
+          },
+          "Resource": {
+            "Database": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Name": "example_database",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResprincipalC",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "Database": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Name": "example_database",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+            "CREATE_TABLE",
+            "ALTER",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResprincipalC",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "Database": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Name": "example_database",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResprincipalC",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "Database": {
+              "CatalogId": {
+                "Fn::Select": [
+                  4,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Fn::GetAtt": [
+                          "RoleResprincipalC",
+                          "arn",
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+              "Name": "example_local_resource_link",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Permissions": [
+            "SELECT",
+            "DESCRIBE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":saml-provider/test-provider:group/test-group1",
+                ],
+              ],
+            },
+          },
+          "Resource": {
+            "Table": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "DatabaseName": "example_database",
+              "Name": "example_table1",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Permissions": [
+            "SELECT",
+            "DESCRIBE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":saml-provider/test-provider:user/test-user@example.com",
+                ],
+              ],
+            },
+          },
+          "Resource": {
+            "Table": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "DatabaseName": "example_database",
+              "Name": "example_table1",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Permissions": [
+            "SELECT",
+            "DESCRIBE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResprincipalC",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "Table": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "DatabaseName": "example_database",
+              "Name": "example_table1",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Permissions": [
+            "SELECT",
+            "DESCRIBE",
+            "INSERT",
+            "DELETE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResprincipalC",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "Table": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "DatabaseName": "example_database",
+              "Name": "example_table2",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+    },
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
+    },
+  },
+  "test-org-test-env-test-domain-test-lakeformation-main-xxxxxxxxxxxxx-us-east-1": {
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+    },
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`lakeformation-access-control Snapshot Tests Lakeformation Stack Snapshot Test 1`] = `
+{
+  "Description": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "RoleResprincipalC": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ServiceToken": {
+          "Ref": "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "roleRef": {
+          "name": "Admin",
+          "refId": "principalC",
+        },
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-lakeformation-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "lakeformation-access-control",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lakeformation-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.0.0",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "CatalogId": {
+          "Ref": "AWS::AccountId",
+        },
+        "DatabaseInput": {
+          "Name": "example_local_resource_link",
+          "TargetDatabase": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "DatabaseName": "example_database",
+          },
+        },
+      },
+      "Type": "AWS::Glue::Database",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":saml-provider/test-provider:group/test-group1",
+              ],
+            ],
+          },
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Name": "example_database",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":saml-provider/test-provider:user/test-user@example.com",
+              ],
+            ],
+          },
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Name": "example_database",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResprincipalC",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Name": "example_database",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResprincipalC",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Name": "example_database",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResprincipalC",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Fn::Select": [
+                4,
+                {
+                  "Fn::Split": [
+                    ":",
+                    {
+                      "Fn::GetAtt": [
+                        "RoleResprincipalC",
+                        "arn",
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            "Name": "example_local_resource_link",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":saml-provider/test-provider:group/test-group1",
+              ],
+            ],
+          },
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "DatabaseName": "example_database",
+            "Name": "example_table1",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":saml-provider/test-provider:user/test-user@example.com",
+              ],
+            ],
+          },
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "DatabaseName": "example_database",
+            "Name": "example_table1",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResprincipalC",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "DatabaseName": "example_database",
+            "Name": "example_table1",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResprincipalC",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "DatabaseName": "example_database",
+            "Name": "example_table2",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

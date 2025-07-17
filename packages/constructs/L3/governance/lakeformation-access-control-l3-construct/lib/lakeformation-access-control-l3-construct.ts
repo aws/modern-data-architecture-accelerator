@@ -162,7 +162,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
     return id;
   }
 
-  private static accountGrants: { [account: string]: CfnPrincipalPermissions } = {};
+  private accountGrants: { [account: string]: CfnPrincipalPermissions } = {};
 
   constructor(scope: Construct, id: string, props: LakeFormationAccessControlL3ConstructProps) {
     super(scope, id, props);
@@ -260,7 +260,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
               permissionsWithGrantOption: [],
             },
           );
-          LakeFormationAccessControlL3Construct.addToAccountGrants(
+          this.addToAccountGrants(
             fromAccount,
             crossAccountResourceLinkGrant,
             fromAccount == this.account ? externalDependency : undefined,
@@ -270,9 +270,9 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
     });
   }
 
-  //We use this static method to ensure that each grant depends on the previous (by account).
+  //We use this method to ensure that each grant depends on the previous (by account).
   //This ensures that each grant is deployed in sequence, avoiding LF API rate limits.
-  private static addToAccountGrants(account: string, grant: CfnPrincipalPermissions, externalDependency?: CfnDatabase) {
+  private addToAccountGrants(account: string, grant: CfnPrincipalPermissions, externalDependency?: CfnDatabase) {
     if (this.accountGrants[account]) {
       grant.addDependency(this.accountGrants[account]);
     } else if (externalDependency) {
@@ -307,7 +307,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
       permissions: grantProps.databasePermissions,
       permissionsWithGrantOption: grantProps.databaseGrantablePermissions || [],
     });
-    LakeFormationAccessControlL3Construct.addToAccountGrants(this.account, databaseGrant, externalDependency);
+    this.addToAccountGrants(this.account, databaseGrant, externalDependency);
   }
 
   private createTableGrant(
@@ -339,7 +339,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
           permissions: grantProps.tablePermissions || [],
           permissionsWithGrantOption: grantProps.tableGrantablePermissions || [],
         });
-        LakeFormationAccessControlL3Construct.addToAccountGrants(this.account, tableGrant, externalDependency);
+        this.addToAccountGrants(this.account, tableGrant, externalDependency);
       });
     } else {
       const tableGrantIdentifier = LakeFormationAccessControlL3Construct.generateIdentifier(
@@ -361,7 +361,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
         permissions: grantProps.tablePermissions || [],
         permissionsWithGrantOption: grantProps.tableGrantablePermissions || [],
       });
-      LakeFormationAccessControlL3Construct.addToAccountGrants(this.account, tableGrant, externalDependency);
+      this.addToAccountGrants(this.account, tableGrant, externalDependency);
     }
   }
 

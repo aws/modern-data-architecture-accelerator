@@ -8,7 +8,10 @@
     "git-clean": "git clean -Xfd -e !development -e !development/** -e !.vscode -e !.vscode/** -e !.idea -e !.idea/**",
     "lint": "lerna run lint --stream",
     "prepare": "husky install source/.husky",
-    "prettier": "lerna run prettier --stream"
+    "prettier": "lerna run prettier --stream",
+    "test:snapshots": "jest --config jest.config.snapshot.js",
+    "test:snapshots:update": "jest --config jest.config.snapshot.js --updateSnapshot",
+    "delete:snapshots": "find . -path '*/__snapshots__/*.snap' -type f -delete"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --max-warnings 0 -c .eslintrc.json --ignore-pattern \"*.d.ts\""

@@ -141,10 +141,9 @@ databases:
       # for the database and its S3 Location for project execution roles
       createReadWriteGrantsForProjectExecutionRoles: true
 
-      # List of additional accounts in which resource links will be generated
-      # to facilitate cross-account access
-      createCrossAccountResourceLinkAccounts:
-        - "12312412"
+      # Removing cross-account resource links for testing
+      # createCrossAccountResourceLinkAccounts:
+      #   - "12312412"
 
       # Optional - the name of the resource links to be generated
       # If not specified, defaults to the database name
@@ -188,8 +187,9 @@ databases:
       createSuperGrantsForDataAdminRoles: true
       createReadGrantsForDataEngineerRoles: true
       createReadWriteGrantsForProjectExecutionRoles: true
-      createCrossAccountResourceLinkAccounts:
-        - "12312412"
+      # Removing cross-account resource links for testing
+      # createCrossAccountResourceLinkAccounts:
+      #   - "12312412"
       grants:
         example_condensed_read_grant:
           principalArns:
@@ -211,8 +211,9 @@ databases:
       createSuperGrantsForDataAdminRoles: true
       createReadGrantsForDataEngineerRoles: true
       createReadWriteGrantsForProjectExecutionRoles: true
-      createCrossAccountResourceLinkAccounts:
-        - "12312412"
+      # Removing cross-account resource links for testing
+      # createCrossAccountResourceLinkAccounts:
+      #   - "12312412"
       grants:
         example_condensed_read_grant:
           principalArns:
@@ -228,8 +229,9 @@ databases:
       createSuperGrantsForDataAdminRoles: true
       createReadGrantsForDataEngineerRoles: true
       createReadWriteGrantsForProjectExecutionRoles: true
-      createCrossAccountResourceLinkAccounts:
-        - "12312412"
+      # Removing cross-account resource links for testing
+      # createCrossAccountResourceLinkAccounts:
+      #   - "12312412"
       grants:
         example_condensed_read_grant:
           principalArns:

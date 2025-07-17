@@ -1,0 +1,2883 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`glue-catalog Snapshot Tests Glue Catalog App App Snapshot Test 1`] = `
+{
+  "test-org-test-env-test-domain-test-glue-catalog-main": {
+    "Description": "(SO0320-glue-catalog) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Mappings": {
+      "LatestNodeRuntimeMap": {
+        "af-south-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-east-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-east-2": {
+          "value": "nodejs22.x",
+        },
+        "ap-northeast-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-northeast-2": {
+          "value": "nodejs22.x",
+        },
+        "ap-northeast-3": {
+          "value": "nodejs22.x",
+        },
+        "ap-south-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-south-2": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-1": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-2": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-3": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-4": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-5": {
+          "value": "nodejs22.x",
+        },
+        "ap-southeast-7": {
+          "value": "nodejs22.x",
+        },
+        "ca-central-1": {
+          "value": "nodejs22.x",
+        },
+        "ca-west-1": {
+          "value": "nodejs22.x",
+        },
+        "cn-north-1": {
+          "value": "nodejs22.x",
+        },
+        "cn-northwest-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-central-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-central-2": {
+          "value": "nodejs22.x",
+        },
+        "eu-isoe-west-1": {
+          "value": "nodejs18.x",
+        },
+        "eu-north-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-south-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-south-2": {
+          "value": "nodejs22.x",
+        },
+        "eu-west-1": {
+          "value": "nodejs22.x",
+        },
+        "eu-west-2": {
+          "value": "nodejs22.x",
+        },
+        "eu-west-3": {
+          "value": "nodejs22.x",
+        },
+        "il-central-1": {
+          "value": "nodejs22.x",
+        },
+        "me-central-1": {
+          "value": "nodejs22.x",
+        },
+        "me-south-1": {
+          "value": "nodejs22.x",
+        },
+        "mx-central-1": {
+          "value": "nodejs22.x",
+        },
+        "sa-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-east-2": {
+          "value": "nodejs22.x",
+        },
+        "us-gov-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-gov-west-1": {
+          "value": "nodejs22.x",
+        },
+        "us-iso-east-1": {
+          "value": "nodejs18.x",
+        },
+        "us-iso-west-1": {
+          "value": "nodejs18.x",
+        },
+        "us-isob-east-1": {
+          "value": "nodejs18.x",
+        },
+        "us-isob-west-1": {
+          "value": "nodejs18.x",
+        },
+        "us-west-1": {
+          "value": "nodejs22.x",
+        },
+        "us-west-2": {
+          "value": "nodejs22.x",
+        },
+      },
+    },
+    "Outputs": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-glue-catalog-main:kms:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-glue-catalog-main:kms:id",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+    },
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+    },
+    "Resources": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-glue-catalog-main/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "glue-catalog",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-glue-catalog-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-glue-catalog) Modern Data Architecture Accelerator. Version 1.0.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "athenacatalognode1": {
+        "Properties": {
+          "Name": "node1",
+          "Parameters": {
+            "catalog-id": "1234567890",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "glue-catalog",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-catalog-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Type": "GLUE",
+        },
+        "Type": "AWS::Athena::DataCatalog",
+      },
+      "athenacatalognode2": {
+        "Properties": {
+          "Name": "node2",
+          "Parameters": {
+            "catalog-id": "0987654321",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "glue-catalog",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-catalog-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Type": "GLUE",
+        },
+        "Type": "AWS::Athena::DataCatalog",
+      },
+      "athenacatalognode3": {
+        "Properties": {
+          "Name": "node3",
+          "Parameters": {
+            "catalog-id": "5678901234",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "glue-catalog",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-catalog-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Type": "GLUE",
+        },
+        "Type": "AWS::Athena::DataCatalog",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will interact only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will interact only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will interact only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "Environment": {
+            "Variables": {
+              "LOG_LEVEL": "INFO",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-glue-catalog-main-catalog-cr",
+          "Handler": "glue_catalog_resource_policy.lambda_handler",
+          "Role": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Runtime": "python3.13",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "glue-catalog",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-catalog-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Timeout": 120,
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:327:25] Role is for Custom Resource. Inline policy specific to custom resource.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "logs:PutLogEvents",
+                  "logs:CreateLogStream",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-glue-catalog-main-catalog-cr*",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Action": "logs:CreateLogGroup",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-glue-catalog-main-catalog-cr*",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Action": [
+                  "glue:PutResourcePolicy",
+                  "glue:DeleteResourcePolicy",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":glue:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":catalog",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Action": "ram:ListResources",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":ram:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":resource-share/*",
+                    ],
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:327:25] Role is for Custom Resource. Inline policy specific to custom resource.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Description": "CR Role",
+          "RoleName": "test-org-test-env-test-domain-test-glue-catalog-main-catalog-cr",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "glue-catalog",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-catalog-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:416:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Description": "CR Role",
+          "RoleName": "test-org-test-env-test-domain-test-glue-catalog-main-ca-51a390e0",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "glue-catalog",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-catalog-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:416:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "logs:PutLogEvents",
+                  "logs:CreateLogStream",
+                ],
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-glue-catalog-main-cat-d4e2e95*",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Action": "logs:CreateLogGroup",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-glue-catalog-main-cat-d4e2e95*",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Action": "lambda:InvokeFunction",
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        {
+                          "Fn::GetAtt": [
+                            "REPLACED-CFN-LOGICAL-ID",
+                            "Arn",
+                          ],
+                        },
+                        ":*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+              {
+                "Action": "lambda:GetFunction",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "catalogresourcepolicy": {
+        "DeletionPolicy": "Delete",
+        "Properties": {
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "account": {
+            "Ref": "AWS::AccountId",
+          },
+          "policyHashParam": "/test-org/test-domain/test-glue-catalog-main/policyhash",
+          "resourcePolicyJson": {
+            "Statement": [
+              {
+                "Action": [
+                  "glue:Get*",
+                  "glue:List*",
+                ],
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::1234567890:root",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::0987654321:root",
+                        ],
+                      ],
+                    },
+                  ],
+                },
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":glue:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":*",
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":glue:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":catalog",
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":glue:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":database/default",
+                      ],
+                    ],
+                  },
+                ],
+                "Sid": "accounts-read",
+              },
+              {
+                "Action": "glue:ShareResource",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "ram.amazonaws.com",
+                },
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":glue:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":catalog",
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":glue:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":database/*",
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":glue:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":table/*/*",
+                      ],
+                    ],
+                  },
+                ],
+                "Sid": "allow-ram-sharing",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+        },
+        "Type": "AWS::CloudFormation::CustomResource",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-glue-catalog-main/policyhash",
+          "Tags": {
+            "mdaa_cdk_app": "glue-catalog",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-glue-catalog-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "catalogresourcepolicy",
+              "PolicyHash",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Lambda function Runtime set by CDK Provider Framework",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will interact only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will interact only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will interact only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-glue-catalog-main/datalake-catalog-cr-provider)",
+          "Environment": {
+            "Variables": {
+              "USER_ON_EVENT_FUNCTION_ARN": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          },
+          "FunctionName": "test-org-test-env-test-domain-test-glue-catalog-main-cat-d4e2e95",
+          "Handler": "framework.onEvent",
+          "Role": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Runtime": {
+            "Fn::FindInMap": [
+              "LatestNodeRuntimeMap",
+              {
+                "Ref": "AWS::Region",
+              },
+              "value",
+            ],
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "glue-catalog",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-catalog-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Timeout": 900,
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "gluecatalogsettings": {
+        "Properties": {
+          "CatalogId": {
+            "Ref": "AWS::AccountId",
+          },
+          "DataCatalogEncryptionSettings": {
+            "ConnectionPasswordEncryption": {
+              "KmsKeyId": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "ReturnConnectionPasswordEncrypted": true,
+            },
+            "EncryptionAtRest": {
+              "CatalogEncryptionMode": "SSE-KMS",
+              "SseAwsKmsKeyId": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          },
+        },
+        "Type": "AWS::Glue::DataCatalogEncryptionSettings",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "AliasName": "alias/test-org-test-env-test-domain-test-glue-catalog-main",
+          "TargetKeyId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::KMS::Alias",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Retain",
+        "Properties": {
+          "Description": "KMS Key for test-org-test-env-test-domain-test-glue-catalog-main",
+          "EnableKeyRotation": true,
+          "Enabled": true,
+          "KeyPolicy": {
+            "Statement": [
+              {
+                "Action": "kms:*",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":iam::",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":root",
+                      ],
+                    ],
+                  },
+                },
+                "Resource": "*",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                  "kms:DescribeKey",
+                  "kms:CreateGrant",
+                ],
+                "Condition": {
+                  "StringEquals": {
+                    "kms:CallerAccount": {
+                      "Ref": "AWS::AccountId",
+                    },
+                    "kms:ViaService": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "glue.",
+                            {
+                              "Ref": "AWS::Region",
+                            },
+                            ".amazonaws.com",
+                          ],
+                        ],
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "datazone.",
+                            {
+                              "Ref": "AWS::Region",
+                            },
+                            ".amazonaws.com",
+                          ],
+                        ],
+                      },
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                  "kms:DescribeKey",
+                  "kms:CreateGrant",
+                ],
+                "Condition": {
+                  "StringEquals": {
+                    "kms:CallerAccount": "1234567890",
+                    "kms:ViaService": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "glue.",
+                            {
+                              "Ref": "AWS::Region",
+                            },
+                            ".amazonaws.com",
+                          ],
+                        ],
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "datazone.",
+                            {
+                              "Ref": "AWS::Region",
+                            },
+                            ".amazonaws.com",
+                          ],
+                        ],
+                      },
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                  "kms:DescribeKey",
+                  "kms:CreateGrant",
+                ],
+                "Condition": {
+                  "StringEquals": {
+                    "kms:CallerAccount": "0987654321",
+                    "kms:ViaService": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "glue.",
+                            {
+                              "Ref": "AWS::Region",
+                            },
+                            ".amazonaws.com",
+                          ],
+                        ],
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "datazone.",
+                            {
+                              "Ref": "AWS::Region",
+                            },
+                            ".amazonaws.com",
+                          ],
+                        ],
+                      },
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                  "kms:DescribeKey",
+                  "kms:CreateGrant",
+                ],
+                "Condition": {
+                  "StringEquals": {
+                    "kms:CallerAccount": "5678901234",
+                    "kms:ViaService": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "glue.",
+                            {
+                              "Ref": "AWS::Region",
+                            },
+                            ".amazonaws.com",
+                          ],
+                        ],
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "datazone.",
+                            {
+                              "Ref": "AWS::Region",
+                            },
+                            ".amazonaws.com",
+                          ],
+                        ],
+                      },
+                    ],
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "glue-catalog",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-catalog-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::KMS::Key",
+        "UpdateReplacePolicy": "Retain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-glue-catalog-main/kms/arn",
+          "Tags": {
+            "mdaa_cdk_app": "glue-catalog",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-glue-catalog-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-glue-catalog-main/kms/id",
+          "Tags": {
+            "mdaa_cdk_app": "glue-catalog",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-glue-catalog-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+    },
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`glue-catalog Snapshot Tests Glue Catalog Stack Snapshot Test 1`] = `
+{
+  "Description": "(SO0320-glue-catalog) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Mappings": {
+    "LatestNodeRuntimeMap": {
+      "af-south-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-east-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-east-2": {
+        "value": "nodejs22.x",
+      },
+      "ap-northeast-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-northeast-2": {
+        "value": "nodejs22.x",
+      },
+      "ap-northeast-3": {
+        "value": "nodejs22.x",
+      },
+      "ap-south-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-south-2": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-1": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-2": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-3": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-4": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-5": {
+        "value": "nodejs22.x",
+      },
+      "ap-southeast-7": {
+        "value": "nodejs22.x",
+      },
+      "ca-central-1": {
+        "value": "nodejs22.x",
+      },
+      "ca-west-1": {
+        "value": "nodejs22.x",
+      },
+      "cn-north-1": {
+        "value": "nodejs22.x",
+      },
+      "cn-northwest-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-central-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-central-2": {
+        "value": "nodejs22.x",
+      },
+      "eu-isoe-west-1": {
+        "value": "nodejs18.x",
+      },
+      "eu-north-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-south-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-south-2": {
+        "value": "nodejs22.x",
+      },
+      "eu-west-1": {
+        "value": "nodejs22.x",
+      },
+      "eu-west-2": {
+        "value": "nodejs22.x",
+      },
+      "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "il-central-1": {
+        "value": "nodejs22.x",
+      },
+      "me-central-1": {
+        "value": "nodejs22.x",
+      },
+      "me-south-1": {
+        "value": "nodejs22.x",
+      },
+      "mx-central-1": {
+        "value": "nodejs22.x",
+      },
+      "sa-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-east-2": {
+        "value": "nodejs22.x",
+      },
+      "us-gov-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-gov-west-1": {
+        "value": "nodejs22.x",
+      },
+      "us-iso-east-1": {
+        "value": "nodejs18.x",
+      },
+      "us-iso-west-1": {
+        "value": "nodejs18.x",
+      },
+      "us-isob-east-1": {
+        "value": "nodejs18.x",
+      },
+      "us-isob-west-1": {
+        "value": "nodejs18.x",
+      },
+      "us-west-1": {
+        "value": "nodejs22.x",
+      },
+      "us-west-2": {
+        "value": "nodejs22.x",
+      },
+    },
+  },
+  "Outputs": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-glue-catalog-main:kms:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-glue-catalog-main:kms:id",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-glue-catalog-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "glue-catalog",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-catalog-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "(SO0320-glue-catalog) Modern Data Architecture Accelerator. Version 1.0.0",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "athenacatalognode1": {
+      "Properties": {
+        "Name": "node1",
+        "Parameters": {
+          "catalog-id": "1234567890",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "glue-catalog",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-catalog-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Type": "GLUE",
+      },
+      "Type": "AWS::Athena::DataCatalog",
+    },
+    "athenacatalognode2": {
+      "Properties": {
+        "Name": "node2",
+        "Parameters": {
+          "catalog-id": "0987654321",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "glue-catalog",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-catalog-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Type": "GLUE",
+      },
+      "Type": "AWS::Athena::DataCatalog",
+    },
+    "athenacatalognode3": {
+      "Properties": {
+        "Name": "node3",
+        "Parameters": {
+          "catalog-id": "5678901234",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "glue-catalog",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-catalog-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Type": "GLUE",
+      },
+      "Type": "AWS::Athena::DataCatalog",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will interact only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will interact only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will interact only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:354:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-glue-catalog-main-catalog-cr",
+        "Handler": "glue_catalog_resource_policy.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "glue-catalog",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-catalog-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Timeout": 120,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:327:25] Role is for Custom Resource. Inline policy specific to custom resource.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-glue-catalog-main-catalog-cr*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-glue-catalog-main-catalog-cr*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "glue:PutResourcePolicy",
+                "glue:DeleteResourcePolicy",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":glue:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":catalog",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "ram:ListResources",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ram:",
+                    {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":resource-share/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:327:25] Role is for Custom Resource. Inline policy specific to custom resource.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-glue-catalog-main-catalog-cr",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "glue-catalog",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-catalog-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:416:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Description": "CR Role",
+        "RoleName": "test-org-test-env-test-domain-test-glue-catalog-main-ca-51a390e0",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "glue-catalog",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-catalog-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:416:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-glue-catalog-main-cat-d4e2e95*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "logs:CreateLogGroup",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-glue-catalog-main-cat-d4e2e95*",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "REPLACED-CFN-LOGICAL-ID",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "catalogresourcepolicy": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "account": {
+          "Ref": "AWS::AccountId",
+        },
+        "policyHashParam": "/test-org/test-domain/test-glue-catalog-main/policyhash",
+        "resourcePolicyJson": {
+          "Statement": [
+            {
+              "Action": [
+                "glue:Get*",
+                "glue:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":iam::1234567890:root",
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":iam::0987654321:root",
+                      ],
+                    ],
+                  },
+                ],
+              },
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":glue:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":glue:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":catalog",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":glue:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":database/default",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "accounts-read",
+            },
+            {
+              "Action": "glue:ShareResource",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ram.amazonaws.com",
+              },
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":glue:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":catalog",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":glue:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":database/*",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":glue:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/*/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "allow-ram-sharing",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-glue-catalog-main/policyhash",
+        "Tags": {
+          "mdaa_cdk_app": "glue-catalog",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-catalog-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "catalogresourcepolicy",
+            "PolicyHash",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Lambda function Runtime set by CDK Provider Framework",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will interact only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will interact only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will interact only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/governance/glue-catalog-l3-construct/lib/glue-catalog-l3-construct.ts:426:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-glue-catalog-main/datalake-catalog-cr-provider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+        },
+        "FunctionName": "test-org-test-env-test-domain-test-glue-catalog-main-cat-d4e2e95",
+        "Handler": "framework.onEvent",
+        "Role": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Runtime": {
+          "Fn::FindInMap": [
+            "LatestNodeRuntimeMap",
+            {
+              "Ref": "AWS::Region",
+            },
+            "value",
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "glue-catalog",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-catalog-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "gluecatalogsettings": {
+      "Properties": {
+        "CatalogId": {
+          "Ref": "AWS::AccountId",
+        },
+        "DataCatalogEncryptionSettings": {
+          "ConnectionPasswordEncryption": {
+            "KmsKeyId": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+            "ReturnConnectionPasswordEncrypted": true,
+          },
+          "EncryptionAtRest": {
+            "CatalogEncryptionMode": "SSE-KMS",
+            "SseAwsKmsKeyId": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+        },
+      },
+      "Type": "AWS::Glue::DataCatalogEncryptionSettings",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "AliasName": "alias/test-org-test-env-test-domain-test-glue-catalog-main",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::KMS::Alias",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "Description": "KMS Key for test-org-test-env-test-domain-test-glue-catalog-main",
+        "EnableKeyRotation": true,
+        "Enabled": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey",
+                "kms:CreateGrant",
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": {
+                    "Ref": "AWS::AccountId",
+                  },
+                  "kms:ViaService": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "glue.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "datazone.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey",
+                "kms:CreateGrant",
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": "1234567890",
+                  "kms:ViaService": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "glue.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "datazone.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey",
+                "kms:CreateGrant",
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": "0987654321",
+                  "kms:ViaService": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "glue.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "datazone.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey",
+                "kms:CreateGrant",
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:CallerAccount": "5678901234",
+                  "kms:ViaService": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "glue.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "datazone.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "glue-catalog",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-catalog-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-glue-catalog-main/kms/arn",
+        "Tags": {
+          "mdaa_cdk_app": "glue-catalog",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-catalog-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-glue-catalog-main/kms/id",
+        "Tags": {
+          "mdaa_cdk_app": "glue-catalog",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-catalog-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

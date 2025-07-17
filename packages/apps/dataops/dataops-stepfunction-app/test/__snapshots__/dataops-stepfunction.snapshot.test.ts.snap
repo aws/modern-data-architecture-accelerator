@@ -1,0 +1,1733 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 1`] = `
+{
+  "test-org-test-env-test-domain-test-stepfunction-main": {
+    "Description": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Outputs": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-stepfunction-main:loggroup:samplestatemachine1:name",
+        },
+        "Value": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-1",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-stepfunction-main:queue:samplestatemachine1eventsdlq:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-stepfunction-main:queue:samplestatemachine1eventsdlq:name",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-stepfunction-main:queue:samplestatemachine1eventsdlq:url",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+    },
+    "Parameters": {
+      "BootstrapVersion": {
+        "Default": "/cdk-bootstrap/hnb659fds/version",
+        "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValueorgdomain1glueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/org/domain1/glue-project/crawler/name/raw-source-files-crawler",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValueorgdomainglueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/org/domain/glue-project/crawler/name/raw-source-files-crawler",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValueorgdomainglueprojectjobnamecuratedtable1loadC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/org/domain/glue-project/job/name/curated-table1-load",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValueorgdomainglueprojectjobnamecuratedtable2loadC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/org/domain/glue-project/job/name/curated-table2-load",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile1curateC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/org/domain/glue-project/workflow/name/raw-source-file1-curate",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile2curateC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/org/domain/glue-project/workflow/name/raw-source-file2-curate",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojectsampledeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-sample/deploymentRole/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-sample/kmsArn/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-sample/projectBucket/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-sample/projectTopicArn/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "SsmParameterValuetestorgtestdomaindataopsprojectsamplesecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+        "Default": "/test-org/test-domain/dataops-project-sample/securityConfiguration/default",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+    },
+    "Resources": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Stack description parameter to update on version changes",
+          "Name": "/test-org/test-domain/test-stepfunction-main/aws-solution",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-stepfunction",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-stepfunction-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.0.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Retain",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+              {
+                "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+              {
+                "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              },
+              {
+                "id": "NIST.800.53.R5",
+                "reason": "[CONFIG:test-config.yaml] Cloudwatch Log Group retention period is managed by AWS Secure Environment Accelerator",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "LogGroupName": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-1",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-stepfunction",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-stepfunction-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::Logs::LogGroup",
+        "UpdateReplacePolicy": "Retain",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-stepfunction-main/loggroup/sample-state-machine-1/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-stepfunction",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-stepfunction-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-1",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/dataops-project-sample/stepfunction/name/sample-state-machine-1",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-stepfunction",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-stepfunction-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Name",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "KmsMasterKeyId": {
+            "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+          "QueueName": "test-org-test-env-test-domain-test-stepfunction-main-sample-state-mach--68490aeb",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-stepfunction",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-stepfunction-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::Queue",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sqs:*",
+                "Condition": {
+                  "Bool": {
+                    "aws:SecureTransport": "false",
+                  },
+                },
+                "Effect": "Deny",
+                "Principal": {
+                  "AWS": "*",
+                },
+                "Resource": "*",
+                "Sid": "EnforceSSL",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Condition": {
+                  "ArnEquals": {
+                    "aws:SourceArn": {
+                      "Fn::GetAtt": [
+                        "REPLACED-CFN-LOGICAL-ID",
+                        "Arn",
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "events.amazonaws.com",
+                },
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "Sid": "REPLACED-CFN-LOGICAL-ID",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Condition": {
+                  "ArnEquals": {
+                    "aws:SourceArn": {
+                      "Fn::GetAtt": [
+                        "REPLACED-CFN-LOGICAL-ID",
+                        "Arn",
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "events.amazonaws.com",
+                },
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "Sid": "REPLACED-CFN-LOGICAL-ID",
+              },
+              {
+                "Action": "sqs:SendMessage",
+                "Condition": {
+                  "ArnEquals": {
+                    "aws:SourceArn": {
+                      "Fn::GetAtt": [
+                        "REPLACED-CFN-LOGICAL-ID",
+                        "Arn",
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "events.amazonaws.com",
+                },
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "Sid": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Queues": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::SQS::QueuePolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-stepfunction-main/queue/sample-state-machine-1-events-dlq/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-stepfunction",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-stepfunction-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-stepfunction-main/queue/sample-state-machine-1-events-dlq/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-stepfunction",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-stepfunction-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "QueueName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-SQS3",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-stepfunction-main/queue/sample-state-machine-1-events-dlq/url",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-stepfunction",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-stepfunction-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "testing",
+          "EventBusName": "some-custom-name",
+          "EventPattern": {
+            "detail": {
+              "some_event_key": "some_event_value",
+            },
+            "source": [
+              "glue.amazonaws.com",
+            ],
+          },
+          "Name": "test-org-test-env-test-domain-test-stepfunction-main-t--6f7329e6",
+          "State": "ENABLED",
+          "Targets": [
+            {
+              "Arn": {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "DeadLetterConfig": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+              "Id": "Target0",
+              "RetryPolicy": {
+                "MaximumEventAgeInSeconds": 3600,
+                "MaximumRetryAttempts": 10,
+              },
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+        },
+        "Type": "AWS::Events::Rule",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "Event Rule for triggering sample-state-machine-1-testing-event-bridge-s3 with S3 events",
+          "EventBusName": "some-custom-name",
+          "EventPattern": {
+            "detail": {
+              "bucket": {
+                "name": [
+                  "sample-org-dev-instance1-datalake-raw",
+                ],
+              },
+              "object": {
+                "key": [
+                  {
+                    "prefix": "data/test-lambda/",
+                  },
+                ],
+              },
+            },
+            "detail-type": [
+              "Object Created",
+            ],
+            "source": [
+              "aws.s3",
+            ],
+          },
+          "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-7547f2b3",
+          "State": "ENABLED",
+          "Targets": [
+            {
+              "Arn": {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "DeadLetterConfig": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+              "Id": "Target0",
+              "RetryPolicy": {
+                "MaximumEventAgeInSeconds": 3600,
+                "MaximumRetryAttempts": 10,
+              },
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+        },
+        "Type": "AWS::Events::Rule",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "testing",
+          "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-67677cea",
+          "ScheduleExpression": "cron(0 20 * * ? *)",
+          "State": "ENABLED",
+          "Targets": [
+            {
+              "Arn": {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+              "DeadLetterConfig": {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+              "Id": "Target0",
+              "Input": "{"some-test-input-obj":{"some-test-input-key":"test-value"}}",
+              "RetryPolicy": {
+                "MaximumEventAgeInSeconds": 3600,
+                "MaximumRetryAttempts": 10,
+              },
+              "RoleArn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+        },
+        "Type": "AWS::Events::Rule",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "DefinitionString": {
+            "Fn::Join": [
+              "",
+              [
+                "{"Comment":"A description of my state machine","StartAt":"StartCrawler-Domain1","States":{"StartCrawler-Domain1":{"Type":"Task","Next":"WaitForDomain1Crawler","Parameters":{"Name":"",
+                {
+                  "Ref": "SsmParameterValueorgdomainglueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                ""},"Resource":"arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":states:::aws-sdk:glue:startCrawler"},"WaitForDomain1Crawler":{"Type":"Wait","Seconds":5,"Next":"GetCrawlerStatus-Domain1"},"GetCrawlerStatus-Domain1":{"Type":"Task","Next":"CheckStatus-Domain1Crawler","Parameters":{"Name":"",
+                {
+                  "Ref": "SsmParameterValueorgdomain1glueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                ""},"Resource":"arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":states:::aws-sdk:glue:getCrawler"},"CheckStatus-Domain1Crawler":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.Crawler.State","StringEquals":"RUNNING"},{"Variable":"$.Crawler.State","StringEquals":"STOPPING"}],"Next":"WaitForDomain1Crawler"},{"Or":[{"Variable":"$.Crawler.State","StringEquals":"FAILED"},{"Variable":"$.Crawler.State","StringEquals":"STOPPED"}],"Next":"Fail-Domain1Crawler"}],"Default":"Parallel"},"Parallel":{"Type":"Parallel","Branches":[{"StartAt":"Start-SourceFile1Curation","States":{"Start-SourceFile1Curation":{"Type":"Task","Parameters":{"Name":"",
+                {
+                  "Ref": "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile1curateC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                ""},"Resource":"arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":states:::aws-sdk:glue:startWorkflowRun","Next":"WaitForSourceFile1Curation"},"WaitForSourceFile1Curation":{"Type":"Wait","Seconds":5,"Next":"GetRunStatus-SourceFile1Curation"},"GetRunStatus-SourceFile1Curation":{"Type":"Task","Parameters":{"Name":"",
+                {
+                  "Ref": "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile1curateC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                "","RunId.$":"$.RunId"},"Resource":"arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":states:::aws-sdk:glue:getWorkflowRun","Next":"CheckStatus-SourceFile1Curation"},"CheckStatus-SourceFile1Curation":{"Type":"Choice","Choices":[{"Variable":"$.Run.Status","StringEquals":"RUNNING","Next":"WaitNCheckAagain-SourceFile1Curation"},{"And":[{"Variable":"$.Run.Status","StringEquals":"COMPLETED"},{"Not":{"Variable":"$.Run.Statistics.TotalActions","NumericEqualsPath":"$.Run.Statistics.SucceededActions"}}],"Next":"Fail-SourceFile1Curation"}],"Default":"Success-SourceFile1Curation"},"Success-SourceFile1Curation":{"Type":"Pass","End":true},"WaitNCheckAagain-SourceFile1Curation":{"Type":"Pass","Next":"WaitForSourceFile1Curation","Parameters":{"RunId.$":"$.Run.WorkflowRunId"}},"Fail-SourceFile1Curation":{"Type":"Fail","Cause":"GlueWorkflowError - Not all jobs in workflow were successful."}}},{"StartAt":"Start-Sourcefile2Curation","States":{"Start-Sourcefile2Curation":{"Type":"Task","Parameters":{"Name":"",
+                {
+                  "Ref": "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile2curateC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                ""},"Resource":"arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":states:::aws-sdk:glue:startWorkflowRun","Next":"WaitForSourcefile2Curation"},"WaitForSourcefile2Curation":{"Type":"Wait","Seconds":5,"Next":"GetRunStatus-Sourcefile2sCuration"},"GetRunStatus-Sourcefile2sCuration":{"Type":"Task","Parameters":{"Name":"",
+                {
+                  "Ref": "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile2curateC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                "","RunId.$":"$.RunId"},"Resource":"arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":states:::aws-sdk:glue:getWorkflowRun","Next":"CheckStatus-Sourcefile2sCuration"},"CheckStatus-Sourcefile2sCuration":{"Type":"Choice","Choices":[{"Variable":"$.Run.Status","StringEquals":"RUNNING","Next":"WaitNCheckAgain-Sourcefile2sCuration"},{"And":[{"Variable":"$.Run.Status","StringEquals":"COMPLETED"},{"Not":{"Variable":"$.Run.Statistics.TotalActions","NumericEqualsPath":"$.Run.Statistics.SucceededActions"}}],"Next":"Fail-Sourcefile2sCuration"}],"Default":"Success-Sourcefile2sCuration"},"Success-Sourcefile2sCuration":{"Type":"Pass","End":true},"WaitNCheckAgain-Sourcefile2sCuration":{"Type":"Pass","Next":"WaitForSourcefile2Curation","Parameters":{"RunId.$":"$.Run.WorkflowRunId"}},"Fail-Sourcefile2sCuration":{"Type":"Fail","Cause":"GlueWorkflowError - Not all jobs in workflow were successful."}}}],"Next":"Parallel (1)"},"Parallel (1)":{"Type":"Parallel","End":true,"Branches":[{"StartAt":"Load-Table1","States":{"Load-Table1":{"Type":"Task","Resource":"arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":states:::glue:startJobRun.sync","Parameters":{"JobName":"",
+                {
+                  "Ref": "SsmParameterValueorgdomainglueprojectjobnamecuratedtable1loadC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                ""},"End":true}}},{"StartAt":"Load-Table2","States":{"Load-Table2":{"Type":"Task","Resource":"arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":states:::glue:startJobRun","Parameters":{"JobName":"",
+                {
+                  "Ref": "SsmParameterValueorgdomainglueprojectjobnamecuratedtable2loadC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                ""},"End":true}}}]},"Fail-Domain1Crawler":{"Type":"Fail","Cause":"GlueCrawlerError - Glue Crawler Failed"}}}",
+              ],
+            ],
+          },
+          "LoggingConfiguration": {
+            "Destinations": [
+              {
+                "CloudWatchLogsLogGroup": {
+                  "LogGroupArn": {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+            ],
+            "IncludeExecutionData": false,
+            "Level": "ALL",
+          },
+          "RoleArn": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":role/service-role/StepFunctions-explore-Table1sInfo-ETL-role-4c710b67",
+              ],
+            ],
+          },
+          "StateMachineName": "test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-1",
+          "StateMachineType": "STANDARD",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-stepfunction",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-stepfunction-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "TracingConfiguration": {
+            "Enabled": true,
+          },
+        },
+        "Type": "AWS::StepFunctions::StateMachine",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": "states:StartExecution",
+                "Effect": "Allow",
+                "Resource": {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "events.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-stepfunction",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-stepfunction-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+    },
+    "Rules": {
+      "CheckBootstrapVersion": {
+        "Assertions": [
+          {
+            "Assert": {
+              "Fn::Not": [
+                {
+                  "Fn::Contains": [
+                    [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                    ],
+                    {
+                      "Ref": "BootstrapVersion",
+                    },
+                  ],
+                },
+              ],
+            },
+            "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+          },
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`] = `
+{
+  "Description": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Outputs": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-stepfunction-main:loggroup:samplestatemachine1:name",
+      },
+      "Value": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-1",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-stepfunction-main:queue:samplestatemachine1eventsdlq:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-stepfunction-main:queue:samplestatemachine1eventsdlq:name",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "QueueName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-stepfunction-main:queue:samplestatemachine1eventsdlq:url",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueorgdomain1glueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/org/domain1/glue-project/crawler/name/raw-source-files-crawler",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueorgdomainglueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/org/domain/glue-project/crawler/name/raw-source-files-crawler",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueorgdomainglueprojectjobnamecuratedtable1loadC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/org/domain/glue-project/job/name/curated-table1-load",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueorgdomainglueprojectjobnamecuratedtable2loadC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/org/domain/glue-project/job/name/curated-table2-load",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile1curateC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/org/domain/glue-project/workflow/name/raw-source-file1-curate",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile2curateC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/org/domain/glue-project/workflow/name/raw-source-file2-curate",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaincaefbootstraprolehelperservicetokenC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/caef-bootstrap/role-helper-service-token",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampledeploymentRoledefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-sample/deploymentRole/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-sample/kmsArn/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectBucketdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-sample/projectBucket/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsampleprojectTopicArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-sample/projectTopicArn/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValuetestorgtestdomaindataopsprojectsamplesecurityConfigurationdefaultC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/test-org/test-domain/dataops-project-sample/securityConfiguration/default",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Stack description parameter to update on version changes",
+        "Name": "/test-org/test-domain/test-stepfunction-main/aws-solution",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.0.0",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+            {
+              "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+            {
+              "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+            },
+            {
+              "id": "NIST.800.53.R5",
+              "reason": "[CONFIG:test-config.yaml] Cloudwatch Log Group retention period is managed by AWS Secure Environment Accelerator",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "LogGroupName": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-1",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-stepfunction-main/loggroup/sample-state-machine-1/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "/aws/stepfunction/test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-1",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/dataops-project-sample/stepfunction/name/sample-state-machine-1",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Name",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "KmsMasterKeyId": {
+          "Ref": "SsmParameterValuetestorgtestdomaindataopsprojectsamplekmsArndefaultC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "QueueName": "test-org-test-env-test-domain-test-stepfunction-main-sample-state-mach--68490aeb",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "EnforceSSL",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "Sid": "REPLACED-CFN-LOGICAL-ID",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "Sid": "REPLACED-CFN-LOGICAL-ID",
+            },
+            {
+              "Action": "sqs:SendMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "REPLACED-CFN-LOGICAL-ID",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "Sid": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-stepfunction-main/queue/sample-state-machine-1-events-dlq/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-stepfunction-main/queue/sample-state-machine-1-events-dlq/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "QueueName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-SQS3",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-stepfunction-main/queue/sample-state-machine-1-events-dlq/url",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-stepfunction",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-stepfunction-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "testing",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "detail": {
+            "some_event_key": "some_event_value",
+          },
+          "source": [
+            "glue.amazonaws.com",
+          ],
+        },
+        "Name": "test-org-test-env-test-domain-test-stepfunction-main-t--6f7329e6",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10,
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "Event Rule for triggering sample-state-machine-1-testing-event-bridge-s3 with S3 events",
+        "EventBusName": "some-custom-name",
+        "EventPattern": {
+          "detail": {
+            "bucket": {
+              "name": [
+                "sample-org-dev-instance1-datalake-raw",
+              ],
+            },
+            "object": {
+              "key": [
+                {
+                  "prefix": "data/test-lambda/",
+                },
+              ],
+            },
+          },
+          "detail-type": [
+            "Object Created",
+          ],
+          "source": [
+            "aws.s3",
+          ],
+        },
+        "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-7547f2b3",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+            "Id": "Target0",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10,
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "testing",
+        "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-67677cea",
+        "ScheduleExpression": "cron(0 20 * * ? *)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+            "DeadLetterConfig": {
+              "Arn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+            },
+            "Id": "Target0",
+            "Input": "{"some-test-input-obj":{"some-test-input-key":"test-value"}}",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 3600,
+              "MaximumRetryAttempts": 10,
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "DefinitionString": {
+          "Fn::Join": [
+            "",
+            [
+              "{"Comment":"A description of my state machine","StartAt":"StartCrawler-Domain1","States":{"StartCrawler-Domain1":{"Type":"Task","Next":"WaitForDomain1Crawler","Parameters":{"Name":"",
+              {
+                "Ref": "SsmParameterValueorgdomainglueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+              ""},"Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:glue:startCrawler"},"WaitForDomain1Crawler":{"Type":"Wait","Seconds":5,"Next":"GetCrawlerStatus-Domain1"},"GetCrawlerStatus-Domain1":{"Type":"Task","Next":"CheckStatus-Domain1Crawler","Parameters":{"Name":"",
+              {
+                "Ref": "SsmParameterValueorgdomain1glueprojectcrawlernamerawsourcefilescrawlerC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+              ""},"Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:glue:getCrawler"},"CheckStatus-Domain1Crawler":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.Crawler.State","StringEquals":"RUNNING"},{"Variable":"$.Crawler.State","StringEquals":"STOPPING"}],"Next":"WaitForDomain1Crawler"},{"Or":[{"Variable":"$.Crawler.State","StringEquals":"FAILED"},{"Variable":"$.Crawler.State","StringEquals":"STOPPED"}],"Next":"Fail-Domain1Crawler"}],"Default":"Parallel"},"Parallel":{"Type":"Parallel","Branches":[{"StartAt":"Start-SourceFile1Curation","States":{"Start-SourceFile1Curation":{"Type":"Task","Parameters":{"Name":"",
+              {
+                "Ref": "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile1curateC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+              ""},"Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:glue:startWorkflowRun","Next":"WaitForSourceFile1Curation"},"WaitForSourceFile1Curation":{"Type":"Wait","Seconds":5,"Next":"GetRunStatus-SourceFile1Curation"},"GetRunStatus-SourceFile1Curation":{"Type":"Task","Parameters":{"Name":"",
+              {
+                "Ref": "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile1curateC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+              "","RunId.$":"$.RunId"},"Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:glue:getWorkflowRun","Next":"CheckStatus-SourceFile1Curation"},"CheckStatus-SourceFile1Curation":{"Type":"Choice","Choices":[{"Variable":"$.Run.Status","StringEquals":"RUNNING","Next":"WaitNCheckAagain-SourceFile1Curation"},{"And":[{"Variable":"$.Run.Status","StringEquals":"COMPLETED"},{"Not":{"Variable":"$.Run.Statistics.TotalActions","NumericEqualsPath":"$.Run.Statistics.SucceededActions"}}],"Next":"Fail-SourceFile1Curation"}],"Default":"Success-SourceFile1Curation"},"Success-SourceFile1Curation":{"Type":"Pass","End":true},"WaitNCheckAagain-SourceFile1Curation":{"Type":"Pass","Next":"WaitForSourceFile1Curation","Parameters":{"RunId.$":"$.Run.WorkflowRunId"}},"Fail-SourceFile1Curation":{"Type":"Fail","Cause":"GlueWorkflowError - Not all jobs in workflow were successful."}}},{"StartAt":"Start-Sourcefile2Curation","States":{"Start-Sourcefile2Curation":{"Type":"Task","Parameters":{"Name":"",
+              {
+                "Ref": "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile2curateC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+              ""},"Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:glue:startWorkflowRun","Next":"WaitForSourcefile2Curation"},"WaitForSourcefile2Curation":{"Type":"Wait","Seconds":5,"Next":"GetRunStatus-Sourcefile2sCuration"},"GetRunStatus-Sourcefile2sCuration":{"Type":"Task","Parameters":{"Name":"",
+              {
+                "Ref": "SsmParameterValueorgdomainglueprojectworkflownamerawsourcefile2curateC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+              "","RunId.$":"$.RunId"},"Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:glue:getWorkflowRun","Next":"CheckStatus-Sourcefile2sCuration"},"CheckStatus-Sourcefile2sCuration":{"Type":"Choice","Choices":[{"Variable":"$.Run.Status","StringEquals":"RUNNING","Next":"WaitNCheckAgain-Sourcefile2sCuration"},{"And":[{"Variable":"$.Run.Status","StringEquals":"COMPLETED"},{"Not":{"Variable":"$.Run.Statistics.TotalActions","NumericEqualsPath":"$.Run.Statistics.SucceededActions"}}],"Next":"Fail-Sourcefile2sCuration"}],"Default":"Success-Sourcefile2sCuration"},"Success-Sourcefile2sCuration":{"Type":"Pass","End":true},"WaitNCheckAgain-Sourcefile2sCuration":{"Type":"Pass","Next":"WaitForSourcefile2Curation","Parameters":{"RunId.$":"$.Run.WorkflowRunId"}},"Fail-Sourcefile2sCuration":{"Type":"Fail","Cause":"GlueWorkflowError - Not all jobs in workflow were successful."}}}],"Next":"Parallel (1)"},"Parallel (1)":{"Type":"Parallel","End":true,"Branches":[{"StartAt":"Load-Table1","States":{"Load-Table1":{"Type":"Task","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::glue:startJobRun.sync","Parameters":{"JobName":"",
+              {
+                "Ref": "SsmParameterValueorgdomainglueprojectjobnamecuratedtable1loadC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+              ""},"End":true}}},{"StartAt":"Load-Table2","States":{"Load-Table2":{"Type":"Task","Resource":"arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::glue:startJobRun","Parameters":{"JobName":"",
+              {
+                "Ref": "SsmParameterValueorgdomainglueprojectjobnamecuratedtable2loadC96584B6F00A464EAD1953AFF4B05118Parameter",
+              },
+              ""},"End":true}}}]},"Fail-Domain1Crawler":{"Type":"Fail","Cause":"GlueCrawlerError - Glue Crawler Failed"}}}",
+            ],
+          ],
+        },
+        "LoggingConfiguration": {
+          "Destinations": [
+            {
+              "CloudWatchLogsLogGroup": {
+                "LogGroupArn": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
+            },
+          ],
+          "IncludeExecutionData": false,
+          "Level": "ALL",
+        },
+        "RoleArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":iam::",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              ":role/service-role/StepFunctions-explore-Table1sInfo-ETL-role-4c710b67",
+            ],
+          ],
+        },
+        "StateMachineName": "test-org-test-env-test-domain-test-stepfunction-main-sample-state-machine-1",
+        "StateMachineType": "STANDARD",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "TracingConfiguration": {
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

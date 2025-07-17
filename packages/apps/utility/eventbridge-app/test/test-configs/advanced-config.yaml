@@ -1,0 +1,14 @@
+# Advanced configuration for eventbridge module
+# TODO: Replace with your module's actual configuration structure
+
+# Example configuration - replace with actual structure
+eventbridgeSettings:
+  enabled: true
+  name: test-eventbridge-advanced
+  # Add your module-specific configuration here
+  
+  # Advanced features
+  advancedFeatures:
+    feature1: enabled
+    feature2: configured
+    # Add more advanced configuration options
