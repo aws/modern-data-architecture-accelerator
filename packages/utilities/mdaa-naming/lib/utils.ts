@@ -3,15 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export function fixAndValidate(input: string): string {
-  const normalized = input;
-
+export function validateResourceName(resourceName: string): string {
   // Handle single character case separately
-  if (normalized.length === 1) {
-    if (!/^[A-Za-z0-9]$/.test(normalized)) {
-      throw new Error(`Invalid single-character format: ${normalized}. Must be alphanumeric.`);
+  if (resourceName.length === 1) {
+    if (!/^[A-Za-z0-9]$/.test(resourceName)) {
+      throw new Error(`Invalid single-character format: ${resourceName}. Must be alphanumeric.`);
     }
-    return normalized;
+    return resourceName;
   }
 
   // Regex breakdown:
@@ -20,13 +18,13 @@ export function fixAndValidate(input: string): string {
   // [A-Za-z0-9]$     - Ends with letter/number (not hyphen)
   const validPattern = /^[A-Za-z0-9][A-Za-z0-9\-_.]*[A-Za-z0-9]$/;
 
-  if (!isException(normalized) && !validPattern.test(normalized)) {
-    throw new Error(`Invalid string format: ${normalized}`);
+  if (!isException(resourceName) && !validPattern.test(resourceName)) {
+    throw new Error(`Invalid string format: ${resourceName}`);
   }
 
-  return normalized;
+  return resourceName;
 }
 
-function isException(name: string): boolean {
+export function isException(name: string): boolean {
   return name.indexOf('Token[TOKEN') > -1 || name.endsWith('vpc-');
 }

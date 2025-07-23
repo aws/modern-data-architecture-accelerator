@@ -4,7 +4,7 @@
  */
 
 import { Node } from 'constructs';
-import { fixAndValidate } from './utils';
+import { validateResourceName } from './utils';
 
 /**
  * Basic config for a MDAA naming implementation.
@@ -123,9 +123,9 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
     }
     if (maxLength && name.length >= maxLength) {
       const hashCodeHex = MdaaDefaultResourceNaming.hashCodeHex(name);
-      return fixAndValidate(`${name.substring(0, maxLength - (hashCodeHex.length + 1))}-${hashCodeHex}`);
+      name = `${name.substring(0, maxLength - (hashCodeHex.length + 1))}-${hashCodeHex}`;
     }
-    return fixAndValidate(name);
+    return validateResourceName(name);
   }
 
   /**

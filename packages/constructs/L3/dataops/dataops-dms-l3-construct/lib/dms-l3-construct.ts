@@ -44,6 +44,7 @@ import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct';
 import { SuppressionProps } from '@aws-mdaa/roles-l3-construct';
+import { CfnResource } from 'aws-cdk-lib';
 
 export interface EndpointProps {
   /**
@@ -386,10 +387,9 @@ export class DMSL3Construct extends MdaaL3Construct {
       ? Role.fromRoleArn(this, 'dms-role', props.dms.dmsRoleArn)
       : this.createDmsRole();
     // if user explicitly wants to create the dms-vpc-role
-    if (props.dms.createDmsVpcRole === true) {
-      this.createDmsVpcRole();
-    }
-    const replicationInstances = this.createReplicationInstances();
+    const dmsVpcRole =
+      props.dms.createDmsVpcRole === true ? (this.createDmsVpcRole().node.defaultChild as CfnResource) : undefined;
+    const replicationInstances = this.createReplicationInstances(dmsVpcRole);
     const endpoints = this.createEndpoints(dmsRole);
     this.createReplicationTasks(replicationInstances, endpoints);
   }
@@ -437,7 +437,7 @@ export class DMSL3Construct extends MdaaL3Construct {
     });
   }
 
-  private createDmsVpcRole(): IRole {
+  private createDmsVpcRole(): MdaaRole {
     const role = new MdaaRole(this, 'dms-vpc-role', {
       naming: this.props.naming,
       roleName: 'dms-vpc-role',
@@ -542,7 +542,7 @@ export class DMSL3Construct extends MdaaL3Construct {
     }
   }
 
-  private createReplicationInstances(): { [name: string]: CfnReplicationInstance } {
+  private createReplicationInstances(vpcDmsRole: CfnResource | undefined): { [name: string]: CfnReplicationInstance } {
     return Object.fromEntries(
       Object.entries(this.props.dms.replicationInstances || {}).map(([instanceName, instanceProps]) => {
         const subnetGroupProps: CfnReplicationSubnetGroupProps = {
@@ -555,6 +555,9 @@ export class DMSL3Construct extends MdaaL3Construct {
           `replication-subnet-group-${instanceName}`,
           subnetGroupProps,
         );
+        if (vpcDmsRole) {
+          subnetGroup.addDependency(vpcDmsRole);
+        }
 
         const vpc = Vpc.fromVpcAttributes(this, 'vpc of' + instanceName, {
           availabilityZones: ['dummy'],

@@ -20,7 +20,9 @@ describe('MdaaDefaultResourceNaming', () => {
   test('resourceName', () => {
     expect(naming.resourceName()).toBe('test-org-test-env-test-domain-test-module');
     expect(naming.resourceName('test-resource')).toBe('test-org-test-env-test-domain-test-module-test-resource');
-    expect(naming.resourceName('test-resource', 20)).toBe('test-org-tes-a115c7e');
+    const newName = naming.resourceName('x'.repeat(100), 20);
+    expect(newName.length).toBe(20);
+    expect(newName).toBe('test-org-te-5a4488cb');
   });
 
   test('ssmPath', () => {

@@ -40,6 +40,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { ConfigurationElement } from '@aws-mdaa/config';
+import { sanitizeScheduledActionName } from './utils';
 
 export interface FederationProps {
   /**
@@ -951,7 +952,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
         const targetAction = action.targetAction == 'pauseCluster' ? pauseClusterAction : resumeClusterAction;
         // Create Redshift Scheduled Action
         return new CfnScheduledAction(this.scope, `scheduled-action-${action.name}`, {
-          scheduledActionName: this.props.naming.resourceName(action.name, 55),
+          scheduledActionName: sanitizeScheduledActionName(this.props.naming.resourceName(action.name, 55)),
           enable: action.enable,
           targetAction: targetAction,
           schedule: action.schedule,

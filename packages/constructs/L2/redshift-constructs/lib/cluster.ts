@@ -162,7 +162,7 @@ export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
 export class MdaaRedshiftCluster extends Cluster {
   private static setProps(props: MdaaRedshiftClusterProps): ClusterProps {
     const overrideProps = {
-      clusterName: props.naming.resourceName(props.clusterName),
+      clusterName: props.naming.resourceName(props.clusterName, 63),
       publiclyAccessible: false,
       encrypted: true,
       removalPolicy: RemovalPolicy.RETAIN,

@@ -7,6 +7,7 @@ import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //
 import { CfnNotebookInstance, CfnNotebookInstanceProps } from 'aws-cdk-lib/aws-sagemaker';
 import { Construct } from 'constructs';
 import { IResolvable } from 'aws-cdk-lib';
+import { sanitizeNotebookName, MAX_NOTEBOOK_NAME_LENGTH } from './utils';
 import InstanceMetadataServiceConfigurationProperty = CfnNotebookInstance.InstanceMetadataServiceConfigurationProperty;
 
 /**
@@ -70,7 +71,7 @@ export interface MdaaNoteBookProps extends MdaaConstructProps {
    */
   readonly volumeSizeInGb?: number;
   /**
-   * 	Whether root access is enabled or disabled for users of the notebook instance.
+   *  Whether root access is enabled or disabled for users of the notebook instance.
    */
   readonly rootAccess?: string;
 }
@@ -81,7 +82,9 @@ export interface MdaaNoteBookProps extends MdaaConstructProps {
 export class MdaaNoteBook extends CfnNotebookInstance {
   private static setProps(props: MdaaNoteBookProps): CfnNotebookInstanceProps {
     const overrideProps = {
-      notebookInstanceName: props.naming.resourceName(props.notebookInstanceName),
+      notebookInstanceName: sanitizeNotebookName(
+        props.naming.resourceName(props.notebookInstanceName, MAX_NOTEBOOK_NAME_LENGTH),
+      ),
       rootAccess: props.rootAccess == 'Enabled' ? 'Enabled' : 'Disabled',
       directInternetAccess: 'Disabled',
     };

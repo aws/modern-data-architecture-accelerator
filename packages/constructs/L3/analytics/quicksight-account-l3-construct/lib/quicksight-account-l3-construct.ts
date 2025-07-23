@@ -16,6 +16,7 @@ import { CfnVPCConnection, CfnVPCConnectionProps } from 'aws-cdk-lib/aws-quicksi
 import { Provider } from 'aws-cdk-lib/custom-resources';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
+import { sanitizeAccountName } from './utils';
 
 export interface AccountWithNameProps extends AccountProps {
   readonly accountName: string;
@@ -91,6 +92,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
   protected readonly props: QuickSightAccountL3ConstructProps;
 
   private boto3Layer: LayerVersion;
+
   constructor(scope: Construct, id: string, props: QuickSightAccountL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
@@ -171,13 +173,12 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
       glueResourceAccess: undefined,
     };
 
-    const accountResource = new CustomResource(this, 'account-cr', {
+    return new CustomResource(this, 'account-cr', {
       serviceToken: accountProvider.serviceToken,
       properties: {
         accountDetail: crProps,
       },
     });
-    return accountResource;
   }
 
   //Creates Custom Lambda Provider to create QS Account
@@ -408,7 +409,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
     const accountCreateProps: AccountWithNameProps = {
       ...this.props.qsAccount,
       ...{
-        accountName: this.props.naming.resourceName(),
+        accountName: sanitizeAccountName(this.props.naming.resourceName(undefined, 55)),
       },
     };
     return this.createAccountCr(accountProvider, accountCreateProps);
@@ -421,13 +422,13 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
       availabilityZones: ['dummy'],
     });
     /**
-    For every sgAccess in the config, add appropriate ingress/egress rules to the QuickSight SG
-    Note that the QuickSight SG is not stateless and thus both egress (QuickSight to peer)
-    and ingress (peer to QuickSight) rules are required.
-    See https://docs.aws.amazon.com/quicksight/latest/user/vpc-security-groups.html
-    These below ingress rules will allow traffic from data sources in the VPC 
-    to return to the QS service via the VPC connection it creates (to which the security group is attached.)
-    */
+     For every sgAccess in the config, add appropriate ingress/egress rules to the QuickSight SG
+     Note that the QuickSight SG is not stateless and thus both egress (QuickSight to peer)
+     and ingress (peer to QuickSight) rules are required.
+     See https://docs.aws.amazon.com/quicksight/latest/user/vpc-security-groups.html
+     These below ingress rules will allow traffic from data sources in the VPC
+     to return to the QS service via the VPC connection it creates (to which the security group is attached.)
+     */
     const ingressRules: MdaaSecurityGroupRuleProps = {
       ipv4: this.props.qsAccount.securityGroupAccess?.ipv4?.map(rule => {
         return { cidr: rule.cidr, protocol: Protocol.TCP, port: 1, toPort: 65535 };
@@ -441,7 +442,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
     };
 
     //Create the SecurityGroup
-    const quickSightSecurityGroup = new MdaaSecurityGroup(this, `quicksight-sg`, {
+    return new MdaaSecurityGroup(this, `quicksight-sg`, {
       naming: this.props.naming,
       securityGroupName: 'quicksight-sg',
       vpc: vpc,
@@ -450,19 +451,15 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
       ingressRules: ingressRules,
       egressRules: this.props.qsAccount.securityGroupAccess,
     });
-
-    return quickSightSecurityGroup;
   }
 
   private buildQuickSightServiceRole(): IRole {
-    const role = new MdaaRole(this, `service-role`, {
+    return new MdaaRole(this, `service-role`, {
       assumedBy: new ServicePrincipal('quicksight.amazonaws.com'),
       description: 'QuickSight Service Role',
       roleName: `service-role`,
       naming: this.props.naming,
     });
-
-    return role;
   }
 
   private createServiceManagedPolicy(role: IRole): IManagedPolicy {

@@ -1,11 +1,11 @@
 # (Required) Name of the Data Ops Project
-# Name the the project the resources of which will be used by this workflow.
+# Name the project the resources of which will be used by this workflow.
 # Other resources within the project can be referenced in the workflow config using
 # the "project:" prefix on the config value.
 projectName: dataops-project-test
 # List of workflow definitions as produced by 'aws glue get-workflow --name <name> --include-graph'
 workflowDefinitions:
-  # Integration with Event Bridge for the purpose
+  # Integration with EventBridge for the purpose
   # of triggering this workflow with Event Bridge rules
   - eventBridge:
       # Number of times Event Bridge will attempt to trigger this workflow

@@ -157,3 +157,54 @@ describe('QS Account Mandatory Tests', () => {
     });
   });
 });
+describe('QS Account Name Validity Tests', () => {
+  function constructProps(testApp: MdaaTestApp): QuickSightAccountL3ConstructProps {
+    return {
+      qsAccount: {
+        edition: 'ENTERPRISE_AND_Q',
+        authenticationMethod: 'IAM_AND_QUICKSIGHT',
+        notificationEmail: 'test@example.com',
+        vpcId: 'vpc-abcd1234',
+        subnetIds: ['test-subnet-id1', 'test-subnet-id2'],
+      },
+      naming: testApp.naming,
+
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    };
+  }
+
+  test('Test QS Account With invalid name gets sanitized', () => {
+    const testApp = new MdaaTestApp({
+      org: 'D-test-not-allowed',
+    });
+
+    new QuickSightAccountL3Construct(testApp.testStack, 'test-stack', constructProps(testApp));
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::CloudFormation::CustomResource', {
+      accountDetail: Match.objectLike({
+        edition: 'ENTERPRISE_AND_Q',
+        authenticationMethod: 'IAM_AND_QUICKSIGHT',
+        notificationEmail: 'test@example.com',
+        accountName: 'test-not-allowed-test-env-test-domain-test-module',
+      }),
+    });
+  });
+  test('Test QS Account With long name', () => {
+    const testApp = new MdaaTestApp({
+      org: 'test-very-very-very-long-org',
+    });
+
+    new QuickSightAccountL3Construct(testApp.testStack, 'test-stack', constructProps(testApp));
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::CloudFormation::CustomResource', {
+      accountDetail: Match.objectLike({
+        edition: 'ENTERPRISE_AND_Q',
+        authenticationMethod: 'IAM_AND_QUICKSIGHT',
+        notificationEmail: 'test@example.com',
+        accountName: 'test-very-very-very-long-org-test-env-test-do-5d64fc24',
+      }),
+    });
+  });
+});

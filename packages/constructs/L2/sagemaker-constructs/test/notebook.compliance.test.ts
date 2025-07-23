@@ -28,7 +28,7 @@ describe('MDAA Construct Compliance Tests', () => {
 
   test('NotebookInstanceName', () => {
     template.hasResourceProperties('AWS::SageMaker::NotebookInstance', {
-      NotebookInstanceName: testApp.naming.resourceName('test-notebook'),
+      NotebookInstanceName: 'test-org-test-env-test-domain-test-module-test-notebook',
     });
   });
 
@@ -71,6 +71,33 @@ describe('MDAA Construct Compliance Tests', () => {
   test('DirectInternetAccess', () => {
     template.hasResourceProperties('AWS::SageMaker::NotebookInstance', {
       DirectInternetAccess: 'Disabled',
+    });
+  });
+});
+describe('MDAA Notebook Name Tests', () => {
+  const testApp = new MdaaTestApp();
+
+  const testContstructProps: MdaaNoteBookProps = {
+    notebookInstanceId: 'test-id',
+    naming: testApp.naming,
+    instanceType: 'ml.t3.medium',
+    subnetId: 'test-subnet-id',
+    kmsKeyId: 'arn:test-partition:kms:test-region:test-account:key/test-key',
+    roleArn: 'arn:test-partition:iam:test-region:test-account:role/test-role',
+    securityGroupIds: ['test-security-group'],
+    notebookInstanceName: 'test-notebook'.repeat(5),
+  };
+
+  new MdaaNoteBook(testApp.testStack, 'test-construct', testContstructProps);
+
+  testApp.checkCdkNagCompliance(testApp.testStack);
+  const template = Template.fromStack(testApp.testStack);
+
+  const expectedInstanceName = 'test-org-test-env-test-domain-test-module-test-notebo-334f45b5';
+  test('NotebookInstanceName', () => {
+    expect(expectedInstanceName.length).toBeLessThan(64);
+    template.hasResourceProperties('AWS::SageMaker::NotebookInstance', {
+      NotebookInstanceName: expectedInstanceName,
     });
   });
 });
