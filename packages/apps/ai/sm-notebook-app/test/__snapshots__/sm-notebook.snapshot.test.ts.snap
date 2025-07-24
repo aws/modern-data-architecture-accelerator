@@ -137,43 +137,43 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook App App Snapshot Test 1`]
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-L1",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
               },
             ],
           },
@@ -309,19 +309,19 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook App App Snapshot Test 1`]
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:81:25] Inline policy used only for deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:81:25] Policy used only for deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:81:25] Policy used only for deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:81:25] Policy used only for deployment.",
+                "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
               },
             ],
           },
@@ -628,7 +628,7 @@ sh $ASSETS_DIR/testing/test.sh",
             ],
           },
           "LifecycleConfigName": "test-org-test-env-test-domain-test-sagemaker-notebook-app-example-lifecycle-config",
-          "NotebookInstanceName": "test-org-test-env-test-domain-test-sagemaker-notebook-app-test-notebook-name",
+          "NotebookInstanceName": "REPLACED-S3-BUCKET-NAME",
           "RoleArn": {
             "Fn::Join": [
               "",
@@ -878,7 +878,7 @@ sh $ASSETS_DIR/testing/test.sh",
             ],
           },
           "LifecycleConfigName": "existing-lifecycle-config",
-          "NotebookInstanceName": "test-org-test-env-test-domain-test-sagemaker-notebook-app-notebook-2",
+          "NotebookInstanceName": "REPLACED-S3-BUCKET-NAME",
           "RoleArn": {
             "Fn::GetAtt": [
               "RoleResnotebook2",
@@ -958,17 +958,7 @@ sh $ASSETS_DIR/testing/test.sh",
               "Arn",
             ],
           },
-          "NotebookInstanceName": {
-            "Fn::Join": [
-              "",
-              [
-                "test-org-test-env-test-domain-test-sagemaker-notebook-app-",
-                {
-                  "Ref": "notebookname",
-                },
-              ],
-            ],
-          },
+          "NotebookInstanceName": "REPLACED-S3-BUCKET-NAME",
           "RoleArn": {
             "Fn::GetAtt": [
               "RoleResnotebook2",
@@ -1226,43 +1216,43 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook Stack Snapshot Test 1`] =
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-L1",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
             },
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:96:29] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
             },
           ],
         },
@@ -1398,19 +1388,19 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook Stack Snapshot Test 1`] =
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:81:25] Inline policy used only for deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Inline policy used only for deployment.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:81:25] Policy used only for deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:81:25] Policy used only for deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:81:25] Policy used only for deployment.",
+              "reason": "[MDAA:@aws-mdaa/ai/sm-shared/lib/sm-shared.ts:LINE:COL] Policy used only for deployment.",
             },
           ],
         },
@@ -1717,7 +1707,7 @@ sh $ASSETS_DIR/testing/test.sh",
           ],
         },
         "LifecycleConfigName": "test-org-test-env-test-domain-test-sagemaker-notebook-example-lifecycle-config",
-        "NotebookInstanceName": "test-org-test-env-test-domain-test-sagemaker-notebook-test-notebook-name",
+        "NotebookInstanceName": "test-org-test-env-test-domain-test-sagemaker-notebook-5fab237",
         "RoleArn": {
           "Fn::Join": [
             "",
@@ -1967,7 +1957,7 @@ sh $ASSETS_DIR/testing/test.sh",
           ],
         },
         "LifecycleConfigName": "existing-lifecycle-config",
-        "NotebookInstanceName": "test-org-test-env-test-domain-test-sagemaker-notebook-notebook-2",
+        "NotebookInstanceName": "REPLACED-S3-BUCKET-NAME",
         "RoleArn": {
           "Fn::GetAtt": [
             "RoleResnotebook2",
@@ -2047,17 +2037,7 @@ sh $ASSETS_DIR/testing/test.sh",
             "Arn",
           ],
         },
-        "NotebookInstanceName": {
-          "Fn::Join": [
-            "",
-            [
-              "test-org-test-env-test-domain-test-sagemaker-notebook-",
-              {
-                "Ref": "notebookname",
-              },
-            ],
-          ],
-        },
+        "NotebookInstanceName": "REPLACED-S3-BUCKET-NAME",
         "RoleArn": {
           "Fn::GetAtt": [
             "RoleResnotebook2",

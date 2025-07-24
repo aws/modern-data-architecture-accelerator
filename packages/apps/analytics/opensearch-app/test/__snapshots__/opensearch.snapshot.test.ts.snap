@@ -243,43 +243,43 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-L1",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Lambda function Runtime set by CDK Provider Framework",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
               },
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will interact only with IAM.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will interact only with IAM.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will interact only with IAM.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will interact only with IAM.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will interact only with IAM.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will interact only with IAM.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -339,7 +339,7 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:231:33] Role is for Custom Resource Provider Lambda Function. AWS Managed policy AWSLambdaBasicExecutionRole provides least privilege permissions.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function. AWS Managed policy AWSLambdaBasicExecutionRole provides least privilege permissions.",
               },
             ],
           },
@@ -402,19 +402,19 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:241:35] Role is for Custom Resource Provider Lambda Function. KMS policy added is least privilege.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function. KMS policy added is least privilege.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:241:35] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:241:35] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:241:35] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
               },
             ],
           },
@@ -500,15 +500,15 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
-                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
               },
               {
                 "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
-                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
               },
               {
                 "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
-                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
               },
             ],
           },
@@ -660,7 +660,7 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -705,7 +705,7 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -768,7 +768,7 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -798,7 +798,7 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -828,7 +828,7 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1241,11 +1241,11 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-OS3",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:149:29] The Opensearch domain is deployed within VPC. IP based access policies cannot be applied to domains that reside within VPC because security groups already enforce IP-based access policy. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/vpc.html#vpc-security",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] The Opensearch domain is deployed within VPC. IP based access policies cannot be applied to domains that reside within VPC because security groups already enforce IP-based access policy. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/vpc.html#vpc-security",
               },
               {
                 "id": "AwsSolutions-OS5",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:149:29] CDK Construct applies Domain Access Policy immedietely after the domain is created. Zero Trust is still applied, not as part of domain properties in CDK generated cloudformation template, but immediately after domain deployment via custom resource",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] CDK Construct applies Domain Access Policy immedietely after the domain is created. Zero Trust is still applied, not as part of domain properties in CDK generated cloudformation template, but immediately after domain deployment via custom resource",
               },
             ],
           },
@@ -1419,15 +1419,15 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:166:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:166:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:166:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -1600,19 +1600,19 @@ exports[`opensearch Snapshot Tests Opensearch App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:125:33] Role is for Custom Resource Provider. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/encryption-at-rest.html",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/encryption-at-rest.html",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:125:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:125:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:125:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -1916,43 +1916,43 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-L1",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Lambda function Runtime set by CDK Provider Framework",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
             },
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will interact only with IAM.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will interact only with IAM.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will interact only with IAM.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will interact only with IAM.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will interact only with IAM.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will interact only with IAM.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:187:29] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -2012,7 +2012,7 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:231:33] Role is for Custom Resource Provider Lambda Function. AWS Managed policy AWSLambdaBasicExecutionRole provides least privilege permissions.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function. AWS Managed policy AWSLambdaBasicExecutionRole provides least privilege permissions.",
             },
           ],
         },
@@ -2075,19 +2075,19 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:241:35] Role is for Custom Resource Provider Lambda Function. KMS policy added is least privilege.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function. KMS policy added is least privilege.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:241:35] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:241:35] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:241:35] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider Lambda Function executed only at the time of infra deployment. Least privilege KMS policies automatically added.",
             },
           ],
         },
@@ -2173,15 +2173,15 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
             },
             {
               "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
             },
             {
               "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
             },
           ],
         },
@@ -2333,7 +2333,7 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -2378,7 +2378,7 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -2441,7 +2441,7 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -2471,7 +2471,7 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -2501,7 +2501,7 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -2914,11 +2914,11 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-OS3",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:149:29] The Opensearch domain is deployed within VPC. IP based access policies cannot be applied to domains that reside within VPC because security groups already enforce IP-based access policy. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/vpc.html#vpc-security",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] The Opensearch domain is deployed within VPC. IP based access policies cannot be applied to domains that reside within VPC because security groups already enforce IP-based access policy. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/vpc.html#vpc-security",
             },
             {
               "id": "AwsSolutions-OS5",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:149:29] CDK Construct applies Domain Access Policy immedietely after the domain is created. Zero Trust is still applied, not as part of domain properties in CDK generated cloudformation template, but immediately after domain deployment via custom resource",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] CDK Construct applies Domain Access Policy immedietely after the domain is created. Zero Trust is still applied, not as part of domain properties in CDK generated cloudformation template, but immediately after domain deployment via custom resource",
             },
           ],
         },
@@ -3092,15 +3092,15 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:166:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:166:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:166:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },
@@ -3273,19 +3273,19 @@ exports[`opensearch Snapshot Tests Opensearch Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:125:33] Role is for Custom Resource Provider. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/encryption-at-rest.html",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. https://docs.aws.amazon.com/opensearch-service/latest/developerguide/encryption-at-rest.html",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:125:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:125:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:125:33] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/opensearch-constructs/lib/domain.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },

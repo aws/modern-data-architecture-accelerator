@@ -3,11 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// NOSONAR
-/* istanbul ignore file */
-/* sonar-disable */
-// This file is excluded from SonarQube coverage analysis as it contains test utilities
-
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { expect, test } from '@jest/globals';
@@ -276,5 +271,23 @@ function configureSnapshotSerializers(): void {
   expect.addSnapshotSerializer({
     test: isTimestamp,
     print: (): string => '"REPLACED-TIMESTAMP"',
+  });
+
+  // Add serializers to ignore line numbers in snapshot tests
+  expect.addSnapshotSerializer({
+    test: (val: unknown): boolean =>
+      typeof val === 'string' && val.includes('cdk-hnb659fds-container-assets') && /:[a-f0-9]{64}/.test(val),
+    print: (val: unknown): string => {
+      const stringVal = typeof val === 'string' ? val : String(val);
+      return JSON.stringify(stringVal.replace(/:[a-f0-9]{64}/g, ':ASSET-HASH'));
+    },
+  });
+
+  expect.addSnapshotSerializer({
+    test: (val: unknown): boolean => typeof val === 'string' && val.includes('[MDAA:') && /:\d+:\d+\]/.test(val),
+    print: (val: unknown): string => {
+      const stringVal = typeof val === 'string' ? val : String(val);
+      return JSON.stringify(stringVal.replace(/(\[MDAA:[^:]+):\d+:\d+(\])/g, '$1:LINE:COL$2'));
+    },
   });
 }

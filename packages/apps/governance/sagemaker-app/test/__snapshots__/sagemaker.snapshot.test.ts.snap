@@ -382,39 +382,39 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -476,39 +476,39 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -541,39 +541,39 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -600,19 +600,19 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] PutEnvironmentBlueprintConfiguration does not take a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] PutEnvironmentBlueprintConfiguration does not take a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html ",
               },
             ],
           },
@@ -665,19 +665,19 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
             ],
           },
@@ -738,19 +738,19 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
             ],
           },
@@ -804,43 +804,43 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-L1",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Lambda function Runtime set by CDK Provider Framework",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
               },
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -912,31 +912,31 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -987,31 +987,31 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -1473,15 +1473,15 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -1538,15 +1538,15 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -1585,15 +1585,15 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -1623,15 +1623,15 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -1661,15 +1661,15 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -2024,19 +2024,19 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -2075,19 +2075,19 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -2181,19 +2181,19 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -2223,19 +2223,19 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -2265,19 +2265,19 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+                "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
               },
             ],
           },
@@ -2711,39 +2711,39 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -2805,39 +2805,39 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -2870,39 +2870,39 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -2929,19 +2929,19 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] PutEnvironmentBlueprintConfiguration does not take a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] PutEnvironmentBlueprintConfiguration does not take a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html ",
             },
           ],
         },
@@ -2994,19 +2994,19 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
           ],
         },
@@ -3067,19 +3067,19 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
           ],
         },
@@ -3133,43 +3133,43 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-L1",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Lambda function Runtime set by CDK Provider Framework",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
             },
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -3241,31 +3241,31 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },
@@ -3316,31 +3316,31 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },
@@ -3802,15 +3802,15 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },
@@ -3867,15 +3867,15 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },
@@ -3914,15 +3914,15 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },
@@ -3952,15 +3952,15 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },
@@ -3990,15 +3990,15 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:449:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },
@@ -4353,19 +4353,19 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },
@@ -4404,19 +4404,19 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },
@@ -4510,19 +4510,19 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },
@@ -4552,19 +4552,19 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },
@@ -4594,19 +4594,19 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permissions are related DataZone and only one permission is given to RAM to get share associations.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:513:25] Permission to use Key for DataZone. No other role requires this.",
+              "reason": "[MDAA:@aws-mdaa/governance/datazone-l3-construct/lib/datazone-l3-construct.ts:LINE:COL] Permission to use Key for DataZone. No other role requires this.",
             },
           ],
         },

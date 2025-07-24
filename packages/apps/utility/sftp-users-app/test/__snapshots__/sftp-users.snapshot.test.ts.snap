@@ -176,19 +176,19 @@ exports[`sftp-users Snapshot Tests SFTP users App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
             ],
           },
@@ -238,19 +238,19 @@ exports[`sftp-users Snapshot Tests SFTP users App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
             ],
           },
@@ -345,19 +345,19 @@ exports[`sftp-users Snapshot Tests SFTP users App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
             ],
           },
@@ -387,19 +387,19 @@ exports[`sftp-users Snapshot Tests SFTP users App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
             ],
           },
@@ -429,19 +429,19 @@ exports[`sftp-users Snapshot Tests SFTP users App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
               },
             ],
           },
@@ -669,19 +669,19 @@ exports[`sftp-users Snapshot Tests SFTP users Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
           ],
         },
@@ -731,19 +731,19 @@ exports[`sftp-users Snapshot Tests SFTP users Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
           ],
         },
@@ -838,19 +838,19 @@ exports[`sftp-users Snapshot Tests SFTP users Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
           ],
         },
@@ -880,19 +880,19 @@ exports[`sftp-users Snapshot Tests SFTP users Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
           ],
         },
@@ -922,19 +922,19 @@ exports[`sftp-users Snapshot Tests SFTP users Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Statement resource is scoped to user home directory. Wildcard is for filenames/object keys not known at deployment time.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:125:27] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-users-l3-construct/lib/sftp-users-l3-construct.ts:LINE:COL] Permissions are specific to this SFTP server role. Inline policy is appropriate.",
             },
           ],
         },

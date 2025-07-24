@@ -264,39 +264,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -362,39 +362,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -427,39 +427,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -486,23 +486,23 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Role is for Custom Resource. Inline policy specific to custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource. Inline policy specific to custom resource.",
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] SSO App name not known at deployment time. https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslakeformation.html#awslakeformation-actions-as-permissions",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] SSO App name not known at deployment time. https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslakeformation.html#awslakeformation-actions-as-permissions",
               },
             ],
           },
@@ -610,19 +610,19 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
             ],
           },
@@ -672,19 +672,19 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
             ],
           },
@@ -749,43 +749,43 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-L1",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Lambda function Runtime set by CDK Provider Framework",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
               },
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -857,31 +857,31 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -932,31 +932,31 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -1058,39 +1058,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -1156,39 +1156,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -1221,39 +1221,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -1280,23 +1280,23 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Role is for Custom Resource. Inline policy specific to custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource. Inline policy specific to custom resource.",
               },
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] LakeFormation permissions do not accept resource. https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslakeformation.html#awslakeformation-actions-as-permissions",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] LakeFormation permissions do not accept resource. https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslakeformation.html#awslakeformation-actions-as-permissions",
               },
             ],
           },
@@ -1330,19 +1330,19 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
             ],
           },
@@ -1392,19 +1392,19 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
             ],
           },
@@ -1469,43 +1469,43 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-L1",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Lambda function Runtime set by CDK Provider Framework",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
               },
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -1577,31 +1577,31 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -1652,31 +1652,31 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -2149,39 +2149,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -2247,39 +2247,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -2312,39 +2312,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -2371,23 +2371,23 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Role is for Custom Resource. Inline policy specific to custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource. Inline policy specific to custom resource.",
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] SSO App name not known at deployment time. https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslakeformation.html#awslakeformation-actions-as-permissions",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] SSO App name not known at deployment time. https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslakeformation.html#awslakeformation-actions-as-permissions",
             },
           ],
         },
@@ -2495,19 +2495,19 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
           ],
         },
@@ -2557,19 +2557,19 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
           ],
         },
@@ -2634,43 +2634,43 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-L1",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Lambda function Runtime set by CDK Provider Framework",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
             },
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -2742,31 +2742,31 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },
@@ -2817,31 +2817,31 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },
@@ -2943,39 +2943,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -3041,39 +3041,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -3106,39 +3106,39 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:114:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -3165,23 +3165,23 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Function is for custom resource; inline policy use appropriate",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] Role is for Custom Resource. Inline policy specific to custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource. Inline policy specific to custom resource.",
             },
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:72:27] LakeFormation permissions do not accept resource. https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslakeformation.html#awslakeformation-actions-as-permissions",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] LakeFormation permissions do not accept resource. https://docs.aws.amazon.com/service-authorization/latest/reference/list_awslakeformation.html#awslakeformation-actions-as-permissions",
             },
           ],
         },
@@ -3215,19 +3215,19 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
           ],
         },
@@ -3277,19 +3277,19 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
           ],
         },
@@ -3354,43 +3354,43 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-L1",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Lambda function Runtime set by CDK Provider Framework",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
             },
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:194:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -3462,31 +3462,31 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },
@@ -3537,31 +3537,31 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:166:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },

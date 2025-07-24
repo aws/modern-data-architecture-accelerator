@@ -121,15 +121,15 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
-                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
               },
               {
                 "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
-                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
               },
               {
                 "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
-                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
               },
               {
                 "id": "NIST.800.53.R5",
@@ -211,7 +211,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -253,7 +253,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -364,7 +364,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -394,7 +394,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -424,7 +424,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -588,15 +588,15 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
               },
             ],
           },
@@ -743,15 +743,15 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
               },
             ],
           },
@@ -784,15 +784,15 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
               },
             ],
           },
@@ -987,15 +987,15 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
             },
             {
               "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
             },
             {
               "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
             },
             {
               "id": "NIST.800.53.R5",
@@ -1077,7 +1077,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1119,7 +1119,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1230,7 +1230,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1260,7 +1260,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1290,7 +1290,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1454,15 +1454,15 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
             },
           ],
         },
@@ -1609,15 +1609,15 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
             },
           ],
         },
@@ -1650,15 +1650,15 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:208:25] Role is specific to invocation of this step function. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-stepfunction-l3-construct/lib/dataops-stepfunction-l3-construct.ts:LINE:COL] Role is specific to invocation of this step function. Inline policy is appropriate.",
             },
           ],
         },

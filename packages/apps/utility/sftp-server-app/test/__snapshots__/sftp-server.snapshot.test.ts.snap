@@ -205,19 +205,19 @@ exports[`sftp-server Snapshot Tests SFTP App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Wildcard is for log stream names, which are not known at deployment time.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Wildcard is for log stream names, which are not known at deployment time.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
               },
             ],
           },
@@ -267,19 +267,19 @@ exports[`sftp-server Snapshot Tests SFTP App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Wildcard is for log stream names, which are not known at deployment time.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Wildcard is for log stream names, which are not known at deployment time.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+                "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
               },
             ],
           },
@@ -599,19 +599,19 @@ exports[`sftp-server Snapshot Tests SFTP Stack  Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Wildcard is for log stream names, which are not known at deployment time.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Wildcard is for log stream names, which are not known at deployment time.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
             },
           ],
         },
@@ -661,19 +661,19 @@ exports[`sftp-server Snapshot Tests SFTP Stack  Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Wildcard is for log stream names, which are not known at deployment time.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Wildcard is for log stream names, which are not known at deployment time.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:106:25] Role is specific to this server. Inline policy is appropriate.",
+              "reason": "[MDAA:@aws-mdaa/utility/sftp-server-l3-construct/lib/sftp-server-l3-construct.ts:LINE:COL] Role is specific to this server. Inline policy is appropriate.",
             },
           ],
         },

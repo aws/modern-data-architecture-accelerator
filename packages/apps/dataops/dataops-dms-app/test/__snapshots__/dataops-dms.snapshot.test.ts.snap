@@ -620,6 +620,9 @@ exports[`dataops-dms Snapshot Tests DMS App App Snapshot Test 1`] = `
         "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
         "Properties": {
           "ReplicationSubnetGroupDescription": "test-org-test-env-test-domain-test-dms-main-test-instance",
           "ReplicationSubnetGroupIdentifier": "test-org-test-env-test-domain-test-dms-main-test-instance",
@@ -1523,6 +1526,9 @@ exports[`dataops-dms Snapshot Tests DMS Stack Snapshot Test 1`] = `
       "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
       "Properties": {
         "ReplicationSubnetGroupDescription": "test-org-test-env-test-domain-test-dms-main-test-instance",
         "ReplicationSubnetGroupIdentifier": "test-org-test-env-test-domain-test-dms-main-test-instance",

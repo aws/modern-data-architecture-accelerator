@@ -59,27 +59,27 @@ exports[`dataops-dynamodb Snapshot Tests DynamoDb App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "HIPAA.Security-DynamoDBInBackupPlan",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
               },
               {
                 "id": "PCI.DSS.321-DynamoDBInBackupPlan",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
               },
               {
                 "id": "NIST.800.53.R5-DynamoDBInBackupPlan",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
               },
               {
                 "id": "NIST.800.53.R5-DynamoDBAutoScalingEnabled",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
               },
               {
                 "id": "HIPAA.Security-DynamoDBAutoScalingEnabled",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
               },
               {
                 "id": "PCI.DSS.321-DynamoDBAutoScalingEnabled",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
               },
             ],
           },
@@ -158,27 +158,27 @@ exports[`dataops-dynamodb Snapshot Tests DynamoDb App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "HIPAA.Security-DynamoDBInBackupPlan",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
               },
               {
                 "id": "PCI.DSS.321-DynamoDBInBackupPlan",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
               },
               {
                 "id": "NIST.800.53.R5-DynamoDBInBackupPlan",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
               },
               {
                 "id": "NIST.800.53.R5-DynamoDBAutoScalingEnabled",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
               },
               {
                 "id": "HIPAA.Security-DynamoDBAutoScalingEnabled",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
               },
               {
                 "id": "PCI.DSS.321-DynamoDBAutoScalingEnabled",
-                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+                "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
               },
             ],
           },
@@ -359,27 +359,27 @@ exports[`dataops-dynamodb Snapshot Tests DynamoDb Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "HIPAA.Security-DynamoDBInBackupPlan",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
             },
             {
               "id": "PCI.DSS.321-DynamoDBInBackupPlan",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
             },
             {
               "id": "NIST.800.53.R5-DynamoDBInBackupPlan",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
             },
             {
               "id": "NIST.800.53.R5-DynamoDBAutoScalingEnabled",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
             },
             {
               "id": "HIPAA.Security-DynamoDBAutoScalingEnabled",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
             },
             {
               "id": "PCI.DSS.321-DynamoDBAutoScalingEnabled",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
             },
           ],
         },
@@ -458,27 +458,27 @@ exports[`dataops-dynamodb Snapshot Tests DynamoDb Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "HIPAA.Security-DynamoDBInBackupPlan",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
             },
             {
               "id": "PCI.DSS.321-DynamoDBInBackupPlan",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
             },
             {
               "id": "NIST.800.53.R5-DynamoDBInBackupPlan",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of AWS Backup",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of AWS Backup",
             },
             {
               "id": "NIST.800.53.R5-DynamoDBAutoScalingEnabled",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
             },
             {
               "id": "HIPAA.Security-DynamoDBAutoScalingEnabled",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
             },
             {
               "id": "PCI.DSS.321-DynamoDBAutoScalingEnabled",
-              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:161:25] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
+              "reason": "[MDAA:@aws-mdaa/ddb-constructs/lib/index.ts:LINE:COL] MDAA does not enforce use of Auto Scaling on Provisioned Capacity tables.",
             },
           ],
         },

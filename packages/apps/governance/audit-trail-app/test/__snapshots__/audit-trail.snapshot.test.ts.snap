@@ -46,15 +46,15 @@ exports[`audit-trail Snapshot Tests Audit Trail App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-CloudTrailCloudWatchLogsEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:54:25] CloudTrail targeted at dedicated Audit Bucket.",
+                "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:LINE:COL] CloudTrail targeted at dedicated Audit Bucket.",
               },
               {
                 "id": "HIPAA.Security-CloudTrailCloudWatchLogsEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:54:25] CloudTrail targeted at dedicated Audit Bucket.",
+                "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:LINE:COL] CloudTrail targeted at dedicated Audit Bucket.",
               },
               {
                 "id": "PCI.DSS.321-CloudTrailCloudWatchLogsEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:54:25] CloudTrail targeted at dedicated Audit Bucket.",
+                "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:LINE:COL] CloudTrail targeted at dedicated Audit Bucket.",
               },
             ],
           },
@@ -198,15 +198,15 @@ exports[`audit-trail Snapshot Tests Audit Trail Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-CloudTrailCloudWatchLogsEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:54:25] CloudTrail targeted at dedicated Audit Bucket.",
+              "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:LINE:COL] CloudTrail targeted at dedicated Audit Bucket.",
             },
             {
               "id": "HIPAA.Security-CloudTrailCloudWatchLogsEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:54:25] CloudTrail targeted at dedicated Audit Bucket.",
+              "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:LINE:COL] CloudTrail targeted at dedicated Audit Bucket.",
             },
             {
               "id": "PCI.DSS.321-CloudTrailCloudWatchLogsEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:54:25] CloudTrail targeted at dedicated Audit Bucket.",
+              "reason": "[MDAA:@aws-mdaa/governance/audit-trail-l3-construct/lib/audit-trail-l3-construct.ts:LINE:COL] CloudTrail targeted at dedicated Audit Bucket.",
             },
           ],
         },

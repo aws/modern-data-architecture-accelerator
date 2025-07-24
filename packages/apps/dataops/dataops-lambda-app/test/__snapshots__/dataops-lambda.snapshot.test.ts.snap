@@ -462,7 +462,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -504,7 +504,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -554,7 +554,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -584,7 +584,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -614,7 +614,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -642,7 +642,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -684,7 +684,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -735,7 +735,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -777,7 +777,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -888,7 +888,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -918,7 +918,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -948,7 +948,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -975,7 +975,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1005,7 +1005,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1035,7 +1035,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1063,7 +1063,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1105,7 +1105,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1156,7 +1156,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1198,7 +1198,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1248,7 +1248,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1278,7 +1278,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1308,7 +1308,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1335,7 +1335,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1365,7 +1365,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1395,7 +1395,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1423,7 +1423,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1465,7 +1465,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1515,7 +1515,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1545,7 +1545,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1575,7 +1575,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1799,27 +1799,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -1827,7 +1827,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
         "Properties": {
           "Code": {
             "ImageUri": {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:40294424e595f4b337d92397f1eece34292e419150c05d1111e896431b6f5140",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:ASSET-HASH",
             },
           },
           "DeadLetterConfig": {
@@ -1882,27 +1882,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -1932,27 +1932,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -1979,27 +1979,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2020,27 +2020,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2113,27 +2113,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2163,27 +2163,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2210,27 +2210,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2308,27 +2308,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2403,27 +2403,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2453,27 +2453,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2500,27 +2500,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2550,27 +2550,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2597,27 +2597,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2688,27 +2688,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -2738,27 +2738,27 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
               },
             ],
           },
@@ -3272,7 +3272,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3314,7 +3314,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3364,7 +3364,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3394,7 +3394,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3424,7 +3424,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3452,7 +3452,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3494,7 +3494,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3545,7 +3545,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3587,7 +3587,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3698,7 +3698,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3728,7 +3728,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3758,7 +3758,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3785,7 +3785,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3815,7 +3815,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3845,7 +3845,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3873,7 +3873,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3915,7 +3915,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3966,7 +3966,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4008,7 +4008,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4058,7 +4058,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4088,7 +4088,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4118,7 +4118,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4145,7 +4145,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4175,7 +4175,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4205,7 +4205,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4233,7 +4233,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4275,7 +4275,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4325,7 +4325,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4355,7 +4355,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4385,7 +4385,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:243:25] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4609,27 +4609,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -4637,7 +4637,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
       "Properties": {
         "Code": {
           "ImageUri": {
-            "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:40294424e595f4b337d92397f1eece34292e419150c05d1111e896431b6f5140",
+            "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:ASSET-HASH",
           },
         },
         "DeadLetterConfig": {
@@ -4692,27 +4692,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -4742,27 +4742,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -4789,27 +4789,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -4830,27 +4830,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -4923,27 +4923,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -4973,27 +4973,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -5020,27 +5020,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -5118,27 +5118,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -5213,27 +5213,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -5263,27 +5263,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -5310,27 +5310,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -5360,27 +5360,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -5407,27 +5407,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -5498,27 +5498,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },
@@ -5548,27 +5548,27 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] Concurrency Limits not required.",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:326:25] VPC Not Required",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
             },
           ],
         },

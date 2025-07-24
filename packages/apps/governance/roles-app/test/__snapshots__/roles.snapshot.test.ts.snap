@@ -1024,7 +1024,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
               },
             ],
           },
@@ -1062,7 +1062,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
               },
             ],
           },
@@ -1089,7 +1089,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
               },
             ],
           },
@@ -1136,7 +1136,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
               },
             ],
           },
@@ -1313,7 +1313,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
               },
             ],
           },
@@ -1340,7 +1340,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
               },
             ],
           },
@@ -1387,7 +1387,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] Minimum permission provided to Data Engineer persona",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] Minimum permission provided to Data Engineer persona",
               },
             ],
           },
@@ -1602,7 +1602,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] Minimum permission provided to Data Engineer persona",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] Minimum permission provided to Data Engineer persona",
               },
             ],
           },
@@ -1629,7 +1629,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] Minimum permission provided to Data Engineer persona",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] Minimum permission provided to Data Engineer persona",
               },
             ],
           },
@@ -1676,7 +1676,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
               },
             ],
           },
@@ -1775,7 +1775,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
               },
             ],
           },
@@ -1802,7 +1802,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
               },
             ],
           },
@@ -1849,7 +1849,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
               },
             ],
           },
@@ -1976,7 +1976,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
               },
             ],
           },
@@ -2003,7 +2003,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
               },
             ],
           },
@@ -2050,7 +2050,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
               },
             ],
           },
@@ -2154,7 +2154,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
               },
             ],
           },
@@ -2181,7 +2181,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
               },
             ],
           },
@@ -2228,19 +2228,19 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
               },
               {
                 "id": "NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
               },
               {
                 "id": "HIPAA.Security-IAMPolicyNoStatementsWithFullAccess",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
               },
               {
                 "id": "PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
               },
             ],
           },
@@ -2321,19 +2321,19 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
               },
               {
                 "id": "NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
               },
               {
                 "id": "HIPAA.Security-IAMPolicyNoStatementsWithFullAccess",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
               },
               {
                 "id": "PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
               },
             ],
           },
@@ -2360,19 +2360,19 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
               },
               {
                 "id": "NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
               },
               {
                 "id": "HIPAA.Security-IAMPolicyNoStatementsWithFullAccess",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
               },
               {
                 "id": "PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
               },
             ],
           },
@@ -2419,7 +2419,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
               },
             ],
           },
@@ -2495,7 +2495,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
               },
             ],
           },
@@ -2522,7 +2522,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
+                "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
               },
             ],
           },
@@ -5245,7 +5245,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
             },
           ],
         },
@@ -5283,7 +5283,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
             },
           ],
         },
@@ -5310,7 +5310,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - RedshiftNoResourceReadAccess: Policy actions do not require Resource! ",
             },
           ],
         },
@@ -5357,7 +5357,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
             },
           ],
         },
@@ -5534,7 +5534,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
             },
           ],
         },
@@ -5561,7 +5561,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Admin persona to have necessary permission for codecommit service - s3DataAdminDeletePermissions: Permissions provided to Delete Bucket. Permission to delete object should be provided outside of this policy - SageMakerBasicAccess: Allows DataAdmin to manage Sagemaker apps and user profiles - IAMViewRolePermissions: Basic capability for DataAdmin to list and get role permissions - RedshiftDataAdminAccess: Redshift data admin permissions - GlueAdminAccess: Glue data admin permission - SecretsManagerBasicAccess: Allow data admin to generate random pwd and view secrets metadata - LakeFormationDataAdminPermissions: Provide Lakeformation DataAdmin permissions - DmsDataAdminAccess: Permissions to manage replication tasks and other required data admin permissions - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data admin to view details about a ssm parameter ",
             },
           ],
         },
@@ -5608,7 +5608,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] Minimum permission provided to Data Engineer persona",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] Minimum permission provided to Data Engineer persona",
             },
           ],
         },
@@ -5823,7 +5823,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] Minimum permission provided to Data Engineer persona",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] Minimum permission provided to Data Engineer persona",
             },
           ],
         },
@@ -5850,7 +5850,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] Minimum permission provided to Data Engineer persona",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] Minimum permission provided to Data Engineer persona",
             },
           ],
         },
@@ -5897,7 +5897,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
             },
           ],
         },
@@ -5996,7 +5996,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
             },
           ],
         },
@@ -6023,7 +6023,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - BasicS3NoResourceAccess: Above s3 Policy actions do not require Resource! - AthenaNoResource: Above Athena Policy actions do not require Resource! - BasicAthenaAccessForDefaultCatalog: Provided access to default catalog - LakeFormationNoResourceReadAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement - BasicLfDataAccess: AWS Lake Formation does not support specifying a resource ARN in the Resource element of an IAM policy statement",
             },
           ],
         },
@@ -6070,7 +6070,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
             },
           ],
         },
@@ -6197,7 +6197,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
             },
           ],
         },
@@ -6224,7 +6224,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - GlueAccessNoResource: Policy actions do not require Resource! - GlueDataBrewNoResourceReadAccess: Policy actions do not require Resource! - GlueDataBrewNoResourceWriteAccess: Policy actions do not require Resource! - DmsNoResourceReadAccess: Policy actions do not require Resource - DmsNoResourceWriteAccess: Policy actions do not require Resource ",
             },
           ],
         },
@@ -6271,7 +6271,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
             },
           ],
         },
@@ -6375,7 +6375,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
             },
           ],
         },
@@ -6402,7 +6402,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - SagemakerNoResourceAccessPolicy: Policy actions do not require Resource! - ServiceCatalogNoResourceReadAccess: Policy actions do not require Resource! - ServiceCatalogNoResourceListAccess: Policy actions do not require Resource! - DeployNotebooksFromServiceCatalog: Permissions necessary to Deploy Notebooks from Service Catalog - ModifySelfCreatedCatalogProducts: Permission required to modify Self created Product ",
             },
           ],
         },
@@ -6449,19 +6449,19 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
             },
             {
               "id": "NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
             },
             {
               "id": "HIPAA.Security-IAMPolicyNoStatementsWithFullAccess",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
             },
             {
               "id": "PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
             },
           ],
         },
@@ -6542,19 +6542,19 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
             },
             {
               "id": "NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
             },
             {
               "id": "HIPAA.Security-IAMPolicyNoStatementsWithFullAccess",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
             },
             {
               "id": "PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
             },
           ],
         },
@@ -6581,19 +6581,19 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CodeCommitReadAccess: Permissions provided to Data Scientist persona to have necessary permission for codecommit service - SageMakerLogsAccess: Permissions provided to access Sagemaker logs - KmsListAliases: Permissions provided to view aliases for KMS keys - BasicSsmListAccess: Allows data scientist to view details about a ssm parameter ",
             },
             {
               "id": "NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
             },
             {
               "id": "HIPAA.Security-IAMPolicyNoStatementsWithFullAccess",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
             },
             {
               "id": "PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL] - GroundTruthLabellingNoResourceAccess: Data Scientist persona will need access to all the action",
             },
           ],
         },
@@ -6640,7 +6640,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
             },
           ],
         },
@@ -6716,7 +6716,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
             },
           ],
         },
@@ -6743,7 +6743,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:281:31]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
+              "reason": "[MDAA:@aws-mdaa/governance/roles-l3-construct/lib/roles-l3-construct.ts:LINE:COL]  - CloudWatchNoResourceReadAccess: Policy actions do not require Resource - CloudWatchLogsNoResourceReadAccess: Policy actions do not require Resource - CodeCommitNoResourceAccess: Above CodeCommit Policy actions do not require Resource ",
             },
           ],
         },

@@ -1,8 +1,10 @@
+/**
+ * Jest configuration
+ */
 module.exports = {
-    testEnvironment: 'node',
-    roots: ['<rootDir>/test'],
-    testMatch: ['**/*.test.ts'],
-    transform: {
-      '^.+\\.tsx?$': 'ts-jest'
-    }
-  };
+  roots: ['<rootDir>/test'],
+  testMatch: ['**/*.test.ts'],
+  transform: {
+    '^.+.tsx?$': 'ts-jest',
+  },
+};

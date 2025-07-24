@@ -1295,15 +1295,15 @@ exports[`datasync Snapshot Tests Datasync App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
-                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
               },
               {
                 "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
-                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
               },
               {
                 "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
-                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+                "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
               },
             ],
           },
@@ -2831,15 +2831,15 @@ exports[`datasync Snapshot Tests Datasync Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod",
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
             },
             {
               "id": "HIPAA.Security-CloudWatchLogGroupRetentionPeriod",
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
             },
             {
               "id": "PCI.DSS.321-CloudWatchLogGroupRetentionPeriod",
-              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:52:27] LogGroup retention is set to RetentionDays.INFINITE.",
+              "reason": "[MDAA:@aws-mdaa/cloudwatch-constructs/lib/loggroup.ts:LINE:COL] LogGroup retention is set to RetentionDays.INFINITE.",
             },
           ],
         },

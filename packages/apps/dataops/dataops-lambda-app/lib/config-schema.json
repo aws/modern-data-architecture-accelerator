@@ -676,7 +676,7 @@
                     "description": "List of egress rules to be added to the function SG"
                 },
                 "securityGroupId": {
-                    "description": "If specified, the function will use this security group for\nit's VPC connection. Otherwise a new security group will\nbe created.",
+                    "description": "If specified, the function will use this security group for\nits VPC connection. Otherwise, a new security group will\nbe created.",
                     "type": "string"
                 },
                 "subnetIds": {

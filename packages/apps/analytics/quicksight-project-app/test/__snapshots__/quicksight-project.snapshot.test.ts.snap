@@ -2247,39 +2247,39 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -2341,39 +2341,39 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -2403,39 +2403,39 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -2462,7 +2462,7 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:342:25] ds:CreateIdentityPoolDirectory,ds:DescribeDirectories - Takes no resource.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] ds:CreateIdentityPoolDirectory,ds:DescribeDirectories - Takes no resource.",
               },
             ],
           },
@@ -2555,43 +2555,43 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-L1",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Lambda function Runtime set by CDK Provider Framework",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
               },
               {
                 "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
               {
                 "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
               {
                 "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will interact only with QuickSight APIs.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
               },
               {
                 "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
               },
             ],
           },
@@ -2663,31 +2663,31 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -2738,31 +2738,31 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+                "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
               },
             ],
           },
@@ -2859,19 +2859,19 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
             ],
           },
@@ -2932,19 +2932,19 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
               {
                 "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
               {
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
               },
             ],
           },
@@ -5373,39 +5373,39 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -5467,39 +5467,39 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -5529,39 +5529,39 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:368:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -5588,7 +5588,7 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:342:25] ds:CreateIdentityPoolDirectory,ds:DescribeDirectories - Takes no resource.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] ds:CreateIdentityPoolDirectory,ds:DescribeDirectories - Takes no resource.",
             },
           ],
         },
@@ -5681,43 +5681,43 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-L1",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Lambda function Runtime set by CDK Provider Framework",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
             },
             {
               "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
             {
               "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and error handling will be handled by CloudFormation.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
             {
               "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will interact only with QuickSight APIs.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will interact only with QuickSight APIs.",
             },
             {
               "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:446:25] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
             },
           ],
         },
@@ -5789,31 +5789,31 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },
@@ -5864,31 +5864,31 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:427:25] Role is for Custom Resource Provider. Inline policy automatically added.",
+              "reason": "[MDAA:@aws-mdaa/analytics/quicksight-project-l3-construct/lib/quicksight-project-l3-construct.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
             },
           ],
         },
@@ -5985,19 +5985,19 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
           ],
         },
@@ -6058,19 +6058,19 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
             {
               "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
             {
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:143:25] Inline policy is specific to this role and its custom resource.",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
             },
           ],
         },
