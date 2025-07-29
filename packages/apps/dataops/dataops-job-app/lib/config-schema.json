@@ -167,7 +167,9 @@
                     "description": "Enables real-time monitoring and troubleshooting of AWS Glue jobs by streaming logs to CloudWatch Logs while the job is running"
                 },
                 "defaultArguments": {
-                    "additionalProperties": {},
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "description": "Default arguments which will be supplied to the job",
                     "type": "object"
                 },

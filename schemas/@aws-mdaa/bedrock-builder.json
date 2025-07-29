@@ -218,6 +218,10 @@
                 "description": {
                     "description": "Optional description for the guardrail",
                     "type": "string"
+                },
+                "sensitiveInformationFilters": {
+                    "$ref": "#/definitions/SensitiveInformationFilters",
+                    "description": "Configuration for sensitive information filters (PII detection and removal)"
                 }
             },
             "required": [
@@ -462,6 +466,109 @@
                     "type": "string"
                 }
             },
+            "type": "object"
+        },
+        "CfnGuardrail.PiiEntityConfigProperty": {
+            "additionalProperties": false,
+            "description": "The PII entity to configure for the guardrail.",
+            "properties": {
+                "action": {
+                    "description": "Configure guardrail action when the PII entity is detected.",
+                    "type": "string"
+                },
+                "inputAction": {
+                    "description": "Options for sensitive information action.",
+                    "type": "string"
+                },
+                "inputEnabled": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                "outputAction": {
+                    "description": "Options for sensitive information action.",
+                    "type": "string"
+                },
+                "outputEnabled": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                "type": {
+                    "description": "Configure guardrail type when the PII entity is detected.\n\nThe following PIIs are used to block or mask sensitive information:\n\n- *General*\n\n- *ADDRESS*\n\nA physical address, such as \"100 Main Street, Anytown, USA\" or \"Suite #12, Building 123\". An address can include information such as the street, building, location, city, state, country, county, zip code, precinct, and neighborhood.\n- *AGE*\n\nAn individual's age, including the quantity and unit of time. For example, in the phrase \"I am 40 years old,\" Guardrails recognizes \"40 years\" as an age.\n- *NAME*\n\nAn individual's name. This entity type does not include titles, such as Dr., Mr., Mrs., or Miss. guardrails doesn't apply this entity type to names that are part of organizations or addresses. For example, guardrails recognizes the \"John Doe Organization\" as an organization, and it recognizes \"Jane Doe Street\" as an address.\n- *EMAIL*\n\nAn email address, such as *marymajor@email.com* .\n- *PHONE*\n\nA phone number. This entity type also includes fax and pager numbers.\n- *USERNAME*\n\nA user name that identifies an account, such as a login name, screen name, nick name, or handle.\n- *PASSWORD*\n\nAn alphanumeric string that is used as a password, such as \"* *very20special#pass** \".\n- *DRIVER_ID*\n\nThe number assigned to a driver's license, which is an official document permitting an individual to operate one or more motorized vehicles on a public road. A driver's license number consists of alphanumeric characters.\n- *LICENSE_PLATE*\n\nA license plate for a vehicle is issued by the state or country where the vehicle is registered. The format for passenger vehicles is typically five to eight digits, consisting of upper-case letters and numbers. The format varies depending on the location of the issuing state or country.\n- *VEHICLE_IDENTIFICATION_NUMBER*\n\nA Vehicle Identification Number (VIN) uniquely identifies a vehicle. VIN content and format are defined in the *ISO 3779* specification. Each country has specific codes and formats for VINs.\n- *Finance*\n\n- *CREDIT_DEBIT_CARD_CVV*\n\nA three-digit card verification code (CVV) that is present on VISA, MasterCard, and Discover credit and debit cards. For American Express credit or debit cards, the CVV is a four-digit numeric code.\n- *CREDIT_DEBIT_CARD_EXPIRY*\n\nThe expiration date for a credit or debit card. This number is usually four digits long and is often formatted as *month/year* or *MM/YY* . Guardrails recognizes expiration dates such as *01/21* , *01/2021* , and *Jan 2021* .\n- *CREDIT_DEBIT_CARD_NUMBER*\n\nThe number for a credit or debit card. These numbers can vary from 13 to 16 digits in length. However, Amazon Comprehend also recognizes credit or debit card numbers when only the last four digits are present.\n- *PIN*\n\nA four-digit personal identification number (PIN) with which you can access your bank account.\n- *INTERNATIONAL_BANK_ACCOUNT_NUMBER*\n\nAn International Bank Account Number has specific formats in each country. For more information, see [www.iban.com/structure](https://docs.aws.amazon.com/https://www.iban.com/structure) .\n- *SWIFT_CODE*\n\nA SWIFT code is a standard format of Bank Identifier Code (BIC) used to specify a particular bank or branch. Banks use these codes for money transfers such as international wire transfers.\n\nSWIFT codes consist of eight or 11 characters. The 11-digit codes refer to specific branches, while eight-digit codes (or 11-digit codes ending in 'XXX') refer to the head or primary office.\n- *IT*\n\n- *IP_ADDRESS*\n\nAn IPv4 address, such as *198.51.100.0* .\n- *MAC_ADDRESS*\n\nA *media access control* (MAC) address is a unique identifier assigned to a network interface controller (NIC).\n- *URL*\n\nA web address, such as *www.example.com* .\n- *AWS_ACCESS_KEY*\n\nA unique identifier that's associated with a secret access key; you use the access key ID and secret access key to sign programmatic AWS requests cryptographically.\n- *AWS_SECRET_KEY*\n\nA unique identifier that's associated with an access key. You use the access key ID and secret access key to sign programmatic AWS requests cryptographically.\n- *USA specific*\n\n- *US_BANK_ACCOUNT_NUMBER*\n\nA US bank account number, which is typically 10 to 12 digits long.\n- *US_BANK_ROUTING_NUMBER*\n\nA US bank account routing number. These are typically nine digits long,\n- *US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER*\n\nA US Individual Taxpayer Identification Number (ITIN) is a nine-digit number that starts with a \"9\" and contain a \"7\" or \"8\" as the fourth digit. An ITIN can be formatted with a space or a dash after the third and forth digits.\n- *US_PASSPORT_NUMBER*\n\nA US passport number. Passport numbers range from six to nine alphanumeric characters.\n- *US_SOCIAL_SECURITY_NUMBER*\n\nA US Social Security Number (SSN) is a nine-digit number that is issued to US citizens, permanent residents, and temporary working residents.\n- *Canada specific*\n\n- *CA_HEALTH_NUMBER*\n\nA Canadian Health Service Number is a 10-digit unique identifier, required for individuals to access healthcare benefits.\n- *CA_SOCIAL_INSURANCE_NUMBER*\n\nA Canadian Social Insurance Number (SIN) is a nine-digit unique identifier, required for individuals to access government programs and benefits.\n\nThe SIN is formatted as three groups of three digits, such as *123-456-789* . A SIN can be validated through a simple check-digit process called the [Luhn algorithm](https://docs.aws.amazon.com/https://www.wikipedia.org/wiki/Luhn_algorithm) .\n- *UK Specific*\n\n- *UK_NATIONAL_HEALTH_SERVICE_NUMBER*\n\nA UK National Health Service Number is a 10-17 digit number, such as *485 777 3456* . The current system formats the 10-digit number with spaces after the third and sixth digits. The final digit is an error-detecting checksum.\n- *UK_NATIONAL_INSURANCE_NUMBER*\n\nA UK National Insurance Number (NINO) provides individuals with access to National Insurance (social security) benefits. It is also used for some purposes in the UK tax system.\n\nThe number is nine digits long and starts with two letters, followed by six numbers and one letter. A NINO can be formatted with a space or a dash after the two letters and after the second, forth, and sixth digits.\n- *UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER*\n\nA UK Unique Taxpayer Reference (UTR) is a 10-digit number that identifies a taxpayer or a business.\n- *Custom*\n\n- *Regex filter* - You can use a regular expressions to define patterns for a guardrail to recognize and act upon such as serial number, booking ID etc..",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "action",
+                "type"
+            ],
+            "type": "object"
+        },
+        "CfnGuardrail.RegexConfigProperty": {
+            "additionalProperties": false,
+            "description": "The regular expression to configure for the guardrail.",
+            "properties": {
+                "action": {
+                    "description": "The guardrail action to configure when matching regular expression is detected.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "The description of the regular expression to configure for the guardrail.",
+                    "type": "string"
+                },
+                "inputAction": {
+                    "description": "Options for sensitive information action.",
+                    "type": "string"
+                },
+                "inputEnabled": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                "name": {
+                    "description": "The name of the regular expression to configure for the guardrail.",
+                    "type": "string"
+                },
+                "outputAction": {
+                    "description": "Options for sensitive information action.",
+                    "type": "string"
+                },
+                "outputEnabled": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                "pattern": {
+                    "description": "The regular expression pattern to configure for the guardrail.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "action",
+                "name",
+                "pattern"
+            ],
             "type": "object"
         },
         "CfnParameterProps": {
@@ -1478,6 +1585,26 @@
                 "bufferSize",
                 "maxTokens"
             ],
+            "type": "object"
+        },
+        "SensitiveInformationFilters": {
+            "additionalProperties": false,
+            "properties": {
+                "piiEntities": {
+                    "description": "Configuration for PII entity filters",
+                    "items": {
+                        "$ref": "#/definitions/CfnGuardrail.PiiEntityConfigProperty"
+                    },
+                    "type": "array"
+                },
+                "regexes": {
+                    "description": "Configuration for regex pattern filters",
+                    "items": {
+                        "$ref": "#/definitions/CfnGuardrail.RegexConfigProperty"
+                    },
+                    "type": "array"
+                }
+            },
             "type": "object"
         },
         "Strength": {

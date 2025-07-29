@@ -194,16 +194,92 @@ knowledgeBases:
 
 # Guardrails Configuration
 guardrails:
-  enterprise-guardrail:
-    description: 'Enterprise content safety guardrail'
+  test-guardrail:
+    description: 'Content safety guardrail with PII protection'
     contentFilters:
       hate:
         inputStrength: 'MEDIUM'
         outputStrength: 'MEDIUM'
-    blockedInputMessaging: 'Your input contains restricted content'
-    blockedOutputsMessaging: 'Response blocked due to policy restrictions'
-
+      sexual:
+        inputStrength: 'HIGH'
+        outputStrength: 'HIGH'
+      violence:
+        inputStrength: 'MEDIUM'
+        outputStrength: 'MEDIUM'
     contextualGroundingFilters:
       grounding: 0.95
       relevance: 0.90
+    sensitiveInformationFilters:
+      # See link to configure PII entity
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-bedrock-guardrail-piientityconfig.html#cfn-bedrock-guardrail-piientityconfig-type
+      piiEntities:
+        # General PII - ANONYMIZE
+        - type: 'NAME'
+          action: 'ANONYMIZE'
+        - type: 'AGE' 
+          action: 'ANONYMIZE'
+        - type: 'EMAIL'
+          action: 'ANONYMIZE'
+        - type: 'PHONE'
+          action: 'ANONYMIZE'
+        - type: 'ADDRESS'
+          action: 'ANONYMIZE'
+        - type: 'USERNAME'
+          action: 'ANONYMIZE'
+        - type: 'PASSWORD'
+          action: 'BLOCK'  # Security sensitive
+        - type: 'DRIVER_ID'
+          action: 'ANONYMIZE'
+        - type: 'VEHICLE_IDENTIFICATION_NUMBER'
+          action: 'ANONYMIZE'
+        - type: 'LICENSE_PLATE'
+          action: 'ANONYMIZE'
+        
+        # Finance PII - BLOCK
+        - type: 'CREDIT_DEBIT_CARD_NUMBER'
+          action: 'BLOCK'
+        - type: 'CREDIT_DEBIT_CARD_CVV'
+          action: 'BLOCK'
+        - type: 'CREDIT_DEBIT_CARD_EXPIRY'
+          action: 'BLOCK'
+        - type: 'PIN'
+          action: 'BLOCK'
+        - type: 'US_BANK_ACCOUNT_NUMBER'
+          action: 'BLOCK'
+        - type: 'US_BANK_ROUTING_NUMBER'
+          action: 'BLOCK'
+        - type: 'INTERNATIONAL_BANK_ACCOUNT_NUMBER'
+          action: 'BLOCK'
+        - type: 'SWIFT_CODE'
+          action: 'BLOCK'
+        
+        # IT PII - BLOCK
+        - type: 'IP_ADDRESS'
+          action: 'BLOCK'
+        - type: 'MAC_ADDRESS'
+          action: 'BLOCK'
+        - type: 'AWS_ACCESS_KEY'
+          action: 'BLOCK'
+        - type: 'AWS_SECRET_KEY'
+          action: 'BLOCK'
+        
+        
+        # Canada Specific PII - BLOCK
+        - type: 'CA_HEALTH_NUMBER'
+          action: 'BLOCK'
+        - type: 'CA_SOCIAL_INSURANCE_NUMBER'
+          action: 'BLOCK'
+        
+      # Regex Based pattern matching for Sensitive Information
+      regexes:
+        - name: 'CompanyEmployeeId'
+          pattern: 'EMP-\d{6}'
+          action: 'ANONYMIZE'
+          description: 'Company employee ID format'
+        - name: 'InternalApiKey'
+          pattern: 'INTERNAL_[A-Z0-9]{16}'
+          action: 'BLOCK'
+          description: 'Internal API key format'
+    blockedInputMessaging: 'Your input contains restricted or sensitive content'
+    blockedOutputsMessaging: 'Response blocked due to policy restrictions or sensitive information'
 ```

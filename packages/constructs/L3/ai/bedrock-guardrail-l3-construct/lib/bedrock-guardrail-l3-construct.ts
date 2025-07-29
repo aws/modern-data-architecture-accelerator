@@ -47,6 +47,17 @@ export interface GroundingFilters {
   readonly relevance?: number;
 }
 
+export interface SensitiveInformationFilters {
+  /**
+   * Configuration for PII entity filters
+   */
+  readonly piiEntities?: bedrock.CfnGuardrail.PiiEntityConfigProperty[];
+  /**
+   * Configuration for regex pattern filters
+   */
+  readonly regexes?: bedrock.CfnGuardrail.RegexConfigProperty[];
+}
+
 export interface BedrockGuardrailProps {
   /**
    * Optional description for the guardrail
@@ -71,6 +82,10 @@ export interface BedrockGuardrailProps {
    * Configuration for contextual grounding filters
    */
   readonly contextualGroundingFilters?: GroundingFilters;
+  /**
+   * Configuration for sensitive information filters (PII detection and removal)
+   */
+  readonly sensitiveInformationFilters?: SensitiveInformationFilters;
 }
 
 export interface NamedGuardrailProps {
@@ -117,31 +132,8 @@ export class BedrockGuardrailL3Construct extends MdaaL3Construct {
       filtersConfig: filtersConfig,
     };
 
-    let contextualGroundingConfig: bedrock.CfnGuardrail.ContextualGroundingPolicyConfigProperty | undefined;
-
-    if (config.contextualGroundingFilters) {
-      const groundingFilters: bedrock.CfnGuardrail.ContextualGroundingFilterConfigProperty[] = [];
-
-      if (config.contextualGroundingFilters.grounding !== undefined) {
-        groundingFilters.push({
-          type: 'GROUNDING',
-          threshold: config.contextualGroundingFilters.grounding,
-        });
-      }
-
-      if (config.contextualGroundingFilters.relevance !== undefined) {
-        groundingFilters.push({
-          type: 'RELEVANCE',
-          threshold: config.contextualGroundingFilters.relevance,
-        });
-      }
-
-      if (groundingFilters.length > 0) {
-        contextualGroundingConfig = {
-          filtersConfig: groundingFilters,
-        };
-      }
-    }
+    const contextualGroundingConfig = this.createContextualGroundingConfig(config.contextualGroundingFilters);
+    const sensitiveInformationPolicyConfig = this.createSensitiveInformationConfig(config.sensitiveInformationFilters);
 
     const guardrailProps: bedrock.CfnGuardrailProps = {
       name: this.props.naming.resourceName(guardrailName, 50),
@@ -151,8 +143,50 @@ export class BedrockGuardrailL3Construct extends MdaaL3Construct {
       blockedOutputsMessaging: config.blockedOutputsMessaging || 'The response contains content that is not allowed.',
       contentPolicyConfig: contentPolicyConfig,
       contextualGroundingPolicyConfig: contextualGroundingConfig,
+      sensitiveInformationPolicyConfig: sensitiveInformationPolicyConfig,
     };
 
     return new bedrock.CfnGuardrail(this, `${guardrailName}-guardrail`, guardrailProps);
+  }
+
+  private createContextualGroundingConfig(
+    filters?: GroundingFilters,
+  ): bedrock.CfnGuardrail.ContextualGroundingPolicyConfigProperty | undefined {
+    if (!filters) return undefined;
+
+    const groundingFilters: bedrock.CfnGuardrail.ContextualGroundingFilterConfigProperty[] = [];
+
+    if (filters.grounding !== undefined) {
+      groundingFilters.push({
+        type: 'GROUNDING',
+        threshold: filters.grounding,
+      });
+    }
+
+    if (filters.relevance !== undefined) {
+      groundingFilters.push({
+        type: 'RELEVANCE',
+        threshold: filters.relevance,
+      });
+    }
+
+    return groundingFilters.length > 0 ? { filtersConfig: groundingFilters } : undefined;
+  }
+
+  private createSensitiveInformationConfig(
+    filters?: SensitiveInformationFilters,
+  ): bedrock.CfnGuardrail.SensitiveInformationPolicyConfigProperty | undefined {
+    if (!filters) return undefined;
+
+    const { piiEntities, regexes } = filters;
+
+    if (piiEntities?.length || regexes?.length) {
+      return {
+        piiEntitiesConfig: piiEntities?.length ? piiEntities : undefined,
+        regexesConfig: regexes?.length ? regexes : undefined,
+      };
+    }
+
+    return undefined;
   }
 }
