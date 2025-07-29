@@ -37,48 +37,24 @@ def handle_create_update(event, context):
 
     resource_config = event['ResourceProperties']
 
-    domainVersion = resource_config.get('domainVersion', None)
-    if(domainVersion != 'V1'):
-        return {
-                "Status": "200",
-                "Data": {
-                    'id': "sagemaker_domain"
-                }
-            }
-
     domainIdentifier = resource_config.get('domainIdentifier', None)
+    arn = resource_config.get('arn', None)
     if (domainIdentifier is None):
         raise Exception("Unable to parse domainIdentifier from event.")
 
-    enabledRegions = resource_config.get(
-        'enabledRegions', None)
-    if (enabledRegions is None):
-        raise Exception("Unable to parse enabledRegions from event.")
-
-
-    list_env_bp_response = datazone_client.list_environment_blueprints(
+    search_users_response = datazone_client.search_user_profiles(
         domainIdentifier=domainIdentifier,
-        managed=True,
-        name='CustomAwsService'
+        userType='DATAZONE_IAM_USER',
+        searchText=arn
     )
     
-    if len(list_env_bp_response['items']) != 1:
-        logger.error(json.dumps(list_env_bp_response, indent=4, sort_keys=True, default=str))
-        raise Exception("Unexected number of CustomAwsService Environment Blueprints")
-    
-    environmentBlueprintIdentifier = list_env_bp_response['items'][0]['id']
-
-    update_response = datazone_client.put_environment_blueprint_configuration(
-        domainIdentifier=domainIdentifier,
-        environmentBlueprintIdentifier=environmentBlueprintIdentifier,
-        enabledRegions=enabledRegions
-    )
-
-    # logger.debug(json.dumps(update_response, indent=2))
+    if len(search_users_response['items']) != 1:
+        logger.error(json.dumps(search_users_response, indent=4, sort_keys=True, default=str))
+        raise Exception("Unexected number of user profiles found")
 
     return {
         "Status": "200",
         "Data": {
-            'id': update_response.get("environmentBlueprintId")
+            'id': search_users_response['items'][0].get('id')
         }
     }

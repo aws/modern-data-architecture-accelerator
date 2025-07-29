@@ -14,6 +14,7 @@ import { DomainConfig, MdaaDataZoneDomainSSMConfigParser } from './domain_config
  */
 export interface MdaaDatazoneProjectProps extends MdaaConstructProps {
   readonly name?: string;
+  readonly domainUnit?: string;
   readonly domainConfigSSMParam?: string;
   readonly domainConfig?: DomainConfig;
 }
@@ -29,12 +30,14 @@ export class MdaaDatazoneProject extends Construct {
   constructor(scope: Construct, id: string, props: MdaaDatazoneProjectProps) {
     super(scope, id);
 
-    const domainConfig = props.domainConfigSSMParam
+    const domainConfigParser = props.domainConfigSSMParam
       ? new MdaaDataZoneDomainSSMConfigParser(scope, 'domain-config-parser', {
           naming: props.naming,
           domainConfigSSMParam: props.domainConfigSSMParam,
-        }).parsedConfig
-      : props.domainConfig;
+        })
+      : undefined;
+
+    const domainConfig = domainConfigParser ? domainConfigParser.parsedConfig : props.domainConfig;
 
     if (!domainConfig) {
       throw new Error('One of domainConfig or domainConfigSSMParam must be specified');
@@ -45,6 +48,7 @@ export class MdaaDatazoneProject extends Construct {
     const projectProps: CfnProjectProps = {
       domainIdentifier: domainConfig.domainId,
       name: props.naming.resourceName(props.name, 80),
+      domainUnitId: props.domainUnit ? domainConfigParser?.getDomainUnitId(props.domainUnit) : undefined,
     };
     this.project = new CfnProject(this, 'project', projectProps);
 

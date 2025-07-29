@@ -9,33 +9,52 @@ import { MdaaManagedPolicy, MdaaManagedPolicyProps, MdaaRole } from '@aws-mdaa/i
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
-import { Duration } from 'aws-cdk-lib';
+import { Duration, Stack } from 'aws-cdk-lib';
 
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaDataZoneDomainSSMConfigParser } from '@aws-mdaa/datazone-constructs';
-import { CfnDomain, CfnDomainProps, CfnUserProfile, CfnUserProfileProps } from 'aws-cdk-lib/aws-datazone';
+import {
+  CfnDomain,
+  CfnDomainProps,
+  CfnDomainUnit,
+  CfnDomainUnitProps,
+  CfnGroupProfile,
+  CfnGroupProfileProps,
+  CfnOwner,
+  CfnOwnerProps,
+  CfnUserProfile,
+  CfnUserProfileProps,
+} from 'aws-cdk-lib/aws-datazone';
 import { Conditions, Effect, IRole, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { CfnResourceShare, CfnResourceShareProps } from 'aws-cdk-lib/aws-ram';
 import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
+import { flattenDomainUnitPaths } from './utils';
 
-export interface AdminUser {
-  readonly role: MdaaRoleRef;
-  readonly userType: 'IAM_ROLE' | 'SSO_USER';
+export interface DataZoneUser {
+  readonly iamRole?: MdaaRoleRef;
+  readonly ssoId?: string;
 }
 
-export interface NamedAdminUsers {
+export interface DataZoneGroup {
+  readonly ssoId: string;
+}
+export interface NamedDataZoneGroups {
   /** @jsii ignore */
-  readonly [name: string]: AdminUser;
+  readonly [name: string]: DataZoneGroup;
+}
+export interface NamedDataZoneUsers {
+  /** @jsii ignore */
+  readonly [name: string]: DataZoneUser;
 }
 export interface AsscociatedAccount {
   readonly account: string;
   readonly glueCatalogKmsKeyArn: string;
   readonly region?: string;
   readonly cdkRoleArn?: string;
-  readonly adminUsers?: NamedAdminUsers;
+  readonly createCdkUser?: boolean;
 }
 
 export interface NamedAssociatedAccounts {
@@ -47,12 +66,30 @@ export interface NamedBaseDomainsProps {
   /** @jsii ignore */
   readonly [name: string]: BaseDomainProps;
 }
+
+export interface DomainUnit {
+  readonly ownerAccounts?: string[];
+  readonly ownerUsers?: string[];
+  readonly ownerGroups?: string[];
+  readonly description?: string;
+  readonly domainUnits?: NamedDomainUnits;
+}
+export interface NamedDomainUnits {
+  /** @jsii ignore */
+  readonly [name: string]: DomainUnit;
+}
+
 export interface BaseDomainProps {
   readonly dataAdminRole: MdaaRoleRef;
-  readonly additionalAdminUsers?: NamedAdminUsers;
   readonly description?: string;
   readonly userAssignment: 'MANUAL' | 'AUTOMATIC';
   readonly associatedAccounts?: NamedAssociatedAccounts;
+  readonly domainUnits?: NamedDomainUnits;
+  readonly users?: NamedDataZoneUsers;
+  readonly groups?: NamedDataZoneGroups;
+  readonly ownerUsers?: string[];
+  readonly ownerGroups?: string[];
+  readonly ownerAccounts?: string[];
 }
 
 export interface DomainProps extends BaseDomainProps {
@@ -67,7 +104,10 @@ export interface DataZoneL3ConstructProps extends MdaaL3ConstructProps {
   readonly glueCatalogKmsKeyArn: string;
   readonly domains: NamedDomainsProps;
 }
-
+export interface CreatedDomainUnit {
+  readonly id: string;
+  readonly domainUnits?: { [name: string]: CreatedDomainUnit };
+}
 const DEFAULT_SSO_TYPE = 'DISABLED';
 const DEFAULT_USER_ASSIGNMENT = 'MANUAL';
 
@@ -105,65 +145,16 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       description: domainProps.description,
       singleSignOn: singleSignOn,
       domainVersion: domainProps.domainVersion,
-      serviceRole: domainVersion == 'V2' ? this.createServiceRole('service', kmsKey).roleArn : undefined,
+      serviceRole: domainVersion == 'V2' ? this.createServiceRole(`service-${domainName}`, kmsKey).roleArn : undefined,
     };
 
     // Create domain
     const domain = new CfnDomain(this, `${domainName}-domain`, cfnDomainProps);
 
-    const adminUserProfileProps: CfnUserProfileProps = {
-      domainIdentifier: domain.attrId,
-      userIdentifier: dataAdminRole.arn(),
-      userType: 'IAM_ROLE',
-      status: 'ACTIVATED',
-    };
-    const adminUserProfile = new CfnUserProfile(this, `${domainName}-admin-user-profile`, adminUserProfileProps);
-
-    const glueCatalogKmsKeyArns = [
-      ...Object.entries(domainProps.associatedAccounts || {}).map(x => x[1].glueCatalogKmsKeyArn),
-      this.props.glueCatalogKmsKeyArn,
-    ];
-
-    const domainKmsUsagePolicyName = this.props.naming.resourceName(`kms-usage-${domainName}`);
-
-    const keyAccessAccounts = [
-      ...Object.entries(domainProps.associatedAccounts || {}).map(x => x[1].account),
-      this.account,
-    ];
-
-    const domainKmsUsagePolicy = this.createDomainKmsUsagePolicy(
-      this,
-      domainKmsUsagePolicyName,
-      this.region,
-      this.account,
-      keyAccessAccounts,
-      kmsKey.keyArn,
-      glueCatalogKmsKeyArns,
-    );
-
-    executionRole.addManagedPolicy(domainKmsUsagePolicy);
-
-    Object.entries(domainProps.additionalAdminUsers || {}).forEach(adminUser => {
-      const resolvedUserRole = this.props.roleHelper.resolveRoleRefWithRefId(adminUser[1].role, adminUser[0]);
-      const accountUserProfileProps: CfnUserProfileProps = {
-        domainIdentifier: domain.attrId,
-        userIdentifier: adminUser[1].userType == 'IAM_ROLE' ? resolvedUserRole.arn() : resolvedUserRole.name(),
-        userType: adminUser[1].userType,
-        status: 'ACTIVATED',
-      };
-      new CfnUserProfile(this, `${domainName}-admin-user-${adminUser[0]}`, accountUserProfileProps);
-    });
-
-    new MdaaParamAndOutput(this, {
-      resourceType: 'admin-user',
-      resourceId: domainName,
-      name: 'id',
-      value: adminUserProfile.attrId,
-      ...this.props,
-      tier: ParameterTier.ADVANCED,
-    });
+    const domainCdkUserId = this.getDomainCdkUserId(domainName, domain, domain.attrId, kmsKey.keyArn);
 
     const customEnvBlueprintConfig = this.createCustomBlueprintConfig(
+      domainName,
       this,
       domain.attrId,
       [this.region],
@@ -171,100 +162,408 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       domainVersion,
     );
 
-    const configParam = this.createDomainConfigParam(
+    const dataAdminUserProfileProps: CfnUserProfileProps = {
+      domainIdentifier: domain.attrId,
+      userIdentifier: dataAdminRole.arn(),
+      userType: 'IAM_ROLE',
+      status: 'ACTIVATED',
+    };
+    const dataAdminUserProfile = new CfnUserProfile(
+      this,
+      `${domainName}-admin-user-profile`,
+      dataAdminUserProfileProps,
+    );
+
+    const admincfnOwnerProps: CfnOwnerProps = {
+      domainIdentifier: domain.attrId,
+      entityIdentifier: domain.attrRootDomainUnitId,
+      entityType: 'DOMAIN_UNIT',
+      owner: {
+        user: {
+          userIdentifier: dataAdminUserProfile.attrId,
+        },
+      },
+    };
+    new CfnOwner(domain, `owner-user-data-admin`, admincfnOwnerProps);
+
+    const glueCatalogKmsKeyArns = [
+      ...Object.entries(domainProps.associatedAccounts || {}).map(x => x[1].glueCatalogKmsKeyArn),
+      this.props.glueCatalogKmsKeyArn,
+    ];
+
+    const domainKmsUsagePolicyName = this.props.naming.resourceName(`domain-kms-usage-${domainName}`);
+
+    const keyAccessAccounts = [
+      ...Object.entries(domainProps.associatedAccounts || {}).map(x => x[1].account),
+      this.account,
+    ];
+
+    const domainKmsUsagePolicy = this.createDomainKmsUsagePolicy(
       domainName,
-      domain,
-      adminUserProfile,
-      domainVersion,
+      this,
+      domainKmsUsagePolicyName,
+      this.region,
+      this.account,
+      keyAccessAccounts,
       {
         domainKmsKeyArn: kmsKey.keyArn,
         glueCatalogKmsKeyArns: glueCatalogKmsKeyArns,
-        domainKmsUsagePolicyName: domainKmsUsagePolicyName,
       },
-      customEnvBlueprintConfig?.getAttString('id'),
     );
 
+    executionRole.addManagedPolicy(domainKmsUsagePolicy);
+
+    const domainUsers = Object.fromEntries(
+      Object.entries(domainProps.users || {}).map(([userName, userProps]) => {
+        const userIdentifier = userProps.iamRole
+          ? this.props.roleHelper.resolveRoleRefWithRefId(userProps.iamRole, userName).arn()
+          : userProps.ssoId;
+        const userType = userProps.iamRole ? 'IAM_ROLE' : 'SSO_USER';
+
+        if (!userType || !userIdentifier) {
+          throw new Error(`One of user iamRole or ssoId must be specified in user props for user ${userName}`);
+        }
+
+        const userProfileProps: CfnUserProfileProps = {
+          domainIdentifier: domain.attrId,
+          userIdentifier: userIdentifier,
+          userType: userType,
+          status: 'ACTIVATED',
+        };
+        const user = new CfnUserProfile(this, `${domainName}-user-${userName}`, userProfileProps);
+        return [userName, user];
+      }),
+    );
+
+    const domainGroups = Object.fromEntries(
+      Object.entries(domainProps.groups || {}).map(([groupName, groupProps]) => {
+        const groupProfileProps: CfnGroupProfileProps = {
+          domainIdentifier: domain.attrId,
+          groupIdentifier: groupProps.ssoId,
+
+          status: 'ASSIGNED',
+        };
+        const user = new CfnGroupProfile(this, `${domainName}-group-${groupName}`, groupProfileProps);
+        return [groupName, user];
+      }),
+    );
+
+    domainProps.ownerUsers?.forEach(ownerName => {
+      const ownerUser = domainUsers[ownerName];
+      if (!ownerUser) {
+        throw new Error(`Unknown owner user ${ownerName} on domain ${domainName}`);
+      }
+      const cfnOwnerProps: CfnOwnerProps = {
+        domainIdentifier: domain.attrId,
+        entityIdentifier: domain.attrRootDomainUnitId,
+        entityType: 'DOMAIN_UNIT',
+        owner: {
+          user: {
+            userIdentifier: ownerUser.attrId,
+          },
+        },
+      };
+      new CfnOwner(domain, `owner-user-${ownerName}`, cfnOwnerProps);
+    });
+
+    domainProps.ownerGroups?.forEach(ownerName => {
+      const ownerGroup = domainGroups[ownerName];
+      if (!ownerGroup) {
+        throw new Error(`Unknown owner group ${ownerName} on domain ${domainName}`);
+      }
+      const cfnOwnerProps: CfnOwnerProps = {
+        domainIdentifier: domain.attrId,
+        entityIdentifier: domain.attrRootDomainUnitId,
+        entityType: 'DOMAIN_UNIT',
+        owner: {
+          group: {
+            groupIdentifier: ownerGroup.attrId,
+          },
+        },
+      };
+      new CfnOwner(domain, `owner-group-${ownerName}`, cfnOwnerProps);
+    });
+
     if (domainProps.associatedAccounts) {
-      const ramShareProps: CfnResourceShareProps = {
+      const domainramShareProps: CfnResourceShareProps = {
         name: `DataZone-${this.props.naming.resourceName()}-${domain.attrId}`,
         resourceArns: [domain.attrArn],
         principals: Object.entries(domainProps.associatedAccounts).map(x => x[1].account),
         permissionArns: ['arn:aws:ram::aws:permission/AWSRAMDefaultPermissionAmazonDataZoneDomain'],
       };
-      const associatedAccountRamShare = new CfnResourceShare(this, `domain-ram-share`, ramShareProps);
+      const domainRamShare = new CfnResourceShare(this, `domain-ram-share-${domainName}`, domainramShareProps);
+      const associatedAccountCdkUserProfiles = Object.fromEntries(
+        Object.entries(domainProps.associatedAccounts || {})
+          .filter(associatedAccountProps => {
+            return associatedAccountProps[1].createCdkUser;
+          })
+          .map(([associatedAccountName, associatedAccountProps]) => {
+            const associatedAccountRamShareMonitor = this.getRamAssociationMonitor(
+              domain,
+              domainRamShare,
+              associatedAccountProps.account,
+            );
 
-      if (configParam.param) {
-        const ramShareProps: CfnResourceShareProps = {
-          name: this.props.naming.resourceName('domain-config-ssm'),
-          resourceArns: [configParam.param.parameterArn],
-          principals: Object.entries(domainProps.associatedAccounts).map(x => x[1].account),
+            const accountCdkUserProfileProps: CfnUserProfileProps = {
+              domainIdentifier: domain.attrId,
+              userIdentifier:
+                associatedAccountProps.cdkRoleArn ??
+                `arn:${this.partition}:iam::${associatedAccountProps.account}:role/cdk-hnb659fds-cfn-exec-role-${associatedAccountProps.account}-${this.region}`,
+              userType: 'IAM_ROLE',
+              status: 'ACTIVATED',
+            };
+            const associatedAccountCdkUserProfile = new CfnUserProfile(
+              this,
+              `${domainName}-${associatedAccountName}-cdk-user-profile`,
+              accountCdkUserProfileProps,
+            );
+            associatedAccountCdkUserProfile.node.addDependency(associatedAccountRamShareMonitor);
+            return [associatedAccountName, associatedAccountCdkUserProfile];
+          }),
+      );
+      domainProps.ownerAccounts?.forEach(ownerName => {
+        const ownerUser = associatedAccountCdkUserProfiles[ownerName];
+        if (!ownerUser) {
+          throw new Error(`Unknown owner account cdk user ${ownerName} on domain ${domainName}`);
+        }
+        const cfnOwnerProps: CfnOwnerProps = {
+          domainIdentifier: domain.attrId,
+          entityIdentifier: domain.attrRootDomainUnitId,
+          entityType: 'DOMAIN_UNIT',
+          owner: {
+            user: {
+              userIdentifier: ownerUser.attrId,
+            },
+          },
         };
-        new CfnResourceShare(this, `domain-config-ram-share`, ramShareProps);
+        new CfnOwner(domain, `owner-cdk-user-${ownerName}`, cfnOwnerProps);
+      });
 
-        Object.entries(domainProps.associatedAccounts).forEach(associatedAccount => {
-          const accountCdkUserProfileProps: CfnUserProfileProps = {
-            domainIdentifier: domain.attrId,
-            userIdentifier:
-              associatedAccount[1].cdkRoleArn ??
-              `arn:${this.partition}:iam::${associatedAccount[1].account}:role/cdk-hnb659fds-cfn-exec-role-${associatedAccount[1].account}-${this.region}`,
-            userType: 'IAM_ROLE',
-            status: 'ACTIVATED',
-          };
-          const associatedAccountCdkUserProfile = new CfnUserProfile(
-            this,
-            `${domainName}-${associatedAccount[1].account}-cdk-user-profile`,
-            accountCdkUserProfileProps,
-          );
+      const createdDomainUnits = this.createDomainUnits(
+        domain,
+        domain.attrId,
+        domain.attrRootDomainUnitId,
+        {
+          domainUsers: domainUsers,
+          domainGroups: domainGroups,
+          dataAdminUserProfile: dataAdminUserProfile,
+          associatedAccountCdkUserProfiles: associatedAccountCdkUserProfiles,
+        },
+        domainProps.domainUnits,
+      );
 
-          associatedAccountCdkUserProfile.node.addDependency(associatedAccountRamShare);
+      this.createDomainUnitGrant(domain, `root-grant-create-project`, kmsKey.keyArn, domainName, domain, {
+        policyType: 'CREATE_PROJECT',
+        detail: {
+          createProject: {
+            includeChildDomainUnits: true,
+          },
+        },
+        principal: {
+          user: {
+            userIdentifier: domainCdkUserId,
+          },
+        },
+      });
 
-          this.createAssociatedAccountStackResources(
-            associatedAccount[0],
-            associatedAccount[1].account,
-            associatedAccount[1].region || this.region,
-            configParam.paramName,
-            domainKmsUsagePolicyName,
-            keyAccessAccounts,
-            domainName,
-          );
-        });
+      this.createDomainUnitGrant(domain, `root-grant-project-members`, kmsKey.keyArn, domainName, domain, {
+        policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+
+        detail: {
+          addToProjectMemberPool: {
+            includeChildDomainUnits: true,
+          },
+        },
+        principal: {
+          user: {
+            allUsersGrantFilter: {},
+          },
+        },
+      });
+
+      const configParam = this.createDomainConfigParam(
+        domainName,
+        domain,
+        dataAdminUserProfile,
+        domainVersion,
+        {
+          domainKmsKeyArn: kmsKey.keyArn,
+          glueCatalogKmsKeyArns: glueCatalogKmsKeyArns,
+          domainKmsUsagePolicyName: domainKmsUsagePolicyName,
+        },
+        createdDomainUnits,
+        customEnvBlueprintConfig?.getAttString('id'),
+      );
+
+      if (!configParam.param) {
+        throw new Error('Unexpected missing param');
       }
+      const configParamRamShareProps: CfnResourceShareProps = {
+        name: this.props.naming.resourceName('domain-config-ssm'),
+        resourceArns: [configParam.param.parameterArn],
+        principals: Object.entries(domainProps.associatedAccounts).map(x => x[1].account),
+      };
+      new CfnResourceShare(this, `domain-config-ram-share-${domainName}`, configParamRamShareProps);
+
+      Object.entries(domainProps.associatedAccounts).forEach(associatedAccount => {
+        this.createAssociatedAccountStackResources(
+          associatedAccount[0],
+          associatedAccount[1].account,
+          associatedAccount[1].region || this.region,
+          configParam.paramName,
+          domainKmsUsagePolicyName,
+          keyAccessAccounts,
+          domainName,
+        );
+      });
     }
+  }
+
+  private createDomainUnits(
+    scope: Construct,
+    domainId: string,
+    parentDomainId: string,
+    userProfiles: {
+      domainUsers: { [name: string]: CfnUserProfile };
+      domainGroups: { [name: string]: CfnGroupProfile };
+      dataAdminUserProfile: CfnUserProfile;
+      associatedAccountCdkUserProfiles: { [name: string]: CfnUserProfile };
+    },
+    domainUnits?: NamedDomainUnits,
+  ): { [name: string]: CreatedDomainUnit } {
+    return Object.fromEntries(
+      Object.entries(domainUnits ?? {}).map(([domainUnitName, domainUnitProps]) => {
+        const cfnDomainUnitProps: CfnDomainUnitProps = {
+          domainIdentifier: domainId,
+          name: domainUnitName,
+          parentDomainUnitIdentifier: parentDomainId,
+          description: domainUnitProps.description,
+        };
+        const domainUnit = new CfnDomainUnit(scope, `domain-unit-${domainUnitName}`, cfnDomainUnitProps);
+
+        const dataAdminOwnerProps: CfnOwnerProps = {
+          domainIdentifier: domainId,
+          entityIdentifier: domainUnit.attrId,
+          entityType: 'DOMAIN_UNIT',
+          owner: {
+            user: {
+              userIdentifier: userProfiles.dataAdminUserProfile.attrId,
+            },
+          },
+        };
+        new CfnOwner(domainUnit, `owner-user-data-admin`, dataAdminOwnerProps);
+
+        domainUnitProps.ownerAccounts?.forEach(ownerName => {
+          const ownerUser = userProfiles.associatedAccountCdkUserProfiles[ownerName];
+          if (!ownerUser) {
+            throw new Error(`Unknown owner account ${ownerName} for domainUnit ${domainUnitName}`);
+          }
+          const cfnOwnerProps: CfnOwnerProps = {
+            domainIdentifier: domainId,
+            entityIdentifier: domainUnit.attrId,
+            entityType: 'DOMAIN_UNIT',
+            owner: {
+              user: {
+                userIdentifier: ownerUser.attrId,
+              },
+            },
+          };
+          new CfnOwner(domainUnit, `owner-cdk-user-${ownerName}`, cfnOwnerProps);
+        });
+
+        domainUnitProps.ownerUsers?.forEach(ownerName => {
+          const ownerUser = userProfiles.domainUsers[ownerName];
+          if (!ownerUser) {
+            throw new Error(`Unknown owner user ${ownerName} for domainUnit ${domainUnitName}`);
+          }
+          const cfnOwnerProps: CfnOwnerProps = {
+            domainIdentifier: domainId,
+            entityIdentifier: domainUnit.attrId,
+            entityType: 'DOMAIN_UNIT',
+            owner: {
+              user: {
+                userIdentifier: ownerUser.attrId,
+              },
+            },
+          };
+          new CfnOwner(domainUnit, `owner-user-${ownerName}`, cfnOwnerProps);
+        });
+
+        domainUnitProps.ownerGroups?.forEach(ownerName => {
+          const ownerGroup = userProfiles.domainGroups[ownerName];
+          if (!ownerGroup) {
+            throw new Error(`Unknown owner group ${ownerName} for domainUnit ${domainUnitName}`);
+          }
+          const cfnOwnerProps: CfnOwnerProps = {
+            domainIdentifier: domainId,
+            entityIdentifier: domainUnit.attrId,
+            entityType: 'DOMAIN_UNIT',
+            owner: {
+              group: {
+                groupIdentifier: ownerGroup.attrId,
+              },
+            },
+          };
+          new CfnOwner(domainUnit, `owner-group-${ownerName}`, cfnOwnerProps);
+        });
+
+        const childDomainUnits = this.createDomainUnits(
+          domainUnit,
+          domainId,
+          domainUnit.attrId,
+          {
+            domainUsers: userProfiles.domainUsers,
+            domainGroups: userProfiles.domainGroups,
+            dataAdminUserProfile: userProfiles.dataAdminUserProfile,
+            associatedAccountCdkUserProfiles: userProfiles.associatedAccountCdkUserProfiles,
+          },
+          domainUnitProps.domainUnits,
+        );
+        return [domainUnitName, { id: domainUnit.attrId, domainUnits: childDomainUnits }];
+      }),
+    );
   }
 
   private createAssociatedAccountStackResources(
     associatedAccountName: string,
     associatedAccountNum: string,
     region: string,
-    configParamName: string,
+    domainConfigSsmParamName: string,
     domainKmsUsagePolicyName: string,
     keyAccessAccounts: string[],
     domainName: string,
   ) {
     try {
       const crossAccountStack = this.getCrossAccountStack(associatedAccountNum);
-
       //The cross account stack is going to consume the domain config via RAM-shared Domain Config SSM Param created above
-      const domainConfigSsmParamArn = `arn:${this.partition}:ssm:${region}:${this.account}:parameter${configParamName}`;
+      const domainConfigSsmParamArn = `arn:${this.partition}:ssm:${region}:${this.account}:parameter${domainConfigSsmParamName}`;
 
-      const domainConfigParser = new MdaaDataZoneDomainSSMConfigParser(crossAccountStack, 'domain-config-parser', {
-        naming: this.props.naming,
-        domainConfigSSMParam: domainConfigSsmParamArn,
-      });
+      const domainConfigParser = new MdaaDataZoneDomainSSMConfigParser(
+        crossAccountStack,
+        `domain-config-parser-${domainName}`,
+        {
+          naming: this.props.naming,
+          domainConfigSSMParam: domainConfigSsmParamArn,
+        },
+      );
 
       //Create a managed policy which can be used to provide access to the Domain and Glue Catalog KMS keys in associated accounts
       this.createDomainKmsUsagePolicy(
+        domainName,
         crossAccountStack,
         domainKmsUsagePolicyName,
         associatedAccountNum,
         region,
         keyAccessAccounts,
-        domainConfigParser.parsedConfig.domainKmsKeyArn,
-        domainConfigParser.parsedConfig.glueCatalogKmsKeyArns,
+        {
+          domainKmsKeyArn: domainConfigParser.parsedConfig.domainKmsKeyArn,
+          glueCatalogKmsKeyArns: domainConfigParser.parsedConfig.glueCatalogKmsKeyArns,
+        },
       );
 
       //Enable custom blueprints in the target account for this domain
       this.createCustomBlueprintConfig(
+        domainName,
         crossAccountStack,
         domainConfigParser.parsedConfig.domainId,
         [region || this.region],
@@ -279,27 +578,34 @@ export class DataZoneL3Construct extends MdaaL3Construct {
   }
 
   private createDomainKmsUsagePolicy(
+    domainName: string,
     scope: Construct,
     policyName: string,
     account: string,
     region: string,
     keyAccessAccounts: string[],
-    domainKmsKeyArn: string,
-    glueCatalogKmsKeyArns: string[],
+    kmsArns: {
+      domainKmsKeyArn: string;
+      glueCatalogKmsKeyArns: string[];
+    },
   ) {
     const kmsUsagePolicyProps: MdaaManagedPolicyProps = {
       naming: this.props.naming,
       managedPolicyName: policyName,
       verbatimPolicyName: true, //policy name is passed verbatim as it will be the same in all accounts
     };
-    const domainKmsUsagePolicy = new MdaaManagedPolicy(scope, 'domain-kms-managed-policy', kmsUsagePolicyProps);
+    const domainKmsUsagePolicy = new MdaaManagedPolicy(
+      scope,
+      `domain-kms-managed-policy-${domainName}`,
+      kmsUsagePolicyProps,
+    );
 
     // Reference https://docs.aws.amazon.com/datazone/latest/userguide/encryption-rest-datazone.html
     //Provide Decrypt on the Domain KMS Key when used within DataZone
     const domainKeyDecryptStatement = new PolicyStatement({
       sid: 'DomainKmsDecrypt',
       effect: Effect.ALLOW,
-      resources: [domainKmsKeyArn],
+      resources: [kmsArns.domainKmsKeyArn],
       actions: ['kms:Decrypt', 'kms:GenerateDataKey'],
       conditions: {
         'ForAnyValue:StringEquals': {
@@ -313,7 +619,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     const domainKeyGrantStatement = new PolicyStatement({
       sid: 'DomainKmsGrant',
       effect: Effect.ALLOW,
-      resources: [domainKmsKeyArn],
+      resources: [kmsArns.domainKmsKeyArn],
       actions: ['kms:CreateGrant'],
       conditions: {
         StringLike: {
@@ -333,7 +639,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     const glueCatalogDescribeStatement = new PolicyStatement({
       sid: 'GlueKmsDescribe',
       effect: Effect.ALLOW,
-      resources: glueCatalogKmsKeyArns,
+      resources: kmsArns.glueCatalogKmsKeyArns,
       actions: ['kms:DescribeKey'],
     });
     domainKmsUsagePolicy.addStatements(glueCatalogDescribeStatement);
@@ -342,7 +648,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     const glueCatalogDecryptStatement = new PolicyStatement({
       sid: 'GlueKmsDecrypt',
       effect: Effect.ALLOW,
-      resources: glueCatalogKmsKeyArns,
+      resources: kmsArns.glueCatalogKmsKeyArns,
       actions: ['kms:Decrypt'],
       conditions: {
         StringEquals: {
@@ -365,8 +671,10 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       glueCatalogKmsKeyArns: string[];
       domainKmsUsagePolicyName: string;
     },
+    createdDomainUnits: { [name: string]: CreatedDomainUnit },
     customEnvBlueprintConfigId?: string,
   ): MdaaParamAndOutput {
+    const domainUnitIds = flattenDomainUnitPaths('domainUnit:', createdDomainUnits);
     return new MdaaParamAndOutput(this, {
       resourceType: 'domain',
       resourceId: domainName,
@@ -381,6 +689,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
         domainKmsKeyArn: domainKmsConfig.domainKmsKeyArn,
         glueCatalogKmsKeyArns: domainKmsConfig.glueCatalogKmsKeyArns,
         domainKmsUsagePolicyName: domainKmsConfig.domainKmsUsagePolicyName,
+        ...domainUnitIds,
       }),
       ...this.props,
     });
@@ -537,6 +846,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
   }
 
   private createCustomBlueprintConfig(
+    domainName: string,
     scope: Construct,
     domainId: string,
     regions: string[],
@@ -580,6 +890,180 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       },
     };
 
-    return new MdaaCustomResource(scope, 'env-blueprint-config-cr', crProps);
+    return new MdaaCustomResource(scope, `env-blueprint-config-cr-${domainName}`, crProps);
+  }
+
+  private createDomainUnitGrant(
+    scope: Construct,
+    grantId: string,
+    domainKmsKeyArn: string,
+    domainName: string,
+    domain: CfnDomain,
+    grantProps: {
+      policyType:
+        | 'CREATE_DOMAIN_UNIT'
+        | 'OVERRIDE_DOMAIN_UNIT_OWNERS'
+        | 'ADD_TO_PROJECT_MEMBER_POOL'
+        | 'OVERRIDE_PROJECT_OWNERS'
+        | 'CREATE_GLOSSARY'
+        | 'CREATE_FORM_TYPE'
+        | 'CREATE_ASSET_TYPE'
+        | 'CREATE_PROJECT'
+        | 'CREATE_ENVIRONMENT_PROFILE'
+        | 'DELEGATE_CREATE_ENVIRONMENT_PROFILE'
+        | 'CREATE_ENVIRONMENT'
+        | 'CREATE_ENVIRONMENT_FROM_BLUEPRINT'
+        | 'CREATE_PROJECT_FROM_PROJECT_PROFILE'
+        | 'USE_ASSET_TYPE';
+      detail: unknown;
+      principal: unknown;
+    },
+  ) {
+    const addPolicyGrantStatements = [
+      new PolicyStatement({
+        resources: ['*'],
+        actions: ['datazone:AddPolicyGrant'],
+      }),
+      new PolicyStatement({
+        resources: [domainKmsKeyArn],
+        actions: [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS],
+      }),
+    ];
+
+    const crProps: MdaaCustomResourceProps = {
+      resourceType: 'AddPolicyGrant',
+      code: Code.fromAsset(`${__dirname}/../src/lambda/add_policy_grant`),
+      runtime: Runtime.PYTHON_3_13,
+      handler: 'add_policy_grant.lambda_handler',
+      handlerRolePolicyStatements: addPolicyGrantStatements,
+      handlerPolicySuppressions: [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'AddPolicyGrant does not take a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html ',
+        },
+      ],
+      handlerProps: {
+        domainIdentifier: domain.attrId,
+        entityIdentifier: domain.attrRootDomainUnitId,
+        entityType: 'DOMAIN_UNIT',
+        policyType: grantProps.policyType,
+        detail: grantProps.detail,
+        principal: grantProps.principal,
+      },
+      naming: this.props.naming,
+      pascalCaseProperties: false,
+      handlerTimeout: Duration.seconds(120),
+      environment: {
+        LOG_LEVEL: 'INFO',
+      },
+    };
+    const grantCr = new MdaaCustomResource(scope, grantId, crProps);
+
+    if (grantCr.handlerFunction.role) {
+      const stack = Stack.of(scope);
+      const ownerResourceId = `${domainName}-owner-grant-cr-user-profile`;
+      const existingOwner = stack.node.tryFindChild(ownerResourceId);
+      if (!existingOwner) {
+        const dataAdminUserProfileProps: CfnUserProfileProps = {
+          domainIdentifier: domain.attrId,
+          userIdentifier: grantCr.handlerFunction.role?.roleArn,
+          userType: 'IAM_ROLE',
+          status: 'ACTIVATED',
+        };
+        const dataAdminUserProfile = new CfnUserProfile(
+          this,
+          `${domainName}-grant-cr-user-profile`,
+          dataAdminUserProfileProps,
+        );
+        const adminCfnOwnerProps: CfnOwnerProps = {
+          domainIdentifier: domain.attrId,
+          entityIdentifier: domain.attrRootDomainUnitId,
+          entityType: 'DOMAIN_UNIT',
+          owner: {
+            user: {
+              userIdentifier: dataAdminUserProfile.attrId,
+            },
+          },
+        };
+        const grantCrOwner = new CfnOwner(stack, ownerResourceId, adminCfnOwnerProps);
+        grantCr.node.addDependency(grantCrOwner);
+      }
+    }
+  }
+  private getDomainCdkUserId(domainName: string, scope: Construct, domainId: string, domainKmsKeyArn: string): string {
+    const searchUserProfileStatements = [
+      new PolicyStatement({
+        resources: ['*'],
+        actions: ['datazone:SearchUserProfiles'],
+      }),
+      new PolicyStatement({
+        resources: [domainKmsKeyArn],
+        actions: [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS],
+      }),
+    ];
+
+    const crProps: MdaaCustomResourceProps = {
+      resourceType: 'DomainCdkUserId',
+      code: Code.fromAsset(`${__dirname}/../src/lambda/get_user_profile`),
+      runtime: Runtime.PYTHON_3_13,
+      handler: 'get_user_profile.lambda_handler',
+      handlerRolePolicyStatements: searchUserProfileStatements,
+      handlerPolicySuppressions: [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'SearchUserProfiles does not take a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html ',
+        },
+      ],
+      handlerProps: {
+        domainIdentifier: domainId,
+        arn: `arn:${this.partition}:iam::${this.account}:role/cdk-hnb659fds-cfn-exec-role-${this.account}-${this.region}`,
+      },
+      naming: this.props.naming,
+      pascalCaseProperties: false,
+      handlerTimeout: Duration.seconds(120),
+      environment: {
+        LOG_LEVEL: 'INFO',
+      },
+    };
+
+    return new MdaaCustomResource(scope, `domain-cdk-user-id-cr-${domainName}`, crProps).getAttString('id');
+  }
+
+  private getRamAssociationMonitor(scope: Construct, domainRamShare: CfnResourceShare, associatedAccount: string) {
+    const searchUserProfileStatements = [
+      new PolicyStatement({
+        resources: ['*'],
+        actions: ['ram:GetResourceShareAssociations'],
+      }),
+    ];
+
+    const crProps: MdaaCustomResourceProps = {
+      resourceType: 'RamAssociationMonitor',
+      code: Code.fromAsset(`${__dirname}/../src/lambda/monitor_ram_association`),
+      runtime: Runtime.PYTHON_3_13,
+      handler: 'monitor_ram_association.lambda_handler',
+      handlerRolePolicyStatements: searchUserProfileStatements,
+      handlerPolicySuppressions: [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'GetResourceShareAssociations does not take a resource: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazondatazone.html ',
+        },
+      ],
+      handlerProps: {
+        resourceShareArn: domainRamShare.attrArn,
+        associatedEntity: associatedAccount,
+      },
+      naming: this.props.naming,
+      pascalCaseProperties: false,
+      handlerTimeout: Duration.seconds(120),
+      environment: {
+        LOG_LEVEL: 'INFO',
+      },
+    };
+
+    return new MdaaCustomResource(scope, `domain-ram-association-monitor-${associatedAccount}`, crProps);
   }
 }

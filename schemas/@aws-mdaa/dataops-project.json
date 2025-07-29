@@ -739,6 +739,9 @@
             "properties": {
                 "domainConfigSSMParam": {
                     "type": "string"
+                },
+                "domainUnit": {
+                    "type": "string"
                 }
             },
             "required": [

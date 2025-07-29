@@ -27,6 +27,7 @@ export interface MdaaDataZoneDomainSSMConfigParserProps extends MdaaConstructPro
 
 export class MdaaDataZoneDomainSSMConfigParser extends Construct {
   public readonly parsedConfig: DomainConfig;
+  domainConfigParser: MdaaCustomResource;
 
   constructor(scope: Construct, id: string, props: MdaaDataZoneDomainSSMConfigParserProps) {
     super(scope, id);
@@ -62,21 +63,24 @@ export class MdaaDataZoneDomainSSMConfigParser extends Construct {
       },
     };
 
-    const domainConfigParser = new MdaaCustomResource(scope, 'domain-config-cr', crProps);
+    this.domainConfigParser = new MdaaCustomResource(this, 'domain-config-cr', crProps);
 
     this.parsedConfig = {
-      domainArn: domainConfigParser.getAttString('domainArn'),
-      domainVersion: domainConfigParser.getAttString('domainVersion'),
-      domainId: domainConfigParser.getAttString('domainId'),
-      domainCustomEnvBlueprintId: domainConfigParser.getAttString('datalakeEnvBlueprintId'),
-      domainKmsKeyArn: domainConfigParser.getAttString('domainKmsKeyArn'),
-      adminUserProfileId: domainConfigParser.getAttString('adminUserProfileId'),
+      domainArn: this.domainConfigParser.getAttString('domainArn'),
+      domainVersion: this.domainConfigParser.getAttString('domainVersion'),
+      domainId: this.domainConfigParser.getAttString('domainId'),
+      domainCustomEnvBlueprintId: this.domainConfigParser.getAttString('datalakeEnvBlueprintId'),
+      domainKmsKeyArn: this.domainConfigParser.getAttString('domainKmsKeyArn'),
+      adminUserProfileId: this.domainConfigParser.getAttString('adminUserProfileId'),
       domainKmsUsagePolicy: ManagedPolicy.fromManagedPolicyName(
         this,
         'kms-managed-policy',
-        domainConfigParser.getAttString('domainKmsUsagePolicyName'),
+        this.domainConfigParser.getAttString('domainKmsUsagePolicyName'),
       ),
-      glueCatalogKmsKeyArns: domainConfigParser.getAtt('glueCatalogKmsKeyArns').toStringList(),
+      glueCatalogKmsKeyArns: this.domainConfigParser.getAtt('glueCatalogKmsKeyArns').toStringList(),
     };
+  }
+  public getDomainUnitId(path: string): string {
+    return this.domainConfigParser.getAttString(`domainUnit:${path}`);
   }
 }

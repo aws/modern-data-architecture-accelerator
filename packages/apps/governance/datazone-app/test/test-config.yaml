@@ -16,22 +16,79 @@ domains:
     # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
     userAssignment: MANUAL
 
+    # Users to be added to the domain (IAM Roles or SSO Users)
+    users:
+      # A friendly name for an iam user
+      iam-user-name:
+        # an IAM based user
+        # can be referenced by arn, name, or Id
+        iamRole:
+          arn: role-arn
+      # A friendly name for an sso user
+      sso-user-name:
+        ssoId: sso-user-id
+
+    # Groups to be added to the domain (SSO only)
+    groups:
+      # A friendly name for an sso group
+      test-sso-group1:
+        ssoId: test
+
+      test-sso-group2:
+        ssoId: test2
+
+    # List of users who will be added as owners on the root domain unit
+    ownerUsers:
+      - sso-user-name # Must be a named user on the domain
+    # List of groups who will be added as owners on the root domain unit
+    ownerGroups:
+      - test-sso-group1 # Must be a named group on the domain
+
+    # List associated accounts which will be as owners of this domain, allowing
+    # creation of projects within the domain root
+    ownerAccounts:
+      - associated-account-name1
+
+    # Domain units to be added to the domain
+    domainUnits:
+      # The domain unit name
+      test-unit1:
+        # List of owner users for the domain unit
+        ownerUsers:
+          - sso-user-name # Must be a named user on the domain
+        # List associated accounts which will be as owners of this domain unit, allowing
+        # creation of projects within
+        ownerAccounts:
+          - associated-account-name2
+        # Option domain unit description
+        description: testing
+        # Child domain units within this domain unit
+        domainUnits:
+          # The child domain unit name
+          test-unit2:
+            # Option domain unit description
+            description: testing
+            # List of owner groups for this domain unit
+            ownerGroups:
+              - test-sso-group2 # Must be a named group on the domain
+
     # Optional - Additional accounts which will be associated to the domain
     associatedAccounts:
       # A friendly name for the associated account
-      associated-account-name:
+      associated-account-name1:
         # The AWS account number fo the associated account.
         # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
         account: '1234567890'
         # The arn of the KMS key used to encrypt the glue catalog in this associated account
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
-        # Optional -Admin users which will be added from the associated account for this domain.
-        # These users will be able to administer the domain from within the associated account
-        adminUsers:
-          # A friendly name for the associated account admin
-          associated-account-admin-name:
-            # The user type. One of IAM_ROLE or SSO_USER
-            userType: IAM_ROLE
-            # The role reference (required for userType IAM_ROLE )
-            role:
-              arn: associated-account-admin-role-arn
+        # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
+        createCdkUser: true
+      # A friendly name for the associated account
+      associated-account-name2:
+        # The AWS account number fo the associated account.
+        # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
+        account: '2234567890'
+        # The arn of the KMS key used to encrypt the glue catalog in this associated account
+        glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
+        # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
+        createCdkUser: true

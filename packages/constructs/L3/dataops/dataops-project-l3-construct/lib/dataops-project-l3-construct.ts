@@ -312,6 +312,7 @@ export interface DatazoneProps {
 }
 
 export interface DatazoneProjectProps {
+  readonly domainUnit?: string;
   readonly domainConfigSSMParam: string;
 }
 
@@ -523,6 +524,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
   private createDataZoneProject(mdaaProjectProps: DatazoneProjectProps): MdaaDatazoneProject {
     const constructProps: MdaaDatazoneProjectProps = {
       naming: this.props.naming,
+      domainUnit: mdaaProjectProps.domainUnit,
       domainConfigSSMParam: mdaaProjectProps.domainConfigSSMParam,
     };
     return new MdaaDatazoneProject(this, 'datazone-project', constructProps);

@@ -44,6 +44,7 @@ export class MdaaCustomResource extends CustomResource {
     const stack = Stack.of(scope);
 
     const handlerFunctionName = props.naming.resourceName(`${props.resourceType}-handler`, 64);
+
     const handlerRoleResourceId = `custom-${props.resourceType}-handler-role`;
     const existingHandlerRole = stack.node.tryFindChild(handlerRoleResourceId) as Role;
     const handlerRole = existingHandlerRole

@@ -2,37 +2,17 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
-        "AdminUser": {
-            "additionalProperties": false,
-            "properties": {
-                "role": {
-                    "$ref": "#/definitions/MdaaRoleRef"
-                },
-                "userType": {
-                    "enum": [
-                        "IAM_ROLE",
-                        "SSO_USER"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "role",
-                "userType"
-            ],
-            "type": "object"
-        },
         "AsscociatedAccount": {
             "additionalProperties": false,
             "properties": {
                 "account": {
                     "type": "string"
                 },
-                "adminUsers": {
-                    "$ref": "#/definitions/NamedAdminUsers"
-                },
                 "cdkRoleArn": {
                     "type": "string"
+                },
+                "createCdkUser": {
+                    "type": "boolean"
                 },
                 "glueCatalogKmsKeyArn": {
                     "type": "string"
@@ -110,12 +90,34 @@
             },
             "type": "object"
         },
+        "DataZoneGroup": {
+            "additionalProperties": false,
+            "properties": {
+                "ssoId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "ssoId"
+            ],
+            "type": "object"
+        },
+        "DataZoneUser": {
+            "additionalProperties": false,
+            "properties": {
+                "iamRole": {
+                    "$ref": "#/definitions/MdaaRoleRef",
+                    "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id."
+                },
+                "ssoId": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "DomainProps": {
             "additionalProperties": false,
             "properties": {
-                "additionalAdminUsers": {
-                    "$ref": "#/definitions/NamedAdminUsers"
-                },
                 "associatedAccounts": {
                     "$ref": "#/definitions/NamedAssociatedAccounts"
                 },
@@ -125,12 +127,36 @@
                 "description": {
                     "type": "string"
                 },
+                "domainUnits": {
+                    "$ref": "#/definitions/NamedDomainUnits"
+                },
                 "domainVersion": {
                     "enum": [
                         "V1",
                         "V2"
                     ],
                     "type": "string"
+                },
+                "groups": {
+                    "$ref": "#/definitions/NamedDataZoneGroups"
+                },
+                "ownerAccounts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "ownerGroups": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "ownerUsers": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "singleSignOnType": {
                     "enum": [
@@ -145,6 +171,9 @@
                         "MANUAL"
                     ],
                     "type": "string"
+                },
+                "users": {
+                    "$ref": "#/definitions/NamedDataZoneUsers"
                 }
             },
             "required": [
@@ -152,6 +181,36 @@
                 "singleSignOnType",
                 "userAssignment"
             ],
+            "type": "object"
+        },
+        "DomainUnit": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "domainUnits": {
+                    "$ref": "#/definitions/NamedDomainUnits"
+                },
+                "ownerAccounts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "ownerGroups": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "ownerUsers": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
             "type": "object"
         },
         "MdaaNagSuppressionByPath": {
@@ -334,15 +393,27 @@
             ],
             "type": "object"
         },
-        "NamedAdminUsers": {
-            "additionalProperties": {
-                "$ref": "#/definitions/AdminUser"
-            },
-            "type": "object"
-        },
         "NamedAssociatedAccounts": {
             "additionalProperties": {
                 "$ref": "#/definitions/AsscociatedAccount"
+            },
+            "type": "object"
+        },
+        "NamedDataZoneGroups": {
+            "additionalProperties": {
+                "$ref": "#/definitions/DataZoneGroup"
+            },
+            "type": "object"
+        },
+        "NamedDataZoneUsers": {
+            "additionalProperties": {
+                "$ref": "#/definitions/DataZoneUser"
+            },
+            "type": "object"
+        },
+        "NamedDomainUnits": {
+            "additionalProperties": {
+                "$ref": "#/definitions/DomainUnit"
             },
             "type": "object"
         },
