@@ -22,6 +22,7 @@ export class DataZoneCDKApp extends MdaaCdkApp {
     const appConfig = new DataZoneConfigParser(stack, parserProps);
     const constructProps: DataZoneL3ConstructProps = {
       domains: appConfig.domains,
+      lakeformationManageAccessRole: appConfig.lakeformationManageAccessRole,
       glueCatalogKmsKeyArn: appConfig.glueCatalogKmsKeyArn,
       ...l3ConstructProps,
     };

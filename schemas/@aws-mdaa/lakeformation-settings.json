@@ -269,6 +269,10 @@
             "description": "If true (default false), then CDK Exec Role will be automatically added as a LF Admin",
             "type": "boolean"
         },
+        "createDataZoneAdminRole": {
+            "description": "If true, a role will be created as an LF admin for DataZone to use to manage LF permissions within the account.",
+            "type": "boolean"
+        },
         "crossAccountVersion": {
             "description": "Cross account sharing version. If not specified, defaults to latest.",
             "type": "string"

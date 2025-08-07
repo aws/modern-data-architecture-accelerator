@@ -25,6 +25,7 @@ export class DataOpsProjectCDKApp extends MdaaCdkApp {
     };
 
     new DataOpsProjectL3Construct(stack, 'construct', constructProps);
+
     return [stack];
   }
 }

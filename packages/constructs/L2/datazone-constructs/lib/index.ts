@@ -4,4 +4,4 @@
  */
 
 export * from './project';
-export * from './domain_config_parser';
+export * from './domain_config';

@@ -64,7 +64,7 @@ export interface PrincipalProps {
   /**
    * Arn of an IAM principal for the grant.
    */
-  readonly role?: MdaaRoleRef | MdaaResolvableRole;
+  readonly role?: MdaaRoleRef;
   /**
    * Optionally, the principal account can be specified for cases where the account cannot be
    * determined from the role arn
@@ -203,7 +203,9 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
       const resourceLinkProps = resourceLinkEntry[1];
       const fromAccount = resourceLinkProps.fromAccount || this.account;
       const createScope = fromAccount != this.account ? this.getCrossAccountStack(fromAccount) : this;
-
+      if (!createScope) {
+        throw new Error('Error determining scope for resource link. Cross account stack not defined.');
+      }
       const resourceLinkDatabaseProps: CfnDatabaseProps = {
         catalogId: fromAccount,
         databaseInput: {

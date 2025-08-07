@@ -54,6 +54,12 @@
       "path": "../../core/l3-construct"
     },
     {
+      "path": "../lakeformation-settings-l3-construct"
+    },
+    {
+      "path": "../glue-catalog-l3-construct"
+    },
+    {
       "path": "../../../../utilities/mdaa-naming"
     },
     {

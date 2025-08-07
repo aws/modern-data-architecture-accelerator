@@ -3,13 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { MdaaNagSuppressions } from '@aws-mdaa/construct';
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
+import { MdaaRole, MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaBoto3LayerVersion } from '@aws-mdaa/lambda-constructs';
 import { DefaultStackSynthesizer, Duration, Stack } from 'aws-cdk-lib';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Effect, IRole, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
 export interface LakeFormationSettingsL3ConstructProps extends MdaaL3ConstructProps {
@@ -32,6 +35,11 @@ export interface LakeFormationSettingsL3ConstructProps extends MdaaL3ConstructPr
    * If provided, will configure LakeFormation and IAMIdentityCenter integration
    */
   readonly iamIdentityCenter?: IdentityCenterConfig;
+
+  /**
+   * If true, a role will be created as an LF admin for DataZone to use to manage LF permissions within the account.
+   */
+  readonly createDataZoneAdminRole?: boolean;
 }
 
 export interface IdentityCenterConfig {
@@ -40,6 +48,7 @@ export interface IdentityCenterConfig {
 }
 
 export class LakeFormationSettingsL3Construct extends MdaaL3Construct {
+  public static readonly DZ_MANAGE_ACCESS_ROLE_SSM_PATH = '/lakeformation-settings/datazone-manage-access-role-arn';
   protected readonly props: LakeFormationSettingsL3ConstructProps;
   static readonly LATEST_CROSS_ACCOUNT_VERSION = '4';
 
@@ -156,15 +165,24 @@ export class LakeFormationSettingsL3Construct extends MdaaL3Construct {
 
     const synthesizer = Stack.of(this).synthesizer as DefaultStackSynthesizer;
 
-    const cdkLfAdmin = {
-      // The CDK cloudformation execution role.
-      DataLakePrincipalIdentifier: synthesizer.cloudFormationExecutionRoleArn.replace(
-        '${AWS::Partition}',
-        this.partition,
-      ),
-    };
+    const cdkLfAdmin = this.props.createCdkLFAdmin
+      ? {
+          // The CDK cloudformation execution role.
+          DataLakePrincipalIdentifier: synthesizer.cloudFormationExecutionRoleArn.replace(
+            '${AWS::Partition}',
+            this.partition,
+          ),
+        }
+      : undefined;
 
-    const admins = this.props.createCdkLFAdmin ? [...dataLakeAdmins, cdkLfAdmin] : dataLakeAdmins;
+    const dzLfAdmin = this.props.createDataZoneAdminRole
+      ? {
+          // The CDK cloudformation execution role.
+          DataLakePrincipalIdentifier: this.createDatazoneManageAccessRole().roleArn,
+        }
+      : undefined;
+
+    const admins = [...dataLakeAdmins, cdkLfAdmin!, dzLfAdmin!];
 
     const manageSettingsPolicyStatement = new PolicyStatement({
       effect: Effect.ALLOW,
@@ -208,5 +226,33 @@ export class LakeFormationSettingsL3Construct extends MdaaL3Construct {
       },
     };
     new MdaaCustomResource(this.scope, `lf-settings`, settingsCrProps);
+  }
+
+  private createDatazoneManageAccessRole(): IRole {
+    const manageAccessRole = new MdaaRole(this, 'datazone-manage-access-role', {
+      naming: this.props.naming,
+      roleName: 'datazone-manage-access',
+      assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions({
+        StringEquals: {
+          'aws:SourceAccount': this.account,
+        },
+      }),
+      managedPolicies: [
+        MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneGlueManageAccessRolePolicy'),
+      ],
+    });
+    MdaaNagSuppressions.addCodeResourceSuppressions(manageAccessRole, [
+      {
+        id: 'AwsSolutions-IAM4',
+        reason: 'Permissions are restricted to this AWS Account.',
+      },
+    ]);
+
+    new StringParameter(manageAccessRole, 'ssm', {
+      parameterName: LakeFormationSettingsL3Construct.DZ_MANAGE_ACCESS_ROLE_SSM_PATH,
+      stringValue: manageAccessRole.roleArn,
+    });
+
+    return manageAccessRole;
   }
 }

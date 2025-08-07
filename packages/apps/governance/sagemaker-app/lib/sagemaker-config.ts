@@ -9,18 +9,22 @@ import { Stack } from 'aws-cdk-lib';
 
 import { NamedDomainsProps, NamedBaseDomainsProps } from '@aws-mdaa/datazone-l3-construct';
 import * as configSchema from './config-schema.json';
+import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 
 export interface SagemakerConfigContents extends MdaaBaseConfigContents {
   readonly domains: NamedBaseDomainsProps;
-  readonly glueCatalogKmsKeyArn: string;
+  readonly glueCatalogKmsKeyArn?: string;
+  readonly lakeformationManageAccessRole?: MdaaRoleRef;
 }
 
 export class SagemakerConfigParser extends MdaaAppConfigParser<SagemakerConfigContents> {
   public domains: NamedDomainsProps;
-  public glueCatalogKmsKeyArn: string;
+  public glueCatalogKmsKeyArn?: string;
+  readonly lakeformationManageAccessRole?: MdaaRoleRef;
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
     this.glueCatalogKmsKeyArn = this.configContents.glueCatalogKmsKeyArn;
+    this.lakeformationManageAccessRole = this.configContents.lakeformationManageAccessRole;
     this.domains = Object.fromEntries(
       Object.entries(this.configContents.domains).map(entry => {
         return [

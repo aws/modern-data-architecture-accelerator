@@ -5,11 +5,11 @@
 
 import { SecurityConfiguration } from '@aws-cdk/aws-glue-alpha';
 import { AthenaWorkgroupL3Construct, AthenaWorkgroupL3ConstructProps } from '@aws-mdaa/athena-workgroup-l3-construct';
-import { MdaaDatazoneProject, MdaaDatazoneProjectProps } from '@aws-mdaa/datazone-constructs';
+import { DomainConfig, MdaaDatazoneProject, MdaaDatazoneProjectProps } from '@aws-mdaa/datazone-constructs';
 import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
 import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-mdaa/ec2-l3-construct';
 import { MdaaSecurityConfig } from '@aws-mdaa/glue-constructs';
-import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
@@ -57,6 +57,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { ConfigurationElement } from '@aws-mdaa/config';
+import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
 
 export interface NamedDatabaseGrantProps {
   /**
@@ -313,7 +314,9 @@ export interface DatazoneProps {
 
 export interface DatazoneProjectProps {
   readonly domainUnit?: string;
-  readonly domainConfigSSMParam: string;
+  readonly domainConfigSSMParam?: string;
+  readonly domainConfig?: DomainConfig;
+  readonly lakeformationManageAccessRole?: MdaaRoleRef;
 }
 
 export interface NamedSecurityGroupConfigProps {
@@ -339,7 +342,7 @@ export interface FailureNotificationsProps {
 interface DatazoneResources {
   readonly datazoneProject: MdaaDatazoneProject;
   readonly datazoneEnv: CfnEnvironment;
-  readonly datazoneManageAccessRole: IRole;
+  readonly lakeformationManageAccessRole: IRole;
 }
 
 export class DataOpsProjectL3Construct extends MdaaL3Construct {
@@ -366,10 +369,14 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     this.dataAdminRoleIds = this.dataAdminRoles.map(x => x.id());
 
     const projectDeploymentRole = this.createProjectDeploymentRole();
-    const lakeFormationRole = this.createLakeFormationRole();
+    const lakeFormationLocationRole = this.createLakeFormationRole();
     const datazoneUserRole = this.createDatazoneUserRole();
 
-    const projectKmsKey = this.createProjectKmsKey([projectDeploymentRole, datazoneUserRole, lakeFormationRole]);
+    const projectKmsKey = this.createProjectKmsKey([
+      projectDeploymentRole,
+      datazoneUserRole,
+      lakeFormationLocationRole,
+    ]);
 
     const s3OutputKmsKey = props.s3OutputKmsKeyArn
       ? MdaaKmsKey.fromKeyArn(this.scope, 's3OutputKmsKey', props.s3OutputKmsKeyArn)
@@ -394,7 +401,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       s3OutputKmsKey,
       projectDeploymentRole,
       datazoneUserRole,
-      lakeFormationRole,
+      lakeFormationLocationRole,
     );
 
     const datazoneResources = this.createDatazoneResources(projectBucket, datazoneUserRole);
@@ -472,24 +479,35 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       if (this.props.datazone?.project) {
         const datazoneProject = this.createDataZoneProject(this.props.datazone.project);
 
-        const datazoneManageAccessRole = this.createDatazoneManageAccessRole(
-          this,
-          datazoneProject.domainConfig.domainArn,
-        );
+        datazoneUserRole.addManagedPolicy(datazoneProject.domainKmsUsagePolicy);
 
-        const datazoneKmsUsagePolicy = datazoneProject.domainConfig.domainKmsUsagePolicy;
-        datazoneManageAccessRole.addManagedPolicy(datazoneKmsUsagePolicy);
-        datazoneUserRole.addManagedPolicy(datazoneKmsUsagePolicy);
+        const lakeformationManageAccessRole = this.props.datazone.project.lakeformationManageAccessRole
+          ? this.props.roleHelper
+              .resolveRoleRefWithRefId(
+                this.props.datazone.project.lakeformationManageAccessRole,
+                'lf-manage-access-role',
+              )
+              .role('lf-manage-access-role')
+          : Role.fromRoleArn(
+              this,
+              'lf-manage-access-role',
+              StringParameter.valueForStringParameter(
+                this,
+                LakeFormationSettingsL3Construct.DZ_MANAGE_ACCESS_ROLE_SSM_PATH,
+              ),
+            );
+
         const datazoneEnv = this.createDataZoneEnvironment(
           projectBucket,
           datazoneProject,
-          datazoneManageAccessRole,
+          lakeformationManageAccessRole,
           datazoneUserRole,
+          datazoneProject.domainConfig.glueCatalogArns,
         );
 
         return {
           datazoneProject,
-          datazoneManageAccessRole,
+          lakeformationManageAccessRole,
           datazoneEnv: datazoneEnv,
         };
       }
@@ -498,34 +516,12 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     return undefined;
   }
 
-  private createDatazoneManageAccessRole(scope: Construct, domainArn: string): IRole {
-    const manageAccessRole = new MdaaRole(scope, 'manage-access-role', {
-      naming: this.props.naming,
-      roleName: 'dz-manage-access',
-      assumedBy: new ServicePrincipal('datazone.amazonaws.com').withConditions({
-        ArnEquals: {
-          'aws:SourceArn': domainArn,
-        },
-      }),
-      managedPolicies: [
-        MdaaManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDataZoneGlueManageAccessRolePolicy'),
-      ],
-    });
-    MdaaNagSuppressions.addCodeResourceSuppressions(manageAccessRole, [
-      {
-        id: 'AwsSolutions-IAM4',
-        reason: 'Permissions are restricted to one DataZone Domain and to one AWS Account.',
-      },
-    ]);
-
-    return manageAccessRole;
-  }
-
   private createDataZoneProject(mdaaProjectProps: DatazoneProjectProps): MdaaDatazoneProject {
     const constructProps: MdaaDatazoneProjectProps = {
       naming: this.props.naming,
       domainUnit: mdaaProjectProps.domainUnit,
       domainConfigSSMParam: mdaaProjectProps.domainConfigSSMParam,
+      domainConfig: mdaaProjectProps.domainConfig,
     };
     return new MdaaDatazoneProject(this, 'datazone-project', constructProps);
   }
@@ -533,8 +529,9 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
   private createDataZoneEnvironment(
     projectBucket: IBucket,
     dzProject: MdaaDatazoneProject,
-    datazoneManageAccessRole: IRole,
+    lakeformationManagedAccessRole: IRole,
     datazoneUserRole: IRole,
+    glueCatalogArns: string[],
   ): CfnEnvironment {
     const subBucketLocation = projectBucket.s3UrlForObject('/data/datazone');
     // Create the database
@@ -571,7 +568,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       subDatabase,
       subDatabaseLFProps,
       true,
-      datazoneManageAccessRole,
+      lakeformationManagedAccessRole,
       subBucketLocation,
     );
 
@@ -630,14 +627,14 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       },
     };
     new CfnEnvironmentActions(this, 'console-env-action', consoleActionProps);
-    const userManagedPolicy = this.createDatazoneUserManagedPolicy(projectBucket);
+    const userManagedPolicy = this.createDatazoneUserManagedPolicy(projectBucket, glueCatalogArns);
     userManagedPolicy.attachToRole(datazoneUserRole);
 
     this.createDatazoneSubscriptionTarget(
       datazoneEnv,
       dzProject,
       datazoneUserRole,
-      datazoneManageAccessRole,
+      lakeformationManagedAccessRole,
       subDatabaseName,
     );
 
@@ -648,7 +645,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     env: CfnEnvironment,
     mdaaProject: MdaaDatazoneProject,
     envRole: IRole,
-    datazoneManageAccessRole: IRole,
+    lakeformationManagedAccessRole: IRole,
     subDatabaseName: string,
   ) {
     const subTargetProps: CfnSubscriptionTargetProps = {
@@ -656,7 +653,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       authorizedPrincipals: [envRole.roleArn], //User role
       domainIdentifier: mdaaProject.project.domainIdentifier,
       environmentIdentifier: env.attrId,
-      manageAccessRole: datazoneManageAccessRole.roleArn, //manage role
+      manageAccessRole: lakeformationManagedAccessRole.roleArn, //manage role
       name: this.props.naming.resourceName(),
       subscriptionTargetConfig: [
         {
@@ -687,7 +684,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     return role;
   }
 
-  private createDatazoneUserManagedPolicy(projectBucket: IBucket): ManagedPolicy {
+  private createDatazoneUserManagedPolicy(projectBucket: IBucket, glueCatalogArns: string[]): ManagedPolicy {
     //Allow to access the glue catalog resources
     const userPolicy: ManagedPolicy = new ManagedPolicy(this, 'datazone-user-access-policy', {
       managedPolicyName: this.props.naming.resourceName('datazone-user-access-policy'),
@@ -758,12 +755,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         'glue:GetTableVersions',
         'glue:GetColumnStatistics*',
       ],
-      resources: [
-        `arn:${this.partition}:glue:${this.region}:*:catalog`,
-        `arn:${this.partition}:glue:${this.region}:*:database/*`,
-        `arn:${this.partition}:glue:${this.region}:*:table/*`,
-        `arn:${this.partition}:glue:${this.region}:*:tableVersion/*`,
-      ],
+      resources: glueCatalogArns,
     });
     userPolicy.addStatements(accessGlueResourceStatement);
     MdaaNagSuppressions.addCodeResourceSuppressions(userPolicy, [
@@ -929,7 +921,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
           database,
           databaseProps.lakeFormation || {},
           databaseProps.createDatazoneDatasource || false,
-          datazoneResources?.datazoneManageAccessRole,
+          datazoneResources?.lakeformationManageAccessRole,
           databaseBucket?.arnForObjects(databaseProps.locationPrefix || ''),
         );
       }
@@ -957,7 +949,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       configuration: {
         glueRunConfiguration: {
           autoImportDataQualityResult: true,
-          dataAccessRole: datazoneResources.datazoneManageAccessRole.roleArn,
+          dataAccessRole: datazoneResources.lakeformationManageAccessRole.roleArn,
           relationalFilterConfigurations: [
             {
               databaseName: databaseResourceName,
@@ -1011,7 +1003,11 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
             return [
               x.refId(),
               {
-                role: x,
+                role: {
+                  arn: x.arn(),
+                  id: x.id(),
+                  name: x.name(),
+                },
               },
             ];
           }),
@@ -1028,7 +1024,11 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
             return [
               x.refId(),
               {
-                role: x,
+                role: {
+                  arn: x.arn(),
+                  id: x.id(),
+                  name: x.name(),
+                },
               },
             ];
           }),
@@ -1046,7 +1046,11 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
             return [
               x.refId(),
               {
-                role: x,
+                role: {
+                  arn: x.arn(),
+                  id: x.id(),
+                  name: x.name(),
+                },
               },
             ];
           }),

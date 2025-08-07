@@ -32,8 +32,14 @@ sagemaker: # Module Name can be customized
 [Config Schema Docs](SCHEMA.md)
 
 ```yaml
-# The arn of the KMS key used to encrypt the glue catalog in this account
+# (Optional) The arn of the KMS key used to encrypt the glue catalog in this account
+# If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
 glueCatalogKmsKeyArn: test-glue-catalog-key-arn
+# (Optional) The role which will be used to manage LF permissions for all domains
+# This should be an LF Admin role within the account, likely created by the LF Settings module
+# If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
+lakeformationManageAccessRole:
+  arn: 'arn:test-partition:iam::test-account:role/test-role'
 # List of domains to create
 domains:
   # domain's name (must be unique)
@@ -43,9 +49,6 @@ domains:
       name: Admin
     # Required - Description to give to the domain
     description: DataZone Domain Description
-
-    # Optional - Type of SSO (default: DISABLED): DISABLED | IAM_IDC
-    singleSignOnType: DISABLED
 
     # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
     userAssignment: MANUAL
@@ -115,6 +118,12 @@ domains:
         account: '1234567890'
         # The arn of the KMS key used to encrypt the glue catalog in this associated account
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
+        # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
+        createCdkUser: true
+        # (Optional) The role which will be used within the associated account to administer LF permissions.
+        # This should be an LF Admin role within the account, likely created by the LF Settings module in the associated account.
+        # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
+        lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role'
       # A friendly name for the associated account
       associated-account-name2:
         # The AWS account number fo the associated account.
@@ -124,4 +133,8 @@ domains:
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
         createCdkUser: true
+        # (Optional) The role which will be used within the associated account to administer LF permissions.
+        # This should be an LF Admin role within the account, likely created by the LF Settings module in the associated account.
+        # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
+        lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role'
 ```

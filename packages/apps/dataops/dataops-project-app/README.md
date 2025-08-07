@@ -2,7 +2,7 @@
 
 The Data Ops Project CDK application is used to deploy the resources required to support and perform data operations on top of a Data Lake, primarily using Glue Crawlers and Glue Jobs.
 
-***
+---
 
 ## Deployed Resources and Compliance Details
 
@@ -10,47 +10,47 @@ The Data Ops Project CDK application is used to deploy the resources required to
 
 **Project KMS Key** - Used to encrypt all project information at rest across all project resources.
 
-* Usage access granted to project data engineer and execution roles (by key policy)
-* Usage/Admin access granted to data admin role (by key policy)
+- Usage access granted to project data engineer and execution roles (by key policy)
+- Usage/Admin access granted to data admin role (by key policy)
 
 **Project S3 Bucket** - A storage location for project activities (scratch and temporary).
 
-* Read/write access granted (by prefix) to project data engineer, execution, and data admin roles (by bucket policy)
-* Used as temp location for all project glue jobs
-* Used to deploy/stage all glue job code
-* Can be used to store project-related derived data for downstream processing
+- Read/write access granted (by prefix) to project data engineer, execution, and data admin roles (by bucket policy)
+- Used as temp location for all project glue jobs
+- Used to deploy/stage all glue job code
+- Can be used to store project-related derived data for downstream processing
 
 **Glue Databases** - A Glue Catalog database will be created for each project database specified in the config.
 
-* Can be used by project crawlers and jobs to store crawled/generated tables
+- Can be used by project crawlers and jobs to store crawled/generated tables
 
 **LakeFormation Grants** - Grant access to project Glue databases and tables
 
-* Data lake location and read/write data lake permission grants can be automatically created for project execution and engineer roles
-* Data lake permission grants (read or write) can be configured on a per database (and optionally table) basis for additional principals
-* If using LakeFormation across accounts, database resource links and resource link describe grants can be created across accounts (required for cross account access)
+- Data lake location and read/write data lake permission grants can be automatically created for project execution and engineer roles
+- Data lake permission grants (read or write) can be configured on a per database (and optionally table) basis for additional principals
+- If using LakeFormation across accounts, database resource links and resource link describe grants can be created across accounts (required for cross account access)
 
 **Project Glue Security Config** - Security config which will be used by all jobs under the project
 
-* Ensures all job output, logging, and bookmark data is encryped with the project KMS key
+- Ensures all job output, logging, and bookmark data is encryped with the project KMS key
 
 **Project Glue SecurityGroups** - Security groups which can be used by Glue Connections or other project resources
 
-* All egress permitted by default
-* Self-referencing ingress rule added by default (allows all traffic within security group, required by Glue)
-* All other ingress traffic denied by default
+- All egress permitted by default
+- Self-referencing ingress rule added by default (allows all traffic within security group, required by Glue)
+- All other ingress traffic denied by default
 
 **Glue Connections** - Glue connections for reuse across project jobs and crawlers
 
-* Network connections for VPC access
-  * Can use either a project Security Group or an existing security group
-* JDBC connections for RDBMS access
-  * Credentials should be stored in a secret and referenced using dynamic references
-  * Note that secret rotation will break this configuration. Instead, use a Network/Vpc connection and directly consume credentials from Secret in Glue Job code
+- Network connections for VPC access
+  - Can use either a project Security Group or an existing security group
+- JDBC connections for RDBMS access
+  - Credentials should be stored in a secret and referenced using dynamic references
+  - Note that secret rotation will break this configuration. Instead, use a Network/Vpc connection and directly consume credentials from Secret in Glue Job code
 
 **Glue Custom Classifiers** - Glue classifiers for reuse across project crawlers
 
-***
+---
 
 ## Configuration
 
@@ -59,10 +59,10 @@ The Data Ops Project CDK application is used to deploy the resources required to
 Add the following snippet to your mdaa.yaml under the `modules:` section of a domain/env in order to use this module:
 
 ```yaml
-          dataops-project: # Module Name can be customized
-            module_path: "@aws-caef/dataops-project" # Must match module NPM package name
-            module_configs:
-              - ./dataops-project.yaml # Filename/path can be customized
+dataops-project: # Module Name can be customized
+  module_path: '@aws-caef/dataops-project' # Must match module NPM package name
+  module_configs:
+    - ./dataops-project.yaml # Filename/path can be customized
 ```
 
 ### Module Config (./dataops-project.yaml)
@@ -111,7 +111,7 @@ securityGroupConfigs:
           port: 443
 
 # Optional - The ID of the KMS key which will encrypt all S3 outputs of Jobs run under this project.
-# If not specified, the project key will be used. 
+# If not specified, the project key will be used.
 s3OutputKmsKeyArn: ssm:/sample-org/instance1/datalake/kms/id
 
 # Optional - The Arn of the KMS key used to encrypt the Glue Catalog. Specific access to this key
@@ -123,34 +123,34 @@ glueCatalogKmsKeyArn: ssm:/sample-org/shared/glue-catalog/kms/arn
 classifiers:
   # (optional)  Example of a CSV Classifier.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-csvclassifier.html
   classifierCsv:
-    classifierType: "csv"
+    classifierType: 'csv'
     configuration:
       csvClassifier:
         allowSingleColumn: false
-        containsHeader: "PRESENT"
-        delimiter: "~"
+        containsHeader: 'PRESENT'
+        delimiter: '~'
         disableValueTrimming: false
         header:
           - columnA
           - columnB
-        quoteSymbol: "^"
+        quoteSymbol: '^'
   # (optional)  Example of a Grok Classifier.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-grokclassifier.html
   classifierGrok:
-    classifierType: "grok"
+    classifierType: 'grok'
     configuration:
       grokClassifier:
         classification: special-logs
-        customPatterns: "MESSAGEPREFIX .*-.*-.*-.*-.*"
+        customPatterns: 'MESSAGEPREFIX .*-.*-.*-.*-.*'
         grokPattern: '%{TIMESTAMP_ISO8601:timestamp} \[%{MESSAGEPREFIX:message_prefix}\] %{CRAWLERLOGLEVEL:loglevel} : %{GREEDYDATA:message}'
   # (optional) Example of a JSON Classifier.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-jsonclassifier.html
   classifierJson:
-    classifierType: "json"
+    classifierType: 'json'
     configuration:
       jsonClassifier:
-        jsonPath: "$[*]"
+        jsonPath: '$[*]'
   # (optional) Example of an XML Classifier.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-xmlclassifier.html
   classifierXml:
-    classifierType: "xml"
+    classifierType: 'xml'
     configuration:
       xmlClassifier:
         classification: xml-data
@@ -163,7 +163,7 @@ connections:
     connectionType: NETWORK
     description: VPC Connection Example
     physicalConnectionRequirements:
-      availabilityZone: "{{region}}a"
+      availabilityZone: '{{region}}a'
       subnetId: subnet-123abc456def
       securityGroupIdList:
         - sg-890abc123asc
@@ -172,7 +172,7 @@ connections:
     connectionType: NETWORK
     description: VPC Connection Example
     physicalConnectionRequirements:
-      availabilityZone: "{{region}}a"
+      availabilityZone: '{{region}}a'
       subnetId: subnet-09ba402b76a346ffb
       projectSecurityGroupNames:
         - test-security-group
@@ -181,11 +181,11 @@ connections:
     connectionType: JDBC
     # To understand the supported values in connectionProperties see: https://docs.aws.amazon.com/glue/latest/webapi/API_Connection.html
     connectionProperties:
-      JDBC_CONNECTION_URL: "jdbc:awsathena://AwsRegion=[REGION];UID=[ACCESS KEY];PWD=[SECRET KEY];S3OutputLocation=[LOCATION]"
+      JDBC_CONNECTION_URL: 'jdbc:awsathena://AwsRegion=[REGION];UID=[ACCESS KEY];PWD=[SECRET KEY];S3OutputLocation=[LOCATION]'
       JDBC_ENFORCE_SSL: true
     description: JDBC Connection Example
     physicalConnectionRequirements:
-      availabilityZone: "{{region}}a"
+      availabilityZone: '{{region}}a'
       subnetId: subnet-123abc456def
       securityGroupIdList:
         - sg-890abc123asc
@@ -195,18 +195,15 @@ datazone:
   project:
     # The SSM Parameter containing domain config details for a DataZone Domain created by the MDAA Datazone module
     domainConfigSSMParam: /sample-org/shared/datazone/domain/test-domain/config
+    # (Optional) The role which will be used to managed lake formation permissions for the project.
+    # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
+    lakeformationManageAccessRole:
+      arn: arn:{{partition}}:iam::{{account}}:role/test-lf-admin-role
 
 # (Optional) List of Databases to create. Referred to by name in the crawler configuration files.
 databases:
   test-database1:
     description: Test Database 1
-        
-    # (Optional, default false) When true, create database with exact name as specified. Naming convention does not apply.
-    verbatimName: false
-
-    # (Optional, default false) When true, replaces hyphens with underscores in database name. Applies to verbatim db names as well.
-    icebergCompliantName: false
-    
     locationBucketName: some-bucket-name
     locationPrefix: data/test1
     lakeFormation:
@@ -222,14 +219,13 @@ databases:
       # for the database and its S3 Location for project execution roles
       createReadWriteGrantsForProjectExecutionRoles: true
 
-      # List of additional accounts in which resource links will be generated
-      # to facilitate cross-account access
-      createCrossAccountResourceLinkAccounts:
-        - "12312412"
+      # Removing cross-account resource links for testing
+      # createCrossAccountResourceLinkAccounts:
+      #   - "12312412"
 
       # Optional - the name of the resource links to be generated
       # If not specified, defaults to the database name
-      createCrossAccountResourceLinkName: "testing"
+      createCrossAccountResourceLinkName: 'testing'
       grants:
         # Each grant is keyed with a name which is unique within the context
         # of the database
@@ -269,8 +265,9 @@ databases:
       createSuperGrantsForDataAdminRoles: true
       createReadGrantsForDataEngineerRoles: true
       createReadWriteGrantsForProjectExecutionRoles: true
-      createCrossAccountResourceLinkAccounts:
-        - "12312412"
+      # Removing cross-account resource links for testing
+      # createCrossAccountResourceLinkAccounts:
+      #   - "12312412"
       grants:
         example_condensed_read_grant:
           principalArns:
@@ -282,12 +279,23 @@ databases:
     locationPrefix: data/test-database3
     createDatazoneDatasource: true
 
-# Verbatim DB Name Config
+  # Verbatim DB Name Config
   test-database4:
     description: Test Database 4
     verbatimName: true
     locationBucketName: some-bucket-name
     locationPrefix: data/test4
+    lakeFormation:
+      createSuperGrantsForDataAdminRoles: true
+      createReadGrantsForDataEngineerRoles: true
+      createReadWriteGrantsForProjectExecutionRoles: true
+      # Removing cross-account resource links for testing
+      # createCrossAccountResourceLinkAccounts:
+      #   - "12312412"
+      grants:
+        example_condensed_read_grant:
+          principalArns:
+            principalA: arn:{{partition}}:iam::{{account}}:role/cross-account-role
 
   # Iceberg Compliant DB Name Config
   test-database5:
@@ -299,8 +307,9 @@ databases:
       createSuperGrantsForDataAdminRoles: true
       createReadGrantsForDataEngineerRoles: true
       createReadWriteGrantsForProjectExecutionRoles: true
-      createCrossAccountResourceLinkAccounts:
-        - "12312412"
+      # Removing cross-account resource links for testing
+      # createCrossAccountResourceLinkAccounts:
+      #   - "12312412"
       grants:
         example_condensed_read_grant:
           principalArns:

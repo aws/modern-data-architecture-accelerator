@@ -28,13 +28,15 @@ describe('MDAA Compliance Stack Tests', () => {
     roleHelper: new MdaaRoleHelper(stack, testApp.naming),
     naming: testApp.naming,
     iamAllowedPrincipalsDefault: true,
+    createCdkLFAdmin: true,
+    createDataZoneAdminRole: true,
   };
 
   new LakeFormationSettingsL3Construct(stack, 'teststack', constructProps);
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
 
-  // console.log( JSON.stringify( template, undefined, 2 ) )
+  console.log(JSON.stringify(template, undefined, 2));
 
   test('LakeFormationSettings', () => {
     template.hasResourceProperties('Custom::lakeformation-settings', {
@@ -44,6 +46,11 @@ describe('MDAA Compliance Stack Tests', () => {
           {
             DataLakePrincipalIdentifier: 'arn:test-partition:iam::test-account:role/TestAccess',
           },
+          {
+            DataLakePrincipalIdentifier:
+              'arn:test-partition:iam::test-account:role/cdk-hnb659fds-cfn-exec-role-test-account-test-region',
+          },
+          { DataLakePrincipalIdentifier: { 'Fn::GetAtt': ['teststackdatazonemanageaccessroleF842C73A', 'Arn'] } },
         ],
         CreateDatabaseDefaultPermissions: [
           {
@@ -75,6 +82,42 @@ describe('MDAA Compliance Stack Tests', () => {
           DataLakePrincipalIdentifier: 'test-account',
         },
       ],
+    });
+  });
+  test('DZ Management Role', () => {
+    template.hasResourceProperties('AWS::IAM::Role', {
+      AssumeRolePolicyDocument: {
+        Statement: [
+          {
+            Action: 'sts:AssumeRole',
+            Condition: {
+              StringEquals: {
+                'aws:SourceAccount': 'test-account',
+              },
+            },
+            Effect: 'Allow',
+            Principal: {
+              Service: 'datazone.amazonaws.com',
+            },
+          },
+        ],
+        Version: '2012-10-17',
+      },
+      ManagedPolicyArns: [
+        {
+          'Fn::Join': [
+            '',
+            [
+              'arn:',
+              {
+                Ref: 'AWS::Partition',
+              },
+              ':iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy',
+            ],
+          ],
+        },
+      ],
+      RoleName: 'test-org-test-env-test-domain-test-module-datazone-man--6d477660',
     });
   });
 });

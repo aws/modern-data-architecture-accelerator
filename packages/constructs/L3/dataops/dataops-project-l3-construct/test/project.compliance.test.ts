@@ -63,6 +63,9 @@ describe('MDAA Compliance Stack Tests', () => {
     datazone: {
       project: {
         domainConfigSSMParam: '/test/config/param',
+        lakeformationManageAccessRole: {
+          arn: 'arn:test-partition:iam::test-account:role/test-role-arn',
+        },
       },
     },
     securityGroupConfigs: {

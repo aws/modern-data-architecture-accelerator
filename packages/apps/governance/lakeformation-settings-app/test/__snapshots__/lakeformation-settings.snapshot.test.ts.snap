@@ -145,6 +145,36 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-lakeformation-settings-main:role:datazonemanageaccess:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lakeformation-settings-main:role:datazonemanageaccess:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-lakeformation-settings-main:role:datazonemanageaccess:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-lakeformation-settings-main:lambda:lakeformationidcconfigshandler:arn",
         },
         "Value": {
@@ -249,6 +279,154 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
           "Type": "String",
           "Value": {
             "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/governance/lakeformation-settings-l3-construct/lib/lakeformation-settings-l3-construct.ts:LINE:COL] Permissions are restricted to this AWS Account.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Condition": {
+                  "StringEquals": {
+                    "aws:SourceAccount": {
+                      "Ref": "AWS::AccountId",
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "datazone.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "ManagedPolicyArns": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy",
+                ],
+              ],
+            },
+          ],
+          "RoleName": "test-org-test-env-test-domain-test-lakeformation-setti--39c0c0e0",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "lakeformation-settings",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-lakeformation-settings-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lakeformation-settings-main/role/datazone-manage-access/arn",
+          "Tags": {
+            "mdaa_cdk_app": "lakeformation-settings",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lakeformation-settings-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lakeformation-settings-main/role/datazone-manage-access/id",
+          "Tags": {
+            "mdaa_cdk_app": "lakeformation-settings",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lakeformation-settings-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "RoleId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-lakeformation-settings-main/role/datazone-manage-access/name",
+          "Tags": {
+            "mdaa_cdk_app": "lakeformation-settings",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lakeformation-settings-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/lakeformation-settings/datazone-manage-access-role-arn",
+          "Tags": {
+            "mdaa_cdk_app": "lakeformation-settings",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-lakeformation-settings-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
           },
         },
         "Type": "AWS::SSM::Parameter",
@@ -1845,6 +2023,28 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
                   ],
                 },
               },
+              {
+                "DataLakePrincipalIdentifier": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::\${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-\${AWS::AccountId}-\${AWS::Region}",
+                    ],
+                  ],
+                },
+              },
+              {
+                "DataLakePrincipalIdentifier": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+              },
             ],
             "Parameters": {
               "CROSS_ACCOUNT_VERSION": "4",
@@ -2030,6 +2230,36 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-lakeformation-settings-main:role:datazonemanageaccess:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lakeformation-settings-main:role:datazonemanageaccess:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "RoleId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-lakeformation-settings-main:role:datazonemanageaccess:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-lakeformation-settings-main:lambda:lakeformationidcconfigshandler:arn",
       },
       "Value": {
@@ -2134,6 +2364,154 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
         "Type": "String",
         "Value": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/governance/lakeformation-settings-l3-construct/lib/lakeformation-settings-l3-construct.ts:LINE:COL] Permissions are restricted to this AWS Account.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": {
+                    "Ref": "AWS::AccountId",
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "datazone.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy",
+              ],
+            ],
+          },
+        ],
+        "RoleName": "test-org-test-env-test-domain-test-lakeformation-setti--39c0c0e0",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "lakeformation-settings",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-lakeformation-settings-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lakeformation-settings-main/role/datazone-manage-access/arn",
+        "Tags": {
+          "mdaa_cdk_app": "lakeformation-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lakeformation-settings-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lakeformation-settings-main/role/datazone-manage-access/id",
+        "Tags": {
+          "mdaa_cdk_app": "lakeformation-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lakeformation-settings-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-lakeformation-settings-main/role/datazone-manage-access/name",
+        "Tags": {
+          "mdaa_cdk_app": "lakeformation-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lakeformation-settings-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/lakeformation-settings/datazone-manage-access-role-arn",
+        "Tags": {
+          "mdaa_cdk_app": "lakeformation-settings",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-lakeformation-settings-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
         },
       },
       "Type": "AWS::SSM::Parameter",
@@ -3727,6 +4105,28 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
                 "Fn::GetAtt": [
                   "RoleResAdmin0",
                   "arn",
+                ],
+              },
+            },
+            {
+              "DataLakePrincipalIdentifier": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":iam::\${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-\${AWS::AccountId}-\${AWS::Region}",
+                  ],
+                ],
+              },
+            },
+            {
+              "DataLakePrincipalIdentifier": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
                 ],
               },
             },

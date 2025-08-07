@@ -4,136 +4,6 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
 {
   "test-org-test-env-test-domain-test-dataops-project-main": {
     "Description": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.0.0",
-    "Mappings": {
-      "LatestNodeRuntimeMap": {
-        "af-south-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-east-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-east-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-northeast-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-northeast-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-northeast-3": {
-          "value": "nodejs22.x",
-        },
-        "ap-south-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-south-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-1": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-2": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-3": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-4": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-5": {
-          "value": "nodejs22.x",
-        },
-        "ap-southeast-7": {
-          "value": "nodejs22.x",
-        },
-        "ca-central-1": {
-          "value": "nodejs22.x",
-        },
-        "ca-west-1": {
-          "value": "nodejs22.x",
-        },
-        "cn-north-1": {
-          "value": "nodejs22.x",
-        },
-        "cn-northwest-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-central-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-central-2": {
-          "value": "nodejs22.x",
-        },
-        "eu-isoe-west-1": {
-          "value": "nodejs18.x",
-        },
-        "eu-north-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-south-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-south-2": {
-          "value": "nodejs22.x",
-        },
-        "eu-west-1": {
-          "value": "nodejs22.x",
-        },
-        "eu-west-2": {
-          "value": "nodejs22.x",
-        },
-        "eu-west-3": {
-          "value": "nodejs22.x",
-        },
-        "il-central-1": {
-          "value": "nodejs22.x",
-        },
-        "me-central-1": {
-          "value": "nodejs22.x",
-        },
-        "me-south-1": {
-          "value": "nodejs22.x",
-        },
-        "mx-central-1": {
-          "value": "nodejs22.x",
-        },
-        "sa-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-east-2": {
-          "value": "nodejs22.x",
-        },
-        "us-gov-east-1": {
-          "value": "nodejs22.x",
-        },
-        "us-gov-west-1": {
-          "value": "nodejs22.x",
-        },
-        "us-iso-east-1": {
-          "value": "nodejs18.x",
-        },
-        "us-iso-west-1": {
-          "value": "nodejs18.x",
-        },
-        "us-isob-east-1": {
-          "value": "nodejs18.x",
-        },
-        "us-isob-west-1": {
-          "value": "nodejs18.x",
-        },
-        "us-west-1": {
-          "value": "nodejs22.x",
-        },
-        "us-west-2": {
-          "value": "nodejs22.x",
-        },
-      },
-    },
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -198,36 +68,6 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-dataops-project-main:role:dzmanageaccess:arn",
-        },
-        "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Export": {
-          "Name": "test-org:test-domain:test-dataops-project-main:role:dzmanageaccess:id",
-        },
-        "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "RoleId",
-          ],
-        },
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Export": {
-          "Name": "test-org:test-domain:test-dataops-project-main:role:dzmanageaccess:name",
-        },
-        "Value": {
-          "Ref": "REPLACED-CFN-LOGICAL-ID",
-        },
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Export": {
           "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:wgusage:arn",
         },
         "Value": {
@@ -260,25 +100,6 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               ],
             },
           ],
-        },
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Export": {
-          "Name": "test-org:test-domain:test-dataops-project-main:lambda:domainconfigparserhandler:arn",
-        },
-        "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Export": {
-          "Name": "test-org:test-domain:test-dataops-project-main:lambda:domainconfigparserhandler:name",
-        },
-        "Value": {
-          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
       },
       "REPLACED-CFN-LOGICAL-ID": {
@@ -416,6 +237,46 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       "SsmParameterValuetestorgtestdomaingeneratedroledatabrewidC96584B6F00A464EAD1953AFF4B05118Parameter": {
         "Default": "/test-org/test-domain/generated-role/databrew/id",
         "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_admin_user_profile_id",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_arn",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_datalake_blueprint_config_id",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_id",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_kms_key_arn",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_kms_usage_policy_name",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_name",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_version",
+        "Type": "AWS::SSM::Parameter::Value<String>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_glue_catalog_kms_key_arns",
+        "Type": "AWS::SSM::Parameter::Value<List<String>>",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_glue_catalog_resource_arns",
+        "Type": "AWS::SSM::Parameter::Value<List<String>>",
       },
     },
     "Resources": {
@@ -2096,10 +1957,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         "Properties": {
           "Description": "Amazon Athena",
           "DomainIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "EnvironmentIdentifier": {
             "Fn::GetAtt": [
@@ -2132,10 +1990,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
             {
               "Key": "AmazonDataZoneDomain",
               "Value": {
-                "Fn::GetAtt": [
-                  "REPLACED-CFN-LOGICAL-ID",
-                  "domainId",
-                ],
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
             },
             {
@@ -2212,10 +2067,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           "Name": "/test-org/test-domain/test-dataops-project-main/workgroup/name",
           "Tags": {
             "AmazonDataZoneDomain": {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "domainId",
-              ],
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
             "AmazonDataZoneEnvironment": {
               "Fn::GetAtt": [
@@ -2244,10 +2096,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         "Properties": {
           "Description": "AWS Console",
           "DomainIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "EnvironmentIdentifier": {
             "Fn::GetAtt": [
@@ -2265,10 +2114,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "DomainIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "EnvironmentAccountIdentifier": {
             "Ref": "AWS::AccountId",
@@ -2277,10 +2123,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
             "Ref": "AWS::Region",
           },
           "EnvironmentBlueprintId": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "datalakeEnvBlueprintId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "EnvironmentProfileIdentifier": "",
           "EnvironmentRoleArn": {
@@ -2302,10 +2145,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "DomainIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "Name": "test-org-test-env-test-domain-test-dataops-project-main",
         },
@@ -2316,17 +2156,11 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         "Properties": {
           "Designation": "PROJECT_OWNER",
           "DomainIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "Member": {
             "UserIdentifier": {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "adminUserProfileId",
-              ],
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
           },
           "ProjectIdentifier": {
@@ -2368,10 +2202,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
             },
           ],
           "DomainIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "EnvironmentIdentifier": {
             "Fn::GetAtt": [
@@ -2380,9 +2211,19 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
             ],
           },
           "ManageAccessRole": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":role/test-lf-admin-role",
+              ],
             ],
           },
           "Name": "test-org-test-env-test-domain-test-dataops-project-main",
@@ -2484,72 +2325,9 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
                   "glue:GetColumnStatistics*",
                 ],
                 "Effect": "Allow",
-                "Resource": [
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":glue:",
-                        {
-                          "Ref": "AWS::Region",
-                        },
-                        ":*:catalog",
-                      ],
-                    ],
-                  },
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":glue:",
-                        {
-                          "Ref": "AWS::Region",
-                        },
-                        ":*:database/*",
-                      ],
-                    ],
-                  },
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":glue:",
-                        {
-                          "Ref": "AWS::Region",
-                        },
-                        ":*:table/*",
-                      ],
-                    ],
-                  },
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":glue:",
-                        {
-                          "Ref": "AWS::Region",
-                        },
-                        ":*:tableVersion/*",
-                      ],
-                    ],
-                  },
-                ],
+                "Resource": {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
               },
             ],
             "Version": "2012-10-17",
@@ -2561,20 +2339,6 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           ],
         },
         "Type": "AWS::IAM::ManagedPolicy",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "DeletionPolicy": "Delete",
-        "Properties": {
-          "ServiceToken": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-          "domainConfigSSMParam": "/sample-org/shared/datazone/domain/test-domain/config",
-        },
-        "Type": "Custom::DomainConfigParser",
-        "UpdateReplacePolicy": "Delete",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
@@ -2745,10 +2509,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         "Properties": {
           "Description": "AWS Glue Catalog",
           "DomainIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "EnvironmentIdentifier": {
             "Fn::GetAtt": [
@@ -2782,10 +2543,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         "Properties": {
           "Description": "AWS Glue ETL",
           "DomainIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "EnvironmentIdentifier": {
             "Fn::GetAtt": [
@@ -3170,9 +2928,19 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           ],
           "Principal": {
             "DataLakePrincipalIdentifier": {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "Arn",
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":role/test-lf-admin-role",
+                ],
               ],
             },
           },
@@ -3237,9 +3005,19 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           ],
           "Principal": {
             "DataLakePrincipalIdentifier": {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "Arn",
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":role/test-lf-admin-role",
+                ],
               ],
             },
           },
@@ -4040,9 +3818,19 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           ],
           "Principal": {
             "DataLakePrincipalIdentifier": {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "Arn",
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":role/test-lf-admin-role",
+                ],
               ],
             },
           },
@@ -4075,9 +3863,19 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           ],
           "Principal": {
             "DataLakePrincipalIdentifier": {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "Arn",
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":role/test-lf-admin-role",
+                ],
               ],
             },
           },
@@ -4789,166 +4587,10 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         "Type": "AWS::LakeFormation::PrincipalPermissions",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM4",
-                "reason": "[MDAA:@aws-mdaa/dataops/dataops-project-l3-construct/lib/dataops-project-l3-construct.ts:LINE:COL] Permissions are restricted to one DataZone Domain and to one AWS Account.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "AssumeRolePolicyDocument": {
-            "Statement": [
-              {
-                "Action": "sts:AssumeRole",
-                "Condition": {
-                  "ArnEquals": {
-                    "aws:SourceArn": {
-                      "Fn::GetAtt": [
-                        "REPLACED-CFN-LOGICAL-ID",
-                        "domainArn",
-                      ],
-                    },
-                  },
-                },
-                "Effect": "Allow",
-                "Principal": {
-                  "Service": "datazone.amazonaws.com",
-                },
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "ManagedPolicyArns": [
-            {
-              "Fn::Join": [
-                "",
-                [
-                  "arn:",
-                  {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy",
-                ],
-              ],
-            },
-            {
-              "Fn::Join": [
-                "",
-                [
-                  "arn:",
-                  {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":iam::",
-                  {
-                    "Ref": "AWS::AccountId",
-                  },
-                  ":policy/",
-                  {
-                    "Fn::GetAtt": [
-                      "REPLACED-CFN-LOGICAL-ID",
-                      "domainKmsUsagePolicyName",
-                    ],
-                  },
-                ],
-              ],
-            },
-          ],
-          "RoleName": "test-org-test-env-test-domain-test-dataops-project-main-55711afa",
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "dataops-project",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-dataops-project-main",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Role",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "Name": "/test-org/test-domain/test-dataops-project-main/role/dz-manage-access/arn",
-          "Tags": {
-            "mdaa_cdk_app": "dataops-project",
-            "mdaa_domain": "test-domain",
-            "mdaa_env": "test-env",
-            "mdaa_module_name": "test-dataops-project-main",
-            "mdaa_org": "test-org",
-          },
-          "Type": "String",
-          "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-        },
-        "Type": "AWS::SSM::Parameter",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "Name": "/test-org/test-domain/test-dataops-project-main/role/dz-manage-access/id",
-          "Tags": {
-            "mdaa_cdk_app": "dataops-project",
-            "mdaa_domain": "test-domain",
-            "mdaa_env": "test-env",
-            "mdaa_module_name": "test-dataops-project-main",
-            "mdaa_org": "test-org",
-          },
-          "Type": "String",
-          "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "RoleId",
-            ],
-          },
-        },
-        "Type": "AWS::SSM::Parameter",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "Name": "/test-org/test-domain/test-dataops-project-main/role/dz-manage-access/name",
-          "Tags": {
-            "mdaa_cdk_app": "dataops-project",
-            "mdaa_domain": "test-domain",
-            "mdaa_env": "test-env",
-            "mdaa_module_name": "test-dataops-project-main",
-            "mdaa_org": "test-org",
-          },
-          "Type": "String",
-          "Value": {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        },
-        "Type": "AWS::SSM::Parameter",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "Amazon S3",
           "DomainIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "EnvironmentIdentifier": {
             "Fn::GetAtt": [
@@ -4983,9 +4625,19 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
             "GlueRunConfiguration": {
               "AutoImportDataQualityResult": true,
               "DataAccessRole": {
-                "Fn::GetAtt": [
-                  "REPLACED-CFN-LOGICAL-ID",
-                  "Arn",
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":iam::",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":role/test-lf-admin-role",
+                  ],
                 ],
               },
               "RelationalFilterConfigurations": [
@@ -5160,730 +4812,6 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           },
         },
         "Type": "AWS::SSM::Parameter",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "REPLACED-CFN-LOGICAL-ID",
-          "REPLACED-CFN-LOGICAL-ID",
-        ],
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "Code": {
-            "S3Bucket": {
-              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-            },
-            "S3Key": "REPLACED-GENERATED-NAME.zip",
-          },
-          "Environment": {
-            "Variables": {
-              "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
-            },
-          },
-          "FunctionName": "test-org-test-env-test-domain-test-dataops-project-mai--3cc64af9",
-          "Handler": "domain_configuration.lambda_handler",
-          "Role": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-          "Runtime": "python3.13",
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "dataops-project",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-dataops-project-main",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-          "Timeout": 120,
-        },
-        "Type": "AWS::Lambda::Function",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
-        ],
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "Name": "/test-org/test-domain/test-dataops-project-main/lambda/domainconfigparser-handler/arn",
-          "Tags": {
-            "mdaa_cdk_app": "dataops-project",
-            "mdaa_domain": "test-domain",
-            "mdaa_env": "test-env",
-            "mdaa_module_name": "test-dataops-project-main",
-            "mdaa_org": "test-org",
-          },
-          "Type": "String",
-          "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-        },
-        "Type": "AWS::SSM::Parameter",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
-        ],
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "Name": "/test-org/test-domain/test-dataops-project-main/lambda/domainconfigparser-handler/name",
-          "Tags": {
-            "mdaa_cdk_app": "dataops-project",
-            "mdaa_domain": "test-domain",
-            "mdaa_env": "test-env",
-            "mdaa_module_name": "test-dataops-project-main",
-            "mdaa_org": "test-org",
-          },
-          "Type": "String",
-          "Value": {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        },
-        "Type": "AWS::SSM::Parameter",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "PolicyDocument": {
-            "Statement": [
-              {
-                "Action": "ssm:GetParameter",
-                "Effect": "Allow",
-                "Resource": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":ssm:",
-                      {
-                        "Ref": "AWS::Region",
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId",
-                      },
-                      ":parameter/sample-org/shared/datazone/domain/test-domain/config",
-                    ],
-                  ],
-                },
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "PolicyName": "DomainConfigParser-handler",
-          "Roles": [
-            {
-              "Ref": "REPLACED-CFN-LOGICAL-ID",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Policy",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "AssumeRolePolicyDocument": {
-            "Statement": [
-              {
-                "Action": "sts:AssumeRole",
-                "Effect": "Allow",
-                "Principal": {
-                  "Service": "lambda.amazonaws.com",
-                },
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "RoleName": "test-org-test-env-test-domain-test-dataops-project-mai--3cc64af9",
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "dataops-project",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-dataops-project-main",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Role",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "PolicyDocument": {
-            "Statement": [
-              {
-                "Action": [
-                  "logs:PutLogEvents",
-                  "logs:CreateLogStream",
-                ],
-                "Effect": "Allow",
-                "Resource": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-mai--3cc64af9*",
-                    ],
-                  ],
-                },
-              },
-              {
-                "Action": "logs:CreateLogGroup",
-                "Effect": "Allow",
-                "Resource": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-mai--3cc64af9*",
-                    ],
-                  ],
-                },
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-          "Roles": [
-            {
-              "Ref": "REPLACED-CFN-LOGICAL-ID",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Policy",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "DependsOn": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "REPLACED-CFN-LOGICAL-ID",
-        ],
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-L1",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "NIST.800.53.R5-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "HIPAA.Security-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaDLQ",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaInsideVPC",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-              },
-              {
-                "id": "PCI.DSS.321-LambdaConcurrency",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "Code": {
-            "S3Bucket": {
-              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-            },
-            "S3Key": "REPLACED-GENERATED-NAME.zip",
-          },
-          "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-dataops-project-main/custom-DomainConfigParser-provider)",
-          "Environment": {
-            "Variables": {
-              "USER_ON_EVENT_FUNCTION_ARN": {
-                "Fn::GetAtt": [
-                  "REPLACED-CFN-LOGICAL-ID",
-                  "Arn",
-                ],
-              },
-            },
-          },
-          "FunctionName": "test-org-test-env-test-domain-test-dataops-project-main-69015fd4",
-          "Handler": "framework.onEvent",
-          "Role": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
-            ],
-          },
-          "Runtime": {
-            "Fn::FindInMap": [
-              "LatestNodeRuntimeMap",
-              {
-                "Ref": "AWS::Region",
-              },
-              "value",
-            ],
-          },
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "dataops-project",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-dataops-project-main",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-          "Timeout": 900,
-        },
-        "Type": "AWS::Lambda::Function",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "AssumeRolePolicyDocument": {
-            "Statement": [
-              {
-                "Action": "sts:AssumeRole",
-                "Effect": "Allow",
-                "Principal": {
-                  "Service": "lambda.amazonaws.com",
-                },
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "Description": "CR Role",
-          "RoleName": "test-org-test-env-test-domain-test-dataops-project-main-69015fd4",
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "dataops-project",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-dataops-project-main",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Role",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-              },
-              {
-                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-              },
-              {
-                "id": "HIPAA.Security-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-              },
-              {
-                "id": "PCI.DSS.321-IAMNoInlinePolicy",
-                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "PolicyDocument": {
-            "Statement": [
-              {
-                "Action": [
-                  "logs:PutLogEvents",
-                  "logs:CreateLogStream",
-                ],
-                "Effect": "Allow",
-                "Resource": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-main-69015fd4*",
-                    ],
-                  ],
-                },
-              },
-              {
-                "Action": "logs:CreateLogGroup",
-                "Effect": "Allow",
-                "Resource": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-main-69015fd4*",
-                    ],
-                  ],
-                },
-              },
-              {
-                "Action": "lambda:InvokeFunction",
-                "Effect": "Allow",
-                "Resource": [
-                  {
-                    "Fn::GetAtt": [
-                      "REPLACED-CFN-LOGICAL-ID",
-                      "Arn",
-                    ],
-                  },
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        {
-                          "Fn::GetAtt": [
-                            "REPLACED-CFN-LOGICAL-ID",
-                            "Arn",
-                          ],
-                        },
-                        ":*",
-                      ],
-                    ],
-                  },
-                ],
-              },
-              {
-                "Action": "lambda:GetFunction",
-                "Effect": "Allow",
-                "Resource": {
-                  "Fn::GetAtt": [
-                    "REPLACED-CFN-LOGICAL-ID",
-                    "Arn",
-                  ],
-                },
-              },
-            ],
-            "Version": "2012-10-17",
-          },
-          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-          "Roles": [
-            {
-              "Ref": "REPLACED-CFN-LOGICAL-ID",
-            },
-          ],
-        },
-        "Type": "AWS::IAM::Policy",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
@@ -6104,10 +5032,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
                   },
                   ":policy/",
                   {
-                    "Fn::GetAtt": [
-                      "REPLACED-CFN-LOGICAL-ID",
-                      "domainKmsUsagePolicyName",
-                    ],
+                    "Ref": "REPLACED-CFN-LOGICAL-ID",
                   },
                 ],
               ],
@@ -6889,136 +5814,6 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
 exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] = `
 {
   "Description": "(SO0320-dataops-project) Modern Data Architecture Accelerator. Version 1.0.0",
-  "Mappings": {
-    "LatestNodeRuntimeMap": {
-      "af-south-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-east-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-east-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-northeast-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-northeast-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-northeast-3": {
-        "value": "nodejs22.x",
-      },
-      "ap-south-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-south-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-1": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-2": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-3": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-4": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-5": {
-        "value": "nodejs22.x",
-      },
-      "ap-southeast-7": {
-        "value": "nodejs22.x",
-      },
-      "ca-central-1": {
-        "value": "nodejs22.x",
-      },
-      "ca-west-1": {
-        "value": "nodejs22.x",
-      },
-      "cn-north-1": {
-        "value": "nodejs22.x",
-      },
-      "cn-northwest-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-central-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-central-2": {
-        "value": "nodejs22.x",
-      },
-      "eu-isoe-west-1": {
-        "value": "nodejs18.x",
-      },
-      "eu-north-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-south-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-south-2": {
-        "value": "nodejs22.x",
-      },
-      "eu-west-1": {
-        "value": "nodejs22.x",
-      },
-      "eu-west-2": {
-        "value": "nodejs22.x",
-      },
-      "eu-west-3": {
-        "value": "nodejs22.x",
-      },
-      "il-central-1": {
-        "value": "nodejs22.x",
-      },
-      "me-central-1": {
-        "value": "nodejs22.x",
-      },
-      "me-south-1": {
-        "value": "nodejs22.x",
-      },
-      "mx-central-1": {
-        "value": "nodejs22.x",
-      },
-      "sa-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-east-2": {
-        "value": "nodejs22.x",
-      },
-      "us-gov-east-1": {
-        "value": "nodejs22.x",
-      },
-      "us-gov-west-1": {
-        "value": "nodejs22.x",
-      },
-      "us-iso-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-iso-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-east-1": {
-        "value": "nodejs18.x",
-      },
-      "us-isob-west-1": {
-        "value": "nodejs18.x",
-      },
-      "us-west-1": {
-        "value": "nodejs22.x",
-      },
-      "us-west-2": {
-        "value": "nodejs22.x",
-      },
-    },
-  },
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -7083,36 +5878,6 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-dataops-project-main:role:dzmanageaccess:arn",
-      },
-      "Value": {
-        "Fn::GetAtt": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "Arn",
-        ],
-      },
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Export": {
-        "Name": "test-org:test-domain:test-dataops-project-main:role:dzmanageaccess:id",
-      },
-      "Value": {
-        "Fn::GetAtt": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "RoleId",
-        ],
-      },
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Export": {
-        "Name": "test-org:test-domain:test-dataops-project-main:role:dzmanageaccess:name",
-      },
-      "Value": {
-        "Ref": "REPLACED-CFN-LOGICAL-ID",
-      },
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Export": {
         "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:wgusage:arn",
       },
       "Value": {
@@ -7145,25 +5910,6 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             ],
           },
         ],
-      },
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Export": {
-        "Name": "test-org:test-domain:test-dataops-project-main:lambda:domainconfigparserhandler:arn",
-      },
-      "Value": {
-        "Fn::GetAtt": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "Arn",
-        ],
-      },
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Export": {
-        "Name": "test-org:test-domain:test-dataops-project-main:lambda:domainconfigparserhandler:name",
-      },
-      "Value": {
-        "Ref": "REPLACED-CFN-LOGICAL-ID",
       },
     },
     "REPLACED-CFN-LOGICAL-ID": {
@@ -7301,6 +6047,46 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     "SsmParameterValuetestorgtestdomaingeneratedroledatabrewidC96584B6F00A464EAD1953AFF4B05118Parameter": {
       "Default": "/test-org/test-domain/generated-role/databrew/id",
       "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_admin_user_profile_id",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_arn",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_datalake_blueprint_config_id",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_id",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_kms_key_arn",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_kms_usage_policy_name",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_name",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_version",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_glue_catalog_kms_key_arns",
+      "Type": "AWS::SSM::Parameter::Value<List<String>>",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Default": "/sample-org/shared/datazone/domain/test-domain/config/domain_glue_catalog_resource_arns",
+      "Type": "AWS::SSM::Parameter::Value<List<String>>",
     },
   },
   "Resources": {
@@ -8981,10 +7767,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
       "Properties": {
         "Description": "Amazon Athena",
         "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "domainId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "EnvironmentIdentifier": {
           "Fn::GetAtt": [
@@ -9017,10 +7800,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
           {
             "Key": "AmazonDataZoneDomain",
             "Value": {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "domainId",
-              ],
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
           },
           {
@@ -9097,10 +7877,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         "Name": "/test-org/test-domain/test-dataops-project-main/workgroup/name",
         "Tags": {
           "AmazonDataZoneDomain": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "domainId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
           "AmazonDataZoneEnvironment": {
             "Fn::GetAtt": [
@@ -9129,10 +7906,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
       "Properties": {
         "Description": "AWS Console",
         "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "domainId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "EnvironmentIdentifier": {
           "Fn::GetAtt": [
@@ -9150,10 +7924,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "domainId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "EnvironmentAccountIdentifier": {
           "Ref": "AWS::AccountId",
@@ -9162,10 +7933,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
           "Ref": "AWS::Region",
         },
         "EnvironmentBlueprintId": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "datalakeEnvBlueprintId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "EnvironmentProfileIdentifier": "",
         "EnvironmentRoleArn": {
@@ -9187,10 +7955,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "domainId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "Name": "test-org-test-env-test-domain-test-dataops-project-main",
       },
@@ -9201,17 +7966,11 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
       "Properties": {
         "Designation": "PROJECT_OWNER",
         "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "domainId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "Member": {
           "UserIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "adminUserProfileId",
-            ],
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
         },
         "ProjectIdentifier": {
@@ -9253,10 +8012,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
           },
         ],
         "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "domainId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "EnvironmentIdentifier": {
           "Fn::GetAtt": [
@@ -9265,9 +8021,19 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
           ],
         },
         "ManageAccessRole": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":iam::",
+              {
+                "Ref": "AWS::AccountId",
+              },
+              ":role/test-lf-admin-role",
+            ],
           ],
         },
         "Name": "test-org-test-env-test-domain-test-dataops-project-main",
@@ -9369,72 +8135,9 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
                 "glue:GetColumnStatistics*",
               ],
               "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":glue:",
-                      {
-                        "Ref": "AWS::Region",
-                      },
-                      ":*:catalog",
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":glue:",
-                      {
-                        "Ref": "AWS::Region",
-                      },
-                      ":*:database/*",
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":glue:",
-                      {
-                        "Ref": "AWS::Region",
-                      },
-                      ":*:table/*",
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":glue:",
-                      {
-                        "Ref": "AWS::Region",
-                      },
-                      ":*:tableVersion/*",
-                    ],
-                  ],
-                },
-              ],
+              "Resource": {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
             },
           ],
           "Version": "2012-10-17",
@@ -9446,20 +8149,6 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         ],
       },
       "Type": "AWS::IAM::ManagedPolicy",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-        "domainConfigSSMParam": "/sample-org/shared/datazone/domain/test-domain/config",
-      },
-      "Type": "Custom::DomainConfigParser",
-      "UpdateReplacePolicy": "Delete",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
@@ -9630,10 +8319,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
       "Properties": {
         "Description": "AWS Glue Catalog",
         "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "domainId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "EnvironmentIdentifier": {
           "Fn::GetAtt": [
@@ -9667,10 +8353,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
       "Properties": {
         "Description": "AWS Glue ETL",
         "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "domainId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "EnvironmentIdentifier": {
           "Fn::GetAtt": [
@@ -10055,9 +8738,19 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         ],
         "Principal": {
           "DataLakePrincipalIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":role/test-lf-admin-role",
+              ],
             ],
           },
         },
@@ -10122,9 +8815,19 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         ],
         "Principal": {
           "DataLakePrincipalIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":role/test-lf-admin-role",
+              ],
             ],
           },
         },
@@ -10925,9 +9628,19 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         ],
         "Principal": {
           "DataLakePrincipalIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":role/test-lf-admin-role",
+              ],
             ],
           },
         },
@@ -10960,9 +9673,19 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         ],
         "Principal": {
           "DataLakePrincipalIdentifier": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "Arn",
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":role/test-lf-admin-role",
+              ],
             ],
           },
         },
@@ -11674,166 +10397,10 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
       "Type": "AWS::LakeFormation::PrincipalPermissions",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/dataops/dataops-project-l3-construct/lib/dataops-project-l3-construct.ts:LINE:COL] Permissions are restricted to one DataZone Domain and to one AWS Account.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Condition": {
-                "ArnEquals": {
-                  "aws:SourceArn": {
-                    "Fn::GetAtt": [
-                      "REPLACED-CFN-LOGICAL-ID",
-                      "domainArn",
-                    ],
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "datazone.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AmazonDataZoneGlueManageAccessRolePolicy",
-              ],
-            ],
-          },
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::",
-                {
-                  "Ref": "AWS::AccountId",
-                },
-                ":policy/",
-                {
-                  "Fn::GetAtt": [
-                    "REPLACED-CFN-LOGICAL-ID",
-                    "domainKmsUsagePolicyName",
-                  ],
-                },
-              ],
-            ],
-          },
-        ],
-        "RoleName": "test-org-test-env-test-domain-test-dataops-project-main-55711afa",
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "dataops-project",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-dataops-project-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Name": "/test-org/test-domain/test-dataops-project-main/role/dz-manage-access/arn",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-project",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-dataops-project-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Name": "/test-org/test-domain/test-dataops-project-main/role/dz-manage-access/id",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-project",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-dataops-project-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "RoleId",
-          ],
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Name": "/test-org/test-domain/test-dataops-project-main/role/dz-manage-access/name",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-project",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-dataops-project-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "REPLACED-CFN-LOGICAL-ID",
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "Description": "Amazon S3",
         "DomainIdentifier": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "domainId",
-          ],
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
         },
         "EnvironmentIdentifier": {
           "Fn::GetAtt": [
@@ -11868,9 +10435,19 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
           "GlueRunConfiguration": {
             "AutoImportDataQualityResult": true,
             "DataAccessRole": {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "Arn",
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":role/test-lf-admin-role",
+                ],
               ],
             },
             "RelationalFilterConfigurations": [
@@ -12045,730 +10622,6 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         },
       },
       "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
-        "REPLACED-CFN-LOGICAL-ID",
-        "REPLACED-CFN-LOGICAL-ID",
-      ],
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-          },
-          "S3Key": "REPLACED-GENERATED-NAME.zip",
-        },
-        "Environment": {
-          "Variables": {
-            "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
-          },
-        },
-        "FunctionName": "test-org-test-env-test-domain-test-dataops-project-mai--3cc64af9",
-        "Handler": "domain_configuration.lambda_handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.13",
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "dataops-project",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-dataops-project-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-        "Timeout": 120,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
-      ],
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Name": "/test-org/test-domain/test-dataops-project-main/lambda/domainconfigparser-handler/arn",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-project",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-dataops-project-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
-      ],
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Name": "/test-org/test-domain/test-dataops-project-main/lambda/domainconfigparser-handler/name",
-        "Tags": {
-          "mdaa_cdk_app": "dataops-project",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-dataops-project-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Ref": "REPLACED-CFN-LOGICAL-ID",
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "ssm:GetParameter",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition",
-                    },
-                    ":ssm:",
-                    {
-                      "Ref": "AWS::Region",
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId",
-                    },
-                    ":parameter/sample-org/shared/datazone/domain/test-domain/config",
-                  ],
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "DomainConfigParser-handler",
-        "Roles": [
-          {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "RoleName": "test-org-test-env-test-domain-test-dataops-project-mai--3cc64af9",
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "dataops-project",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-dataops-project-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "logs:PutLogEvents",
-                "logs:CreateLogStream",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition",
-                    },
-                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-mai--3cc64af9*",
-                  ],
-                ],
-              },
-            },
-            {
-              "Action": "logs:CreateLogGroup",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition",
-                    },
-                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-mai--3cc64af9*",
-                  ],
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-        "Roles": [
-          {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "DependsOn": [
-        "REPLACED-CFN-LOGICAL-ID",
-        "REPLACED-CFN-LOGICAL-ID",
-      ],
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-L1",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Lambda function Runtime set by CDK Provider Framework",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "NIST.800.53.R5-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "HIPAA.Security-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaDLQ",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaInsideVPC",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
-            },
-            {
-              "id": "PCI.DSS.321-LambdaConcurrency",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
-          },
-          "S3Key": "REPLACED-GENERATED-NAME.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-dataops-project-main/custom-DomainConfigParser-provider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "FunctionName": "test-org-test-env-test-domain-test-dataops-project-main-69015fd4",
-        "Handler": "framework.onEvent",
-        "Role": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "Arn",
-          ],
-        },
-        "Runtime": {
-          "Fn::FindInMap": [
-            "LatestNodeRuntimeMap",
-            {
-              "Ref": "AWS::Region",
-            },
-            "value",
-          ],
-        },
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "dataops-project",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-dataops-project-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Description": "CR Role",
-        "RoleName": "test-org-test-env-test-domain-test-dataops-project-main-69015fd4",
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "dataops-project",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-dataops-project-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] Inline policy is specific to this role and its custom resource.",
-            },
-            {
-              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-            },
-            {
-              "id": "HIPAA.Security-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-            },
-            {
-              "id": "PCI.DSS.321-IAMNoInlinePolicy",
-              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Role is for Custom Resource Provider. Inline policy automatically added.",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "logs:PutLogEvents",
-                "logs:CreateLogStream",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition",
-                    },
-                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-main-69015fd4*",
-                  ],
-                ],
-              },
-            },
-            {
-              "Action": "logs:CreateLogGroup",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition",
-                    },
-                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-dataops-project-main-69015fd4*",
-                  ],
-                ],
-              },
-            },
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "REPLACED-CFN-LOGICAL-ID",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "REPLACED-CFN-LOGICAL-ID",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "REPLACED-CFN-LOGICAL-ID",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
-        "Roles": [
-          {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
@@ -12989,10 +10842,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
                 },
                 ":policy/",
                 {
-                  "Fn::GetAtt": [
-                    "REPLACED-CFN-LOGICAL-ID",
-                    "domainKmsUsagePolicyName",
-                  ],
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
                 },
               ],
             ],

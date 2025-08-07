@@ -7,7 +7,8 @@ import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { CfnProject, CfnProjectMembership, CfnProjectMembershipProps, CfnProjectProps } from 'aws-cdk-lib/aws-datazone';
 import { Construct } from 'constructs';
-import { DomainConfig, MdaaDataZoneDomainSSMConfigParser } from './domain_config_parser';
+import { DomainConfig } from './domain_config';
+import { IManagedPolicy, ManagedPolicy } from 'aws-cdk-lib/aws-iam';
 
 /**
  * Properties for creating a compliant Mdaa Datazone Project
@@ -24,20 +25,15 @@ export interface MdaaDatazoneProjectProps extends MdaaConstructProps {
  */
 export class MdaaDatazoneProject extends Construct {
   public readonly domainConfig: DomainConfig;
-
+  public readonly domainKmsUsagePolicy: IManagedPolicy;
   public readonly project: CfnProject;
 
   constructor(scope: Construct, id: string, props: MdaaDatazoneProjectProps) {
     super(scope, id);
 
-    const domainConfigParser = props.domainConfigSSMParam
-      ? new MdaaDataZoneDomainSSMConfigParser(scope, 'domain-config-parser', {
-          naming: props.naming,
-          domainConfigSSMParam: props.domainConfigSSMParam,
-        })
-      : undefined;
-
-    const domainConfig = domainConfigParser ? domainConfigParser.parsedConfig : props.domainConfig;
+    const domainConfig = props.domainConfigSSMParam
+      ? DomainConfig.fromSsm(scope, 'domain-config-parser', props.domainConfigSSMParam, props.naming)
+      : props.domainConfig;
 
     if (!domainConfig) {
       throw new Error('One of domainConfig or domainConfigSSMParam must be specified');
@@ -45,10 +41,16 @@ export class MdaaDatazoneProject extends Construct {
 
     this.domainConfig = domainConfig;
 
+    this.domainKmsUsagePolicy = ManagedPolicy.fromManagedPolicyName(
+      this,
+      'domain-kms-policy',
+      domainConfig.domainKmsUsagePolicyName,
+    );
+
     const projectProps: CfnProjectProps = {
       domainIdentifier: domainConfig.domainId,
       name: props.naming.resourceName(props.name, 80),
-      domainUnitId: props.domainUnit ? domainConfigParser?.getDomainUnitId(props.domainUnit) : undefined,
+      domainUnitId: props.domainUnit ? domainConfig.getDomainUnitId(props.domainUnit) : undefined,
     };
     this.project = new CfnProject(this, 'project', projectProps);
 

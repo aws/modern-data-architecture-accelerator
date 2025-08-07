@@ -33,7 +33,7 @@ export abstract class MdaaL3Construct extends Construct {
     this.baseprops = baseprops;
   }
 
-  protected getCrossAccountStack(account?: string, region?: string): Stack {
+  protected getCrossAccountStack(account?: string, region?: string): Stack | undefined {
     console.log(`Cross Account: ${account} : ${account ?? this.account} Region: ${region} : ${region ?? this.region}`);
     console.log(`Stacks: ${Object.keys(this.baseprops.crossAccountStacks || {})}`);
     if (!this.baseprops.crossAccountStacks) {
@@ -41,9 +41,11 @@ export abstract class MdaaL3Construct extends Construct {
     } else if (!account && !region) {
       throw new Error('Must specify either account or region');
     } else if (!this.baseprops.crossAccountStacks[account ?? this.account]) {
-      throw new Error(`No cross account stacks defined for account ${account ?? this.account}`);
+      console.warn(`No cross account stacks defined for account ${account ?? this.account}`);
+      return undefined;
     } else if (!this.baseprops.crossAccountStacks[account ?? this.account][region ?? this.region]) {
-      throw new Error(`No cross account stack defined for account ${account ?? this.account}/${region ?? this.region}`);
+      console.warn(`No cross account stack defined for account ${account ?? this.account}/${region ?? this.region}`);
+      return undefined;
     }
     return this.baseprops.crossAccountStacks[account ?? this.account][region ?? this.region];
   }

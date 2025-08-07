@@ -11,6 +11,13 @@ lakeFormationAdminRoles:
 # LakeFormation.
 iamAllowedPrincipalsDefault: true
 
+# If set to true, MDAA will assign the CDK deploy role as an LZ admin
+createCdkLFAdmin: true
+
+# If set to true, MDAA will create a Data Zone Admin role and assign
+# as an LZ admin
+createDataZoneAdminRole: true
+
 # If specified, Lakeformation will be integrated with IAM identity center
 iamIdentityCenter:
   # The IAM Identity Center instance ID
@@ -18,8 +25,8 @@ iamIdentityCenter:
   # (Optional) - Accounts, Orgs, Organizational Units with which to share LakeFormation services via IAM Identity Center
   shares:
     # Example of an account to be shared with
-    - "test-account"
+    - 'test-account'
     # Example of an Org Id to be shared with
-    - "arn:aws:organizations::test-account:organization/test-org-id"
+    - 'arn:aws:organizations::test-account:organization/test-org-id'
     # Example of an OU to be shared with
-    - "arn:aws:organizations::test-account:ou/test-org-id/test-ou-id"
+    - 'arn:aws:organizations::test-account:ou/test-org-id/test-ou-id'

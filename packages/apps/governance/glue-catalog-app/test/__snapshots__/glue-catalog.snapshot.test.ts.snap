@@ -1375,6 +1375,26 @@ exports[`glue-catalog Snapshot Tests Glue Catalog App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
+          "Name": "/glue-catalog-settings/catalog-kms-key",
+          "Tags": {
+            "mdaa_cdk_app": "glue-catalog",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-glue-catalog-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
           "Name": "/test-org/test-domain/test-glue-catalog-main/kms/arn",
           "Tags": {
             "mdaa_cdk_app": "glue-catalog",
@@ -2813,6 +2833,26 @@ exports[`glue-catalog Snapshot Tests Glue Catalog Stack Snapshot Test 1`] = `
       },
       "Type": "AWS::KMS::Key",
       "UpdateReplacePolicy": "Retain",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/glue-catalog-settings/catalog-kms-key",
+        "Tags": {
+          "mdaa_cdk_app": "glue-catalog",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-glue-catalog-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {

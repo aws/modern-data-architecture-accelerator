@@ -12,7 +12,8 @@ import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { Duration, Stack } from 'aws-cdk-lib';
 
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
-import { MdaaDataZoneDomainSSMConfigParser } from '@aws-mdaa/datazone-constructs';
+
+import { DomainConfig, DomainConfigProps } from '@aws-mdaa/datazone-constructs';
 import {
   CfnDomain,
   CfnDomainProps,
@@ -25,13 +26,15 @@ import {
   CfnUserProfile,
   CfnUserProfileProps,
 } from 'aws-cdk-lib/aws-datazone';
-import { Conditions, Effect, IRole, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Conditions, Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { CfnResourceShare, CfnResourceShareProps } from 'aws-cdk-lib/aws-ram';
-import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
+import { ParameterTier, StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { flattenDomainUnitPaths } from './utils';
+import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
+import { GlueCatalogL3Construct } from '@aws-mdaa/glue-catalog-l3-construct';
 
 export interface DataZoneUser {
   readonly iamRole?: MdaaRoleRef;
@@ -52,6 +55,7 @@ export interface NamedDataZoneUsers {
 export interface AsscociatedAccount {
   readonly account: string;
   readonly glueCatalogKmsKeyArn: string;
+  readonly lakeformationManageAccessRoleArn?: string;
   readonly region?: string;
   readonly cdkRoleArn?: string;
   readonly createCdkUser?: boolean;
@@ -101,15 +105,18 @@ export interface NamedDomainsProps {
   readonly [name: string]: DomainProps;
 }
 export interface DataZoneL3ConstructProps extends MdaaL3ConstructProps {
-  readonly glueCatalogKmsKeyArn: string;
+  readonly glueCatalogKmsKeyArn?: string;
+  readonly lakeformationManageAccessRole?: MdaaRoleRef;
   readonly domains: NamedDomainsProps;
 }
+
+const DEFAULT_SSO_TYPE = 'DISABLED';
+const DEFAULT_USER_ASSIGNMENT = 'MANUAL';
+
 export interface CreatedDomainUnit {
   readonly id: string;
   readonly domainUnits?: { [name: string]: CreatedDomainUnit };
 }
-const DEFAULT_SSO_TYPE = 'DISABLED';
-const DEFAULT_USER_ASSIGNMENT = 'MANUAL';
 
 export class DataZoneL3Construct extends MdaaL3Construct {
   protected readonly props: DataZoneL3ConstructProps;
@@ -118,13 +125,30 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     super(scope, id, props);
     this.props = props;
 
+    const lakeformationManageAccessRole = props.lakeformationManageAccessRole
+      ? Role.fromRoleArn(
+          this,
+          `lf-manage-access-role-import`,
+          this.props.roleHelper
+            .resolveRoleRefWithRefId(props.lakeformationManageAccessRole, 'lf-manage-access-role')
+            .arn(),
+        )
+      : Role.fromRoleArn(
+          this,
+          `lf-manage-access-role-import`,
+          StringParameter.valueForStringParameter(
+            this,
+            LakeFormationSettingsL3Construct.DZ_MANAGE_ACCESS_ROLE_SSM_PATH,
+          ),
+        );
+
     Object.entries(this.props.domains || {}).forEach(entry => {
       const domainName = entry[0];
       const domainProps = entry[1];
-      this.createDomain(domainName, domainProps);
+      this.createDomain(domainName, domainProps, lakeformationManageAccessRole);
     });
   }
-  private createDomain(domainName: string, domainProps: DomainProps) {
+  private createDomain(domainName: string, domainProps: DomainProps, lakeformationManageAccessRole: IRole) {
     const dataAdminRole = this.props.roleHelper.resolveRoleRefWithRefId(domainProps.dataAdminRole, 'admin');
 
     const domainVersion = domainProps.domainVersion ?? 'V1';
@@ -188,10 +212,11 @@ export class DataZoneL3Construct extends MdaaL3Construct {
 
     const glueCatalogKmsKeyArns = [
       ...Object.entries(domainProps.associatedAccounts || {}).map(x => x[1].glueCatalogKmsKeyArn),
-      this.props.glueCatalogKmsKeyArn,
+      this.props.glueCatalogKmsKeyArn ||
+        StringParameter.valueForStringParameter(this, GlueCatalogL3Construct.ACCOUNT_KEY_SSM_PATH),
     ];
 
-    const domainKmsUsagePolicyName = this.props.naming.resourceName(`domain-kms-usage-${domainName}`);
+    const domainKmsUsagePolicyName = this.props.naming.resourceName(`domain-kms-use-${domainName}`);
 
     const keyAccessAccounts = [
       ...Object.entries(domainProps.associatedAccounts || {}).map(x => x[1].account),
@@ -210,6 +235,8 @@ export class DataZoneL3Construct extends MdaaL3Construct {
         glueCatalogKmsKeyArns: glueCatalogKmsKeyArns,
       },
     );
+
+    lakeformationManageAccessRole.addManagedPolicy(domainKmsUsagePolicy);
 
     executionRole.addManagedPolicy(domainKmsUsagePolicy);
 
@@ -300,6 +327,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
           .map(([associatedAccountName, associatedAccountProps]) => {
             const associatedAccountRamShareMonitor = this.getRamAssociationMonitor(
               domain,
+              `domain-ram-association-monitor-${associatedAccountName}`,
               domainRamShare,
               associatedAccountProps.account,
             );
@@ -380,37 +408,65 @@ export class DataZoneL3Construct extends MdaaL3Construct {
           },
         },
       });
+      const glueCatalogArns = [
+        ...this.createDzGlueAccountStatementResources(this.account),
+        ...Object.entries(domainProps.associatedAccounts || {}).flatMap(x =>
+          this.createDzGlueAccountStatementResources(x[1].account),
+        ),
+      ];
 
-      const configParam = this.createDomainConfigParam(
-        domainName,
-        domain,
-        dataAdminUserProfile,
+      const domainUnitIds = flattenDomainUnitPaths('', createdDomainUnits);
+
+      const domainConfigProps: DomainConfigProps = {
+        naming: this.props.naming,
+        domainName: domain.name,
+        domainArn: domain.attrArn,
+        domainId: domain.attrId,
+        adminUserProfileId: dataAdminUserProfile.attrId,
         domainVersion,
-        {
-          domainKmsKeyArn: kmsKey.keyArn,
-          glueCatalogKmsKeyArns: glueCatalogKmsKeyArns,
-          domainKmsUsagePolicyName: domainKmsUsagePolicyName,
-        },
-        createdDomainUnits,
-        customEnvBlueprintConfig?.getAttString('id'),
-      );
+        domainKmsKeyArn: kmsKey.keyArn,
+        glueCatalogKmsKeyArns: glueCatalogKmsKeyArns,
+        domainKmsUsagePolicyName: domainKmsUsagePolicy.managedPolicyName,
+        domainUnits: domainUnitIds,
+        glueCatalogArns: glueCatalogArns,
+        domainCustomEnvBlueprintId: customEnvBlueprintConfig?.getAttString('id'),
+      };
 
-      if (!configParam.param) {
-        throw new Error('Unexpected missing param');
-      }
+      const domainConfig = new DomainConfig(this, `domain-config-${domainName}`, domainConfigProps);
+      const configParamArns = domainConfig.createDomainConfigParams(domainName);
+
+      const baseConfigParam = new MdaaParamAndOutput(this, {
+        createOutputs: false,
+        resourceType: 'domain',
+        resourceId: domainName,
+        name: `config`,
+        tier: ParameterTier.ADVANCED,
+        value: JSON.stringify(configParamArns, undefined, 2),
+        ...this.props,
+      });
+
       const configParamRamShareProps: CfnResourceShareProps = {
-        name: this.props.naming.resourceName('domain-config-ssm'),
-        resourceArns: [configParam.param.parameterArn],
+        name: this.props.naming.resourceName(`domain-config-ssm-${domainName}`),
+        resourceArns: [baseConfigParam.param!.parameterArn, ...configParamArns],
         principals: Object.entries(domainProps.associatedAccounts).map(x => x[1].account),
       };
-      new CfnResourceShare(this, `domain-config-ram-share-${domainName}`, configParamRamShareProps);
+      const configRamShare = new CfnResourceShare(
+        this,
+        `domain-config-ram-share-${domainName}`,
+        configParamRamShareProps,
+      );
 
       Object.entries(domainProps.associatedAccounts).forEach(associatedAccount => {
+        this.getRamAssociationMonitor(
+          domain,
+          `domain-config-ram-association-monitor-${associatedAccount[0]}`,
+          configRamShare,
+          associatedAccount[1].account,
+        );
         this.createAssociatedAccountStackResources(
           associatedAccount[0],
-          associatedAccount[1].account,
-          associatedAccount[1].region || this.region,
-          configParam.paramName,
+          associatedAccount[1],
+          baseConfigParam.paramName,
           domainKmsUsagePolicyName,
           keyAccessAccounts,
           domainName,
@@ -418,7 +474,14 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       });
     }
   }
-
+  private createDzGlueAccountStatementResources(account: string): string[] {
+    return [
+      `arn:${this.partition}:glue:${this.region}:${account}:catalog`,
+      `arn:${this.partition}:glue:${this.region}:${account}:database/*`,
+      `arn:${this.partition}:glue:${this.region}:${account}:table/*`,
+      `arn:${this.partition}:glue:${this.region}:${account}:tableVersion/*`,
+    ];
+  }
   private createDomainUnits(
     scope: Construct,
     domainId: string,
@@ -526,55 +589,68 @@ export class DataZoneL3Construct extends MdaaL3Construct {
 
   private createAssociatedAccountStackResources(
     associatedAccountName: string,
-    associatedAccountNum: string,
-    region: string,
+    assocatedAccountProps: AsscociatedAccount,
     domainConfigSsmParamName: string,
     domainKmsUsagePolicyName: string,
     keyAccessAccounts: string[],
     domainName: string,
   ) {
-    try {
-      const crossAccountStack = this.getCrossAccountStack(associatedAccountNum);
-      //The cross account stack is going to consume the domain config via RAM-shared Domain Config SSM Param created above
-      const domainConfigSsmParamArn = `arn:${this.partition}:ssm:${region}:${this.account}:parameter${domainConfigSsmParamName}`;
-
-      const domainConfigParser = new MdaaDataZoneDomainSSMConfigParser(
-        crossAccountStack,
-        `domain-config-parser-${domainName}`,
-        {
-          naming: this.props.naming,
-          domainConfigSSMParam: domainConfigSsmParamArn,
-        },
-      );
-
-      //Create a managed policy which can be used to provide access to the Domain and Glue Catalog KMS keys in associated accounts
-      this.createDomainKmsUsagePolicy(
-        domainName,
-        crossAccountStack,
-        domainKmsUsagePolicyName,
-        associatedAccountNum,
-        region,
-        keyAccessAccounts,
-        {
-          domainKmsKeyArn: domainConfigParser.parsedConfig.domainKmsKeyArn,
-          glueCatalogKmsKeyArns: domainConfigParser.parsedConfig.glueCatalogKmsKeyArns,
-        },
-      );
-
-      //Enable custom blueprints in the target account for this domain
-      this.createCustomBlueprintConfig(
-        domainName,
-        crossAccountStack,
-        domainConfigParser.parsedConfig.domainId,
-        [region || this.region],
-        domainConfigParser.parsedConfig.domainKmsKeyArn,
-        domainConfigParser.parsedConfig.domainVersion,
-      );
-    } catch (e: unknown) {
+    const crossAccountStack = this.getCrossAccountStack(assocatedAccountProps.account);
+    if (!crossAccountStack) {
       console.warn(
-        `Cross account stack not defined for associated account ${associatedAccountName}/${associatedAccountNum} on domain ${domainName}. Cross account association will not work.`,
+        `Cross account stack not defined for associated account ${associatedAccountName}/${assocatedAccountProps.account} on domain ${domainName}. Cross account association will not work.`,
       );
+      return;
     }
+    const region = assocatedAccountProps.region || this.region;
+    //The cross account stack is going to consume the domain config via RAM-shared Domain Config SSM Param created above
+    const domainConfigSsmParamArn = `arn:${this.partition}:ssm:${region}:${this.account}:parameter${domainConfigSsmParamName}`;
+
+    const domainConfig = DomainConfig.fromSsm(
+      crossAccountStack,
+      `domain-config-parser-${domainName}`,
+      domainConfigSsmParamArn,
+      this.props.naming,
+    );
+
+    //Create a managed policy which can be used to provide access to the Domain and Glue Catalog KMS keys in associated accounts
+    const domainKmsUsagePolicy = this.createDomainKmsUsagePolicy(
+      domainName,
+      crossAccountStack,
+      domainKmsUsagePolicyName,
+      assocatedAccountProps.account,
+      region,
+      keyAccessAccounts,
+      {
+        domainKmsKeyArn: domainConfig.domainKmsKeyArn,
+        glueCatalogKmsKeyArns: domainConfig.glueCatalogKmsKeyArns,
+      },
+    );
+    const lakeformationManageAccessRole = assocatedAccountProps.lakeformationManageAccessRoleArn
+      ? Role.fromRoleArn(
+          crossAccountStack,
+          `lf-manage-access-role-import-${domainName}`,
+          assocatedAccountProps.lakeformationManageAccessRoleArn,
+        )
+      : Role.fromRoleArn(
+          crossAccountStack,
+          `lf-manage-access-role-import-${domainName}`,
+          StringParameter.valueForStringParameter(
+            crossAccountStack,
+            LakeFormationSettingsL3Construct.DZ_MANAGE_ACCESS_ROLE_SSM_PATH,
+          ),
+        );
+    lakeformationManageAccessRole.addManagedPolicy(domainKmsUsagePolicy);
+
+    //Enable custom blueprints in the target account for this domain
+    this.createCustomBlueprintConfig(
+      domainName,
+      crossAccountStack,
+      domainConfig.domainId,
+      [region || this.region],
+      domainConfig.domainKmsKeyArn,
+      domainConfig.domainVersion,
+    );
   }
 
   private createDomainKmsUsagePolicy(
@@ -635,6 +711,7 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       },
     });
     domainKmsUsagePolicy.addStatements(domainKeyGrantStatement);
+
     //Provide DescribeKey on all Glue Catalog keys for all associated accounts
     const glueCatalogDescribeStatement = new PolicyStatement({
       sid: 'GlueKmsDescribe',
@@ -659,40 +736,6 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     domainKmsUsagePolicy.addStatements(glueCatalogDecryptStatement);
 
     return domainKmsUsagePolicy;
-  }
-
-  private createDomainConfigParam(
-    domainName: string,
-    domain: CfnDomain,
-    adminUserProfile: CfnUserProfile,
-    domainVersion: string,
-    domainKmsConfig: {
-      domainKmsKeyArn: string;
-      glueCatalogKmsKeyArns: string[];
-      domainKmsUsagePolicyName: string;
-    },
-    createdDomainUnits: { [name: string]: CreatedDomainUnit },
-    customEnvBlueprintConfigId?: string,
-  ): MdaaParamAndOutput {
-    const domainUnitIds = flattenDomainUnitPaths('domainUnit:', createdDomainUnits);
-    return new MdaaParamAndOutput(this, {
-      resourceType: 'domain',
-      resourceId: domainName,
-      name: 'config',
-      tier: ParameterTier.ADVANCED,
-      value: JSON.stringify({
-        domainId: domain.attrId,
-        domainArn: domain.attrArn,
-        adminUserProfileId: adminUserProfile.attrId,
-        datalakeEnvBlueprintId: customEnvBlueprintConfigId,
-        domainVersion: domainVersion,
-        domainKmsKeyArn: domainKmsConfig.domainKmsKeyArn,
-        glueCatalogKmsKeyArns: domainKmsConfig.glueCatalogKmsKeyArns,
-        domainKmsUsagePolicyName: domainKmsConfig.domainKmsUsagePolicyName,
-        ...domainUnitIds,
-      }),
-      ...this.props,
-    });
   }
 
   private createDomainKmsKey(domainName: string, domainProps: DomainProps, dataAdminRole: MdaaResolvableRole): IKey {
@@ -1031,7 +1074,12 @@ export class DataZoneL3Construct extends MdaaL3Construct {
     return new MdaaCustomResource(scope, `domain-cdk-user-id-cr-${domainName}`, crProps).getAttString('id');
   }
 
-  private getRamAssociationMonitor(scope: Construct, domainRamShare: CfnResourceShare, associatedAccount: string) {
+  private getRamAssociationMonitor(
+    scope: Construct,
+    id: string,
+    domainRamShare: CfnResourceShare,
+    associatedAccount: string,
+  ) {
     const searchUserProfileStatements = [
       new PolicyStatement({
         resources: ['*'],
@@ -1064,6 +1112,6 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       },
     };
 
-    return new MdaaCustomResource(scope, `domain-ram-association-monitor-${associatedAccount}`, crProps);
+    return new MdaaCustomResource(scope, id, crProps);
   }
 }

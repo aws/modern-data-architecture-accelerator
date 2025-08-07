@@ -37,7 +37,7 @@ securityGroupConfigs:
           port: 443
 
 # Optional - The ID of the KMS key which will encrypt all S3 outputs of Jobs run under this project.
-# If not specified, the project key will be used. 
+# If not specified, the project key will be used.
 s3OutputKmsKeyArn: ssm:/sample-org/instance1/datalake/kms/id
 
 # Optional - The Arn of the KMS key used to encrypt the Glue Catalog. Specific access to this key
@@ -49,34 +49,34 @@ glueCatalogKmsKeyArn: ssm:/sample-org/shared/glue-catalog/kms/arn
 classifiers:
   # (optional)  Example of a CSV Classifier.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-csvclassifier.html
   classifierCsv:
-    classifierType: "csv"
+    classifierType: 'csv'
     configuration:
       csvClassifier:
         allowSingleColumn: false
-        containsHeader: "PRESENT"
-        delimiter: "~"
+        containsHeader: 'PRESENT'
+        delimiter: '~'
         disableValueTrimming: false
         header:
           - columnA
           - columnB
-        quoteSymbol: "^"
+        quoteSymbol: '^'
   # (optional)  Example of a Grok Classifier.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-grokclassifier.html
   classifierGrok:
-    classifierType: "grok"
+    classifierType: 'grok'
     configuration:
       grokClassifier:
         classification: special-logs
-        customPatterns: "MESSAGEPREFIX .*-.*-.*-.*-.*"
+        customPatterns: 'MESSAGEPREFIX .*-.*-.*-.*-.*'
         grokPattern: '%{TIMESTAMP_ISO8601:timestamp} \[%{MESSAGEPREFIX:message_prefix}\] %{CRAWLERLOGLEVEL:loglevel} : %{GREEDYDATA:message}'
   # (optional) Example of a JSON Classifier.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-jsonclassifier.html
   classifierJson:
-    classifierType: "json"
+    classifierType: 'json'
     configuration:
       jsonClassifier:
-        jsonPath: "$[*]"
+        jsonPath: '$[*]'
   # (optional) Example of an XML Classifier.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-xmlclassifier.html
   classifierXml:
-    classifierType: "xml"
+    classifierType: 'xml'
     configuration:
       xmlClassifier:
         classification: xml-data
@@ -89,7 +89,7 @@ connections:
     connectionType: NETWORK
     description: VPC Connection Example
     physicalConnectionRequirements:
-      availabilityZone: "{{region}}a"
+      availabilityZone: '{{region}}a'
       subnetId: subnet-123abc456def
       securityGroupIdList:
         - sg-890abc123asc
@@ -98,7 +98,7 @@ connections:
     connectionType: NETWORK
     description: VPC Connection Example
     physicalConnectionRequirements:
-      availabilityZone: "{{region}}a"
+      availabilityZone: '{{region}}a'
       subnetId: subnet-09ba402b76a346ffb
       projectSecurityGroupNames:
         - test-security-group
@@ -107,11 +107,11 @@ connections:
     connectionType: JDBC
     # To understand the supported values in connectionProperties see: https://docs.aws.amazon.com/glue/latest/webapi/API_Connection.html
     connectionProperties:
-      JDBC_CONNECTION_URL: "jdbc:awsathena://AwsRegion=[REGION];UID=[ACCESS KEY];PWD=[SECRET KEY];S3OutputLocation=[LOCATION]"
+      JDBC_CONNECTION_URL: 'jdbc:awsathena://AwsRegion=[REGION];UID=[ACCESS KEY];PWD=[SECRET KEY];S3OutputLocation=[LOCATION]'
       JDBC_ENFORCE_SSL: true
     description: JDBC Connection Example
     physicalConnectionRequirements:
-      availabilityZone: "{{region}}a"
+      availabilityZone: '{{region}}a'
       subnetId: subnet-123abc456def
       securityGroupIdList:
         - sg-890abc123asc
@@ -121,6 +121,10 @@ datazone:
   project:
     # The SSM Parameter containing domain config details for a DataZone Domain created by the MDAA Datazone module
     domainConfigSSMParam: /sample-org/shared/datazone/domain/test-domain/config
+    # (Optional) The role which will be used to managed lake formation permissions for the project.
+    # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
+    lakeformationManageAccessRole:
+      arn: arn:{{partition}}:iam::{{account}}:role/test-lf-admin-role
 
 # (Optional) List of Databases to create. Referred to by name in the crawler configuration files.
 databases:
@@ -147,7 +151,7 @@ databases:
 
       # Optional - the name of the resource links to be generated
       # If not specified, defaults to the database name
-      createCrossAccountResourceLinkName: "testing"
+      createCrossAccountResourceLinkName: 'testing'
       grants:
         # Each grant is keyed with a name which is unique within the context
         # of the database

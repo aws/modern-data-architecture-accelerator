@@ -64,7 +64,7 @@ export interface GlueCatalogL3ConstructProps extends MdaaL3ConstructProps {
 
 export class GlueCatalogL3Construct extends MdaaL3Construct {
   protected readonly props: GlueCatalogL3ConstructProps;
-
+  public static readonly ACCOUNT_KEY_SSM_PATH = '/glue-catalog-settings/catalog-kms-key';
   private catalogResourcePolicyProvider?: Provider;
   private consumerAccounts?: { [key: string]: string };
   private kmsKeyConsumerAccounts?: { [key: string]: string };
@@ -146,6 +146,7 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
       ...(this.consumerAccounts || {}),
       ...(this.kmsKeyConsumerAccounts || {}),
     }).map(x => x[1]);
+
     //Use some private helper functions to create the catalog resources
     const catalogKmsKey = this.createCatalogKmsKey(
       allReadPrincipalArns,
@@ -291,6 +292,10 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
       });
       catalogKmsKey.addToResourcePolicy(writePrincipalPolicyStatement);
     }
+    new StringParameter(catalogKmsKey, 'account-key-ssm', {
+      parameterName: GlueCatalogL3Construct.ACCOUNT_KEY_SSM_PATH,
+      stringValue: catalogKmsKey.keyArn,
+    });
     return catalogKmsKey;
   }
 

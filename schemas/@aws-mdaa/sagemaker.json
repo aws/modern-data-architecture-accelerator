@@ -17,6 +17,9 @@
                 "glueCatalogKmsKeyArn": {
                     "type": "string"
                 },
+                "lakeformationManageAccessRoleArn": {
+                    "type": "string"
+                },
                 "region": {
                     "type": "string"
                 }
@@ -416,6 +419,10 @@
         "glueCatalogKmsKeyArn": {
             "type": "string"
         },
+        "lakeformationManageAccessRole": {
+            "$ref": "#/definitions/MdaaRoleRef",
+            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id."
+        },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
             "description": "Nag suppressions"
@@ -426,8 +433,7 @@
         }
     },
     "required": [
-        "domains",
-        "glueCatalogKmsKeyArn"
+        "domains"
     ],
     "type": "object"
 }

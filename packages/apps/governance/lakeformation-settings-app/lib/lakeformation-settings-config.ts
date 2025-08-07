@@ -30,6 +30,11 @@ export interface LakeFormationSettingsConfigContents extends MdaaBaseConfigConte
    * If provided, will configure LakeFormation and IAMIdentityCenter integration
    */
   readonly iamIdentityCenter?: IdentityCenterConfig;
+
+  /**
+   * If true, a role will be created as an LF admin for DataZone to use to manage LF permissions within the account.
+   */
+  readonly createDataZoneAdminRole?: boolean;
 }
 
 export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeFormationSettingsConfigContents> {
@@ -37,6 +42,7 @@ export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeF
   public readonly createCdkLFAdmin?: boolean;
   public readonly iamAllowedPrincipalsDefault: boolean;
   public readonly iamIdentityCenter?: IdentityCenterConfig;
+  public readonly createDataZoneAdminRole?: boolean;
   /** Cross account sharing version. If not specified, defaults to latest. */
   public readonly crossAccountVersion?: string;
 
@@ -48,5 +54,6 @@ export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeF
     this.createCdkLFAdmin = this.configContents.createCdkLFAdmin;
     this.iamIdentityCenter = this.configContents.iamIdentityCenter;
     this.crossAccountVersion = this.configContents.crossAccountVersion;
+    this.createDataZoneAdminRole = this.configContents.createDataZoneAdminRole;
   }
 }

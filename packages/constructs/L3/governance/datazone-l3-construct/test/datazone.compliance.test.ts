@@ -16,6 +16,7 @@ describe('MDAA Compliance Stack Tests', () => {
 
     const constructProps: DataZoneL3ConstructProps = {
       glueCatalogKmsKeyArn: 'test-key-arn',
+      lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::test-account:role/test-role' },
       crossAccountStacks: {
         '12312421': { 'test-region': new Stack(testApp, 'testextrastack') },
       },
@@ -61,6 +62,7 @@ describe('MDAA Compliance Stack Tests', () => {
             test1: {
               account: '12312421',
               glueCatalogKmsKeyArn: 'test-associated-key-arn',
+              lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role',
             },
           },
         },
@@ -92,6 +94,7 @@ describe('MDAA Compliance Stack Tests', () => {
     const stack = testApp.testStack;
 
     const constructProps: DataZoneL3ConstructProps = {
+      lakeformationManageAccessRole: { arn: 'arn:test-partition:iam::test-account:role/test-role' },
       glueCatalogKmsKeyArn: 'test-key-arn',
       crossAccountStacks: {
         '12312421': { 'test-region': new Stack(testApp, 'testextrastack') },
@@ -142,11 +145,13 @@ describe('MDAA Compliance Stack Tests', () => {
               account: '12312421',
               glueCatalogKmsKeyArn: 'test-associated-key-arn',
               createCdkUser: true,
+              lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role',
             },
             'test-account2': {
               account: '1231241224',
               glueCatalogKmsKeyArn: 'test-associated-key-arn',
               createCdkUser: true,
+              lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role',
             },
           },
         },
