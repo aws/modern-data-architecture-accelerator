@@ -647,6 +647,112 @@ generateRoles:
     ...
 ```
 
+## Module Hooks
+
+MDAA supports predeploy and postdeploy hooks that allow you to execute custom commands before and after module deployment. This is useful for tasks like data preparation, validation, cleanup, or integration with external systems.
+
+### Hook Configuration
+
+Hooks are configured at the module level in your MDAA configuration:
+
+```yaml
+domains:
+  shared:
+    environments:
+      dev:
+        modules:
+          datalake:
+            module_path: '@aws-mdaa/datalake'
+            module_configs:
+              - ./datalake.yaml
+            # Predeploy hook - runs before module deployment
+            predeploy:
+              command: "./scripts/prepare-data.sh"
+              exit_if_fail: true
+            # Postdeploy hook - runs after module deployment
+            postdeploy:
+              command: "./scripts/validate-deployment.sh"
+              exit_if_fail: false
+              after_success: true
+```
+
+### Hook Properties
+
+#### `command` (required)
+The command to execute. This can be:
+- A shell script: `"./scripts/setup.sh"`
+- A direct command: `"aws s3 cp data.csv s3://my-bucket/"`
+- A complex command: `"npm run build && npm run test"`
+
+#### `exit_if_fail` (optional, default: false)
+If `true`, the deployment will stop if the hook command fails (exits with non-zero code).
+If `false`, the deployment will continue even if the hook fails.
+
+#### `after_success` (optional, default: false, postdeploy only)
+For postdeploy hooks only:
+- If `true`, the hook only runs if the module deployment was successful
+- If `false`, the hook runs regardless of deployment success/failure
+
+### Hook Execution Environment
+
+Hooks execute with the following characteristics:
+
+- **Working Directory**: Commands run in the module's directory
+- **Environment Variables**: All environment variables from the MDAA process are inherited, including AWS credentials
+- **Output**: Command output appears in real-time during execution
+- **Error Reporting**: Enhanced error details are provided when commands fail, including exit codes and file analysis for shell scripts
+
+### Common Use Cases
+
+#### Data Preparation
+```yaml
+predeploy:
+  command: "./scripts/upload-sample-data.sh"
+  exit_if_fail: true
+```
+
+#### Deployment Validation
+```yaml
+postdeploy:
+  command: "./scripts/run-integration-tests.sh"
+  exit_if_fail: false
+  after_success: true
+```
+
+#### Cleanup Tasks
+```yaml
+postdeploy:
+  command: "./scripts/cleanup-temp-resources.sh"
+  exit_if_fail: false
+  after_success: false  # Run cleanup even if deployment failed
+```
+
+#### AWS CLI Operations
+```yaml
+predeploy:
+  command: "aws s3 sync ./data/ s3://my-data-bucket/input/"
+  exit_if_fail: true
+```
+
+### Hook Execution Order
+
+For modules with both hooks configured:
+
+1. **Predeploy hook** executes first
+2. **Module deployment** (CDK/Terraform commands) executes
+3. **Postdeploy hook** executes last (subject to `after_success` setting)
+
+If a predeploy hook fails and `exit_if_fail: true`, the module deployment and postdeploy hook will not execute.
+
+### Best Practices
+
+- **Script Permissions**: Ensure shell scripts are executable (`chmod +x script.sh`)
+- **Error Handling**: Use `exit_if_fail: true` for critical setup tasks
+- **Idempotency**: Design hooks to be safely re-runnable
+- **Logging**: Include appropriate logging in your hook scripts for debugging
+- **AWS Credentials**: Hooks automatically inherit AWS credentials from the MDAA process
+- **Path References**: Use relative paths from the module directory or absolute paths
+
 ## Resource Naming
 
 MDAA provides a default naming implementation which can be overridden through specification of a custom naming module and class in the MDAA configuration. The default naming convention is implemented as follows:

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
+import { MdaaConstructProps, MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR //NOSONAR
 import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import {
   Cluster,
@@ -17,10 +17,10 @@ import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SecurityGroup, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
 import { IRole } from 'aws-cdk-lib/aws-iam';
 import { CfnCluster } from 'aws-cdk-lib/aws-redshift';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { MdaaRedshiftClusterParameterGroup } from './parameter-group';
 import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
+import { sanitizeClusterName } from './utils';
 
 /**
  * Properties for creating a compliant Redshift Cluster
@@ -133,7 +133,7 @@ export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
   /**
    * The number of days that automated snapshots are retained
    *
-   * Value must be between 0 to 35
+   * Value must be between 0 and 35
    *
    * @default - 1
    */
@@ -162,7 +162,7 @@ export interface MdaaRedshiftClusterProps extends MdaaConstructProps {
 export class MdaaRedshiftCluster extends Cluster {
   private static setProps(props: MdaaRedshiftClusterProps): ClusterProps {
     const overrideProps = {
-      clusterName: props.naming.resourceName(props.clusterName, 63),
+      clusterName: sanitizeClusterName(props.naming.resourceName(props.clusterName, 63)),
       publiclyAccessible: false,
       encrypted: true,
       removalPolicy: RemovalPolicy.RETAIN,
@@ -175,8 +175,7 @@ export class MdaaRedshiftCluster extends Cluster {
         encryptionKey: props.encryptionKey,
       },
     };
-    const allProps = { ...props, ...overrideProps };
-    return allProps;
+    return { ...props, ...overrideProps };
   }
 
   public readonly secret?: ISecret;

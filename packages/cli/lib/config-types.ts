@@ -27,6 +27,12 @@ export interface EnvEffectiveConfig extends DomainEffectiveConfig {
   envName: string;
   useBootstrap: boolean;
 }
+export interface HookConfig {
+  command?: string;
+  exit_if_fail?: boolean;
+  after_success?: boolean;
+}
+
 export interface ModuleEffectiveConfig extends EnvEffectiveConfig {
   moduleType?: 'cdk' | 'tf';
   modulePath: string;
@@ -36,6 +42,8 @@ export interface ModuleEffectiveConfig extends EnvEffectiveConfig {
   effectiveModuleConfig: ConfigurationElement;
   moduleConfigFiles?: string[];
   mdaaCompliant?: boolean;
+  predeploy?: HookConfig;
+  postdeploy?: HookConfig;
 }
 
 export interface ModuleDeploymentConfig extends ModuleEffectiveConfig {

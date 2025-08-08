@@ -21,6 +21,21 @@ import path = require('path');
 
 const avj = new Ajv();
 
+export interface HookConfig {
+  /**
+   * Command to execute for the hook
+   */
+  readonly command?: string;
+  /**
+   * If true, deployment will exit if the hook fails
+   */
+  readonly exit_if_fail?: boolean;
+  /**
+   * If true, hook will only run after successful deployment
+   */
+  readonly after_success?: boolean;
+}
+
 export interface MdaaModuleConfig {
   /**
    * The type of module.
@@ -109,6 +124,14 @@ export interface MdaaModuleConfig {
    * If true, MDAA will expect the module to implement MDAA_compliant behaviours
    */
   readonly mdaa_compliant?: boolean;
+  /**
+   * Hook to run before module deployment
+   */
+  readonly predeploy?: HookConfig;
+  /**
+   * Hook to run after module deployment
+   */
+  readonly postdeploy?: HookConfig;
 }
 
 export interface Deployment {

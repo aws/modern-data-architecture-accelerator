@@ -148,6 +148,24 @@
             ],
             "type": "object"
         },
+        "HookConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "after_success": {
+                    "description": "If true, hook will only run after successful deployment",
+                    "type": "boolean"
+                },
+                "command": {
+                    "description": "Command to execute for the hook",
+                    "type": "string"
+                },
+                "exit_if_fail": {
+                    "description": "If true, deployment will exit if the hook fails",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
         "MdaaCustomAspect": {
             "additionalProperties": false,
             "properties": {
@@ -407,6 +425,14 @@
                         "tf"
                     ],
                     "type": "string"
+                },
+                "postdeploy": {
+                    "$ref": "#/definitions/HookConfig",
+                    "description": "Hook to run after module deployment"
+                },
+                "predeploy": {
+                    "$ref": "#/definitions/HookConfig",
+                    "description": "Hook to run before module deployment"
                 },
                 "tag_config_data": {
                     "additionalProperties": {

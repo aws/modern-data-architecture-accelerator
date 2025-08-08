@@ -11,10 +11,12 @@ import {
   MdaaCustomNaming,
   TagElement,
 } from '@aws-mdaa/config';
+import { analyzeScriptFile, executeCommand, logExecutionError, logImmediate } from './command-utils';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
   Deployment,
+  HookConfig,
   MdaaCliConfig,
   MdaaDomainConfig,
   MdaaEnvironmentConfig,
@@ -36,6 +38,8 @@ import { loadLocalPackages } from './package-helper';
 export interface DeployStageMap {
   [key: string]: ModuleDeploymentConfig[];
 }
+
+type HookType = 'postdeploy' | 'predeploy';
 
 export class MdaaDeploy {
   private readonly config: MdaaCliConfig;
@@ -342,7 +346,7 @@ export class MdaaDeploy {
     }
 
     this.reverse(Object.keys(envDeployStages).sort((a, b) => +a - +b)).forEach(stage => {
-      console.log(`Env ${envEffectiveConfig.domainName}/${envEffectiveConfig.envName} Running MDAA stage ${stage}`);
+      logImmediate(`Env ${envEffectiveConfig.domainName}/${envEffectiveConfig.envName} Running MDAA stage ${stage}`);
       this.reverse(envDeployStages[stage]).forEach(module => {
         this.deployModule(module);
       });
@@ -369,7 +373,7 @@ export class MdaaDeploy {
       .forEach(moduleEffectiveConfig => {
         const logPrefix = `${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName}`;
 
-        console.log(`Module ${logPrefix}: Prepping packages`);
+        logImmediate(`Module ${logPrefix}: Prepping packages`);
         const moduleDeploymentConfig = this.prepModule(moduleEffectiveConfig);
 
         const customNamingModulePath =
@@ -659,7 +663,7 @@ export class MdaaDeploy {
     return MdaaDeploy.DEFAULT_DEPLOY_STAGE;
   }
 
-  private deployModule(moduleDeploymentConfig: ModuleDeploymentConfig) {
+  public deployModule(moduleDeploymentConfig: ModuleDeploymentConfig) {
     if (!this.devopsMode) {
       console.log(`\n-----------------------------------------------------------`);
       console.log(
@@ -668,12 +672,66 @@ export class MdaaDeploy {
       console.log(`-----------------------------------------------------------`);
     }
 
-    this.reverse(moduleDeploymentConfig.moduleCmds).forEach(moduleCmd => {
-      console.log(
-        `Module ${moduleDeploymentConfig.domainName}/${moduleDeploymentConfig.envName}/${moduleDeploymentConfig.moduleName}: Running cmd:\n${moduleCmd}`,
-      );
-      this.execCmd(`cd '${moduleDeploymentConfig.modulePath}' && ${moduleCmd}`);
-    });
+    // Execute predeploy hook
+    if (moduleDeploymentConfig.predeploy && this.action === 'deploy') {
+      this.executeHook(moduleDeploymentConfig, 'predeploy', moduleDeploymentConfig.predeploy);
+    }
+
+    let deploymentSuccess = true;
+    try {
+      this.reverse(moduleDeploymentConfig.moduleCmds).forEach(moduleCmd => {
+        console.log(
+          `Module ${moduleDeploymentConfig.domainName}/${moduleDeploymentConfig.envName}/${moduleDeploymentConfig.moduleName}: Running cmd:\n${moduleCmd}`,
+        );
+        this.execCmd(`cd '${moduleDeploymentConfig.modulePath}' && ${moduleCmd}`);
+      });
+    } catch (error) {
+      deploymentSuccess = false;
+      throw error;
+    } finally {
+      // Execute postdeploy hook
+      if (moduleDeploymentConfig.postdeploy && this.action === 'deploy') {
+        const shouldRunPostdeploy = !moduleDeploymentConfig.postdeploy.after_success || deploymentSuccess;
+        if (shouldRunPostdeploy) {
+          this.executeHook(moduleDeploymentConfig, 'postdeploy', moduleDeploymentConfig.postdeploy);
+        }
+      }
+    }
+  }
+
+  private executeHook(moduleDeploymentConfig: ModuleDeploymentConfig, hookType: HookType, hookConfig: HookConfig) {
+    const modulePrefix = `${moduleDeploymentConfig.domainName}/${moduleDeploymentConfig.envName}/${moduleDeploymentConfig.moduleName}`;
+
+    if (!hookConfig.command) {
+      console.warn(`Module ${modulePrefix}: ${hookType} hook defined but no command specified`);
+      return;
+    }
+
+    const hookCommand = hookConfig.command;
+    if (!hookCommand) {
+      return;
+    }
+
+    console.log(`Module ${modulePrefix}: Executing ${hookType} hook`);
+    console.log(`Module ${modulePrefix}: Hook command: ${hookCommand}`);
+
+    try {
+      this.execCmd(hookCommand);
+      console.log(`Module ${modulePrefix}: ${hookType} hook completed successfully`);
+    } catch (error) {
+      console.error(`Module ${modulePrefix}: ${hookType} hook failed: ${error}`);
+
+      if (hookConfig.exit_if_fail) {
+        console.error(
+          `Module ${modulePrefix}: Exiting deployment due to ${hookType} hook failure (exit_if_fail=${hookConfig.exit_if_fail})`,
+        );
+        throw error;
+      } else {
+        console.warn(
+          `Module ${modulePrefix}: Continuing deployment despite ${hookType} hook failure (exit_if_fail=${hookConfig.exit_if_fail})`,
+        );
+      }
+    }
   }
 
   private createCdkCommand(moduleEffectiveConfig: ModuleEffectiveConfig, localModule: boolean): string {
@@ -855,6 +913,8 @@ export class MdaaDeploy {
       terraform: this.computeEffectiveTerraformConfig(envEffectiveConfig, mdaaModule.terraform),
       deployAccount: envEffectiveConfig.deployAccount,
       deployRegion: envEffectiveConfig.deployRegion,
+      predeploy: mdaaModule.predeploy,
+      postdeploy: mdaaModule.postdeploy,
     };
   }
 
@@ -900,23 +960,38 @@ export class MdaaDeploy {
   }
 
   /* istanbul ignore next */
-  private execCmd(cmd: string) {
-    // nosemgrep
-    if (!this.testMode) {
-      try {
-        require('child_process').execSync(cmd, { stdio: 'inherit' });
-      } catch (error: unknown) {
-        if (this.noFail) {
-          console.warn(`Child process raised exception: ${error}`);
-          if (error instanceof Error) {
-            console.error(error.stack);
-          }
-        } else {
-          throw error;
-        }
+  public execCmd(cmd: string) {
+    if (this.testMode) {
+      console.log(`Testing Mode:\n ${cmd}`);
+      return;
+    }
+
+    try {
+      executeCommand(cmd);
+    } catch (error: unknown) {
+      this.handleCommandError(cmd, error);
+    }
+  }
+
+  private handleCommandError(cmd: string, error: unknown) {
+    console.error(`\n=== Command Execution Failed ===`);
+    console.error(`Command: ${cmd}`);
+
+    logExecutionError(error);
+    analyzeScriptFile(cmd);
+    console.error(`=== End Error Details ===\n`);
+
+    this.handleErrorBasedOnFailMode(error);
+  }
+
+  private handleErrorBasedOnFailMode(error: unknown) {
+    if (this.noFail) {
+      console.warn(`Child process raised exception: ${error}`);
+      if (error instanceof Error) {
+        console.error(error.stack);
       }
     } else {
-      console.log(`Testing Mode:\n ${cmd}`);
+      throw error;
     }
   }
 

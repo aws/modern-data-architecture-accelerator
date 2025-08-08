@@ -136,13 +136,13 @@ export interface SuppressionProps {
 export interface OpensearchL3ConstructProps extends MdaaL3ConstructProps {
   readonly domain: OpensearchDomainProps;
 }
-//This stack creates all of the resources required for a Data Warehouse
+//This stack creates all the resources required for a Data Warehouse
 export class OpensearchL3Construct extends MdaaL3Construct {
   protected readonly props: OpensearchL3ConstructProps;
 
   private dataAdminRole: MdaaResolvableRole;
-  private opensearchDomainKmsKey: MdaaKmsKey;
-  private logGroup: MdaaLogGroup;
+  private readonly opensearchDomainKmsKey: MdaaKmsKey;
+  private readonly logGroup: MdaaLogGroup;
 
   constructor(scope: Construct, id: string, props: OpensearchL3ConstructProps) {
     super(scope, id, props);
