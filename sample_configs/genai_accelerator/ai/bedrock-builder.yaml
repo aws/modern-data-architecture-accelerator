@@ -1,0 +1,136 @@
+# List of admin roles which will be provided access to agent resources (like KMS/Bucket)
+dataAdminRoles:
+  - id: "ssm:/{{org}}/shared/generated-role/data-admin/id"
+
+lambdaFunctions:
+  layers:
+    - layerName: customer-support-layer
+      src: ../lambda/layer
+      description: 'Common libraries for customer support functions'
+
+  functions:
+    - functionName: customer-support-agent-lambda
+      srcDir: ../lambda/src
+      handler: support_function.lambda_handler
+      runtime: python3.13
+      roleArn: ssm:/{{org}}/shared/generated-role/agent-lambda-role/arn
+      description: "Lambda function for Bedrock Agent Action group: customer-support-agent/support-actions"
+      generatedLayerNames:
+        - customer-support-layer
+
+    - functionName: knowledge-base-transformer
+      srcDir: ../lambda/src
+      handler: kb_custom_transform.lambda_handler
+      runtime: python3.13
+      roleArn: ssm:/{{org}}/shared/generated-role/agent-lambda-role/arn
+      description: "Lambda function for performing custom transformations on data while ingesting into knowledgebases"
+      generatedLayerNames:
+        - customer-support-layer
+
+# Bedrock Agent Configuration
+agents:
+  customer-support-agent:
+    agentAliasName: "prod-alias"
+    role:
+      id: ssm:/{{org}}/shared/generated-role/agent-execution-role/id
+    foundationModel: "{{context:llm_model_id}}"
+
+    description: "Customer Support Agent"
+    autoPrepare: true
+    instruction: |
+      You are a customer support agent for a cloud services company. Your role is to help customers with:
+      1. Finding information about their account and services
+      2. Troubleshooting common issues
+      3. Providing guidance on best practices
+      4. Escalating complex issues to human support when necessary
+      
+      Always be professional, courteous, and helpful. If you don't know the answer to a question, 
+      acknowledge that and offer to find more information or escalate the issue.
+      
+      When users ask about your functionality, provide guidance in natural language and do not include function names.
+    idleSessionTtlInSeconds: 600
+    guardrail:
+      id: "config:enterpriseguardrail"
+      version: 'DRAFT'
+    
+    # Action groups for the agent
+    actionGroups:
+      - actionGroupName: "support-actions"
+        description: "Actions for customer support functions"
+        actionGroupExecutor:
+          lambda: generated-function:customer-support-agent-lambda
+        apiSchema:
+          openApiSchemaPath: ../api-schema/support-actions-api.yaml
+    
+    knowledgeBases:
+      - description: "Customer Support Knowledge Base"
+        id: "config:kb-test-customer-support"
+
+vectorStores:
+  cs-vector-store:
+    vpcId: "{{context:vpc_id}}"
+    subnetIds: 
+      - "{{context:subnet_id_1}}"
+      - "{{context:subnet_id_2}}"
+      - "{{context:subnet_id_3}}"
+    minCapacity: 1.0
+    maxCapacity: 8.0
+
+knowledgeBases:
+  kb-test-customer-support:
+    embeddingModel: 'amazon.titan-embed-text-v2:0'
+    vectorStore: cs-vector-store
+    role:
+      id: ssm:/{{org}}/shared/generated-role/kb-execution-role/id
+    supplementalBucketName: ssm:/{{org}}/shared/datalake/bucket/customer-support-supplemental-images/name
+    s3DataSources:
+      support-docs:
+        bucketName: ssm:/{{org}}/shared/datalake/bucket/customer-support-docs/name
+        prefix: 'support-docs/'
+        enableSync: true
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          chunkingConfiguration:
+            chunkingStrategy: 'FIXED_SIZE'
+            fixedSizeChunkingConfiguration:
+              maxTokens: 512
+              overlapPercentage: 20
+      
+      product-docs:
+        bucketName: ssm:/{{org}}/shared/datalake/bucket/customer-support-docs/name
+        prefix: 'product-docs/'
+        enableSync: true
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_FOUNDATION_MODEL'
+            bedrockFoundationModelConfiguration:
+              modelArn: "{{context:llm_model_id}}"
+              parsingModality: 'MULTIMODAL'
+              parsingPromptText: 'Extract key information from this product documentation'
+          
+          customTransformationConfiguration:
+            intermediateStorageBucket: ssm:/{{org}}/shared/datalake/bucket/custom-transform-intermediate/name
+            intermediateStoragePrefix: 'product-docs/transformed'
+            transformLambdaArns:
+              - generated-function:knowledge-base-transformer
+
+    vectorFieldSize: 1024
+
+# Guardrails Configuration
+guardrails:
+  enterpriseguardrail:
+    description: 'Enterprise content safety guardrail for customer support'
+    blockedInputMessaging: 'Your input contains content that violates our usage policies. Please rephrase your question.'
+    blockedOutputsMessaging: 'I cannot provide a response to that query due to content policy restrictions.'
+    
+    contentFilters:
+      hate:
+        inputStrength: 'MEDIUM'
+        outputStrength: 'MEDIUM'
+    
+    contextualGroundingFilters:
+      grounding: 0.95
+      relevance: 0.90

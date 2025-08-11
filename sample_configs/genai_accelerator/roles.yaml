@@ -1,0 +1,500 @@
+generatePolicies:
+  DataAdminPolicy:
+    policyDocument:
+      Statement:
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets
+            - s3:GetAccountPublicAccessBlock
+            - s3:GetBucketPublicAccessBlock
+            - s3:GetBucketPolicyStatus
+            - s3:GetBucketAcl
+            - s3:ListAccessPoints
+            - s3:GetBucketLocation
+          Resource: "*"
+
+        # Allows basic listing of KMS keys (required for up)
+        - Sid: BasicKMSAccess
+          Effect: Allow
+          Action:
+            - kms:ListAliases
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+  DataUserPolicy:
+    policyDocument:
+      Statement:
+        # Basic S3 account-level permissions
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets
+            - s3:GetAccountPublicAccessBlock
+            - s3:GetBucketPublicAccessBlock
+            - s3:GetBucketPolicyStatus
+            - s3:GetBucketAcl
+            - s3:ListAccessPoints
+          Resource: "*"
+
+        # S3 bucket read and write permissions
+        - Sid: S3BucketReadWriteAccess
+          Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:GetObjectVersion
+            - s3:PutObject
+            - s3:PutObjectAcl
+            - s3:DeleteObject
+            - s3:DeleteObjectVersion
+            - s3:ListBucket
+            - s3:ListBucketVersions
+            - s3:GetBucketLocation
+            - s3:GetBucketVersioning
+          Resource:
+            - "arn:{{partition}}:s3:::{{org}}-*"
+            - "arn:{{partition}}:s3:::{{org}}-*/*"
+
+        # KMS permissions for encrypted buckets
+        - Sid: KMSBucketAccess
+          Effect: Allow
+          Action:
+            - kms:Decrypt
+            - kms:GenerateDataKey
+            - kms:DescribeKey
+            - kms:ListAliases
+          Resource:
+            - "arn:{{partition}}:kms:{{region}}:{{account}}:key/*"
+
+        # Basic KMS listing permissions
+        - Sid: BasicKMSAccess
+          Effect: Allow
+          Action:
+            - kms:ListAliases
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "Wildcard resources required for bucket access patterns and KMS key access."
+
+  BedrockAdminPolicy:
+    policyDocument:
+      Statement:
+        - SID: BedrockAgentAccess
+          Effect: Allow
+          Action:
+            - "bedrock:CreateAgent"
+            - "bedrock:DeleteAgent"
+            - "bedrock:GetAgent"
+            - "bedrock:ListAgents"
+            - "bedrock:UpdateAgent"
+            - "bedrock:CreateAgentAlias"
+            - "bedrock:DeleteAgentAlias"
+            - "bedrock:GetAgentAlias"
+            - "bedrock:ListAgentAliases"
+            - "bedrock:UpdateAgentAlias"
+            - "bedrock:CreateAgentActionGroup"
+            - "bedrock:DeleteAgentActionGroup"
+            - "bedrock:GetAgentActionGroup"
+            - "bedrock:ListAgentActionGroups"
+            - "bedrock:UpdateAgentActionGroup"
+            - "bedrock:PrepareAgent"
+            - "bedrock:AssociateAgentKnowledgeBase"
+            - "bedrock:DisassociateAgentKnowledgeBase"
+            - "bedrock:ListAgentKnowledgeBases"
+            - "bedrock:InvokeAgent"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:agent/*"
+        
+        # Bedrock Knowledge Base permissions
+        - SID: BedrockKnowledgeBaseAccess
+          Effect: Allow
+          Action:
+            - "bedrock:CreateKnowledgeBase"
+            - "bedrock:DeleteKnowledgeBase"
+            - "bedrock:GetKnowledgeBase"
+            - "bedrock:ListKnowledgeBases"
+            - "bedrock:UpdateKnowledgeBase"
+            - "bedrock:CreateDataSource"
+            - "bedrock:DeleteDataSource"
+            - "bedrock:GetDataSource"
+            - "bedrock:ListDataSources"
+            - "bedrock:UpdateDataSource"
+            - "bedrock:StartIngestionJob"
+            - "bedrock:GetIngestionJob"
+            - "bedrock:ListIngestionJobs"
+            - "bedrock:StopIngestionJob"
+            - "bedrock:RetrieveAndGenerate"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:knowledge-base/*"
+        
+        # Bedrock Guardrail permissions
+        - SID: BedrockGuardrailAccess
+          Effect: Allow
+          Action:
+            - "bedrock:CreateGuardrail"
+            - "bedrock:DeleteGuardrail"
+            - "bedrock:GetGuardrail"
+            - "bedrock:ListGuardrails"
+            - "bedrock:UpdateGuardrail"
+            - "bedrock:CreateGuardrailVersion"
+            - "bedrock:GetGuardrailVersion"
+            - "bedrock:ListGuardrailVersions"
+            - "bedrock:ApplyGuardrail"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:guardrail/*"
+        
+        # Bedrock Foundation Model permissions
+        - SID: BedrockModelAccess
+          Effect: Allow
+          Action:
+            - "bedrock:InvokeModel"
+            - "bedrock:InvokeModelWithResponseStream"
+            - "bedrock:GetFoundationModel"
+            - "bedrock:ListFoundationModels"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}::foundation-model/*"
+        
+        # Lambda permissions for action groups
+        - SID: LambdaAccess
+          Effect: Allow
+          Action:
+            - "lambda:CreateFunction"
+            - "lambda:DeleteFunction"
+            - "lambda:GetFunction"
+            - "lambda:UpdateFunctionCode"
+            - "lambda:UpdateFunctionConfiguration"
+            - "lambda:AddPermission"
+            - "lambda:RemovePermission"
+            - "lambda:InvokeFunction"
+            - "lambda:ListFunctions"
+            - "lambda:PublishLayerVersion"
+            - "lambda:GetLayerVersion"
+            - "lambda:DeleteLayerVersion"
+            - "lambda:ListLayerVersions"
+          Resource:
+            - "arn:{{partition}}:lambda:{{region}}:{{account}}:function:*"
+            - "arn:{{partition}}:lambda:{{region}}:{{account}}:layer:*"
+        
+        # S3 permissions for knowledge bases
+        - SID: S3Access
+          Effect: Allow
+          Action:
+            - "s3:CreateBucket"
+            - "s3:DeleteBucket"
+            - "s3:GetBucketLocation"
+            - "s3:GetBucketPolicy"
+            - "s3:PutBucketPolicy"
+            - "s3:GetObject"
+            - "s3:PutObject"
+            - "s3:DeleteObject"
+            - "s3:ListBucket"
+          Resource:
+            - "arn:{{partition}}:s3:::*"
+        
+        # IAM permissions for roles
+        - SID: IAMAccess
+          Effect: Allow
+          Action:
+            - "iam:CreateRole"
+            - "iam:DeleteRole"
+            - "iam:GetRole"
+            - "iam:PassRole"
+            - "iam:PutRolePolicy"
+            - "iam:GetRolePolicy"
+            - "iam:DeleteRolePolicy"
+            - "iam:AttachRolePolicy"
+            - "iam:DetachRolePolicy"
+          Resource:
+            - "arn:{{partition}}:iam::{{account}}:role/*"
+        
+        # KMS permissions for encryption
+        - SID: KMSAccess
+          Effect: Allow
+          Action:
+            - "kms:CreateKey"
+            - "kms:DescribeKey"
+            - "kms:EnableKey"
+            - "kms:DisableKey"
+            - "kms:ScheduleKeyDeletion"
+            - "kms:CancelKeyDeletion"
+            - "kms:GenerateDataKey"
+            - "kms:Encrypt"
+            - "kms:Decrypt"
+            - "kms:ReEncrypt*"
+            - "kms:CreateAlias"
+            - "kms:DeleteAlias"
+            - "kms:ListAliases"
+            - "kms:PutKeyPolicy"
+            - "kms:GetKeyPolicy"
+          Resource:
+            - "arn:{{partition}}:kms:{{region}}:{{account}}:key/*"
+        
+        # RDS permissions for vector stores
+        - SID: RDSAccess
+          Effect: Allow
+          Action:
+            - "rds:CreateDBCluster"
+            - "rds:DeleteDBCluster"
+            - "rds:DescribeDBClusters"
+            - "rds:ModifyDBCluster"
+            - "rds:CreateDBInstance"
+            - "rds:DeleteDBInstance"
+            - "rds:DescribeDBInstances"
+            - "rds:ModifyDBInstance"
+            - "rds:CreateDBSubnetGroup"
+            - "rds:DeleteDBSubnetGroup"
+            - "rds:DescribeDBSubnetGroups"
+          Resource:
+            - "arn:{{partition}}:rds:{{region}}:{{account}}:cluster:*"
+            - "arn:{{partition}}:rds:{{region}}:{{account}}:db:*"
+            - "arn:{{partition}}:rds:{{region}}:{{account}}:subgrp:*"
+        
+        # CloudWatch Logs permissions
+        - SID: CloudWatchLogsAccess
+          Effect: Allow
+          Action:
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+            - "logs:DescribeLogGroups"
+            - "logs:DescribeLogStreams"
+          Resource:
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:*"
+        
+        # EC2 permissions for networking
+        - SID: EC2Access
+          Effect: Allow
+          Action:
+            - "ec2:CreateSecurityGroup"
+            - "ec2:DeleteSecurityGroup"
+            - "ec2:DescribeSecurityGroups"
+            - "ec2:AuthorizeSecurityGroupIngress"
+            - "ec2:AuthorizeSecurityGroupEgress"
+            - "ec2:RevokeSecurityGroupIngress"
+            - "ec2:RevokeSecurityGroupEgress"
+            - "ec2:DescribeSubnets"
+            - "ec2:DescribeVpcs"
+          Resource: "*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions require wildcard resources for Bedrock Builder functionality"
+
+  BedrockAgentExecutionPolicy:
+    policyDocument:
+      Statement:
+        # Bedrock Foundation Model permissions
+        - SID: BedrockModelAccess
+          Effect: Allow
+          Action:
+            - "bedrock:InvokeModel"
+            - "bedrock:InvokeModelWithResponseStream"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}::foundation-model/*"
+        
+        # Lambda permissions for action groups
+        - SID: LambdaAccess
+          Effect: Allow
+          Action:
+            - "lambda:InvokeFunction"
+          Resource:
+            - "arn:{{partition}}:lambda:{{region}}:{{account}}:function:*"
+        
+        # Knowledge Base permissions
+        - SID: KnowledgeBaseAccess
+          Effect: Allow
+          Action:
+            - "bedrock:RetrieveAndGenerate"
+            - "bedrock:Retrieve"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:knowledge-base/*"
+        
+        # S3 permissions for knowledge bases
+        - SID: S3Access
+          Effect: Allow
+          Action:
+            - "s3:GetObject"
+            - "s3:ListBucket"
+          Resource:
+            - "arn:{{partition}}:s3:::{{org}}-*/*"
+            - "arn:{{partition}}:s3:::{{org}}-*"
+        
+        # CloudWatch Logs permissions
+        - SID: CloudWatchLogsAccess
+          Effect: Allow
+          Action:
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+          Resource:
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/bedrock/*"
+        
+        # Guardrail permissions
+        - SID: GuardrailAccess
+          Effect: Allow
+          Action:
+            - "bedrock:ApplyGuardrail"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:guardrail/enterprise-guardrail"
+        
+        # KMS permissions
+        - SID: KMSAccess
+          Effect: Allow
+          Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+          Resource:
+            - "arn:{{partition}}:kms:{{region}}:{{account}}:key/*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions require wildcard resources for Bedrock Agent functionality"
+
+  KnowledgeBaseExecutionPolicy:
+    policyDocument:
+      Statement:
+        # S3 permissions for knowledge bases
+        - SID: S3Access
+          Effect: Allow
+          Action:
+            - "s3:GetObject"
+            - "s3:ListBucket"
+            - "s3:PutObject"
+          Resource:
+            - "arn:{{partition}}:s3:::{{org}}-*/*"
+            - "arn:{{partition}}:s3:::{{org}}-*"
+        
+        # CloudWatch Logs permissions
+        - SID: CloudWatchLogsAccess
+          Effect: Allow
+          Action:
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+          Resource:
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/bedrock/*"
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/lambda/*"
+        
+        # Lambda permissions for custom transformers
+        - SID: LambdaAccess
+          Effect: Allow
+          Action:
+            - "lambda:InvokeFunction"
+          Resource:
+            - "arn:{{partition}}:lambda:{{region}}:{{account}}:function:knowledge-base-transformer"
+        
+        # Bedrock Foundation Model permissions for parsing
+        - SID: BedrockModelAccess
+          Effect: Allow
+          Action:
+            - "bedrock:InvokeModel"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0"
+            - "arn:{{partition}}:bedrock:{{region}}::foundation-model/amazon.titan-embed-text-v2:0"
+        
+        # Bedrock Knowledge Base ingestion permissions
+        - SID: BedrockIngestionAccess
+          Effect: Allow
+          Action:
+            - "bedrock:StartIngestionJob"
+            - "bedrock:GetIngestionJob"
+            - "bedrock:ListIngestionJobs"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:knowledge-base/*"
+        
+        # KMS permissions
+        - SID: KMSAccess
+          Effect: Allow
+          Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+          Resource:
+            - "arn:{{partition}}:kms:{{region}}:{{account}}:key/*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions require wildcard resources for Knowledge Base functionality"
+
+  AgentLambdaExecutionPolicy:
+    policyDocument:
+      Statement:
+        # CloudWatch Logs permissions
+        - SID: CloudWatchLogsAccess
+          Effect: Allow
+          Action:
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+          Resource:
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/lambda/*"
+        
+        # S3 permissions for accessing documents
+        - SID: S3Access
+          Effect: Allow
+          Action:
+            - "s3:GetObject"
+            - "s3:ListBucket"
+          Resource:
+            - "arn:{{partition}}:s3:::{{org}}-*/*"
+            - "arn:{{partition}}:s3:::{{org}}-*"
+        
+        # KMS permissions
+        - SID: KMSAccess
+          Effect: Allow
+          Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+          Resource:
+            - "arn:{{partition}}:kms:{{region}}:{{account}}:key/*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions require wildcard resources for Lambda functionality"
+
+# The list of roles which will be generated
+generateRoles:
+  # Data Admin role with permissions for Bedrock Builder resources
+  data-admin:
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - "AmazonBedrockFullAccess"
+    generatedPolicies:
+      - BedrockAdminPolicy
+      - DataAdminPolicy
+      - DataUserPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AmazonBedrockFullAccess approved for usage"
+  
+  data-user:
+    trustedPrincipal: this_account
+    generatedPolicies:
+      - DataUserPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AmazonBedrockFullAccess approved for usage"
+
+  # Bedrock Agent Execution Role
+  agent-execution-role:
+    trustedPrincipal: service:bedrock.amazonaws.com
+    generatedPolicies:
+      - BedrockAgentExecutionPolicy
+
+  # Knowledge Base Execution Role
+  kb-execution-role:
+    trustedPrincipal: service:bedrock.amazonaws.com
+    additionalTrustedPrincipals:
+      - trustedPrincipal: service:lambda.amazonaws.com
+    generatedPolicies:
+      - KnowledgeBaseExecutionPolicy
+
+  # Lambda Execution Role for Agent Action Groups
+  agent-lambda-role:
+    trustedPrincipal: service:lambda.amazonaws.com
+    awsManagedPolicies:
+      - "service-role/AWSLambdaBasicExecutionRole"
+    generatedPolicies:
+      - AgentLambdaExecutionPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for usage"

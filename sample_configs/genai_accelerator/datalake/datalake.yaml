@@ -1,0 +1,56 @@
+# A list of Logical Config Roles which can be referenced in Access Policies
+roles:
+  DataAdminRole:
+    - id: generated-role-id:data-admin
+  DataUserRole:
+    - id: generated-role-id:data-user
+  AgentRole:
+    - id: generated-role-id:agent-execution-role
+  KnowledgeBaseRole:
+    - id: generated-role-id:kb-execution-role
+
+# Definitions of access policies which grant access to S3 paths for specified Logical Config Roles
+accessPolicies:
+  AdminPolicy:
+    rule:
+      prefix: /
+      ReadWriteSuperRoles:
+        - DataAdminRole
+    
+  DataReadPolicy:
+    rule:
+      prefix: /
+      ReadRoles:
+        - DataUserRole
+
+  KnowledgeBasePolicy:
+    rule:
+      prefix: /
+      ReadWriteSuperRoles:
+        - KnowledgeBaseRole
+      ReadRoles:
+        - KnowledgeBaseRole
+        - AgentRole
+
+# The set of S3 buckets which will be created, and the access policies which will be applied
+buckets:
+  # Bucket for customer support documents
+  customer-support-docs:
+    enableEventBridgeNotifications: true
+    accessPolicies:
+      - AdminPolicy
+      - DataReadPolicy
+      - KnowledgeBasePolicy
+    
+  # Bucket for supplemental images
+  customer-support-supplemental-images:
+    accessPolicies:
+      - AdminPolicy
+      - DataReadPolicy
+      - KnowledgeBasePolicy
+    
+  # Bucket for custom transformations
+  custom-transform-intermediate:
+    accessPolicies:
+      - AdminPolicy
+      - KnowledgeBasePolicy

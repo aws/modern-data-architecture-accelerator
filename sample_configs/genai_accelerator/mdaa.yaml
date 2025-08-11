@@ -1,0 +1,54 @@
+# All resources will be deployed to the default region specified in the environment or AWS configurations.
+# Can optional specify a specific AWS Region Name.
+region: default
+
+# One or more tag files containing tags which will be applied to all deployed resources
+tag_configs:
+  - ./tags.yaml
+
+## Pre-Deployment Instructions
+organization: <unique-org-name>
+
+context:
+  vpc_id: <your vpc id>
+  subnet_id_1:  <your subnet id 1>
+  subnet_id_2:  <your subnet id 2>
+  subnet_id_3:  <your subnet id 3>
+  llm_model_id: <your_model_id> # e.g. "anthropic.claude-3-sonnet-20240229-v1:0
+
+# One or more domains may be specified. Domain name will be incorporated by default naming implementation
+# to prefix all resource names.
+domains:
+  # The name of the domain. In this case, we are building a 'shared' domain.
+  shared:
+    # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
+    environments:
+      
+      # The environment name will be incorporated into resource name by the default naming implementation.
+      dev:
+        # The list of modules which will be deployed. A module points to a specific CAEF CDK App, and
+        # specifies a deployment configuration file if required.
+        modules:
+          # This module will create all of the roles required for the Bedrock Builder
+          roles:
+            module_path: "@aws-mdaa/roles"
+            module_configs:
+              - ./roles.yaml
+          
+          # Data Lake module for creating S3 buckets needed by Bedrock Knowledge Base
+          datalake:
+            module_path: "@aws-mdaa/datalake"
+            module_configs:
+              - ./datalake/datalake.yaml
+
+   # The name of the domain. In this case, we are building a 'genai' domain.
+  genai:
+    environments:
+      dev:
+        # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
+        modules:
+          # Bedrock Builder module for deploying Bedrock Agents and Knowledge Bases
+          customer-support-agent:
+            module_path: "@aws-caef/bedrock-builder"
+            module_configs:
+              - ./ai/bedrock-builder.yaml
