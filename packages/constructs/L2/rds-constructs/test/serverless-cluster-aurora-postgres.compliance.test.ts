@@ -8,7 +8,7 @@ import { Template } from 'aws-cdk-lib/assertions';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import * as rds from 'aws-cdk-lib/aws-rds';
-import { MdaaRdsServerlessCluster, MdaaRdsServerlessClusterProps } from '../lib/serverless-cluster';
+import { MdaaRdsServerlessCluster, MdaaRdsServerlessClusterProps } from '../lib';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
@@ -41,7 +41,7 @@ describe('Aurora Postgres: MDAA Construct Compliance Tests', () => {
     monitoringRole,
     engineVersion: testEngineVersion,
     backupRetention: 20,
-    clusterIdentifier: 'test-cluster',
+    clusterIdentifier: 'test--cluster'.repeat(10),
     masterUsername: 'postgres-admin',
     encryptionKey: testKey,
     vpc: testVpc,
@@ -59,7 +59,7 @@ describe('Aurora Postgres: MDAA Construct Compliance Tests', () => {
 
   test('DBClusterIdentifier', () => {
     template.hasResourceProperties('AWS::RDS::DBCluster', {
-      DBClusterIdentifier: testApp.naming.resourceName('test-cluster'),
+      DBClusterIdentifier: 'test-org-test-env-test-domain-test-module-test-clust-3afb5975',
     });
   });
   test('Is EngineMode serverless', () => {

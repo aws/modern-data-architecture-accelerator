@@ -22,6 +22,7 @@ import {
 } from 'aws-cdk-lib/aws-rds';
 import { SecretRotationApplication } from 'aws-cdk-lib/aws-secretsmanager';
 import { IRole } from 'aws-cdk-lib/aws-iam';
+import { getSanitizeClusterIdentifier } from './utils';
 
 /**
  * Properties for creating a compliant RDS Serverless Cluster
@@ -181,7 +182,7 @@ export class MdaaRdsServerlessCluster extends DatabaseCluster {
         props.engine == 'aurora-mysql'
           ? DatabaseClusterEngine.auroraMysql({ version: <AuroraMysqlEngineVersion>props.engineVersion })
           : DatabaseClusterEngine.auroraPostgres({ version: <AuroraPostgresEngineVersion>props.engineVersion }),
-      clusterIdentifier: props.naming.resourceName(props.clusterIdentifier),
+      clusterIdentifier: getSanitizeClusterIdentifier(props),
       storageEncryptionKey: props.encryptionKey,
       removalPolicy: RemovalPolicy.RETAIN,
       writer: ClusterInstance.serverlessV2(`${props.clusterIdentifier}-cluster-writer`),

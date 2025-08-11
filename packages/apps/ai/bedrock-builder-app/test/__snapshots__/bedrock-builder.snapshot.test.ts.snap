@@ -2698,7 +2698,7 @@ Provide responses in markdown format with source citations
         "Properties": {
           "BackupRetentionPeriod": 20,
           "CopyTagsToSnapshot": true,
-          "DBClusterIdentifier": "test-org-test-env-test-domain-test-bedrock-builder-app-test-vector-store",
+          "DBClusterIdentifier": "REPLACED-S3-BUCKET-NAME",
           "DBClusterParameterGroupName": "default.aurora-postgresql16",
           "DBSubnetGroupName": {
             "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -8514,7 +8514,7 @@ Provide responses in markdown format with source citations
       "Properties": {
         "BackupRetentionPeriod": 20,
         "CopyTagsToSnapshot": true,
-        "DBClusterIdentifier": "test-org-test-env-test-domain-test-bedrock-builder-main-test-vector-store",
+        "DBClusterIdentifier": "REPLACED-S3-BUCKET-NAME",
         "DBClusterParameterGroupName": "default.aurora-postgresql16",
         "DBSubnetGroupName": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
