@@ -32,7 +32,7 @@
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
     "aws-cdk-lib": "2.201.0",
-    "cdk-nag": "2.35.25",
+    "cdk-nag": "2.37.1",
     "constructs": "10.0.96",
     "jest": "29.5.0",
     "ts-jest": "29.1.0",
@@ -52,7 +52,7 @@
     "@aws-mdaa/l3-construct": "^1.0.0",
     "@aws-mdaa/naming": "^1.0.0",
     "aws-cdk-lib": "2.201.0",
-    "cdk-nag": "2.35.25",
+    "cdk-nag": "2.37.1",
     "constructs": "10.0.96"
   },
   "peerDependencies": {
@@ -62,7 +62,7 @@
     "@aws-mdaa/l3-construct": "1.0.0",
     "@aws-mdaa/naming": "1.0.0",
     "aws-cdk-lib": "2.201.0",
-    "cdk-nag": "2.35.25",
+    "cdk-nag": "2.37.1",
     "constructs": "10.0.96"
   },
   "gitHead": "ade1ce5962dee1fa47a3668c8e35d130c686ad35",

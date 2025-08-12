@@ -58,7 +58,7 @@
     "@aws-cdk/aws-glue-alpha": "2.201.0-alpha.0",
     "cross-spawn": "7.0.5",
     "@octokit/request": "9.2.1",
-    "cdk-nag": "2.35.25",
+    "cdk-nag": "2.37.1",
     "cdk8s": "2.69.42",
     "tar": "6.2.1",
     "glob": "9.3.5",

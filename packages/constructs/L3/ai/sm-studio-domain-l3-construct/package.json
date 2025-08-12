@@ -74,7 +74,7 @@
     "@aws-mdaa/sagemaker-constructs": "^1.0.0",
     "@aws-mdaa/sm-shared": "^1.0.0",
     "aws-cdk-lib": "2.201.0",
-    "cdk-nag": "2.35.25",
+    "cdk-nag": "2.37.1",
     "constructs": "10.0.96",
     "lodash": "4.17.21"
   },

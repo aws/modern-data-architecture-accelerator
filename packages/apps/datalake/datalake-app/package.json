@@ -43,7 +43,7 @@
     "@aws-mdaa/naming": "^1.0.0",
     "ajv": "8.17.1",
     "aws-cdk-lib": "2.201.0",
-    "cdk-nag": "2.35.25",
+    "cdk-nag": "2.37.1",
     "constructs": "10.0.96",
     "source-map-support": "0.5.21",
     "yaml": "1.10.2"
