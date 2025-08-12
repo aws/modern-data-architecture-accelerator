@@ -2,6 +2,32 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
+        "AdditionalResourcePermission": {
+            "additionalProperties": false,
+            "properties": {
+                "action": {
+                    "description": "Action to be granted to the principal",
+                    "type": "string"
+                },
+                "principal": {
+                    "description": "ARN of principal to which permission is to be granted.",
+                    "type": "string"
+                },
+                "sourceAccount": {
+                    "description": "The source account from which actions are allowed in case the principal is a service principal",
+                    "type": "string"
+                },
+                "sourceArn": {
+                    "description": "ARN of source resource from which actions are allowed in case the principal is a service principal",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "action",
+                "principal"
+            ],
+            "type": "object"
+        },
         "CfnParameterProps": {
             "additionalProperties": false,
             "properties": {
@@ -194,6 +220,13 @@
         "FunctionProps": {
             "additionalProperties": false,
             "properties": {
+                "additionalResourcePermissions": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/AdditionalResourcePermission"
+                    },
+                    "description": "Additional permissions to be added to Lambda resource policy",
+                    "type": "object"
+                },
                 "description": {
                     "default": "- No description.",
                     "description": "A description of the function.",
@@ -230,6 +263,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "grantInvoke": {
+                    "description": "ARN of principal to which lambda:InvokeFunction will be granted",
+                    "type": "string"
                 },
                 "handler": {
                     "description": "The Lambda handler in the source code",

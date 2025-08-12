@@ -30,6 +30,7 @@ import {
 } from 'aws-cdk-lib/aws-lambda';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
+import { ArnPrincipal } from 'aws-cdk-lib/aws-iam';
 
 export interface VpcConfigProps {
   /**
@@ -69,6 +70,32 @@ export interface FunctionProps extends FunctionOptions {
    * If true, srcDir is expected to contain a DockerFile
    */
   readonly dockerBuild?: boolean;
+  /**
+   * ARN of principal to which lambda:InvokeFunction will be granted
+   */
+  readonly grantInvoke?: string;
+  /**
+   * Additional permissions to be added to Lambda resource policy
+   */
+  readonly additionalResourcePermissions?: { [sid: string]: AdditionalResourcePermission };
+}
+export interface AdditionalResourcePermission {
+  /**
+   * ARN of principal to which permission is to be granted.
+   */
+  readonly principal: string;
+  /**
+   * Action to be granted to the principal
+   */
+  readonly action: string;
+  /**
+   * The source account from which actions are allowed in case the principal is a service principal
+   */
+  readonly sourceAccount?: string;
+  /**
+   * ARN of source resource from which actions are allowed in case the principal is a service principal
+   */
+  readonly sourceArn?: string;
 }
 
 export interface FunctionOptions {
@@ -317,6 +344,24 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     };
 
     const lambdaFunction = this.createDockerOrLambdaFunction(lambdaOptions, functionProps, generatedLayersByName);
+
+    // Add resource based permission
+    if (functionProps.grantInvoke) {
+      lambdaFunction.grantInvoke(new ArnPrincipal(functionProps.grantInvoke));
+    }
+
+    // Add additional resource based permissions
+    if (functionProps.additionalResourcePermissions) {
+      Object.entries(functionProps.additionalResourcePermissions).forEach(([sid, permission]) => {
+        const permissionProps = {
+          principal: new ArnPrincipal(permission.principal),
+          action: permission.action,
+          ...(permission.sourceArn && { sourceArn: permission.sourceArn }),
+          ...(permission.sourceAccount && { sourceAccount: permission.sourceAccount }),
+        };
+        lambdaFunction.addPermission(sid, permissionProps);
+      });
+    }
 
     //An inline policy to allow the Lambda role to write to DLQ is automatically added,
     //but this triggers Nags. Instead, we use the Queue Resource policy,

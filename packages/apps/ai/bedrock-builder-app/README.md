@@ -81,7 +81,28 @@ lambdaFunctions:
       roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
       description: For custom parsing and chunking logic
       # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
-
+    - functionName: test-custom-router1
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.13
+      roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
+      description: For custom chat routing logic
+      grantInvoke: "arn:aws:iam::123456789012:role/role-in-another-account"
+    - functionName: test-custom-router2
+      srcDir: ./src/function
+      handler: test.lambda_handler
+      runtime: python3.13
+      roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role'
+      description: For custom chat routing logic
+      grantInvoke: "arn:aws:iam::123456789012:role/role-in-another-account"
+      additionalResourcePermissions:
+        crossAccountInvoke:
+          principal: "arn:aws:iam::123456789012:role/role-in-another-account"
+          action: lambda:InvokeFunction
+        crossAccountInvoke2:
+          principal: "arn:aws:iam::123456789012:role/role-in-another-account"
+          action: lambda:InvokeFunction
+          
 # Bedrock Agent Configuration
 agents:
   test-agent:
