@@ -311,6 +311,123 @@ export class DataZoneL3Construct extends MdaaL3Construct {
       new CfnOwner(domain, `owner-group-${ownerName}`, cfnOwnerProps);
     });
 
+    const associatedAccountCdkUserProfiles = this.createAccountAssociations(domainName, domainProps, domain);
+
+    const createdDomainUnits = this.createDomainUnits(
+      domain,
+      domain.attrId,
+      domain.attrRootDomainUnitId,
+      {
+        domainUsers: domainUsers,
+        domainGroups: domainGroups,
+        dataAdminUserProfile: dataAdminUserProfile,
+        associatedAccountCdkUserProfiles: associatedAccountCdkUserProfiles || {},
+      },
+      domainProps.domainUnits,
+    );
+
+    this.createDomainUnitGrant(domain, `root-grant-create-project`, kmsKey.keyArn, domainName, domain, {
+      policyType: 'CREATE_PROJECT',
+      detail: {
+        createProject: {
+          includeChildDomainUnits: true,
+        },
+      },
+      principal: {
+        user: {
+          userIdentifier: domainCdkUserId,
+        },
+      },
+    });
+
+    this.createDomainUnitGrant(domain, `root-grant-project-members`, kmsKey.keyArn, domainName, domain, {
+      policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
+
+      detail: {
+        addToProjectMemberPool: {
+          includeChildDomainUnits: true,
+        },
+      },
+      principal: {
+        user: {
+          allUsersGrantFilter: {},
+        },
+      },
+    });
+    const glueCatalogArns = [
+      ...this.createDzGlueAccountStatementResources(this.account),
+      ...Object.entries(domainProps.associatedAccounts || {}).flatMap(x =>
+        this.createDzGlueAccountStatementResources(x[1].account),
+      ),
+    ];
+
+    const domainUnitIds = flattenDomainUnitPaths('', createdDomainUnits);
+
+    const domainConfigProps: DomainConfigProps = {
+      naming: this.props.naming,
+      domainName: domain.name,
+      domainArn: domain.attrArn,
+      domainId: domain.attrId,
+      adminUserProfileId: dataAdminUserProfile.attrId,
+      domainVersion,
+      domainKmsKeyArn: kmsKey.keyArn,
+      glueCatalogKmsKeyArns: glueCatalogKmsKeyArns,
+      domainKmsUsagePolicyName: domainKmsUsagePolicy.managedPolicyName,
+      domainUnits: domainUnitIds,
+      glueCatalogArns: glueCatalogArns,
+      domainCustomEnvBlueprintId: customEnvBlueprintConfig?.getAttString('id'),
+    };
+
+    const domainConfig = new DomainConfig(this, `domain-config-${domainName}`, domainConfigProps);
+
+    const configParamArns = domainConfig.createDomainConfigParams(domainName);
+
+    const baseConfigParam = new MdaaParamAndOutput(this, {
+      createOutputs: false,
+      resourceType: 'domain',
+      resourceId: domainName,
+      name: `config`,
+      tier: ParameterTier.ADVANCED,
+      value: JSON.stringify(configParamArns, undefined, 2),
+      ...this.props,
+    });
+
+    if (domainProps.associatedAccounts) {
+      const configParamRamShareProps: CfnResourceShareProps = {
+        name: this.props.naming.resourceName(`domain-config-ssm-${domainName}`),
+        resourceArns: [baseConfigParam.param!.parameterArn, ...configParamArns],
+        principals: Object.entries(domainProps.associatedAccounts).map(x => x[1].account),
+      };
+      const configRamShare = new CfnResourceShare(
+        this,
+        `domain-config-ram-share-${domainName}`,
+        configParamRamShareProps,
+      );
+
+      Object.entries(domainProps.associatedAccounts || {}).forEach(associatedAccount => {
+        this.getRamAssociationMonitor(
+          domain,
+          `domain-config-ram-association-monitor-${associatedAccount[0]}`,
+          configRamShare,
+          associatedAccount[1].account,
+        );
+        this.createAssociatedAccountStackResources(
+          associatedAccount[0],
+          associatedAccount[1],
+          baseConfigParam.paramName,
+          domainKmsUsagePolicyName,
+          keyAccessAccounts,
+          domainName,
+        );
+      });
+    }
+  }
+
+  private createAccountAssociations(
+    domainName: string,
+    domainProps: DomainProps,
+    domain: CfnDomain,
+  ): { [name: string]: CfnUserProfile } {
     if (domainProps.associatedAccounts) {
       const domainramShareProps: CfnResourceShareProps = {
         name: `DataZone-${this.props.naming.resourceName()}-${domain.attrId}`,
@@ -366,113 +483,9 @@ export class DataZoneL3Construct extends MdaaL3Construct {
         };
         new CfnOwner(domain, `owner-cdk-user-${ownerName}`, cfnOwnerProps);
       });
-
-      const createdDomainUnits = this.createDomainUnits(
-        domain,
-        domain.attrId,
-        domain.attrRootDomainUnitId,
-        {
-          domainUsers: domainUsers,
-          domainGroups: domainGroups,
-          dataAdminUserProfile: dataAdminUserProfile,
-          associatedAccountCdkUserProfiles: associatedAccountCdkUserProfiles,
-        },
-        domainProps.domainUnits,
-      );
-
-      this.createDomainUnitGrant(domain, `root-grant-create-project`, kmsKey.keyArn, domainName, domain, {
-        policyType: 'CREATE_PROJECT',
-        detail: {
-          createProject: {
-            includeChildDomainUnits: true,
-          },
-        },
-        principal: {
-          user: {
-            userIdentifier: domainCdkUserId,
-          },
-        },
-      });
-
-      this.createDomainUnitGrant(domain, `root-grant-project-members`, kmsKey.keyArn, domainName, domain, {
-        policyType: 'ADD_TO_PROJECT_MEMBER_POOL',
-
-        detail: {
-          addToProjectMemberPool: {
-            includeChildDomainUnits: true,
-          },
-        },
-        principal: {
-          user: {
-            allUsersGrantFilter: {},
-          },
-        },
-      });
-      const glueCatalogArns = [
-        ...this.createDzGlueAccountStatementResources(this.account),
-        ...Object.entries(domainProps.associatedAccounts || {}).flatMap(x =>
-          this.createDzGlueAccountStatementResources(x[1].account),
-        ),
-      ];
-
-      const domainUnitIds = flattenDomainUnitPaths('', createdDomainUnits);
-
-      const domainConfigProps: DomainConfigProps = {
-        naming: this.props.naming,
-        domainName: domain.name,
-        domainArn: domain.attrArn,
-        domainId: domain.attrId,
-        adminUserProfileId: dataAdminUserProfile.attrId,
-        domainVersion,
-        domainKmsKeyArn: kmsKey.keyArn,
-        glueCatalogKmsKeyArns: glueCatalogKmsKeyArns,
-        domainKmsUsagePolicyName: domainKmsUsagePolicy.managedPolicyName,
-        domainUnits: domainUnitIds,
-        glueCatalogArns: glueCatalogArns,
-        domainCustomEnvBlueprintId: customEnvBlueprintConfig?.getAttString('id'),
-      };
-
-      const domainConfig = new DomainConfig(this, `domain-config-${domainName}`, domainConfigProps);
-      const configParamArns = domainConfig.createDomainConfigParams(domainName);
-
-      const baseConfigParam = new MdaaParamAndOutput(this, {
-        createOutputs: false,
-        resourceType: 'domain',
-        resourceId: domainName,
-        name: `config`,
-        tier: ParameterTier.ADVANCED,
-        value: JSON.stringify(configParamArns, undefined, 2),
-        ...this.props,
-      });
-
-      const configParamRamShareProps: CfnResourceShareProps = {
-        name: this.props.naming.resourceName(`domain-config-ssm-${domainName}`),
-        resourceArns: [baseConfigParam.param!.parameterArn, ...configParamArns],
-        principals: Object.entries(domainProps.associatedAccounts).map(x => x[1].account),
-      };
-      const configRamShare = new CfnResourceShare(
-        this,
-        `domain-config-ram-share-${domainName}`,
-        configParamRamShareProps,
-      );
-
-      Object.entries(domainProps.associatedAccounts).forEach(associatedAccount => {
-        this.getRamAssociationMonitor(
-          domain,
-          `domain-config-ram-association-monitor-${associatedAccount[0]}`,
-          configRamShare,
-          associatedAccount[1].account,
-        );
-        this.createAssociatedAccountStackResources(
-          associatedAccount[0],
-          associatedAccount[1],
-          baseConfigParam.paramName,
-          domainKmsUsagePolicyName,
-          keyAccessAccounts,
-          domainName,
-        );
-      });
+      return associatedAccountCdkUserProfiles;
     }
+    return {};
   }
   private createDzGlueAccountStatementResources(account: string): string[] {
     return [
