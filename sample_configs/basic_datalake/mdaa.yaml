@@ -9,7 +9,7 @@ tag_configs:
 ## Pre-Deployment Instructions
 
 # TODO: Set an appropriate, unique organization name
-# Failure to do so may resulting in global naming conflicts.
+# Failure to do so may result in global naming conflicts.
 organization: <unique-org-name>
 
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
@@ -27,7 +27,7 @@ domains:
         # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
         # specifies a deployment configuration file if required.
         modules:
-          # This module will create all of the roles required for the datalake, as well as dataops layers running on top
+          # This module will create all the roles required for the datalake, as well as dataops layers running on top
           roles: # The module name (ie 'roles') will be incorporated into resource name by the default naming implementation.
             module_path: "@aws-mdaa/roles"
             module_configs:

@@ -81,7 +81,7 @@ export interface JobConfig {
   /**
    * Default arguments which will be supplied to the job
    */
-  readonly defaultArguments?: { [key: string]: string };
+  readonly defaultArguments?: ConfigurationElement;
   /**
    * Description of the job
    */
@@ -219,14 +219,13 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     extract: boolean,
   ): BucketDeployment {
     // Deploy Source asset(s) to /deployment/libs/<job> location.
-    const additionalFileDeployment = new BucketDeployment(this.scope, deploymentId, {
+    return new BucketDeployment(this.scope, deploymentId, {
       sources: additionalFilesSources,
       destinationBucket: projectBucket,
       destinationKeyPrefix: deploymentPath,
       role: deploymentRole,
       extract: extract,
     });
-    return additionalFileDeployment;
   }
 
   private addAdditionalScripts(
@@ -234,9 +233,7 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     jobConfig: JobConfig,
     projectBucket: IBucket,
     deploymentRole: IRole,
-    defaultArguments: {
-      [key: string]: string;
-    },
+    defaultArguments: ConfigurationElement,
   ) {
     if (jobConfig.additionalScripts) {
       /**
@@ -289,17 +286,14 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     jobConfig: JobConfig,
     projectBucket: IBucket,
     deploymentRole: IRole,
-    defaultArguments: {
-      [key: string]: string;
-    },
+    defaultArguments: ConfigurationElement,
   ) {
     if (jobConfig.additionalJars) {
       // Create Source asset for each directory
       const additionalFilesSources = jobConfig.additionalJars.map(fullFileName => {
         const filePath = path.dirname(fullFileName.trim());
         const fileName = path.basename(fullFileName.trim());
-        const fileSource = Source.asset(filePath, { exclude: ['**', `!${fileName}`] });
-        return fileSource;
+        return Source.asset(filePath, { exclude: ['**', `!${fileName}`] });
       });
       const deploymentPath = `deployment/libs/${jobName}`;
 
@@ -331,17 +325,14 @@ export class GlueJobL3Construct extends MdaaL3Construct {
     jobConfig: JobConfig,
     projectBucket: IBucket,
     deploymentRole: IRole,
-    defaultArguments: {
-      [key: string]: string;
-    },
+    defaultArguments: ConfigurationElement,
   ) {
     if (jobConfig.additionalFiles) {
       // Create Source asset for each directory
       const additionalFilesSources = jobConfig.additionalFiles.map(fullFileName => {
         const filePath = path.dirname(fullFileName.trim());
         const fileName = path.basename(fullFileName.trim());
-        const fileSource = Source.asset(filePath, { exclude: ['**', `!${fileName}`] });
-        return fileSource;
+        return Source.asset(filePath, { exclude: ['**', `!${fileName}`] });
       });
       const deploymentPath = `deployment/files/${jobName}`;
       const additionalFileDeployment = this.deployAdditionalFiles(
@@ -451,6 +442,11 @@ export class GlueJobL3Construct extends MdaaL3Construct {
       );
     } else {
       console.log(`Continuous logging not enabled for job: ${jobName}`);
+    }
+
+    const inputParams = defaultArguments['--input_params'];
+    if (inputParams) {
+      defaultArguments['--input_params'] = JSON.stringify(inputParams);
     }
 
     const job = new MdaaCfnJob(this.scope, `${jobName}-job`, {

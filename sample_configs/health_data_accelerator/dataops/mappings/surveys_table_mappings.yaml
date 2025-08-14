@@ -1,0 +1,125 @@
+# Name of the DataOps Project 
+projectName: hda-project
+
+dms:
+  replicationTasks:
+    test-task:
+      tableMappings:
+        rules: [
+          {
+            "rule-type": "selection",
+            "rule-id": "13",
+            "rule-name": "13",
+            "object-locator": {
+              "schema-name": "survey",
+              "table-name": "survey"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "14",
+            "rule-name": "14",
+            "object-locator": {
+              "schema-name": "survey",
+              "table-name": "survey_assignment"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "15",
+            "rule-name": "15",
+            "object-locator": {
+              "schema-name": "survey",
+              "table-name": "survey_question"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "16",
+            "rule-name": "16",
+            "object-locator": {
+              "schema-name": "survey",
+              "table-name": "question"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "17",
+            "rule-name": "17",
+            "object-locator": {
+              "schema-name": "survey",
+              "table-name": "survey_response"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "18",
+            "rule-name": "18",
+            "object-locator": {
+              "schema-name": "survey",
+              "table-name": "trivia"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "19",
+            "rule-name": "19",
+            "object-locator": {
+              "schema-name": "survey",
+              "table-name": "survey_trivia"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "20",
+            "rule-name": "cdc timestamp seq",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%"
+            },
+            "rule-action": "add-column",
+            "value": "CDC_TIMESTAMP_SEQ",
+            "expression": "$AR_H_TIMESTAMP",
+            "data-type": {
+              "type": "datetime",
+              "precision": 6
+            }
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "21",
+            "rule-name": "cdc operation",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%"
+            },
+            "rule-action": "add-column",
+            "value": "CDC_OPERATION",
+            "expression": "$AR_H_OPERATION",
+            "data-type": {
+              "type": "string",
+              "length": 50
+            }
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "22",
+            "rule-name": "convert column names to uppercase",
+            "rule-action": "convert-uppercase",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%",
+              "column-name": "%"
+            }
+          }
+        ]

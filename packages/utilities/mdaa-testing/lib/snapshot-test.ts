@@ -97,8 +97,8 @@ export function snapShotTestApp(testNamePrefix: string, appProvider: () => cdk.A
   });
 }
 
-const MAX_STRING_LENGTH = 1000; 
-const REGEX_TIMEOUT_MS = 100; 
+const MAX_STRING_LENGTH = 1000;
+const REGEX_TIMEOUT_MS = 100;
 
 function safeRegexTest(pattern: RegExp, input: string): boolean {
   if (typeof input !== 'string' || input.length > MAX_STRING_LENGTH) {
@@ -124,30 +124,17 @@ function safeRegexTest(pattern: RegExp, input: string): boolean {
 
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isUuid = (val: unknown): boolean => {
-  return (
-    typeof val === 'string' &&
-    val.length === 36 && 
-    safeRegexTest(uuidRegex, val)
-  );
+  return typeof val === 'string' && val.length === 36 && safeRegexTest(uuidRegex, val);
 };
 
 const zipRegex = /^[0-9a-f]{64}\.zip$/i;
 const isZip = (val: unknown): boolean => {
-  return (
-    typeof val === 'string' &&
-    val.length === 68 && 
-    safeRegexTest(zipRegex, val)
-  );
+  return typeof val === 'string' && val.length === 68 && safeRegexTest(zipRegex, val);
 };
 
 const jsonRegex = /^[a-z0-9]{1,50}\.json$/i;
 const isGreedyJson = (val: unknown): boolean => {
-  return (
-    typeof val === 'string' &&
-    val.length >= 6 && 
-    val.length <= 55 && 
-    safeRegexTest(jsonRegex, val)
-  );
+  return typeof val === 'string' && val.length >= 6 && val.length <= 55 && safeRegexTest(jsonRegex, val);
 };
 
 const md5Regex = /^[0-9a-f]{32}$/i;
@@ -167,29 +154,19 @@ const isAssetHash = (val: unknown): boolean => {
 
 const s3BucketRegex = /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]-[0-9a-f]{8}$/;
 const isS3BucketWithSuffix = (val: unknown): boolean => {
-  return (
-    typeof val === 'string' &&
-    val.length >= 12 &&
-    val.length <= 63 && 
-    safeRegexTest(s3BucketRegex, val)
-  );
+  return typeof val === 'string' && val.length >= 12 && val.length <= 63 && safeRegexTest(s3BucketRegex, val);
 };
 
 const cfnLogicalIdRegex = /^[A-Za-z][A-Za-z0-9]{0,246}[0-9A-F]{8}$/;
 const isCfnLogicalId = (val: unknown): boolean => {
-  return (
-    typeof val === 'string' &&
-    val.length >= 9 && 
-    val.length <= 255 && 
-    safeRegexTest(cfnLogicalIdRegex, val)
-  );
+  return typeof val === 'string' && val.length >= 9 && val.length <= 255 && safeRegexTest(cfnLogicalIdRegex, val);
 };
 
 const arnWithAccountRegex = /^arn:aws[a-z0-9-]*:[a-z0-9-]+:[a-z0-9-]*:\d{12}:/;
 const isArnWithAccount = (val: unknown): boolean => {
   return (
     typeof val === 'string' &&
-    val.length >= 20 && 
+    val.length >= 20 &&
     val.length <= MAX_STRING_LENGTH &&
     safeRegexTest(arnWithAccountRegex, val)
   );
@@ -197,12 +174,7 @@ const isArnWithAccount = (val: unknown): boolean => {
 
 const timestampRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z?$/;
 const isTimestamp = (val: unknown): boolean => {
-  return (
-    typeof val === 'string' &&
-    val.length >= 19 && 
-    val.length <= 24 && 
-    safeRegexTest(timestampRegex, val)
-  );
+  return typeof val === 'string' && val.length >= 19 && val.length <= 24 && safeRegexTest(timestampRegex, val);
 };
 
 function safeArnReplace(val: unknown): string {
@@ -284,10 +256,10 @@ function configureSnapshotSerializers(): void {
   });
 
   expect.addSnapshotSerializer({
-    test: (val: unknown): boolean => typeof val === 'string' && val.includes('[MDAA:') && /:\d+:\d+\]/.test(val),
+    test: (val: unknown): boolean => typeof val === 'string' && val.includes('[MDAA:') && /:\d+:\d+]/.test(val),
     print: (val: unknown): string => {
       const stringVal = typeof val === 'string' ? val : String(val);
-      return JSON.stringify(stringVal.replace(/(\[MDAA:[^:]+):\d+:\d+(\])/g, '$1:LINE:COL$2'));
+      return JSON.stringify(stringVal.replace(/(\[MDAA:[^:]+):\d+:\d+(])/g, '$1:LINE:COL$2'));
     },
   });
 }

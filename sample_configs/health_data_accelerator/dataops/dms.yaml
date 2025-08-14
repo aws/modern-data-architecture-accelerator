@@ -1,0 +1,138 @@
+# Name of the DataOps Project 
+projectName: hda-project
+
+# Contains all DMS related configuration
+dms:
+  # The role DMS tasks will run as. This role will require prior access to AWS-service based endpoints.
+  # Access to secrets referenced in the config will be granted automatically.
+  # Role must also have an assume role trust policy to the regional DMS service name: dms.<region>.amazonaws.com
+  dmsRoleArn: ssm:/{{org}}/shared/generated-role/dms/arn
+
+  # Replication instances which will be provisioned by the config
+  replicationInstances:
+    # Each instance has a unique name in the config
+    test-instance:
+      # The instance class.
+      # See https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.Types.html for options
+      instanceClass: dms.t3.micro
+      # The VPC Id on which the replication instance will be deployed
+      vpcId: "{{context:vpc_id}}"
+      # The subnets to which the replication instance will be connected.
+      subnetIds:
+        - "{{context:subnet_id1}}"
+        - "{{context:subnet_id2}}"
+  
+  # Endpoints which will be created by the config
+  endpoints:
+    # Each endpoint has a unique name
+    test-source:
+      # The type of endpoint--one of 'source' or 'target'
+      endpointType: source
+      # The endpoint engine name. 
+      # One of mysql | oracle | postgres | mariadb | aurora | aurora-postgresql | 
+      # opensearch | redshift | redshift-serverless |s3 | db2 | azuredb | sybase | 
+      # dynamodb | mongodb | kinesis | kafka | elasticsearch | docdb | sqlserver | neptune | postgres
+      engineName: postgres
+      # Name of the database
+      databaseName: "{{context:dms-source-db}}"
+      # The appropriate settings for the provided engine name.
+      postgreSqlSettings:
+        # Arn of the secret from which credentials will be read.
+        # The DMS role will be granted access to retrieve the secret
+        secretsManagerSecretArn: "{{context:dms-rds-secrets-arn}}"
+        # The DMS role will be granted decrypt access to this key
+        secretsManagerSecretKMSArn: "{{context:dms-rds-secrets-kms-arn}}"
+    test-target:
+      endpointType: target
+      engineName: s3
+      s3Settings:
+        bucketName: ssm:/{{org}}/shared/datalake/bucket/staging/name
+        bucketFolder: landing
+        includeOpForFullLoad: true
+        datePartitionEnabled: true
+        cdcInsertsAndUpdates: true
+        dataFormat: parquet
+        enableStatistics: true
+        addColumnName: true
+        parquetVersion: parquet-2-0
+        serverSideEncryptionKmsKeyId: ssm:/{{org}}/shared/datalake/kms/arn
+
+  # Replication tasks which will be created by the config.
+  replicationTasks:
+    # Each replication task has a unique name
+    test-task:
+      # The name of the replication instance to be used from the 'replicationInstances' section of the config
+      replicationInstance: test-instance
+      # The name of the source endpoint to be used from the 'endpoints' section of the config
+      sourceEndpoint: test-source
+      # The name of the target endpoint to be used from the 'endpoints' section of the config
+      targetEndpoint: test-target
+      # The type of migration
+      # One of `full-load` | `cdc` | `full-load-and-cdc`
+      migrationType: full-load-and-cdc
+      # Table mappings config to be used
+      # Will be passed directly to the task config.
+      tableMappings:
+        # same content as patients_mappings.json
+        rules: [
+          {
+            "rule-type": "selection",
+            "rule-id": "1",
+            "rule-name": "patients",
+            "object-locator": {
+              "schema-name": "public",
+              "table-name": "patient"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "2",
+            "rule-name": "cdc timestamp seq",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%"
+            },
+            "rule-action": "add-column",
+            "value": "CDC_TIMESTAMP_SEQ",
+            "expression": "$AR_H_TIMESTAMP",
+            "data-type": {
+              "type": "datetime",
+              "precision": 6
+            }
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "3",
+            "rule-name": "cdc operation",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%"
+            },
+            "rule-action": "add-column",
+            "value": "CDC_OPERATION",
+            "expression": "$AR_H_OPERATION",
+            "data-type": {
+              "type": "string",
+              "length": 50
+            }
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "4",
+            "rule-name": "convert column names to uppercase",
+            "rule-action": "convert-uppercase",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%",
+              "column-name": "%"
+            }
+          }
+        ]
+      # Further settings
+      replicationTaskSettings:
+        Logging:
+          EnableLogging: true

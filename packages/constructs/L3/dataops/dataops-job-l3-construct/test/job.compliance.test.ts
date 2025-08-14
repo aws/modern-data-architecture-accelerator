@@ -256,4 +256,34 @@ describe('MDAA Compliance Stack Tests', () => {
       });
     });
   });
+
+  describe('MDAA with input parameters', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+
+    const inputParamsObj = {
+      key1: 1,
+      key2: 'value2',
+    };
+
+    const testJobInputParamsProps: JobConfig = {
+      ...testJobProps,
+      defaultArguments: {
+        '--input_params': inputParamsObj,
+      },
+    };
+
+    new GlueJobL3Construct(stack, 'teststack', {
+      ...createConstructorProps(stack, testApp),
+      jobConfigs: { testJob: testJobInputParamsProps },
+    });
+    const template = Template.fromStack(testApp.testStack);
+
+    test('Validate resource counts', () => {
+      template.resourceCountIs('AWS::Glue::Job', 1);
+      const resources = template.findResources('AWS::Glue::Job');
+      const inputParams: string = resources['testJobjob'].Properties.DefaultArguments['--input_params'];
+      expect(JSON.parse(inputParams)).toEqual(inputParamsObj);
+    });
+  });
 });

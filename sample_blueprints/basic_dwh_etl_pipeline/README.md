@@ -17,7 +17,7 @@ The following instructions assume you have already deployed your Data Lake (poss
 
 1. Deploy sample configurations into the specified directory structure (or obtain from the MDAA repo under `sample_blueprints/basic_dwh_etl_pipeline`).
 
-2. Edit the `mdaa.yaml` to specify an organization name to replace `<unique-org-name>`. This must be a globally unqique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
+2. Edit the `mdaa.yaml` to specify an organization name to replace `<unique-org-name>`. This must be a globally unique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
 3. Review and Edit the `*.yaml` files to specify values for atttributes marked in angle brackets `<>` e.g. `<your-glue-catalog-database-name-for-raw-datasets>`.
 

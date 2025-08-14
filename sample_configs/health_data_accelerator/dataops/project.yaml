@@ -1,0 +1,36 @@
+# Arns for IAM roles which will be provided to the project's resources (IE bucket)
+dataAdminRoles:
+  # This is an arn which will be resolved first to a role ID for inclusion in the bucket policy.
+  # Note that this resolution will require iam:GetRole against this role arn for the role executing CDK.
+  - id: ssm:/{{org}}/shared/generated-role/data-admin/id
+
+# List of roles which will be used to execute dataops processes using project resources
+projectExecutionRoles:
+  - id: ssm:/{{org}}/shared/generated-role/glue-etl/id
+  - id: ssm:/{{org}}/{{domain}}/generated-role/file-manager-lambda-role/id
+  - id: ssm:/{{org}}/{{domain}}/generated-role/batch-generator-lambda-role/id
+  - id: ssm:/{{org}}/shared/generated-role/file-processor-glue-job-role/id
+  - id: ssm:/{{org}}/shared/generated-role/transformation-glue-job-role/id
+
+s3OutputKmsKeyArn: ssm:/{{org}}/shared/datalake/kms/arn
+glueCatalogKmsKeyArn: ssm:/{{org}}/shared/glue-catalog/kms/arn
+# List of Databases to create within the project.
+databases:
+  # This database will be used to illustrate access grants
+  # using LakeFormation.
+  raw_db:
+    description: Raw Database
+    # The data lake S3 bucket and prefix location where the database data is stored.
+    # Project execution roles will be granted access to create Glue tables
+    # which point to this location.
+    locationBucketName: ssm:/{{org}}/shared/datalake/bucket/raw/name
+    locationPrefix: data
+    icebergCompliantName: true
+  curated_db:
+    description: Curated Database
+    # The data lake S3 bucket and prefix location where the database data is stored.
+    # Project execution roles will be granted access to create Glue tables
+    # which point to this location.
+    locationBucketName: ssm:/{{org}}/shared/datalake/bucket/curated/name
+    locationPrefix: data
+    icebergCompliantName: true

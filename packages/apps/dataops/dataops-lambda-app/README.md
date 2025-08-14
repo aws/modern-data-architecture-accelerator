@@ -12,7 +12,7 @@ The Data Ops Lambda CDK application is used to deploy the resources required to 
 
 **Lambda Functions** - Lambda functions for use in DataOps
   
-* May be optionally VPC bound with configurable VPC, Subnet, and Security Group Paramters
+* May be optionally VPC bound with configurable VPC, Subnet, and Security Group Parameters
   * Can use an existing security group (from Project, for instance), or create a new security group per function
   * If creating a per-function security group:
     * All egress allowed by default (configurable)
@@ -47,7 +47,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
 # (Required) Name of the Data Ops Project
-# Name the the project the resources of which will be used by these functions.
+# Name the project the resources of which will be used by these functions.
 # Other resources within the project can be referenced in the functions config using
 # the "project:" prefix on the config value.
 projectName: dataops-project-test
@@ -63,7 +63,7 @@ functions:
   # Required function parameters
   - functionName: testfun # Function name. Must be unique within the config.
 
-    # (Optional) Fuction Description
+    # (Optional) Function Description
     description: Function descriptions
 
     # Function source code directory
@@ -81,11 +81,11 @@ functions:
     # Number of times Lambda (0-2) will retry before the invocation event
     # is sent to DLQ.
     retryAttempts: 2
-    # The max age of an invocation event before it is send to DLQ, either due to
+    # The max age of an invocation event before it is sent to DLQ, either due to
     # failure, or insufficient Lambda capacity.
     maxEventAgeSeconds: 3600
 
-    # (Optional) Number of seconds after which the function will timeout.
+    # (Optional) Number of seconds after which the function will time out.
     # Default is 3 seconds
     timeoutSeconds: 10
 
@@ -95,7 +95,7 @@ functions:
 
     # (Optional) Number of reserved concurrent instances to be configured on the function.
     # Ensures function always has this amount of concurrency available, but
-    # is subtracted from the overall account-wide concurrency limts.
+    # is subtracted from the overall account-wide concurrency limits.
     # Default is to not reserve concurrency, and use the account-wide pool.
     reservedConcurrentExecutions: 100
 

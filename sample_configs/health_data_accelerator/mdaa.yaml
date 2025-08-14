@@ -1,0 +1,140 @@
+# All resources will be deployed to the default region specified in the environment or AWS configurations.
+# Can optional specify a specific AWS Region Name.
+region: default
+
+# One or more tag files containing tags which will be applied to all deployed resources
+tag_configs:
+  - ./tags.yaml
+
+## Pre-Deployment Instructions
+
+# TODO: Set an appropriate, unique organization name
+# Failure to do so may result in global naming conflicts.
+organization: <unique-org-name>
+
+# TODO: Set appropriate context values for your environment.
+context:
+  dms-source-db: <dms source relational db database name>
+  dms-rds-secrets-arn: <arn of the AWS secrets manager secret containing RDS credentials for DMS>
+  dms-rds-secrets-kms-arn: <arn of the KMS key to decrypt the above secret>
+  vpc_id: <your vpc id>
+  subnet_id1: <your subnet id1>
+  subnet_id2: <your subnet id2>
+  file_processor_event_bridge_trigger_hour: <file processor triggered every these hours>
+  file_processor_event_bridge_trigger_rate: <file processor processing these many days>
+  transformation_event_bridge_trigger_rate: <transformation processing these many days>
+  transformation_event_bridge_trigger_hour: <transformation triggered every these hours>
+
+# One or more domains may be specified. Domain name will be incorporated by default naming implementation
+# to prefix all resource names.
+domains:
+  # The named of the domain. In this case, we are building a 'shared' domain.
+  shared:
+    # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
+    environments:
+      # The environment name will be incorporated into resource name by the default naming implementation.
+      dev:
+        # The target deployment account can be specified per environment.
+        # If 'default' or not specified, the account configured in the environment will be assumed.
+        account: default
+        # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
+        # specifies a deployment configuration file if required.
+        modules:
+          # This module will create all the roles required for the datalake, as well as dataops layers running on top
+          roles: # The module name (ie 'roles') will be incorporated into resource name by the default naming implementation.
+            module_path: "@aws-mdaa/roles"
+            module_configs:
+              - ./roles.yaml
+
+          # This module will deploy the S3 data lake buckets.
+          # Coarse grained access may be granted directly to S3 for certain roles.
+          datalake:
+            module_path: "@aws-mdaa/datalake"
+            module_configs:
+              - ./datalake/datalake.yaml
+
+          # This module will ensure that LakeFormation is configured to
+          # automatically generate IAMAllowedPrincipal grants on new databases and tables.
+          # This effectively delegates all Glue resource access controls
+          # to IAM.
+          lakeformation-settings:
+            module_path: "@aws-mdaa/lakeformation-settings"
+            module_configs:
+              - ./datalake/lakeformation-settings.yaml
+
+          # This module will create an Athena Workgroup which can be used to query
+          # the data lake.
+          athena:
+            module_path: "@aws-mdaa/athena-workgroup"
+            module_configs:
+              - ./datalake/athena.yaml
+
+          # This module will create a secure S3-based bucket for use as a Cloudtrail Inventory target.
+          audit:
+            module_path: "@aws-mdaa/audit"
+            module_configs:
+              - ./governance/audit.yaml
+
+          # This module will create a secure S3-based Audit Trail.
+          audit-trail:
+            module_path: "@aws-mdaa/audit-trail"
+            module_configs:
+              - ./governance/audit-trail.yaml
+
+          # This module will ensure the Glue Catalog is KMS encrypted.
+          # Comment this out if there are multiple MDAA deployments into an account.
+          glue-catalog:
+            module_path: "@aws-mdaa/glue-catalog"
+
+  # The named of the domain. In this case, we are building a 'dataops' domain.
+  dataops:
+    # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
+    environments:
+      # The environment name will be incorporated into resource name by the default naming implementation.
+      dev:
+        # The target deployment account can be specified per environment.
+        # If 'default' or not specified, the account configured in the environment will be assumed.
+        account: default
+        # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
+        # specifies a deployment configuration file if required.
+        modules:
+          # This module will create all the roles required for the datalake, as well as dataops layers running on top
+          roles: # The module name (ie 'roles') will be incorporated into resource name by the default naming implementation.
+            module_path: "@aws-mdaa/roles"
+            module_configs:
+              - ./dataops/roles.yaml
+
+          # This module will create DataOps Project resources which can be shared
+          # across multiple
+          hda-project:
+            module_path: "@aws-mdaa/dataops-project"
+            module_configs:
+              - ./dataops/project.yaml
+          dynamodb-tables:
+            module_path: "@aws-mdaa/dataops-dynamodb"
+            module_configs:
+              - ./dataops/dynamodb.yaml
+          # This module will ensure the Glue Catalog is KMS encrypted.
+          # Comment this out if there are multiple MDAA deployments into an account.
+          glue-jobs:
+            module_path: "@aws-mdaa/dataops-job"
+            module_configs:
+              - ./dataops/jobs.yaml
+          # file manager to manage data from the staging bucket
+          hda-function:
+            module_path: "@aws-mdaa/dataops-lambda"
+            module_configs:
+              - ./dataops/lambda.yaml
+          file-workflow:
+            cdk_app: "@aws-mdaa/dataops-stepfunction"
+            app_configs:
+              - ./dataops/stepfunction.yaml
+          # actions and resources created before other dms modules
+          dms-shared:
+            module_path: "@aws-mdaa/dataops-dms"
+            module_configs:
+              - ./dataops/dms-shared.yaml
+          dms:
+            module_path: "@aws-mdaa/dataops-dms"
+            module_configs:
+              - ./dataops/dms.yaml

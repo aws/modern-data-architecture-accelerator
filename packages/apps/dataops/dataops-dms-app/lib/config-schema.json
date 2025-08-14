@@ -68,6 +68,9 @@
         "DMSProps": {
             "additionalProperties": false,
             "properties": {
+                "createDmsLogRole": {
+                    "type": "boolean"
+                },
                 "createDmsVpcRole": {
                     "type": "boolean"
                 },

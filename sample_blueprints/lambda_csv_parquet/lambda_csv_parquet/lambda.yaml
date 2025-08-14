@@ -11,7 +11,7 @@ functions:
       # See https://aws-sdk-pandas.readthedocs.io/en/latest/install.html#aws-lambda-layer
       - "arn:aws:lambda:{{region}}:336392948345:layer:AWSSDKPandas-Python313:1"
 
-    # (Optional) Fuction Description
+    # (Optional) Function Description
     description: Transforms CSVs into Parquet
 
     # Function source code directory
@@ -29,12 +29,12 @@ functions:
     # Number of times Lambda (0-2) will retry before the invocation event
     # is sent to DLQ.
     retryAttempts: 2
-    # The max age of an invocation event before it is send to DLQ, either due to
+    # The max age of an invocation event before it is sent to DLQ, either due to
     # failure, or insufficient Lambda capacity.
     maxEventAgeSeconds: 3600
 
-    # (Optional) Number of seconds after which the function will timeout.
-    # Setting to 300s (5 min) to allow time for transformation. May need to increase to accomodate larger files.
+    # (Optional) Number of seconds after which the function will time out.
+    # Setting to 300s (5 min) to allow time for transformation. May need to increase to accommodate larger files.
     timeoutSeconds: 300
 
     environment:
@@ -62,7 +62,7 @@ functions:
       # List of s3 buckets and prefixes which will be monitored via EventBridge in order to trigger this function
       # Note that the S3 Bucket must have Event Bridge Notifications enabled.
       s3EventBridgeRules:
-        csv-upload-event:
+        staging-update-event:
           # The bucket producing event notifications
           buckets:
             - "{{context:datalake_src_bucket_name}}"

@@ -31,7 +31,6 @@ cdk.context.json
 __pycache__
 .nx
 test-template.json
-.venv
 .terraform*
 **/*.drawio.bkp
 *.zip
@@ -42,3 +41,5 @@ deployment/cdk-solution-helper/package-lock.json
 deployment/global-s3-assets*
 deployment/regional-s3-assets*
 !jest.config.snapshot.js
+.venv
+.coverage

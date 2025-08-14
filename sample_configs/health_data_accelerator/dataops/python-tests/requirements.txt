@@ -1,0 +1,14 @@
+# Python testing dependencies for Health Data Accelerator
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.1
+moto[dynamodb,s3,glue]>=4.2.0
+boto3>=1.28.0
+botocore>=1.31.0
+coverage>=7.2.0
+
+# For Glue job testing
+pyspark>=3.4.0
+
+# For mocking AWS services
+responses>=0.23.0

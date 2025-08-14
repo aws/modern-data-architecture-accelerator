@@ -442,6 +442,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       keyAccessPolicy.addStatements(keyAccessStatement);
     }
   }
+
   private createAthenaWorkgroup(datazoneUserRole: Role, projectBucket: IBucket, datazoneEnv?: CfnEnvironment) {
     const athenaWgProps: AthenaWorkgroupL3ConstructProps = {
       dataAdminRoles: this.props.dataAdminRoleRefs,
@@ -465,6 +466,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       Tags.of(athenaWg.workgroup).add('AmazonDataZoneDomain', datazoneEnv.domainIdentifier);
     }
   }
+
   private createLakeFormationRole() {
     return new MdaaRole(this.scope, 'lake-formation-role', {
       naming: this.props.naming,
@@ -803,6 +805,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
     return securityGroup;
   }
+
   /** @jsii ignore */
   private createProjectConnectors(
     connections: NamedConnectionProps,
@@ -842,6 +845,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       this.createProjectSSMParam(`ssm-connection-${connectionName}`, `connections/${connectionName}`, resourceName);
     });
   }
+
   private createProjectClassifiers(classifiers: NamedClassifierProps) {
     Object.entries(classifiers).forEach(entry => {
       const classifierName = entry[0];
@@ -864,6 +868,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       this.createProjectSSMParam(`ssm-classifier-${classifierName}`, `classifiers/${classifierName}`, resourceName);
     });
   }
+
   private createProjectSecurityConfig(projectKmsKey: IMdaaKmsKey, s3OutputKmsKey: IKey): SecurityConfiguration {
     //Create project security Config
     const projectSecurityConfig = new MdaaSecurityConfig(this.scope, `security-config`, {
@@ -894,7 +899,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       const databaseProps = entry[1];
 
       const dbName = databaseProps.verbatimName ? databaseName : this.props.naming.resourceName(databaseName);
-      const dbResourceName = databaseProps.icebergCompliantName ? dbName.replace('-', '_') : dbName;
+      const dbResourceName = databaseProps.icebergCompliantName ? dbName.replace(/-/g, '_') : dbName;
       const databaseBucket = databaseProps.locationBucketName
         ? MdaaBucket.fromBucketName(this, `database-bucket-${databaseName}`, databaseProps.locationBucketName)
         : projectBucket;
@@ -1134,6 +1139,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       return undefined;
     }
   }
+
   private tryParseArn(arnString: string): ArnComponents | undefined {
     try {
       return Arn.split(arnString, ArnFormat.NO_RESOURCE_NAME);
@@ -1141,6 +1147,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       return undefined;
     }
   }
+
   private createLakeFormationGrantProps(dbResourceName: string, dbGrantProps: DatabaseGrantProps): GrantProps {
     const databasePermissions =
       LakeFormationAccessControlL3Construct.DATABASE_PERMISSIONS_MAP[dbGrantProps.databasePermissions || 'read'];

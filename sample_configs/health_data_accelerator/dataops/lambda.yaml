@@ -1,0 +1,145 @@
+# The dataops project name is the MDAA module name for the project.
+projectName: hda-project
+
+# List of functions definitions
+functions:
+  # File manager lambda
+  - functionName: file-manager # Function name. Must be unique within the config.
+
+    # (Optional) Function Description
+    description: File manager for the staging bucket
+
+    # Function source code directory
+    srcDir: "./src/lambda/file_manager"
+
+    # Code path to the Lambda handler function.
+    handler: odpf_file_manager.lambda_handler
+
+    # The runtime for the function source code.
+    runtime: python3.13
+
+    # The role with which the Lambda function will be executed
+    roleArn: ssm:/{{org}}/dataops/generated-role/file-manager-lambda-role/arn
+
+    # Number of times Lambda (0-2) will retry before the invocation event
+    # is sent to DLQ.
+    retryAttempts: 2
+    # The max age of an invocation event before it is sent to DLQ, either due to
+    # failure, or insufficient Lambda capacity.
+    maxEventAgeSeconds: 3600
+
+    # (Optional) Number of seconds after which the function will time out.
+    # Setting to 300s (5 min) to allow time for transformation. May need to increase to accommodate larger files.
+    timeoutSeconds: 300
+
+    environment:
+      DMS_TRACKER_TABLE: project:dynamodb/name/file_tracker
+
+    # (Optional) Size of function execution memory in MB
+    # Default is 128MB
+    memorySizeMB: 128
+
+    # (Optional) Size of function ephemeral storage in MB
+    # Default is 1024MB
+    ephemeralStorageSizeMB: 1024
+
+    # Integration with Event Bridge for the purpose
+    # of triggering this function with Event Bridge rules
+    eventBridge:
+      # Number of times Event Bridge will attempt to trigger this function
+      # before sending event to DLQ. Note that Event Bridge Lambda invocation
+      # is async, so Lambda Function execution errors will generally be handled
+      # on the Lambda side itself.
+      retryAttempts: 10
+      # The max age of an event before Event Bridges sends it to DLQ.
+      maxEventAgeSeconds: 3600
+      # List of s3 buckets and prefixes which will be monitored via EventBridge in order to trigger this function
+      # Note that the S3 Bucket must have Event Bridge Notifications enabled.
+      s3EventBridgeRules:
+        file-manager-s3-events:
+          # The bucket producing event notifications
+          buckets:
+            - ssm:/{{org}}/shared/datalake/bucket/staging/name
+  # batch processor lambda
+  - functionName: batch-generator # Function name. Must be unique within the config.
+
+    # (Optional) Function Description
+    description: Batch processor reading from tracking db
+
+    # Function source code directory
+    srcDir: "./src/lambda/file_processor"
+
+    # Code path to the Lambda handler function.
+    handler: odpf_batch_generator_lambda.lambda_handler
+
+    # The runtime for the function source code.
+    runtime: python3.13
+
+    # The role with which the Lambda function will be executed
+    roleArn: ssm:/{{org}}/dataops/generated-role/batch-generator-lambda-role/arn
+
+    # Number of times Lambda (0-2) will retry before the invocation event
+    # is sent to DLQ.
+    retryAttempts: 2
+    # The max age of an invocation event before it is sent to DLQ, either due to
+    # failure, or insufficient Lambda capacity.
+    maxEventAgeSeconds: 3600
+
+    # (Optional) Number of seconds after which the function will time out.
+    # Setting to 300s (5 min) to allow time for transformation. May need to increase to accommodate larger files.
+    timeoutSeconds: 300
+
+    environment:
+      ODPF_RAW_TABLE_CONFIG_DDB_TABLE_NAME: project:dynamodb/name/odpf_raw_table_config
+      ODPF_BATCH_CONFIG_DDB_TABLE_NAME:     project:dynamodb/name/odpf_batch_config
+
+    # (Optional) Size of function execution memory in MB
+    # Default is 128MB
+    memorySizeMB: 128
+
+    # (Optional) Size of function ephemeral storage in MB
+    # Default is 1024MB
+    ephemeralStorageSizeMB: 1024
+
+  # file processor trigger lambda
+  - functionName: file_processor_trigger # Function name. Must be unique within the config.
+
+    # (Optional) Function Description
+    description: triggers glue job
+
+    # Function source code directory
+    srcDir: "./src/lambda/file_processor"
+
+    # Code path to the Lambda handler function.
+    handler: odpf_file_processor_trigger_lambda.lambda_handler
+
+    # The runtime for the function source code.
+    runtime: python3.13
+
+    # The role with which the Lambda function will be executed
+    roleArn: ssm:/{{org}}/dataops/generated-role/file-processor-trigger-lambda-role/arn
+
+    # Number of times Lambda (0-2) will retry before the invocation event
+    # is sent to DLQ.
+    retryAttempts: 2
+    # The max age of an invocation event before it is sent to DLQ, either due to
+    # failure, or insufficient Lambda capacity.
+    maxEventAgeSeconds: 3600
+
+    # (Optional) Number of seconds after which the function will time out.
+    # Setting to 300s (5 min) to allow time for transformation. May need to increase to accommodate larger files.
+    timeoutSeconds: 300
+
+    environment:
+      ODPF_FILE_TRACKER_DDB_TABLE_NAME: project:dynamodb/name/file_tracker
+      ODPF_FILE_TRACKER_HISTORY_DDB_TABLE_NAME:     project:dynamodb/name/file_tracker_history
+      ODPF_FILE_PROCESSING_TRACKER_DDB_TABLE_NAME:     project:dynamodb/name/odpf_file_processing_tracker
+      ODPF_FILE_PROCESSING_TRACKER_HISTORY_DDB_TABLE_NAME:     project:dynamodb/name/odpf_file_processing_tracker_history
+
+    # (Optional) Size of function execution memory in MB
+    # Default is 128MB
+    memorySizeMB: 128
+
+    # (Optional) Size of function ephemeral storage in MB
+    # Default is 1024MB
+    ephemeralStorageSizeMB: 1024

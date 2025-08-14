@@ -322,6 +322,7 @@ export interface NamedReplicationTaskProps {
 export interface DMSProps {
   readonly dmsRoleArn?: string;
   readonly createDmsVpcRole?: boolean;
+  readonly createDmsLogRole?: boolean;
   readonly replicationInstances?: NamedReplicationInstanceProps;
   readonly endpoints?: NamedEndpointProps;
   readonly replicationTasks?: NamedReplicationTaskProps;
@@ -389,14 +390,18 @@ export class DMSL3Construct extends MdaaL3Construct {
     // if user explicitly wants to create the dms-vpc-role
     const dmsVpcRole =
       props.dms.createDmsVpcRole === true ? (this.createDmsVpcRole().node.defaultChild as CfnResource) : undefined;
+    // if user explicitly wants to create the dms-vpc-role
+    const dmsLogRole =
+      props.dms.createDmsLogRole === true ? (this.createDmsLogRole().node.defaultChild as CfnResource) : undefined;
     const replicationInstances = this.createReplicationInstances(dmsVpcRole);
     const endpoints = this.createEndpoints(dmsRole);
-    this.createReplicationTasks(replicationInstances, endpoints);
+    this.createReplicationTasks(replicationInstances, endpoints, dmsLogRole);
   }
 
   private createReplicationTasks(
     replicationInstances: { [name: string]: CfnReplicationInstance },
     endpoints: { [name: string]: CfnEndpoint },
+    logRole: CfnResource | undefined,
   ) {
     Object.entries(this.props.dms.replicationTasks || {}).forEach(([taskName, taskProps]) => {
       const replicationInstanceArn = taskProps.replicationInstance
@@ -425,7 +430,10 @@ export class DMSL3Construct extends MdaaL3Construct {
           ? JSON.stringify(taskProps.replicationTaskSettings)
           : undefined,
       };
-      new CfnReplicationTask(this, `replication-task-${taskName}`, cfnTaskProps);
+      const task = new CfnReplicationTask(this, `replication-task-${taskName}`, cfnTaskProps);
+      if (logRole) {
+        task.addDependency(logRole);
+      }
     });
   }
 
@@ -450,6 +458,25 @@ export class DMSL3Construct extends MdaaL3Construct {
         id: 'AwsSolutions-IAM4',
         reason:
           'AmazonDMSVPCManagementRole has explicit actions but requires wildcard resource so all VPCs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DMS_migration-IAM.dms-vpc-role.html',
+      },
+    ];
+    MdaaNagSuppressions.addConfigResourceSuppressions(role, suppressions, true);
+    return role;
+  }
+
+  private createDmsLogRole(): MdaaRole {
+    const role = new MdaaRole(this, 'dms-cloudwatch-logs-role', {
+      naming: this.props.naming,
+      roleName: 'dms-cloudwatch-logs-role',
+      verbatimRoleName: true,
+      assumedBy: new ServicePrincipal('dms.amazonaws.com'),
+      managedPolicies: [ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonDMSCloudWatchLogsRole')],
+    });
+    const suppressions: SuppressionProps[] = [
+      {
+        id: 'AwsSolutions-IAM4',
+        reason:
+          'AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole',
       },
     ];
     MdaaNagSuppressions.addConfigResourceSuppressions(role, suppressions, true);

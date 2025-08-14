@@ -1,0 +1,12 @@
+{
+  "tables": [
+    {
+      "database": "hda",
+      "schema": "public",
+      "table_name": "patient",
+      "primary_key": "ID",
+      "partition_key": "ID",
+      "precombine_field": "CDC_TIMESTAMP_SEQ"
+    }
+  ]
+}

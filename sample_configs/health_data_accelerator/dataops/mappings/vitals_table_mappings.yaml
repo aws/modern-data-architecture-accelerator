@@ -1,0 +1,105 @@
+# Name of the DataOps Project 
+projectName: hda-project
+
+dms:
+  replicationTasks:
+    test-task:
+      tableMappings:
+        rules: [
+          {
+            "rule-type": "selection",
+            "rule-id": "5",
+            "rule-name": "5",
+            "object-locator": {
+              "schema-name": "vital",
+              "table-name": "vital_reading"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "6",
+            "rule-name": "6",
+            "object-locator": {
+              "schema-name": "vital",
+              "table-name": "vital_sign"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "7",
+            "rule-name": "7",
+            "object-locator": {
+              "schema-name": "vital",
+              "table-name": "alert"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "8",
+            "rule-name": "8",
+            "object-locator": {
+              "schema-name": "vital",
+              "table-name": "alert_category"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "selection",
+            "rule-id": "9",
+            "rule-name": "9",
+            "object-locator": {
+              "schema-name": "vital",
+              "table-name": "mview-vital-reading-grouped-old"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "19",
+            "rule-name": "cdc timestamp seq",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%"
+            },
+            "rule-action": "add-column",
+            "value": "CDC_TIMESTAMP_SEQ",
+            "expression": "$AR_H_TIMESTAMP",
+            "data-type": {
+              "type": "datetime",
+              "precision": 6
+            }
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "20",
+            "rule-name": "cdc operation",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%"
+            },
+            "rule-action": "add-column",
+            "value": "CDC_OPERATION",
+            "expression": "$AR_H_OPERATION",
+            "data-type": {
+              "type": "string",
+              "length": 50
+            }
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "21",
+            "rule-name": "convert column names to uppercase",
+            "rule-action": "convert-uppercase",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%",
+              "column-name": "%"
+            }
+          }
+        ]

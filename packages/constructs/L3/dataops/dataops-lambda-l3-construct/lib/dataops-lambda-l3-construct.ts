@@ -43,7 +43,7 @@ export interface VpcConfigProps {
   readonly subnetIds: string[];
   /**
    * If specified, the function will use this security group for
-   * it's VPC connection. Otherwise a new security group will
+   * its VPC connection. Otherwise, a new security group will
    * be created.
    */
   readonly securityGroupId?: string;

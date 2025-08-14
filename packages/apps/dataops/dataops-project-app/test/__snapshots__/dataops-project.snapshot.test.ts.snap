@@ -4266,7 +4266,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
               "TableWildcard": {},
             },
           },
@@ -4307,7 +4307,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
               "TableWildcard": {},
             },
           },
@@ -4337,7 +4337,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
               "TableWildcard": {},
             },
           },
@@ -4370,7 +4370,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
               "TableWildcard": {},
             },
           },
@@ -4411,7 +4411,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
               "TableWildcard": {},
             },
           },
@@ -4443,7 +4443,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             },
           },
         },
@@ -4482,7 +4482,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             },
           },
         },
@@ -4510,7 +4510,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             },
           },
         },
@@ -4541,7 +4541,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             },
           },
         },
@@ -4580,7 +4580,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
               "CatalogId": {
                 "Ref": "AWS::AccountId",
               },
-              "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+              "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             },
           },
         },
@@ -5589,7 +5589,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+          "Value": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -5738,7 +5738,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
           "DatabaseInput": {
             "Description": "Test Database 5",
             "LocationUri": "s3://some-bucket-name/data/test5",
-            "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
           },
         },
         "Type": "AWS::Glue::Database",
@@ -10076,7 +10076,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             "TableWildcard": {},
           },
         },
@@ -10117,7 +10117,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             "TableWildcard": {},
           },
         },
@@ -10147,7 +10147,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             "TableWildcard": {},
           },
         },
@@ -10180,7 +10180,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             "TableWildcard": {},
           },
         },
@@ -10221,7 +10221,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "DatabaseName": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "DatabaseName": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
             "TableWildcard": {},
           },
         },
@@ -10253,7 +10253,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
           },
         },
       },
@@ -10292,7 +10292,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
           },
         },
       },
@@ -10320,7 +10320,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
           },
         },
       },
@@ -10351,7 +10351,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
           },
         },
       },
@@ -10390,7 +10390,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
             "CatalogId": {
               "Ref": "AWS::AccountId",
             },
-            "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+            "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
           },
         },
       },
@@ -11399,7 +11399,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+        "Value": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -11548,7 +11548,7 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
         "DatabaseInput": {
           "Description": "Test Database 5",
           "LocationUri": "s3://some-bucket-name/data/test5",
-          "Name": "test_org-test-env-test-domain-test-dataops-project-main-test-database5",
+          "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
         },
       },
       "Type": "AWS::Glue::Database",

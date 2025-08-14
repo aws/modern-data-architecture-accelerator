@@ -1,3 +1,8 @@
+/*!
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 const ACCOUNT_NAME_PATTERN = /^(?!D-|d-)([\da-zA-Z]+)(-*[\da-zA-Z])*/;
 
 export class InvalidAccountNameError implements Error {

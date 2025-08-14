@@ -1,0 +1,23 @@
+{
+  "name": "health-data-accelerator-dataops",
+  "version": "1.0.0",
+  "description": "Health Data Accelerator DataOps Python Testing",
+  "private": true,
+  "scripts": {
+    "test:python": "cd python-tests && ./.venv/bin/python -m pytest",
+    "test:python:install": "cd python-tests && python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt",
+    "test:python:coverage": "cd python-tests && ./.venv/bin/python -m pytest --cov-report=xml --cov-report=html",
+    "test:python:setup": "cd python-tests && chmod +x setup.sh && ./setup.sh",
+    "test:python:unit": "cd python-tests && ./venv/bin/python -m pytest -m unit",
+    "test:python:lambda": "cd python-tests && ./venv/bin/python -m pytest -m lambda",
+    "test:python:glue": "cd python-tests && ./venv/bin/python -m pytest -m glue"
+  },
+  "keywords": [
+    "health-data-accelerator",
+    "aws",
+    "lambda",
+    "glue",
+    "testing"
+  ],
+  "license": "Apache-2.0"
+}

@@ -7,6 +7,36 @@ exports[`dataops-dms Snapshot Tests DMS App App Snapshot Test 1`] = `
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-dms-main:role:dmscloudwatchlogsrole:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-dms-main:role:dmscloudwatchlogsrole:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-dms-main:role:dmscloudwatchlogsrole:name",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-dms-main:role:dmsvpcrole:arn",
         },
         "Value": {
@@ -163,6 +193,157 @@ exports[`dataops-dms Snapshot Tests DMS App App Snapshot Test 1`] = `
           },
           "Type": "String",
           "Value": "(SO0320-dataops-dms) Modern Data Architecture Accelerator. Version 1.0.0",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[CONFIG:test-config.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "dms.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "ManagedPolicyArns": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole",
+                ],
+              ],
+            },
+          ],
+          "RoleName": "dms-cloudwatch-logs-role",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-dms",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-dms-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[CONFIG:test-config.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dms-main/role/dms-cloudwatch-logs-role/arn",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-dms",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dms-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[CONFIG:test-config.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dms-main/role/dms-cloudwatch-logs-role/id",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-dms",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dms-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "RoleId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[CONFIG:test-config.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dms-main/role/dms-cloudwatch-logs-role/name",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-dms",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dms-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -656,6 +837,9 @@ exports[`dataops-dms Snapshot Tests DMS App App Snapshot Test 1`] = `
         "Type": "AWS::DMS::ReplicationSubnetGroup",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
         "Properties": {
           "MigrationType": "full-load",
           "ReplicationInstanceArn": {
@@ -913,6 +1097,36 @@ exports[`dataops-dms Snapshot Tests DMS Stack Snapshot Test 1`] = `
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-dms-main:role:dmscloudwatchlogsrole:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:role:dmscloudwatchlogsrole:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "RoleId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-dms-main:role:dmscloudwatchlogsrole:name",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-dms-main:role:dmsvpcrole:arn",
       },
       "Value": {
@@ -1069,6 +1283,157 @@ exports[`dataops-dms Snapshot Tests DMS Stack Snapshot Test 1`] = `
         },
         "Type": "String",
         "Value": "(SO0320-dataops-dms) Modern Data Architecture Accelerator. Version 1.0.0",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[CONFIG:test-config.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "dms.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole",
+              ],
+            ],
+          },
+        ],
+        "RoleName": "dms-cloudwatch-logs-role",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-dms",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-dms-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[CONFIG:test-config.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/role/dms-cloudwatch-logs-role/arn",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[CONFIG:test-config.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/role/dms-cloudwatch-logs-role/id",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "RoleId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[CONFIG:test-config.yaml] AmazonDMSCloudWatchLogsRole has explicit actions but requires wildcard resource so all logs would be covered by all DMS that use this role. See: https://docs.aws.amazon.com/dms/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonDMSCloudWatchLogsRole",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dms-main/role/dms-cloudwatch-logs-role/name",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-dms",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dms-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -1562,6 +1927,9 @@ exports[`dataops-dms Snapshot Tests DMS Stack Snapshot Test 1`] = `
       "Type": "AWS::DMS::ReplicationSubnetGroup",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
       "Properties": {
         "MigrationType": "full-load",
         "ReplicationInstanceArn": {

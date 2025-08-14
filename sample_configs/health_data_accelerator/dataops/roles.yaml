@@ -1,0 +1,156 @@
+generatePolicies:
+  FileManagerPolicy:
+    policyDocument:
+      Statement:
+        - SID: DynamoDBWriter
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:dynamodb:{{region}}:{{account}}:table/*"
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:TransactWriteItems
+            - dynamodb:DeleteItem
+            - dynamodb:GetItem
+            - dynamodb:Scan
+            - dynamodb:Query
+            - dynamodb:UpdateItem
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "DDB table name not known at deployment time."
+  StepFunctionLogPolicy:
+    policyDocument:
+      Statement:
+        - SID: GeneralLogging
+          Effect: Allow
+          Resource:
+            - "*"
+          Action:
+            - logs:CreateLogDelivery
+            - logs:GetLogDelivery
+            - logs:UpdateLogDelivery
+            - logs:DeleteLogDelivery
+            - logs:ListLogDeliveries
+            - logs:PutResourcePolicy
+            - logs:DescribeResourcePolicies
+            - logs:DescribeLogGroups
+        - SID: LogStreamLogging
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/stepfunction/*:*"
+          Action:
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "CloudWatch API actions, such as CreateLogDelivery and DescribeLogGroups, do not support Resource types defined by Amazon CloudWatch Logs"
+  DataOpsGlueJobPolicy:
+    policyDocument:
+      Statement:
+        - SID: GlueInvoker
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:glue:{{region}}:{{account}}:job/*"
+          Action:
+            - glue:StartJobRun
+            - glue:GetJobRun
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "Glue job name not known at deployment time."
+  BatchGeneratorDdbPolicy:
+    policyDocument:
+      Statement:
+        - SID: DynamoDBWriter
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:dynamodb:{{region}}:{{account}}:table/*"
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:Query
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "DDB table name not known at deployment time."
+  FileProcessorLambdaPolicy:
+    policyDocument:
+      Statement:
+        - SID: LambdaInvoker
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:lambda:{{region}}:{{account}}:function:*"
+          Action:
+            - lambda:InvokeFunction
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "Lambda name not known at deployment time."
+  FileProcessorLogPolicy:
+    policyDocument:
+      Statement:
+        - SID: GeneralLogging
+          Effect: Allow
+          Resource:
+            - "*"
+          Action:
+            - logs:CreateLogDelivery
+            - logs:GetLogDelivery
+            - logs:UpdateLogDelivery
+            - logs:DeleteLogDelivery
+            - logs:ListLogDeliveries
+            - logs:PutResourcePolicy
+            - logs:DescribeResourcePolicies
+            - logs:DescribeLogGroups
+        - SID: LogStreamLogging
+          Effect: Allow
+          Resource:
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/stepfunction/*:*"
+          Action:
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "CloudWatch API actions, such as CreateLogDelivery and DescribeLogGroups, do not support Resource types defined by Amazon CloudWatch Logs"
+
+
+# The list of roles which will be generated
+generateRoles:
+  file-manager-lambda-role:
+    trustedPrincipal: service:lambda.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    awsManagedPolicies:
+      - service-role/AWSLambdaBasicExecutionRole
+    generatedPolicies:
+      - FileManagerPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for usage"
+  file-processor-role:
+    trustedPrincipal: service:states.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    generatedPolicies:
+      - FileProcessorLambdaPolicy
+      - StepFunctionLogPolicy
+  transformation-role:
+    trustedPrincipal: service:states.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    generatedPolicies:
+      - DataOpsGlueJobPolicy
+      - StepFunctionLogPolicy
+  batch-generator-lambda-role:
+    trustedPrincipal: service:lambda.amazonaws.com
+    generatedPolicies:
+      - BatchGeneratorDdbPolicy
+    # A list of AWS managed policies which will be added to the role
+    awsManagedPolicies:
+      - service-role/AWSLambdaBasicExecutionRole
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for usage"
+  file-processor-trigger-lambda-role:
+    trustedPrincipal: service:lambda.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    generatedPolicies:
+      - DataOpsGlueJobPolicy
+    # A list of AWS managed policies which will be added to the role
+    awsManagedPolicies:
+      - service-role/AWSLambdaBasicExecutionRole
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for usage"

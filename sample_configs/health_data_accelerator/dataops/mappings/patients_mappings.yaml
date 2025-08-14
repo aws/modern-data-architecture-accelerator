@@ -1,0 +1,65 @@
+# Name of the DataOps Project 
+projectName: hda-project
+
+dms:
+  replicationTasks:
+    test-task:
+      tableMappings:
+        rules: [
+          {
+            "rule-type": "selection",
+            "rule-id": "1",
+            "rule-name": "patients",
+            "object-locator": {
+              "schema-name": "hda",
+              "table-name": "patients"
+            },
+            "rule-action": "include"
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "2",
+            "rule-name": "cdc timestamp seq",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%"
+            },
+            "rule-action": "add-column",
+            "value": "CDC_TIMESTAMP_SEQ",
+            "expression": "$AR_H_TIMESTAMP",
+            "data-type": {
+              "type": "datetime",
+              "precision": 6
+            }
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "3",
+            "rule-name": "cdc operation",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%"
+            },
+            "rule-action": "add-column",
+            "value": "CDC_OPERATION",
+            "expression": "$AR_H_OPERATION",
+            "data-type": {
+              "type": "string",
+              "length": 50
+            }
+          },
+          {
+            "rule-type": "transformation",
+            "rule-id": "4",
+            "rule-name": "convert column names to uppercase",
+            "rule-action": "convert-uppercase",
+            "rule-target": "column",
+            "object-locator": {
+              "schema-name": "%",
+              "table-name": "%",
+              "column-name": "%"
+            }
+          }
+        ]

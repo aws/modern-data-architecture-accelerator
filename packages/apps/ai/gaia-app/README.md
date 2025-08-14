@@ -133,11 +133,11 @@ gaia:
     existingPoolClientId: "{{resolve:ssm:/path/to/cognito_client_id}}"
     # The existing userpool domain, optionally can be supplied if authType is 'existing'
     existingPoolDomain: "{{resolve:ssm:/path/to/cognito_auth_url}}"
-    # Optionally provide the cognito user pool domain, but be globally unqique, required for authType ad
+    # Optionally provide the cognito user pool domain, but be globally unique, required for authType ad
     cognitoDomain: <globally-unique-cognito-domain>
     # Required if authType is ad, the path of the ssm parameter  for email claim as a string
     idpSamlEmailClaimParamPath: "/path/to/idp/saml/claim/email",
-    # Required if authType is ad, the path of the ssm parameter  for saml meta data file as a string
+    # Required if authType is ad, the path of the ssm parameter  for saml metadata file as a string
     idpSamlMetadataUrlOrFileParamPath: "/path/to/idp/saml/metadata"
   # GAIA is catered around a quick admin chat playground that is focused on RAG over chat, but GenAI cases are vast
   # so adopters can optionally choose to override any of the lambdas or code and if not provided falls back to default sample code

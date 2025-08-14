@@ -13,7 +13,7 @@ More predeployment info and procedures are available in [PREDEPLOYMENT](../../PR
 
 1. Deploy sample configurations into the specified directory structure (or obtain from the MDAA repo under `sample_configs/basic_datalake`).
 
-2. Edit the `mdaa.yaml` to specify an organization name. This must be a globally unqique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
+2. Edit the `mdaa.yaml` to specify an organization name. This must be a globally unique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
 3. If required, edit the `mdaa.yaml` to specify `context:` values specific to your environment.
 

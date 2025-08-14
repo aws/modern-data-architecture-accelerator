@@ -1,0 +1,71 @@
+# The name of the dataops project this crawler will be created within.
+# The dataops project name is the MDAA module name for the project.
+projectName: hda-project
+
+templates:
+  # An example job template. Can be referenced from other jobs. Will not itself be deployed.
+  hda-glue-template:
+    # (required) Command definition for the glue job
+    command:
+      name: "glueetl"
+      pythonVersion: "3"
+    # (required) Description of the Glue Job
+    description: Template to create a Job that transforms CSVs into Parquet
+    defaultArguments:
+      --enable-continuous-cloudwatch-log: "True"
+      --enable-job-insights: "True"
+      --enable-continuous-log-filter: "True"
+      --enable-glue-datacatalog: "True"
+      --enable-glue-catalog: "True"
+      --datalake-formats: "iceberg"
+      --input_params:
+        raw_bucket_name: ssm:/{{org}}/shared/datalake/bucket/raw/name
+        raw_catalog_name: project:databaseName/raw_db
+        curated_bucket_name: ssm:/{{org}}/shared/datalake/bucket/curated/name
+        curated_catalog_name: project:databaseName/curated_db
+    # (optional) maximum concurrent runs.  See: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html#aws-glue-api-jobs-job-ExecutionProperty
+    executionProperty:
+      maxConcurrentRuns: 100
+    # (optional) Glue version to use as a string.  See: https://docs.aws.amazon.com/glue/latest/dg/release-notes.html
+    glueVersion: "4.0"
+    maxRetries: 0
+    # (optional) Number of minutes to wait before sending a job run delay notification.
+    notificationProperty:
+      notifyDelayAfter: 1
+    # (optional) Number of workers to provision
+    #numberOfWorkers: 1
+    # (optional) Number of minutes to wait before considering the job timed out
+    timeout: 60
+    # (optional) Worker type to use.  Any of: "Standard" | "G.1X" | "G.2X"
+    # Use maxCapacity or WorkerType.  Not both.
+    # workerType: "G.1X"
+    # Viewing real-time logs provides you with a better perspective on the running job.
+    # https://docs.aws.amazon.com/glue/latest/dg/monitor-continuous-logging.html
+    continuousLogging:
+      # For allowed values, refer https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.RetentionDays.html
+      # Possible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0.
+      logGroupRetentionDays: 14
+
+jobs:
+  file-processor-glue-job:
+    template: "hda-glue-template" # Reference a job template.
+    command:
+      scriptLocation: ./src/glue/file_processor/odpf_file_processor.py
+      name: glueetl
+    allocatedCapacity: 2
+    executionRoleArn: ssm:/{{org}}/shared/generated-role/file-processor-glue-job-role/arn
+    description: Job for transforming staging data into data in raw bucket
+  vitals-transformation-glue-job:
+    template: "hda-glue-template" # Reference a job template.
+    command:
+      scriptLocation: ./src/glue/transformation/vitals_transformation_job.py
+      name: glueetl
+    executionRoleArn: ssm:/{{org}}/shared/generated-role/transformation-glue-job-role/arn
+    description: Job for transforming raw data to vitals tables in curated bucket
+  surveys-transformation-glue-job:
+    template: "hda-glue-template" # Reference a job template.
+    command:
+      scriptLocation: ./src/glue/transformation/surveys_transformation_job.py
+      name: glueetl
+    executionRoleArn: ssm:/{{org}}/shared/generated-role/transformation-glue-job-role/arn
+    description: Job for transforming raw data to survey tables in curated bucket

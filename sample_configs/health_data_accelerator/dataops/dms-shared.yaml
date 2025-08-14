@@ -1,0 +1,9 @@
+# Name of the DataOps Project 
+projectName: hda-project
+
+# Contains all DMS related configuration
+dms:
+  # decide if we need to create the one-per-account role of `dms-vpc-role` that is required before DMS is created
+  createDmsVpcRole: true
+  # decide if we need to create the one-per-account role of `dms-cloudwatch-log-role` that is required before DMS is created
+  createDmsLogRole: true
