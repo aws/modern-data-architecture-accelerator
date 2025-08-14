@@ -1,0 +1,16 @@
+projectName: project1
+
+crawlers:
+  crawler1:
+    executionRoleArn: ssm:/{{org}}/govern1/generated-role/glue-etl/arn
+    # (required) Reference back to the database name in the 'databases:' section of the crawler.yaml
+    databaseName: project:databaseName/sample-database1
+    # (required) Description of the crawler
+    description: Sample Data crawler
+    # (required) At least one target definition.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-targets.html
+    targets:
+      # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
+      s3Targets:
+        - path: s3://{{resolve:ssm:/{{org}}/data1/datalake/bucket/transformed/name}}/data/sample-database1/
+        
+

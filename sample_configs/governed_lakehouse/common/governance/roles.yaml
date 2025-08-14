@@ -1,0 +1,102 @@
+# yaml-language-server: $schema=../../../../../mdaa/schemas/@aws-mdaa/roles.json
+generatePolicies:
+  BasicDataPolicy:
+    policyDocument:
+      Statement:
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets
+            - s3:GetAccountPublicAccessBlock
+            - s3:GetBucketPublicAccessBlock
+            - s3:GetBucketPolicyStatus
+            - s3:GetBucketAcl
+            - s3:ListAccessPoints
+            - s3:GetBucketLocation
+          Resource: "*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+  
+  DataZoneListDomainsPolicy:
+    policyDocument:
+      Statement:
+        - Sid: DataZoneListDomains
+          Effect: Allow
+          Action:
+            - datazone:ListDomains
+          Resource: "*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "ListDomains requires wildcard resource access."
+
+# The list of roles which will be generated
+generateRoles:
+  glue-etl:
+    trustedPrincipal: service:glue.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    awsManagedPolicies:
+      - service-role/AWSGlueServiceRole
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueServiceRole approved for usage"
+
+  data-admin:
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - AmazonDataZoneFullAccess
+      - AWSGlueConsoleFullAccess
+      - AWSLakeFormationDataAdmin
+      - AWSLakeFormationCrossAccountManager
+    generatedPolicies:
+      - BasicDataPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueConsoleFullAccess, AmazonDataZoneFullAccess, AWSLakeFormationDataAdmin, AWSLakeFormationCrossAccountManager approved for usage"
+
+  data-engineer:
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - AWSGlueConsoleFullAccess
+      - AmazonDataZoneFullUserAccess
+    generatedPolicies:
+      - BasicDataPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueConsoleFullAccess, AmazonDataZoneFullUserAccessapproved for usage"
+
+  data-user1:
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - AWSGlueConsoleFullAccess
+      - AmazonDataZoneFullUserAccess
+    generatedPolicies:
+      - BasicDataPolicy
+      - DataZoneListDomainsPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueConsoleFullAccess, AmazonDataZoneFullUserAccessapproved for usage"
+
+  data-user2:
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - AWSGlueConsoleFullAccess
+      - AmazonDataZoneFullUserAccess
+    generatedPolicies:
+      - BasicDataPolicy
+      - DataZoneListDomainsPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueConsoleFullAccess, AmazonDataZoneFullUserAccessapproved for usage"
+
+  data-user3:
+    trustedPrincipal: this_account
+    awsManagedPolicies:
+      - AWSGlueConsoleFullAccess
+      - AmazonDataZoneFullUserAccess
+    generatedPolicies:
+      - BasicDataPolicy
+      - DataZoneListDomainsPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueConsoleFullAccess, AmazonDataZoneFullUserAccessapproved for usage"

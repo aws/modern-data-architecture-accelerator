@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../../../../mdaa/schemas/@aws-mdaa/datazone.json
+# List of domains to create
+domains:
+  # domain's name (must be unique)
+  domain1:
+    dataAdminRole:
+      id: ssm:/{{org}}/govern1/generated-role/data-admin/id
+        
+    # Required - Description to give to the domain
+    description: DataZone Domain 1
+
+    # Optional - Type of SSO (default: DISABLED): DISABLED | IAM_IDC
+    singleSignOnType: DISABLED
+
+    # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
+    userAssignment: MANUAL
+
+    users:
+      # A friendly name for an iam user
+      data-engineer:
+        # an IAM based user
+        # can be referenced by arn, name, or Id
+        iamRole:
+          id: ssm:/{{org}}/govern1/generated-role/data-engineer/id
+
+      data-user1:
+        iamRole:
+          id: ssm:/{{org}}/govern1/generated-role/data-user1/id
+
+      data-user2:
+        iamRole:
+          id: ssm:/{{org}}/govern1/generated-role/data-user2/id
+
+      data-user3:
+        iamRole:
+          id: ssm:/{{org}}/govern1/generated-role/data-user3/id
+    
+    # Owners of the root Domain Unit
+    ownerUsers:
+      - data-engineer
+
+    domainUnits:
+      unit1:
+        ownerUsers:
+          - data-user1
+        description: Domain Unit 1
+      unit2:
+        ownerUsers:
+          - data-user2
+        description: Domain Unit 2
+      unit3:
+        ownerUsers:
+          - data-user2
+        description: Domain Unit 2
+

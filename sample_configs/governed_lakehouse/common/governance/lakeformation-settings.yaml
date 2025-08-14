@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../../../../mdaa/schemas/@aws-mdaa/lakeformation-settings.json
+lakeFormationAdminRoles:
+  - id: generated-role-id:data-admin
+createCdkLFAdmin: true
+createDataZoneAdminRole: true
+iamAllowedPrincipalsDefault: false

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../../../mdaa/schemas/@aws-mdaa/dataops-project.json
+# Arns for IAM roles which will be provided to the projects's resources (IE bucket)
+dataAdminRoles:
+  # This is an arn which will be resolved first to a role ID for inclusion in the bucket policy.
+  # Note that this resolution will require iam:GetRole against this role arn for the role executing CDK.
+  - id: ssm:/{{org}}/govern1/generated-role/data-admin/id
+
+# Arns for IAM role which will be authoring code within the project
+dataEngineerRoles:
+  - id: ssm:/{{org}}/govern1/generated-role/data-engineer/id
+
+# List of roles which will be used to execute dataops processes using project resources
+projectExecutionRoles:
+  - id: ssm:/{{org}}/govern1/generated-role/glue-etl/id
+
+s3OutputKmsKeyArn: ssm:/{{org}}/data1/datalake/kms/arn
+glueCatalogKmsKeyArn: ssm:/{{org}}/govern1/glue-catalog/kms/arn
+
+datazone:
+  project:
+    domainConfigSSMParam: /{{org}}/govern1/datazone/domain/domain1/config
+    domainUnit: /unit3
+
