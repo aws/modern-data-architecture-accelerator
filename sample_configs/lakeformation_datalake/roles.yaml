@@ -91,9 +91,6 @@ generatePolicies:
           Action:
             - sagemaker:CreatePresignedDomainUrl
           Resource: "*"
-          Condition:
-            StringEquals:
-              "sagemaker:ResourceTag/userid": "${aws:userid}"
 
     suppressions:
       - id: "AwsSolutions-IAM5"

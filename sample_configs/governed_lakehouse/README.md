@@ -45,7 +45,9 @@ Note that this architecture does not preclude direct S3 access to the data lake 
 
 2. Edit the `mdaa.yaml` to specify an organization name. This must be a globally unique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
-3. **Deploy Application**
+3. Make sure you deploy the config in regions which are supported by Datazone. Check [Supported Regions for Datazone](https://docs.aws.amazon.com/datazone/latest/userguide/datazone-supported-regions.html)
+
+4. **Deploy Application**
    ```bash
    # Deploy governed lakehouse
    <path_to_mdaa_repo>/bin/mdaa <path_to_mdaa_repo>/sample_configs/governed_lakehouse/mdaa.yaml deploy

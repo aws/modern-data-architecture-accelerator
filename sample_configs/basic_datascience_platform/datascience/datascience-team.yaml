@@ -26,7 +26,7 @@ team:
       # The key/name of the user profile should be specified as follows:
       # If the Domain is in SSO auth mode, this should map to an SSO User ID.
       # If in IAM mode, this should map to Session Name portion of the aws:userid variable.
-      "<data scientist user id>":
+      "{{context:datascience_team_name}}":
         # Required if the domain is in IAM AuthMode. This is the role
         # from which the user will launch the user profile in Studio.
         # The role's id will be combined with the userid

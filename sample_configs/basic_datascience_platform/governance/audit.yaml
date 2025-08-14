@@ -1,0 +1,4 @@
+# Roles which will be provided read access to the audit logs via bucket policy.
+# Roles within the target account may be referenced by id, arn, and/or name.
+readRoles:
+    - id: generated-role-id:data-admin

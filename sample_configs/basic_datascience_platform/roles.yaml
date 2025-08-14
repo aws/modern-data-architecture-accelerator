@@ -1,4 +1,88 @@
 generatePolicies:
+  GlueJobPolicy:
+      policyDocument:
+        Statement:
+          - SID: GlueCloudwatch
+            Effect: Allow
+            Resource:
+              - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws-glue/*"
+            Action:
+              - logs:CreateLogStream
+              - logs:AssociateKmsKey
+              - logs:CreateLogGroup
+              - logs:PutLogEvents
+      suppressions:
+        - id: "AwsSolutions-IAM5"
+          reason: "Glue log group name not known at deployment time."
+
+  DataAdminPolicy:
+    policyDocument:
+      Statement:
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets
+            - s3:GetAccountPublicAccessBlock
+            - s3:GetBucketPublicAccessBlock
+            - s3:GetBucketPolicyStatus
+            - s3:GetBucketAcl
+            - s3:ListAccessPoints
+            - s3:GetBucketLocation
+          Resource: "*"
+
+        # Allows basic listing of KMS keys (required for up)
+        - Sid: BasicKMSAccess
+          Effect: Allow
+          Action:
+            - kms:ListAliases
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+  DataUserPolicy:
+    policyDocument:
+      Statement:
+        # This statement allows coarse-grained access to Glue catalog resources, but does not itself grant any access to data.
+        # Effective permissions are the intersection between IAM Glue Permissions and LF Grants. By establishing broad, coarse-grained permissions here,
+        # we are effectively concentrating effective permissions management in LF Grants.
+        - SID: GlueCoarseGrainedAccess
+          Effect: Allow
+          Resource:
+            - arn:{{partition}}:glue:{{region}}:{{account}}:catalog
+            - arn:{{partition}}:glue:{{region}}:{{account}}:database/*
+            - arn:{{partition}}:glue:{{region}}:{{account}}:table/*
+          Action:
+            - glue:GetDatabase
+            - glue:GetDatabases
+            - glue:GetCatalogImportStatus
+            - glue:GetTable
+            - glue:GetTables
+            - glue:GetPartition
+            - glue:GetPartitions
+            - glue:SearchTables
+
+        # This statement allows the usage of LakeFormation, but does not itself grant any access to data.
+        # For data access, an explicit LF Grant is required.
+        - SID: LakeFormationGetDataAccess
+          Effect: Allow
+          Action:
+            - lakeformation:GetDataAccess
+          Resource: "*"
+
+        # This statement allows the basic listing of Athena workgroups
+        # Specific Athena accesses are granted by the Athena Workgroup module itself.
+        - SID: BasicAthenaAccess
+          Effect: Allow
+          Action:
+            - athena:ListWorkGroups
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
   DataScienceAdminPolicy:
     policyDocument:
       Statement:
@@ -98,18 +182,43 @@ generatePolicies:
     suppressions:
       - id: "AwsSolutions-IAM5"
         reason: "These actions do not accept a resource or resource name not known at deployment time."
-
+  
+# The list of roles which will be generated
 generateRoles:
   # A data admin role which will be granted admin
   # access to deployed resources.
+  glue-etl:
+    trustedPrincipal: service:glue.amazonaws.com
+    # A list of AWS managed policies which will be added to the role
+    awsManagedPolicies:
+      - service-role/AWSGlueServiceRole
+    generatedPolicies:
+      - GlueJobPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueServiceRole approved for usage"
+
   data-admin:
     trustedPrincipal: this_account
+    awsManagedPolicies:
+      - AWSGlueConsoleFullAccess
+      - AWSLakeFormationDataAdmin
+      - AWSLakeFormationCrossAccountManager
     generatedPolicies:
+      - DataUserPolicy
+      - DataAdminPolicy
       - DataScienceUserPolicy
       - DataScienceAdminPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSGlueConsoleFullAccess, AWSLakeFormationDataAdmin, AWSLakeFormationCrossAccountManager approved for usage"
 
-  # A data scientist role which will be granted user access
-  # to deployed resources.
+  data-user:
+    trustedPrincipal: this_account
+    generatedPolicies:
+      - DataUserPolicy
+      - DataScienceUserPolicy
+
   data-scientist:
     trustedPrincipal: this_account
     generatedPolicies:

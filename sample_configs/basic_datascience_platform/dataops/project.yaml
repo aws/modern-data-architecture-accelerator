@@ -1,0 +1,38 @@
+# Arns for IAM roles which will be provided to the projects's resources (IE bucket)
+dataAdminRoles:
+  # This is an arn which will be resolved first to a role ID for inclusion in the bucket policy.
+  # Note that this resolution will require iam:GetRole against this role arn for the role executing CDK.
+  - id: ssm:/{{org}}/shared/generated-role/data-admin/id
+
+# List of roles which will be used to execute dataops processes using project resources
+projectExecutionRoles:
+  - id: ssm:/{{org}}/shared/generated-role/glue-etl/id
+
+s3OutputKmsKeyArn: ssm:/{{org}}/shared/datalake/kms/arn
+glueCatalogKmsKeyArn: ssm:/{{org}}/shared/glue-catalog/kms/arn
+
+# List of Databases to create within the project.
+databases:
+  # This database will be used to illustrate access grants
+  # using LakeFormation.
+  sample-database:
+    description: Sample Database
+    # The data lake S3 bucket and prefix location where the database data is stored.
+    # Project execution roles will be granted access to create Glue tables
+    # which point to this location.
+    locationBucketName: ssm:/{{org}}/shared/datalake/bucket/transformed/name
+    locationPrefix: data/sample_data
+
+    # (Optional) - The LF configuration which will be applied to the database
+    lakeFormation:
+      # (Optional) - If true (default false), LF superuser grants will be automatically added for project admin roles.
+      # This will allow data admin to perform administrative actions against the database and its tables.
+      createSuperGrantsForDataAdminRoles: true
+      # (Optional) - If true (default false), LF read/write grants will be automatically added for project execution roles.
+      # This will allow execution roles to create/update/delete tables and partitions within the database.
+      createReadWriteGrantsForProjectExecutionRoles: true
+      # (Optional) A list of grants to be provided for user principals to the database
+      grants:
+        data-user-read:
+          principalArns:
+            data-user: ssm:/{{org}}/shared/generated-role/data-user/arn
