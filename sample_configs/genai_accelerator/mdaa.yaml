@@ -14,7 +14,9 @@ context:
   subnet_id_1:  <your subnet id 1>
   subnet_id_2:  <your subnet id 2>
   subnet_id_3:  <your subnet id 3>
-  llm_model_id: <your_model_id> # e.g. "anthropic.claude-3-sonnet-20240229-v1:0
+  llm_model: <your_model> # e.g. anthropic.claude-3-5-sonnet-20240620-v1:0 or an ARN
+  kb_embedding_model: <kb_embedding_model> # e.g. amazon.titan-embed-text-v2:0
+  kb_parsing_model: <kb_parsing_model> # e.g. anthropic.claude-3-5-sonnet-20240620-v1:0
 
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names.
@@ -29,7 +31,7 @@ domains:
         # The list of modules which will be deployed. A module points to a specific CAEF CDK App, and
         # specifies a deployment configuration file if required.
         modules:
-          # This module will create all of the roles required for the Bedrock Builder
+          # This module will create all the roles required for the Bedrock Builder
           roles:
             module_path: "@aws-mdaa/roles"
             module_configs:

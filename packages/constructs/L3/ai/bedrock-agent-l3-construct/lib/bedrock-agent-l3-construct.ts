@@ -7,7 +7,7 @@ import { MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { USER_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
-import { aws_bedrock as bedrock, aws_kms as kms } from 'aws-cdk-lib';
+import { aws_bedrock as bedrock, aws_kms as kms, CfnResource } from 'aws-cdk-lib';
 import { CfnGuardrail, CfnKnowledgeBase } from 'aws-cdk-lib/aws-bedrock';
 import { Effect, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { CfnPermission } from 'aws-cdk-lib/aws-lambda';
@@ -237,6 +237,9 @@ export class BedrockAgentL3Construct extends MdaaL3Construct {
       actionGroups: agentActionGroups,
     });
 
+    // Ensure the agent is created only after the managed policy is fully deployed
+    agent.addDependency(agentManagedPolicy.node.defaultChild as CfnResource);
+
     // Create an alias for the agent
     this.createAgentAlias(agentName, agent.attrAgentId, agentConfig);
 
@@ -354,7 +357,7 @@ export class BedrockAgentL3Construct extends MdaaL3Construct {
     knowledgeBaseArns?: string[],
     guardrailArn?: string,
   ): ManagedPolicy {
-    // Add a Policy to allow invoke access to the foundation model
+    // Add a Policy to allow to invoke access to the foundation model
     const agentManagedPolicy = new MdaaManagedPolicy(this, `agent-managed-pol-${agentName}`, {
       managedPolicyName: `agent-${agentName}`,
       naming: this.props.naming,
@@ -367,12 +370,19 @@ export class BedrockAgentL3Construct extends MdaaL3Construct {
     });
     agentManagedPolicy.addStatements(kmsKeyStatement);
 
-    // Allow access to the foundation model
+    // Allow access to the foundation model (including inference profiles)
+    const modelActions = ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'];
+
+    // Add additional permissions for inference profiles
+    if (foundationModelArn.includes(':inference-profile/')) {
+      modelActions.push('bedrock:GetInferenceProfile');
+    }
+
     const invokeModelStatement = new PolicyStatement({
       sid: 'InvokeFoundationModel',
       effect: Effect.ALLOW,
       resources: [foundationModelArn],
-      actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
+      actions: modelActions,
     });
     agentManagedPolicy.addStatements(invokeModelStatement);
 

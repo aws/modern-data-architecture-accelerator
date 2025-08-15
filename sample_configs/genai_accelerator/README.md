@@ -6,6 +6,9 @@ This sample configuration demonstrates deploying an enterprise-ready Customer Su
 
 ## Architecture Overview
 
+![GenAI Accelerator](docs/genai_accelerator.png)
+
+
 This configuration deploys:
 
 1. A GenAI platform with Bedrock integration for the core GenAI capabilities
@@ -36,10 +39,21 @@ This configuration deploys:
 
 2. Edit the `mdaa.yaml` to specify an organization name. This must be a globally unique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
-3. Update the VPC and subnet information in the `mdaa.yaml` file under the `context:` section with your environment-specific values.
+3. **Determine Model Configuration**
+   
+   Choose your model ID from the [AWS Bedrock supported models list](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html).
+   
+   **For cross-region inference capabilities**, use the [Model Configuration Helper Script](#model-configuration-helper-script) to determine the correct model arn.
+   - **Single region**: Use model ID directly (e.g., `anthropic.claude-3-5-sonnet-20240620-v1:0`)
+
+4. **Update Configuration Files**
+   
+   Update the `mdaa.yaml` file under the `context:` section with:
+   - VPC and subnet information from your environment
+   - `llm_model` value from step 3 (either model ID or inference profile ARN)
 
 
-4. **Deploy Application**
+5. **Deploy Application**
    ```bash
    # Deploy genai_accelerator starter package
    <path_to_mdaa_repo>/bin/mdaa <path_to_mdaa_repo>/sample_configs/genai_accelerator/mdaa.yaml deploy
@@ -245,12 +259,61 @@ aws s3 sync ./documents/ \
 
 ***
 
+## Scripts
+
+### Model Configuration Helper Script
+
+Use this script to determine the correct model configuration for your deployment:
+
+```bash
+#!/bin/bash
+# Model Configuration Helper Script
+
+# Set your desired model ID and region
+export LLM_MODEL_ID="anthropic.claude-3-7-sonnet-20250219-v1:0"  # Change this to your desired model
+export AWS_REGION="us-east-1"  # Change this to your target region
+
+echo "Checking model: $LLM_MODEL_ID in region: $AWS_REGION"
+
+MODEL_ARN=$(aws bedrock get-foundation-model --model-identifier "$LLM_MODEL_ID" --region "$AWS_REGION" --query "modelDetails.modelArn" --output text 2>/dev/null || echo "")
+
+if [ -z "$MODEL_ARN" ]; then
+    echo "Could not retrieve model ARN for $LLM_MODEL_ID"
+    exit 1
+fi
+
+echo "Checking to see if there is a profile..."
+
+# Check if there's an inference profile for this model ARN
+PROFILE_ARN=$(aws bedrock list-inference-profiles --region "$AWS_REGION" --query "inferenceProfileSummaries[?contains(models[].modelArn, '$MODEL_ARN')].inferenceProfileArn" --output text 2>/dev/null || echo "")
+if [ -n "$PROFILE_ARN" ]; then
+    MODEL_TO_USE="$PROFILE_ARN"
+    echo "Found inference profile in $AWS_REGION: $PROFILE_ARN"
+else
+    MODEL_TO_USE="$LLM_MODEL_ID"
+    echo "No inference profile found, using model directly"
+fi
+
+echo "Testing accessibility of: $MODEL_TO_USE"
+
+```
+
+**Important Notes:**
+- **Cross-region inference**: Use inference profile ARN (e.g., `arn:aws:bedrock:us-east-1:<account_id>:inference-profile/anthropic.claude-3-7-sonnet-20250219-v1:0`). Don't use inference profile for kb_parsing_model.
+- **Knowledge base parsing**: Always use standard model ID format
+- **Single region**: Use model ID directly
+
+***
+
 ## Troubleshooting
 
 ### Common Issues
 
 1. **Access Denied when calling Bedrock**: 
    - Ensure you have model access of llm_model_id specified in the context values
+   - Use the [Model Configuration Helper Script](#model-configuration-helper-script) to verify model access and determine correct configuration
+   - If you want to use models which need cross-region inference, use inference profile arn (e.g., `arn:aws:bedrock:us-east-1:<account_id>:inference-profile/anthropic.claude-3-7-sonnet-20250219-v1:0`)
+   - Knowledge base parsing cannot use cross-region inference profiles and requires standard model format. Use single region model id (e.g. `anthropic.claude-3-5-sonnet-20240620-v1:0`)
    - Ensure the agent execution role has the necessary Bedrock permissions
    - Verify that the foundation model is available in your region
    - Check that the agent execution role can assume the service role for bedrock.amazonaws.com

@@ -413,6 +413,42 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbfoundationmodeltestknowledgebase:arn",
+        },
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbfoundationmodeltestknowledgebase:name",
+        },
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbaccesstestvectorstore:arn",
         },
         "Value": {
@@ -449,7 +485,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbtestknowledgebase:arn",
+          "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbdatasynctestknowledgebase:arn",
         },
         "Value": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -457,7 +493,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbtestknowledgebase:name",
+          "Name": "test-org:test-domain:test-bedrock-builder-app:managed-policy:kbdatasynctestknowledgebase:name",
         },
         "Value": {
           "Fn::Select": [
@@ -933,6 +969,9 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
         "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
         "Properties": {
           "ActionGroups": [
             {
@@ -2938,6 +2977,166 @@ Provide responses in markdown format with source citations
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-app--66f818e8",
+          "Path": "/",
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "bedrock:InvokeModel",
+                  "bedrock:InvokeModelWithResponseStream",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  "arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1",
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":bedrock:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        "::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+                      ],
+                    ],
+                  },
+                ],
+                "Sid": "InvokeFoundationModels",
+              },
+              {
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:Encrypt",
+                  "kms:ReEncryptFrom",
+                  "kms:ReEncryptTo",
+                  "kms:GenerateDataKey",
+                  "kms:GenerateDataKeyWithoutPlaintext",
+                  "kms:GenerateDataKeyPair",
+                  "kms:GenerateDataKeyPairWithoutPlaintext",
+                  "kms:DescribeKey",
+                  "kms:CreateGrant",
+                ],
+                "Condition": {
+                  "StringLike": {
+                    "kms:ViaService": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "bedrock.",
+                          {
+                            "Ref": "AWS::Region",
+                          },
+                          ".amazonaws.com",
+                        ],
+                      ],
+                    },
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "Arn",
+                  ],
+                },
+                "Sid": "BedrockKms",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "Roles": [
+            {
+              "Fn::Select": [
+                1,
+                {
+                  "Fn::Split": [
+                    "/",
+                    {
+                      "Fn::Select": [
+                        5,
+                        {
+                          "Fn::Split": [
+                            ":",
+                            {
+                              "Fn::GetAtt": [
+                                "RoleReskbexecutionrole",
+                                "arn",
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        "Type": "AWS::IAM::ManagedPolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/managed-policy/kb-foundation-model-test-knowledge-base/arn",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/managed-policy/kb-foundation-model-test-knowledge-base/name",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Ref": "REPLACED-CFN-LOGICAL-ID",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Description": "",
           "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-app--5dd4eb7c",
           "Path": "/",
           "PolicyDocument": {
@@ -3106,75 +3305,10 @@ Provide responses in markdown format with source citations
         },
         "Properties": {
           "Description": "",
-          "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-app---12c5300",
+          "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-app--67724132",
           "Path": "/",
           "PolicyDocument": {
             "Statement": [
-              {
-                "Action": [
-                  "bedrock:InvokeModel",
-                  "bedrock:InvokeModelWithResponseStream",
-                ],
-                "Effect": "Allow",
-                "Resource": [
-                  "arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1",
-                  {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:",
-                        {
-                          "Ref": "AWS::Partition",
-                        },
-                        ":bedrock:",
-                        {
-                          "Ref": "AWS::Region",
-                        },
-                        "::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
-                      ],
-                    ],
-                  },
-                ],
-                "Sid": "InvokeFoundationModels",
-              },
-              {
-                "Action": [
-                  "kms:Decrypt",
-                  "kms:Encrypt",
-                  "kms:ReEncryptFrom",
-                  "kms:ReEncryptTo",
-                  "kms:GenerateDataKey",
-                  "kms:GenerateDataKeyWithoutPlaintext",
-                  "kms:GenerateDataKeyPair",
-                  "kms:GenerateDataKeyPairWithoutPlaintext",
-                  "kms:DescribeKey",
-                  "kms:CreateGrant",
-                ],
-                "Condition": {
-                  "StringLike": {
-                    "kms:ViaService": {
-                      "Fn::Join": [
-                        "",
-                        [
-                          "bedrock.",
-                          {
-                            "Ref": "AWS::Region",
-                          },
-                          ".amazonaws.com",
-                        ],
-                      ],
-                    },
-                  },
-                },
-                "Effect": "Allow",
-                "Resource": {
-                  "Fn::GetAtt": [
-                    "REPLACED-CFN-LOGICAL-ID",
-                    "Arn",
-                  ],
-                },
-                "Sid": "BedrockKms",
-              },
               {
                 "Action": [
                   "bedrock:StartIngestionJob",
@@ -3257,7 +3391,7 @@ Provide responses in markdown format with source citations
           },
         },
         "Properties": {
-          "Name": "/test-org/test-domain/test-bedrock-builder-app/managed-policy/kb-test-knowledge-base/arn",
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/managed-policy/kb-datasync-test-knowledge-base/arn",
           "Tags": {
             "mdaa_cdk_app": "bedrock-builder",
             "mdaa_domain": "test-domain",
@@ -3284,7 +3418,7 @@ Provide responses in markdown format with source citations
           },
         },
         "Properties": {
-          "Name": "/test-org/test-domain/test-bedrock-builder-app/managed-policy/kb-test-knowledge-base/name",
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/managed-policy/kb-datasync-test-knowledge-base/name",
           "Tags": {
             "mdaa_cdk_app": "bedrock-builder",
             "mdaa_domain": "test-domain",
@@ -3400,14 +3534,14 @@ Provide responses in markdown format with source citations
           "on_create_sql_statements": [
             "CREATE EXTENSION IF NOT EXISTS vector",
             "
-        CREATE TABLE IF NOT EXISTS embeddings_3f4c89b3_1536
-        (
-            id UUID PRIMARY KEY,
+      CREATE TABLE IF NOT EXISTS embeddings_3f4c89b3_1536
+      (
+        id UUID PRIMARY KEY,
       content TEXT NOT NULL,
       metadata JSON,
       custom_metadata JSONB,
       embedding VECTOR(1536)
-        );
+      );
     ",
             "CREATE INDEX IF NOT EXISTS idx_embedding_vector ON embeddings_3f4c89b3_1536 USING hnsw (embedding vector_cosine_ops) WITH (ef_construction=256);",
             "CREATE INDEX IF NOT EXISTS idx_content ON embeddings_3f4c89b3_1536 USING gin (to_tsvector('simple', content))",
@@ -4761,6 +4895,7 @@ Provide responses in markdown format with source citations
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
@@ -7230,6 +7365,42 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:managed-policy:kbfoundationmodeltestknowledgebase:arn",
+      },
+      "Value": {
+        "Ref": "REPLACED-CFN-LOGICAL-ID",
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:managed-policy:kbfoundationmodeltestknowledgebase:name",
+      },
+      "Value": {
+        "Fn::Select": [
+          1,
+          {
+            "Fn::Split": [
+              "/",
+              {
+                "Fn::Select": [
+                  5,
+                  {
+                    "Fn::Split": [
+                      ":",
+                      {
+                        "Ref": "REPLACED-CFN-LOGICAL-ID",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-main:managed-policy:kbaccesstestvectorstore:arn",
       },
       "Value": {
@@ -7266,7 +7437,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-main:managed-policy:kbtestknowledgebase:arn",
+        "Name": "test-org:test-domain:test-bedrock-builder-main:managed-policy:kbdatasynctestknowledgebase:arn",
       },
       "Value": {
         "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -7274,7 +7445,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-main:managed-policy:kbtestknowledgebase:name",
+        "Name": "test-org:test-domain:test-bedrock-builder-main:managed-policy:kbdatasynctestknowledgebase:name",
       },
       "Value": {
         "Fn::Select": [
@@ -7750,6 +7921,9 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
       "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
       "Properties": {
         "ActionGroups": [
           {
@@ -9755,6 +9929,166 @@ Provide responses in markdown format with source citations
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "Description": "",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-mai--6dfb5f12",
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1",
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":bedrock:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      "::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "InvokeFoundationModels",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:DescribeKey",
+                "kms:CreateGrant",
+              ],
+              "Condition": {
+                "StringLike": {
+                  "kms:ViaService": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "bedrock.",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ".amazonaws.com",
+                      ],
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "Arn",
+                ],
+              },
+              "Sid": "BedrockKms",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "RoleReskbexecutionrole",
+                              "arn",
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/managed-policy/kb-foundation-model-test-knowledge-base/arn",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/managed-policy/kb-foundation-model-test-knowledge-base/name",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Ref": "REPLACED-CFN-LOGICAL-ID",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Description": "",
         "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-main-17bf5f5a",
         "Path": "/",
         "PolicyDocument": {
@@ -9923,75 +10257,10 @@ Provide responses in markdown format with source citations
       },
       "Properties": {
         "Description": "",
-        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-main-1d25746a",
+        "ManagedPolicyName": "test-org-test-env-test-domain-test-bedrock-builder-main-42b4aea4",
         "Path": "/",
         "PolicyDocument": {
           "Statement": [
-            {
-              "Action": [
-                "bedrock:InvokeModel",
-                "bedrock:InvokeModelWithResponseStream",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                "arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1",
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":bedrock:",
-                      {
-                        "Ref": "AWS::Region",
-                      },
-                      "::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
-                    ],
-                  ],
-                },
-              ],
-              "Sid": "InvokeFoundationModels",
-            },
-            {
-              "Action": [
-                "kms:Decrypt",
-                "kms:Encrypt",
-                "kms:ReEncryptFrom",
-                "kms:ReEncryptTo",
-                "kms:GenerateDataKey",
-                "kms:GenerateDataKeyWithoutPlaintext",
-                "kms:GenerateDataKeyPair",
-                "kms:GenerateDataKeyPairWithoutPlaintext",
-                "kms:DescribeKey",
-                "kms:CreateGrant",
-              ],
-              "Condition": {
-                "StringLike": {
-                  "kms:ViaService": {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "bedrock.",
-                        {
-                          "Ref": "AWS::Region",
-                        },
-                        ".amazonaws.com",
-                      ],
-                    ],
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "REPLACED-CFN-LOGICAL-ID",
-                  "Arn",
-                ],
-              },
-              "Sid": "BedrockKms",
-            },
             {
               "Action": [
                 "bedrock:StartIngestionJob",
@@ -10074,7 +10343,7 @@ Provide responses in markdown format with source citations
         },
       },
       "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-main/managed-policy/kb-test-knowledge-base/arn",
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/managed-policy/kb-datasync-test-knowledge-base/arn",
         "Tags": {
           "mdaa_cdk_app": "bedrock-builder",
           "mdaa_domain": "test-domain",
@@ -10101,7 +10370,7 @@ Provide responses in markdown format with source citations
         },
       },
       "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-main/managed-policy/kb-test-knowledge-base/name",
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/managed-policy/kb-datasync-test-knowledge-base/name",
         "Tags": {
           "mdaa_cdk_app": "bedrock-builder",
           "mdaa_domain": "test-domain",
@@ -10217,14 +10486,14 @@ Provide responses in markdown format with source citations
         "on_create_sql_statements": [
           "CREATE EXTENSION IF NOT EXISTS vector",
           "
-        CREATE TABLE IF NOT EXISTS embeddings_3f4c89b3_1536
-        (
-            id UUID PRIMARY KEY,
+      CREATE TABLE IF NOT EXISTS embeddings_3f4c89b3_1536
+      (
+        id UUID PRIMARY KEY,
       content TEXT NOT NULL,
       metadata JSON,
       custom_metadata JSONB,
       embedding VECTOR(1536)
-        );
+      );
     ",
           "CREATE INDEX IF NOT EXISTS idx_embedding_vector ON embeddings_3f4c89b3_1536 USING hnsw (embedding vector_cosine_ops) WITH (ef_construction=256);",
           "CREATE INDEX IF NOT EXISTS idx_content ON embeddings_3f4c89b3_1536 USING gin (to_tsvector('simple', content))",
@@ -11578,6 +11847,7 @@ Provide responses in markdown format with source citations
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",

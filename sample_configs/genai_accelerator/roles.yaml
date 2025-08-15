@@ -156,7 +156,7 @@ generatePolicies:
             - "bedrock:GetFoundationModel"
             - "bedrock:ListFoundationModels"
           Resource:
-            - "arn:{{partition}}:bedrock:{{region}}::foundation-model/*"
+            - "arn:{{partition}}:bedrock:*::foundation-model/*"
         
         # Lambda permissions for action groups
         - SID: LambdaAccess
@@ -293,8 +293,8 @@ generatePolicies:
             - "bedrock:InvokeModel"
             - "bedrock:InvokeModelWithResponseStream"
           Resource:
-            - "arn:{{partition}}:bedrock:{{region}}::foundation-model/*"
-        
+            - "arn:{{partition}}:bedrock:*::foundation-model/*"
+
         # Lambda permissions for action groups
         - SID: LambdaAccess
           Effect: Allow
@@ -391,8 +391,15 @@ generatePolicies:
           Action:
             - "bedrock:InvokeModel"
           Resource:
-            - "arn:{{partition}}:bedrock:{{region}}::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0"
-            - "arn:{{partition}}:bedrock:{{region}}::foundation-model/amazon.titan-embed-text-v2:0"
+            - "arn:{{partition}}:bedrock:*::foundation-model/*"
+
+        # Bedrock Data Automation permissions for parsing
+        - SID: BedrockDataAutomationAccess
+          Effect: Allow
+          Action:
+            - "bedrock:InvokeDataAutomationAsync"
+            - "bedrock:GetDataAutomationStatus"
+          Resource: "*"
         
         # Bedrock Knowledge Base ingestion permissions
         - SID: BedrockIngestionAccess

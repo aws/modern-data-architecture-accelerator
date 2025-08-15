@@ -33,7 +33,7 @@ agents:
     agentAliasName: "prod-alias"
     role:
       id: ssm:/{{org}}/shared/generated-role/agent-execution-role/id
-    foundationModel: "{{context:llm_model_id}}"
+    foundationModel: "{{context:llm_model}}"
 
     description: "Customer Support Agent"
     autoPrepare: true
@@ -78,7 +78,7 @@ vectorStores:
 
 knowledgeBases:
   kb-test-customer-support:
-    embeddingModel: 'amazon.titan-embed-text-v2:0'
+    embeddingModel: "{{context:kb_embedding_model}}"
     vectorStore: cs-vector-store
     role:
       id: ssm:/{{org}}/shared/generated-role/kb-execution-role/id
@@ -89,10 +89,6 @@ knowledgeBases:
         prefix: 'support-docs/'
         enableSync: true
         vectorIngestionConfiguration:
-          parsingConfiguration:
-            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
-            bedrockDataAutomationConfiguration:
-              parsingModality: 'MULTIMODAL'
           chunkingConfiguration:
             chunkingStrategy: 'FIXED_SIZE'
             fixedSizeChunkingConfiguration:
@@ -107,7 +103,7 @@ knowledgeBases:
           parsingConfiguration:
             parsingStrategy: 'BEDROCK_FOUNDATION_MODEL'
             bedrockFoundationModelConfiguration:
-              modelArn: "{{context:llm_model_id}}"
+              modelArn: "{{context:kb_parsing_model}}"
               parsingModality: 'MULTIMODAL'
               parsingPromptText: 'Extract key information from this product documentation'
           

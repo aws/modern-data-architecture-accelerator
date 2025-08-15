@@ -16,7 +16,7 @@ import {
   MdaaRdsDataResource,
   MdaaRdsDataResourceProps,
 } from '@aws-mdaa/rds-constructs';
-import { aws_bedrock as bedrock, aws_s3 as s3 } from 'aws-cdk-lib';
+import { aws_bedrock as bedrock, aws_s3 as s3, CfnResource } from 'aws-cdk-lib';
 import { Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
@@ -32,7 +32,7 @@ import {
 } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { join } from 'path';
-import { MdaaParamAndOutput, MdaaNagSuppressions } from '@aws-mdaa/construct';
+import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct';
 
 // ---------------------------------------------
 // Knowledge Base Interfaces and Types
@@ -436,6 +436,59 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       ? kbConfig.embeddingModel
       : `arn:${this.partition}:bedrock:${this.region}::foundation-model/${kbConfig.embeddingModel}`;
 
+    // Collect foundation model ARNs used in parsing configurations
+    const parsingModelArns = new Set<string>();
+    Object.values(kbConfig.s3DataSources || {}).forEach(dsProps => {
+      if (dsProps.vectorIngestionConfiguration?.parsingConfiguration) {
+        const parsingConfig = dsProps.vectorIngestionConfiguration.parsingConfiguration;
+        if (
+          parsingConfig.parsingStrategy === 'BEDROCK_FOUNDATION_MODEL' &&
+          parsingConfig.bedrockFoundationModelConfiguration?.modelArn
+        ) {
+          parsingModelArns.add(
+            parsingConfig.bedrockFoundationModelConfiguration.modelArn.startsWith('arn')
+              ? parsingConfig.bedrockFoundationModelConfiguration.modelArn
+              : `arn:${this.partition}:bedrock:${this.region}::foundation-model/${parsingConfig.bedrockFoundationModelConfiguration.modelArn}`,
+          );
+        }
+      }
+    });
+
+    // Create foundation model policy before knowledge base creation
+    const foundationModelResources = [embeddingModelArn, ...Array.from(parsingModelArns)];
+    const modelActions = ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'];
+
+    // Add additional permissions for inference profiles
+    const hasInferenceProfile = foundationModelResources.some(arn => arn.includes(':inference-profile/'));
+    if (hasInferenceProfile) {
+      modelActions.push('bedrock:GetInferenceProfile');
+    }
+
+    const foundationModelPolicy = new MdaaManagedPolicy(this, `bedrock-kb-foundation-model-policy-${kbName}`, {
+      naming: this.props.naming,
+      managedPolicyName: `kb-foundation-model-${kbName}`,
+      roles: [kbRole],
+      statements: [
+        new PolicyStatement({
+          sid: 'InvokeFoundationModels',
+          effect: Effect.ALLOW,
+          resources: foundationModelResources,
+          actions: modelActions,
+        }),
+        new PolicyStatement({
+          sid: 'BedrockKms',
+          effect: Effect.ALLOW,
+          resources: [kmsKey.keyArn],
+          actions: [...USER_ACTIONS, 'kms:DescribeKey', 'kms:CreateGrant'],
+          conditions: {
+            StringLike: {
+              'kms:ViaService': `bedrock.${this.region}.amazonaws.com`,
+            },
+          },
+        }),
+      ],
+    });
+
     // Create the Bedrock Knowledge Base
     const knowledgeBase = new bedrock.CfnKnowledgeBase(this, `${kbName}-KnowledgeBase`, {
       name: this.props.naming.resourceName(kbName),
@@ -491,6 +544,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     knowledgeBase.node.addDependency(createDb);
     knowledgeBase.node.addDependency(createTable);
     knowledgeBase.node.addDependency(vectorStorePolicy);
+    knowledgeBase.node.addDependency(foundationModelPolicy.node.defaultChild as CfnResource);
 
     const kbLogGroupProps: MdaaLogGroupProps = {
       encryptionKey: kmsKey,
@@ -543,48 +597,12 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       }
     });
 
-    // Collect foundation model ARNs used in parsing configurations
-    const parsingModelArns = new Set<string>();
-    Object.values(kbConfig.s3DataSources || {}).forEach(dsProps => {
-      if (dsProps.vectorIngestionConfiguration?.parsingConfiguration) {
-        const parsingConfig = dsProps.vectorIngestionConfiguration.parsingConfiguration;
-        if (
-          parsingConfig.parsingStrategy === 'BEDROCK_FOUNDATION_MODEL' &&
-          parsingConfig.bedrockFoundationModelConfiguration?.modelArn
-        ) {
-          parsingModelArns.add(
-            parsingConfig.bedrockFoundationModelConfiguration.modelArn.startsWith('arn')
-              ? parsingConfig.bedrockFoundationModelConfiguration.modelArn
-              : `arn:${this.partition}:bedrock:${this.region}::foundation-model/${parsingConfig.bedrockFoundationModelConfiguration.modelArn}`,
-          );
-        }
-      }
-    });
-
-    // Create policy statements for foundation model access
-    const foundationModelResources = [embeddingModelArn, ...Array.from(parsingModelArns)];
-    const kbPolicyProps: MdaaManagedPolicyProps = {
+    // Create DataSource sync policy (after knowledge base creation)
+    const dataSyncPolicyProps: MdaaManagedPolicyProps = {
       naming: this.props.naming,
-      managedPolicyName: `kb-${kbName}`,
+      managedPolicyName: `kb-datasync-${kbName}`,
       roles: [kbRole],
       statements: [
-        new PolicyStatement({
-          sid: 'InvokeFoundationModels',
-          effect: Effect.ALLOW,
-          resources: foundationModelResources,
-          actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
-        }),
-        new PolicyStatement({
-          sid: 'BedrockKms',
-          effect: Effect.ALLOW,
-          resources: [kmsKey.keyArn],
-          actions: [...USER_ACTIONS, 'kms:DescribeKey', 'kms:CreateGrant'],
-          conditions: {
-            StringLike: {
-              'kms:ViaService': `bedrock.${this.region}.amazonaws.com`,
-            },
-          },
-        }),
         new PolicyStatement({
           sid: 'DataSourceSync',
           effect: Effect.ALLOW,
@@ -596,7 +614,11 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       ],
     };
 
-    const kbManagedPolicy = new MdaaManagedPolicy(this, `bedrock-knowledge-base-policy-${kbName}`, kbPolicyProps);
+    const kbManagedPolicy = new MdaaManagedPolicy(
+      this,
+      `bedrock-knowledge-base-datasync-policy-${kbName}`,
+      dataSyncPolicyProps,
+    );
     MdaaNagSuppressions.addCodeResourceSuppressions(
       kbManagedPolicy,
       [
@@ -637,10 +659,10 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     ];
 
     return `
-        CREATE TABLE IF NOT EXISTS ${tableName}
-        (
-            ${columns.join(',\n      ')}
-        );
+      CREATE TABLE IF NOT EXISTS ${tableName}
+      (
+        ${columns.join(',\n      ')}
+      );
     `;
   }
 

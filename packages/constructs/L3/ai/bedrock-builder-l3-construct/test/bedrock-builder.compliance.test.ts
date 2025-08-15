@@ -589,9 +589,10 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
     test('Test Knowledge Base Policy with Foundation Model Access', () => {
       const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
+
       const kbPolicy = Object.values(managedPolicies).find(policy =>
         (policy as { Properties: { ManagedPolicyName?: string } }).Properties.ManagedPolicyName?.includes(
-          'kb-test-kb-vector',
+          'kb-foundation',
         ),
       ) as { Properties: { PolicyDocument: { Statement: Array<{ Sid?: string; Effect: string; Action: string[] }> } } };
 
