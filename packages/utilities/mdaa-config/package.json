@@ -5,7 +5,7 @@
     "name": "Amazon Web Services",
     "url": "https://aws.amazon.com/solutions"
   },
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-mdaa/naming": "^1.0.0",
+    "@aws-mdaa/naming": "^1.1.0",
     "aws-cdk-lib": "2.201.0",
     "constructs": "10.0.96",
     "xregexp": "5.1.1"

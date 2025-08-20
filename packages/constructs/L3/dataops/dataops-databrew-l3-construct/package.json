@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/dataops-databrew-l3-construct",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "DataOps Databrew L3 Construct",
   "license": "Apache-2.0",
   "author": {
@@ -22,12 +22,12 @@
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "devDependencies": {
-    "@aws-mdaa/construct": "1.0.0",
-    "@aws-mdaa/iam-role-helper": "1.0.0",
-    "@aws-mdaa/kms-constructs": "1.0.0",
-    "@aws-mdaa/l3-construct": "1.0.0",
-    "@aws-mdaa/naming": "1.0.0",
-    "@aws-mdaa/testing": "^1.0.0",
+    "@aws-mdaa/construct": "1.1.0",
+    "@aws-mdaa/iam-role-helper": "1.1.0",
+    "@aws-mdaa/kms-constructs": "1.1.0",
+    "@aws-mdaa/l3-construct": "1.1.0",
+    "@aws-mdaa/naming": "1.1.0",
+    "@aws-mdaa/testing": "^1.1.0",
     "@types/jest": "29.5.0",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -45,22 +45,22 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-mdaa/construct": "^1.0.0",
-    "@aws-mdaa/databrew-constructs": "^1.0.0",
-    "@aws-mdaa/iam-role-helper": "^1.0.0",
-    "@aws-mdaa/kms-constructs": "^1.0.0",
-    "@aws-mdaa/l3-construct": "^1.0.0",
-    "@aws-mdaa/naming": "^1.0.0",
+    "@aws-mdaa/construct": "^1.1.0",
+    "@aws-mdaa/databrew-constructs": "^1.1.0",
+    "@aws-mdaa/iam-role-helper": "^1.1.0",
+    "@aws-mdaa/kms-constructs": "^1.1.0",
+    "@aws-mdaa/l3-construct": "^1.1.0",
+    "@aws-mdaa/naming": "^1.1.0",
     "aws-cdk-lib": "2.201.0",
     "cdk-nag": "2.37.1",
     "constructs": "10.0.96"
   },
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.0.0",
-    "@aws-mdaa/iam-role-helper": "1.0.0",
-    "@aws-mdaa/kms-constructs": "1.0.0",
-    "@aws-mdaa/l3-construct": "1.0.0",
-    "@aws-mdaa/naming": "1.0.0",
+    "@aws-mdaa/construct": "1.1.0",
+    "@aws-mdaa/iam-role-helper": "1.1.0",
+    "@aws-mdaa/kms-constructs": "1.1.0",
+    "@aws-mdaa/l3-construct": "1.1.0",
+    "@aws-mdaa/naming": "1.1.0",
     "aws-cdk-lib": "2.201.0",
     "cdk-nag": "2.37.1",
     "constructs": "10.0.96"

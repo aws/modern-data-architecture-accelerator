@@ -36,6 +36,9 @@
   ],
   "references": [
     {
+      "path": "../mdaa-config"
+    },
+    {
       "path": "../../constructs/L2/construct"
     },
     {
@@ -43,9 +46,6 @@
     },
     {
       "path": "../mdaa-naming"
-    },
-    {
-      "path": "../mdaa-config"
     },
     {
       "path": "../../constructs/L2/sqs-constructs"

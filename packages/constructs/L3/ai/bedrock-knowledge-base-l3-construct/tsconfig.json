@@ -36,10 +36,10 @@
   ],
   "references": [
     {
-      "path": "../../../L2/construct"
+      "path": "../../../L2/cloudwatch-constructs"
     },
     {
-      "path": "../../../L2/cloudwatch-constructs"
+      "path": "../../../L2/construct"
     },
     {
       "path": "../../dataops/dataops-lambda-l3-construct"

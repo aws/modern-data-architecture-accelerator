@@ -54,6 +54,9 @@
       "path": "../../utility/ec2-l3-construct"
     },
     {
+      "path": "../../governance/glue-catalog-l3-construct"
+    },
+    {
       "path": "../../../L2/glue-constructs"
     },
     {
@@ -69,13 +72,10 @@
       "path": "../../core/l3-construct"
     },
     {
-      "path": "../../governance/lakeformation-settings-l3-construct"
-    },
-    {
-      "path": "../../governance/glue-catalog-l3-construct"
-    },
-    {
       "path": "../../governance/lakeformation-access-control-l3-construct"
+    },
+    {
+      "path": "../../governance/lakeformation-settings-l3-construct"
     },
     {
       "path": "../../../L2/lambda-constructs"

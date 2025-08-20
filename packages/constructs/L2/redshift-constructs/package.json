@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/redshift-constructs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "MDAA Redshift Constructs",
   "license": "Apache-2.0",
   "author": {
@@ -23,11 +23,11 @@
   },
   "devDependencies": {
     "@aws-cdk/aws-redshift-alpha": "2.201.0-alpha.0",
-    "@aws-mdaa/construct": "1.0.0",
-    "@aws-mdaa/iam-constructs": "1.0.0",
-    "@aws-mdaa/kms-constructs": "1.0.0",
-    "@aws-mdaa/naming": "1.0.0",
-    "@aws-mdaa/testing": "^1.0.0",
+    "@aws-mdaa/construct": "1.1.0",
+    "@aws-mdaa/iam-constructs": "1.1.0",
+    "@aws-mdaa/kms-constructs": "1.1.0",
+    "@aws-mdaa/naming": "1.1.0",
+    "@aws-mdaa/testing": "^1.1.0",
     "@types/jest": "29.5.0",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -46,20 +46,20 @@
   },
   "dependencies": {
     "@aws-cdk/aws-redshift-alpha": "2.201.0-alpha.0",
-    "@aws-mdaa/construct": "^1.0.0",
-    "@aws-mdaa/iam-constructs": "^1.0.0",
-    "@aws-mdaa/kms-constructs": "^1.0.0",
-    "@aws-mdaa/naming": "^1.0.0",
+    "@aws-mdaa/construct": "^1.1.0",
+    "@aws-mdaa/iam-constructs": "^1.1.0",
+    "@aws-mdaa/kms-constructs": "^1.1.0",
+    "@aws-mdaa/naming": "^1.1.0",
     "aws-cdk-lib": "2.201.0",
     "cdk-nag": "2.37.1",
     "constructs": "10.0.96"
   },
   "peerDependencies": {
     "@aws-cdk/aws-redshift-alpha": "2.201.0-alpha.0",
-    "@aws-mdaa/construct": "1.0.0",
-    "@aws-mdaa/iam-constructs": "1.0.0",
-    "@aws-mdaa/kms-constructs": "1.0.0",
-    "@aws-mdaa/naming": "1.0.0",
+    "@aws-mdaa/construct": "1.1.0",
+    "@aws-mdaa/iam-constructs": "1.1.0",
+    "@aws-mdaa/kms-constructs": "1.1.0",
+    "@aws-mdaa/naming": "1.1.0",
     "aws-cdk-lib": "2.201.0",
     "cdk-nag": "2.37.1",
     "constructs": "10.0.96"

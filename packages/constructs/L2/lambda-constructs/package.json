@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/lambda-constructs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "MDAA Lambda Constructs",
   "license": "Apache-2.0",
   "solution_id": "SO0320",
@@ -24,10 +24,10 @@
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "devDependencies": {
-    "@aws-mdaa/construct": "1.0.0",
-    "@aws-mdaa/iam-constructs": "1.0.0",
-    "@aws-mdaa/naming": "1.0.0",
-    "@aws-mdaa/testing": "^1.0.0",
+    "@aws-mdaa/construct": "1.1.0",
+    "@aws-mdaa/iam-constructs": "1.1.0",
+    "@aws-mdaa/naming": "1.1.0",
+    "@aws-mdaa/testing": "^1.1.0",
     "@types/jest": "29.5.0",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -48,18 +48,18 @@
     "command-exists"
   ],
   "dependencies": {
-    "@aws-mdaa/construct": "^1.0.0",
-    "@aws-mdaa/iam-constructs": "^1.0.0",
-    "@aws-mdaa/naming": "^1.0.0",
+    "@aws-mdaa/construct": "^1.1.0",
+    "@aws-mdaa/iam-constructs": "^1.1.0",
+    "@aws-mdaa/naming": "^1.1.0",
     "aws-cdk-lib": "2.201.0",
     "cdk-nag": "2.37.1",
     "command-exists": "^1.2.9",
     "constructs": "10.0.96"
   },
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.0.0",
-    "@aws-mdaa/iam-constructs": "1.0.0",
-    "@aws-mdaa/naming": "1.0.0",
+    "@aws-mdaa/construct": "1.1.0",
+    "@aws-mdaa/iam-constructs": "1.1.0",
+    "@aws-mdaa/naming": "1.1.0",
     "aws-cdk-lib": "2.201.0",
     "cdk-nag": "2.37.1",
     "constructs": "10.0.96"

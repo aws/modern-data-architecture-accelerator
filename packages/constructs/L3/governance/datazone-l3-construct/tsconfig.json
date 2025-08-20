@@ -45,6 +45,9 @@
       "path": "../../../L2/datazone-constructs"
     },
     {
+      "path": "../glue-catalog-l3-construct"
+    },
+    {
       "path": "../../../../utilities/iam-role-helper"
     },
     {
@@ -55,9 +58,6 @@
     },
     {
       "path": "../lakeformation-settings-l3-construct"
-    },
-    {
-      "path": "../glue-catalog-l3-construct"
     },
     {
       "path": "../../../../utilities/mdaa-naming"

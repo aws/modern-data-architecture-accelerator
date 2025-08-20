@@ -1,3 +1,8 @@
+/*!
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { MdaaRdsServerlessClusterProps } from './serverless-cluster';
 
 const CLUSTER_IDENTIFIER_LENGTH = 63;

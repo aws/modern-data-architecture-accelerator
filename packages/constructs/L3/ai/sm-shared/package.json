@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/sm-shared",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "MDAA SageMaker Shared Constructs",
   "license": "Apache-2.0",
   "author": {
@@ -22,10 +22,10 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@aws-mdaa/construct": "1.0.0",
-    "@aws-mdaa/l3-construct": "1.0.0",
-    "@aws-mdaa/naming": "1.0.0",
-    "@aws-mdaa/testing": "^1.0.0",
+    "@aws-mdaa/construct": "1.1.0",
+    "@aws-mdaa/l3-construct": "1.1.0",
+    "@aws-mdaa/naming": "1.1.0",
+    "@aws-mdaa/testing": "^1.1.0",
     "@types/jest": "29.5.0",
     "@types/node": "17.0.23",
     "@types/prettier": "2.6.0",
@@ -39,9 +39,9 @@
     "typescript-json-schema": "0.63.0"
   },
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.0.0",
-    "@aws-mdaa/l3-construct": "1.0.0",
-    "@aws-mdaa/naming": "1.0.0",
+    "@aws-mdaa/construct": "1.1.0",
+    "@aws-mdaa/l3-construct": "1.1.0",
+    "@aws-mdaa/naming": "1.1.0",
     "aws-cdk-lib": "2.201.0",
     "constructs": "10.0.96"
   },
@@ -50,10 +50,10 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-mdaa/construct": "^1.0.0",
-    "@aws-mdaa/l3-construct": "^1.0.0",
-    "@aws-mdaa/naming": "^1.0.0",
-    "@aws-mdaa/sagemaker-constructs": "^1.0.0",
+    "@aws-mdaa/construct": "^1.1.0",
+    "@aws-mdaa/l3-construct": "^1.1.0",
+    "@aws-mdaa/naming": "^1.1.0",
+    "@aws-mdaa/sagemaker-constructs": "^1.1.0",
     "aws-cdk-lib": "2.201.0",
     "cdk-nag": "2.37.1",
     "constructs": "10.0.96"

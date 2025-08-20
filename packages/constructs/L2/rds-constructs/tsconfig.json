@@ -39,10 +39,10 @@
       "path": "../construct"
     },
     {
-      "path": "../iam-constructs"
+      "path": "../custom-constructs"
     },
     {
-      "path": "../custom-constructs"
+      "path": "../iam-constructs"
     },
     {
       "path": "../kms-constructs"
