@@ -299,7 +299,7 @@ echo "Testing accessibility of: $MODEL_TO_USE"
 ```
 
 **Important Notes:**
-- **Cross-region inference**: Use inference profile ARN (e.g., `arn:aws:bedrock:us-east-1:<account_id>:inference-profile/anthropic.claude-3-7-sonnet-20250219-v1:0`). Don't use inference profile for kb_parsing_model.
+- **Cross-region inference**: Use inference profile ARN (e.g., `arn:aws:bedrock:us-east-1:<account_id>:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0`)
 - **Knowledge base parsing**: Always use standard model ID format
 - **Single region**: Use model ID directly
 
@@ -312,8 +312,7 @@ echo "Testing accessibility of: $MODEL_TO_USE"
 1. **Access Denied when calling Bedrock**: 
    - Ensure you have model access of llm_model_id specified in the context values
    - Use the [Model Configuration Helper Script](#model-configuration-helper-script) to verify model access and determine correct configuration
-   - If you want to use models which need cross-region inference, use inference profile arn (e.g., `arn:aws:bedrock:us-east-1:<account_id>:inference-profile/anthropic.claude-3-7-sonnet-20250219-v1:0`)
-   - Knowledge base parsing cannot use cross-region inference profiles and requires standard model format. Use single region model id (e.g. `anthropic.claude-3-5-sonnet-20240620-v1:0`)
+   - If you want to use models which need cross-region inference, use inference profile arn (e.g., `arn:aws:bedrock:us-east-1:<account_id>:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0`)
    - Ensure the agent execution role has the necessary Bedrock permissions
    - Verify that the foundation model is available in your region
    - Check that the agent execution role can assume the service role for bedrock.amazonaws.com
