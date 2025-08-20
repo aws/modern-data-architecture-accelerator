@@ -383,7 +383,7 @@ generatePolicies:
           Action:
             - "lambda:InvokeFunction"
           Resource:
-            - "arn:{{partition}}:lambda:{{region}}:{{account}}:function:knowledge-base-transformer"
+            - "arn:{{partition}}:lambda:{{region}}:{{account}}:function:*"
         
         # Bedrock Foundation Model permissions for parsing
         - SID: BedrockModelAccess
@@ -441,6 +441,7 @@ generatePolicies:
           Effect: Allow
           Action:
             - "s3:GetObject"
+            - "s3:PutObject"
             - "s3:ListBucket"
           Resource:
             - "arn:{{partition}}:s3:::{{org}}-*/*"

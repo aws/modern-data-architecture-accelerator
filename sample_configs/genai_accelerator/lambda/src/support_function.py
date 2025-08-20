@@ -3,9 +3,10 @@ import boto3
 import os
 import uuid
 from datetime import datetime
-from aws_lambda_powertools import Logger
+import logging
 
-logger = Logger()
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 ACCOUNT_DB = {
     "acc-12345": {
@@ -50,7 +51,6 @@ TICKET_DB = {
     }
 }
 
-@logger.inject_lambda_context
 def lambda_handler(event, context):
     """
     Handler function for the customer support agent Lambda.
@@ -63,7 +63,7 @@ def lambda_handler(event, context):
         The response to be sent back to the Bedrock Agent
     """
     try:
-        logger.info("Received event", extra={"event": event})
+        logger.info(f"Received event: {json.dumps(event)}")
         
         # Extract the API operation from the event
         api_path = event.get("requestBody", {}).get("apiPath", "")

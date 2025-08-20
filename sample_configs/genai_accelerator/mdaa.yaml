@@ -16,7 +16,7 @@ context:
   subnet_id_3:  <your subnet id 3>
   llm_model: <your_model> # e.g. anthropic.claude-3-5-sonnet-20240620-v1:0 or an ARN
   kb_embedding_model: <kb_embedding_model> # e.g. amazon.titan-embed-text-v2:0
-  kb_parsing_model: <kb_parsing_model> # e.g. anthropic.claude-3-5-sonnet-20240620-v1:0
+  kb_parsing_model: <kb_parsing_model> # e.g. anthropic.claude-3-5-sonnet-20240620-v1:0 or an ARN
 
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names.

@@ -8,6 +8,8 @@ roles:
     - id: generated-role-id:agent-execution-role
   KnowledgeBaseRole:
     - id: generated-role-id:kb-execution-role
+  AgentLambdaRole:
+    - id: generated-role-id:agent-lambda-role
 
 # Definitions of access policies which grant access to S3 paths for specified Logical Config Roles
 accessPolicies:
@@ -32,6 +34,12 @@ accessPolicies:
         - KnowledgeBaseRole
         - AgentRole
 
+  AgentPolicy:
+    rule:
+      prefix: /
+      ReadWriteSuperRoles:
+        - AgentLambdaRole
+
 # The set of S3 buckets which will be created, and the access policies which will be applied
 buckets:
   # Bucket for customer support documents
@@ -54,3 +62,4 @@ buckets:
     accessPolicies:
       - AdminPolicy
       - KnowledgeBasePolicy
+      - AgentPolicy
