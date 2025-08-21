@@ -3,7 +3,7 @@
 exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-quicksight-project-main": {
-    "Description": "(SO0320-quicksight-project) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-quicksight-project) Modern Data Architecture Accelerator. Version 1.1.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -183,7 +183,7 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-quicksight-project) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-quicksight-project) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -2297,7 +2297,7 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
                 "Ref": "AWS::AccountId",
               },
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-quicksight-project-ma-7cc9d3f",
@@ -3129,7 +3129,7 @@ exports[`quicksight-project Snapshot Tests Quicksight Project App App Snapshot T
 
 exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-quicksight-project) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-quicksight-project) Modern Data Architecture Accelerator. Version 1.1.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -3309,7 +3309,7 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-quicksight-project) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-quicksight-project) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -5423,7 +5423,7 @@ exports[`quicksight-project Snapshot Tests Quicksight Project Stack Snapshot Tes
               "Ref": "AWS::AccountId",
             },
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-project-ma-7cc9d3f",

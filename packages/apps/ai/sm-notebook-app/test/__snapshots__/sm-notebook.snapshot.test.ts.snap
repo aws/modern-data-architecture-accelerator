@@ -3,7 +3,7 @@
 exports[`sm-notebook Snapshot Tests Sagemaker Notebook App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-sagemaker-notebook-app": {
-    "Description": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version 1.1.0",
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -261,7 +261,7 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook App App Snapshot Test 1`]
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -1082,7 +1082,7 @@ sh $ASSETS_DIR/testing/test.sh",
 
 exports[`sm-notebook Snapshot Tests Sagemaker Notebook Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version 1.1.0",
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -1340,7 +1340,7 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook Stack Snapshot Test 1`] =
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-sm-notebook) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },

@@ -3,7 +3,7 @@
 exports[`ec2 Snapshot Tests EC2 App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-ec2-main": {
-    "Description": "(SO0320-ec2) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-ec2) Modern Data Architecture Accelerator. Version 1.1.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -319,7 +319,7 @@ exports[`ec2 Snapshot Tests EC2 App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-ec2) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-ec2) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -381,7 +381,7 @@ exports[`ec2 Snapshot Tests EC2 App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-ec2-main-ec2volumee--770761e7",
@@ -1093,7 +1093,7 @@ exports[`ec2 Snapshot Tests EC2 App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-ec2-main-secretkeypai-222cf41",
@@ -3662,7 +3662,7 @@ type C:\\cfn\\log\\cfn-init.log</powershell>",
 
 exports[`ec2 Snapshot Tests EC2 Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-ec2) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-ec2) Modern Data Architecture Accelerator. Version 1.1.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -3978,7 +3978,7 @@ exports[`ec2 Snapshot Tests EC2 Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-ec2) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-ec2) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -4040,7 +4040,7 @@ exports[`ec2 Snapshot Tests EC2 Stack Snapshot Test 1`] = `
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-ec2-main-ec2volumee--770761e7",
@@ -4752,7 +4752,7 @@ exports[`ec2 Snapshot Tests EC2 Stack Snapshot Test 1`] = `
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-ec2-main-secretkeypai-222cf41",

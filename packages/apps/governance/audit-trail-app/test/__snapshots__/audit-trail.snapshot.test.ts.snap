@@ -3,7 +3,7 @@
 exports[`audit-trail Snapshot Tests Audit Trail App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-audit-trail-main": {
-    "Description": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version 1.1.0",
     "Parameters": {
       "BootstrapVersion": {
         "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -36,7 +36,7 @@ exports[`audit-trail Snapshot Tests Audit Trail App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -155,7 +155,7 @@ exports[`audit-trail Snapshot Tests Audit Trail App App Snapshot Test 1`] = `
 
 exports[`audit-trail Snapshot Tests Audit Trail Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version 1.1.0",
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -188,7 +188,7 @@ exports[`audit-trail Snapshot Tests Audit Trail Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-audit-trail) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },

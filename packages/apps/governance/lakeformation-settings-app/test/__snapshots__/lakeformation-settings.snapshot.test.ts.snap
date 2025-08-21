@@ -3,7 +3,7 @@
 exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-lakeformation-settings-main": {
-    "Description": "(SO0320-lakeformation-settings) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-lakeformation-settings) Modern Data Architecture Accelerator. Version 1.1.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -250,7 +250,7 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-lakeformation-settings) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-lakeformation-settings) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -488,7 +488,7 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-lakeformation-settin-2efedb13",
@@ -1282,7 +1282,7 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-lakeformation-settin-6ccac296",
@@ -2088,7 +2088,7 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
 
 exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-lakeformation-settings) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-lakeformation-settings) Modern Data Architecture Accelerator. Version 1.1.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -2335,7 +2335,7 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-lakeformation-settings) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-lakeformation-settings) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -2573,7 +2573,7 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-lakeformation-settin-2efedb13",
@@ -3367,7 +3367,7 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-lakeformation-settin-6ccac296",

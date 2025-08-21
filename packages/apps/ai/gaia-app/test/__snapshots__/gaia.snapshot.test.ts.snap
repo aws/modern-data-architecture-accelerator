@@ -3,7 +3,7 @@
 exports[`GAIA Snapshot Tests GAIA App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-gaia-app": {
-    "Description": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.1.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -790,7 +790,7 @@ def sort_filter_rules(json_obj):
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -911,7 +911,7 @@ def sort_filter_rules(json_obj):
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-gaia-app-databaseset-5e3f57a6",
@@ -3277,7 +3277,7 @@ def sort_filter_rules(json_obj):
               "UPLOAD_BUCKET_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
               "WEBSITE_CRAWLING_WORKFLOW_ARN": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
@@ -6113,7 +6113,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-gaia-app-websocket---74db1ce0",
@@ -6441,7 +6441,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-gaia-app-websocket-c-1fc981d2",
@@ -6829,7 +6829,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
               "WEBSOCKET_API_ENDPOINT": {
                 "Fn::Join": [
                   "",
@@ -7238,7 +7238,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
               "WEBSOCKET_API_ENDPOINT": {
                 "Fn::Join": [
                   "",
@@ -8729,7 +8729,7 @@ def sort_filter_rules(json_obj):
               "SESSIONS_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -9852,7 +9852,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -14356,7 +14356,7 @@ def sort_filter_rules(json_obj):
               "UPLOAD_BUCKET_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -15528,7 +15528,7 @@ def sort_filter_rules(json_obj):
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
               "SAGEMAKER_RAG_MODELS_ENDPOINT": "",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -17030,7 +17030,7 @@ def sort_filter_rules(json_obj):
               "UPLOAD_BUCKET_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -17935,7 +17935,7 @@ def sort_filter_rules(json_obj):
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-gaia-app-gaiasecrets--7ce725b",
@@ -18993,7 +18993,7 @@ def sort_filter_rules(json_obj):
 
 exports[`GAIA Snapshot Tests GAIA Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.1.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -19780,7 +19780,7 @@ def sort_filter_rules(json_obj):
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -19901,7 +19901,7 @@ def sort_filter_rules(json_obj):
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-gaia-main-databasese--70d9798",
@@ -22267,7 +22267,7 @@ def sort_filter_rules(json_obj):
             "UPLOAD_BUCKET_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             "WEBSITE_CRAWLING_WORKFLOW_ARN": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
@@ -25103,7 +25103,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-gaia-main-websocket--752e6fe2",
@@ -25431,7 +25431,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-gaia-main-websocket--360faf30",
@@ -25819,7 +25819,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             "WEBSOCKET_API_ENDPOINT": {
               "Fn::Join": [
                 "",
@@ -26228,7 +26228,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             "WEBSOCKET_API_ENDPOINT": {
               "Fn::Join": [
                 "",
@@ -27719,7 +27719,7 @@ def sort_filter_rules(json_obj):
             "SESSIONS_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -28842,7 +28842,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -33346,7 +33346,7 @@ def sort_filter_rules(json_obj):
             "UPLOAD_BUCKET_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -34518,7 +34518,7 @@ def sort_filter_rules(json_obj):
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
             "SAGEMAKER_RAG_MODELS_ENDPOINT": "",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -36020,7 +36020,7 @@ def sort_filter_rules(json_obj):
             "UPLOAD_BUCKET_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -36925,7 +36925,7 @@ def sort_filter_rules(json_obj):
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-gaia-main-gaiasecre--7bc3525d",

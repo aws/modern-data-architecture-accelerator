@@ -3,7 +3,7 @@
 exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-stepfunction-main": {
-    "Description": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.1.0",
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -110,7 +110,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -869,7 +869,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
 
 exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.1.0",
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -976,7 +976,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-dataops-stepfunction) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },

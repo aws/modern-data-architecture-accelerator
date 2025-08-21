@@ -3,7 +3,7 @@
 exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-roles-main": {
-    "Description": "(SO0320-roles) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-roles) Modern Data Architecture Accelerator. Version 1.1.0",
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -690,7 +690,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-roles) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-roles) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -4224,7 +4224,7 @@ exports[`roles Snapshot Tests Roles App App Snapshot Test 1`] = `
 
 exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-roles) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-roles) Modern Data Architecture Accelerator. Version 1.1.0",
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -4911,7 +4911,7 @@ exports[`roles Snapshot Tests Roles Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-roles) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-roles) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },

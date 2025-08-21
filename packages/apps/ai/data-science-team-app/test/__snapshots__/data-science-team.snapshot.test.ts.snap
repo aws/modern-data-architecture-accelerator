@@ -2,7 +2,7 @@
 
 exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-datascience-team) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-datascience-team) Modern Data Architecture Accelerator. Version 1.1.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -790,7 +790,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-datascience-team) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-datascience-team) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -1110,7 +1110,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-data-science-team-s--16227506",
@@ -1838,7 +1838,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-data-science-team-s--44c7e747",
@@ -6312,7 +6312,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-data-science-team-m--6a337e5f",
@@ -9565,7 +9565,7 @@ sh $ASSETS_DIR/testing/test.sh",
 exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-data-science-team-app": {
-    "Description": "(SO0320-datascience-team) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-datascience-team) Modern Data Architecture Accelerator. Version 1.1.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -10353,7 +10353,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-datascience-team) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-datascience-team) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -10673,7 +10673,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-data-science-team-ap-44301926",
@@ -11401,7 +11401,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-data-science-team-a--57b934f3",
@@ -15875,7 +15875,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-data-science-team-a--6f8a0433",

@@ -3,7 +3,7 @@
 exports[`Core App Snapshot Tests Core App - Complete App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-core-app-complete": {
-    "Description": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.1.0",
     "Parameters": {
       "BootstrapVersion": {
         "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -28,7 +28,7 @@ exports[`Core App Snapshot Tests Core App - Complete App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -82,7 +82,7 @@ exports[`Core App Snapshot Tests Core App - Complete App Snapshot Test 1`] = `
 
 exports[`Core App Snapshot Tests Core App Stack - Basic Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.1.0",
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -107,7 +107,7 @@ exports[`Core App Snapshot Tests Core App Stack - Basic Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -160,7 +160,7 @@ exports[`Core App Snapshot Tests Core App Stack - Basic Snapshot Test 1`] = `
 
 exports[`Core App Snapshot Tests Core App Stack - Development Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.1.0",
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -185,7 +185,7 @@ exports[`Core App Snapshot Tests Core App Stack - Development Snapshot Test 1`] 
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -238,7 +238,7 @@ exports[`Core App Snapshot Tests Core App Stack - Development Snapshot Test 1`] 
 
 exports[`Core App Snapshot Tests Core App Stack - Production Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.1.0",
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -263,7 +263,7 @@ exports[`Core App Snapshot Tests Core App Stack - Production Snapshot Test 1`] =
           "mdaa_org": "enterprise",
         },
         "Type": "String",
-        "Value": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-app) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },

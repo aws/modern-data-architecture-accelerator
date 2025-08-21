@@ -3,7 +3,7 @@
 exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-quicksight-namespace-main": {
-    "Description": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.1.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -326,7 +326,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -1168,7 +1168,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
               },
               "IDENTITY_STORE": "QUICKSIGHT",
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--3a033d04",
@@ -2371,7 +2371,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
               "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
               "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-AUTHORS,test-org-test-env-test-domain-test-quicksight-namespace-main-READERS",
               "QUICKSIGHT_ROLE": "AUTHOR",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace-648ef977",
@@ -2593,7 +2593,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
               "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
               "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-PUBLISHERS",
               "QUICKSIGHT_ROLE": "AUTHOR",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--1a088d98",
@@ -2815,7 +2815,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
               "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
               "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-READERS",
               "QUICKSIGHT_ROLE": "READER",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--348256c1",
@@ -3008,7 +3008,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
 
 exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.1.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -3331,7 +3331,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -4173,7 +4173,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
             },
             "IDENTITY_STORE": "QUICKSIGHT",
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--3a033d04",
@@ -5376,7 +5376,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
             "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
             "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-AUTHORS,test-org-test-env-test-domain-test-quicksight-namespace-main-READERS",
             "QUICKSIGHT_ROLE": "AUTHOR",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace-648ef977",
@@ -5598,7 +5598,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
             "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
             "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-PUBLISHERS",
             "QUICKSIGHT_ROLE": "AUTHOR",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--1a088d98",
@@ -5820,7 +5820,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
             "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
             "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-READERS",
             "QUICKSIGHT_ROLE": "READER",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--348256c1",
@@ -6012,7 +6012,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
 
 exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.1.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -6335,7 +6335,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -7177,7 +7177,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
             },
             "IDENTITY_STORE": "QUICKSIGHT",
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--3a033d04",
@@ -8380,7 +8380,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
             "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
             "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-AUTHORS,test-org-test-env-test-domain-test-quicksight-namespace-main-READERS,test-org-test-env-test-domain-test-quicksight-namespace-main-PUBLISHERS",
             "QUICKSIGHT_ROLE": "AUTHOR",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace-648ef977",
@@ -8602,7 +8602,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
             "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
             "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-PUBLISHERS,test-org-test-env-test-domain-test-quicksight-namespace-main-READERS",
             "QUICKSIGHT_ROLE": "AUTHOR",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--1a088d98",
@@ -8824,7 +8824,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
             "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
             "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-READERS",
             "QUICKSIGHT_ROLE": "READER",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--348256c1",
@@ -9016,7 +9016,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
 
 exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.1.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -9290,7 +9290,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-quicksight-namespace) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -9962,7 +9962,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
             },
             "IDENTITY_STORE": "QUICKSIGHT",
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--3a033d04",
@@ -11052,7 +11052,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
             "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
             "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-AUTHORS,test-org-test-env-test-domain-test-quicksight-namespace-main-READERS",
             "QUICKSIGHT_ROLE": "AUTHOR",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace-648ef977",
@@ -11274,7 +11274,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
             "NAMESPACE": "test-org-test-env-test-domain-test-quicksight-namespace-main",
             "QUICKSIGHT_GROUPS": "test-org-test-env-test-domain-test-quicksight-namespace-main-READERS",
             "QUICKSIGHT_ROLE": "READER",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.0.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespac--348256c1",

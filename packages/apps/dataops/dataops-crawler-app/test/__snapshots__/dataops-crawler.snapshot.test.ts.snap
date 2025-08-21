@@ -3,7 +3,7 @@
 exports[`dataops-crawler Snapshot Tests Glue Crawler App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-glue-crawler-main": {
-    "Description": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.1.0",
     "Parameters": {
       "BootstrapVersion": {
         "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -56,7 +56,7 @@ exports[`dataops-crawler Snapshot Tests Glue Crawler App App Snapshot Test 1`] =
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -185,7 +185,7 @@ exports[`dataops-crawler Snapshot Tests Glue Crawler App App Snapshot Test 1`] =
 
 exports[`dataops-crawler Snapshot Tests Glue Crawler Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.1.0",
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -238,7 +238,7 @@ exports[`dataops-crawler Snapshot Tests Glue Crawler Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-dataops-crawler) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },

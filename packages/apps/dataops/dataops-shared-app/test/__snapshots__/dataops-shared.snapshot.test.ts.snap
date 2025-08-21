@@ -3,7 +3,7 @@
 exports[`DataOps Shared App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-dataops-shared-app": {
-    "Description": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version 1.1.0",
     "Parameters": {
       "BootstrapVersion": {
         "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -154,7 +154,7 @@ exports[`DataOps Shared App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -208,7 +208,7 @@ exports[`DataOps Shared App App Snapshot Test 1`] = `
 
 exports[`DataOps Shared Config Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version 1.1.0",
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -359,7 +359,7 @@ exports[`DataOps Shared Config Snapshot Test 1`] = `
           "mdaa_org": "analytics-org",
         },
         "Type": "String",
-        "Value": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-dataops-shared) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },

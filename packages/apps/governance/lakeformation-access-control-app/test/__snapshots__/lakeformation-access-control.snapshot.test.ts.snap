@@ -3,7 +3,7 @@
 exports[`lakeformation-access-control Snapshot Tests Lakeformation App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-lakeformation-main": {
-    "Description": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.0.0",
+    "Description": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.1.0",
     "Parameters": {
       "BootstrapVersion": {
         "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -42,7 +42,7 @@ exports[`lakeformation-access-control Snapshot Tests Lakeformation App App Snaps
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.0.0",
+          "Value": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.1.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -447,7 +447,7 @@ exports[`lakeformation-access-control Snapshot Tests Lakeformation App App Snaps
 
 exports[`lakeformation-access-control Snapshot Tests Lakeformation Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.0.0",
+  "Description": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.1.0",
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -486,7 +486,7 @@ exports[`lakeformation-access-control Snapshot Tests Lakeformation Stack Snapsho
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.0.0",
+        "Value": "(SO0320-lakeformation-access-control) Modern Data Architecture Accelerator. Version 1.1.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
