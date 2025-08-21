@@ -68,8 +68,7 @@ health_data_accelerator
 │         ├── python-tests
 │         │         ├── conftest.py
 │         │         ├── pytest.ini
-│         │         ├── requirements.txt
-│         │         ├── setup.sh
+│         │         ├── pyproject.toml
 │         │         ├── test_file_manager_simple.py
 │         │         └── test_setup.py
 │         ├── roles.yaml

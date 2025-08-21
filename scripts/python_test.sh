@@ -20,6 +20,14 @@ fi
 FAILED_PACKAGES=()
 TOTAL_PACKAGES=0
 
+# Check if uv is available
+if ! command -v uv >/dev/null 2>&1; then
+    echo "❌ uv is required for Python testing but not found."
+    echo "Please install uv: curl -LsSf https://astral.sh/uv/install.sh | sh"
+    echo "Or use your package manager: brew install uv"
+    exit 1
+fi
+
 for package in $PYTHON_TEST_PACKAGES; do
     TOTAL_PACKAGES=$((TOTAL_PACKAGES + 1))
     echo ""
@@ -29,29 +37,14 @@ for package in $PYTHON_TEST_PACKAGES; do
     
     cd "$PROJECT_ROOT/$package/python-tests"
     
-    # Check if virtual environment exists, create if not
-    if [ ! -d ".venv" ]; then
-        echo "Creating virtual environment for $package..."
-        python3 -m venv .venv
-    fi
-    
-    # Activate virtual environment and run tests
-    source .venv/bin/activate
-    
-    # Install dependencies if requirements.txt exists
-    if [ -f "requirements.txt" ]; then
-        pip install -r requirements.txt > /dev/null 2>&1
-    fi
-    
-    # Run tests
-    if python3 -m pytest; then
+    # Run tests with coverage using uv
+    if uv run pytest --cov --cov-report=xml --cov-report=html --cov-report=term; then
         echo "✅ Python tests passed for $package"
     else
         echo "❌ Python tests failed for $package"
         FAILED_PACKAGES+=("$package")
     fi
     
-    deactivate
     cd "$PROJECT_ROOT"
 done
 

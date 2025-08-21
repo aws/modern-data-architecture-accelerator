@@ -131,6 +131,40 @@ feature_merge_build_test:
     - ./scripts/npm_install.sh
     - ./scripts/build_test.sh
 
+feature_merge_python_test:
+  stage: build  # Same stage = parallel execution
+  tags:
+    - arch:amd64
+    - size:large  # Smaller than 3xlarge since no TypeScript build
+  only:
+    - merge_requests
+  needs:
+    - feature_merge_main  # Same dependency as build_test
+  cache:
+    key: feature-merge-python-$CI_COMMIT_SHA
+    paths:
+      - "**/python-tests/.venv/"
+      - "**/python-tests/uv.lock"
+    policy: pull-push
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: "**/python-tests/coverage.xml"
+    paths:
+      - "**/python-tests/coverage.xml"
+      - "**/python-tests/htmlcov/"
+    expire_in: 1 week
+  script:
+    - echo "Installing uv for Python testing..."
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - echo "Verifying uv installation..."
+    - which uv
+    - uv --version
+    - echo "Running Python tests with coverage..."
+    - npm run test:python:all
+
 feature_merge_snapshot_test:
   tags:
     - arch:amd64
@@ -255,6 +289,42 @@ feature_build_test:
   allow_failure: false
   script:
     - ./scripts/build_test.sh
+
+feature_python_test:
+  stage: build  # Same stage = parallel execution
+  tags:
+    - arch:amd64
+    - size:large  # Smaller than 3xlarge since no TypeScript build
+  except:
+    refs:
+      - main
+      - tags
+  needs:
+    - feature_version  # Same dependency as feature_build_test
+  cache:
+    key: feature-python-$CI_COMMIT_SHA
+    paths:
+      - "**/python-tests/.venv/"
+      - "**/python-tests/uv.lock"
+    policy: pull-push
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: "**/python-tests/coverage.xml"
+    paths:
+      - "**/python-tests/coverage.xml"
+      - "**/python-tests/htmlcov/"
+    expire_in: 1 week
+  script:
+    - echo "Installing uv for Python testing..."
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - export PATH="$HOME/.local/bin:$PATH"
+    - echo "Verifying uv installation..."
+    - which uv
+    - uv --version
+    - echo "Running Python tests with coverage..."
+    - npm run test:python:all
 
 feature_package:
   tags:

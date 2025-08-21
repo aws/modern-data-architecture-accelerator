@@ -231,6 +231,34 @@ MDAA can be used and extended in the following ways:
 
 This solution collects anonymous operational metrics to help AWS improve the quality and features of the solution. For more information, including how to disable this capability, please see the [implementation guide] (<https://docs.aws.amazon.com/cdk/latest/guide/cli.html#version_reporting>).
 
+## Development and Testing
+
+MDAA includes comprehensive testing for both TypeScript/CDK code and Python Lambda/Glue functions:
+
+- **TypeScript Testing**: CDK unit tests using CDK Assertions framework
+- **Python Testing**: Modern `uv`-based testing with pytest for Lambda functions and Glue jobs
+- **CI/CD Integration**: Automated testing in build pipelines
+
+### Quick Start for Developers
+
+```bash
+# Run all tests
+./scripts/test.sh              # Both TypeScript and Python tests
+
+# Run specific test types
+lerna run test --stream        # TypeScript tests only
+npm run test:python:all        # Python tests only
+
+# Development workflow
+lerna run build && lerna run test    # Build and test TypeScript
+uv run pytest                       # Run Python tests (from python-tests/ dir)
+```
+
+For detailed development and testing information, see:
+- [DEVELOPMENT.md](DEVELOPMENT.md) - Development setup and testing guide
+- [PYTHON_TESTING.md](PYTHON_TESTING.md) - Comprehensive Python testing documentation
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.

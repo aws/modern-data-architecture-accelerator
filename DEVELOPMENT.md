@@ -24,8 +24,20 @@
 
 ### Testing Overview
 
-The testing approach for MDAA changes varies depending on the type of package being tested (App, Stack, or Construct). Before testing, ensure that
-the entire MDAA repo is cloned, bootstrapped, and built using the procedures in [CONTRIBUTING](CONTRIBUTING.md).
+MDAA supports both **TypeScript/CDK testing** and **Python testing** for comprehensive code coverage. The testing approach varies depending on the type of package being tested (App, Stack, Construct, or Python Lambda/Glue code). Before testing, ensure that the entire MDAA repo is cloned, bootstrapped, and built using the procedures in [CONTRIBUTING](CONTRIBUTING.md).
+
+### Quick Test Commands
+
+```bash
+# Run all tests (TypeScript + Python)
+npm run test:python:all        # All Python tests
+lerna run test --stream        # All TypeScript tests
+./scripts/test.sh             # Both TypeScript and Python tests
+
+# Run tests during development
+lerna run build && lerna run test    # TypeScript build + test
+npm run test:python:all              # Python tests only
+```
 
 ### Testing Constructs and Stacks
 
@@ -92,6 +104,106 @@ describe( 'MDAA Construct Compliance Tests', () => {
     
 } )
 ```
+
+### Testing Python Code
+
+MDAA includes comprehensive Python testing for Lambda functions, Glue jobs, and other Python components using modern tooling.
+
+#### Python Test Structure
+
+Python tests are located in `python-tests/` directories alongside the Python source code:
+
+```
+package-name/
+├── python-tests/              # Python testing directory
+│   ├── pyproject.toml        # Modern Python project config
+│   ├── pytest.ini           # pytest configuration
+│   ├── conftest.py          # Shared test fixtures
+│   ├── .venv/              # Virtual environment (auto-managed)
+│   └── test_*.py           # Test files
+├── src/ or lib/             # Python source code being tested
+└── package.json             # npm scripts for testing (optional)
+```
+
+#### Running Python Tests
+
+**Prerequisites: Install uv**
+```bash
+# Install uv (required for Python testing)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# or: brew install uv
+# or: pip install uv
+```
+
+**Option 1: Direct uv commands (Recommended)**
+```bash
+# Navigate to any python-tests directory
+cd path/to/package/python-tests
+
+# Run tests (uv handles everything automatically)
+uv run pytest                    # Run all tests
+uv run pytest --cov            # Run with coverage
+uv run pytest -v               # Verbose output
+uv run pytest test_specific.py # Run specific test file
+```
+
+**Option 2: npm scripts**
+```bash
+# From package root
+npm run test:python             # Run Python tests for this package
+npm run test:python:coverage    # Run with coverage report
+
+# From repository root
+npm run test:python:all         # Run ALL Python tests (recommended for CI/CD)
+npm run test:python            # Run workspace Python tests only
+```
+
+#### Discovering Python Tests
+
+To see all packages with Python tests:
+```bash
+# Find all python-tests directories
+find packages sample_configs -name "python-tests" -type d
+
+# Count total test packages
+find packages sample_configs -name "python-tests" -type d | wc -l
+```
+
+#### Adding Python Tests to New Packages
+
+1. **Copy structure** from existing package:
+   ```bash
+   # Find an existing python-tests directory
+   find packages sample_configs -name "python-tests" -type d | head -1
+   
+   # Copy the structure
+   cp -r path/to/existing/python-tests your-package/
+   ```
+
+2. **Update `pyproject.toml`** with your dependencies:
+   ```toml
+   [project]
+   name = "your-package-tests"
+   dependencies = [
+       "pytest>=7.4.0",
+       "pytest-cov>=4.1.0",
+       "boto3>=1.28.0",
+       # Add your specific dependencies
+   ]
+   ```
+
+3. **Update `conftest.py`** to point to your source code:
+   ```python
+   # Add the source directory to Python path
+   src_path = os.path.join(os.path.dirname(__file__), '../src')
+   sys.path.insert(0, src_path)
+   ```
+
+4. **Create test files** following `test_*.py` naming convention
+
+5. **Run tests**: `uv run pytest` in the python-tests directory
+
+For detailed Python testing documentation, see [PYTHON_TESTING.md](PYTHON_TESTING.md).
 
 ### Testing Apps
 

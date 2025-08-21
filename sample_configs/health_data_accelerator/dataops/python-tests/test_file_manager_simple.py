@@ -11,11 +11,8 @@ from botocore.exceptions import ClientError
 # Import the file manager module
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../src/lambda/file_manager'))
 
-try:
-    import odpf_file_manager
-    from odpf_file_manager import FileManagerConfig
-except ImportError as e:
-    pytest.skip(f"Could not import odpf_file_manager: {e}", allow_module_level=True)
+import odpf_file_manager
+from odpf_file_manager import FileManagerConfig
 
 
 class TestFileManagerConfig:

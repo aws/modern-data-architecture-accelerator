@@ -1,0 +1,43 @@
+[project]
+name = "health-data-accelerator-tests"
+version = "0.1.0"
+description = "Health Data Accelerator Python Tests"
+requires-python = ">=3.9"
+dependencies = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.1",
+    "moto[dynamodb,s3,glue]>=4.2.0",
+    "boto3>=1.28.0",
+    "botocore>=1.31.0",
+    "coverage>=7.2.0",
+    "pyspark>=3.4.0",
+    "responses>=0.23.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--verbose",
+    "--tb=short",
+]
+
+[tool.coverage.run]
+source = ["../src"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
+

@@ -43,3 +43,8 @@ deployment/regional-s3-assets*
 !jest.config.snapshot.js
 .venv
 .coverage
+coverage.xml
+htmlcov/
+*.coverage
+.pytest_cache/
+uv.lock
