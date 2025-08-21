@@ -164,6 +164,7 @@ export class MdaaInstallerStack extends cdk.Stack {
     });
 
     new cdk.CfnRule(this, 'ValidateNetworkParametersForDataScience', {
+      ruleCondition: cdk.Fn.conditionEquals(sampleNameParam.valueAsString, 'basic_datascience_platform'),
       assertions: [
         {
           assert: cdk.Fn.conditionNot(cdk.Fn.conditionEquals(vpcIdParam.valueAsString, '')),
