@@ -7,6 +7,7 @@ import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { aws_bedrock as bedrock } from 'aws-cdk-lib';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
+import { MdaaParamAndOutput } from '@aws-mdaa/construct';
 
 // ---------------------------------------------
 // Guardrail Interfaces and Types
@@ -146,7 +147,24 @@ export class BedrockGuardrailL3Construct extends MdaaL3Construct {
       sensitiveInformationPolicyConfig: sensitiveInformationPolicyConfig,
     };
 
-    return new bedrock.CfnGuardrail(this, `${guardrailName}-guardrail`, guardrailProps);
+    const cfnGuardrail = new bedrock.CfnGuardrail(this, `${guardrailName}-guardrail`, guardrailProps);
+
+    new MdaaParamAndOutput(this, {
+      resourceType: 'guardrail',
+      resourceId: guardrailName,
+      name: 'arn',
+      value: cfnGuardrail.attrGuardrailArn,
+      ...this.props,
+    });
+    new MdaaParamAndOutput(this, {
+      resourceType: 'guardrail',
+      resourceId: guardrailName,
+      name: 'id',
+      value: cfnGuardrail.attrGuardrailId,
+      ...this.props,
+    });
+
+    return cfnGuardrail;
   }
 
   private createContextualGroundingConfig(
