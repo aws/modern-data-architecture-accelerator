@@ -5,7 +5,7 @@
 
 import { describe } from '@jest/globals';
 import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
-import { MdaaCdkApp } from '../lib/app';
+import { MdaaCdkApp } from '../lib';
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';

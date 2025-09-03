@@ -25,15 +25,15 @@ import {
   Portfolio,
 } from 'aws-cdk-lib/aws-servicecatalog';
 import { AwsSolutionsChecks, HIPAASecurityChecks, NIST80053R5Checks, PCIDSS321Checks } from 'cdk-nag';
-import * as fs from 'fs';
 import * as path from 'path';
-import * as yaml from 'yaml';
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from './app_config';
 import * as configSchema from './config-schema.json';
 import { MdaaProductStack, MdaaProductStackProps, MdaaStack } from './stack';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
+import { cleanContextStringValue, readYamlFile } from './utils';
 // nosemgrep
 import assert = require('assert');
+
 const pjson = require('../package.json');
 
 export interface MdaaAppProps extends AppProps {
@@ -50,6 +50,7 @@ export interface Deployment {
   readonly region?: string;
   readonly account?: string;
 }
+
 /**
  * Base class for MDAA CDK Apps. Provides consistent app behaviours in
  * configuration parsing, stack generation, resource naming,
@@ -74,6 +75,7 @@ export abstract class MdaaCdkApp extends App {
   private readonly baseConfigParser: MdaaAppConfigParser<MdaaBaseConfigContents>;
   private readonly additionalStacks?: Deployment[];
   private readonly additionalStacksMap: { [account: string]: { [region: string]: Stack } };
+
   /**
    * Constructor does most of the app initialization, reading inputs from CDK context, parsing App config files, configuring resource naming, and configuring CDK Nag.
    * @param props - CDK AppProps (default empty). Not typically required if running using the CDK cli, but useful for direct instantiation.
@@ -128,7 +130,7 @@ export abstract class MdaaCdkApp extends App {
       this.useBootstrap =
         this.node.tryGetContext('use_bootstrap') == undefined
           ? true
-          : /true/i.test(this.node.tryGetContext('use_bootstrap'));
+          : cleanContextStringValue(this.node.tryGetContext('use_bootstrap')).toLowerCase() === 'true';
     }
     const namingModule: string = this.node.tryGetContext('naming_module');
     const namingClass: string = this.node.tryGetContext('naming_class');
@@ -136,7 +138,7 @@ export abstract class MdaaCdkApp extends App {
     const logSuppressions: boolean =
       this.node.tryGetContext('log_suppressions') == undefined
         ? false
-        : /true/i.test(this.node.tryGetContext('log_suppressions'));
+        : cleanContextStringValue(this.node.tryGetContext('log_suppressions')).toLowerCase() === 'true';
 
     Aspects.of(this).add(new AwsSolutionsChecks({ verbose: true, logIgnores: logSuppressions }));
     Aspects.of(this).add(new NIST80053R5Checks({ verbose: true, logIgnores: logSuppressions }));
@@ -211,29 +213,34 @@ export abstract class MdaaCdkApp extends App {
   }
 
   private loadTagConfigFromFiles(): TagElement {
-    const tagConfigRaw = this.loadConfigFromFiles(this.node.tryGetContext('tag_configs')?.split(',') || []);
+    const tagConfigRaw = this.loadConfigFromFiles(
+      this.node.tryGetContext('tag_configs')?.split(',').map(cleanContextStringValue) || [],
+    );
     return (tagConfigRaw['tags'] as TagElement) || {};
   }
 
   private loadConfigFromFiles(fileList: string[]): ConfigurationElement {
     // nosemgrep
     const _ = require('lodash');
+
     function customizer(objValue: unknown, srcValue: unknown): unknown[] | undefined {
       if (_.isArray(objValue)) {
         return (objValue as unknown[]).concat(srcValue);
       }
       return undefined;
     }
+
     let configRaw: ConfigurationElement = {};
 
-    fileList.forEach((fileName: string) => {
+    fileList.forEach((rawFileName: string) => {
+      const fileName = cleanContextStringValue(rawFileName);
       console.log(`Reading config from ${fileName}`);
       // nosemgrep
-      const parsedYaml = yaml.parse(fs.readFileSync(fileName.trim(), 'utf8'));
+      const parsedYaml = readYamlFile(fileName.trim());
       //Resolve relative paths in parsedYaml
       const baseDir = path.dirname(fileName.trim());
       const pathResolvedYaml = new MdaaConfigTransformer(new ConfigConfigPathValueTransformer(baseDir)).transformConfig(
-        parsedYaml,
+        parsedYaml as ConfigurationElement,
       );
       configRaw = _.mergeWith(configRaw, pathResolvedYaml, customizer);
     });
@@ -464,6 +471,7 @@ export abstract class MdaaCdkApp extends App {
       tags: this.tags,
     };
   }
+
   /**
    *
    * @returns A standard set of MDAA Stack Props for use in Mdaa App Configs
