@@ -230,7 +230,7 @@ export class MdaaRoleHelper {
     const resolveRoleProvider = new Provider(this.scope, 'resolve-role-res-cr-provider', {
       providerFunctionName: resolveRoleProviderFunctionName,
       onEventHandler: resolveRoleLambda,
-      role: resolveRoleCrProviderRole,
+      frameworkOnEventRole: resolveRoleCrProviderRole,
     });
 
     MdaaNagSuppressions.addCodeResourceSuppressions(

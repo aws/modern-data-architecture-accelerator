@@ -415,7 +415,7 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
     const catalogResourcePolicyProvider = new Provider(this.scope, 'datalake-catalog-cr-provider', {
       providerFunctionName: catalogCrProviderFunctionName,
       onEventHandler: catalogResourcePolicyLambda,
-      role: catalogCrProviderRole,
+      frameworkOnEventRole: catalogCrProviderRole,
     });
 
     MdaaNagSuppressions.addCodeResourceSuppressions(

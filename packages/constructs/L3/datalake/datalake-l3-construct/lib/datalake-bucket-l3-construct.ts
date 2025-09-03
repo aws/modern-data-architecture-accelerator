@@ -642,7 +642,7 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
     const datalakeFolderProvider = new Provider(this.scope, 'datalake-folder-cr-provider', {
       providerFunctionName: folderCrProviderFunctionName,
       onEventHandler: datalakeFolderLambda,
-      role: folderCrProviderRole,
+      frameworkOnEventRole: folderCrProviderRole,
     });
 
     MdaaNagSuppressions.addCodeResourceSuppressions(

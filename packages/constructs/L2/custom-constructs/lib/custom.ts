@@ -188,7 +188,7 @@ export class MdaaCustomResource extends CustomResource {
       ? existingProvider
       : new Provider(stack, providerResourceId, {
           onEventHandler: this.handlerFunctionPlaceHolder,
-          role: providerRole,
+          frameworkOnEventRole: providerRole,
           providerFunctionName: providerFunctionName,
         });
 

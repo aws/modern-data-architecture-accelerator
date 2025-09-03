@@ -330,7 +330,7 @@ export class QuickSightAccountL3Construct extends MdaaL3Construct {
     const accountCrProvider = new Provider(this, 'qsAccount-cr-provider', {
       providerFunctionName: accountCrProviderFunctionName,
       onEventHandler: accountCrLambda,
-      role: accountCrProviderRole,
+      frameworkOnEventRole: accountCrProviderRole,
     });
     MdaaNagSuppressions.addCodeResourceSuppressions(
       accountCrProviderRole,

@@ -408,7 +408,7 @@ export class QuickSightNamespaceL3Construct extends MdaaL3Construct {
     const namespaceCrProvider: Provider = new Provider(this, 'ns-cr-provider', {
       providerFunctionName: namespaceCrProviderFunctionName,
       onEventHandler: quicksightNamespaceCrLambda,
-      role: namespaceCrProviderRole,
+      frameworkOnEventRole: namespaceCrProviderRole,
     });
     MdaaNagSuppressions.addCodeResourceSuppressions(
       namespaceCrProviderRole,

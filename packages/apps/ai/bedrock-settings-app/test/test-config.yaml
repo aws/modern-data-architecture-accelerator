@@ -1,0 +1,9 @@
+# Controls whether or not Bedrock logs model invocation activity
+
+# Enabling this will result in a new S3 bucket being created
+# specifically for model invocation audit logs.
+enableAuditLoggingToS3: true
+
+# Enabling this will result in a new Cloudwatch Log Group being created
+# specifically for model invocation audit logs.
+enableAuditLoggingToCloudwatch: true

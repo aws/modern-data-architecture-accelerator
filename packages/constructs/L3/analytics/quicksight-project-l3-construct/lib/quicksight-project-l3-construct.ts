@@ -422,7 +422,7 @@ export class QuickSightProjectL3Construct extends MdaaL3Construct {
     const qsFoldersCrProvider = new Provider(this, 'qsFolders-cr-provider', {
       providerFunctionName: qsFoldersCrProviderFunctionName,
       onEventHandler: quicksightFoldersCrLambda,
-      role: qsFoldersCrProviderRole,
+      frameworkOnEventRole: qsFoldersCrProviderRole,
     });
     MdaaNagSuppressions.addCodeResourceSuppressions(
       qsFoldersCrProviderRole,
