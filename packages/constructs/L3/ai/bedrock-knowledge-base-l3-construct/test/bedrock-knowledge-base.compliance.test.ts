@@ -15,7 +15,21 @@ import {
   VectorStoreProps,
 } from '../lib';
 
+// Mock the resolveModelArn function
+jest.mock('@aws-mdaa/ai-helper', () => ({
+  resolveModelArn: jest.fn((modelIdentifier: string, partition: string, region: string, account: string) =>
+    modelIdentifier.startsWith('arn:')
+      ? modelIdentifier
+      : modelIdentifier.startsWith('us.')
+      ? `arn:${partition}:bedrock:${region}:${account}:inference-profile/${modelIdentifier}`
+      : `arn:${partition}:bedrock:${region}::foundation-model/${modelIdentifier}`,
+  ),
+}));
+
 describe('Bedrock Knowledge Base L3 Construct Tests', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   const kbRoleRef: MdaaRoleRef = {
     arn: 'arn:test-partition:iam::test-account:role/kb-execution-role',
     name: 'kb-execution-role',
@@ -69,6 +83,51 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
       },
       StorageConfiguration: {
         Type: 'RDS',
+      },
+    });
+    template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+      ManagedPolicyName: 'test-org-test-env-test-domain-test-module-kb-foundatio--387a8141',
+      PolicyDocument: {
+        Statement: [
+          {
+            Action: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
+            Effect: 'Allow',
+            Resource: 'arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
+            Sid: 'InvokeFoundationModels',
+          },
+          {},
+        ],
+      },
+    });
+  });
+
+  test('Test Knowledge Base Creation with ARN', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb',
+      kbConfig: {
+        ...basicKnowledgeBase,
+        embeddingModel: 'arn:aws:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
+      },
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
+      Name: 'test-org-test-env-test-domain-test-module-test-kb',
+      KnowledgeBaseConfiguration: {
+        Type: 'VECTOR',
+        VectorKnowledgeBaseConfiguration: {
+          EmbeddingModelArn: 'arn:aws:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
+        },
       },
     });
   });
@@ -304,6 +363,18 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-chunking-construct', constructProps);
     const template = Template.fromStack(testApp.testStack);
 
+    template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
+      Name: 'test-org-test-env-test-domain-test-module-test-kb-chunking',
+      KnowledgeBaseConfiguration: {
+        Type: 'VECTOR',
+        VectorKnowledgeBaseConfiguration: {
+          EmbeddingModelArn: 'arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
+        },
+      },
+      StorageConfiguration: {
+        Type: 'RDS',
+      },
+    });
     template.hasResourceProperties('AWS::Bedrock::DataSource', {
       Name: 'hierarchicalSource',
       VectorIngestionConfiguration: {
@@ -400,6 +471,93 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
             },
           ],
         },
+      },
+    });
+    template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+      ManagedPolicyName: 'test-org-test-env-test-domain-test-module-kb-foundation--5ffcdc1',
+      PolicyDocument: {
+        Statement: [
+          {
+            Action: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
+            Effect: 'Allow',
+            Resource: [
+              'arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
+              'arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
+            ],
+            Sid: 'InvokeFoundationModels',
+          },
+          {},
+        ],
+      },
+    });
+  });
+
+  test('Test Custom Transformation and Parsing Prompt using Inference', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const kbWithCustomConfig: BedrockKnowledgeBaseProps = {
+      ...basicKnowledgeBase,
+      s3DataSources: {
+        customSource: {
+          bucketName: 'custom-bucket',
+          vectorIngestionConfiguration: {
+            parsingConfiguration: {
+              parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
+              bedrockFoundationModelConfiguration: {
+                modelArn: 'us.anthropic.claude-3-sonnet-20240229-v1:0',
+                parsingPromptText: 'Extract key information',
+                parsingModality: 'MULTIMODAL',
+              },
+            },
+            customTransformationConfiguration: {
+              intermediateStorageBucket: 'transform-bucket',
+              intermediateStoragePrefix: 'transform-prefix',
+              transformLambdaArns: ['arn:aws:lambda:us-east-1:123456789012:function:transform'],
+            },
+          },
+        },
+      },
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-custom',
+      kbConfig: kbWithCustomConfig,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-custom-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+    template.hasResourceProperties('AWS::Bedrock::DataSource', {
+      VectorIngestionConfiguration: {
+        ParsingConfiguration: {
+          ParsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
+          BedrockFoundationModelConfiguration: {
+            ModelArn:
+              'arn:test-partition:bedrock:test-region:test-account:inference-profile/us.anthropic.claude-3-sonnet-20240229-v1:0',
+          },
+        },
+      },
+    });
+    template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+      ManagedPolicyName: 'test-org-test-env-test-domain-test-module-kb-foundation--5ffcdc1',
+      PolicyDocument: {
+        Statement: [
+          {
+            Action: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream', 'bedrock:GetInferenceProfile'],
+            Effect: 'Allow',
+            Resource: [
+              'arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
+              'arn:test-partition:bedrock:test-region:test-account:inference-profile/us.anthropic.claude-3-sonnet-20240229-v1:0',
+            ],
+            Sid: 'InvokeFoundationModels',
+          },
+          {},
+        ],
       },
     });
   });

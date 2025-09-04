@@ -8,9 +8,20 @@ import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { CfnGuardrail, CfnKnowledgeBase } from 'aws-cdk-lib/aws-bedrock';
 import { Key } from 'aws-cdk-lib/aws-kms';
-import { writeFileSync, mkdirSync } from 'fs';
+import { mkdirSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { BedrockAgentL3Construct, BedrockAgentL3ConstructProps, BedrockAgentProps } from '../lib';
+
+// Mock the resolveModelArn function
+jest.mock('@aws-mdaa/ai-helper', () => ({
+  resolveModelArn: jest.fn((modelIdentifier: string, partition: string, region: string, account: string) =>
+    modelIdentifier.startsWith('arn:')
+      ? modelIdentifier
+      : modelIdentifier.startsWith('us.')
+      ? `arn:${partition}:bedrock:${region}:${account}:inference-profile/${modelIdentifier}`
+      : `arn:${partition}:bedrock:${region}::foundation-model/${modelIdentifier}`,
+  ),
+}));
 
 describe('BedrockAgentL3Construct Unit Tests', () => {
   let testApp: MdaaTestApp;
@@ -52,7 +63,8 @@ describe('BedrockAgentL3Construct Unit Tests', () => {
         AgentName: 'test-org-test-env-test-domain-test-module-test-agent',
         AutoPrepare: false,
         Instruction: 'Test agent instructions',
-        FoundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
+        FoundationModel:
+          'arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
         IdleSessionTTLInSeconds: 3600,
       });
     });
@@ -117,6 +129,39 @@ describe('BedrockAgentL3Construct Unit Tests', () => {
               Effect: 'Allow',
               Resource: 'arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
               Action: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
+            },
+          ],
+        },
+      });
+    });
+    test('should handle inference profile id', () => {
+      const agentWithModelArn: BedrockAgentProps = {
+        role: agentExecutionRoleRef,
+        instruction: 'Test instructions',
+        foundationModel: 'us.anthropic.claude-3-sonnet-20240229-v1:0',
+      };
+
+      const constructProps: BedrockAgentL3ConstructProps = {
+        agentName: 'arn-agent',
+        agentConfig: agentWithModelArn,
+        kmsKey,
+        roleHelper,
+        naming: testApp.naming,
+      };
+
+      new BedrockAgentL3Construct(testApp.testStack, 'arn-agent-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        PolicyDocument: {
+          Statement: [
+            {},
+            {
+              Sid: 'InvokeFoundationModel',
+              Effect: 'Allow',
+              Resource:
+                'arn:test-partition:bedrock:test-region:test-account:inference-profile/us.anthropic.claude-3-sonnet-20240229-v1:0',
+              Action: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream', 'bedrock:GetInferenceProfile'],
             },
           ],
         },

@@ -17,6 +17,17 @@ import {
 } from '@aws-mdaa/bedrock-knowledge-base-l3-construct';
 import { BedrockGuardrailProps, NamedGuardrailProps } from '@aws-mdaa/bedrock-guardrail-l3-construct';
 
+// Mock the resolveModelArn function
+jest.mock('@aws-mdaa/ai-helper', () => ({
+  resolveModelArn: jest.fn((modelIdentifier: string, partition: string, region: string, account: string) =>
+    modelIdentifier.startsWith('arn:')
+      ? modelIdentifier
+      : modelIdentifier.startsWith('us.')
+      ? `arn:${partition}:bedrock:${region}:${account}:inference-profile/${modelIdentifier}`
+      : `arn:${partition}:bedrock:${region}::foundation-model/${modelIdentifier}`,
+  ),
+}));
+
 describe('Bedrock Builder Compliance Stack Tests', () => {
   const layerProps: LayerProps = {
     layerName: 'test-layer',
@@ -120,7 +131,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         },
       },
 
-      embeddingModel: 'arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v2:0',
+      embeddingModel: 'arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v1',
       vectorFieldSize: 1024,
     };
     const template = generateTemplateFromTestInput(
@@ -140,7 +151,8 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         AgentResourceRoleArn: 'arn:test-partition:iam::test-account:role/agent-execution-role',
         AutoPrepare: false,
         Description: 'Sample Agent',
-        FoundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
+        FoundationModel:
+          'arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
         IdleSessionTTLInSeconds: 3600,
       });
     });
@@ -151,7 +163,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         KnowledgeBaseConfiguration: {
           Type: 'VECTOR',
           VectorKnowledgeBaseConfiguration: {
-            EmbeddingModelArn: 'arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v2:0',
+            EmbeddingModelArn: 'arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v1',
           },
         },
         StorageConfiguration: {

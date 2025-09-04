@@ -102,7 +102,7 @@ vectorStores:
 # Knowledge Base Configuration
 knowledgeBases:
   test-knowledge-base:
-    embeddingModel: 'arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1'
+    embeddingModel: 'arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v1'
     vectorStore: test-vector-store
     vectorFieldSize: 1536
     role:

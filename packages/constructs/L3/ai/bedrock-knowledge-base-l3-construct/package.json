@@ -28,6 +28,7 @@
     "@aws-mdaa/ec2-constructs": "^1.1.0",
     "@aws-mdaa/iam-constructs": "1.1.0",
     "@aws-mdaa/iam-role-helper": "1.1.0",
+    "@aws-mdaa/ai-helper": "1.1.0",
     "@aws-mdaa/kms-constructs": "1.1.0",
     "@aws-mdaa/l3-construct": "1.1.0",
     "@aws-mdaa/rds-constructs": "^1.1.0",

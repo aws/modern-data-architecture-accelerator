@@ -1070,7 +1070,22 @@ paths:
             ],
           },
           "Description": "This is a Test Agent",
-          "FoundationModel": "anthropic.claude-3-sonnet-20240229-v1:0",
+          "FoundationModel": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":bedrock:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                "::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+              ],
+            ],
+          },
           "GuardrailConfiguration": {
             "GuardrailIdentifier": {
               "Fn::Join": [
@@ -3050,7 +3065,7 @@ Provide responses in markdown format with source citations
                 ],
                 "Effect": "Allow",
                 "Resource": [
-                  "arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1",
+                  "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v1",
                   {
                     "Fn::Join": [
                       "",
@@ -3596,7 +3611,7 @@ Provide responses in markdown format with source citations
           "on_create_sql_statements": [
             "CREATE EXTENSION IF NOT EXISTS vector",
             "
-      CREATE TABLE IF NOT EXISTS embeddings_3f4c89b3_1536
+      CREATE TABLE IF NOT EXISTS embeddings_2ed4c606_1536
       (
         id UUID PRIMARY KEY,
       content TEXT NOT NULL,
@@ -3605,9 +3620,9 @@ Provide responses in markdown format with source citations
       embedding VECTOR(1536)
       );
     ",
-            "CREATE INDEX IF NOT EXISTS idx_embedding_vector ON embeddings_3f4c89b3_1536 USING hnsw (embedding vector_cosine_ops) WITH (ef_construction=256);",
-            "CREATE INDEX IF NOT EXISTS idx_content ON embeddings_3f4c89b3_1536 USING gin (to_tsvector('simple', content))",
-            "CREATE INDEX IF NOT EXISTS idx_custom_metadata ON embeddings_3f4c89b3_1536 USING gin (custom_metadata);",
+            "CREATE INDEX IF NOT EXISTS idx_embedding_vector ON embeddings_2ed4c606_1536 USING hnsw (embedding vector_cosine_ops) WITH (ef_construction=256);",
+            "CREATE INDEX IF NOT EXISTS idx_content ON embeddings_2ed4c606_1536 USING gin (to_tsvector('simple', content))",
+            "CREATE INDEX IF NOT EXISTS idx_custom_metadata ON embeddings_2ed4c606_1536 USING gin (custom_metadata);",
           ],
           "secret_arn": {
             "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -4968,7 +4983,7 @@ Provide responses in markdown format with source citations
           "KnowledgeBaseConfiguration": {
             "Type": "VECTOR",
             "VectorKnowledgeBaseConfiguration": {
-              "EmbeddingModelArn": "arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1",
+              "EmbeddingModelArn": "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v1",
               "SupplementalDataStorageConfiguration": {
                 "SupplementalDataStorageLocations": [
                   {
@@ -5024,7 +5039,7 @@ Provide responses in markdown format with source citations
                   ],
                 ],
               },
-              "TableName": "embeddings_3f4c89b3_1536",
+              "TableName": "embeddings_2ed4c606_1536",
             },
             "Type": "RDS",
           },
@@ -8084,7 +8099,22 @@ paths:
           ],
         },
         "Description": "This is a Test Agent",
-        "FoundationModel": "anthropic.claude-3-sonnet-20240229-v1:0",
+        "FoundationModel": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":bedrock:",
+              {
+                "Ref": "AWS::Region",
+              },
+              "::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+            ],
+          ],
+        },
         "GuardrailConfiguration": {
           "GuardrailIdentifier": {
             "Fn::Join": [
@@ -10064,7 +10094,7 @@ Provide responses in markdown format with source citations
               ],
               "Effect": "Allow",
               "Resource": [
-                "arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1",
+                "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v1",
                 {
                   "Fn::Join": [
                     "",
@@ -10610,7 +10640,7 @@ Provide responses in markdown format with source citations
         "on_create_sql_statements": [
           "CREATE EXTENSION IF NOT EXISTS vector",
           "
-      CREATE TABLE IF NOT EXISTS embeddings_3f4c89b3_1536
+      CREATE TABLE IF NOT EXISTS embeddings_2ed4c606_1536
       (
         id UUID PRIMARY KEY,
       content TEXT NOT NULL,
@@ -10619,9 +10649,9 @@ Provide responses in markdown format with source citations
       embedding VECTOR(1536)
       );
     ",
-          "CREATE INDEX IF NOT EXISTS idx_embedding_vector ON embeddings_3f4c89b3_1536 USING hnsw (embedding vector_cosine_ops) WITH (ef_construction=256);",
-          "CREATE INDEX IF NOT EXISTS idx_content ON embeddings_3f4c89b3_1536 USING gin (to_tsvector('simple', content))",
-          "CREATE INDEX IF NOT EXISTS idx_custom_metadata ON embeddings_3f4c89b3_1536 USING gin (custom_metadata);",
+          "CREATE INDEX IF NOT EXISTS idx_embedding_vector ON embeddings_2ed4c606_1536 USING hnsw (embedding vector_cosine_ops) WITH (ef_construction=256);",
+          "CREATE INDEX IF NOT EXISTS idx_content ON embeddings_2ed4c606_1536 USING gin (to_tsvector('simple', content))",
+          "CREATE INDEX IF NOT EXISTS idx_custom_metadata ON embeddings_2ed4c606_1536 USING gin (custom_metadata);",
         ],
         "secret_arn": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -11982,7 +12012,7 @@ Provide responses in markdown format with source citations
         "KnowledgeBaseConfiguration": {
           "Type": "VECTOR",
           "VectorKnowledgeBaseConfiguration": {
-            "EmbeddingModelArn": "arn:aws:bedrock::aws:foundation-model/amazon.titan-embed-text-v1",
+            "EmbeddingModelArn": "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v1",
             "SupplementalDataStorageConfiguration": {
               "SupplementalDataStorageLocations": [
                 {
@@ -12038,7 +12068,7 @@ Provide responses in markdown format with source citations
                 ],
               ],
             },
-            "TableName": "embeddings_3f4c89b3_1536",
+            "TableName": "embeddings_2ed4c606_1536",
           },
           "Type": "RDS",
         },

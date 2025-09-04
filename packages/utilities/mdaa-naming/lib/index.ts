@@ -115,6 +115,14 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
 
   /**
    * Generates a resource name in the format of <org>-<env>-<domain>-<module_name>
+   * @param resourceNameSuffix Optional naming suffix to be added to the generated resource name.
+   * Useful when multiple resources of the same type are created within the same stack.
+   *
+   * @param maxLength Should be used to truncate the generated resource names to a specified length.
+   * The result should still be unique and stable.
+   * Caution: Known bug - names exactly equal to `maxLength` are unnecessarily truncated with hash suffix
+   * (should use `>` instead of `>=`). Left unfixed to prevent breaking existing deployments that rely on
+   * this behavior. Cosmetic issue only - does not affect infrastructure functionality.
    */
   public resourceName(resourceNameSuffix?: string, maxLength?: number): string {
     let name = `${this.props.org}-${this.props.env}-${this.props.domain}-${this.props.moduleName}`;
@@ -182,6 +190,6 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
   }
 
   protected lowerCase(input: string): string {
-    return input.toLowerCase().replace(/\{token\[token\.(\d+)\]\}/, '{Token[TOKEN.$1]}');
+    return input.toLowerCase().replace(/\{token\[token\.(\d+)]}/, '{Token[TOKEN.$1]}');
   }
 }

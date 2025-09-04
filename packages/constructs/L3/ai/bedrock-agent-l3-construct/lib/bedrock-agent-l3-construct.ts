@@ -15,6 +15,7 @@ import { Construct } from 'constructs';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { parse, stringify } from 'yaml';
+import { resolveModelArn } from '@aws-mdaa/ai-helper';
 
 export interface APISchemaProperty extends bedrock.CfnAgent.APISchemaProperty {
   /**
@@ -123,7 +124,7 @@ export interface BedrockAgentProps {
   readonly agentAliasName?: string;
   /**
    * Reference to role which will be used as execution role on all agent(s).
-   * The role must have assume role trust with bedrock.amazonaws.com.
+   * The role must have assume-role trust with bedrock.amazonaws.com.
    */
   readonly role: MdaaRoleRef;
 }
@@ -208,9 +209,7 @@ export class BedrockAgentL3Construct extends MdaaL3Construct {
       ? `arn:aws:bedrock:${this.region}:${this.account}:guardrail/${guardrailAssociation.guardrailIdentifier}`
       : undefined;
 
-    const foundationModelArn = agentConfig.foundationModel.startsWith('arn:')
-      ? agentConfig.foundationModel
-      : `arn:${this.partition}:bedrock:${this.region}::foundation-model/${agentConfig.foundationModel}`;
+    const foundationModelArn = resolveModelArn(agentConfig.foundationModel, this.partition, this.region, this.account);
 
     const agentManagedPolicy = this.createBedrockAgentPolicy(
       agentName,
@@ -227,7 +226,7 @@ export class BedrockAgentL3Construct extends MdaaL3Construct {
       autoPrepare: agentConfig.autoPrepare ?? false,
       customerEncryptionKeyArn: kmsKey.keyArn,
       description: agentConfig.description,
-      foundationModel: agentConfig.foundationModel,
+      foundationModel: foundationModelArn,
       idleSessionTtlInSeconds: agentConfig.idleSessionTtlInSeconds ?? 3600,
       instruction: agentConfig.instruction,
       promptOverrideConfiguration: agentConfig.promptOverrideConfiguration,

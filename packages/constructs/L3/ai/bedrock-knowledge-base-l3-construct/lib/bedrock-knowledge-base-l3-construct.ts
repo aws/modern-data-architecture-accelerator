@@ -33,6 +33,7 @@ import {
 import { Construct } from 'constructs';
 import { join } from 'path';
 import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct';
+import { resolveModelArn } from '@aws-mdaa/ai-helper';
 
 // ---------------------------------------------
 // Knowledge Base Interfaces and Types
@@ -261,10 +262,10 @@ export interface BedrockKnowledgeBaseProps {
   readonly supplementalBucketName?: string;
   /**
    * Reference to role which will be used as execution role on knowledge base.
-   * The role must have assume role trust with bedrock.amazonaws.com
+   * The role must have assume-role trust with bedrock.amazonaws.com
    * The role must have access to S3 data sources granted within MDAA bucket config
    * Optionally:
-   * a) Role must have assume role trust with lambda.amazonaws.com to enable sync functionality for datasources
+   * a) Role must have assume-role trust with lambda.amazonaws.com to enable sync functionality for datasources
    * b) If datasource is configured with BedrockDataAutomation or Foundation Model Parsing, Role must have access to the Root of a supplementalBucket
    */
   readonly role: MdaaRoleRef;
@@ -432,9 +433,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     kbRole.addManagedPolicy(vectorStorePolicy);
     createTable.handlerFunction.role?.addManagedPolicy(vectorStorePolicy);
 
-    const embeddingModelArn = kbConfig.embeddingModel.startsWith('arn:')
-      ? kbConfig.embeddingModel
-      : `arn:${this.partition}:bedrock:${this.region}::foundation-model/${kbConfig.embeddingModel}`;
+    const embeddingModelArn = resolveModelArn(kbConfig.embeddingModel, this.partition, this.region, this.account);
 
     // Collect foundation model ARNs used in parsing configurations
     const parsingModelArns = new Set<string>();
@@ -446,9 +445,12 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
           parsingConfig.bedrockFoundationModelConfiguration?.modelArn
         ) {
           parsingModelArns.add(
-            parsingConfig.bedrockFoundationModelConfiguration.modelArn.startsWith('arn')
-              ? parsingConfig.bedrockFoundationModelConfiguration.modelArn
-              : `arn:${this.partition}:bedrock:${this.region}::foundation-model/${parsingConfig.bedrockFoundationModelConfiguration.modelArn}`,
+            resolveModelArn(
+              parsingConfig.bedrockFoundationModelConfiguration.modelArn,
+              this.partition,
+              this.region,
+              this.account,
+            ),
           );
         }
       }
@@ -854,9 +856,12 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       parsingConfig.parsingStrategy === 'BEDROCK_FOUNDATION_MODEL' &&
       parsingConfig.bedrockFoundationModelConfiguration
     ) {
-      const modelArn: string = parsingConfig.bedrockFoundationModelConfiguration.modelArn.startsWith('arn:')
-        ? parsingConfig.bedrockFoundationModelConfiguration.modelArn
-        : `arn:${this.partition}:bedrock:${this.region}::foundation-model/${parsingConfig.bedrockFoundationModelConfiguration.modelArn}`;
+      const modelArn: string = resolveModelArn(
+        parsingConfig.bedrockFoundationModelConfiguration.modelArn,
+        this.partition,
+        this.region,
+        this.account,
+      );
       return {
         parsingStrategy: parsingConfig.parsingStrategy,
         bedrockFoundationModelConfiguration: {
