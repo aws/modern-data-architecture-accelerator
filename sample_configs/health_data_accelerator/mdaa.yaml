@@ -126,11 +126,17 @@ domains:
             module_configs:
               - ./dataops/lambda.yaml
           file-workflow:
-            cdk_app: "@aws-mdaa/dataops-stepfunction"
-            app_configs:
+            module_path: "@aws-mdaa/dataops-stepfunction"
+            module_configs:
               - ./dataops/stepfunction.yaml
+            postdeploy:
+              command: "./dataops/scripts/load_batch_config.sh"
+              exit_if_fail: true
           # actions and resources created before other dms modules
           dms-shared:
+            predeploy:
+              command: "./dataops/scripts/load_table_info.sh table_config.json"
+              exit_if_fail: true
             module_path: "@aws-mdaa/dataops-dms"
             module_configs:
               - ./dataops/dms-shared.yaml

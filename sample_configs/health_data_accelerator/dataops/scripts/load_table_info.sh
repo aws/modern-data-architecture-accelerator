@@ -10,8 +10,14 @@ if [ -z "$JSON_FILE" ]; then
 fi
 
 if [ ! -f "$JSON_FILE" ]; then
-    echo "Error: JSON file '$JSON_FILE' does not exist"
-    exit 1
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    RELATIVE_JSON_FILE="$SCRIPT_DIR/$JSON_FILE"
+    if [ -f "$RELATIVE_JSON_FILE" ]; then
+        JSON_FILE="$RELATIVE_JSON_FILE"
+    else
+        echo "Error: JSON file '$JSON_FILE' does not exist as is or as $RELATIVE_JSON_FILE"
+        exit 1
+    fi
 fi
 
 # Check that AWS_REGION is set
