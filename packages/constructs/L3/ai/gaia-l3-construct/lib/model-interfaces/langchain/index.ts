@@ -12,7 +12,7 @@ import * as path from 'path';
 import { RagEngines } from '../../rag-engines';
 import { Shared } from '../../shared';
 import { SystemConfig } from '../../shared/types';
-import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
+import { MdaaDockerImageFunction, MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaSqsDeadLetterQueue, MdaaSqsQueue } from '@aws-mdaa/sqs-constructs';
@@ -34,6 +34,7 @@ export class LangChainInterface extends MdaaL3Construct {
   public readonly requestHandler: MdaaLambdaFunction;
   public readonly requestHandlerRole: MdaaRole;
   private readonly props: LangChainInterfaceProps;
+
   constructor(scope: Construct, id: string, props: LangChainInterfaceProps) {
     super(scope, id, props);
     this.props = props;
@@ -155,6 +156,7 @@ export class LangChainInterface extends MdaaL3Construct {
       }),
     );
   }
+
   private addRequestHandlerRagPermissions(requestHandlerRole: MdaaRole, requestHandler: lambda.IFunction) {
     if (this.props.ragEngines?.auroraPgVector) {
       this.props.ragEngines?.auroraPgVector.database.secret?.grantRead(requestHandlerRole);
@@ -199,6 +201,7 @@ export class LangChainInterface extends MdaaL3Construct {
       }
     }
   }
+
   private addRequestHandlerRoleBedrockPermissions(requestHandlerRole: MdaaRole, requestHandler: lambda.IFunction) {
     if (this.props.config.bedrock?.enabled) {
       requestHandlerRole.addToPolicy(
@@ -256,12 +259,10 @@ export class LangChainInterface extends MdaaL3Construct {
       }
     }
   }
+
   private createRequestHandler(requestHandlerRole: iam.IRole) {
-    const langchainInterfaceHandlerCodePath =
-      this.props.config?.codeOverwrites?.langchainInterfaceHandlerCodePath !== undefined
-        ? this.props.config.codeOverwrites.langchainInterfaceHandlerCodePath
-        : path.join(__dirname, './functions/request-handler');
-    const requestHandler = new MdaaLambdaFunction(this, 'RequestHandler', {
+    // Use container deployment instead of layers
+    const requestHandler = new MdaaDockerImageFunction(this, 'RequestHandler', {
       functionName: 'model-interface-request-handler',
       naming: this.props.naming,
       role: requestHandlerRole,
@@ -269,14 +270,13 @@ export class LangChainInterface extends MdaaL3Construct {
       createOutputs: false,
       vpc: this.props.shared.vpc,
       vpcSubnets: { subnets: this.props.shared.appSubnets },
-      code: lambda.Code.fromAsset(langchainInterfaceHandlerCodePath),
-      handler: 'index.handler',
-      runtime: this.props.shared.pythonRuntime,
+      code: lambda.DockerImageCode.fromImageAsset(path.join(__dirname, '../..'), {
+        file: 'model-interfaces/langchain/functions/request-handler/Dockerfile',
+      }),
       architecture: this.props.shared.lambdaArchitecture,
       tracing: lambda.Tracing.ACTIVE,
       timeout: cdk.Duration.minutes(2),
       memorySize: 1024,
-      layers: [this.props.shared.powerToolsLayer, this.props.shared.commonLayer, this.props.shared.pythonSDKLayer],
       environment: this.createRequestHandlerEnv(),
     });
 
@@ -292,6 +292,7 @@ export class LangChainInterface extends MdaaL3Construct {
 
     return requestHandler;
   }
+
   private createRequestHandlerEnv(): { [key: string]: string } | undefined {
     return {
       ...this.props.shared.defaultEnvironmentVariables,

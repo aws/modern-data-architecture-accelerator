@@ -9,6 +9,15 @@ tag_configs:
 ## Pre-Deployment Instructions
 organization: <add-org>
 
+context:
+  vpc_id: <your vpc id>
+  app_subnet_id_1:  <your app subnet id 1>
+  app_subnet_id_2:  <your app subnet id 2>
+  app_sg:  <your app sg>
+  db_subnet_id_1:  <your db subnet id 1>
+  db_subnet_id_2:  <your db subnet id 2>
+  db_sg:  <your db sg>
+
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names.
 domains:

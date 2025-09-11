@@ -41,6 +41,8 @@ deployment/cdk-solution-helper/package-lock.json
 deployment/global-s3-assets*
 deployment/regional-s3-assets*
 !jest.config.snapshot.js
+
+# Python build artifacts and virtual environments
 .venv
 .coverage
 coverage.xml
@@ -48,3 +50,6 @@ htmlcov/
 *.coverage
 .pytest_cache/
 uv.lock
+*.egg-info/
+build/
+dist/

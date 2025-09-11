@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gaia-l3-construct-tests"
+version = "0.1.0"
+description = "GAIA L3 Construct Python Tests"
+requires-python = "~=3.12.0"
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["layers/common/requirements.txt", "python-tests/requirements.txt"]}
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--verbose",
+    "--tb=short",
+]
+pythonpath = ["layers/python-sdk/python"]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "genai_core: Tests for genai_core module",
+    "file_import: Tests for file import batch job",
+    "secrets: Tests for secrets rotation function",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/node_modules/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

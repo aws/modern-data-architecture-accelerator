@@ -1,3 +1,4 @@
+# All commonLayer dependencies
 aws_xray_sdk==2.12.1
 boto3==1.35.63
 numpy==1.26.4
@@ -9,10 +10,17 @@ psycopg2-binary==2.9.9
 pgvector==0.3.1
 pydantic==2.7.4
 urllib3==2.5.0
-openai==0.28.1
 beautifulsoup4==4.12.3
-requests==2.32.4
+requests>=2.32.5
 pyjwt==2.8.0
 cryptography==44.0.1
 attrs==23.1.0
 defusedxml==0.7.1
+
+# Langchain dependencies (upgraded versions)
+langchain-community==0.3.29
+langchain-aws==0.2.7
+openai==0.28.1
+
+# AWS Lambda Powertools (needed for the function)
+aws-lambda-powertools>=2.25.0

@@ -33,3 +33,7 @@ packages/constructs/L2/eks-constructs/lib/cluster.ts:468 # it's not an email add
 packages/constructs/L2/eks-constructs/lib/cluster.ts:540 # it's not an email address!
 packages/constructs/L3/ai/datascience-team-l3-construct/lib/datascience-team-l3-construct.ts:30 # public ECR account
 .github/workflows/docs.yml:57 # Email address for GitHub workflow
+packages/constructs/L3/ai/gaia-l3-construct/lib/shared/python-tests/README.md:93 # not an email address!
+integ/model-interfaces/request-handler/README.md:102 # not an email address!
+integ/model-interfaces/request-handler/README.md:108 # not an email address!
+integ/model-interfaces/request-handler/README.md:113 # not an email address!

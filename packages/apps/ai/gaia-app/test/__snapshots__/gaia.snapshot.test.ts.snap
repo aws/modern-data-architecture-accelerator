@@ -8691,10 +8691,9 @@ def sort_filter_rules(json_obj):
             "x86_64",
           ],
           "Code": {
-            "S3Bucket": {
-              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            "ImageUri": {
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:ASSET-HASH",
             },
-            "S3Key": "REPLACED-GENERATED-NAME.zip",
           },
           "Environment": {
             "Variables": {
@@ -8737,39 +8736,14 @@ def sort_filter_rules(json_obj):
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-gaia-app-model-inter-13439783",
-          "Handler": "index.handler",
-          "Layers": [
-            {
-              "Fn::Join": [
-                "",
-                [
-                  "arn:",
-                  {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":lambda:",
-                  {
-                    "Ref": "AWS::Region",
-                  },
-                  ":017000801446:layer:AWSLambdaPowertoolsPythonV2:46",
-                ],
-              ],
-            },
-            {
-              "Ref": "REPLACED-CFN-LOGICAL-ID",
-            },
-            {
-              "Ref": "REPLACED-CFN-LOGICAL-ID",
-            },
-          ],
           "MemorySize": 1024,
+          "PackageType": "Image",
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
             ],
           },
-          "Runtime": "python3.12",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -27681,10 +27655,9 @@ def sort_filter_rules(json_obj):
           "x86_64",
         ],
         "Code": {
-          "S3Bucket": {
-            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          "ImageUri": {
+            "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:ASSET-HASH",
           },
-          "S3Key": "REPLACED-GENERATED-NAME.zip",
         },
         "Environment": {
           "Variables": {
@@ -27727,39 +27700,14 @@ def sort_filter_rules(json_obj):
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-gaia-main-model-int--328a803b",
-        "Handler": "index.handler",
-        "Layers": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":lambda:",
-                {
-                  "Ref": "AWS::Region",
-                },
-                ":017000801446:layer:AWSLambdaPowertoolsPythonV2:46",
-              ],
-            ],
-          },
-          {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-          {
-            "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        ],
         "MemorySize": 1024,
+        "PackageType": "Image",
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
           ],
         },
-        "Runtime": "python3.12",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",

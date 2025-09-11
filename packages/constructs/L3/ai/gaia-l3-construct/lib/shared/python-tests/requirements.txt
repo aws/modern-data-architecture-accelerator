@@ -1,0 +1,6 @@
+aws_lambda_powertools
+pytest
+moto
+coverage
+langchain
+langchain-core

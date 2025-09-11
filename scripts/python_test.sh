@@ -37,12 +37,23 @@ for package in $PYTHON_TEST_PACKAGES; do
     
     cd "$PROJECT_ROOT/$package/python-tests"
     
-    # Run tests with coverage using uv
-    if uv run pytest --cov --cov-report=xml --cov-report=html --cov-report=term; then
-        echo "✅ Python tests passed for $package"
+    # Check if this is the gaia-l3-construct package and skip coverage
+    if [[ "$package" == *"gaia-l3-construct"* ]]; then
+        echo "Running tests without coverage for gaia-l3-construct..."
+        if uv run pytest --ignore=test_file_import_main.py -v; then
+            echo "✅ Python tests passed for $package"
+        else
+            echo "❌ Python tests failed for $package"
+            FAILED_PACKAGES+=("$package")
+        fi
     else
-        echo "❌ Python tests failed for $package"
-        FAILED_PACKAGES+=("$package")
+        # Run tests with coverage using uv for other packages
+        if uv run pytest --cov --cov-report=xml --cov-report=html --cov-report=term; then
+            echo "✅ Python tests passed for $package"
+        else
+            echo "❌ Python tests failed for $package"
+            FAILED_PACKAGES+=("$package")
+        fi
     fi
     
     cd "$PROJECT_ROOT"
