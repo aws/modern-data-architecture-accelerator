@@ -143,12 +143,21 @@ agents:
 
 vectorStores:
   test-vector-store:
+    vectorStoreType: 'OPENSEARCH_SERVERLESS'
     vpcId: test-vpc-id
     subnetIds:
       - 'test-subnet-id'
     # (Optional) min and max Aurora Serverless Capacity Units
     minCapacity: 1
     maxCapacity: 8
+  test-vector-store2:
+    # (Optional) Default value: AURORA_SERVERLESS 
+    vectorStoreType: 'OPENSEARCH_SERVERLESS'
+    vpcId: test-vpc-id
+    subnetIds:
+      - 'test-subnet-id1'
+      - 'test-subnet-id2'
+    standbyReplicas: DISABLE
 
 # Knowledge Base Configuration
 knowledgeBases:
@@ -213,6 +222,81 @@ knowledgeBases:
               - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
               - generated-function:test-custom-transformer
 
+    sharepointDataSources:
+      test-sharepoint-ds-default-parsing:
+        dataSource:
+          # Valid values: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS (recommended), OAUTH2_CLIENT_CREDENTIALS 
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          # For details of secret, refer: https://docs.aws.amazon.com/bedrock/latest/userguide/sharepoint-data-source-connector.html#:~:text=When%20using%20SharePoint%20App%2DOnly%20authentication
+          credentialsSecretArn: 'arn:aws:secretsmanager:<region>:<account>:secret:/test/sharepoint/secret-abc123'
+          domain: mycompany.sharepoint.com
+          # (Optional) Only valid value: ONLINE
+          hostType: ONLINE
+          siteUrls: 
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+      test-sharepoint-ds-bda-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:aws:secretsmanager:<region>:<account>:secret:/test/sharepoint/secret-abc123'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls: 
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          # (Optional) Allows customized chunking strategy for the data source.
+          # The chunking strategy cannot be modified after a data source has been created
+          chunkingConfiguration:
+            chunkingStrategy: 'FIXED_SIZE'
+            fixedSizeChunkingConfiguration:
+              maxTokens: 512
+              overlapPercentage: 20
+      test-sharepoint-ds-fm-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:aws:secretsmanager:<region>:<account>:secret:/test/sharepoint/secret-abc123'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls: 
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_FOUNDATION_MODEL'
+            bedrockFoundationModelConfiguration:
+              modelArn: 'anthropic.claude-3-sonnet-20240229-v1:0'
+              parsingModality: 'MULTIMODAL'
+              parsingPromptText: 'Extract key information from this document'
+      test-sharepoint-ds-custom-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:aws:secretsmanager:<region>:<account>:secret:/test/sharepoint/secret-abc123'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls: 
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          chunkingConfiguration:
+            chunkingStrategy: 'NONE'
+          # (Optional) Allows providing a lambda function to perform custom transformations on data being ingested into the Knowledgebase.
+          # # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
+          customTransformationConfiguration:
+            intermediateStorageBucket: 'custom-transform-intermediate-bucket'
+            intermediateStoragePrefix: 'path/to/data/objects'
+            transformLambdaArns:
+              # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
+              - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
+              - generated-function:test-custom-transformer
 # Guardrails Configuration
 guardrails:
   test-guardrail:

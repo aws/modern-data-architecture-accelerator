@@ -5,14 +5,15 @@
 
 import { MdaaRoleHelper, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { AuroraCapacityUnit } from 'aws-cdk-lib/aws-rds';
 import {
   BedrockKnowledgeBaseL3Construct,
   BedrockKnowledgeBaseL3ConstructProps,
   BedrockKnowledgeBaseProps,
-  VectorStoreProps,
+  AuroraServerlessPgVectorProps,
+  OpensearchServerlessProps,
 } from '../lib';
 
 // Mock the resolveModelArn function
@@ -35,7 +36,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     name: 'kb-execution-role',
   };
 
-  const vectorStoreConfig: VectorStoreProps = {
+  const vectorStoreConfig: AuroraServerlessPgVectorProps = {
     vpcId: 'test-vpc-id',
     subnetIds: ['test-subnet-1', 'test-subnet-2'],
     minCapacity: AuroraCapacityUnit.ACU_2,
@@ -560,5 +561,346 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
         ],
       },
     });
+  });
+
+  test('Test Knowledge Base with Multiple Transform Lambda ARNs', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const kbWithMultipleTransforms: BedrockKnowledgeBaseProps = {
+      ...basicKnowledgeBase,
+      s3DataSources: {
+        multiTransformSource: {
+          bucketName: 'multi-transform-bucket',
+          vectorIngestionConfiguration: {
+            customTransformationConfiguration: {
+              intermediateStorageBucket: 'transform-bucket',
+              intermediateStoragePrefix: 'transform-prefix',
+              transformLambdaArns: [
+                'arn:aws:lambda:us-east-1:123456789012:function:transform1',
+                'arn:aws:lambda:us-east-1:123456789012:function:transform2',
+              ],
+            },
+          },
+        },
+      },
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-multi-transform',
+      kbConfig: kbWithMultipleTransforms,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-multi-transform-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::Bedrock::DataSource', {
+      VectorIngestionConfiguration: {
+        CustomTransformationConfiguration: {
+          Transformations: [
+            {
+              StepToApply: 'POST_CHUNKING',
+              TransformationFunction: {
+                TransformationLambdaConfiguration: {
+                  LambdaArn: 'arn:aws:lambda:us-east-1:123456789012:function:transform1',
+                },
+              },
+            },
+            {
+              StepToApply: 'POST_CHUNKING',
+              TransformationFunction: {
+                TransformationLambdaConfiguration: {
+                  LambdaArn: 'arn:aws:lambda:us-east-1:123456789012:function:transform2',
+                },
+              },
+            },
+          ],
+        },
+      },
+    });
+  });
+
+  test('Test Knowledge Base Parameter and Output Creation', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-params',
+      kbConfig: basicKnowledgeBase,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-params-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Verify SSM parameter is created for knowledge base ID
+    template.hasResourceProperties('AWS::SSM::Parameter', {
+      Type: 'String',
+    });
+
+    // Verify CloudFormation output is created
+    const outputs = template.findOutputs('*');
+    expect(Object.keys(outputs).length).toBeGreaterThan(0);
+  });
+
+  test('Test OpenSearch Serverless Vector Store', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const opensearchConfig: OpensearchServerlessProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['test-subnet-1', 'test-subnet-2'],
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-opensearch',
+      kbConfig: basicKnowledgeBase,
+      vectorStoreConfig: opensearchConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-opensearch-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::OpenSearchServerless::Collection', {
+      Type: 'VECTORSEARCH',
+    });
+  });
+
+  test('Test SharePoint Data Source', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const kbWithSharePoint: BedrockKnowledgeBaseProps = {
+      ...basicKnowledgeBase,
+      sharepointDataSources: {
+        sharePointSource: {
+          dataSource: {
+            authType: 'OAUTH2_CLIENT_CREDENTIALS',
+            credentialsSecretArn: 'arn:aws:secretsmanager:us-east-1:123456789012:secret:sharepoint-creds',
+            domain: 'example.sharepoint.com',
+            siteUrls: ['https://example.sharepoint.com/sites/test'],
+            tenantId: '12345678-1234-1234-1234-123456789012',
+          },
+        },
+      },
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-sharepoint',
+      kbConfig: kbWithSharePoint,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-sharepoint-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::Bedrock::DataSource', {
+      Name: 'sharePointSource',
+      DataSourceConfiguration: {
+        Type: 'SHAREPOINT',
+      },
+    });
+  });
+
+  test('Test Knowledge Base with Inference Profile Model', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const kbWithInferenceProfile: BedrockKnowledgeBaseProps = {
+      ...basicKnowledgeBase,
+      embeddingModel: 'arn:aws:bedrock:us-east-1:123456789012:inference-profile/test-profile',
+      vectorFieldSize: 1024,
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-inference',
+      kbConfig: kbWithInferenceProfile,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-inference-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          {
+            Action: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream', 'bedrock:GetInferenceProfile'],
+            Effect: 'Allow',
+            Resource: 'arn:aws:bedrock:us-east-1:123456789012:inference-profile/test-profile',
+            Sid: 'InvokeFoundationModels',
+          },
+        ]),
+      },
+    });
+  });
+
+  test('Test Chunking Configuration Validation Errors', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const kbWithInvalidFixedSize: BedrockKnowledgeBaseProps = {
+      ...basicKnowledgeBase,
+      s3DataSources: {
+        invalidSource: {
+          bucketName: 'test-bucket',
+          vectorIngestionConfiguration: {
+            chunkingConfiguration: {
+              chunkingStrategy: 'FIXED_SIZE',
+            },
+          },
+        },
+      },
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-invalid',
+      kbConfig: kbWithInvalidFixedSize,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    expect(() => {
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-invalid-construct', constructProps);
+    }).toThrow('fixedSizeChunkingConfiguration is required when chunkingStrategy is FIXED_SIZE');
+  });
+
+  test('Test Invalid Vector Store Type Error', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const invalidVectorStoreConfig = {
+      ...vectorStoreConfig,
+      vectorStoreType: 'INVALID_TYPE' as unknown as string,
+    } as AuroraServerlessPgVectorProps | OpensearchServerlessProps;
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-invalid-store',
+      kbConfig: basicKnowledgeBase,
+      vectorStoreConfig: invalidVectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    expect(() => {
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-invalid-store-construct', constructProps);
+    }).toThrow('Invalid vector store type: INVALID_TYPE');
+  });
+
+  test('Test Knowledge Base Logging Configuration', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-logging',
+      kbConfig: basicKnowledgeBase,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-logging-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::Logs::LogGroup', {
+      LogGroupName: Match.stringLikeRegexp('/aws/vendedlogs/bedrock/knowledge-base/.*'),
+    });
+
+    template.hasResourceProperties('AWS::Logs::DeliverySource', {
+      LogType: 'APPLICATION_LOGS',
+    });
+
+    template.hasResourceProperties('AWS::Logs::DeliveryDestination', {});
+    template.hasResourceProperties('AWS::Logs::Delivery', {});
+  });
+
+  test('Test Multiple Embedding Models Vector Field Size', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const testCases = [
+      { model: 'cohere.embed-english-v3', expectedSize: 1024 },
+      { model: 'amazon.titan-embed-text-v2:0', expectedSize: 1024 },
+    ];
+
+    testCases.forEach(({ model, expectedSize }, index) => {
+      const kbWithModel: BedrockKnowledgeBaseProps = {
+        ...basicKnowledgeBase,
+        embeddingModel: model,
+      };
+
+      const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+        kbName: `test-kb-model-${index}`,
+        kbConfig: kbWithModel,
+        vectorStoreConfig,
+        kmsKey,
+        roleHelper,
+        naming: testApp.naming,
+      };
+
+      const construct = new BedrockKnowledgeBaseL3Construct(
+        testApp.testStack,
+        `test-kb-model-construct-${index}`,
+        constructProps,
+      );
+
+      expect((construct as unknown as { cachedVectorFieldSize: number })['cachedVectorFieldSize']).toBe(expectedSize);
+    });
+  });
+
+  test('Test Unknown Embedding Model Error', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const kbWithUnknownModel: BedrockKnowledgeBaseProps = {
+      ...basicKnowledgeBase,
+      embeddingModel: 'unknown.embedding-model',
+      vectorFieldSize: undefined, // Remove vectorFieldSize to trigger error
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-unknown-model',
+      kbConfig: kbWithUnknownModel,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    expect(() => {
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-unknown-model-construct', constructProps);
+    }).toThrow('Unable to determine vector field size from Embedding Model ID : unknown.embedding-model. ');
   });
 });

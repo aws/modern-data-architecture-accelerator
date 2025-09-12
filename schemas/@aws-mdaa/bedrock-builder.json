@@ -128,6 +128,73 @@
             ],
             "type": "object"
         },
+        "AuroraServerlessPgVectorProps": {
+            "additionalProperties": false,
+            "properties": {
+                "engineVersion": {
+                    "type": "string"
+                },
+                "maxCapacity": {
+                    "description": "Aurora capacity units (ACUs).\nEach ACU is a combination of processing and memory capacity.",
+                    "enum": [
+                        1,
+                        128,
+                        16,
+                        192,
+                        2,
+                        256,
+                        32,
+                        384,
+                        4,
+                        64,
+                        8
+                    ],
+                    "type": "number"
+                },
+                "minCapacity": {
+                    "description": "Aurora capacity units (ACUs).\nEach ACU is a combination of processing and memory capacity.",
+                    "enum": [
+                        1,
+                        128,
+                        16,
+                        192,
+                        2,
+                        256,
+                        32,
+                        384,
+                        4,
+                        64,
+                        8
+                    ],
+                    "type": "number"
+                },
+                "port": {
+                    "type": "number"
+                },
+                "subnetIds": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "vectorStoreType": {
+                    "description": "Supported vector store types",
+                    "enum": [
+                        "AURORA_SERVERLESS",
+                        "OPENSEARCH_SERVERLESS"
+                    ],
+                    "type": "string"
+                },
+                "vpcId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subnetIds",
+                "vpcId"
+            ],
+            "type": "object"
+        },
         "BedrockAgentProps": {
             "additionalProperties": false,
             "properties": {
@@ -194,7 +261,7 @@
             "properties": {
                 "parsingModality": {
                     "const": "MULTIMODAL",
-                    "description": "Specifies whether to enable parsing of multimodal data, including both text and/or images.\nAllowed value: MULTIMODAL",
+                    "description": "Specifies whether to enable parsing of multimodal data, including both text and/or images.",
                     "type": "string"
                 }
             },
@@ -209,7 +276,7 @@
                 },
                 "parsingModality": {
                     "const": "MULTIMODAL",
-                    "description": "Specifies whether to enable parsing of multimodal data, including both text and/or images.\nAllowed value: MULTIMODAL",
+                    "description": "Specifies whether to enable parsing of multimodal data, including both text and/or images.",
                     "type": "string"
                 },
                 "parsingPromptText": {
@@ -269,6 +336,10 @@
                 "s3DataSources": {
                     "$ref": "#/definitions/NamedS3DataSource",
                     "description": "Array of S3 data sources to be used for the knowledge base\nEach data source specifies a bucket and optional prefix"
+                },
+                "sharepointDataSources": {
+                    "$ref": "#/definitions/NamedSharepointDataSources",
+                    "description": "List of Sharepoint data sources to be used for ingestion into knowledge base"
                 },
                 "supplementalBucketName": {
                     "description": "Name of the S3 bucket for supplemental data storage.\nRequired when using advanced parsing strategies like BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL.",
@@ -664,14 +735,8 @@
             "additionalProperties": false,
             "properties": {
                 "chunkingStrategy": {
-                    "description": "The chunking strategy to use for processing documents\nFIXED_SIZE - Split documents into chunks of specified size\nHIERARCHICAL - Split documents into parent and child chunks\nSEMANTIC - Split documents based on semantic meaning\nNONE - Treat each file as a single chunk",
-                    "enum": [
-                        "FIXED_SIZE",
-                        "HIERARCHICAL",
-                        "NONE",
-                        "SEMANTIC"
-                    ],
-                    "type": "string"
+                    "$ref": "#/definitions/ChunkingStrategy",
+                    "description": "The chunking strategy to use for processing documents"
                 },
                 "fixedSizeChunkingConfiguration": {
                     "$ref": "#/definitions/FixedSizeChunking",
@@ -690,6 +755,16 @@
                 "chunkingStrategy"
             ],
             "type": "object"
+        },
+        "ChunkingStrategy": {
+            "description": "Supported chunking strategies",
+            "enum": [
+                "FIXED_SIZE",
+                "HIERARCHICAL",
+                "NONE",
+                "SEMANTIC"
+            ],
+            "type": "string"
         },
         "ContentFilterConfig": {
             "additionalProperties": false,
@@ -1491,6 +1566,7 @@
             "additionalProperties": {
                 "$ref": "#/definitions/S3DataSource"
             },
+            "description": "Named collection of S3 data sources for configuration mapping",
             "type": "object"
         },
         "NamedS3EventBridgeRuleProps": {
@@ -1499,10 +1575,61 @@
             },
             "type": "object"
         },
+        "NamedSharepointDataSources": {
+            "additionalProperties": {
+                "$ref": "#/definitions/SharepointDataSource"
+            },
+            "description": "Named collection of SharePoint data sources for configuration mapping",
+            "type": "object"
+        },
         "NamedVectorStoreProps": {
             "additionalProperties": {
-                "$ref": "#/definitions/VectorStoreProps"
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/AuroraServerlessPgVectorProps"
+                    },
+                    {
+                        "$ref": "#/definitions/OpensearchServerlessProps"
+                    }
+                ]
             },
+            "description": "Named collection of vector store configurations for mapping",
+            "type": "object"
+        },
+        "OpensearchServerlessProps": {
+            "additionalProperties": false,
+            "properties": {
+                "standbyReplicas": {
+                    "description": "Enable or Disable standby replicas\nThis cannot be changed after creation of the Opensearch Serverless Collection",
+                    "enum": [
+                        "DISABLE",
+                        "ENABLE"
+                    ],
+                    "type": "string"
+                },
+                "subnetIds": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "vectorStoreType": {
+                    "description": "Supported vector store types",
+                    "enum": [
+                        "AURORA_SERVERLESS",
+                        "OPENSEARCH_SERVERLESS"
+                    ],
+                    "type": "string"
+                },
+                "vpcId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "standbyReplicas",
+                "subnetIds",
+                "vpcId"
+            ],
             "type": "object"
         },
         "ParsingConfiguration": {
@@ -1517,18 +1644,22 @@
                     "description": "Configuration for foundation model parsing\nRequired when parsingStrategy is BEDROCK_FOUNDATION_MODEL"
                 },
                 "parsingStrategy": {
-                    "description": "The parsing strategy to use for processing documents\nBEDROCK_DATA_AUTOMATION - Use Bedrock Data Automation for parsing\nBEDROCK_FOUNDATION_MODEL - Use foundation model for parsing",
-                    "enum": [
-                        "BEDROCK_DATA_AUTOMATION",
-                        "BEDROCK_FOUNDATION_MODEL"
-                    ],
-                    "type": "string"
+                    "$ref": "#/definitions/ParsingStrategy",
+                    "description": "The parsing strategy to use for processing documents"
                 }
             },
             "required": [
                 "parsingStrategy"
             ],
             "type": "object"
+        },
+        "ParsingStrategy": {
+            "description": "Supported parsing strategies",
+            "enum": [
+                "BEDROCK_DATA_AUTOMATION",
+                "BEDROCK_FOUNDATION_MODEL"
+            ],
+            "type": "string"
         },
         "Record<string,IResolvable|CfnAgent.ParameterDetailProperty>": {
             "additionalProperties": false,
@@ -1644,6 +1775,62 @@
             },
             "type": "object"
         },
+        "SharepointDataSource": {
+            "additionalProperties": false,
+            "properties": {
+                "dataSource": {
+                    "$ref": "#/definitions/SharepointDataSourceConfiguration"
+                },
+                "vectorIngestionConfiguration": {
+                    "$ref": "#/definitions/VectorIngestionConfiguration",
+                    "description": "Vector ingestion configuration for this data source"
+                }
+            },
+            "required": [
+                "dataSource"
+            ],
+            "type": "object"
+        },
+        "SharepointDataSourceConfiguration": {
+            "additionalProperties": false,
+            "properties": {
+                "authType": {
+                    "description": "The supported authentication type to authenticate and connect to your SharePoint site/sites.\nValid values: OAUTH2_CLIENT_CREDENTIALS, OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS",
+                    "type": "string"
+                },
+                "credentialsSecretArn": {
+                    "description": "The Amazon Resource Name of an AWS Secrets Manager secret that stores your authentication credentials for your SharePoint site/sites.",
+                    "type": "string"
+                },
+                "domain": {
+                    "description": "The domain of your SharePoint instance or site URL/URLs.\nValid Pattern: ^arn:aws(|-cn|-us-gov):secretsmanager:[a-z0-9-]{1,20}:([0-9]{12}|):secret:[a-zA-Z0-9!/_+=.@-]{1,512}$",
+                    "type": "string"
+                },
+                "hostType": {
+                    "description": "The supported host type, whether online/cloud or server/on-premises.\nValid values: ONLINE\nDefault: ONLINE",
+                    "type": "string"
+                },
+                "siteUrls": {
+                    "description": "A list of one or more SharePoint site URLs.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "tenantId": {
+                    "description": "The identifier of your Microsoft 365 tenant.\nValid Pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "authType",
+                "credentialsSecretArn",
+                "domain",
+                "siteUrls",
+                "tenantId"
+            ],
+            "type": "object"
+        },
         "Strength": {
             "enum": [
                 "HIGH",
@@ -1668,69 +1855,6 @@
                     "description": "Configuration for document parsing"
                 }
             },
-            "type": "object"
-        },
-        "VectorStoreProps": {
-            "additionalProperties": false,
-            "properties": {
-                "engineVersion": {
-                    "description": "Optional Aurora PostgreSQL engine version",
-                    "type": "string"
-                },
-                "maxCapacity": {
-                    "description": "Optional maximum Aurora Capacity Units",
-                    "enum": [
-                        1,
-                        128,
-                        16,
-                        192,
-                        2,
-                        256,
-                        32,
-                        384,
-                        4,
-                        64,
-                        8
-                    ],
-                    "type": "number"
-                },
-                "minCapacity": {
-                    "description": "Optional minimum Aurora Capacity Units",
-                    "enum": [
-                        1,
-                        128,
-                        16,
-                        192,
-                        2,
-                        256,
-                        32,
-                        384,
-                        4,
-                        64,
-                        8
-                    ],
-                    "type": "number"
-                },
-                "port": {
-                    "description": "Optional port number for the database connection (default: 5432)",
-                    "type": "number"
-                },
-                "subnetIds": {
-                    "description": "subnet selection for the vector store",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "vpcId": {
-                    "description": "VPC where the vector store will be deployed",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "subnetIds",
-                "vpcId"
-            ],
             "type": "object"
         },
         "VpcConfigProps": {

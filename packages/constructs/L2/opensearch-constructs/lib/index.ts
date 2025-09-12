@@ -4,3 +4,4 @@
  */
 
 export * from './domain';
+export * from './serverless-collection';

@@ -274,6 +274,247 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
+  test('Test Error Handling - No Logging Destinations Enabled', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const props: BedrockSettingsL3ConstructProps = {
+      enableAuditLoggingToS3: false,
+      enableAuditLoggingToCloudwatch: false,
+      naming: testApp.naming,
+      roleHelper,
+    };
+
+    expect(() => {
+      new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', props);
+    }).toThrow('At least one of enableAuditLoggingToCloudwatch or enableAuditLoggingToS3 must be true.');
+  });
+
+  test('Test CloudWatch Log Group Configuration', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const props: BedrockSettingsL3ConstructProps = {
+      enableAuditLoggingToS3: false,
+      enableAuditLoggingToCloudwatch: true,
+      naming: testApp.naming,
+      roleHelper,
+    };
+
+    new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', props);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Verify CloudWatch Log Group has infinite retention for audit purposes
+    template.hasResourceProperties('AWS::Logs::LogGroup', {
+      RetentionInDays: Match.absent(),
+    });
+
+    // Verify S3 bucket is still created (used for CloudWatch large data delivery)
+    template.resourceCountIs('AWS::S3::Bucket', 1);
+  });
+
+  test('Test S3-Only Configuration', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const props: BedrockSettingsL3ConstructProps = {
+      enableAuditLoggingToS3: true,
+      enableAuditLoggingToCloudwatch: false,
+      naming: testApp.naming,
+      roleHelper,
+    };
+
+    new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', props);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Verify no CloudWatch Log Group is created when CloudWatch logging is disabled
+    template.resourceCountIs('AWS::Logs::LogGroup', 0);
+
+    // Verify S3 bucket is created
+    template.resourceCountIs('AWS::S3::Bucket', 1);
+
+    // Verify service role policy only includes KMS permissions (no CloudWatch)
+    template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+      PolicyDocument: {
+        Statement: [
+          {
+            Effect: 'Allow',
+            Action: ['kms:Encrypt', 'kms:Decrypt', 'kms:ReEncrypt', 'kms:GenerateDataKey', 'kms:DescribeKey'],
+          },
+        ],
+      },
+    });
+  });
+
+  test('Test Custom Resource Configuration Properties', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const props: BedrockSettingsL3ConstructProps = {
+      enableAuditLoggingToS3: true,
+      enableAuditLoggingToCloudwatch: true,
+      naming: testApp.naming,
+      roleHelper,
+    };
+
+    new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', props);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Verify custom resource has correct configuration
+    template.hasResourceProperties('Custom::logs-model-invocation', {
+      enableAuditLoggingToS3: true,
+      enableAuditLoggingToCloudwatch: true,
+      s3Config: {
+        s3Bucket: Match.anyValue(),
+        s3Prefix: 'bedrock-model-invocation-logs/bedrock-model-invocation',
+      },
+      cloudwatchConfig: {
+        cloudwatchLogGroupName: Match.anyValue(),
+        largeDataDeliveryS3Config: {
+          s3Bucket: Match.anyValue(),
+          s3Prefix: 'bedrock-model-invocation-logs/bedrock-model-invocation/cloudwatch-logs-large-data-delivery/',
+        },
+      },
+    });
+  });
+
+  test('Test CDK Nag Suppressions Applied', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const props: BedrockSettingsL3ConstructProps = {
+      enableAuditLoggingToS3: true,
+      enableAuditLoggingToCloudwatch: false,
+      naming: testApp.naming,
+      roleHelper,
+    };
+
+    new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', props);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Verify S3 bucket exists (suppressions are applied to this resource)
+    template.resourceCountIs('AWS::S3::Bucket', 1);
+
+    // Verify Lambda function has IAM policy suppression for wildcard resources
+    template.hasResourceProperties('AWS::IAM::Policy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          {
+            Effect: 'Allow',
+            Action: [
+              'bedrock:DeleteModelInvocationLoggingConfiguration',
+              'bedrock:GetModelInvocationLoggingConfiguration',
+              'bedrock:PutModelInvocationLoggingConfiguration',
+            ],
+            Resource: '*',
+          },
+        ]),
+      },
+    });
+  });
+
+  test('Test Resource Naming Convention', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const props: BedrockSettingsL3ConstructProps = {
+      enableAuditLoggingToS3: true,
+      enableAuditLoggingToCloudwatch: true,
+      naming: testApp.naming,
+      roleHelper,
+    };
+
+    new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', props);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Verify S3 bucket follows naming convention
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketName: Match.stringLikeRegexp('.*logs-model.*'),
+    });
+
+    // Verify KMS key alias follows naming convention
+    template.hasResourceProperties('AWS::KMS::Alias', {
+      AliasName: Match.stringLikeRegexp('alias/.*bedrock-kms-key.*'),
+    });
+
+    // Verify IAM role follows naming convention
+    template.hasResourceProperties('AWS::IAM::Role', {
+      RoleName: Match.stringLikeRegexp('.*bedrock-loggi.*'),
+    });
+  });
+
+  test('Test Security Configuration - Encryption at Rest', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const props: BedrockSettingsL3ConstructProps = {
+      enableAuditLoggingToS3: true,
+      enableAuditLoggingToCloudwatch: true,
+      naming: testApp.naming,
+      roleHelper,
+    };
+
+    new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', props);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Verify KMS key has rotation enabled
+    template.hasResourceProperties('AWS::KMS::Key', {
+      EnableKeyRotation: true,
+    });
+
+    // Verify CloudWatch Log Group uses KMS encryption
+    template.hasResourceProperties('AWS::Logs::LogGroup', {
+      KmsKeyId: Match.anyValue(),
+    });
+
+    // Verify S3 bucket uses KMS encryption
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      BucketEncryption: {
+        ServerSideEncryptionConfiguration: [
+          {
+            ServerSideEncryptionByDefault: {
+              SSEAlgorithm: 'aws:kms',
+              KMSMasterKeyID: Match.anyValue(),
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  test('Test Service Principal Conditions', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+
+    const props: BedrockSettingsL3ConstructProps = {
+      enableAuditLoggingToS3: true,
+      enableAuditLoggingToCloudwatch: true,
+      naming: testApp.naming,
+      roleHelper,
+    };
+
+    new BedrockSettingsL3Construct(testApp.testStack, 'bedrock-settings', props);
+    const template = Template.fromStack(testApp.testStack);
+
+    // Verify S3 bucket policy has proper source account and ARN conditions
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          {
+            Effect: 'Allow',
+            Principal: { Service: 'bedrock.amazonaws.com' },
+            Action: 's3:PutObject',
+            Resource: Match.anyValue(),
+            Condition: {
+              StringEquals: { 'aws:SourceAccount': 'test-account' },
+              ArnLike: { 'aws:SourceArn': 'arn:aws:bedrock:test-region:test-account:*' },
+            },
+          },
+        ]),
+      },
+    });
+  });
+
   test('Test Resource Tagging and Naming Compliance', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);

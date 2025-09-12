@@ -3,48 +3,59 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaLogGroup, MdaaLogGroupProps } from '@aws-mdaa/cloudwatch-constructs';
+import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
+import {
+  MdaaBoto3LayerVersion,
+  MdaaAwsAuthLayerVersion,
+  MdaaOpensearchPyLayerVersion,
+} from '@aws-mdaa/lambda-constructs';
+import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { FunctionProps, LambdaFunctionL3Construct } from '@aws-mdaa/dataops-lambda-l3-construct';
 import { MdaaSecurityGroup } from '@aws-mdaa/ec2-constructs';
-import { MdaaManagedPolicy, MdaaManagedPolicyProps } from '@aws-mdaa/iam-constructs';
+import { MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { USER_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaAuroraPgVector, MdaaAuroraPgVectorProps, MdaaRdsDataResource } from '@aws-mdaa/rds-constructs';
 import {
-  MdaaAuroraPgVector,
-  MdaaAuroraPgVectorProps,
-  MdaaRdsDataResource,
-  MdaaRdsDataResourceProps,
-} from '@aws-mdaa/rds-constructs';
-import { aws_bedrock as bedrock, aws_s3 as s3, CfnResource } from 'aws-cdk-lib';
-import { Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { Effect, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+  MdaaOpensearchServerlessCollection,
+  MdaaOpensearchServerlessCollectionProps,
+} from '@aws-mdaa/opensearch-constructs';
+import { aws_bedrock as bedrock, aws_s3 as s3, CfnResource, Duration } from 'aws-cdk-lib';
+import { IVpc, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Effect, IRole, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { AuroraCapacityUnit } from 'aws-cdk-lib/aws-rds';
-import {
-  CfnDelivery,
-  CfnDeliveryDestination,
-  CfnDeliveryDestinationProps,
-  CfnDeliveryProps,
-  CfnDeliverySource,
-  CfnDeliverySourceProps,
-  RetentionDays,
-} from 'aws-cdk-lib/aws-logs';
+import { CfnDelivery, CfnDeliveryDestination, CfnDeliverySource, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { join } from 'path';
 import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { resolveModelArn } from '@aws-mdaa/ai-helper';
+import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 
 // ---------------------------------------------
 // Knowledge Base Interfaces and Types
 // ---------------------------------------------
 
+/** Supported parsing modality for multimodal data */
+type ParsingModality = 'MULTIMODAL';
+
+/** Supported vector store types */
+type VectorStoreType = 'AURORA_SERVERLESS' | 'OPENSEARCH_SERVERLESS';
+
+/** Supported parsing strategies */
+type ParsingStrategy = 'BEDROCK_DATA_AUTOMATION' | 'BEDROCK_FOUNDATION_MODEL';
+
+/** Supported chunking strategies */
+type ChunkingStrategy = 'FIXED_SIZE' | 'HIERARCHICAL' | 'SEMANTIC' | 'NONE';
+
+/** Supported standby replicas flag values for vector store */
+type StandbyReplicas = 'ENABLE' | 'DISABLE';
 export interface BedrockDataAutomationConfig {
   /**
    * Specifies whether to enable parsing of multimodal data, including both text and/or images.
-   * Allowed value: MULTIMODAL
    */
-  readonly parsingModality?: 'MULTIMODAL';
+  readonly parsingModality?: ParsingModality;
 }
 
 export interface BedrockFoundationModelConfig {
@@ -58,18 +69,15 @@ export interface BedrockFoundationModelConfig {
   readonly parsingPromptText?: string;
   /**
    * Specifies whether to enable parsing of multimodal data, including both text and/or images.
-   * Allowed value: MULTIMODAL
    */
-  readonly parsingModality?: 'MULTIMODAL';
+  readonly parsingModality?: ParsingModality;
 }
 
 export interface ParsingConfiguration {
   /**
    * The parsing strategy to use for processing documents
-   * BEDROCK_DATA_AUTOMATION - Use Bedrock Data Automation for parsing
-   * BEDROCK_FOUNDATION_MODEL - Use foundation model for parsing
    */
-  readonly parsingStrategy: 'BEDROCK_DATA_AUTOMATION' | 'BEDROCK_FOUNDATION_MODEL';
+  readonly parsingStrategy: ParsingStrategy;
   /**
    * Configuration for Bedrock Data Automation parsing
    * Optional when parsingStrategy is BEDROCK_DATA_AUTOMATION
@@ -144,12 +152,8 @@ export interface SemanticChunking {
 export interface ChunkingConfiguration {
   /**
    * The chunking strategy to use for processing documents
-   * FIXED_SIZE - Split documents into chunks of specified size
-   * HIERARCHICAL - Split documents into parent and child chunks
-   * SEMANTIC - Split documents based on semantic meaning
-   * NONE - Treat each file as a single chunk
    */
-  readonly chunkingStrategy: 'FIXED_SIZE' | 'HIERARCHICAL' | 'SEMANTIC' | 'NONE';
+  readonly chunkingStrategy: ChunkingStrategy;
   /**
    * Configuration for fixed-size chunking
    */
@@ -199,44 +203,80 @@ export interface S3DataSource {
   readonly enableSync?: boolean;
 }
 
-export interface VectorStoreProps {
+export interface SharepointDataSource {
+  readonly dataSource: SharepointDataSourceConfiguration;
   /**
-   * VPC where the vector store will be deployed
+   * Vector ingestion configuration for this data source
    */
+  readonly vectorIngestionConfiguration?: VectorIngestionConfiguration;
+}
+
+export interface SharepointDataSourceConfiguration {
+  /** The supported authentication type to authenticate and connect to your SharePoint site/sites.
+   *  Valid values: OAUTH2_CLIENT_CREDENTIALS, OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+   */
+  readonly authType: string;
+  /** The Amazon Resource Name of an AWS Secrets Manager secret that stores your authentication credentials for your SharePoint site/sites. */
+  readonly credentialsSecretArn: string;
+  /** The domain of your SharePoint instance or site URL/URLs.
+   *  Valid Pattern: ^arn:aws(|-cn|-us-gov):secretsmanager:[a-z0-9-]{1,20}:([0-9]{12}|):secret:[a-zA-Z0-9!/_+=.@-]{1,512}$
+   */
+  readonly domain: string;
+  /** The supported host type, whether online/cloud or server/on-premises.
+   *  Valid values: ONLINE
+   *  Default: ONLINE
+   */
+  readonly hostType?: string;
+  /** A list of one or more SharePoint site URLs. */
+  readonly siteUrls: string[];
+  /** The identifier of your Microsoft 365 tenant.
+   *  Valid Pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+   */
+  readonly tenantId: string;
+}
+interface BaseVectorStoreProps {
+  readonly vectorStoreType?: VectorStoreType;
   readonly vpcId: string;
-  /**
-   * subnet selection for the vector store
-   */
   readonly subnetIds: string[];
-  /**
-   * Optional port number for the database connection (default: 5432)
-   */
+}
+
+export interface AuroraServerlessPgVectorProps extends BaseVectorStoreProps {
   readonly port?: number;
-  /**
-   * Optional Aurora PostgreSQL engine version
-   */
   readonly engineVersion?: string;
-  /**
-   * Optional minimum Aurora Capacity Units
-   */
   readonly minCapacity?: AuroraCapacityUnit;
-  /**
-   * Optional maximum Aurora Capacity Units
-   */
   readonly maxCapacity?: AuroraCapacityUnit;
 }
 
+export interface OpensearchServerlessProps extends BaseVectorStoreProps {
+  /**
+   * Enable or Disable standby replicas
+   * This cannot be changed after creation of the Opensearch Serverless Collection
+   */
+  readonly standbyReplicas: StandbyReplicas;
+}
+/** Named collection of SharePoint data sources for configuration mapping */
+export interface NamedSharepointDataSources {
+  /** @jsii ignore */
+  [dsName: string]: SharepointDataSource;
+}
+
+/** Named collection of S3 data sources for configuration mapping */
 export interface NamedS3DataSource {
   /** @jsii ignore */
   [dsName: string]: S3DataSource;
 }
 
+/** Named collection of vector store configurations for mapping */
 export interface NamedVectorStoreProps {
   /** @jsii ignore */
-  [storeName: string]: VectorStoreProps;
+  [storeName: string]: AuroraServerlessPgVectorProps | OpensearchServerlessProps;
 }
 
 export interface BedrockKnowledgeBaseProps {
+  /**
+   * List of Sharepoint data sources to be used for ingestion into knowledge base
+   */
+  readonly sharepointDataSources?: NamedSharepointDataSources;
   /**
    * Array of S3 data sources to be used for the knowledge base
    * Each data source specifies a bucket and optional prefix
@@ -279,7 +319,7 @@ export interface NamedKnowledgeBaseProps {
 export interface BedrockKnowledgeBaseL3ConstructProps extends MdaaL3ConstructProps {
   readonly kbName: string;
   readonly kbConfig: BedrockKnowledgeBaseProps;
-  readonly vectorStoreConfig: VectorStoreProps;
+  readonly vectorStoreConfig: AuroraServerlessPgVectorProps | OpensearchServerlessProps;
   readonly kmsKey: IKey;
 }
 
@@ -290,43 +330,134 @@ export interface BedrockKnowledgeBaseL3ConstructProps extends MdaaL3ConstructPro
 export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
   public readonly knowledgeBase: bedrock.CfnKnowledgeBase;
   /** @jsii ignore */
-  public readonly vectorStore: [MdaaAuroraPgVector, ManagedPolicy];
-  protected readonly props: BedrockKnowledgeBaseL3ConstructProps;
+  public readonly vectorStore: [MdaaAuroraPgVector | MdaaOpensearchServerlessCollection, ManagedPolicy];
 
-  private static EMBEDDING_MODEL_VECTOR_SIZE: { [model: string]: number } = {
-    'amazon.titan-embed-text-v2': 1024,
-    'amazon.titan-embed-image-v1': 1024,
-    'cohere.embed-english-v3': 1024,
-    'cohere.embed-multilingual-v3': 1024,
-  };
+  private vectorStoreSecurityGroup: MdaaSecurityGroup | undefined = undefined;
+  protected readonly props: BedrockKnowledgeBaseL3ConstructProps;
+  private readonly kbRole: IRole;
+  private cachedVectorFieldSize!: number;
+  private cachedEmbeddingModelHash!: string;
+
+  private static readonly EMBEDDING_MODEL_VECTOR_SIZE = new Map<string, number>([
+    ['amazon.titan-embed-text-v1', 1536],
+    ['amazon.titan-embed-text-v2', 1024],
+    ['amazon.titan-embed-image-v1', 1024],
+    ['cohere.embed-english-v3', 1024],
+    ['cohere.embed-multilingual-v3', 1024],
+    ['amazon.titan-embed-g1-text-02', 1536],
+  ]);
+
+  private static readonly DB_FIELD_NAMES = {
+    METADATA: 'metadata',
+    CUSTOM_METADATA: 'custom_metadata',
+    PRIMARY_KEY: 'id',
+    TEXT: 'content',
+    VECTOR: 'embedding',
+  } as const;
+
+  private static readonly OPENSEARCH_FIELD_NAMES = {
+    METADATA: 'metadata',
+    TEXT: 'content',
+    VECTOR: 'embedding',
+  } as const;
+
+  private static readonly LAMBDA_TIMEOUT = {
+    MIN: 1,
+    MAX: 900,
+    DEFAULT: 300,
+  } as const;
+
+  /**
+   * Gets the vector field size for the given embedding model
+   * @param embeddingModelBase The base embedding model identifier
+   * @returns The vector field size for the model
+   * @throws Error if vector field size cannot be determined
+   */
+  private getVectorFieldSize(embeddingModelBase: string): number {
+    const vectorFieldSize =
+      this.props.kbConfig.vectorFieldSize ||
+      BedrockKnowledgeBaseL3Construct.EMBEDDING_MODEL_VECTOR_SIZE.get(embeddingModelBase);
+
+    if (!vectorFieldSize) {
+      throw new Error(`Unable to determine vector field size from Embedding Model ID : ${embeddingModelBase}. `);
+    }
+
+    return vectorFieldSize;
+  }
 
   constructor(scope: Construct, id: string, props: BedrockKnowledgeBaseL3ConstructProps) {
     super(scope, id, props);
     this.props = props;
 
-    // Create vector store first
+    this.initializeCachedValues();
+    this.kbRole = this.resolveKnowledgeBaseRole();
     this.vectorStore = this.createVectorStore(props.kbConfig.vectorStore, props.vectorStoreConfig, props.kmsKey);
-
     this.knowledgeBase = this.createKnowledgeBase(props.kbName, props.kbConfig, props.kmsKey, this.vectorStore);
+  }
+
+  private initializeCachedValues(): void {
+    const embeddingModelBase = this.props.kbConfig.embeddingModel.replace(/:.*/, '');
+    this.cachedVectorFieldSize = this.getVectorFieldSize(embeddingModelBase);
+    this.cachedEmbeddingModelHash = this.hashCodeHex(this.props.kbConfig.embeddingModel);
+  }
+
+  private resolveKnowledgeBaseRole(): IRole {
+    const roleId = `bedrock-knowledge-base-role-${this.props.kbName}`;
+    return this.props.roleHelper.resolveRoleRefWithRefId(this.props.kbConfig.role, roleId).role(roleId);
   }
 
   private createVectorStore(
     vectorStoreName: string,
-    vectorStoreConfig: VectorStoreProps,
+    vectorStoreConfig: AuroraServerlessPgVectorProps | OpensearchServerlessProps,
     kmsKey: IKey,
-  ): [MdaaAuroraPgVector, ManagedPolicy] {
+  ): [MdaaAuroraPgVector | MdaaOpensearchServerlessCollection, ManagedPolicy] {
+    const vectorStoreType = vectorStoreConfig.vectorStoreType || 'AURORA_SERVERLESS';
+
+    if (vectorStoreType === 'AURORA_SERVERLESS') {
+      return this.createAuroraServerlessPgVectorStore(
+        vectorStoreName,
+        vectorStoreConfig as AuroraServerlessPgVectorProps,
+        kmsKey,
+      );
+    } else if (vectorStoreType === 'OPENSEARCH_SERVERLESS') {
+      const opensearchParams = this.prepareOpensearchVectorStoreParams();
+      return this.createOpensearchServerlessVectorStore(
+        vectorStoreName,
+        vectorStoreConfig as OpensearchServerlessProps,
+        [],
+        opensearchParams.readWriteArns,
+        kmsKey,
+      );
+    } else {
+      throw new Error(
+        `Invalid vector store type: ${vectorStoreType}. Valid vector store types: AURORA_SERVERLESS, OPENSEARCH_SERVERLESS`,
+      );
+    }
+  }
+
+  private createVpcAndSecurityGroup(vectorStoreName: string, vpcId: string): [IVpc, MdaaSecurityGroup] {
     const vpc = Vpc.fromVpcAttributes(this, `vpc-import-vectorstore-${vectorStoreName}`, {
-      vpcId: vectorStoreConfig.vpcId,
+      vpcId,
       availabilityZones: ['a'],
       publicSubnetIds: ['a'],
     });
     const vectorStoreSg = new MdaaSecurityGroup(this, `${vectorStoreName}-vector-store-sg`, {
       naming: this.props.naming,
       securityGroupName: vectorStoreName,
-      vpc: vpc,
+      vpc,
       allowAllOutbound: true,
       addSelfReferenceRule: true,
     });
+    this.vectorStoreSecurityGroup = vectorStoreSg;
+    return [vpc, vectorStoreSg];
+  }
+
+  private createAuroraServerlessPgVectorStore(
+    vectorStoreName: string,
+    vectorStoreConfig: AuroraServerlessPgVectorProps,
+    kmsKey: IKey,
+  ): [MdaaAuroraPgVector, ManagedPolicy] {
+    const [vpc, vectorStoreSg] = this.createVpcAndSecurityGroup(vectorStoreName, vectorStoreConfig.vpcId);
 
     const subnets = vectorStoreConfig.subnetIds.map(id =>
       Subnet.fromSubnetId(this, `kb-import-subnet-${vectorStoreName}-${id}`, id),
@@ -374,67 +505,170 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     return [pgVectorStore, managedPolicy];
   }
 
+  private createOpensearchServerlessVectorStore(
+    vectorStoreName: string,
+    vectorStoreConfig: OpensearchServerlessProps,
+    readOnlyArns: string[],
+    readWriteArns: string[],
+    kmsKey: IKey,
+  ): [MdaaOpensearchServerlessCollection, ManagedPolicy] {
+    const [vpc, vectorStoreSg] = this.createVpcAndSecurityGroup(vectorStoreName, vectorStoreConfig.vpcId);
+
+    const opensearchServerlessCollectionProps: MdaaOpensearchServerlessCollectionProps = {
+      name: vectorStoreName,
+      collectionType: 'VECTORSEARCH',
+      standByReplicas: vectorStoreConfig.standbyReplicas,
+      encryptionKey: kmsKey,
+      vpc: vpc,
+      subnetIds: vectorStoreConfig.subnetIds,
+      securityGroupIds: [vectorStoreSg.securityGroupId],
+      sourceServices: ['bedrock.amazonaws.com'],
+      readWriteArns: readWriteArns,
+      readOnlyArns: readOnlyArns,
+      naming: this.props.naming,
+    };
+    const opensearchServerlessVectorStore: MdaaOpensearchServerlessCollection = new MdaaOpensearchServerlessCollection(
+      this,
+      `opensearch-serverless-${vectorStoreName}`,
+      opensearchServerlessCollectionProps,
+    );
+
+    const managedPolicy = new MdaaManagedPolicy(this, `bedrock-knowledge-base-access-${vectorStoreName}`, {
+      naming: this.props.naming,
+      managedPolicyName: `kb-access-${vectorStoreName}`,
+      statements: [
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['aoss:APIAccessAll'],
+          resources: [
+            `arn:aws:aoss:${this.region}:${this.account}:collection/${opensearchServerlessVectorStore.collection.attrId}`,
+          ],
+        }),
+      ],
+    });
+    return [opensearchServerlessVectorStore, managedPolicy];
+  }
+
   private createKnowledgeBase(
     kbName: string,
     kbConfig: BedrockKnowledgeBaseProps,
     kmsKey: IKey,
-    vectorStore: [MdaaAuroraPgVector, ManagedPolicy],
+    vectorStore: [MdaaAuroraPgVector | MdaaOpensearchServerlessCollection, ManagedPolicy],
   ): bedrock.CfnKnowledgeBase {
-    const [pgVectorStore, vectorStorePolicy] = vectorStore;
-    const databaseName = kbName.replace(/[^a-zA-Z0-9]/g, '_');
-    const embeddingModelBase = kbConfig.embeddingModel.replace(/:.*/, '');
-    const embeddingModelHash = this.hashCodeHex(kbConfig.embeddingModel);
-    const vectorFieldSize =
-      kbConfig.vectorFieldSize || BedrockKnowledgeBaseL3Construct.EMBEDDING_MODEL_VECTOR_SIZE[embeddingModelBase];
+    const [store, policy] = vectorStore;
 
-    if (!vectorFieldSize) {
-      throw new Error(`Unable to determine vector field size from Embedding Model ID : ${kbConfig.embeddingModel}`);
+    if (store instanceof MdaaOpensearchServerlessCollection) {
+      return this.createKnowledgeBaseWithOpenSearch(kbName, kbConfig, kmsKey, store, policy);
+    } else {
+      return this.createKnowledgeBaseWithAurora(kbName, kbConfig, kmsKey, store, policy);
     }
+  }
 
-    const tableName = `embeddings_${embeddingModelHash.slice(-8)}_${vectorFieldSize}`;
-    const metadataField = 'metadata';
-    const customMetadataField = 'custom_metadata';
-    const primaryKeyField = 'id';
-    const textField = 'content';
-    const vectorField = `embedding`;
+  private createKnowledgeBaseWithAurora(
+    kbName: string,
+    kbConfig: BedrockKnowledgeBaseProps,
+    kmsKey: IKey,
+    pgVectorStore: MdaaAuroraPgVector,
+    vectorStorePolicy: ManagedPolicy,
+  ): bedrock.CfnKnowledgeBase {
+    const dbConfig = this.prepareAuroraDbConfiguration(kbName);
+    const { createDb, createTable } = this.setupAuroraDatabase(kbName, pgVectorStore, dbConfig);
 
-    const createDbProps: MdaaRdsDataResourceProps = {
-      rdsCluster: pgVectorStore,
-      onCreateSqlStatements: [`CREATE DATABASE ${databaseName}`],
-      naming: this.props.naming,
-    };
-    const createDb = new MdaaRdsDataResource(this, `create-db-${kbName}`, createDbProps);
-
-    const createTableProps: MdaaRdsDataResourceProps = {
-      rdsCluster: pgVectorStore,
-      databaseName: databaseName,
-      onCreateSqlStatements: [
-        'CREATE EXTENSION IF NOT EXISTS vector',
-        this.generateCreateTableSql(
-          tableName,
-          primaryKeyField,
-          textField,
-          metadataField,
-          vectorField,
-          vectorFieldSize,
-          customMetadataField,
-        ),
-        ...this.generateCreateIndexesSql(tableName, textField, vectorField, customMetadataField),
-      ],
-      naming: this.props.naming,
-    };
-    const createTable = new MdaaRdsDataResource(this, `create-table-${kbName}-${tableName}`, createTableProps);
-    createTable.node.addDependency(createDb);
-
-    const kbRole = this.props.roleHelper
-      .resolveRoleRefWithRefId(kbConfig.role, `bedrock-knowledge-base-role-${kbName}`)
-      .role(`bedrock-knowledge-base-role-${kbName}`);
-
-    kbRole.addManagedPolicy(vectorStorePolicy);
-    createTable.handlerFunction.role?.addManagedPolicy(vectorStorePolicy);
+    this.attachPoliciesToRole(vectorStorePolicy, createTable.handlerFunction.role);
 
     const embeddingModelArn = resolveModelArn(kbConfig.embeddingModel, this.partition, this.region, this.account);
+    const foundationModelPolicy = this.createFoundationModelPolicy(kbName, kbConfig, embeddingModelArn, kmsKey);
+    this.kbRole.addManagedPolicy(foundationModelPolicy);
 
+    const knowledgeBase = this.createAuroraKnowledgeBaseResource(
+      kbName,
+      kbConfig,
+      embeddingModelArn,
+      pgVectorStore,
+      dbConfig,
+    );
+
+    this.setupKnowledgeBaseDependencies(knowledgeBase, [
+      createDb,
+      createTable,
+      vectorStorePolicy,
+      foundationModelPolicy,
+    ]);
+    this.finalizeKnowledgeBaseSetup(kbName, kbConfig, knowledgeBase, kmsKey);
+
+    return knowledgeBase;
+  }
+
+  private createKnowledgeBaseWithOpenSearch(
+    kbName: string,
+    kbConfig: BedrockKnowledgeBaseProps,
+    kmsKey: IKey,
+    opensearchStore: MdaaOpensearchServerlessCollection,
+    vectorStorePolicy: ManagedPolicy,
+  ): bedrock.CfnKnowledgeBase {
+    const indexConfig = this.prepareOpenSearchIndexConfiguration();
+    const createVectorIndex = this.setupOpenSearchIndex(kbName, opensearchStore, indexConfig);
+
+    this.kbRole.addManagedPolicy(vectorStorePolicy);
+
+    const embeddingModelArn = resolveModelArn(kbConfig.embeddingModel, this.partition, this.region, this.account);
+    const foundationModelPolicy = this.createFoundationModelPolicy(kbName, kbConfig, embeddingModelArn, kmsKey);
+    this.kbRole.addManagedPolicy(foundationModelPolicy);
+
+    const knowledgeBase = this.createOpenSearchKnowledgeBaseResource(
+      kbName,
+      kbConfig,
+      embeddingModelArn,
+      opensearchStore,
+      indexConfig,
+    );
+
+    this.setupKnowledgeBaseDependencies(knowledgeBase, [createVectorIndex, vectorStorePolicy, foundationModelPolicy]);
+    this.finalizeKnowledgeBaseSetup(kbName, kbConfig, knowledgeBase, kmsKey);
+
+    return knowledgeBase;
+  }
+
+  /**
+   * Prepares OpenSearch Serverless vector store parameters
+   */
+  private prepareOpensearchVectorStoreParams() {
+    // build vector index name with an 8 character hash for uniqueness
+    const vectorIndexName = `embeddings_${this.cachedEmbeddingModelHash.slice(-8)}_${this.cachedVectorFieldSize}`;
+    const resourceType = `create-index-${vectorIndexName}`;
+    const roleName = `${resourceType}-handler`;
+    const createIndexLambdaRoleName = this.props.naming.resourceName(roleName, 64);
+    const readWriteArns = [this.kbRole.roleArn, `arn:aws:iam::${this.account}:role/${createIndexLambdaRoleName}`];
+
+    return { vectorIndexName, readWriteArns };
+  }
+
+  /**
+   * Generates a hash code for the given strings using a simple hash algorithm
+   * Note: This is not cryptographically secure but sufficient for resource naming
+   */
+  private hashCodeHex(...strings: string[]): string {
+    let hash = 0;
+    const input = strings.join('');
+
+    for (let i = 0; i < input.length; i++) {
+      const char = input.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+
+    return Math.abs(hash).toString(16);
+  }
+
+  /**
+   * Creates a foundation model policy for the knowledge base
+   */
+  private createFoundationModelPolicy(
+    kbName: string,
+    kbConfig: BedrockKnowledgeBaseProps,
+    embeddingModelArn: string,
+    kmsKey: IKey,
+  ): MdaaManagedPolicy {
     // Collect foundation model ARNs used in parsing configurations
     const parsingModelArns = new Set<string>();
     Object.values(kbConfig.s3DataSources || {}).forEach(dsProps => {
@@ -456,7 +690,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       }
     });
 
-    // Create foundation model policy before knowledge base creation
+    // Create foundation model policy
     const foundationModelResources = [embeddingModelArn, ...Array.from(parsingModelArns)];
     const modelActions = ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'];
 
@@ -466,10 +700,10 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       modelActions.push('bedrock:GetInferenceProfile');
     }
 
-    const foundationModelPolicy = new MdaaManagedPolicy(this, `bedrock-kb-foundation-model-policy-${kbName}`, {
+    return new MdaaManagedPolicy(this, `bedrock-kb-foundation-model-policy-${kbName}`, {
       naming: this.props.naming,
       managedPolicyName: `kb-foundation-model-${kbName}`,
-      roles: [kbRole],
+      roles: [this.kbRole],
       statements: [
         new PolicyStatement({
           sid: 'InvokeFoundationModels',
@@ -482,165 +716,9 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
           effect: Effect.ALLOW,
           resources: [kmsKey.keyArn],
           actions: [...USER_ACTIONS, 'kms:DescribeKey', 'kms:CreateGrant'],
-          conditions: {
-            StringLike: {
-              'kms:ViaService': `bedrock.${this.region}.amazonaws.com`,
-            },
-          },
         }),
       ],
     });
-
-    // Create the Bedrock Knowledge Base
-    const knowledgeBase = new bedrock.CfnKnowledgeBase(this, `${kbName}-KnowledgeBase`, {
-      name: this.props.naming.resourceName(kbName),
-      roleArn: kbRole.roleArn,
-      knowledgeBaseConfiguration: {
-        type: 'VECTOR',
-        vectorKnowledgeBaseConfiguration: {
-          embeddingModelArn: embeddingModelArn,
-          ...(kbConfig.supplementalBucketName && {
-            supplementalDataStorageConfiguration: {
-              supplementalDataStorageLocations: [
-                {
-                  supplementalDataStorageLocationType: 'S3',
-                  s3Location: {
-                    uri: `s3://${kbConfig.supplementalBucketName}`,
-                  },
-                },
-              ],
-            },
-          }),
-        },
-      },
-      storageConfiguration: {
-        type: 'RDS',
-        rdsConfiguration: {
-          credentialsSecretArn: pgVectorStore.rdsClusterSecret.secretArn || '',
-          databaseName: databaseName,
-          resourceArn: pgVectorStore.clusterArn,
-          tableName: tableName,
-          fieldMapping: {
-            metadataField: metadataField,
-            primaryKeyField: primaryKeyField,
-            textField: textField,
-            vectorField: vectorField,
-            customMetadataField: customMetadataField,
-          },
-        },
-      },
-    });
-
-    new MdaaParamAndOutput(
-      this,
-      {
-        resourceType: 'knowledgeBase',
-        resourceId: kbName,
-        name: 'id',
-        value: knowledgeBase.attrKnowledgeBaseId,
-        ...this.props,
-      },
-      this,
-    );
-
-    knowledgeBase.node.addDependency(createDb);
-    knowledgeBase.node.addDependency(createTable);
-    knowledgeBase.node.addDependency(vectorStorePolicy);
-    knowledgeBase.node.addDependency(foundationModelPolicy.node.defaultChild as CfnResource);
-
-    const kbLogGroupProps: MdaaLogGroupProps = {
-      encryptionKey: kmsKey,
-      logGroupNamePathPrefix: '/aws/vendedlogs/bedrock/knowledge-base/',
-      logGroupName: kbName,
-      retention: RetentionDays.INFINITE,
-      naming: this.props.naming,
-    };
-    const kbLogGroup = new MdaaLogGroup(this, `kb-loggroup-${kbName}`, kbLogGroupProps);
-
-    const kbLogSourceProps: CfnDeliverySourceProps = {
-      name: this.props.naming.resourceName(kbName, 60),
-      logType: 'APPLICATION_LOGS',
-      resourceArn: knowledgeBase.attrKnowledgeBaseArn,
-    };
-    const kbLogSource = new CfnDeliverySource(this, `kb-logsource-${kbName}`, kbLogSourceProps);
-
-    const kbLogDestinationProps: CfnDeliveryDestinationProps = {
-      name: this.props.naming.resourceName(kbName, 60),
-      destinationResourceArn: kbLogGroup.logGroupArn,
-    };
-    const kbLogDestination = new CfnDeliveryDestination(this, `kb-logdestination-${kbName}`, kbLogDestinationProps);
-
-    const kbLogDeliveryProps: CfnDeliveryProps = {
-      deliveryDestinationArn: kbLogDestination.attrArn,
-      deliverySourceName: kbLogSource.name,
-    };
-    const cfnDelivery = new CfnDelivery(this, `kb-logdelivery-${kbName}`, kbLogDeliveryProps);
-    cfnDelivery.addDependency(kbLogSource);
-
-    // Create data sources for the knowledge base
-    Object.entries(kbConfig.s3DataSources || {}).forEach(([dsName, dsProps]) => {
-      const dataSource = this.createBedrockDataSource(
-        knowledgeBase.attrKnowledgeBaseId,
-        kbName,
-        dsName,
-        dsProps,
-        kmsKey,
-      );
-      if (dsProps.enableSync) {
-        this.createDataSourceSyncLambda(
-          kbName,
-          dsName,
-          knowledgeBase.attrKnowledgeBaseId,
-          dataSource.attrDataSourceId,
-          dsProps,
-          kbRole.roleArn,
-          kmsKey,
-        );
-      }
-    });
-
-    // Create DataSource sync policy (after knowledge base creation)
-    const dataSyncPolicyProps: MdaaManagedPolicyProps = {
-      naming: this.props.naming,
-      managedPolicyName: `kb-datasync-${kbName}`,
-      roles: [kbRole],
-      statements: [
-        new PolicyStatement({
-          sid: 'DataSourceSync',
-          effect: Effect.ALLOW,
-          resources: [
-            `arn:${this.partition}:bedrock:${this.region}:${this.account}:knowledge-base/${knowledgeBase.attrKnowledgeBaseId}/*`,
-          ],
-          actions: ['bedrock:StartIngestionJob', 'bedrock:GetIngestionJob', 'bedrock:ListIngestionJobs'],
-        }),
-      ],
-    };
-
-    const kbManagedPolicy = new MdaaManagedPolicy(
-      this,
-      `bedrock-knowledge-base-datasync-policy-${kbName}`,
-      dataSyncPolicyProps,
-    );
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      kbManagedPolicy,
-      [
-        {
-          id: 'AwsSolutions-IAM5',
-          reason: 'Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity',
-        },
-      ],
-      true,
-    );
-
-    return knowledgeBase;
-  }
-
-  private hashCodeHex(...strings: string[]) {
-    let h = 0;
-    strings.forEach(s => {
-      for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
-    });
-    return h.toString(16);
   }
 
   private generateCreateTableSql(
@@ -652,18 +730,20 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     vectorFieldSize: number,
     customMetadataField: string,
   ): string {
-    const columns: string[] = [
-      `${primaryKeyField} UUID PRIMARY KEY`,
-      `${textField} TEXT NOT NULL`,
-      `${metadataField} JSON`,
-      `${customMetadataField} JSONB`,
-      `${vectorField} VECTOR(${vectorFieldSize})`,
+    const columnDefinitions = [
+      { name: primaryKeyField, type: 'UUID PRIMARY KEY' },
+      { name: textField, type: 'TEXT NOT NULL' },
+      { name: metadataField, type: 'JSON' },
+      { name: customMetadataField, type: 'JSONB' },
+      { name: vectorField, type: `VECTOR(${vectorFieldSize})` },
     ];
+
+    const columns = columnDefinitions.map(col => `${col.name} ${col.type}`);
 
     return `
       CREATE TABLE IF NOT EXISTS ${tableName}
       (
-        ${columns.join(',\n      ')}
+        ${columns.join(',\n        ')}
       );
     `;
   }
@@ -676,12 +756,12 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
   ): string[] {
     return [
       `CREATE INDEX IF NOT EXISTS idx_${vectorField}_vector ON ${tableName} USING hnsw (${vectorField} vector_cosine_ops) WITH (ef_construction=256);`,
-      `CREATE INDEX IF NOT EXISTS idx_${textField} ON ${tableName} USING gin (to_tsvector('simple', ${textField}))`,
+      `CREATE INDEX IF NOT EXISTS idx_${textField} ON ${tableName} USING gin (to_tsvector('simple', ${textField}));`,
       `CREATE INDEX IF NOT EXISTS idx_${customMetadataField} ON ${tableName} USING gin (${customMetadataField});`,
     ];
   }
 
-  private createBedrockDataSource(
+  private createS3DataSource(
     knowledgeBaseId: string,
     kbName: string,
     dsName: string,
@@ -698,27 +778,80 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       },
     };
 
-    const baseDataSourceProps: bedrock.CfnDataSourceProps = {
-      knowledgeBaseId: knowledgeBaseId,
-      name: dsName,
-      dataSourceConfiguration: dataSourceConfig,
-      serverSideEncryptionConfiguration: {
-        kmsKeyArn: kmsKey.keyArn,
+    return this.createDataSourceWithConfig(
+      knowledgeBaseId,
+      kbName,
+      dsName,
+      dataSourceConfig,
+      dsProps.vectorIngestionConfiguration,
+      kmsKey,
+    );
+  }
+  private createSharepointDataSource(
+    knowledgeBaseId: string,
+    kbName: string,
+    dsName: string,
+    dsProps: SharepointDataSource,
+    kmsKey: IKey,
+  ): bedrock.CfnDataSource {
+    const dataSourceConfig: bedrock.CfnDataSource.DataSourceConfigurationProperty = {
+      type: 'SHAREPOINT',
+      sharePointConfiguration: {
+        sourceConfiguration: {
+          authType: dsProps.dataSource.authType,
+          credentialsSecretArn: dsProps.dataSource.credentialsSecretArn,
+          domain: dsProps.dataSource.domain,
+          hostType: dsProps.dataSource.hostType || 'ONLINE',
+          siteUrls: dsProps.dataSource.siteUrls,
+          tenantId: dsProps.dataSource.tenantId,
+        },
       },
     };
 
-    if (dsProps.vectorIngestionConfiguration) {
-      const vectorIngestionConfig = this.createVectorIngestionConfiguration(dsProps.vectorIngestionConfiguration);
+    return this.createDataSourceWithConfig(
+      knowledgeBaseId,
+      kbName,
+      dsName,
+      dataSourceConfig,
+      dsProps.vectorIngestionConfiguration,
+      kmsKey,
+    );
+  }
+
+  /**
+   * Common method to create data sources with configuration
+   */
+  private createDataSourceWithConfig(
+    knowledgeBaseId: string,
+    kbName: string,
+    dsName: string,
+    dataSourceConfig: bedrock.CfnDataSource.DataSourceConfigurationProperty,
+    vectorIngestionConfig?: VectorIngestionConfiguration,
+    kmsKey?: IKey,
+  ): bedrock.CfnDataSource {
+    const baseDataSourceProps: bedrock.CfnDataSourceProps = {
+      knowledgeBaseId,
+      name: dsName,
+      dataSourceConfiguration: dataSourceConfig,
+      ...(kmsKey && {
+        serverSideEncryptionConfiguration: {
+          kmsKeyArn: kmsKey.keyArn,
+        },
+      }),
+    };
+
+    if (vectorIngestionConfig) {
+      const vectorIngestionConfigProp = this.createVectorIngestionConfiguration(vectorIngestionConfig);
       return new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, {
         ...baseDataSourceProps,
-        vectorIngestionConfiguration: vectorIngestionConfig,
+        vectorIngestionConfiguration: vectorIngestionConfigProp,
       });
     }
 
     return new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, baseDataSourceProps);
   }
 
-  private createDataSourceSyncLambda(
+  private createS3DataSourceSyncLambda(
     kbName: string,
     dsName: string,
     knowledgeBaseId: string,
@@ -734,7 +867,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       handler: 'datasource_sync.lambda_handler',
       runtime: 'python3.13',
       roleArn: roleArn,
-      timeoutSeconds: 300,
+      timeoutSeconds: BedrockKnowledgeBaseL3Construct.LAMBDA_TIMEOUT.DEFAULT,
       environment: {
         KNOWLEDGE_BASE_ID: knowledgeBaseId,
         DATA_SOURCE_ID: dataSourceId,
@@ -763,9 +896,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
   private createVectorIngestionConfiguration(
     config: VectorIngestionConfiguration,
   ): bedrock.CfnDataSource.VectorIngestionConfigurationProperty {
-    const result: bedrock.CfnDataSource.VectorIngestionConfigurationProperty = {};
     return {
-      ...result,
       ...(config.chunkingConfiguration && {
         chunkingConfiguration: this.createChunkingConfigurationProperty(config.chunkingConfiguration),
       }),
@@ -780,38 +911,489 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     };
   }
 
+  private createKnowledgeBaseLogging(kbName: string, knowledgeBase: bedrock.CfnKnowledgeBase, kmsKey: IKey): void {
+    const kbLogGroup = new MdaaLogGroup(this, `kb-loggroup-${kbName}`, {
+      encryptionKey: kmsKey,
+      logGroupNamePathPrefix: '/aws/vendedlogs/bedrock/knowledge-base/',
+      logGroupName: kbName,
+      retention: RetentionDays.INFINITE,
+      naming: this.props.naming,
+    });
+
+    const kbLogSource = new CfnDeliverySource(this, `kb-logsource-${kbName}`, {
+      name: this.props.naming.resourceName(kbName, 60),
+      logType: 'APPLICATION_LOGS',
+      resourceArn: knowledgeBase.attrKnowledgeBaseArn,
+    });
+
+    const kbLogDestination = new CfnDeliveryDestination(this, `kb-logdestination-${kbName}`, {
+      name: this.props.naming.resourceName(kbName, 60),
+      destinationResourceArn: kbLogGroup.logGroupArn,
+    });
+
+    const cfnDelivery = new CfnDelivery(this, `kb-logdelivery-${kbName}`, {
+      deliveryDestinationArn: kbLogDestination.attrArn,
+      deliverySourceName: kbLogSource.name,
+    });
+    cfnDelivery.addDependency(kbLogSource);
+  }
+
+  private createDataSources(
+    kbConfig: BedrockKnowledgeBaseProps,
+    knowledgeBase: bedrock.CfnKnowledgeBase,
+    kbName: string,
+    kmsKey: IKey,
+  ): void {
+    Object.entries(kbConfig.s3DataSources || {}).forEach(([dsName, dsProps]) => {
+      const dataSource = this.createS3DataSource(knowledgeBase.attrKnowledgeBaseId, kbName, dsName, dsProps, kmsKey);
+      if (dsProps.enableSync) {
+        this.createS3DataSourceSyncLambda(
+          kbName,
+          dsName,
+          knowledgeBase.attrKnowledgeBaseId,
+          dataSource.attrDataSourceId,
+          dsProps,
+          this.kbRole.roleArn,
+          kmsKey,
+        );
+      }
+    });
+
+    Object.entries(kbConfig.sharepointDataSources || {}).forEach(([dsName, dsProps]) => {
+      this.createSharepointDataSource(knowledgeBase.attrKnowledgeBaseId, kbName, dsName, dsProps, kmsKey);
+    });
+  }
+
+  private createDataSyncPolicy(kbName: string, knowledgeBase: bedrock.CfnKnowledgeBase): void {
+    const kbManagedPolicy = new MdaaManagedPolicy(this, `bedrock-knowledge-base-datasync-policy-${kbName}`, {
+      naming: this.props.naming,
+      managedPolicyName: `kb-datasync-${kbName}`,
+      roles: [this.kbRole],
+      statements: [
+        new PolicyStatement({
+          sid: 'DataSourceSync',
+          effect: Effect.ALLOW,
+          resources: [
+            `arn:${this.partition}:bedrock:${this.region}:${this.account}:knowledge-base/${knowledgeBase.attrKnowledgeBaseId}/*`,
+          ],
+          actions: ['bedrock:StartIngestionJob', 'bedrock:GetIngestionJob', 'bedrock:ListIngestionJobs'],
+        }),
+      ],
+    });
+    MdaaNagSuppressions.addCodeResourceSuppressions(
+      kbManagedPolicy,
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason: 'Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity',
+        },
+      ],
+      true,
+    );
+  }
+
+  private prepareAuroraDbConfiguration(kbName: string) {
+    const databaseName = kbName.replace(/[^a-zA-Z0-9]/g, '_');
+    // build vector index name with an 8 character hash for uniqueness
+    const tableName = `embeddings_${this.cachedEmbeddingModelHash.slice(-8)}_${this.cachedVectorFieldSize}`;
+
+    return {
+      databaseName,
+      tableName,
+      fieldNames: BedrockKnowledgeBaseL3Construct.DB_FIELD_NAMES,
+    };
+  }
+
+  private prepareOpenSearchIndexConfiguration() {
+    // build vector index name with an 8 character hash for uniqueness
+    const vectorIndexName = `embeddings_${this.cachedEmbeddingModelHash.slice(-8)}_${this.cachedVectorFieldSize}`;
+
+    return {
+      vectorIndexName,
+      fieldNames: BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES,
+    };
+  }
+
+  private setupAuroraDatabase(
+    kbName: string,
+    pgVectorStore: MdaaAuroraPgVector,
+    dbConfig: {
+      databaseName: string;
+      tableName: string;
+      fieldNames: typeof BedrockKnowledgeBaseL3Construct.DB_FIELD_NAMES;
+    },
+  ) {
+    const createDb = new MdaaRdsDataResource(this, `create-db-${kbName}`, {
+      rdsCluster: pgVectorStore,
+      onCreateSqlStatements: [`CREATE DATABASE ${dbConfig.databaseName}`],
+      naming: this.props.naming,
+    });
+
+    const createTable = new MdaaRdsDataResource(this, `create-table-${kbName}-${dbConfig.tableName}`, {
+      rdsCluster: pgVectorStore,
+      databaseName: dbConfig.databaseName,
+      onCreateSqlStatements: [
+        'CREATE EXTENSION IF NOT EXISTS vector',
+        this.generateCreateTableSql(
+          dbConfig.tableName,
+          dbConfig.fieldNames.PRIMARY_KEY,
+          dbConfig.fieldNames.TEXT,
+          dbConfig.fieldNames.METADATA,
+          dbConfig.fieldNames.VECTOR,
+          this.cachedVectorFieldSize,
+          dbConfig.fieldNames.CUSTOM_METADATA,
+        ),
+        ...this.generateCreateIndexesSql(
+          dbConfig.tableName,
+          dbConfig.fieldNames.TEXT,
+          dbConfig.fieldNames.VECTOR,
+          dbConfig.fieldNames.CUSTOM_METADATA,
+        ),
+      ],
+      naming: this.props.naming,
+    });
+
+    createTable.node.addDependency(createDb);
+    return { createDb, createTable };
+  }
+
+  private attachPoliciesToRole(vectorStorePolicy: ManagedPolicy, handlerRole?: IRole): void {
+    this.kbRole.addManagedPolicy(vectorStorePolicy);
+    handlerRole?.addManagedPolicy(vectorStorePolicy);
+  }
+
+  private createAuroraKnowledgeBaseResource(
+    kbName: string,
+    kbConfig: BedrockKnowledgeBaseProps,
+    embeddingModelArn: string,
+    pgVectorStore: MdaaAuroraPgVector,
+    dbConfig: {
+      databaseName: string;
+      tableName: string;
+      fieldNames: typeof BedrockKnowledgeBaseL3Construct.DB_FIELD_NAMES;
+    },
+  ): bedrock.CfnKnowledgeBase {
+    return new bedrock.CfnKnowledgeBase(this, `${kbName}-KnowledgeBase`, {
+      name: this.props.naming.resourceName(kbName),
+      roleArn: this.kbRole.roleArn,
+      knowledgeBaseConfiguration: this.createVectorKnowledgeBaseConfiguration(kbConfig, embeddingModelArn),
+      storageConfiguration: {
+        type: 'RDS',
+        rdsConfiguration: {
+          credentialsSecretArn: pgVectorStore.rdsClusterSecret.secretArn || '',
+          databaseName: dbConfig.databaseName,
+          resourceArn: pgVectorStore.clusterArn,
+          tableName: dbConfig.tableName,
+          fieldMapping: {
+            metadataField: dbConfig.fieldNames.METADATA,
+            primaryKeyField: dbConfig.fieldNames.PRIMARY_KEY,
+            textField: dbConfig.fieldNames.TEXT,
+            vectorField: dbConfig.fieldNames.VECTOR,
+            customMetadataField: dbConfig.fieldNames.CUSTOM_METADATA,
+          },
+        },
+      },
+    });
+  }
+
+  private createOpenSearchKnowledgeBaseResource(
+    kbName: string,
+    kbConfig: BedrockKnowledgeBaseProps,
+    embeddingModelArn: string,
+    opensearchStore: MdaaOpensearchServerlessCollection,
+    indexConfig: { vectorIndexName: string; fieldNames: typeof BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES },
+  ): bedrock.CfnKnowledgeBase {
+    return new bedrock.CfnKnowledgeBase(this, `${kbName}-KnowledgeBase`, {
+      name: this.props.naming.resourceName(kbName),
+      roleArn: this.kbRole.roleArn,
+      knowledgeBaseConfiguration: this.createVectorKnowledgeBaseConfiguration(kbConfig, embeddingModelArn),
+      storageConfiguration: {
+        type: 'OPENSEARCH_SERVERLESS',
+        opensearchServerlessConfiguration: {
+          collectionArn: opensearchStore.collection.attrArn,
+          vectorIndexName: indexConfig.vectorIndexName,
+          fieldMapping: {
+            metadataField: indexConfig.fieldNames.METADATA,
+            textField: indexConfig.fieldNames.TEXT,
+            vectorField: indexConfig.fieldNames.VECTOR,
+          },
+        },
+      },
+    });
+  }
+
+  private createVectorKnowledgeBaseConfiguration(kbConfig: BedrockKnowledgeBaseProps, embeddingModelArn: string) {
+    return {
+      type: 'VECTOR',
+      vectorKnowledgeBaseConfiguration: {
+        embeddingModelArn,
+        ...(kbConfig.supplementalBucketName && {
+          supplementalDataStorageConfiguration: {
+            supplementalDataStorageLocations: [
+              {
+                supplementalDataStorageLocationType: 'S3',
+                s3Location: {
+                  uri: `s3://${kbConfig.supplementalBucketName}`,
+                },
+              },
+            ],
+          },
+        }),
+      },
+    };
+  }
+
+  private setupKnowledgeBaseDependencies(
+    knowledgeBase: bedrock.CfnKnowledgeBase,
+    dependencies: (CfnResource | ManagedPolicy | MdaaRdsDataResource | MdaaCustomResource)[],
+  ): void {
+    dependencies.forEach(dep => {
+      if (dep?.node) {
+        knowledgeBase.node.addDependency((dep.node.defaultChild as CfnResource) || dep);
+      } else {
+        knowledgeBase.node.addDependency(dep);
+      }
+    });
+
+    this.createKnowledgeBaseOutput(knowledgeBase);
+  }
+
+  private createKnowledgeBaseOutput(knowledgeBase: bedrock.CfnKnowledgeBase): void {
+    new MdaaParamAndOutput(
+      this,
+      {
+        resourceType: 'knowledgeBase',
+        resourceId: this.props.kbName,
+        name: 'id',
+        value: knowledgeBase.attrKnowledgeBaseId,
+        ...this.props,
+      },
+      this,
+    );
+  }
+
+  private finalizeKnowledgeBaseSetup(
+    kbName: string,
+    kbConfig: BedrockKnowledgeBaseProps,
+    knowledgeBase: bedrock.CfnKnowledgeBase,
+    kmsKey: IKey,
+  ): void {
+    this.createKnowledgeBaseLogging(kbName, knowledgeBase, kmsKey);
+    this.createDataSources(kbConfig, knowledgeBase, kbName, kmsKey);
+    this.createDataSyncPolicy(kbName, knowledgeBase);
+  }
+
+  private setupOpenSearchIndex(
+    kbName: string,
+    opensearchStore: MdaaOpensearchServerlessCollection,
+    indexConfig: { vectorIndexName: string; fieldNames: typeof BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES },
+  ): MdaaCustomResource {
+    const lambdaLayers = this.createLambdaLayers();
+    const createIndexProps = this.buildOpenSearchIndexProps(opensearchStore, indexConfig, lambdaLayers);
+
+    const createVectorIndex = new MdaaCustomResource(this, `create-index-${kbName}`, createIndexProps);
+    createVectorIndex.node.addDependency(opensearchStore);
+
+    return createVectorIndex;
+  }
+
+  private createLambdaLayers() {
+    return {
+      boto3: new MdaaBoto3LayerVersion(this, 'boto3-layer', {
+        naming: this.props.naming,
+        createParams: false,
+        createOutputs: false,
+      }),
+      awsauth: new MdaaAwsAuthLayerVersion(this, 'awsauth-layer', {
+        naming: this.props.naming,
+        createParams: false,
+        createOutputs: false,
+      }),
+      opensearchPy: new MdaaOpensearchPyLayerVersion(this, 'opensearchpy-layer', {
+        naming: this.props.naming,
+        createParams: false,
+        createOutputs: false,
+      }),
+    };
+  }
+
+  private buildOpenSearchIndexProps(
+    opensearchStore: MdaaOpensearchServerlessCollection,
+    indexConfig: { vectorIndexName: string; fieldNames: typeof BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES },
+    layers: {
+      boto3: MdaaBoto3LayerVersion;
+      awsauth: MdaaAwsAuthLayerVersion;
+      opensearchPy: MdaaOpensearchPyLayerVersion;
+    },
+  ): MdaaCustomResourceProps {
+    return {
+      resourceType: `create-index-${indexConfig.vectorIndexName}`,
+      naming: this.props.naming,
+      code: Code.fromAsset(join(__dirname, '..', 'src', 'python', 'create-index-aoss')),
+      runtime: Runtime.PYTHON_3_13,
+      handler: 'create_index_aoss.lambda_handler',
+      handlerLayers: [layers.boto3, layers.opensearchPy, layers.awsauth],
+      handlerTimeout: Duration.seconds(BedrockKnowledgeBaseL3Construct.LAMBDA_TIMEOUT.MAX),
+      handlerRolePolicyStatements: this.createOpenSearchPolicyStatements(opensearchStore),
+      handlerPolicySuppressions: this.createOpenSearchPolicySuppressions(),
+      handlerProps: this.createOpenSearchHandlerProps(opensearchStore, indexConfig),
+      environment: this.createOpenSearchEnvironment(opensearchStore, indexConfig),
+      vpc: this.createVpcReference(indexConfig.vectorIndexName),
+      subnet: this.createSubnetReference(indexConfig.vectorIndexName),
+      securityGroup: this.vectorStoreSecurityGroup,
+    };
+  }
+
+  private createOpenSearchPolicyStatements(opensearchStore: MdaaOpensearchServerlessCollection): PolicyStatement[] {
+    return [
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        // APIAccessAll permission required to access the collection.
+        // Refer https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-data-access.html#:~:text=If%20the%20user%20creates%20a%20data%20access%20policy
+        actions: ['aoss:APIAccessAll'],
+        resources: [`arn:aws:aoss:${this.region}:${this.account}:collection/${opensearchStore.collection.attrId}`],
+      }),
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          'ec2:CreateNetworkInterface',
+          'ec2:DescribeNetworkInterfaces',
+          'ec2:DeleteNetworkInterface',
+          'ec2:AttachNetworkInterface',
+          'ec2:DetachNetworkInterface',
+        ],
+        // Lambda requires wildcard permissions for EC2 network interface operations in VPC as resource names not known in advance.
+        // Refer nag suppression comments in createOpenSearchPolicySuppressions function.
+        resources: ['*'],
+      }),
+    ];
+  }
+
+  private createOpenSearchPolicySuppressions() {
+    return [
+      {
+        id: 'AwsSolutions-IAM5',
+        reason:
+          'Lambda requires wildcard permissions for EC2 network interface operations in VPC as resource names not known in advance.',
+        appliesTo: ['Resource::*'],
+      },
+      {
+        id: 'AwsSolutions-IAM5',
+        // APIAccessAll permission required to access the collection.
+        // Refer https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-data-access.html#:~:text=If%20the%20user%20creates%20a%20data%20access%20policy
+        reason: 'Lambda requires APIAccessAll permission for OpenSearch Serverless operations. ',
+        appliesTo: ['Action::aoss:APIAccessAll'],
+      },
+    ];
+  }
+
+  private createOpenSearchHandlerProps(
+    opensearchStore: MdaaOpensearchServerlessCollection,
+    indexConfig: { vectorIndexName: string; fieldNames: typeof BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES },
+  ) {
+    return {
+      CollectionId: opensearchStore.collection.attrId,
+      CollectionEndpoint: opensearchStore.collection.attrCollectionEndpoint,
+      IndexName: indexConfig.vectorIndexName,
+      IndexBody: {
+        mappings: {
+          properties: {
+            [indexConfig.fieldNames.TEXT]: { type: 'text' },
+            [indexConfig.fieldNames.METADATA]: { type: 'object' },
+            [indexConfig.fieldNames.VECTOR]: {
+              type: 'knn_vector',
+              dimension: this.cachedVectorFieldSize,
+              // For details of HNSW parameters refer: https://opensearch.org/blog/a-practical-guide-to-selecting-hnsw-hyperparameters/
+              method: {
+                name: 'hnsw',
+                space_type: 'cosinesimil',
+                engine: 'nmslib',
+                parameters: {
+                  // Higher value improves search quality. Refer above blog for details.
+                  ef_construction: 256,
+                  m: 16,
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+  }
+
+  private createOpenSearchEnvironment(
+    opensearchStore: MdaaOpensearchServerlessCollection,
+    indexConfig: { vectorIndexName: string; fieldNames: typeof BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES },
+  ) {
+    return {
+      LOG_LEVEL: 'INFO',
+      COLLECTION_HOST: opensearchStore.collection.attrCollectionEndpoint,
+      VECTOR_INDEX_NAME: indexConfig.vectorIndexName,
+      VECTOR_FIELD_NAME: indexConfig.fieldNames.VECTOR,
+      VECTOR_DIMENSION: this.cachedVectorFieldSize.toString(),
+      REGION_NAME: this.region,
+    };
+  }
+
+  private createVpcReference(vectorIndexName: string): IVpc {
+    return Vpc.fromVpcAttributes(this, `kb-import-vpc-${vectorIndexName}`, {
+      vpcId: this.props.vectorStoreConfig.vpcId,
+      availabilityZones: ['a'],
+      publicSubnetIds: ['a'],
+    });
+  }
+
+  private createSubnetReference(vectorIndexName: string) {
+    return {
+      subnets: this.props.vectorStoreConfig.subnetIds.map(id =>
+        Subnet.fromSubnetId(this, `kb-import-subnet-${vectorIndexName}-${id}`, id),
+      ),
+    };
+  }
+
   private createChunkingConfigurationProperty(
     config: ChunkingConfiguration,
   ): bedrock.CfnDataSource.ChunkingConfigurationProperty {
-    if (config.chunkingStrategy === 'FIXED_SIZE' && config.fixedSizeChunkingConfiguration) {
-      return {
-        chunkingStrategy: config.chunkingStrategy,
-        fixedSizeChunkingConfiguration: {
-          maxTokens: config.fixedSizeChunkingConfiguration.maxTokens,
-          overlapPercentage: config.fixedSizeChunkingConfiguration.overlapPercentage,
-        },
-      };
-    } else if (config.chunkingStrategy === 'HIERARCHICAL' && config.hierarchicalChunkingConfiguration) {
-      return {
-        chunkingStrategy: config.chunkingStrategy,
-        hierarchicalChunkingConfiguration: {
-          levelConfigurations: config.hierarchicalChunkingConfiguration.levelConfigurations,
-          overlapTokens: config.hierarchicalChunkingConfiguration.overlapTokens,
-        },
-      };
-    } else if (config.chunkingStrategy === 'SEMANTIC' && config.semanticChunkingConfiguration) {
-      return {
-        chunkingStrategy: config.chunkingStrategy,
-        semanticChunkingConfiguration: {
-          maxTokens: config.semanticChunkingConfiguration.maxTokens,
-          bufferSize: config.semanticChunkingConfiguration.bufferSize,
-          breakpointPercentileThreshold: config.semanticChunkingConfiguration.breakpointPercentileThreshold,
-        },
-      };
-    } else {
-      return {
-        chunkingStrategy: config.chunkingStrategy,
-      };
+    const strategyConfig = { chunkingStrategy: config.chunkingStrategy };
+
+    switch (config.chunkingStrategy) {
+      case 'FIXED_SIZE':
+        if (!config.fixedSizeChunkingConfiguration) {
+          throw new Error('fixedSizeChunkingConfiguration is required when chunkingStrategy is FIXED_SIZE');
+        }
+        return {
+          ...strategyConfig,
+          fixedSizeChunkingConfiguration: {
+            maxTokens: config.fixedSizeChunkingConfiguration.maxTokens,
+            overlapPercentage: config.fixedSizeChunkingConfiguration.overlapPercentage,
+          },
+        };
+      case 'HIERARCHICAL':
+        if (!config.hierarchicalChunkingConfiguration) {
+          throw new Error('hierarchicalChunkingConfiguration is required when chunkingStrategy is HIERARCHICAL');
+        }
+        return {
+          ...strategyConfig,
+          hierarchicalChunkingConfiguration: {
+            levelConfigurations: config.hierarchicalChunkingConfiguration.levelConfigurations,
+            overlapTokens: config.hierarchicalChunkingConfiguration.overlapTokens,
+          },
+        };
+      case 'SEMANTIC':
+        if (!config.semanticChunkingConfiguration) {
+          throw new Error('semanticChunkingConfiguration is required when chunkingStrategy is SEMANTIC');
+        }
+        return {
+          ...strategyConfig,
+          semanticChunkingConfiguration: {
+            maxTokens: config.semanticChunkingConfiguration.maxTokens,
+            bufferSize: config.semanticChunkingConfiguration.bufferSize,
+            breakpointPercentileThreshold: config.semanticChunkingConfiguration.breakpointPercentileThreshold,
+          },
+        };
+      case 'NONE':
+      default:
+        return strategyConfig;
     }
   }
 

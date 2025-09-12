@@ -13,7 +13,7 @@ import {
   BedrockKnowledgeBaseProps,
   NamedKnowledgeBaseProps,
   NamedVectorStoreProps,
-  VectorStoreProps,
+  AuroraServerlessPgVectorProps,
 } from '@aws-mdaa/bedrock-knowledge-base-l3-construct';
 import { BedrockGuardrailProps, NamedGuardrailProps } from '@aws-mdaa/bedrock-guardrail-l3-construct';
 
@@ -117,7 +117,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   describe('Bedrock Builder L3 Construct Basic Tests', () => {
     const testApp = new MdaaTestApp();
     // Knowledge Base Properties
-    const vectorStore: VectorStoreProps = {
+    const vectorStore: AuroraServerlessPgVectorProps = {
       vpcId: 'test-vpc-id',
       subnetIds: ['test-subnet'],
     };
@@ -216,7 +216,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     const kmsKeyArn = 'arn:aws:kms:us-west-2:123456789012:key/1234abcd-12ab-34cd-56ef-1234567890ab';
     const testApp = new MdaaTestApp();
     // Knowledge Base Properties
-    const vectorStore: VectorStoreProps = {
+    const vectorStore: AuroraServerlessPgVectorProps = {
       vpcId: 'test-vpc-id',
       subnetIds: ['test-subnet'],
     };
@@ -308,7 +308,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         },
         embeddingModel: 'amazon.titan-embed-text-v2:0',
       };
-      const validVectorStore: VectorStoreProps = {
+      const validVectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -339,7 +339,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         },
         embeddingModel: 'invalid-model',
       };
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -361,7 +361,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   describe('Bedrock Builder L3 Construct with Vector Ingestion Configuration', () => {
     const testApp = new MdaaTestApp();
     // Knowledge Base Properties with Vector Ingestion Configuration
-    const vectorStore: VectorStoreProps = {
+    const vectorStore: AuroraServerlessPgVectorProps = {
       vpcId: 'test-vpc-id',
       subnetIds: ['test-subnet'],
     };
@@ -746,7 +746,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     test('Test Knowledge Base without S3 Data Sources', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -778,7 +778,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     test('Test Knowledge Base with S3 Data Source without enableSync', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -825,7 +825,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     test('Test Knowledge Base with SEMANTIC chunking strategy but no configuration', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -840,7 +840,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
             vectorIngestionConfiguration: {
               chunkingConfiguration: {
                 chunkingStrategy: 'SEMANTIC',
-                // semanticChunkingConfiguration is intentionally undefined to test the && condition
+                // semanticChunkingConfiguration is intentionally undefined to test the error condition
               },
             },
           },
@@ -856,24 +856,16 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         vectorStores: { 'test-vector-store': vectorStore },
       };
 
-      new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-      const template = Template.fromStack(testApp.testStack);
-
-      // Test that data source falls back to default chunking strategy
-      template.hasResourceProperties('AWS::Bedrock::DataSource', {
-        Name: 'testSemanticNoConfig',
-        VectorIngestionConfiguration: {
-          ChunkingConfiguration: {
-            ChunkingStrategy: 'SEMANTIC',
-          },
-        },
-      });
+      // Test that error is thrown when semantic chunking configuration is missing
+      expect(() => {
+        new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
+      }).toThrow('semanticChunkingConfiguration is required when chunkingStrategy is SEMANTIC');
     });
 
     test('Test Knowledge Base with NONE chunking strategy', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -920,7 +912,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     test('Test Knowledge Base with S3 Data Source without prefix', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -963,7 +955,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     test('Test Knowledge Base with enableSync but no prefix', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -1001,7 +993,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     test('Test Knowledge Base with generated function reference in custom transformation', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -1069,7 +1061,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     test('Test Knowledge Base with non-existent generated function reference', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };
@@ -1188,7 +1180,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     test('Test Agent with knowledge base association', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
-      const vectorStore: VectorStoreProps = {
+      const vectorStore: AuroraServerlessPgVectorProps = {
         vpcId: 'test-vpc-id',
         subnetIds: ['test-subnet'],
       };

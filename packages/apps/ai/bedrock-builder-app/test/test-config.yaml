@@ -98,13 +98,20 @@ vectorStores:
     # (Optional) min and max Aurora Serverless Capacity Units
     minCapacity: 1
     maxCapacity: 8
+  test-vector-store2:
+    vectorStoreType: 'OPENSEARCH_SERVERLESS'
+    vpcId: test-vpc-id
+    subnetIds:
+      - 'test-subnet-id1'
+      - 'test-subnet-id2'
+    standbyReplicas: DISABLE
 
 # Knowledge Base Configuration
 knowledgeBases:
   test-knowledge-base:
-    embeddingModel: 'arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v1'
+    embeddingModel: 'amazon.titan-embed-text-v2:0'
     vectorStore: test-vector-store
-    vectorFieldSize: 1536
+    vectorFieldSize: 1024
     role:
       id: generated-role-id:kb-execution-role
     # For Multimodal documents, its mandatory to provide location to store the images extracted from your data source
@@ -113,7 +120,7 @@ knowledgeBases:
       test-ds-default-parsing:
         bucketName: 'customer-docs-bucket'
         prefix: 'support-documents/'
-        enableSync: true 
+        enableSync: true
 
       test-ds-bda-parsing:
         bucketName: 'customer-docs-bucket'
@@ -161,6 +168,91 @@ knowledgeBases:
               # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
               - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
               - generated-function:test-custom-transformer
+    sharepointDataSources:
+      test-sharepoint-ds-default-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:aws:secretsmanager:ca-central-1:123456789012:secret:/test/sharepoint/secret-qeTtB0'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls: 
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+      test-sharepoint-ds-bda-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:aws:secretsmanager:ca-central-1:123456789012:secret:/test/sharepoint/secret-qeTtB0'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls: 
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          # (Optional) Allows customized chunking strategy for the data source.
+          # The chunking strategy cannot be modified after a data source has been created
+          chunkingConfiguration:
+            chunkingStrategy: 'FIXED_SIZE'
+            fixedSizeChunkingConfiguration:
+              maxTokens: 512
+              overlapPercentage: 20
+      test-sharepoint-ds-fm-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:aws:secretsmanager:ca-central-1:123456789012:secret:/test/sharepoint/secret-qeTtB0'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls: 
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_FOUNDATION_MODEL'
+            bedrockFoundationModelConfiguration:
+              modelArn: 'anthropic.claude-3-sonnet-20240229-v1:0'
+              parsingModality: 'MULTIMODAL'
+              parsingPromptText: 'Extract key information from this document'
+      test-sharepoint-ds-custom-parsing:
+        dataSource:
+          authType: OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
+          credentialsSecretArn: 'arn:aws:secretsmanager:ca-central-1:123456789012:secret:/test/sharepoint/secret-qeTtB0'
+          domain: mycompany.sharepoint.com
+          hostType: ONLINE
+          siteUrls: 
+            - 'https://mycompany.sharepoint.com/sites/mysite'
+          tenantId: '2b5901be-9f28-4fa4-b565-706cbbc699c5'
+        vectorIngestionConfiguration:
+          parsingConfiguration:
+            parsingStrategy: 'BEDROCK_DATA_AUTOMATION'
+            bedrockDataAutomationConfiguration:
+              parsingModality: 'MULTIMODAL'
+          chunkingConfiguration:
+            chunkingStrategy: 'NONE'
+          # (Optional) Allows providing a lambda function to perform custom transformations on data being ingested into the Knowledgebase.
+          # # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
+          customTransformationConfiguration:
+            intermediateStorageBucket: 'custom-transform-intermediate-bucket'
+            intermediateStoragePrefix: 'path/to/data/objects'
+            transformLambdaArns:
+              # Refer https://docs.aws.amazon.com/bedrock/latest/userguide/kb-custom-transformation.html for details of how this lambda works.
+              - 'arn:aws:lambda:{{region}}:{{account}}:function:test-custom-transformer'
+              - generated-function:test-custom-transformer
+  test-knowledge-base2:
+    embeddingModel: 'amazon.titan-embed-text-v2:0'
+    vectorStore: test-vector-store2
+    vectorFieldSize: 1024
+    role:
+      id: generated-role-id:kb-execution-role
+    # For Multimodal documents, its mandatory to provide location to store the images extracted from your data source
+    supplementalBucketName: 'supplemental-image-storage-bucket'
+    s3DataSources:
+      test-ds-default-parsing:
+        bucketName: 'customer-docs-bucket'
+        prefix: 'support-documents/'
+        enableSync: true
 
 # Guardrails Configuration
 guardrails:
