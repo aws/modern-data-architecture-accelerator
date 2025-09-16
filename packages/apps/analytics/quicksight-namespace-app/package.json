@@ -33,10 +33,10 @@
     "@types/babel__traverse": "7.18.2"
   },
   "dependencies": {
-    "@aws-mdaa/app": "^1.1.0",
-    "@aws-mdaa/config": "^1.1.0",
-    "@aws-mdaa/l3-construct": "^1.1.0",
-    "@aws-mdaa/quicksight-namespace-l3-construct": "^1.1.0",
+    "@aws-mdaa/app": "1.1.0",
+    "@aws-mdaa/config": "1.1.0",
+    "@aws-mdaa/l3-construct": "1.1.0",
+    "@aws-mdaa/quicksight-namespace-l3-construct": "1.1.0",
     "ajv": "8.17.1",
     "aws-cdk-lib": "2.201.0",
     "cdk-nag": "2.37.1",

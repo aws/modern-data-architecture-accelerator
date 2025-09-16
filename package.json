@@ -56,7 +56,7 @@
   },
   "overrides": {
     "semver": "7.5.2",
-    "axios": "1.8.2",
+    "axios": "1.12.2",
     "aws-cdk-lib": "2.201.0",
     "@aws-cdk/aws-redshift-alpha": "2.201.0-alpha.0",
     "@aws-cdk/aws-glue-alpha": "2.201.0-alpha.0",

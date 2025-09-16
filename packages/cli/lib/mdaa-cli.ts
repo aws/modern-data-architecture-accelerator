@@ -587,7 +587,7 @@ export class MdaaDeploy {
     if (!fs.existsSync(`${prefix}/package.json`)) {
       console.log(`Module ${logPrefix}: Installing ${npmPackage} to ${prefix}.`);
       //Install the module CDK App NPM package
-      const npmInstallCmd = `npm install --no-fund --tag '${this.npmTag}' --prefix '${prefix}' '${npmPackage}' ${
+      const npmInstallCmd = `npm install --no-fund --save-exact --tag '${this.npmTag}' --prefix '${prefix}' '${npmPackage}' ${
         this.npmDebug ? '-d' : ' > /dev/null'
       }`;
       // console.log( `Running NPM Install Cmd: ${ npmInstallCmd }` )
@@ -595,7 +595,7 @@ export class MdaaDeploy {
     } else {
       console.log(`Module ${logPrefix}: Install prefix ${prefix} already exists. Attempting update instead.`);
       if (!this.updateCache[prefix]) {
-        const npmUpdateCmd = `npm update --no-fund --tag '${this.npmTag}' --prefix '${prefix}' ${
+        const npmUpdateCmd = `npm update --no-fund --save-exact --tag '${this.npmTag}' --prefix '${prefix}' ${
           this.npmDebug ? '-d' : ' > /dev/null'
         }`;
         // console.log( `Running NPM Update Cmd: ${ npmUpdateCmd }` )
