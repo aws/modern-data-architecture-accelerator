@@ -219,3 +219,67 @@ functions:
     # In this case, the srcDir is expected to container a Dockerfile
     dockerBuild: true
 ```
+
+## Docker Build Support
+
+The `dockerBuild` feature enables building Lambda functions and layers using Docker containers for complex dependencies and custom runtime environments.
+
+### Lambda Layers with Docker Build
+
+```yaml
+lambdaFunctions:
+  layers:
+    - layerName: my-custom-layer
+      src: ./lambda/layer
+      description: 'Layer with complex dependencies'
+      dockerBuild: true
+```
+
+**Directory Structure:**
+```
+lambda/layer/
+├── Dockerfile
+├── requirements.txt
+└── (other files)
+```
+
+**Example Dockerfile for Layer:**
+```dockerfile
+FROM public.ecr.aws/lambda/python:3.13
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt -t /asset/python
+
+CMD ["echo", "Layer built successfully"]
+```
+
+### Lambda Functions with Docker Build
+
+```yaml
+lambdaFunctions:
+  functions:
+    - functionName: my-docker-function
+      srcDir: ./lambda/docker-function
+      dockerBuild: true
+      description: "Function built with Docker"
+```
+
+**Example Dockerfile for Function:**
+```dockerfile
+FROM public.ecr.aws/lambda/python:3.13
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY app.py ${LAMBDA_TASK_ROOT}
+
+CMD ["app.lambda_handler"]
+```
+
+### Use Cases
+
+Use Docker build when your Lambda requires:
+- Native libraries (e.g., NumPy, Pandas with C extensions)
+- System-level dependencies
+- Custom compiled modules
+- Large dependency sets that exceed Lambda layer size limits

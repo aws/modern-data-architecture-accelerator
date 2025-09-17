@@ -206,6 +206,10 @@ export interface LayerProps {
    * Layer name
    */
   readonly layerName: string;
+  /**
+   * If true, src is expected to contain a Dockerfile for building the layer
+   */
+  readonly dockerBuild?: boolean;
 }
 
 export interface LambdaFunctionL3ConstructProps extends MdaaL3ConstructProps {
@@ -265,8 +269,10 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
   }
 
   private createLambdaLayer(layerProps: LayerProps): LayerVersion {
+    const code = layerProps.dockerBuild ? Code.fromDockerBuild(layerProps.src) : Code.fromAsset(layerProps.src);
+
     return new LayerVersion(this.props.overrideScope ? this : this.scope, `layer-${layerProps.layerName}`, {
-      code: Code.fromAsset(layerProps.src),
+      code,
       layerVersionName: this.props.naming.resourceName(layerProps.layerName, 64),
       description: layerProps.description,
     });

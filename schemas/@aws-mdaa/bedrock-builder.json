@@ -1189,6 +1189,10 @@
                     "description": "Description of the layer",
                     "type": "string"
                 },
+                "dockerBuild": {
+                    "description": "If true, src is expected to contain a Dockerfile for building the layer",
+                    "type": "boolean"
+                },
                 "layerName": {
                     "description": "Layer name",
                     "type": "string"
@@ -1600,12 +1604,8 @@
             "additionalProperties": false,
             "properties": {
                 "standbyReplicas": {
-                    "description": "Enable or Disable standby replicas\nThis cannot be changed after creation of the Opensearch Serverless Collection",
-                    "enum": [
-                        "DISABLE",
-                        "ENABLE"
-                    ],
-                    "type": "string"
+                    "$ref": "#/definitions/StandbyReplicas",
+                    "description": "Enable or Disable standby replicas\nThis cannot be changed after creation of the Opensearch Serverless Collection"
                 },
                 "subnetIds": {
                     "items": {
@@ -1830,6 +1830,14 @@
                 "tenantId"
             ],
             "type": "object"
+        },
+        "StandbyReplicas": {
+            "description": "Supported standby replicas flag values for vector store",
+            "enum": [
+                "DISABLE",
+                "ENABLE"
+            ],
+            "type": "string"
         },
         "Strength": {
             "enum": [

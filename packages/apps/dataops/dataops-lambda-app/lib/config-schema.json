@@ -334,6 +334,10 @@
                     "description": "Description of the layer",
                     "type": "string"
                 },
+                "dockerBuild": {
+                    "description": "If true, src is expected to contain a Dockerfile for building the layer",
+                    "type": "boolean"
+                },
                 "layerName": {
                     "description": "Layer name",
                     "type": "string"
