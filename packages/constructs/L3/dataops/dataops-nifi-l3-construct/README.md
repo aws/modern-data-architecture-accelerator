@@ -2,6 +2,10 @@
 
 The Data Ops Nifi CDK L3 construct is used to deploy the resources required to orchestrate data operations on the data lake using Nifi clusters and flows.
 
+## Kubernetes Version Updates
+
+When updating Kubernetes versions, also update the version defined in `lib/dataops-nifi-l3-construct.ts`. See EKS constructs README for complete upgrade steps.
+
 ***
 
 ## Deployed Resources

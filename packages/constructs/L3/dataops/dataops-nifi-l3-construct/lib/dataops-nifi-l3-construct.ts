@@ -910,7 +910,7 @@ export class NifiL3Construct extends MdaaL3Construct {
 
     const clusterProps: MdaaEKSClusterProps = {
       mgmtInstance: mgmtInstanceProps,
-      version: KubernetesVersion.V1_27,
+      version: KubernetesVersion.V1_31,
       coreDnsComputeType: CoreDnsComputeType.FARGATE,
       adminRoles: adminRoles,
       kmsKey: kmsKey,

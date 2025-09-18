@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { KubectlV27Layer } from '@aws-cdk/lambda-layer-kubectl-v27';
 import { Duration, Names, NestedStack, Stack } from 'aws-cdk-lib';
 import {
   Cluster,
@@ -123,7 +122,11 @@ export class CompliantKubectlProvider extends NestedStack implements IKubectlPro
 
     // allow user to customize the layers with the tools we need
     handler.addLayers(props.cluster.awscliLayer ?? new AwsCliLayer(this, 'AwsCliLayer'));
-    handler.addLayers(props.cluster.kubectlLayer ?? new KubectlV27Layer(this, 'KubectlLayer'));
+    if (props.cluster.kubectlLayer) {
+      handler.addLayers(props.cluster.kubectlLayer);
+    } else {
+      throw new Error('kubectlLayer is required but not provided by the cluster');
+    }
 
     this.handlerRole = handler.role!;
 

@@ -577,7 +577,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/4dabde655780b3481d1b459f1cd244092604008aae0ae70d3d854c895f31920c.json",
+                "/a388d27beb7647e1498881917bef01f3f9699c767411964ab131af2449d7beed.json",
               ],
             ],
           },
@@ -831,7 +831,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/5a76eabcc28867748f9da94a16a53f8b481d12ed3cbfdb31edcbce0ca0101171.json",
+                "/e5ca94fdf8d34a59a983f4fcc8f6c5a93493c459f8d0211761bd244958ff5e7b.json",
               ],
             ],
           },
@@ -955,7 +955,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/13a9ae0324f31b0172ca124209d07dacf158417aca279b64af2697ab01f0fc8e.json",
+                "/a6455d692358dd86e839cbb412281857a48b630a85241d142da559136ab09cb1.json",
               ],
             ],
           },
@@ -1750,7 +1750,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
               "mdaa_module_name": "test-nificluster-main",
               "mdaa_org": "test-org",
             },
-            "version": "1.27",
+            "version": "1.31",
           },
           "ServiceToken": {
             "Fn::GetAtt": [
@@ -4233,7 +4233,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 "",
                 [
                   "#!/bin/bash
-mkdir -p /usr/local/bin && cd /usr/local/bin && curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.9/2024-01-04/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl && cd ~
+mkdir -p /usr/local/bin && cd /usr/local/bin && curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.31.0/2024-11-15/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl && cd ~
 aws eks update-kubeconfig --region ",
                   {
                     "Ref": "AWS::Region",
@@ -8161,7 +8161,7 @@ openssl pkcs12 -export -in /root/mgmt-instance.cert.pem -inkey /root/mgmt-instan
             },
             "S3Key": "REPLACED-GENERATED-NAME.zip",
           },
-          "Description": "/opt/kubectl/kubectl 1.27; /opt/helm/helm 3.12",
+          "Description": "/opt/kubectl/kubectl 1.31.9; /opt/helm/helm 3.17.3",
           "LicenseInfo": "Apache-2.0",
         },
         "Type": "AWS::Lambda::LayerVersion",
@@ -14269,7 +14269,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/4dabde655780b3481d1b459f1cd244092604008aae0ae70d3d854c895f31920c.json",
+              "/a388d27beb7647e1498881917bef01f3f9699c767411964ab131af2449d7beed.json",
             ],
           ],
         },
@@ -14523,7 +14523,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/5a76eabcc28867748f9da94a16a53f8b481d12ed3cbfdb31edcbce0ca0101171.json",
+              "/e5ca94fdf8d34a59a983f4fcc8f6c5a93493c459f8d0211761bd244958ff5e7b.json",
             ],
           ],
         },
@@ -14647,7 +14647,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/13a9ae0324f31b0172ca124209d07dacf158417aca279b64af2697ab01f0fc8e.json",
+              "/a6455d692358dd86e839cbb412281857a48b630a85241d142da559136ab09cb1.json",
             ],
           ],
         },
@@ -15442,7 +15442,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
             "mdaa_module_name": "test-nificluster-main",
             "mdaa_org": "test-org",
           },
-          "version": "1.27",
+          "version": "1.31",
         },
         "ServiceToken": {
           "Fn::GetAtt": [
@@ -17925,7 +17925,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               "",
               [
                 "#!/bin/bash
-mkdir -p /usr/local/bin && cd /usr/local/bin && curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.9/2024-01-04/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl && cd ~
+mkdir -p /usr/local/bin && cd /usr/local/bin && curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.31.0/2024-11-15/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl && cd ~
 aws eks update-kubeconfig --region ",
                 {
                   "Ref": "AWS::Region",
@@ -21853,7 +21853,7 @@ openssl pkcs12 -export -in /root/mgmt-instance.cert.pem -inkey /root/mgmt-instan
           },
           "S3Key": "REPLACED-GENERATED-NAME.zip",
         },
-        "Description": "/opt/kubectl/kubectl 1.27; /opt/helm/helm 3.12",
+        "Description": "/opt/kubectl/kubectl 1.31.9; /opt/helm/helm 3.17.3",
         "LicenseInfo": "Apache-2.0",
       },
       "Type": "AWS::Lambda::LayerVersion",

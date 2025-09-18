@@ -11,7 +11,7 @@ import {
   MdaaEC2SecretKeyPairProps,
 } from '@aws-mdaa/ec2-constructs';
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
-import { KubectlV27Layer } from '@aws-cdk/lambda-layer-kubectl-v27';
+import { KubectlV31Layer } from '@aws-cdk/lambda-layer-kubectl-v31';
 import { Fn, Size, Stack } from 'aws-cdk-lib';
 import {
   ISecurityGroup,
@@ -270,16 +270,106 @@ export interface MdaaEKSClusterProps extends MdaaConstructProps {
  * A construct for creating a compliant EKS cluster resource.
  */
 export class MdaaEKSCluster extends Cluster {
-  private static KUBECTL_URL =
-    'https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.9/2024-01-04/bin/linux/amd64/kubectl';
+  private static getKubectlUrl(version: string): string {
+    // To find new versions for future Kubernetes releases (e.g., 1.34):
+    // 1. Check AWS EKS supported versions: https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html
+    // 2. Browse S3 bucket: https://s3.console.aws.amazon.com/s3/buckets/amazon-eks?region=us-west-2&prefix=
+    // 3. Or use AWS CLI: aws s3 ls s3://amazon-eks/ --recursive | grep kubectl | grep linux/amd64
+    // 4. Format: 'major.minor': 'major.minor.patch/YYYY-MM-DD'
+    const versionMap: Record<string, string> = {
+      '1.28': '1.28.13/2024-11-15',
+      '1.29': '1.29.8/2024-11-15',
+      '1.30': '1.30.4/2024-11-15',
+      '1.31': '1.31.0/2024-11-15',
+      '1.32': '1.32.0/2024-11-15',
+      '1.33': '1.33.0/2024-11-15',
+    };
+
+    const versionInfo = versionMap[version];
+    if (!versionInfo) {
+      throw new Error(
+        `Unsupported Kubernetes version: ${version}. Supported versions: ${Object.keys(versionMap).join(', ')}`,
+      );
+    }
+    // Source: https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+    // AWS publishes kubectl binaries in us-west-2 for all regions
+    return `https://s3.us-west-2.amazonaws.com/amazon-eks/${versionInfo}/bin/linux/amd64/kubectl`;
+  }
+
+  /**
+   * Extracts the minor version from a Kubernetes version string.
+   * @param version Full version string (e.g., "1.29.8")
+   * @returns Minor version string (e.g., "1.29")
+   */
+  private static getMinorVersion(version: string): string {
+    return version.substring(0, 4); // Extract "major.minor" from "major.minor.patch"
+  }
+
+  private static getKubectlLayer(scope: Construct, version: KubernetesVersion): ILayerVersion {
+    const versionString = version.version;
+    const minorVersion = MdaaEKSCluster.getMinorVersion(versionString);
+
+    // Helper function to try loading a specific kubectl layer
+    const tryLoadLayer = (layerPackage: string, LayerClass: string): ILayerVersion | null => {
+      try {
+        const module = require(layerPackage);
+        const LayerConstructor = module[LayerClass];
+        if (LayerConstructor) {
+          return new LayerConstructor(scope, 'kubectl-layer');
+        }
+      } catch (error) {
+        // Layer package not available
+      }
+      return null;
+    };
+
+    let layer: ILayerVersion | null = null;
+
+    switch (minorVersion) {
+      case '1.28':
+        layer = tryLoadLayer('@aws-cdk/lambda-layer-kubectl-v28', 'KubectlV28Layer');
+        break;
+      case '1.29':
+        layer = tryLoadLayer('@aws-cdk/lambda-layer-kubectl-v29', 'KubectlV29Layer');
+        break;
+      case '1.30':
+        layer = tryLoadLayer('@aws-cdk/lambda-layer-kubectl-v30', 'KubectlV30Layer');
+        break;
+      case '1.31':
+        layer = tryLoadLayer('@aws-cdk/lambda-layer-kubectl-v31', 'KubectlV31Layer');
+        break;
+      case '1.32':
+        layer = tryLoadLayer('@aws-cdk/lambda-layer-kubectl-v32', 'KubectlV32Layer');
+        break;
+      case '1.33':
+        layer = tryLoadLayer('@aws-cdk/lambda-layer-kubectl-v33', 'KubectlV33Layer');
+        break;
+      default:
+        console.warn(`No specific kubectl layer available for Kubernetes version ${versionString}, using v31 layer`);
+        break;
+    }
+
+    // Fallback to v31 if specific version not available
+    if (!layer) {
+      if (minorVersion !== '1.31') {
+        console.warn(
+          `kubectl ${minorVersion} layer not available, falling back to v31 for Kubernetes ${versionString}`,
+        );
+      }
+      layer = new KubectlV31Layer(scope, 'kubectl-layer');
+    }
+
+    return layer;
+  }
 
   private static setProps(scope: Construct, props: MdaaEKSClusterProps): ClusterProps {
+    const kubecLayer = MdaaEKSCluster.getKubectlLayer(scope, props.version);
     const overrideProps = {
       clusterName: props.naming.resourceName(props.clusterName, 255),
       endpointAccess: EndpointAccess.PRIVATE, // Force private endpoint access only
       defaultCapacity: 0, // Force specification of a node group to ensure encryption at rest
       secretsEncryptionKey: props.kmsKey,
-      kubectlLayer: new KubectlV27Layer(scope, 'kubectl-layer'),
+      kubectlLayer: kubecLayer,
       vpcSubnets: [
         {
           subnets: props.subnets,
@@ -688,8 +778,9 @@ export class MdaaEKSCluster extends Cluster {
       const keyPairName = this.props.mgmtInstance?.keyPairName ?? keyPair?.name;
 
       const mgmtUserData: UserData = UserData.forLinux();
+      const kubectlUrl = MdaaEKSCluster.getKubectlUrl(MdaaEKSCluster.getMinorVersion(this.props.version.version));
       mgmtUserData.addCommands(
-        `mkdir -p /usr/local/bin && cd /usr/local/bin && curl -O ${MdaaEKSCluster.KUBECTL_URL} && chmod +x /usr/local/bin/kubectl && cd ~`,
+        `mkdir -p /usr/local/bin && cd /usr/local/bin && curl -O ${kubectlUrl} && chmod +x /usr/local/bin/kubectl && cd ~`,
         `aws eks update-kubeconfig --region ${Stack.of(this).region} --name ${this.clusterName}`,
         `cp /root/.kube/config /etc/kubeconfig && chmod o+r /etc/kubeconfig`,
         `echo 'export KUBECONFIG=/etc/kubeconfig' >> /etc/profile.d/kubectl.sh`,

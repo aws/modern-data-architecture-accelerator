@@ -38,7 +38,7 @@ describe('MDAA Construct Compliance Tests', () => {
     vpc: testVpc,
     subnets: [testSubnet],
     kmsKey: testKmsKey,
-    version: KubernetesVersion.V1_26,
+    version: KubernetesVersion.V1_30,
     mgmtInstance: {
       subnetId: 'test-subnet-id',
       availabilityZone: 'test-az',
