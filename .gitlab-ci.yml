@@ -382,6 +382,33 @@ feature_publish_npm:
   script:
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
+feature_test_published_npm:
+  tags:
+    - arch:amd64
+    - size:medium
+  except:
+    refs:
+      - main
+      - tags
+  stage: prerelease_publish
+  cache:
+    key: feature-build-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  dependencies:
+    - feature_publish_npm
+  needs:
+    - feature_publish_npm
+  allow_failure: true
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - SNAPSHOT_VERSION=$(jq -r .version < lerna.json)
+    - echo 'Testing published artifacts for version:' $SNAPSHOT_VERSION
+    - ./scripts/test_published_artifacts.sh $SNAPSHOT_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
+
 feature_publish_pip:
   tags:
     - arch:amd64
