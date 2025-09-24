@@ -84,7 +84,7 @@ def lambda_handler(event, context):
         handle_delete(domainIdentifier,entityIdentifier,entityType,policyType,principal,detail)
         handle_create(domainIdentifier,entityIdentifier,entityType,policyType,principal,detail)
     elif event['RequestType'] == 'Delete':
-        handle_delete(domainIdentifier,entityIdentifier,entityType,policyType,principal)
+        handle_delete(domainIdentifier,entityIdentifier,entityType,policyType,principal,detail)
 
     return {
         "Status": "200",

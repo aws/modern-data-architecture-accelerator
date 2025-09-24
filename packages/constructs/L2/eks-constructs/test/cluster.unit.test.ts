@@ -6,7 +6,7 @@
 import { App, Stack } from 'aws-cdk-lib';
 import { Vpc, InstanceType, InstanceClass, InstanceSize } from 'aws-cdk-lib/aws-ec2';
 import { KubernetesVersion, EndpointAccess, ClusterProps } from 'aws-cdk-lib/aws-eks';
-import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Role, ServicePrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { ILayerVersion } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
@@ -280,6 +280,273 @@ describe('MdaaEKSCluster Unit Tests', () => {
 
       const clusterProps = setProps(stack, props);
       expect(clusterProps.secretsEncryptionKey).toBe(kmsKey);
+    });
+  });
+
+  describe('Error Handling', () => {
+    test('throws error when multiple clusters in same stack', () => {
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+        clusterName: 'test-cluster-1',
+      };
+
+      // Create first cluster
+      new MdaaEKSCluster(stack, 'TestCluster1', props);
+
+      // Try to create second cluster - should throw error
+      expect(() => {
+        new MdaaEKSCluster(stack, 'TestCluster2', {
+          ...props,
+          clusterName: 'test-cluster-2',
+        });
+      }).toThrow('Only a single EKS cluster can be defined within a CloudFormation stack');
+    });
+  });
+
+  describe('Fargate Profile', () => {
+    test('creates fargate profile with custom pod execution role', () => {
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+        clusterName: 'test-cluster',
+      };
+
+      const cluster = new MdaaEKSCluster(stack, 'TestCluster', props);
+
+      const customRole = new Role(stack, 'CustomPodRole', {
+        assumedBy: new ServicePrincipal('eks-fargate-pods.amazonaws.com'),
+      });
+
+      const profile = cluster.addFargateProfile('custom-profile', {
+        podExecutionRole: customRole,
+        selectors: [{ namespace: 'custom' }],
+      });
+
+      expect(profile).toBeDefined();
+    });
+
+    test('creates fargate profile without custom pod execution role', () => {
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+        clusterName: 'test-cluster',
+      };
+
+      const cluster = new MdaaEKSCluster(stack, 'TestCluster', props);
+
+      const profile = cluster.addFargateProfile('auto-profile', {
+        selectors: [{ namespace: 'auto' }],
+      });
+
+      expect(profile).toBeDefined();
+    });
+  });
+
+  describe('Namespace Management', () => {
+    test('cluster has addNamespace method', () => {
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+        clusterName: 'test-cluster',
+      };
+
+      const cluster = new MdaaEKSCluster(stack, 'TestCluster', props);
+
+      // Verify the method exists
+      expect(typeof cluster.addNamespace).toBe('function');
+    });
+  });
+
+  describe('Kubectl Layer Selection', () => {
+    test('uses correct kubectl layer for different versions', () => {
+      const getKubectlLayer = (MdaaEKSCluster as unknown as MdaaEKSClusterStatic).getKubectlLayer;
+
+      // Test v1.28
+      const layer28 = getKubectlLayer(stack, KubernetesVersion.V1_28);
+      expect(layer28).toBeDefined();
+
+      // Test v1.29
+      const layer29 = getKubectlLayer(stack, KubernetesVersion.V1_29);
+      expect(layer29).toBeDefined();
+
+      // Test v1.30
+      const layer30 = getKubectlLayer(stack, KubernetesVersion.V1_30);
+      expect(layer30).toBeDefined();
+    });
+
+    test('handles missing kubectl layer packages gracefully', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const getKubectlLayer = (MdaaEKSCluster as unknown as MdaaEKSClusterStatic).getKubectlLayer;
+
+      // Mock an unsupported version
+      const unsupportedVersion = { version: '1.35.0' } as KubernetesVersion;
+
+      const layer = getKubectlLayer(stack, unsupportedVersion);
+      expect(layer).toBeDefined();
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('No specific kubectl layer available'));
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('Cluster Configuration', () => {
+    test('enforces all required security settings', () => {
+      const setProps = (MdaaEKSCluster as unknown as MdaaEKSClusterStatic).setProps;
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+        clusterName: 'test-cluster',
+      };
+
+      const clusterProps = setProps(stack, props);
+
+      // Verify security configurations
+      expect(clusterProps.endpointAccess).toEqual(EndpointAccess.PRIVATE);
+      expect(clusterProps.defaultCapacity).toBe(0);
+      expect(clusterProps.secretsEncryptionKey).toBe(kmsKey);
+      expect(clusterProps.clusterLogging).toEqual(['api', 'audit', 'authenticator', 'controllerManager', 'scheduler']);
+    });
+
+    test('sets cluster name using naming convention', () => {
+      const setProps = (MdaaEKSCluster as unknown as MdaaEKSClusterStatic).setProps;
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+        clusterName: 'my-cluster',
+      };
+
+      const clusterProps = setProps(stack, props);
+      expect(clusterProps.clusterName).toBe('test-resource-my-cluster');
+    });
+  });
+
+  describe('Management Instance Policy Statements', () => {
+    test('includes custom policy statements in management instance', () => {
+      const customPolicyStatement = new PolicyStatement({
+        actions: ['s3:GetObject'],
+        resources: ['arn:aws:s3:::my-bucket/*'],
+      });
+
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+        clusterName: 'test-cluster',
+        mgmtInstance: {
+          subnetId: 'subnet-12345',
+          availabilityZone: 'us-east-1a',
+          mgmtPolicyStatements: [customPolicyStatement],
+        },
+      };
+
+      const cluster = new MdaaEKSCluster(stack, 'TestCluster', props);
+      expect(cluster.mgmtInstance).toBeDefined();
+    });
+  });
+
+  describe('Cluster Properties Validation', () => {
+    test('creates cluster with all optional properties', () => {
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+        clusterName: 'test-cluster',
+        outputClusterName: true,
+        outputConfigCommand: true,
+        outputMastersRoleArn: true,
+        mastersRole: adminRole,
+        tags: { Environment: 'test' },
+      };
+
+      const cluster = new MdaaEKSCluster(stack, 'TestCluster', props);
+      expect(cluster).toBeDefined();
+      expect(cluster.clusterName).toBeDefined();
+    });
+
+    test('creates cluster with undefined cluster name', () => {
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+      };
+
+      const cluster = new MdaaEKSCluster(stack, 'TestCluster2', props);
+      expect(cluster).toBeDefined();
+    });
+  });
+
+  describe('Chart Components', () => {
+    test('creates EFS storage class and observability components', () => {
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: KubernetesVersion.V1_31,
+        clusterName: 'test-cluster',
+      };
+
+      const cluster = new MdaaEKSCluster(stack, 'TestCluster3', props);
+
+      expect(cluster.efsStorageClassName).toBe('efs-sc');
+      expect(cluster.iamOidcIdentityProvider).toBeDefined();
+      expect(cluster.mdaaKubeCtlProvider).toBeDefined();
+    });
+  });
+
+  describe('Edge Cases', () => {
+    test('handles missing kubectl layer gracefully', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+      const props = {
+        naming,
+        adminRoles: [adminRole],
+        kmsKey,
+        vpc,
+        subnets: vpc.privateSubnets,
+        version: { version: '1.35.0' } as KubernetesVersion,
+        clusterName: 'test-cluster',
+      };
+
+      const cluster = new MdaaEKSCluster(stack, 'TestCluster4', props);
+      expect(cluster).toBeDefined();
+
+      consoleSpy.mockRestore();
     });
   });
 });

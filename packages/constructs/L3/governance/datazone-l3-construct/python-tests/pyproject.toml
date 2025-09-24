@@ -1,0 +1,7 @@
+[project]
+name = "datazone-tests"
+version = "0.1.0"
+dependencies = ["pytest", "pytest-cov", "boto3"]
+
+[tool.pytest.ini_options]
+testpaths = ["."]
