@@ -16,6 +16,10 @@
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
     "test": "jest --passWithNoTests --coverage",
+    "test:python": "cd python-tests && uv run pytest",
+    "test:python:coverage": "cd python-tests && uv run pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html",
+    "test:python:unit": "cd python-tests && uv run pytest -m unit",
+    "test:python:lambda": "cd python-tests && uv run pytest -m lambda",
     "lint": "eslint --max-warnings 0 -c ../../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" ",
     "test-coverage": "jest --passWithNoTests --coverage"
   },

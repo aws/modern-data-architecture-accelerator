@@ -1,0 +1,39 @@
+[project]
+name = "ec2-constructs-tests"
+version = "0.1.0"
+description = "EC2 Constructs Lambda Function Tests"
+requires-python = ">=3.9"
+dependencies = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.1",
+    "boto3>=1.28.0",
+    "botocore>=1.31.0",
+    "moto[ec2]>=4.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--verbose",
+    "--tb=short",
+]
+
+[tool.coverage.run]
+source = ["../src/lambda/keypair", "../src/lambda/volume_check"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
