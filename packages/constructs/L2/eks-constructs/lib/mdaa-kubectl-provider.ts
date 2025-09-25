@@ -46,12 +46,7 @@ export class CompliantKubectlProvider extends NestedStack implements IKubectlPro
     // we will define one per stack for each cluster based on the cluster uniqueid
     const uid = `${Names.nodeUniqueId(cluster.node)}-CompliantKubectlProvider`;
     const stack = Stack.of(scope);
-    let provider = stack.node.tryFindChild(uid) as KubectlProvider;
-    if (!provider) {
-      provider = new KubectlProvider(stack, uid, { cluster });
-    }
-
-    return provider;
+    return (stack.node.tryFindChild(uid) as KubectlProvider) ?? new KubectlProvider(stack, uid, { cluster });
   }
 
   /**

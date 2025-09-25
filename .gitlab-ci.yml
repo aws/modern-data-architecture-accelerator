@@ -56,6 +56,7 @@ image: $MDAA_BUILD_IMAGE
 
 variables:
   VERSION_BUMP_LEVEL: minor
+  RELEASE_TYPE: release
   GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
@@ -760,7 +761,7 @@ release:
     - size:small
   environment: release
   when: manual
-  manual_confirmation: "Are you sure you want release a $VERSION_BUMP_LEVEL version?"
+  manual_confirmation: "Are you sure you want to create a $VERSION_BUMP_LEVEL $RELEASE_TYPE version?"
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"

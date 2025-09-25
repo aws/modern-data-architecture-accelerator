@@ -12,6 +12,7 @@ import { KubernetesVersion } from 'aws-cdk-lib/aws-eks';
 import { Role } from 'aws-cdk-lib/aws-iam';
 import { CompliantKubectlProvider } from '../lib/mdaa-kubectl-provider';
 import * as cdk8s from 'cdk8s';
+import { IKubectlProvider } from 'aws-cdk-lib/aws-eks/lib/kubectl-provider';
 
 describe('MDAA Construct Compliance Tests', () => {
   const testApp = new MdaaTestApp();
@@ -32,7 +33,7 @@ describe('MDAA Construct Compliance Tests', () => {
   const testSubnet = Subnet.fromSubnetId(testApp.testStack, 'subnet', 'test-subnet-id');
   const testSG = SecurityGroup.fromSecurityGroupId(testApp.testStack, 'sg', 'test-sg-id');
 
-  const testContstructProps: MdaaEKSClusterProps = {
+  const testConstructProps: MdaaEKSClusterProps = {
     adminRoles: [testAdminRole],
     naming: testApp.naming,
     vpc: testVpc,
@@ -45,7 +46,7 @@ describe('MDAA Construct Compliance Tests', () => {
     },
   };
 
-  const eksCluster = new MdaaEKSCluster(testApp.testStack, 'test-construct', testContstructProps);
+  const eksCluster = new MdaaEKSCluster(testApp.testStack, 'test-construct', testConstructProps);
 
   eksCluster.addNamespace(new cdk8s.App(), 'test-namespace', 'test-namespace', testSG);
 
@@ -104,7 +105,13 @@ describe('MDAA Construct Compliance Tests', () => {
       clusterName: 'imported-cluster',
       kubectlRoleArn: 'arn:test-partition:iam::test-account:role/test-role',
     });
+    const kubeCtlProvidedCluster = MdaaEKSCluster.fromClusterAttributes(testApp.testStack, 'imported=kubectl-cluster', {
+      clusterName: 'kubectl-provided-cluster',
+      kubectlRoleArn: 'arn:test-partition:iam::test-account:role/test-role',
+      kubectlProvider: {} as IKubectlProvider,
+    });
     test('KubeCtlProvider Methods', () => {
+      expect(() => CompliantKubectlProvider.getOrCreate(testApp.testStack, kubeCtlProvidedCluster)).not.toThrow();
       expect(() => CompliantKubectlProvider.getOrCreate(testApp.testStack, eksCluster)).not.toThrow();
       expect(() => CompliantKubectlProvider.getOrCreate(testApp.testStack, importedEksCluster)).not.toThrow();
       expect(() =>
