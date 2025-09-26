@@ -37,7 +37,7 @@ deploy_gitlab() {
     fi
     
     # Setup GitLab remote
-    git remote add docs_publish "https://gitlab-ci-token:$CI_GROUP_TOKEN@$CI_SERVER_HOST/$MDAA_DOCS_PROJECT_PATH.git/"
+    git remote add docs_publish "https://gitlab-ci-token:$DOCS_CI_GROUP_TOKEN@$CI_SERVER_HOST/$MDAA_DOCS_PROJECT_PATH.git/"
     git fetch docs_publish
 
     # Deploy using mike for GitLab
