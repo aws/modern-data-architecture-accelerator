@@ -53,3 +53,5 @@ uv.lock
 *.egg-info/
 build/
 dist/
+
+.kiro
