@@ -7,7 +7,6 @@ import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { expect, test } from '@jest/globals';
 
-// Define interface for stack templates to improve type safety
 interface StackTemplates {
   [stackName: string]: Record<string, unknown>;
 }

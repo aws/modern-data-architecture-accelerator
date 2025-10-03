@@ -20,78 +20,40 @@ import {
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
-/**
- * Properties for the creation of a MDAA S3 Bucket
- */
 export interface MdaaBucketProps extends mdaa_construct.MdaaConstructProps {
-  /**
-   * Additional KMS key Arns which may be used to write to the bucket (in addition to the default)
-   */
   readonly additionalKmsKeyArns?: string[];
-  /**
-   * If true (default), only the specified KMS keys will be permitted to be used to write to the bucket
-   */
   readonly enforceExclusiveKmsKeys?: boolean;
-  /**
-   * External KMS key to use for bucket encryption.
-   *
-   * The 'encryption' property must be either not specified or set to "Kms".
-   * An error will be emitted if encryption is set to "Unencrypted" or
-   * "Managed".
-   *
-   * @default - If encryption is set to "Kms" and this property is undefined,
-   * a new KMS key will be created and associated with this bucket.
-   */
   readonly encryptionKey: IMdaaKmsKey;
   /**
-   * Physical name of this bucket.
+   * Q-ENHANCED-PROPERTY
+   * Optional physical name for the S3 bucket that will be processed through MDAA naming conventions. If not specified, CloudFormation will assign a unique name. When provided, enables predictable bucket naming for cross-stack references and external integrations.
    *
-   * @default - Assigned by CloudFormation (recommended).
-   */
+   * Use cases: Predictable bucket naming; Cross-stack references; External system integration
+   *
+   * AWS: AWS S3 bucket physical name for resource identification and cross-service integration
+   *
+   * Validation: Must be valid S3 bucket name if provided (3-63 characters, lowercase, no underscores); processed through MDAA naming
+   **/
   readonly bucketName?: string;
-  /**
-   * Whether this bucket should send notifications to Amazon EventBridge or not.
-   *
-   * @default false
-   */
   readonly eventBridgeEnabled?: boolean;
-  /**
-   * Rules that define how Amazon S3 manages objects during their lifetime.
-   *
-   * @default - No lifecycle rules.
-   */
   readonly lifecycleRules?: LifecycleRule[];
 
   /**
-   * The inventory configuration of the bucket.
+   * Q-ENHANCED-PROPERTY
+   * Optional array of inventory configurations for automated bucket content reporting and analysis. Enables scheduled generation of object metadata reports for data governance, cost analysis, and compliance auditing purposes.
    *
-   * @see https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html
+   * Use cases: Data governance reporting; Cost analysis and optimization; Compliance auditing and object tracking
    *
-   * @default - No inventory configuration
-   */
+   * AWS: AWS S3 inventory configuration for automated bucket content reporting and analysis
+   *
+   * Validation: Must be array of valid Inventory objects if provided; defines inventory generation schedule and content
+   *   **/
   readonly inventories?: Inventory[];
 
-  /**
-   * Whether this bucket should have transfer acceleration turned on or not.
-   *
-   * @default false
-   */
   readonly transferAcceleration?: boolean;
 
-  /**
-   * Inteligent Tiering Configurations
-   *
-   * @see https://docs.aws.amazon.com/AmazonS3/latest/userguide/intelligent-tiering.html
-   *
-   * @default No Intelligent Tiiering Configurations.
-   */
   readonly intelligentTieringConfigurations?: IntelligentTieringConfiguration[];
 
-  /**
-   * If set true, the stack id will be used to set a unique bucket name prefix in order
-   * to ensure global uniqueness and protect against bucket name sniping.
-   * Can also be enabled via the "@aws-mdaa/enableUniqueBucketNames" context key.
-   */
   readonly uniqueBucketName?: boolean;
 }
 

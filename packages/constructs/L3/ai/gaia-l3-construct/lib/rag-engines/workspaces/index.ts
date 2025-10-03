@@ -17,7 +17,7 @@ export interface WorkkspacesProps extends MdaaL3ConstructProps {
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraPgVector?: AuroraPgVector;
   readonly kendraRetrieval?: KendraRetrieval;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class Workspaces extends MdaaL3Construct {

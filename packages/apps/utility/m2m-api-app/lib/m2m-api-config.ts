@@ -11,7 +11,17 @@ import { Stack } from 'aws-cdk-lib';
 import * as configSchema from './config-schema.json';
 
 export interface M2MApiConfigContents extends MdaaBaseConfigContents {
-  api: M2MApiProps;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required M2M API configuration defining API Gateway setup with authentication, authorization, and security controls. Provides complete API configuration including endpoints, authentication methods, rate limiting, and security policies for machine-to-machine communication and API access.
+   *
+   * Use cases: API Gateway configuration; M2M authentication; API security; Machine communication
+   *
+   * AWS: API Gateway configuration for M2M API deployment with authentication and security controls
+   *
+   * Validation: Must be valid M2MApiProps; required for M2M API deployment and configuration
+   **/
+  readonly api: M2MApiProps;
 }
 
 export class M2MApiConfigParser extends MdaaAppConfigParser<M2MApiConfigContents> {

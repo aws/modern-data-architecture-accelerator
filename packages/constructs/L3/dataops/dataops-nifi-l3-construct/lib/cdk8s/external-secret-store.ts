@@ -32,7 +32,27 @@ export class ExternalSecretStore extends Construct {
     const secretStore = new cdk8s.ApiObject(this, 'external-secret-store', {
       apiVersion: 'external-secrets.io/v1beta1',
       kind: 'SecretStore',
+      /**
+       * Q-ENHANCED-PROPERTY
+       * Required Kubernetes resource metadata for SecretStore identification and organization within the NiFi cluster namespace. Provides essential metadata including name, namespace, and labels for proper Kubernetes resource management and External Secrets Operator configuration.
+       *
+       * Use cases: Kubernetes resource identification; Namespace organization; Resource metadata management; External Secrets configuration
+       *
+       * AWS: Kubernetes metadata for External Secrets Operator SecretStore resource identification and management
+       *
+       * Validation: Must include valid name and namespace; follows Kubernetes metadata conventions for resource identification
+       */
       metadata: {
+        /**
+         * Q-ENHANCED-PROPERTY
+         * Required name for the SecretStore Kubernetes resource enabling unique identification within the namespace. Provides the specific name used by External Secrets Operator to reference this SecretStore configuration for secret retrieval operations.
+         *
+         * Use cases: SecretStore identification; External secret references; Kubernetes resource naming; Configuration targeting
+         *
+         * AWS: Kubernetes SecretStore resource name for External Secrets Operator configuration and reference
+         *
+         * Validation: Must be valid Kubernetes resource name; required; follows DNS subdomain naming conventions
+         */
         name: props.storeName,
         namespace: props.namespace,
       },

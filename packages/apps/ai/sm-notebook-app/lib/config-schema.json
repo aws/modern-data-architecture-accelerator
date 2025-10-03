@@ -4,14 +4,17 @@
     "definitions": {
         "AssetProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nSageMaker asset configuration interface for file and directory deployment with source path specification and exclusion patterns. Defines asset properties for packaging and deploying local files, scripts, and directories to SageMaker environments with support for file exclusion patterns and target path specification.\n\nUse cases: Script deployment; Configuration file deployment; Asset packaging; File provisioning; Development resource deployment; Custom asset management\n\nAWS: S3 asset deployment with CDK asset bundling for SageMaker environment file provisioning and script deployment\n\nValidation: sourcePath must be valid local file or directory path; exclude patterns must be valid glob patterns; targetPath must be valid target directory if specified",
             "properties": {
                 "exclude": {
+                    "description": "Q-ENHANCED-PROPERTY\nExclusion patterns for asset deployment filtering out unwanted files and directories from asset packaging. Defines glob patterns to exclude specific files or directories during asset deployment for optimized asset size and security compliance.\n\nUse cases: Asset filtering; Security compliance; Size optimization; Unwanted file exclusion; Deployment optimization\n\nAWS: CDK asset bundling exclusion patterns for optimized asset deployment\n\nValidation: Must be valid glob patterns; patterns applied during asset bundling; optional array for file exclusion",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "sourcePath": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired local file or directory path for SageMaker asset deployment specifying the source location of files to be packaged and deployed. Defines the local filesystem path containing scripts, configurations, or other resources to be made available in SageMaker environments.\n\nUse cases: Script deployment; Configuration file deployment; Asset packaging; Local resource deployment; Development file provisioning\nAWS: CDK asset source path for S3 deployment and SageMaker environment file provisioning\nValidation: Must be valid local file or directory path; path must exist and be accessible",
                     "type": "string"
                 }
             },
@@ -85,6 +88,7 @@
         },
         "InstanceMetadataServiceConfiguration": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nSageMaker notebook instance metadata service configuration interface for EC2 instance metadata security settings. Defines Instance Metadata Service (IMDS) configuration for SageMaker notebook instances including metadata service version requirements for enhanced security and compliance with security best practices.\nUse cases: Instance metadata security; IMDS version control; Security compliance; Notebook instance hardening; Metadata access control\nAWS: SageMaker notebook instance metadata service configuration for enhanced security and IMDS version control\nValidation: minimumInstanceMetadataServiceVersion must be valid IMDS version (e.g., '1' or '2'); version 2 recommended for enhanced security",
             "properties": {
                 "minimumInstanceMetadataServiceVersion": {
                     "type": "string"
@@ -97,9 +101,11 @@
         },
         "LifecycleScriptProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nSageMaker lifecycle script configuration interface for notebook and Studio environment setup with asset deployment and command execution. Defines lifecycle script properties including asset management and shell command execution for automated environment configuration during SageMaker instance startup and creation phases.\n\nUse cases: Environment setup automation; Package installation scripts; Custom configuration deployment; Asset provisioning; Development environment preparation; Automated ML environment setup\n\nAWS: SageMaker lifecycle configuration scripts with asset deployment and command execution for automated notebook and Studio environment setup\n\nValidation: assets must be valid NamedAssetProps if specified; cmds must be valid shell commands executable in SageMaker environment; commands must return appropriate exit codes",
             "properties": {
                 "assets": {
-                    "$ref": "#/definitions/NamedAssetProps"
+                    "$ref": "#/definitions/NamedAssetProps",
+                    "description": "Q-ENHANCED-PROPERTY\nNamed assets for SageMaker lifecycle configuration script deployment including files, directories, and resources. Defines asset deployment configuration for lifecycle scripts enabling custom file deployment and resource provisioning during SageMaker environment initialization.\n\nUse cases: Custom file deployment; Resource provisioning; Script dependencies; Configuration files; Asset management\n\nAWS: SageMaker lifecycle configuration asset deployment for environment customization\n\nValidation: Must be valid NamedAssetProps configuration; assets must be accessible during lifecycle execution; optional configuration"
                 },
                 "cmds": {
                     "items": {
@@ -115,8 +121,10 @@
         },
         "MdaaCidrPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaCidrPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "cidr": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired CIDR block specification for network access control in security group rules enabling IP range-based access control. Defines the IP address range that will be allowed or denied access through security group rules for network-level access control and security boundaries.\n\nUse cases: IP range access control; Network security boundaries; CIDR-based filtering; Network access management\n\nAWS: Amazon EC2 security group CIDR block for IP range-based network access control\n\nValidation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-based security group rules",
                     "type": "string"
                 },
                 "description": {
@@ -135,6 +143,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -146,11 +155,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -178,8 +190,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -193,6 +207,7 @@
         },
         "MdaaPrefixListPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaPrefixListPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -201,6 +216,7 @@
                     "type": "number"
                 },
                 "prefixList": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired prefix list identifier for managed IP range access control in security group rules enabling AWS service and managed IP range-based access control. Defines the prefix list ID that contains managed IP ranges for AWS services or custom IP ranges for streamlined security group rule management.\n\nUse cases: AWS service access; Managed IP ranges; Prefix list-based filtering; Streamlined rule management\n\nAWS: Amazon EC2 prefix list identifier for managed IP range-based network access control\n\nValidation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for prefix list-based security group rules",
                     "type": "string"
                 },
                 "protocol": {
@@ -213,6 +229,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -224,30 +241,30 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Reference role by arn",
+                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Reference role by id",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Reference role by name",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "A string which uniquely identifies the MdaaRoleRef within a scope.",
+                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
                     "type": "boolean"
                 }
             },
@@ -255,6 +272,7 @@
         },
         "MdaaSecurityGroupPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -266,6 +284,7 @@
                     "type": "string"
                 },
                 "sgId": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired security group identifier for security group-based access control in network rules enabling security group reference-based access control. Defines the security group ID that will be referenced in security group rules for allowing access between security groups and resources.\n\nUse cases: Security group reference; Cross-security group access; Resource-based access control; Security group chaining\n\nAWS: Amazon EC2 security group identifier for security group-based network access control\n\nValidation: Must be valid security group ID format (sg-xxxxxxxxx); required for security group-based rules",
                     "type": "string"
                 },
                 "suppressions": {
@@ -275,6 +294,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -286,20 +306,24 @@
         },
         "MdaaSecurityGroupRuleProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupRuleProps configuration interface for compute infrastructure and instance management.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "ipv4": {
+                    "description": "Q-ENHANCED-PROPERTY\nIPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions. Specifies IPv4 CIDR blocks that are allowed or denied access through the security group for network-level access control and IP-based security policies.\n\nUse cases: IP-based access control; Network segmentation; CIDR-based restrictions; Geographic access control; Network security policies\n\nAWS: AWS EC2 SecurityGroup rules with IPv4 CIDR block sources/destinations\n\nValidation: Must be valid MdaaCidrPeer array with valid CIDR notation; optional array for IP-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaCidrPeer"
                     },
                     "type": "array"
                 },
                 "prefixList": {
+                    "description": "Q-ENHANCED-PROPERTY\nPrefix list rules for security group traffic control defining managed prefix list-based access restrictions. Specifies AWS-managed or customer-managed prefix lists for scalable IP address range management and centralized network access control.\n\nUse cases: Managed IP ranges; Scalable access control; Centralized IP management; AWS service access; Regional IP restrictions\n\nAWS: AWS EC2 SecurityGroup rules with prefix list sources/destinations\n\nValidation: Must be valid MdaaPrefixListPeer array with valid prefix list IDs; optional array for prefix list-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaPrefixListPeer"
                     },
                     "type": "array"
                 },
                 "sg": {
+                    "description": "Q-ENHANCED-PROPERTY\nSecurity group rules for cross-security group traffic control defining security group-based access restrictions. Specifies other security groups that are allowed access through this security group for resource-level access control and security group chaining.\n\nUse cases: Cross-security group access; Resource-based access control; Security group chaining; Service-to-service communication; Layered security\n\nAWS: AWS EC2 SecurityGroup rules with security group sources/destinations\n\nValidation: Must be valid MdaaSecurityGroupPeer array with valid security group IDs; optional array for SG-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaSecurityGroupPeer"
                     },
@@ -310,14 +334,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -329,11 +356,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -349,15 +379,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -368,12 +401,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -383,23 +419,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -451,27 +493,34 @@
             "additionalProperties": {
                 "$ref": "#/definitions/AssetProps"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNamedAssetProps configuration interface for resource configuration and infrastructure management.\n\nUse cases: Reusable infrastructure components; CDK construct deployment; Compliance controls; Infrastructure patterns\n\nAWS: AWS service configuration and deployment\n\nValidation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements",
             "type": "object"
         },
         "NamedLifecycleConfigProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/NotebookLifeCycleConfigProps"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNamed lifecycle configuration collection interface for SageMaker notebook lifecycle management with string-based naming for organized script deployment. Enables configuration of multiple lifecycle configurations with unique identifiers, supporting organized notebook environment setup and automated script execution for ML development environments.\nUse cases: Lifecycle script organization; Named configuration collections; Notebook environment management; Automated setup scripts; Development environment standardization\nAWS: SageMaker notebook lifecycle configurations with organized naming for automated environment setup and script management\nValidation: Configuration names must be valid identifiers; each NotebookLifeCycleConfigProps must be valid lifecycle configuration; names must be unique within collection",
             "type": "object"
         },
         "NotebookAssetDeploymentConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nSageMaker notebook asset deployment configuration interface for automated asset management with S3 integration and Lambda-based deployment. Defines asset deployment properties including S3 bucket configuration, IAM role specification, and deployment parameters for automated notebook asset provisioning and management.\n\nUse cases: Automated asset deployment; Notebook resource provisioning; S3 asset management; Lambda-based deployment; ML asset automation\n\nAWS: S3 bucket and Lambda function configuration for automated SageMaker notebook asset deployment and management\n\nValidation: assetBucketName must be valid S3 bucket name; assetDeploymentRoleArn must be valid IAM role ARN with S3 and Lambda permissions; memoryLimitMB must be valid Lambda memory allocation",
             "properties": {
                 "assetBucketName": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for SageMaker notebook asset storage enabling centralized asset management and deployment. Defines the S3 bucket that will store notebook assets including notebooks, scripts, and data files for automated deployment to SageMaker notebook instances.\n\nUse cases: Asset storage; Centralized asset management; Notebook deployment; S3-based asset distribution; ML asset organization\n\nAWS: Amazon S3 bucket name for SageMaker notebook asset storage and automated deployment\n\nValidation: Must be valid S3 bucket name; required for asset storage and deployment",
                     "type": "string"
                 },
                 "assetDeploymentRoleArn": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for SageMaker notebook asset deployment Lambda function enabling secure asset deployment operations. Defines the IAM role that will be used by the Lambda function responsible for deploying assets to notebook instances, requiring S3 and SageMaker permissions.\n\nUse cases: Secure asset deployment; Lambda execution role; IAM permissions; Asset deployment automation; Security configuration\n\nAWS: AWS IAM role ARN for Lambda function asset deployment with S3 and SageMaker permissions\n\nValidation: Must be valid IAM role ARN with required permissions; required for asset deployment Lambda function",
                     "type": "string"
                 },
                 "assetPrefix": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional S3 object prefix for SageMaker notebook asset organization enabling structured asset storage and deployment. Defines the S3 key prefix that will be used for organizing assets within the bucket, providing logical separation and organization of different asset types or environments.\n\nUse cases: Asset organization; S3 key structure; Logical asset separation; Environment-based organization; Asset categorization\n\nAWS: Amazon S3 object prefix for SageMaker notebook asset organization and structured storage\n\nValidation: Must be valid S3 key prefix if provided; optional for asset organization",
                     "type": "string"
                 },
                 "memoryLimitMB": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional Lambda function memory limit in megabytes for SageMaker notebook asset deployment function enabling performance optimization. Defines the memory allocation for the Lambda function responsible for asset deployment, allowing performance tuning based on asset size and deployment complexity.\n\nUse cases: Lambda performance tuning; Memory optimization; Deployment performance; Resource allocation; Function configuration\n\nAWS: AWS Lambda function memory limit for SageMaker notebook asset deployment performance optimization\n\nValidation: Must be valid Lambda memory value (128-10240 MB) if provided; optional for performance tuning",
                     "type": "number"
                 }
             },
@@ -483,18 +532,22 @@
         },
         "NotebookLifeCycleConfigProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nSageMaker notebook lifecycle configuration interface for notebook instance startup and creation script management. Defines lifecycle scripts that execute during notebook instance creation and startup, enabling custom environment setup, package installation, and configuration management for ML development environments.\n\nUse cases: Notebook environment setup; Custom package installation; ML library configuration; Development environment preparation; Automated notebook configuration\n\nAWS: SageMaker notebook instance lifecycle configuration with onCreate and onStart script execution for custom environment setup\n\nValidation: onCreate and onStart scripts must be valid lifecycle script configurations; scripts must be executable in SageMaker notebook environment",
             "properties": {
                 "onCreate": {
-                    "$ref": "#/definitions/LifecycleScriptProps"
+                    "$ref": "#/definitions/LifecycleScriptProps",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional lifecycle script configuration for SageMaker notebook instance creation enabling custom environment setup during instance initialization. Defines scripts that execute when the notebook instance is first created, providing initial environment configuration, package installation, and setup tasks for ML development environments.\n\nUse cases: Initial environment setup; Package installation; Notebook creation configuration; ML environment initialization; Custom setup scripts\n\nAWS: SageMaker notebook instance onCreate lifecycle script for initial environment setup and configuration\n\nValidation: Must be valid LifecycleScriptProps if provided; scripts must be executable in SageMaker environment; optional for creation-time configuration"
                 },
                 "onStart": {
-                    "$ref": "#/definitions/LifecycleScriptProps"
+                    "$ref": "#/definitions/LifecycleScriptProps",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional lifecycle script configuration for SageMaker notebook instance startup enabling custom environment preparation on each instance start. Defines scripts that execute every time the notebook instance starts, providing recurring environment setup, package updates, and configuration tasks for consistent ML development environments.\n\nUse cases: Startup environment preparation; Package updates; Recurring configuration; Environment consistency; Startup automation\n\nAWS: SageMaker notebook instance onStart lifecycle script for startup environment preparation and configuration\n\nValidation: Must be valid LifecycleScriptProps if provided; scripts must be executable in SageMaker environment; optional for startup-time configuration"
                 }
             },
             "type": "object"
         },
         "NotebookProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nIndividual SageMaker notebook configuration interface for notebook instance deployment providing ML development settings. Defines notebook-specific properties including instance configuration, networking, security settings, and lifecycle management for ML experimentation and development workflows within secure, compliant environments.\nUse cases: Individual notebook deployment; ML development environments; Data science workspaces; Secure notebook instances; Custom ML environments\nAWS: SageMaker notebook instance configuration with VPC networking, security groups, and lifecycle management for ML development\nValidation: vpcId must be valid VPC identifier; subnetIds must be valid subnet identifiers; instanceType must be valid SageMaker instance type; roleArn must have SageMaker permissions",
             "properties": {
                 "acceleratorTypes": {
                     "items": {
@@ -512,19 +565,23 @@
                     "type": "string"
                 },
                 "instanceMetadataServiceConfiguration": {
-                    "$ref": "#/definitions/InstanceMetadataServiceConfiguration"
+                    "$ref": "#/definitions/InstanceMetadataServiceConfiguration",
+                    "description": "Q-ENHANCED-INTERFACE\nSageMaker notebook instance metadata service configuration interface for EC2 instance metadata security settings. Defines Instance Metadata Service (IMDS) configuration for SageMaker notebook instances including metadata service version requirements for enhanced security and compliance with security best practices.\nUse cases: Instance metadata security; IMDS version control; Security compliance; Notebook instance hardening; Metadata access control\nAWS: SageMaker notebook instance metadata service configuration for enhanced security and IMDS version control\nValidation: minimumInstanceMetadataServiceVersion must be valid IMDS version (e.g., '1' or '2'); version 2 recommended for enhanced security"
                 },
                 "instanceType": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired EC2 instance type for SageMaker notebook instance enabling compute resource specification and performance optimization. Defines the compute capacity and performance characteristics of the notebook instance for ML development, data science workflows, and model experimentation.\n\nUse cases: Compute resource specification; Performance optimization; Cost optimization; Workload-appropriate sizing; ML compute selection\n\nAWS: Amazon EC2 instance type for SageMaker notebook instance compute resource specification\n\nValidation: Must be valid SageMaker-supported instance type; required for notebook instance deployment",
                     "type": "string"
                 },
                 "lifecycleConfigName": {
                     "type": "string"
                 },
                 "notebookName": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional custom name for the SageMaker notebook instance enabling personalized notebook identification and management. Provides a descriptive name for the notebook instance that will be used for identification, logging, and management within the SageMaker environment and MDAA deployment.\n\nUse cases: Notebook identification; Instance naming; Management clarity; Operational visibility; Custom naming\n\nAWS: Amazon SageMaker notebook instance name for identification and management\n\nValidation: Must be valid SageMaker instance name if provided; optional for custom notebook naming",
                     "type": "string"
                 },
                 "notebookRole": {
-                    "$ref": "#/definitions/MdaaRoleRef"
+                    "$ref": "#/definitions/MdaaRoleRef",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired IAM role reference for SageMaker notebook instance enabling secure access to AWS services and resources. Defines the IAM role that will be assumed by the notebook instance for accessing S3, other AWS services, and data resources required for ML development and data science workflows.\n\nUse cases: IAM permissions; Secure service access; Resource access control; ML service integration; Data access management\n\nAWS: AWS IAM role for SageMaker notebook instance service access and resource permissions\n\nValidation: Must be valid MdaaRoleRef with SageMaker permissions; required for notebook instance deployment"
                 },
                 "platformIdentifier": {
                     "type": "string"
@@ -533,21 +590,25 @@
                     "type": "boolean"
                 },
                 "securityGroupEgress": {
-                    "$ref": "#/definitions/MdaaSecurityGroupRuleProps"
+                    "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
+                    "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupRuleProps configuration interface for compute infrastructure and instance management.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements"
                 },
                 "securityGroupId": {
                     "type": "string"
                 },
                 "securityGroupIngress": {
-                    "$ref": "#/definitions/MdaaSecurityGroupRuleProps"
+                    "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
+                    "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupRuleProps configuration interface for compute infrastructure and instance management.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements"
                 },
                 "subnetId": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired subnet identifier for SageMaker notebook instance placement enabling network segmentation and availability zone selection. Defines the specific subnet within the VPC where the notebook instance will be deployed, providing network segmentation and availability zone control for ML development environments.\n\nUse cases: Network segmentation; Availability zone placement; Subnet-level isolation; Network architecture; Instance placement\n\nAWS: Amazon VPC subnet identifier for SageMaker notebook instance placement and network segmentation\n\nValidation: Must be valid subnet identifier; required for notebook instance deployment; subnet must be in specified VPC",
                     "type": "string"
                 },
                 "volumeSizeInGb": {
                     "type": "number"
                 },
                 "vpcId": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired VPC identifier for SageMaker notebook instance deployment enabling network isolation and security boundaries. Defines the Virtual Private Cloud that will host the notebook instance providing network-level security and isolation for ML development and data science workflows.\n\nUse cases: Network isolation; VPC deployment; Security boundaries; Private ML environments; Network-level security\n\nAWS: Amazon VPC identifier for SageMaker notebook instance deployment and network isolation\n\nValidation: Must be valid VPC identifier; required for VPC-based notebook deployment",
                     "type": "string"
                 }
             },
@@ -563,6 +624,7 @@
             "additionalProperties": {
                 "$ref": "#/definitions/NotebookProps"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNamed SageMaker notebook collection interface for managing multiple notebook instances with string-based naming for organized ML development environments. Enables configuration of multiple notebook instances with unique identifiers, supporting team-based ML development and organized notebook management for data science workflows.\nUse cases: Multi-notebook deployments; Team notebook organization; Named notebook collections; ML development environments; Data science team management\nAWS: Multiple SageMaker notebook instances with organized naming for team-based ML development and notebook management\nValidation: Notebook names must be valid identifiers; each NotebookProps must be valid notebook configuration; names must be unique within collection",
             "type": "object"
         },
         "RegexAppliesTo": {
@@ -582,25 +644,28 @@
     },
     "properties": {
         "assetDeploymentConfig": {
-            "$ref": "#/definitions/NotebookAssetDeploymentConfig"
+            "$ref": "#/definitions/NotebookAssetDeploymentConfig",
+            "description": "Q-ENHANCED-PROPERTY\nOptional asset deployment configuration for SageMaker notebook instances enabling automated code and resource deployment. Provides mechanism for deploying notebooks, scripts, and other assets to notebook instances for consistent development environments.\n\nUse cases: Automated asset deployment; Consistent development environments; Code and resource provisioning\n\nAWS: Amazon SageMaker notebook instance asset deployment for development environment setup\n\nValidation: Must be valid NotebookAssetDeploymentConfig if provided; enables automated asset deployment to notebooks"
         },
         "kmsKeyArn": {
+            "description": "Q-ENHANCED-PROPERTY\nOptional KMS key ARN for notebook instance encryption enabling secure data science development with customer-controlled encryption. Provides encryption at rest for notebook instance storage and ensures data protection compliance for sensitive development work.\n\nUse cases: Secure development environments; Data protection compliance; Customer-controlled encryption for notebooks\n\nAWS: AWS KMS key for SageMaker notebook instance encryption and secure development\n\nValidation: Must be valid KMS key ARN if provided; enables encrypted storage for notebook instances",
             "type": "string"
         },
         "lifecycleConfigs": {
-            "$ref": "#/definitions/NamedLifecycleConfigProps"
+            "$ref": "#/definitions/NamedLifecycleConfigProps",
+            "description": "Q-ENHANCED-PROPERTY\nOptional map of lifecycle configuration names to lifecycle configurations enabling automated notebook instance management. Provides startup and shutdown scripts for notebook instances to ensure consistent environment setup and resource management.\n\nUse cases: Automated environment setup; Consistent notebook configuration; Resource management and optimization\n\nAWS: Amazon SageMaker lifecycle configurations for automated notebook instance management\n\nValidation: Must be valid NamedLifecycleConfigProps if provided; enables automated notebook lifecycle management"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "notebooks": {
             "$ref": "#/definitions/NotebookWithIdProps",
-            "description": "List of sagemaker notebook instances to be launched."
+            "description": "Q-ENHANCED-PROPERTY\nOptional map of notebook names to notebook instance configurations enabling data science development environment provisioning. Provides complete notebook instance setup with compute resources, networking, and access controls for machine learning development.\n\nUse cases: Data science development; ML notebook provisioning; development environment setup\n\nAWS: Amazon SageMaker notebook instances for data science and machine learning development\n\nValidation: Must be valid NotebookWithIdProps if provided; defines all notebook instance configurations and capabilities\n  *"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         }
     },
     "type": "object"

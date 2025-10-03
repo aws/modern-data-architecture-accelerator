@@ -15,7 +15,7 @@ export interface CreateKendraWorkspaceProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
   readonly ragDynamoDBTables: RagDynamoDBTables;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class CreateKendraWorkspace extends Construct {

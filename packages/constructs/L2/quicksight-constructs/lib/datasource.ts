@@ -7,77 +7,99 @@ import { MdaaConstructProps } from '@aws-mdaa/construct'; //NOSONAR
 import { CfnDataSource, CfnDataSourceProps } from 'aws-cdk-lib/aws-quicksight';
 import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
-/** Props for the creation of a compliant Quicksight DataSource */
 export interface MdaaQuickSightDataSourceProps extends MdaaConstructProps {
   /**
-   * A set of alternate data source parameters that you want to share for the credentials stored with this data source. The credentials are applied in tandem with the data source parameters when you copy a data source by using a create or update request. The API operation compares the `DataSourceParameters` structure that's in the request with the structures in the `AlternateDataSourceParameters` allow list. If the structures are an exact match, the request is allowed to use the credentials from this existing data source. If the `AlternateDataSourceParameters` list is null, the `Credentials` originally used with this `DataSourceParameters` are automatically allowed.
+   * Q-ENHANCED-PROPERTY
+   * Optional alternate data source parameters for credential sharing and data source copying enabling flexible data source management and credential reuse. Provides alternate parameter sets for credential sharing when copying data sources with matching parameter structures.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-alternatedatasourceparameters
-   */
+   * Use cases: Credential sharing; Data source copying; Parameter management; Flexible connectivity
+   *
+   * AWS: QuickSight alternate data source parameters for credential sharing and flexible data source management
+   *
+   * Validation: Must be array of valid DataSourceParametersProperty if provided; enables credential sharing and copying
+   *   **/
   readonly alternateDataSourceParameters?:
     | Array<CfnDataSource.DataSourceParametersProperty | cdk.IResolvable>
     | cdk.IResolvable;
   /**
-   * The AWS account ID.
+   * Q-ENHANCED-PROPERTY
+   * Optional AWS account ID specification for cross-account data source access enabling multi-account analytics and centralized data source management. Defines the AWS account where the data source will be created for proper account-based access control.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-awsaccountid
-   */
+   * Use cases: Cross-account access; Multi-account analytics; Account-based access control; Centralized management
+   *
+   * AWS: AWS account ID for QuickSight data source account-based access control and multi-account analytics
+   *
+   * Validation: Must be valid AWS account ID if provided; enables cross-account data source access and management
+   **/
   readonly awsAccountId?: string;
   /**
-   * The credentials Amazon QuickSight that uses to connect to your underlying source. Currently, only credentials based on user name and password are supported.
+   * Q-ENHANCED-PROPERTY
+   * Optional credentials configuration for secure data source authentication enabling username/password-based connectivity with secure credential management. Provides authentication credentials for data source connectivity with secure credential storage and management.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-credentials
-   */
+   * Use cases: Secure authentication; Credential management; Data source connectivity; Access control
+   *
+   * AWS: QuickSight data source credentials for secure authentication and data source connectivity
+   *
+   * Validation: Must be valid DataSourceCredentialsProperty if provided; enables secure data source authentication
+   *   **/
   readonly credentials?: CfnDataSource.DataSourceCredentialsProperty | cdk.IResolvable;
-  /**
-   * An ID for the data source. This ID is unique per AWS Region for each AWS account.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-datasourceid
-   */
   readonly dataSourceId?: string;
-  /**
-   * The parameters that Amazon QuickSight uses to connect to your underlying source.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-datasourceparameters
-   */
   readonly dataSourceParameters?: CfnDataSource.DataSourceParametersProperty | cdk.IResolvable;
   /**
-   * Error information from the last update or the creation of the data source.
+   * Q-ENHANCED-PROPERTY
+   * Optional error information for data source troubleshooting and monitoring enabling error tracking and operational visibility. Provides error details from data source creation or updates for troubleshooting and operational management.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-errorinfo
-   */
+   * Use cases: Error tracking; Troubleshooting; Operational monitoring; Data source management
+   *
+   * AWS: QuickSight data source error information for troubleshooting and operational visibility
+   *
+   * Validation: Must be valid DataSourceErrorInfoProperty if provided; enables error tracking and troubleshooting
+   *   **/
   readonly errorInfo?: CfnDataSource.DataSourceErrorInfoProperty | cdk.IResolvable;
   /**
-   * A display name for the data source.
+   * Q-ENHANCED-PROPERTY
+   * Optional display name for data source identification and user interface presentation enabling user-friendly data source naming and organization. Provides human-readable name for data source identification in QuickSight interface and management.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-name
-   */
+   * Use cases: User-friendly naming; Interface presentation; Data source organization; User experience
+   *
+   * AWS: QuickSight data source display name for user interface presentation and data source organization
+   *
+   * Validation: Must be descriptive name string if provided; processed through MDAA naming conventions
+   **/
   readonly name?: string;
   /**
-   * A list of resource permissions on the data source.
+   * Q-ENHANCED-PROPERTY
+   * Optional resource permissions array for data source access control enabling fine-grained access management and sharing capabilities. Provides IAM-based access control for data source sharing and collaborative analytics with granular permission management.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-permissions
-   */
+   * Use cases: Access control; Data source sharing; Collaborative analytics; Permission management
+   *
+   * AWS: QuickSight data source permissions for access control and collaborative analytics capabilities
+   *
+   * Validation: Must be array of valid ResourcePermissionProperty if provided; enables access control and sharing
+   *   **/
   readonly permissions?: Array<CfnDataSource.ResourcePermissionProperty | cdk.IResolvable> | cdk.IResolvable;
-  /**
-   * Contains a map of the key-value pairs for the resource tag or tags assigned to the data source.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-tags
-   */
   readonly tags?: cdk.CfnTag[];
   /**
-   * The type of the data source. To return a list of all data sources, use `ListDataSources` .
+   * Q-ENHANCED-PROPERTY
+   * Required data source type specification controlling connectivity protocols and data source capabilities for various data sources. Defines the specific type of data source for appropriate connectivity, optimization, and feature availability including databases, files, and cloud services.
    *
-   * Use `AMAZON_ELASTICSEARCH` for Amazon OpenSearch Service.
+   * Use cases: Data source type specification; Connectivity protocols; Feature availability; Multi-source support
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-type
-   */
+   * AWS: QuickSight data source type for connectivity protocols and data source capability specification
+   *
+   * Validation: Must be valid data source type string; required; use AMAZON_ELASTICSEARCH for OpenSearch Service
+   **/
   readonly type: string;
   /**
-   * Use this parameter only when you want Amazon QuickSight to use a VPC connection when connecting to your underlying source.
+   * Q-ENHANCED-PROPERTY
+   * Optional VPC connection properties for secure network connectivity enabling private network access and enhanced security for data source connections. Provides VPC-based connectivity for data sources requiring private network access and enhanced security controls.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-quicksight-datasource.html#cfn-quicksight-datasource-vpcconnectionproperties
-   */
+   * Use cases: Private network access; Enhanced security; VPC connectivity; Secure data source access
+   *
+   * AWS: VPC connection properties for QuickSight data source private network access and enhanced security
+   *
+   * Validation: Must be valid VpcConnectionPropertiesProperty if provided; enables VPC-based secure connectivity
+   *   **/
   readonly vpcConnectionProperties?: CfnDataSource.VpcConnectionPropertiesProperty | cdk.IResolvable;
 }
 
@@ -91,6 +113,16 @@ export class MdaaQuickSightDataSource extends CfnDataSource {
   private static setProps(props: MdaaQuickSightDataSourceProps): CfnDataSourceProps {
     const overrideProps = {
       name: props.naming.resourceName(props.name, 80),
+      /**
+       * Q-ENHANCED-PROPERTY
+       * Required SSL configuration for QuickSight data source connection security ensuring encrypted data transmission. Defines SSL/TLS settings for secure database connections with SSL enabled by default for data protection and compliance requirements.
+       *
+       * Use cases: Data transmission security; SSL/TLS encryption; Database connection security; Compliance requirements; Data protection
+       *
+       * AWS: Amazon QuickSight data source SSL configuration for secure database connectivity and encrypted data transmission
+       *
+       * Validation: Must be valid SSL properties object; disableSsl set to false for security; required for secure data source connections
+       */
       sslProperties: {
         disableSsl: false,
       },

@@ -4,23 +4,30 @@
     "definitions": {
         "AsscociatedAccount": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nAssociated account configuration interface for DataZone with cross-account data governance and multi-account integration capabilities. Defines associated account properties for DataZone including cross-account access, resource sharing, and multi-account data governance for enterprise data catalog management.\n\nUse cases: Cross-account data governance; Multi-account integration; Resource sharing; Enterprise data catalog; Cross-account access; Account association\n\nAWS: Amazon DataZone associated account configuration with cross-account governance and multi-account integration\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "properties": {
                 "account": {
+                    "description": "Q-ENHANCED-PROPERTY\nAWS account ID for DataZone cross-account association enabling multi-account data governance and resource sharing. Specifies the target account for DataZone association, supporting enterprise-wide data governance across multiple AWS accounts.\n\nUse cases: Cross-account data governance; Multi-account integration; Enterprise data catalog; Account association; Resource sharing\n\nAWS: Amazon DataZone cross-account association for multi-account data governance and resource sharing\n\nValidation: Must be valid AWS account ID; required; account must be accessible for DataZone association",
                     "type": "string"
                 },
                 "cdkRoleArn": {
+                    "description": "Q-ENHANCED-PROPERTY\nCDK deployment role ARN for cross-account infrastructure management enabling automated resource deployment. Specifies the IAM role used for CDK deployments in the associated account for infrastructure automation and resource management.\n\nUse cases: Cross-account CDK deployment; Infrastructure automation; Resource management; Deployment automation; Cross-account operations\n\nAWS: AWS CDK cross-account deployment role for infrastructure automation and resource management\n\nValidation: Must be valid IAM role ARN if specified; role must have appropriate CDK deployment permissions",
                     "type": "string"
                 },
                 "createCdkUser": {
+                    "description": "Q-ENHANCED-PROPERTY\nCDK user creation flag for automated user provisioning enabling cross-account deployment user management. When enabled, automatically creates CDK deployment users in the associated account for infrastructure automation and deployment operations.\n\nUse cases: Automated user provisioning; Cross-account deployment; User management; Infrastructure automation; Deployment user creation\n\nAWS: AWS IAM user creation for CDK cross-account deployment and infrastructure automation\n\nValidation: Boolean value; when true, creates CDK deployment users in the associated account",
                     "type": "boolean"
                 },
                 "glueCatalogKmsKeyArn": {
+                    "description": "Q-ENHANCED-PROPERTY\nGlue catalog KMS key ARN for cross-account encryption and data protection enabling secure data catalog access. Specifies the KMS key used for encrypting Glue catalog resources in the associated account for secure cross-account data governance.\n\nUse cases: Cross-account encryption; Data protection; Secure catalog access; KMS key management; Data security\n\nAWS: AWS Glue catalog KMS encryption for secure cross-account data catalog access and protection\n\nValidation: Must be valid KMS key ARN; required; key must be accessible from both accounts for encryption operations",
                     "type": "string"
                 },
                 "lakeformationManageAccessRoleArn": {
+                    "description": "Q-ENHANCED-PROPERTY\nLake Formation management access role ARN for cross-account data governance enabling fine-grained access control. Specifies the IAM role used for Lake Formation access management in the associated account for cross-account data governance and permission management.\n\nUse cases: Cross-account Lake Formation access; Fine-grained permissions; Data governance management; Access control; Permission delegation\n\nAWS: AWS Lake Formation cross-account access role for data governance and permission management\n\nValidation: Must be valid IAM role ARN if specified; role must have appropriate Lake Formation permissions",
                     "type": "string"
                 },
                 "region": {
+                    "description": "Q-ENHANCED-PROPERTY\nTarget region for DataZone cross-account association enabling multi-region data governance and resource management. Specifies the AWS region for the associated account resources, supporting multi-region data governance architectures.\n\nUse cases: Multi-region governance; Regional resource management; Cross-region association; Regional data catalog; Geographic distribution\n\nAWS: Amazon DataZone regional association for multi-region data governance and resource management\n\nValidation: Must be valid AWS region name if specified; region must support DataZone services",
                     "type": "string"
                 }
             },
@@ -32,41 +39,51 @@
         },
         "BaseDomainProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nBase domain configuration interface for DataZone providing data governance foundation and domain management capabilities. Defines base domain properties for DataZone including governance foundation, domain configuration, and administrative settings for systematic data catalog domain establishment.\n\nUse cases: Data governance foundation; Domain management; Governance configuration; Administrative settings; Data catalog domains; Domain establishment\n\nAWS: Amazon DataZone base domain configuration providing governance foundation and domain management\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "properties": {
                 "associatedAccounts": {
-                    "$ref": "#/definitions/NamedAssociatedAccounts"
+                    "$ref": "#/definitions/NamedAssociatedAccounts",
+                    "description": "Q-ENHANCED-PROPERTY\nAssociated accounts for cross-account DataZone integration enabling multi-account data governance and resource sharing. Defines accounts that will be associated with the DataZone domain for cross-account data governance and collaborative data management.\n\nUse cases: Cross-account integration; Multi-account governance; Resource sharing; Enterprise data governance; Account association\n\nAWS: Amazon DataZone cross-account association for multi-account data governance and resource sharing\n\nValidation: Must be valid NamedAssociatedAccounts if specified; enables cross-account data governance and collaboration\n  *"
                 },
                 "dataAdminRole": {
-                    "$ref": "#/definitions/MdaaRoleRef"
+                    "$ref": "#/definitions/MdaaRoleRef",
+                    "description": "Q-ENHANCED-PROPERTY\nData admin role reference for DataZone domain administration enabling domain management and administrative access. Specifies the IAM role that will have administrative privileges over the DataZone domain, including user management, resource configuration, and governance policy administration.\n\nUse cases: Domain administration; Administrative access; Domain management; Governance administration; Administrative privileges\n\nAWS: Amazon DataZone domain admin role for domain administration and management\n\nValidation: Must be valid MdaaRoleRef; required; role must have appropriate DataZone administrative permissions"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nDomain description for documentation and identification enabling clear domain purpose and organizational context. Provides descriptive information about the DataZone domain's purpose, scope, and role within the data governance framework.\n\nUse cases: Domain documentation; Purpose identification; Organizational context; Governance documentation; Domain description\n\nAWS: Amazon DataZone domain description for documentation and identification\n\nValidation: Must be valid description string if specified; provides context for domain purpose and governance scope",
                     "type": "string"
                 },
                 "domainUnits": {
-                    "$ref": "#/definitions/NamedDomainUnits"
+                    "$ref": "#/definitions/NamedDomainUnits",
+                    "description": "Q-ENHANCED-PROPERTY\nDomain units for hierarchical organization enabling structured data governance and organizational alignment. Defines the organizational structure within the DataZone domain, supporting hierarchical governance and systematic data organization.\n\nUse cases: Hierarchical organization; Structured governance; Organizational alignment; Domain structure; Governance hierarchy\n\nAWS: Amazon DataZone domain units for hierarchical governance and organizational structure\n\nValidation: Must be valid NamedDomainUnits if specified; enables hierarchical domain organization and governance\n  *"
                 },
                 "groups": {
-                    "$ref": "#/definitions/NamedDataZoneGroups"
+                    "$ref": "#/definitions/NamedDataZoneGroups",
+                    "description": "Q-ENHANCED-PROPERTY\nDomain groups for group-based access management enabling collective user provisioning and group-based access control. Defines groups that will have access to the DataZone domain, supporting group-based data governance and collective access management.\n\nUse cases: Group-based access; Collective provisioning; Group access control; Team management; Group permissions\n\nAWS: Amazon DataZone domain group configuration for group-based access and management\n\nValidation: Must be valid NamedDataZoneGroups if specified; enables group-based access and management\n  *"
                 },
                 "ownerAccounts": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner account IDs for domain ownership enabling cross-account domain administration and account-based ownership control. Specifies AWS accounts that have ownership privileges over the entire DataZone domain, supporting cross-account domain administration and governance.\n\nUse cases: Cross-account ownership; Account-based administration; Multi-account governance; Administrative accounts; Domain ownership\n\nAWS: Amazon DataZone domain account ownership for cross-account domain administration and control\n\nValidation: Must be array of valid AWS account IDs if specified; accounts must be accessible for ownership assignment",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "ownerGroups": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner group names for domain ownership enabling group-based domain administration and collective ownership control. Specifies groups that have ownership privileges over the entire DataZone domain, supporting group-based domain administration and governance.\n\nUse cases: Group-based ownership; Collective administration; Group ownership control; Administrative groups; Domain governance\n\nAWS: Amazon DataZone domain group ownership for group-based domain administration and control\n\nValidation: Must be array of valid group names if specified; groups must exist in the DataZone domain for ownership assignment",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "ownerUsers": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner user names for domain ownership enabling user-based domain administration and ownership control. Specifies users that have ownership privileges over the entire DataZone domain, supporting user-based domain administration and governance.\n\nUse cases: User-based ownership; Domain administration; User ownership control; Administrative users; Domain governance\n\nAWS: Amazon DataZone domain user ownership for user-based domain administration and control\n\nValidation: Must be array of valid user names if specified; users must exist in the DataZone domain for ownership assignment",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "userAssignment": {
+                    "description": "Q-ENHANCED-PROPERTY\nUser assignment mode for DataZone domain access control enabling manual or automatic user provisioning. Controls how users are assigned to the domain, supporting either manual administrative control or automatic assignment based on organizational policies.\n\nUse cases: User provisioning control; Access management; Assignment automation; User lifecycle management; Access control\n\nAWS: Amazon DataZone domain user assignment configuration for user provisioning and access control\n\nValidation: Must be 'MANUAL' or 'AUTOMATIC'; required; determines user assignment and provisioning behavior\n  *",
                     "enum": [
                         "AUTOMATIC",
                         "MANUAL"
@@ -74,7 +91,8 @@
                     "type": "string"
                 },
                 "users": {
-                    "$ref": "#/definitions/NamedDataZoneUsers"
+                    "$ref": "#/definitions/NamedDataZoneUsers",
+                    "description": "Q-ENHANCED-PROPERTY\nDomain users for user access management enabling individual user provisioning and access control. Defines users that will have access to the DataZone domain, supporting individual user management and personalized data governance access.\n\nUse cases: Individual user access; User provisioning; Personal access control; User management; Individual permissions\n\nAWS: Amazon DataZone domain user configuration for individual user access and management\n\nValidation: Must be valid NamedDataZoneUsers if specified; enables individual user access and management\n  *"
                 }
             },
             "required": [
@@ -148,8 +166,10 @@
         },
         "DataZoneGroup": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nDataZone group configuration interface for data governance providing group management and permission orchestration capabilities. Defines DataZone group properties for data governance including group identity, member management, and collective permissions for systematic data governance group administration.\n\nUse cases: Data governance group management; Group permissions; Member administration; Collective access control; Data catalog groups; Governance organization\n\nAWS: Amazon DataZone group configuration with group management and permission orchestration for data governance\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "properties": {
                 "ssoId": {
+                    "description": "Q-ENHANCED-PROPERTY\nSSO group identifier for DataZone group identity and federated group management enabling centralized group-based access control. Specifies the SSO group ID for federated group management and collective permissions within the DataZone data governance environment.\n\nUse cases: SSO group integration; Federated group management; Centralized group access; Collective permissions; Group-based governance\n\nAWS: Amazon DataZone SSO group integration for federated group management and collective access control\n\nValidation: Must be valid SSO group ID; required; group must exist in SSO directory for proper integration",
                     "type": "string"
                 }
             },
@@ -160,12 +180,14 @@
         },
         "DataZoneUser": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nDataZone user configuration interface for data governance providing user management and access control capabilities. Defines DataZone user properties for data governance including user identity, role assignments, and access permissions for systematic data catalog and governance user management.\n\nUse cases: Data governance user management; User access control; Identity management; Role assignments; Data catalog access; Governance permissions\n\nAWS: Amazon DataZone user configuration with identity management and access control for data governance\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "properties": {
                 "iamRole": {
                     "$ref": "#/definitions/MdaaRoleRef",
-                    "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id."
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role reference for DataZone user identity and access control enabling role-based data governance permissions. Specifies the IAM role that will be associated with the DataZone user for access control and permission management within the data governance framework.\n\nUse cases: Role-based access control; IAM integration; Permission management; Data governance access; Identity management\n\nAWS: Amazon DataZone user IAM role association for access control and permission management\n\nValidation: Must be valid MdaaRoleRef if specified; role must exist and be accessible; mutually exclusive with ssoId"
                 },
                 "ssoId": {
+                    "description": "Q-ENHANCED-PROPERTY\nSSO user identifier for DataZone user identity and federated access enabling single sign-on integration. Specifies the SSO user ID for federated identity management and centralized authentication within the DataZone data governance environment.\n\nUse cases: SSO integration; Federated identity; Centralized authentication; Single sign-on access; Identity federation\n\nAWS: Amazon DataZone SSO user integration for federated identity and centralized authentication\n\nValidation: Must be valid SSO user ID if specified; user must exist in SSO directory; mutually exclusive with iamRole",
                     "type": "string"
                 }
             },
@@ -173,26 +195,32 @@
         },
         "DomainUnit": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for DataZone domain unit hierarchy enabling organizational data governance structure. Defines domain unit ownership, permissions, and nested hierarchical organization for systematic data catalog governance and access control within DataZone domains.\n\nUse cases: Hierarchical data governance; Domain unit organization; Nested organizational structure for data catalog management\n\nAWS: Configures AWS DataZone domain units with ownership and hierarchical organization for data governance\n\nValidation: All owner arrays are optional; domainUnits enables recursive nesting for hierarchical organization",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nDomain unit description for documentation and identification enabling clear unit purpose and organizational context. Provides descriptive information about the domain unit's purpose and scope within the data governance hierarchy.\n\nUse cases: Unit documentation; Purpose identification; Organizational context; Governance documentation; Unit description\n\nAWS: Amazon DataZone domain unit description for documentation and identification\n\nValidation: Must be valid description string if specified; provides context for domain unit purpose and scope",
                     "type": "string"
                 },
                 "domainUnits": {
-                    "$ref": "#/definitions/NamedDomainUnits"
+                    "$ref": "#/definitions/NamedDomainUnits",
+                    "description": "Q-ENHANCED-PROPERTY\nNested domain units for hierarchical organization enabling recursive domain unit structure and multi-level governance. Defines child domain units within the current unit, supporting complex organizational hierarchies and nested governance structures.\n\nUse cases: Hierarchical organization; Nested governance; Multi-level structure; Complex organization; Recursive units\n\nAWS: Amazon DataZone nested domain units for hierarchical governance and organizational structure\n\nValidation: Must be valid NamedDomainUnits if specified; enables recursive nesting for complex organizational hierarchies\n  *"
                 },
                 "ownerAccounts": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner account IDs for domain unit access control enabling cross-account ownership and administrative permissions. Specifies AWS accounts that have ownership and administrative access to the domain unit, supporting multi-account data governance and cross-account administration.\n\nUse cases: Cross-account ownership; Multi-account governance; Administrative access; Account-based permissions; Enterprise governance\n\nAWS: Amazon DataZone domain unit account ownership for cross-account governance and administrative access\n\nValidation: Must be array of valid AWS account IDs if specified; accounts must be accessible for ownership assignment",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "ownerGroups": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner group names for domain unit access control enabling group-based ownership and collective administrative permissions. Specifies groups that have ownership and administrative access to the domain unit, supporting group-based data governance and collective administration.\n\nUse cases: Group-based ownership; Collective administration; Group permissions; Team governance; Group access control\n\nAWS: Amazon DataZone domain unit group ownership for group-based governance and administrative access\n\nValidation: Must be array of valid group names if specified; groups must exist in the DataZone domain for ownership assignment",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "ownerUsers": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner user names for domain unit access control enabling user-based ownership and administrative permissions. Specifies users that have ownership and administrative access to the domain unit, supporting user-based data governance and individual administration.\n\nUse cases: User-based ownership; Individual administration; User permissions; Personal governance; User access control\n\nAWS: Amazon DataZone domain unit user ownership for user-based governance and administrative access\n\nValidation: Must be array of valid user names if specified; users must exist in the DataZone domain for ownership assignment",
                     "items": {
                         "type": "string"
                     },
@@ -203,11 +231,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -235,8 +266,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -250,30 +283,30 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Reference role by arn",
+                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Reference role by id",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Reference role by name",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "A string which uniquely identifies the MdaaRoleRef within a scope.",
+                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
                     "type": "boolean"
                 }
             },
@@ -281,14 +314,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -300,11 +336,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -320,15 +359,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -339,12 +381,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -354,23 +399,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -385,51 +436,58 @@
             "additionalProperties": {
                 "$ref": "#/definitions/AsscociatedAccount"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNamed associated account configuration interface for DataZone with systematic cross-account organization and management capabilities. Defines named associated account mappings for organized multi-account data governance including account sets and systematic cross-account administration for enterprise data catalog governance.\n\nUse cases: Named account sets; Cross-account organization; Multi-account management; Systematic account administration; Enterprise governance organization; Account mapping\n\nAWS: Amazon DataZone named associated account configuration with systematic cross-account organization and management\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "type": "object"
         },
         "NamedBaseDomainsProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/BaseDomainProps"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNamed base domain configuration interface for DataZone with systematic domain organization and management capabilities. Defines named base domain mappings for organized data governance including domain sets and systematic domain administration for data catalog governance.\n\nUse cases: Named domain sets; Domain organization; Systematic domain administration; Data governance organization\n\nAWS: Amazon DataZone named base domain configuration with systematic domain organization and management\n\nValidation: String keys must be unique domain names; values must be valid BaseDomainProps configurations",
             "type": "object"
         },
         "NamedDataZoneGroups": {
             "additionalProperties": {
                 "$ref": "#/definitions/DataZoneGroup"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNamed DataZone group configuration interface for data governance with systematic group organization and management capabilities. Defines named DataZone group mappings for organized data governance including group sets, permission management, and systematic group administration for data catalog governance.\n\nUse cases: Named group sets; Group organization; Permission management; Systematic group administration; Data governance organization; Group mapping\n\nAWS: Amazon DataZone named group configuration with systematic group organization and management for data governance\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "type": "object"
         },
         "NamedDataZoneUsers": {
             "additionalProperties": {
                 "$ref": "#/definitions/DataZoneUser"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNamed DataZone user configuration interface for data governance with systematic user organization and management capabilities. Defines named DataZone user mappings for organized data governance including user sets, access management, and systematic user administration for data catalog governance.\n\nUse cases: Named user sets; User organization; Access management; Systematic user administration; Data governance organization; User mapping\n\nAWS: Amazon DataZone named user configuration with systematic user organization and management for data governance\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "type": "object"
         },
         "NamedDomainUnits": {
             "additionalProperties": {
                 "$ref": "#/definitions/DomainUnit"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNamed domain unit configuration interface for DataZone with systematic domain unit organization and management capabilities. Defines named domain unit mappings for organized hierarchical data governance including unit sets and systematic domain unit administration for data catalog governance.\n\nUse cases: Named domain unit sets; Domain unit organization; Hierarchical governance management; Systematic unit administration; Governance organization; Unit mapping\n\nAWS: Amazon DataZone named domain unit configuration with systematic domain unit organization and hierarchical management\n\nValidation: Configuration must be valid for DataZone deployment; properties must conform to AWS DataZone and data governance requirements",
             "type": "object"
         }
     },
     "properties": {
         "domains": {
-            "$ref": "#/definitions/NamedBaseDomainsProps"
+            "$ref": "#/definitions/NamedBaseDomainsProps",
+            "description": "Q-ENHANCED-PROPERTY\nRequired map of domain names to SageMaker domain configurations enabling ML platform management and governance. Provides complete domain setup with user management, security controls, and ML development capabilities for enterprise machine learning operations.\n\nUse cases: ML platform management; SageMaker domain governance; Enterprise ML development environment setup\n\nAWS: Amazon SageMaker domains for ML platform management and governance\n\nValidation: Must be valid NamedBaseDomainsProps; required; defines all SageMaker domain configurations and capabilities\n  *"
         },
         "glueCatalogKmsKeyArn": {
+            "description": "Q-ENHANCED-PROPERTY\nOptional KMS key ARN for Glue catalog encryption enabling secure data catalog operations with customer-controlled encryption. Provides encryption at rest for Glue catalog metadata used in ML workflows and data governance within SageMaker integration.\n\nUse cases: Data catalog encryption; Secure ML metadata management; Customer-controlled key management for ML governance\n\nAWS: AWS KMS key for Glue catalog encryption in SageMaker integration and secure ML metadata management\n\nValidation: Must be valid KMS key ARN if provided; enables secure Glue catalog integration with SageMaker",
             "type": "string"
         },
         "lakeformationManageAccessRole": {
             "$ref": "#/definitions/MdaaRoleRef",
-            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id."
+            "description": "Q-ENHANCED-PROPERTY\nOptional Lake Formation management access role reference enabling SageMaker integration with Lake Formation access control. Provides role-based integration between SageMaker and Lake Formation for ML data governance and access management.\n\nUse cases: Lake Formation integration; ML data governance; Integrated access control for ML workflows\n\nAWS: AWS IAM role for SageMaker and Lake Formation integration and ML governance\n\nValidation: Must be valid MdaaRoleRef if provided; enables integrated governance between SageMaker and Lake Formation"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         }
     },
     "required": [

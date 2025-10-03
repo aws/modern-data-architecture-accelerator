@@ -9,83 +9,59 @@ import { CfnTag, IResolvable } from 'aws-cdk-lib';
 import { CfnServer, CfnServerProps } from 'aws-cdk-lib/aws-transfer';
 import { Construct } from 'constructs';
 
-/**
- * Props for creating a MDAA Athena Workgroup.
- */
 export interface MdaaSFTPServerProps extends MdaaConstructProps {
   /**
-   * Specifies the VPC id on which the server will be placed
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required VPC ID for SFTP server deployment providing network isolation and security controls. Ensures server operates within the specified VPC for secure networking and integration with other VPC resources.
+   *
+   * Use cases: VPC network isolation; Secure networking; VPC resource integration
+   *
+   * AWS: Amazon VPC for Transfer Family SFTP server network isolation and security
+   *
+   * Validation: Must be valid VPC ID; required; VPC must exist and be accessible
+   **/
   readonly vpcId: string;
   /**
-   * Specifies the subnets on which the server will be placed
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required array of subnet IDs for SFTP server endpoint placement within the VPC. Defines the network subnets where server endpoints will be deployed for secure VPC connectivity and availability zone distribution.
+   *
+   * Use cases: VPC network placement; Subnet-specific deployment; Multi-AZ server distribution
+   *
+   * AWS: Amazon VPC subnets for Transfer Family SFTP server endpoint placement
+   *
+   * Validation: Must be array of valid subnet IDs; required; subnets must exist in specified VPC
+   **/
   readonly subnetIds: string[];
   /**
-   * Security group which will be bound to the server.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required primary security group ID for SFTP server network access control defining inbound and outbound traffic rules. Provides network-level security controls for SFTP server access and client connectivity.
+   *
+   * Use cases: Network access control; SFTP traffic filtering; Client connectivity security
+   *
+   * AWS: Amazon VPC security group for Transfer Family SFTP server network access control
+   *
+   * Validation: Must be valid security group ID; required; defines primary network access rules
+   **/
   readonly securityGroupId: string;
-  /**
-   * If specified, the SFTP server will be allocated a public IP address.
-   */
   readonly addressAllocationIds?: string[];
-  /**
-   * Additional security group which will be bound to the server
-   */
   readonly additionalSecurityGroupIds?: string[];
-  /**
-   * If true, SFTP server will be publicly accessible via Elastic IP/VPC
-   */
   readonly publicAddress?: boolean;
   /**
-   * Specifies the domain of the storage system that is used for file transfers.
+   * Q-ENHANCED-PROPERTY
+   * Optional storage domain specification for file transfer operations controlling the underlying storage system. Determines whether files are stored in Amazon S3 or Amazon EFS for different storage requirements and access patterns.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-transfer-server.html#cfn-transfer-server-domain
-   */
+   * Use cases: Storage system selection; File storage requirements; Access pattern optimization
+   *
+   * AWS: AWS Transfer Family server domain configuration for storage system selection
+   *
+   * Validation: Must be valid domain type (S3, EFS) if provided; determines storage backend
+   **/
   readonly domain?: string;
-  /**
-   * Required when `IdentityProviderType` is set to `AWS_DIRECTORY_SERVICE` or `API_GATEWAY` . Accepts an array containing all of the information required to use a directory in `AWS_DIRECTORY_SERVICE` or invoke a customer-supplied authentication API, including the API Gateway URL. Not required when `IdentityProviderType` is set to `SERVICE_MANAGED` .
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-transfer-server.html#cfn-transfer-server-identityproviderdetails
-   */
   readonly identityProviderDetails?: CfnServer.IdentityProviderDetailsProperty | IResolvable;
-  /**
-   * Specifies the mode of authentication for a server. The default value is `SERVICE_MANAGED` , which allows you to store and access user credentials within the AWS Transfer Family service.
-   *
-   * Use `AWS_DIRECTORY_SERVICE` to provide access to Active Directory groups in AWS Managed Active Directory or Microsoft Active Directory in your on-premises environment or in AWS using AD Connectors. This option also requires you to provide a Directory ID using the `IdentityProviderDetails` parameter.
-   *
-   * Use the `API_GATEWAY` value to integrate with an identity provider of your choosing. The `API_GATEWAY` setting requires you to provide an API Gateway endpoint URL to call for authentication using the `IdentityProviderDetails` parameter.
-   *
-   * Use the `AWS_LAMBDA` value to directly use a Lambda function as your identity provider. If you choose this value, you must specify the ARN for the lambda function in the `Function` parameter for the `IdentityProviderDetails` data type.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-transfer-server.html#cfn-transfer-server-identityprovidertype
-   */
   readonly identityProviderType?: string;
-  /**
-   * Specifies the Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that allows a server to turn on Amazon CloudWatch logging for Amazon S3 or Amazon EFS events. When set, user activity can be viewed in your CloudWatch logs.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-transfer-server.html#cfn-transfer-server-loggingrole
-   */
   readonly loggingRole: IMdaaRole;
-  /**
-   * Specify a string to display when users connect to a server. This string is displayed before the user authenticates. For example, the following banner displays details about using the system.
-   *
-   * `This system is for the use of authorized users only. Individuals using this computer system without authority, or in excess of their authority, are subject to having all of their activities on this system monitored and recorded by system personnel.`
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-transfer-server.html#cfn-transfer-server-preauthenticationloginbanner
-   */
   readonly preAuthenticationLoginBanner?: string;
-  /**
-   * Key-value pairs that can be used to group and search for servers.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-transfer-server.html#cfn-transfer-server-tags
-   */
   readonly tags?: CfnTag[];
-  /**
-   * Specifies the workflow ID for the workflow to assign and the execution role used for executing the workflow.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-transfer-server.html#cfn-transfer-server-workflowdetails
-   */
   readonly workflowDetails?: CfnServer.WorkflowDetailsProperty | IResolvable;
 }
 

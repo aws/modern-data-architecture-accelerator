@@ -45,36 +45,160 @@ import { Construct, IConstruct } from 'constructs';
 import * as configSchema from './config-schema.json';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Validation stage command configuration interface for CodeBuild validation projects that execute infrastructure testing and compliance verification during MDAA deployment pipelines. Defines install dependencies and validation commands that run in CodeBuild environments to verify deployed infrastructure meets requirements before pipeline progression.
+ *
+ * Use cases: Infrastructure smoke testing; Compliance verification; Deployment validation; Quality gate enforcement; Post-deployment verification
+ *
+ * AWS: AWS CodeBuild validation project commands with install dependencies and validation script execution for pipeline quality gates
+ *
+ * Validation: install commands must be valid package manager commands; commands must be executable shell scripts that return appropriate exit codes for pipeline success/failure
+ */
 export interface ValidateStageCommands {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of package installation commands for CodeBuild validation environment setup enabling testing tool installation and dependency management. Defines commands that will be executed during the install phase to install required testing frameworks, validation tools, and dependencies needed for infrastructure validation operations.
+   *
+   * Use cases: Testing tool installation; Validation dependency setup; Testing framework installation; Environment preparation; Validation tool setup
+   *
+   * AWS: AWS CodeBuild validation install phase commands for testing tool installation and validation environment setup
+   *
+   * Validation: Must be array of valid shell commands if provided; commands execute in CodeBuild Linux environment; optional for validation install phase
+   **/
   readonly install?: string[];
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of validation commands for infrastructure testing and compliance verification enabling quality gate enforcement. Defines commands that will be executed to validate deployed infrastructure, perform smoke tests, and verify compliance requirements before pipeline progression.
+   *
+   * Use cases: Infrastructure smoke testing; Compliance verification; Quality gate enforcement; Post-deployment validation; Infrastructure testing
+   *
+   * AWS: AWS CodeBuild validation commands for infrastructure testing and compliance verification with quality gate enforcement
+   *
+   * Validation: Must be array of valid shell commands if provided; commands must return appropriate exit codes for pipeline success/failure; optional for validation execution
+   **/
   readonly commands?: string[];
 }
-
+/**
+ * Q-ENHANCED-INTERFACE
+ * Deployment stage command configuration interface for CodeBuild projects that execute custom scripts during MDAA deployment pipeline stages. Defines install dependencies, pre-deployment preparation commands, and post-deployment cleanup commands that run in CodeBuild environments to customize deployment behavior and perform environment-specific operations.
+ *
+ * Use cases: Environment preparation; Custom deployment scripts; Post-deployment cleanup; Infrastructure customization; Environment-specific configuration
+ *
+ * AWS: AWS CodeBuild project commands with install, pre-execution, and post-execution hooks for deployment stage customization
+ *
+ * Validation: install commands must be valid package manager commands; pre/post commands must be executable shell scripts; commands execute in CodeBuild Linux environment
+ */
 export interface StageCommands {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of package installation commands for CodeBuild environment setup enabling dependency management and tool installation. Defines commands that will be executed during the install phase to install required packages, dependencies, and tools needed for deployment operations.
+   *
+   * Use cases: Dependency installation; Tool setup; Package management; Environment preparation; Build tool installation
+   *
+   * AWS: AWS CodeBuild install phase commands for dependency installation and environment setup
+   *
+   * Validation: Must be array of valid shell commands if provided; commands execute in CodeBuild Linux environment; optional for install phase
+   **/
   readonly install?: string[];
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of pre-execution commands for deployment stage preparation enabling custom setup and validation before main deployment operations. Defines commands that will be executed before the main deployment stage to perform environment preparation, validation, and custom setup tasks.
+   *
+   * Use cases: Environment preparation; Pre-deployment validation; Custom setup; Configuration verification; Prerequisite checks
+   *
+   * AWS: AWS CodeBuild pre-execution commands for deployment stage preparation and validation
+   *
+   * Validation: Must be array of valid shell commands if provided; commands execute in CodeBuild Linux environment; optional for pre-execution phase
+   **/
   readonly pre?: string[];
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of post-execution commands for deployment stage cleanup and finalization enabling custom cleanup and post-deployment operations. Defines commands that will be executed after the main deployment stage to perform cleanup, notification, validation, and finalization tasks.
+   *
+   * Use cases: Post-deployment cleanup; Notification sending; Validation checks; Resource cleanup; Finalization tasks
+   *
+   * AWS: AWS CodeBuild post-execution commands for deployment stage cleanup and finalization
+   *
+   * Validation: Must be array of valid shell commands if provided; commands execute in CodeBuild Linux environment; optional for post-execution phase
+   **/
   readonly post?: string[];
 }
-
 export interface Commands extends StageCommands {
   readonly preDeploy?: StageCommands;
   readonly preDeployValidate?: ValidateStageCommands;
   readonly deploy?: StageCommands;
   readonly postDeployValidate?: ValidateStageCommands;
 }
-
+/**
+ * Q-ENHANCED-INTERFACE
+ * MDAA DevOps configuration interface for CI/CD pipeline orchestration with CodeCommit repository integration and multi-environment deployment management. Defines the complete DevOps infrastructure including source repositories, deployment pipelines, and CDK bootstrap configuration for automated MDAA infrastructure deployment across multiple environments with approval gates and validation stages.
+ *
+ * Use cases: Multi-environment CI/CD pipelines; Automated MDAA deployments; Configuration repository management; Infrastructure change management; DevOps automation
+ *
+ * AWS: AWS CodePipeline with CodeCommit source repositories, CodeBuild projects for MDAA CLI execution, and CDK bootstrap integration for infrastructure deployment
+ *
+ * Validation: mdaaCodeCommitRepo and configsCodeCommitRepo must be valid CodeCommit repository names; pipelines must contain valid PipelineConfig objects; cdkBootstrapContext must be valid CDK qualifier
+ */
 export interface DevOpsConfigContents extends MdaaBaseConfigContents, Commands {
   readonly mdaaCodeCommitRepo: string;
   readonly mdaaBranch?: string;
   readonly configsCodeCommitRepo: string;
   readonly configsBranch?: string;
   readonly pipelines?: { [pipelineName: string]: PipelineConfig };
+  /**
+   * Q-ENHANCED-PROPERTY
+   * CDK bootstrap context qualifier for identifying CDK bootstrap resources in the target environment. Defines the CDK bootstrap qualifier used to locate CDK deployment roles, buckets, and other bootstrap resources for MDAA infrastructure deployment through CI/CD pipelines.
+   *
+   * Use cases: CDK bootstrap resource identification; Multi-environment CDK deployment; Bootstrap resource isolation; CDK role management
+   *
+   * AWS: AWS CDK bootstrap resources including deployment roles and asset buckets
+   *
+   * Validation: Must be valid CDK bootstrap qualifier string; defaults to standard CDK qualifier if not specified; optional string
+   **/
   readonly cdkBootstrapContext?: string;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Individual pipeline configuration interface for environment-specific MDAA deployment pipelines with domain, environment, and module filtering capabilities. Defines pipeline-specific deployment parameters including target filters for selective deployment, custom command execution, and pipeline-level deployment lifecycle management for targeted infrastructure deployment within multi-domain data architectures.
+ * Use cases: Environment-specific pipelines; Selective module deployment; Domain-filtered deployments; Pipeline customization; Targeted infrastructure updates
+ * AWS: AWS CodePipeline configuration with domain/environment/module filtering for selective MDAA deployment targeting specific infrastructure components
+ * Validation: domainFilter, envFilter, and moduleFilter must reference valid MDAA domains, environments, and modules; pipeline must inherit valid Commands configuration
+ */
 export interface PipelineConfig extends Commands {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of domain names for pipeline deployment filtering enabling selective domain-specific deployments. Restricts pipeline execution to only the specified MDAA domains, allowing for targeted deployment strategies and domain isolation in multi-domain data architectures.
+   *
+   * Use cases: Domain-specific deployments; Multi-domain filtering; Selective domain updates; Domain isolation strategies
+   *
+   * AWS: AWS CodePipeline domain filtering for selective MDAA domain deployment and targeted infrastructure updates
+   *
+   * Validation: Must be array of valid MDAA domain names if provided; domains must exist in MDAA configuration; optional for domain filtering
+   **/
   readonly domainFilter?: string[];
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of environment names for pipeline deployment filtering enabling selective environment-specific deployments. Restricts pipeline execution to only the specified MDAA environments, allowing for targeted deployment strategies and environment isolation across development, staging, and production environments.
+   *
+   * Use cases: Environment-specific deployments; Multi-environment filtering; Selective environment updates; Environment isolation strategies
+   *
+   * AWS: AWS CodePipeline environment filtering for selective MDAA environment deployment and targeted infrastructure updates
+   *
+   * Validation: Must be array of valid MDAA environment names if provided; environments must exist in MDAA configuration; optional for environment filtering
+   **/
   readonly envFilter?: string[];
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of module names for pipeline deployment filtering enabling selective module-specific deployments. Restricts pipeline execution to only the specified MDAA modules, allowing for targeted deployment strategies and module isolation for specific infrastructure components or services.
+   *
+   * Use cases: Module-specific deployments; Multi-module filtering; Selective module updates; Component isolation strategies
+   *
+   * AWS: AWS CodePipeline module filtering for selective MDAA module deployment and targeted infrastructure component updates
+   *
+   * Validation: Must be array of valid MDAA module names if provided; modules must exist in MDAA configuration; optional for module filtering
+   **/
   readonly moduleFilter?: string[];
 }
 

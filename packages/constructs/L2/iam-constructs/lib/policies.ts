@@ -17,77 +17,78 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
-/**
- * Interface definging a compliant IAM ManagedPolicy
- */
 export interface MdaaManagedPolicyProps extends MdaaConstructProps {
-  /**
-   * The name of the managed policy. If you specify multiple policies for an entity,
-   * specify unique names. For example, if you specify a list of policies for
-   * an IAM role, each policy must have a unique name.
-   *
-   * @default - A name is automatically generated.
-   */
   readonly managedPolicyName?: string;
   /**
-   * A description of the managed policy. Typically used to store information about the
-   * permissions defined in the policy. For example, "Grants access to production DynamoDB tables."
-   * The policy description is immutable. After a value is assigned, it cannot be changed.
+   * Q-ENHANCED-PROPERTY
+   * Optional description of the managed policy explaining its purpose and permissions for documentation and management clarity. Provides human-readable description of the policy's purpose and the permissions it grants for operational understanding and compliance documentation.
    *
-   * @default - empty
-   */
+   * Use cases: Policy documentation; Management clarity; Compliance documentation; Operational understanding
+   *
+   * AWS: AWS IAM managed policy description for documentation and management
+   *
+   * Validation: Must be descriptive text if provided; immutable after creation; recommended for policy documentation
+   **/
   readonly description?: string;
   /**
-   * The path for the policy. This parameter allows (through its regex pattern) a string of characters
-   * consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes.
-   * In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F),
-   * including most punctuation characters, digits, and upper and lowercased letters.
+   * Q-ENHANCED-PROPERTY
+   * Optional IAM path for managed policy organization and management enabling hierarchical policy structure. Specifies the IAM path for the managed policy providing organizational structure and access control grouping for policy management.
    *
-   * For more information about paths, see IAM Identifiers in the IAM User Guide.
+   * Use cases: Policy organization; Hierarchical structure; Access control grouping; IAM management
    *
-   * @default - "/"
-   */
+   * AWS: AWS IAM policy path for managed policy organization and management
+   *
+   * Validation: Must be valid IAM path string if provided; defaults to root path '/' for policy organization
+   **/
   readonly path?: string;
   /**
-   * Users to attach this policy to.
-   * You can also use `attachToUser(user)` to attach this policy to a user.
+   * Q-ENHANCED-PROPERTY
+   * Optional array of IAM users for policy attachment enabling individual user permissions to AWS services and resources. Defines IAM users that will receive the policy permissions enabling direct user access to data lake resources, analytics tools, and data processing capabilities.
    *
-   * @default - No users.
-   */
+   * Use cases: Individual user access; Data analyst permissions; Developer access; Direct user authorization
+   *
+   * AWS: AWS IAM policy attachment to users for individual access permissions and resource authorization
+   *
+   * Validation: Must be valid IUser array if provided; enables individual user access when specified
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_iam.IUser.html
+   **/
   readonly users?: IUser[];
   /**
-   * Roles to attach this policy to.
-   * You can also use `attachToRole(role)` to attach this policy to a role.
+   * Q-ENHANCED-PROPERTY
+   * Optional array of IAM roles for policy attachment enabling service permissions and cross-service access in data analytics environments. Defines IAM roles that will receive the policy permissions enabling secure access to data lake resources, analytics services, and cross-service integrations.
    *
-   * @default - No roles.
-   */
+   * Use cases: Service permissions; Cross-service access; Data lake security; Analytics authorization; Resource access control
+   *
+   * AWS: AWS IAM policy attachment to roles for service and resource access permissions
+   *
+   * Validation: Must be valid IRole array if provided; enables service access when specified
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_iam.IRole.html
+   **/
   readonly roles?: IRole[];
   /**
-   * Groups to attach this policy to.
-   * You can also use `attachToGroup(group)` to attach this policy to a group.
+   * Q-ENHANCED-PROPERTY
+   * Optional array of IAM groups for policy attachment enabling group-based permissions management and organizational access control. Defines IAM groups that will receive the policy permissions enabling organized access to data analytics resources and services.
    *
-   * @default - No groups.
-   */
+   * Use cases: Group-based permissions; Organizational access; Team permissions; Structured access control
+   *
+   * AWS: AWS IAM policy attachment to groups for group-based access permissions
+   *
+   * Validation: Must be valid IGroup array if provided; enables group-based access when specified
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_iam.IGroup.html
+   **/
   readonly groups?: IGroup[];
-  /**
-   * Initial set of permissions to add to this policy document.
-   * You can also use `addPermission(statement)` to add permissions later.
-   *
-   * @default - No statements.
-   */
   readonly statements?: PolicyStatement[];
-  /**
-   * Initial PolicyDocument to use for this ManagedPolicy. If omited, any
-   * `PolicyStatement` provided in the `statements` property will be applied
-   * against the empty default `PolicyDocument`.
-   *
-   * @default - An empty policy.
-   */
   readonly document?: PolicyDocument;
   /**
-   * If specified, policy names will be created using this prefix instead of using the naming module.
-   * This is useful when policy names need to be portable across accounts (such as for integration with SSO permission sets)
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional flag for verbatim policy naming bypassing naming module for cross-account portability and SSO integration. Enables direct policy name specification for scenarios requiring portable policy names across accounts such as SSO permission set integration.
+   *
+   * Use cases: Cross-account portability; SSO integration; Portable naming; Direct name specification
+   *
+   * AWS: AWS IAM policy naming for cross-account portability and SSO integration
+   *
+   * Validation: Must be boolean if provided; enables verbatim naming when true for cross-account scenarios
+   **/
   readonly verbatimPolicyName?: boolean;
 }
 

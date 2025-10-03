@@ -4,62 +4,63 @@
     "definitions": {
         "AccountProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nAccountProps configuration interface for business intelligence and data visualization.\nUse cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting\nAWS: Amazon QuickSight configuration for business intelligence and data visualization\nValidation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements",
             "properties": {
                 "authenticationMethod": {
                     "$ref": "#/definitions/AuthenticationMethod",
-                    "description": "The method to authenticate your Amazon QuickSight account.\nValid Values:"
+                    "description": "Q-ENHANCED-PROPERTY\nRequired authentication method for Amazon QuickSight account access controlling how users authenticate to the business intelligence platform. Determines the identity provider integration and user management approach for QuickSight dashboard and analytics access.\n\nUse cases: Identity provider integration; User authentication control; Enterprise SSO integration; Access management strategy\nAWS: Amazon QuickSight account authentication method configuration for user access control\nValidation: Must be one of 'IAM_AND_QUICKSIGHT', 'IAM_ONLY', or 'ACTIVE_DIRECTORY'; required for account setup"
                 },
                 "contactNumber": {
-                    "description": "A 10-digit phone number for the author of the Amazon QuickSight account to use for future communications.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional 10-digit phone number for the Amazon QuickSight account administrator used for AWS support communications and account notifications. Provides contact information for account-related communications and support escalations.\n\nUse cases: Account administrator contact; AWS support communications; Account notifications; Emergency contact information\nAWS: Amazon QuickSight account contact number for administrator communications and support\nValidation: Must be exactly 10 digits if provided; optional field for account setup",
                     "type": "string"
                 },
                 "edition": {
                     "$ref": "#/definitions/Edition",
-                    "description": "The edition of Amazon QuickSight.\nValid Values: STANDARD | ENTERPRISE | ENTERPRISE_AND_Q"
+                    "description": "Q-ENHANCED-PROPERTY\nRequired Amazon QuickSight edition determining the feature set and capabilities available for business intelligence and data visualization. Controls access to advanced features like machine learning insights, embedded analytics, and enterprise governance capabilities.\n\nUse cases: Feature set selection; Cost optimization; Enterprise capabilities; ML insights access\nAWS: Amazon QuickSight account edition configuration for feature availability and pricing tier\nValidation: Must be one of 'STANDARD', 'ENTERPRISE', or 'ENTERPRISE_AND_Q'; required for account setup"
                 },
                 "emailAddress": {
-                    "description": "The email address of the author of the Amazon QuickSight account to use for future communications.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional email address of the Amazon QuickSight account administrator used for AWS communications and account management notifications. Provides contact information for account-related updates, billing notifications, and administrative communications.\n\nUse cases: Account administrator contact; AWS communications; Account notifications; Administrative updates\nAWS: Amazon QuickSight account administrator email for AWS communications and notifications\nValidation: Must be valid email format if provided; optional field for account setup",
                     "type": "string"
                 },
                 "firstName": {
-                    "description": "The first name of the author of the Amazon QuickSight account to use for future communications.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional first name of the Amazon QuickSight account administrator used for AWS communications and account personalization. Provides personal identification for account-related communications and support interactions.\n\nUse cases: Account personalization; AWS support communications; Administrator identification; Account management\nAWS: Amazon QuickSight account administrator first name for personalized communications\nValidation: String value if provided; optional field for account setup",
                     "type": "string"
                 },
                 "glueResourceAccess": {
-                    "description": "List of Glue resources to which the QuickSight service role will be granted access.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of AWS Glue resource ARNs for Amazon QuickSight service role access enabling data catalog integration. Grants QuickSight permissions to access specific Glue databases, tables, and crawlers for data source discovery and metadata management.\n\nUse cases: Glue data catalog integration; Metadata access; Data source discovery; Table schema access\nAWS: Amazon QuickSight service role permissions for AWS Glue resource access\nValidation: Must be array of valid Glue resource ARNs if provided; optional for Glue integration",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "ipRestrictions": {
-                    "description": "List of IP CIDRs which will be provided access to the account via the QuickSight interface. IP access restrictions are disabled by default.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of IP CIDR blocks for Amazon QuickSight account access restrictions enabling network-based access control. Defines allowed IP ranges for QuickSight interface access, providing additional security layer for business intelligence platform access.\n\nUse cases: Network access control; IP-based security; Corporate network restrictions; Geographic access limitations\nAWS: Amazon QuickSight IP restriction configuration for network-based access control\nValidation: Must be array of valid IpRestrictionProps if provided; optional for enhanced security",
                     "items": {
                         "$ref": "#/definitions/IpRestrictionProps"
                     },
                     "type": "array"
                 },
                 "lastName": {
-                    "description": "The last name of the author of the Amazon QuickSight account to use for future communications.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional last name of the Amazon QuickSight account administrator used for AWS communications and account personalization. Provides personal identification for account-related communications and support interactions.\n\nUse cases: Account personalization; AWS support communications; Administrator identification; Account management\nAWS: Amazon QuickSight account administrator last name for personalized communications\nValidation: String value if provided; optional field for account setup",
                     "type": "string"
                 },
                 "notificationEmail": {
-                    "description": "The email address that you want Amazon QuickSight to send notifications.",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired email address for Amazon QuickSight account notifications including billing alerts, service updates, and administrative communications. Primary contact point for all QuickSight account-related notifications and system alerts.\n\nUse cases: Account notifications; Billing alerts; Service updates; Administrative communications\nAWS: Amazon QuickSight account notification email for system alerts and account communications\nValidation: Must be valid email format; required field for account setup",
                     "type": "string"
                 },
                 "securityGroupAccess": {
                     "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
-                    "description": "Map of names to security group access definitions. Will be added as egrees/ingress rules to the QuickSight security group, permitting access\nbetween the QS account and internal resources on your VPC."
+                    "description": "Q-ENHANCED-PROPERTY\nOptional security group access definitions for Amazon QuickSight VPC connectivity enabling controlled network access to internal resources. Defines ingress and egress rules for the QuickSight security group to permit secure communication with VPC-based data sources and services.\n\nUse cases: VPC resource access control; Data source connectivity; Network security rules; Internal service communication\nAWS: Amazon QuickSight VPC security group rules for controlled access to internal resources\nValidation: Must be valid MdaaSecurityGroupRuleProps if provided; optional for VPC deployments"
                 },
                 "subnetIds": {
-                    "description": "The Subnet IDs to which the QS Account will be connected.",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired array of subnet identifiers for Amazon QuickSight VPC connection enabling network connectivity to data sources across multiple availability zones. Provides high availability and network redundancy for secure data source access within the VPC.\n\nUse cases: Multi-AZ connectivity; High availability; Network redundancy; Secure data source access\nAWS: Amazon QuickSight VPC connection subnet configuration for multi-AZ data source connectivity\nValidation: Must be array of valid subnet IDs (subnet-xxxxxxxx); required for VPC-based deployments",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "vpcId": {
-                    "description": "The VPC to which the QS Account will be associated.",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired VPC identifier for Amazon QuickSight account network association enabling secure connectivity to data sources within the VPC. Establishes network isolation and secure access to VPC-based resources like RDS databases and private data sources.\n\nUse cases: VPC network association; Secure data source connectivity; Network isolation; Private resource access\nAWS: Amazon QuickSight VPC connection configuration for secure network access to data sources\nValidation: Must be valid VPC ID format (vpc-xxxxxxxx); required for VPC-based deployments",
                     "type": "string"
                 }
             },
@@ -153,11 +154,14 @@
         },
         "IpRestrictionProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nIpRestrictionProps configuration interface for business intelligence and data visualization.\nUse cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting\nAWS: Amazon QuickSight configuration for business intelligence and data visualization\nValidation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements",
             "properties": {
                 "cidr": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired CIDR block for QuickSight IP-based access restriction enabling network-level security control. Defines the IP address range that will be allowed to access QuickSight dashboards and analytics, providing network-level security for business intelligence and data visualization access.\n\nUse cases: Network-level security; IP-based access control; Corporate network restrictions; Security compliance; Access management\n\nAWS: Amazon QuickSight IP restriction CIDR block for network-level access control and security\n\nValidation: Must be valid CIDR block format; required for IP restriction configuration",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional description for QuickSight IP restriction rule enabling documentation and management of access control policies. Provides human-readable description of the IP restriction rule for administrative purposes and access control documentation.\n\nUse cases: Access control documentation; Rule management; Administrative clarity; Policy documentation; Security governance\n\nAWS: Amazon QuickSight IP restriction rule description for access control documentation and management\n\nValidation: Must be descriptive string if provided; optional for rule documentation",
                     "type": "string"
                 }
             },
@@ -168,8 +172,10 @@
         },
         "MdaaCidrPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaCidrPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "cidr": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired CIDR block specification for network access control in security group rules enabling IP range-based access control. Defines the IP address range that will be allowed or denied access through security group rules for network-level access control and security boundaries.\n\nUse cases: IP range access control; Network security boundaries; CIDR-based filtering; Network access management\n\nAWS: Amazon EC2 security group CIDR block for IP range-based network access control\n\nValidation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-based security group rules",
                     "type": "string"
                 },
                 "description": {
@@ -188,6 +194,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -199,11 +206,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -231,8 +241,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -246,6 +258,7 @@
         },
         "MdaaPrefixListPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaPrefixListPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -254,6 +267,7 @@
                     "type": "number"
                 },
                 "prefixList": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired prefix list identifier for managed IP range access control in security group rules enabling AWS service and managed IP range-based access control. Defines the prefix list ID that contains managed IP ranges for AWS services or custom IP ranges for streamlined security group rule management.\n\nUse cases: AWS service access; Managed IP ranges; Prefix list-based filtering; Streamlined rule management\n\nAWS: Amazon EC2 prefix list identifier for managed IP range-based network access control\n\nValidation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for prefix list-based security group rules",
                     "type": "string"
                 },
                 "protocol": {
@@ -266,6 +280,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -277,6 +292,7 @@
         },
         "MdaaSecurityGroupPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -288,6 +304,7 @@
                     "type": "string"
                 },
                 "sgId": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired security group identifier for security group-based access control in network rules enabling security group reference-based access control. Defines the security group ID that will be referenced in security group rules for allowing access between security groups and resources.\n\nUse cases: Security group reference; Cross-security group access; Resource-based access control; Security group chaining\n\nAWS: Amazon EC2 security group identifier for security group-based network access control\n\nValidation: Must be valid security group ID format (sg-xxxxxxxxx); required for security group-based rules",
                     "type": "string"
                 },
                 "suppressions": {
@@ -297,6 +314,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -308,20 +326,24 @@
         },
         "MdaaSecurityGroupRuleProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupRuleProps configuration interface for compute infrastructure and instance management.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "ipv4": {
+                    "description": "Q-ENHANCED-PROPERTY\nIPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions. Specifies IPv4 CIDR blocks that are allowed or denied access through the security group for network-level access control and IP-based security policies.\n\nUse cases: IP-based access control; Network segmentation; CIDR-based restrictions; Geographic access control; Network security policies\n\nAWS: AWS EC2 SecurityGroup rules with IPv4 CIDR block sources/destinations\n\nValidation: Must be valid MdaaCidrPeer array with valid CIDR notation; optional array for IP-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaCidrPeer"
                     },
                     "type": "array"
                 },
                 "prefixList": {
+                    "description": "Q-ENHANCED-PROPERTY\nPrefix list rules for security group traffic control defining managed prefix list-based access restrictions. Specifies AWS-managed or customer-managed prefix lists for scalable IP address range management and centralized network access control.\n\nUse cases: Managed IP ranges; Scalable access control; Centralized IP management; AWS service access; Regional IP restrictions\n\nAWS: AWS EC2 SecurityGroup rules with prefix list sources/destinations\n\nValidation: Must be valid MdaaPrefixListPeer array with valid prefix list IDs; optional array for prefix list-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaPrefixListPeer"
                     },
                     "type": "array"
                 },
                 "sg": {
+                    "description": "Q-ENHANCED-PROPERTY\nSecurity group rules for cross-security group traffic control defining security group-based access restrictions. Specifies other security groups that are allowed access through this security group for resource-level access control and security group chaining.\n\nUse cases: Cross-security group access; Resource-based access control; Security group chaining; Service-to-service communication; Layered security\n\nAWS: AWS EC2 SecurityGroup rules with security group sources/destinations\n\nValidation: Must be valid MdaaSecurityGroupPeer array with valid security group IDs; optional array for SG-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaSecurityGroupPeer"
                     },
@@ -332,14 +354,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -351,11 +376,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -371,15 +399,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -390,12 +421,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -405,23 +439,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -486,15 +526,16 @@
     },
     "properties": {
         "account": {
-            "$ref": "#/definitions/AccountProps"
+            "$ref": "#/definitions/AccountProps",
+            "description": "Q-ENHANCED-PROPERTY\nRequired QuickSight account configuration defining all aspects of the account setup including authentication, permissions, and service configuration. Provides account provisioning with proper security and access controls for business intelligence operations.\n\nUse cases: Account provisioning; Authentication setup; Service configuration and access control\n\nAWS: Amazon QuickSight account configuration for complete service setup and management\n\nValidation: Must be valid AccountProps; required; defines all account setup characteristics"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         }
     },
     "required": [

@@ -329,7 +329,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     });
   });
 
-  test('Test Guardrail with Comprehensive Configuration', () => {
+  test('Test Guardrail providing Configuration', () => {
     const testApp = new MdaaTestApp();
     const kmsKey = new Key(testApp.testStack, 'TestKey');
 

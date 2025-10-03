@@ -9,23 +9,25 @@ import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Topic, TopicProps } from 'aws-cdk-lib/aws-sns';
 import { Construct } from 'constructs';
 
-/**
- * Properties for creating a MDAA SNS Topic
- */
 export interface MdaaSnsTopicProps extends MdaaConstructProps {
-  // A name for the topic.
   readonly topicName: string;
 
-  // A KMS Key, either managed by this CDK app, or imported.
   readonly masterKey: IMdaaKmsKey;
 
-  // Enables content-based deduplication for FIFO topics.
   readonly contentBasedDeduplication?: boolean;
 
-  // A developer-defined string that can be used to identify this SNS topic.
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional human-readable display name for the SNS topic providing user-friendly identification in management interfaces. Enables clear topic identification in AWS console and monitoring tools for improved operational visibility.
+   *
+   * Use cases: User-friendly identification; Management interface clarity; Operational visibility
+   *
+   * AWS: AWS SNS topic display name for user interface and management tool identification
+   *
+   * Validation: Must be descriptive text if provided; used for display purposes in AWS console
+   **/
   readonly displayName?: string;
 
-  // Set to true to create a FIFO topic.
   readonly fifo?: boolean;
 }
 

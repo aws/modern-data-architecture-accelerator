@@ -16,6 +16,16 @@ export interface EfsPersistentVolume {
 
 export interface ZookeeperChartProps extends cdk8s.ChartProps {
   readonly caIssuerName: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required Route 53 hosted zone name for ZooKeeper DNS management and service discovery enabling proper hostname resolution. Provides DNS resolution for ZooKeeper cluster endpoints and enables secure communication through proper hostname resolution and certificate validation.
+   *
+   * Use cases: DNS management; Service discovery; Hostname resolution; Certificate validation
+   *
+   * AWS: Amazon Route 53 hosted zone name for ZooKeeper DNS management and service discovery
+   *
+   * Validation: Must be valid hosted zone name string; required for ZooKeeper DNS management and service discovery
+   **/
   readonly hostedZoneName: string;
   readonly awsRegion: string;
   readonly externalSecretsRoleArn: string;
@@ -24,7 +34,27 @@ export interface ZookeeperChartProps extends cdk8s.ChartProps {
   readonly efsStorageClassName: string;
   readonly zookeeperCertDuration: string;
   readonly zookeeperCertRenewBefore: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required certificate key algorithm specification for ZooKeeper certificate cryptographic configuration determining security strength and compatibility. Defines the cryptographic algorithm used for ZooKeeper certificate key generation affecting security level and certificate compatibility.
+   *
+   * Use cases: Cryptographic configuration; Security strength; Algorithm selection; Certificate generation
+   *
+   * AWS: Certificate key algorithm for ZooKeeper certificate cryptographic configuration and security
+   *
+   * Validation: Must be valid key algorithm string; required for ZooKeeper certificate cryptographic configuration
+   **/
   readonly certKeyAlg: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required certificate key size specification for ZooKeeper certificate cryptographic strength determining security level and computational requirements. Defines the key size in bits for ZooKeeper certificate generation affecting security strength and performance characteristics.
+   *
+   * Use cases: Cryptographic strength; Security level; Key size configuration; Certificate security
+   *
+   * AWS: Certificate key size for ZooKeeper certificate cryptographic strength and security configuration
+   *
+   * Validation: Must be valid key size number; required for ZooKeeper certificate cryptographic strength configuration
+   **/
   readonly certKeySize: number;
 }
 

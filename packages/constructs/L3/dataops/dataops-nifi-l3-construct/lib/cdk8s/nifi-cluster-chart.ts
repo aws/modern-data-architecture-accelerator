@@ -37,6 +37,16 @@ export interface NifiClusterChartProps extends cdk8s.ChartProps, NifiIdentityAut
   readonly nodeCount: number;
   readonly nodeMemory: string;
   readonly nodeCpu: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * The tag of the Apache NiFi Docker image to use for the cluster deployment specifying the NiFi version and build. Configures the container image version for NiFi pods enabling version control, feature access, and compatibility management for data flow processing capabilities and security updates.
+   *
+   * Use cases: Version control; Feature access; Security updates; Compatibility management; Image standardization
+   *
+   * AWS: EKS container image specification for NiFi StatefulSet pods from Docker Hub apache/nifi repository
+   *
+   * Validation: Must be valid Docker image tag; defaults to tested version if not specified; 'latest' pulls most recent version
+   **/
   readonly nifiImageTag?: string;
   readonly awsRegion: string;
   readonly adminCredsSecretName: string;
@@ -45,6 +55,16 @@ export interface NifiClusterChartProps extends cdk8s.ChartProps, NifiIdentityAut
   readonly externalSecretsRoleArn: string;
   readonly efsPersistentVolumes: EfsPersistentVolume[];
   readonly efsStorageClassName: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * SAML authentication configuration for Apache NiFi cluster enabling enterprise identity provider integration for secure user authentication. Configures SAML identity provider settings including metadata URL and entity ID for federated authentication and single sign-on access to the NiFi management interface.
+   *
+   * Use cases: Enterprise authentication; Single sign-on; Identity federation; Centralized user management; Security compliance
+   *
+   * AWS: NiFi SAML configuration for identity provider integration in EKS deployment
+   *
+   * Validation: Must be valid NifiClusterChartSamlProps with proper IDP metadata URL and entity ID; optional for SAML authentication
+   **/
   readonly saml?: NifiClusterChartSamlProps;
   readonly caIssuerName: string;
   readonly hostedZoneName: string;
@@ -60,6 +80,16 @@ export interface NifiClusterChartProps extends cdk8s.ChartProps, NifiIdentityAut
   readonly certKeyAlg: string;
   readonly certKeySize: number;
   readonly nifiManagerImageUri: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * NiFi Registry client configurations for connecting to external NiFi Registry instances for flow version management. Defines registry client connections enabling the NiFi cluster to access versioned flows, templates, and process groups from external or centralized NiFi Registry services for deployment and version control.
+   *
+   * Use cases: Flow version management; External registry integration; Template deployment; Process group versioning; Centralized flow management
+   *
+   * AWS: NiFi Registry client configuration for connecting to external registry services in EKS deployment
+   *
+   * Validation: Must be valid NamedNifiRegistryClientProps mapping with proper registry connection details; optional for external registry access
+   **/
   readonly registryClients?: NamedNifiRegistryClientProps;
 }
 

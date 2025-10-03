@@ -25,62 +25,153 @@ export interface AccountWithNameProps extends AccountProps {
 export type AuthenticationMethod = 'IAM_AND_QUICKSIGHT' | 'IAM_ONLY' | 'ACTIVE_DIRECTORY';
 export type Edition = 'STANDARD' | 'ENTERPRISE' | 'ENTERPRISE_AND_Q';
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * AccountProps configuration interface for business intelligence and data visualization.
+ * Use cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting
+ * AWS: Amazon QuickSight configuration for business intelligence and data visualization
+ * Validation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements
+ */
 export interface AccountProps {
   /**
-   * The edition of Amazon QuickSight.
-   * Valid Values: STANDARD | ENTERPRISE | ENTERPRISE_AND_Q
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required Amazon QuickSight edition determining the feature set and capabilities available for business intelligence and data visualization. Controls access to advanced features like machine learning insights, embedded analytics, and enterprise governance capabilities.
+   *
+   * Use cases: Feature set selection; Cost optimization; Enterprise capabilities; ML insights access
+   * AWS: Amazon QuickSight account edition configuration for feature availability and pricing tier
+   * Validation: Must be one of 'STANDARD', 'ENTERPRISE', or 'ENTERPRISE_AND_Q'; required for account setup
+   *   */
   readonly edition: Edition;
   /**
-   * The method to authenticate your Amazon QuickSight account.
-   * Valid Values:
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required authentication method for Amazon QuickSight account access controlling how users authenticate to the business intelligence platform. Determines the identity provider integration and user management approach for QuickSight dashboard and analytics access.
+   *
+   * Use cases: Identity provider integration; User authentication control; Enterprise SSO integration; Access management strategy
+   * AWS: Amazon QuickSight account authentication method configuration for user access control
+   * Validation: Must be one of 'IAM_AND_QUICKSIGHT', 'IAM_ONLY', or 'ACTIVE_DIRECTORY'; required for account setup
+   *   */
   readonly authenticationMethod: AuthenticationMethod;
   /**
-   * The email address that you want Amazon QuickSight to send notifications.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required email address for Amazon QuickSight account notifications including billing alerts, service updates, and administrative communications. Primary contact point for all QuickSight account-related notifications and system alerts.
+   *
+   * Use cases: Account notifications; Billing alerts; Service updates; Administrative communications
+   * AWS: Amazon QuickSight account notification email for system alerts and account communications
+   * Validation: Must be valid email format; required field for account setup
+   *   */
   readonly notificationEmail: string;
   /**
-   * The first name of the author of the Amazon QuickSight account to use for future communications.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional first name of the Amazon QuickSight account administrator used for AWS communications and account personalization. Provides personal identification for account-related communications and support interactions.
+   *
+   * Use cases: Account personalization; AWS support communications; Administrator identification; Account management
+   * AWS: Amazon QuickSight account administrator first name for personalized communications
+   * Validation: String value if provided; optional field for account setup
+   *   */
   readonly firstName?: string;
   /**
-   * The last name of the author of the Amazon QuickSight account to use for future communications.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional last name of the Amazon QuickSight account administrator used for AWS communications and account personalization. Provides personal identification for account-related communications and support interactions.
+   *
+   * Use cases: Account personalization; AWS support communications; Administrator identification; Account management
+   * AWS: Amazon QuickSight account administrator last name for personalized communications
+   * Validation: String value if provided; optional field for account setup
+   *   */
   readonly lastName?: string;
   /**
-   * The email address of the author of the Amazon QuickSight account to use for future communications.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional email address of the Amazon QuickSight account administrator used for AWS communications and account management notifications. Provides contact information for account-related updates, billing notifications, and administrative communications.
+   *
+   * Use cases: Account administrator contact; AWS communications; Account notifications; Administrative updates
+   * AWS: Amazon QuickSight account administrator email for AWS communications and notifications
+   * Validation: Must be valid email format if provided; optional field for account setup
+   *   */
   readonly emailAddress?: string;
   /**
-   * A 10-digit phone number for the author of the Amazon QuickSight account to use for future communications.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional 10-digit phone number for the Amazon QuickSight account administrator used for AWS support communications and account notifications. Provides contact information for account-related communications and support escalations.
+   *
+   * Use cases: Account administrator contact; AWS support communications; Account notifications; Emergency contact information
+   * AWS: Amazon QuickSight account contact number for administrator communications and support
+   * Validation: Must be exactly 10 digits if provided; optional field for account setup
+   *   */
   readonly contactNumber?: string;
   /**
-   * The VPC to which the QS Account will be associated.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required VPC identifier for Amazon QuickSight account network association enabling secure connectivity to data sources within the VPC. Establishes network isolation and secure access to VPC-based resources like RDS databases and private data sources.
+   *
+   * Use cases: VPC network association; Secure data source connectivity; Network isolation; Private resource access
+   * AWS: Amazon QuickSight VPC connection configuration for secure network access to data sources
+   * Validation: Must be valid VPC ID format (vpc-xxxxxxxx); required for VPC-based deployments
+   *   */
   readonly vpcId: string;
   /**
-   * The Subnet IDs to which the QS Account will be connected.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required array of subnet identifiers for Amazon QuickSight VPC connection enabling network connectivity to data sources across multiple availability zones. Provides high availability and network redundancy for secure data source access within the VPC.
+   *
+   * Use cases: Multi-AZ connectivity; High availability; Network redundancy; Secure data source access
+   * AWS: Amazon QuickSight VPC connection subnet configuration for multi-AZ data source connectivity
+   * Validation: Must be array of valid subnet IDs (subnet-xxxxxxxx); required for VPC-based deployments
+   *   */
   readonly subnetIds: string[];
   /**
-   * Map of names to security group access definitions. Will be added as egrees/ingress rules to the QuickSight security group, permitting access
-   * between the QS account and internal resources on your VPC.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional security group access definitions for Amazon QuickSight VPC connectivity enabling controlled network access to internal resources. Defines ingress and egress rules for the QuickSight security group to permit secure communication with VPC-based data sources and services.
+   *
+   * Use cases: VPC resource access control; Data source connectivity; Network security rules; Internal service communication
+   * AWS: Amazon QuickSight VPC security group rules for controlled access to internal resources
+   * Validation: Must be valid MdaaSecurityGroupRuleProps if provided; optional for VPC deployments
+   *   */
   readonly securityGroupAccess?: MdaaSecurityGroupRuleProps;
   /**
-   * List of IP CIDRs which will be provided access to the account via the QuickSight interface. IP access restrictions are disabled by default.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional array of IP CIDR blocks for Amazon QuickSight account access restrictions enabling network-based access control. Defines allowed IP ranges for QuickSight interface access, providing additional security layer for business intelligence platform access.
+   *
+   * Use cases: Network access control; IP-based security; Corporate network restrictions; Geographic access limitations
+   * AWS: Amazon QuickSight IP restriction configuration for network-based access control
+   * Validation: Must be array of valid IpRestrictionProps if provided; optional for enhanced security
+   *   */
   readonly ipRestrictions?: IpRestrictionProps[];
   /**
-   * List of Glue resources to which the QuickSight service role will be granted access.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional array of AWS Glue resource ARNs for Amazon QuickSight service role access enabling data catalog integration. Grants QuickSight permissions to access specific Glue databases, tables, and crawlers for data source discovery and metadata management.
+   *
+   * Use cases: Glue data catalog integration; Metadata access; Data source discovery; Table schema access
+   * AWS: Amazon QuickSight service role permissions for AWS Glue resource access
+   * Validation: Must be array of valid Glue resource ARNs if provided; optional for Glue integration
+   *   */
   readonly glueResourceAccess?: string[];
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * IpRestrictionProps configuration interface for business intelligence and data visualization.
+ * Use cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting
+ * AWS: Amazon QuickSight configuration for business intelligence and data visualization
+ * Validation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements
+ */
 export interface IpRestrictionProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required CIDR block for QuickSight IP-based access restriction enabling network-level security control. Defines the IP address range that will be allowed to access QuickSight dashboards and analytics, providing network-level security for business intelligence and data visualization access.
+   *
+   * Use cases: Network-level security; IP-based access control; Corporate network restrictions; Security compliance; Access management
+   *
+   * AWS: Amazon QuickSight IP restriction CIDR block for network-level access control and security
+   *
+   * Validation: Must be valid CIDR block format; required for IP restriction configuration
+   **/
   readonly cidr: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional description for QuickSight IP restriction rule enabling documentation and management of access control policies. Provides human-readable description of the IP restriction rule for administrative purposes and access control documentation.
+   *
+   * Use cases: Access control documentation; Rule management; Administrative clarity; Policy documentation; Security governance
+   *
+   * AWS: Amazon QuickSight IP restriction rule description for access control documentation and management
+   *
+   * Validation: Must be descriptive string if provided; optional for rule documentation
+   **/
   readonly description?: string;
 }
 

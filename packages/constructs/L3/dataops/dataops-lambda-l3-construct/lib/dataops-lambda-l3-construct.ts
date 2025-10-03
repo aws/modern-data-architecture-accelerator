@@ -32,171 +32,372 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { ArnPrincipal } from 'aws-cdk-lib/aws-iam';
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * VPC configuration properties for Lambda function deployment providing networking and security controls. Defines VPC networking configuration for Lambda functions including subnet placement, security groups, and network access controls for secure function deployment.
+ *
+ * Use cases: VPC Lambda deployment; Network isolation; Security group configuration; Subnet placement
+ *
+ * AWS: VPC configuration for Lambda function networking and security controls
+ *
+ * Validation: vpcId and subnetIds are required; securityGroupId and securityGroupEgressRules are optional
+ */
 export interface VpcConfigProps {
   /**
-   * The ID of the VPC on which the Lambda will be deployed
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required VPC ID for Lambda function deployment enabling network isolation and VPC connectivity for secure function execution. Defines the specific VPC where the Lambda function will be deployed for network isolation and secure connectivity to VPC resources.
+   *
+   * Use cases: VPC deployment; Network isolation; Secure connectivity; VPC resource access
+   *
+   * AWS: AWS VPC ID for Lambda function VPC deployment and network isolation
+   *
+   * Validation: Must be valid VPC ID; required for VPC Lambda deployment; enables secure network connectivity
+   **/
   readonly vpcId: string;
+
   /**
-   * The IDs of the subnets on which the Lambda will be deployed
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required array of subnet IDs for Lambda function placement controlling availability zone distribution and network segmentation. Defines the specific subnets within the VPC where Lambda function ENIs will be created for network connectivity and availability.
+   *
+   * Use cases: Subnet placement; Availability zone distribution; Network segmentation; ENI placement
+   *
+   * AWS: Subnet IDs for Lambda function ENI placement and network connectivity
+   *
+   * Validation: Must be array of valid subnet ID strings; required for Lambda subnet placement and connectivity
+   **/
   readonly subnetIds: string[];
   /**
-   * If specified, the function will use this security group for
-   * its VPC connection. Otherwise, a new security group will
-   * be created.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional security group ID for Lambda function network access control enabling custom security group configuration and traffic filtering. When specified, uses existing security group for Lambda function network access control; otherwise creates new security group.
+   *
+   * Use cases: Custom security group; Network access control; Traffic filtering; Security configuration
+   *
+   * AWS: Security group ID for Lambda function network access control and traffic filtering
+   *
+   * Validation: Must be valid security group ID if provided; enables custom security group configuration
+   **/
   readonly securityGroupId?: string;
   /**
-   * List of egress rules to be added to the function SG
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional security group egress rules for Lambda function outbound traffic control enabling fine-grained network access management and security controls. Provides custom egress rules for Lambda function security group controlling outbound network access.
+   *
+   * Use cases: Egress control; Outbound traffic filtering; Network security; Access management
+   *
+   * AWS: Security group egress rules for Lambda function outbound traffic control and network security
+   *
+   * Validation: Must be valid MdaaSecurityGroupRuleProps if provided; enables custom egress rule configuration
+   *   **/
   readonly securityGroupEgressRules?: MdaaSecurityGroupRuleProps;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Configuration interface for DataOps Lambda function deployment with S3 event processing and EventBridge integration capabilities. Defines Lambda function properties for data processing workflows triggered by S3 object events and EventBridge rules in data lake operations.
+ *
+ * Use cases: S3 event-driven data processing; CSV to Parquet transformation; Data validation workflows; EventBridge-triggered data operations
+ *
+ * AWS: AWS Lambda function configuration for data processing with S3 EventBridge notifications and custom event rules
+ *
+ * Validation: srcDir must exist and contain deployable code; runtime must be valid Lambda runtime; handler must match code structure
+ */
 export interface FunctionProps extends FunctionOptions {
   /**
-   * Function source code location
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required source code directory path containing Lambda function code for data processing operations. Specifies the local directory with function source code that will be packaged and deployed for S3 event processing and data transformation workflows.
+   *
+   * Use cases: CSV to Parquet transformation code; Data validation scripts; S3 event processing logic; Custom data pipeline functions
+   *
+   * AWS: Lambda function source code location for deployment packaging and data processing function creation
+   *
+   * Validation: Must be valid directory path containing deployable Lambda code; directory must exist and be readable
+   **/
   readonly srcDir: string;
   /**
-   * The Lambda handler in the source code
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional Lambda function handler specification for data processing entry point. Defines the specific function handler within the source code that Lambda will invoke for S3 events and EventBridge triggers in data operations.
+   *
+   * Use cases: Python data processing handlers; Node.js transformation functions; Custom event processing entry points; Data pipeline orchestration
+   *
+   * AWS: Lambda function handler for S3 event processing and data transformation execution
+   *
+   * Validation: Must match handler format for specified runtime (e.g., 'index.handler' for Node.js, 'main.lambda_handler' for Python)
+   **/
   readonly handler?: string;
   /**
-   * The name of the Lambda runtime. IE 'python3.8' 'nodejs14.x'
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional Lambda runtime specification for data processing execution environment. Defines the runtime environment for executing data transformation and S3 event processing functions with support for Python and Node.js data operations.
+   *
+   * Use cases: Python 3.9 for pandas data processing; Node.js 18.x for JSON transformations; Custom runtime environments; Data science libraries
+   *
+   * AWS: Lambda runtime environment for data processing function execution and library support
+   *
+   * Validation: Must be valid Lambda runtime (python3.9, nodejs18.x, etc.); must be compatible with source code and data processing libraries
+   **/
   readonly runtime?: string;
   /**
-   * If true, srcDir is expected to contain a DockerFile
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional Docker container build flag for custom data processing environments. When enabled, expects srcDir to contain Dockerfile for custom runtime environments with specialized data processing libraries and dependencies.
+   *
+   * Use cases: Custom Python environments with ML libraries; Specialized data processing containers; Complex dependency management; Custom data science stacks
+   *
+   * AWS: Lambda container image deployment for custom data processing runtime environments and specialized libraries
+   *
+   * Validation: When true, srcDir must contain valid Dockerfile; container must be compatible with Lambda execution environment
+   **/
   readonly dockerBuild?: boolean;
   /**
-   * ARN of principal to which lambda:InvokeFunction will be granted
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional principal ARN for Lambda invoke permissions enabling controlled access to data processing functions. Specifies AWS principals that can invoke the Lambda function for S3 event processing and data transformation operations.
+   *
+   * Use cases: S3 service principal for event triggers; EventBridge service access; Cross-account data processing; Step Functions integration
+   *
+   * AWS: Lambda function invoke permission for S3 EventBridge notifications and data processing service integration
+   *
+   * Validation: Must be valid AWS principal ARN; principal must exist and have appropriate permissions for data operations
+   **/
   readonly grantInvoke?: string;
   /**
-   * Additional permissions to be added to Lambda resource policy
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional additional resource permissions for Lambda function access control in data processing workflows. Provides fine-grained permissions beyond basic invoke for complex S3 data operations and cross-service integration scenarios.
+   *
+   * Use cases: S3 bucket access for data processing; Glue catalog permissions; DynamoDB table access; SNS notification permissions
+   *
+   * AWS: Lambda resource policy permissions for data processing access control and service integration
+   *
+   * Validation: Must be valid SID to AdditionalResourcePermission mapping; enables complex data processing permission scenarios
+   *   **/
   readonly additionalResourcePermissions?: { [sid: string]: AdditionalResourcePermission };
 }
+/**
+ * Q-ENHANCED-INTERFACE
+ * Configuration interface for Lambda resource permission management enabling fine-grained access control for data processing operations. Defines specific permissions for AWS principals to access Lambda functions with optional source restrictions for enhanced security in data workflows.
+ *
+ * Use cases: S3 service permissions for event processing; EventBridge rule access; Cross-account data processing; Service-to-service integration
+ *
+ * AWS: Lambda resource policy permissions for controlled data processing function access and service integration
+ *
+ * Validation: principal and action are required; sourceAccount and sourceArn provide additional security for service principals
+ */
 export interface AdditionalResourcePermission {
   /**
-   * ARN of principal to which permission is to be granted.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required AWS principal ARN for Lambda function access in data processing workflows. Specifies the AWS principal (IAM role, user, service, or account) that will be granted permission to access the Lambda function for S3 event processing and data operations.
+   *
+   * Use cases: S3 service principal for event notifications; EventBridge service for rule triggers; Cross-account data processing roles; Step Functions execution roles
+   *
+   * AWS: Lambda resource policy principal for data processing function access and service integration
+   *
+   * Validation: Must be valid AWS principal ARN format; principal must exist and be accessible for data operations
+   **/
   readonly principal: string;
   /**
-   * Action to be granted to the principal
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required Lambda action specification for data processing function permissions. Defines the specific Lambda action that will be granted to the principal for controlled access to data processing functions and workflow orchestration.
+   *
+   * Use cases: lambda:InvokeFunction for S3 event processing; lambda:InvokeAsync for asynchronous data operations; Custom actions for specific data workflows
+   *
+   * AWS: Lambda action permission for data processing function access and operation authorization
+   *
+   * Validation: Must be valid Lambda action (lambda:InvokeFunction, lambda:InvokeAsync, etc.); action must be appropriate for data processing use case
+   **/
   readonly action: string;
   /**
-   * The source account from which actions are allowed in case the principal is a service principal
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional source AWS account restriction for enhanced security in cross-account data processing scenarios. When specified with service principals, restricts Lambda function access to originate from the specified account for additional security in data operations.
+   *
+   * Use cases: Cross-account S3 event processing; Multi-account data lake architectures; Secure service-to-service data operations; Account-based access control
+   *
+   * AWS: Lambda resource policy source account condition for enhanced cross-account data processing security
+   *
+   * Validation: Must be valid 12-digit AWS account ID if specified; used with service principals for additional data processing security
+   **/
   readonly sourceAccount?: string;
   /**
-   * ARN of source resource from which actions are allowed in case the principal is a service principal
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional source resource ARN restriction for fine-grained access control in data processing workflows. When specified with service principals, restricts Lambda function access to originate from specific AWS resources for enhanced security in data operations.
+   *
+   * Use cases: Specific S3 bucket event processing; EventBridge rule source restrictions; Resource-specific data processing access; Fine-grained security controls
+   *
+   * AWS: Lambda resource policy source ARN condition for resource-specific data processing access control
+   *
+   * Validation: Must be valid AWS resource ARN if specified; used with service principals for resource-specific data processing access
+   **/
   readonly sourceArn?: string;
 }
 
 export interface FunctionOptions {
   /**
-   * The basic function name
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required basic function name for Lambda function identification and management. Provides the function identifier for Lambda operations and serves as the primary reference for function management and invocation.
+   *
+   * Use cases: Function identification; Lambda management; Function invocation; Resource tracking
+   *
+   * AWS: AWS Lambda function name for identification and management operations
+   *
+   * Validation: Must be unique function name string; required for function creation and identification
+   **/
   readonly functionName: string;
   /**
-   * A description of the function.
+   * Q-ENHANCED-PROPERTY
+   * Optional description of the Lambda function explaining its purpose and data processing operations for documentation and management clarity. Provides human-readable description of the function's purpose and the data operations it performs.
    *
-   * @default - No description.
-   */
+   * Use cases: Function documentation; Operational clarity; Data processing explanation; Management understanding
+   *
+   * AWS: AWS Lambda function description for documentation and operational clarity
+   *
+   * Validation: Must be descriptive text if provided; recommended for function documentation and operational understanding
+   **/
   readonly description?: string;
-
   /**
-   * The arn of the role with which the function will be executed
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required IAM role ARN for Lambda function execution permissions enabling secure access to AWS services and resources. Provides the execution role that Lambda assumes to execute the function and access data sources, outputs, and other AWS services.
+   *
+   * Use cases: Function permissions; Service access; Security roles; Resource authorization
+   *
+   * AWS: AWS IAM role ARN for Lambda function execution permissions and service access
+   *
+   * Validation: Must be valid IAM role ARN string; required for function execution permissions and resource access
+   **/
   readonly roleArn: string;
   /**
-   * EventBridge props
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional EventBridge configuration for event-driven function execution enabling automated data processing workflows. Defines EventBridge integration for triggering Lambda functions based on events for automated data processing and workflow orchestration.
+   *
+   * Use cases: Event-driven processing; Workflow automation; Data pipeline triggers; Event orchestration
+   *
+   * AWS: Amazon EventBridge integration for Lambda function event-driven execution
+   *
+   * Validation: Must be valid EventBridgeProps object if provided; enables event-driven function execution when configured
+   **/
   readonly eventBridge?: EventBridgeProps;
   /**
-   * If specified, function will be VPC bound
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional VPC configuration for function network deployment enabling secure networking and resource access within VPC environments. Defines VPC networking configuration for Lambda functions including subnet placement and security groups.
+   *
+   * Use cases: VPC deployment; Secure networking; Private resource access; Network isolation
+   *
+   * AWS: AWS VPC configuration for Lambda function networking and security
+   *
+   * Validation: Must be valid VpcConfigProps object if provided; enables VPC deployment when configured
+   **/
   readonly vpcConfig?: VpcConfigProps;
   /**
-   * The maximum age of a request (in seconds) that Lambda sends to a function for
-   * processing.
+   * Q-ENHANCED-PROPERTY
+   * Optional maximum event age in seconds controlling event processing time limits for data processing workflows. Defines the maximum age of events that Lambda will process before discarding them for event freshness and processing relevance.
    *
-   * Minimum: 60 seconds
-   * Maximum: 6 hours
+   * Use cases: Event freshness; Processing time limits; Data relevance; Event lifecycle management
    *
-   * @default 21600 seconds (6 hours)
-   */
+   * AWS: AWS Lambda maximum event age for event processing time control
+   *
+   * Validation: Must be between 60 and 21600 seconds if provided; defaults to 21600 seconds (6 hours)
+   **/
   readonly maxEventAgeSeconds?: number;
   /**
-   * The maximum number of times to retry when the function returns an error.
+   * Q-ENHANCED-PROPERTY
+   * Optional maximum retry attempts for failed function executions enabling fault tolerance and reliability. Defines the maximum number of times Lambda will retry function execution after errors for improved reliability and fault tolerance in data processing workflows.
    *
-   * Minimum: 0
-   * Maximum: 2
+   * Use cases: Fault tolerance; Function reliability; Error recovery; Retry logic
    *
-   * @default 2
-   */
+   * AWS: AWS Lambda retry attempts for failed function execution recovery and fault tolerance
+   *
+   * Validation: Must be between 0 and 2 if provided; defaults to 2; enables automatic retry for failed executions
+   **/
   readonly retryAttempts?: number;
   /**
-   * List of layer names generated by this config to be added to the function
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional array of generated layer names to be added to the function enabling code reuse and dependency management. Specifies layers generated by the configuration that will be attached to the function for shared code and dependencies.
+   *
+   * Use cases: Code reuse; Dependency management; Shared libraries; Layer management
+   *
+   * AWS: AWS Lambda layers for code reuse and dependency management
+   *
+   * Validation: Must be array of valid layer names if provided; enables layer attachment when specified
+   **/
   readonly generatedLayerNames?: string[];
   /**
-   * List of existing named layer version Arns to be directly added to the function
-   */
-  /** @jsii ignore */
+   * Q-ENHANCED-PROPERTY
+   * Optional map of existing layer version ARNs to be directly added to the function enabling external dependency integration. Provides direct layer ARN references for attaching existing layers to the function for external dependencies and shared code.
+   *
+   * Use cases: External dependencies; Existing layer integration; Shared code; Layer reuse
+   *
+   * AWS: AWS Lambda layer ARNs for external layer integration and dependency management
+   *
+   * Validation: Must be valid layer name to ARN mapping if provided; enables external layer integration when specified
+   *   **/
   readonly layerArns?: { [name: string]: string };
   /**
-   * The function execution time (in seconds) after which Lambda terminates
-   * the function. Because the execution time affects cost, set this value
-   * based on the function's expected execution time.
+   * Q-ENHANCED-PROPERTY
+   * Optional function execution timeout in seconds controlling maximum execution time for data processing operations. Defines the maximum time the function can run before Lambda terminates it, critical for processing workflows and cost management.
    *
-   * @default 3
-   */
+   * Use cases: Execution timeout; Cost control; Processing time limits; Resource management
+   *
+   * AWS: AWS Lambda function timeout for execution time control and resource management
+   *
+   * Validation: Must be positive integer in seconds if provided; defaults to 3 seconds; affects function execution and cost
+   **/
   readonly timeoutSeconds?: number;
   /**
-   * Key-value pairs that Lambda caches and makes available for your Lambda
-   * functions. Use environment variables to apply configuration changes, such
-   * as test and production environment configurations, without changing your
-   * Lambda function source code.
+   * Q-ENHANCED-PROPERTY
+   * Optional environment variables for function configuration enabling runtime configuration and parameter passing. Defines key-value pairs that Lambda caches and makes available for function execution enabling configuration changes without code modifications.
    *
-   * @default - No environment variables.
-   */
+   * Use cases: Runtime configuration; Parameter passing; Environment-specific settings; Configuration management
+   *
+   * AWS: AWS Lambda environment variables for function configuration and runtime parameters
+   *
+   * Validation: Must be valid key-value string pairs if provided; enables runtime configuration when specified
+   *   **/
   readonly environment?: {
     [key: string]: string;
   };
   /**
-   * The maximum of concurrent executions you want to reserve for the function.
+   * Q-ENHANCED-PROPERTY
+   * Optional reserved concurrent executions for function capacity management enabling performance control and cost optimization. Defines the maximum number of concurrent executions reserved for the function affecting performance isolation and resource allocation.
    *
-   * @default - No specific limit - account limit.
-   * @see https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html
-   */
+   * Use cases: Performance control; Capacity management; Cost optimization; Resource isolation
+   *
+   * AWS: AWS Lambda reserved concurrent executions for function capacity and performance management
+   *
+   * Validation: Must be positive integer if provided; affects function concurrency and account limits
+   **/
   readonly reservedConcurrentExecutions?: number;
   /**
-   * The amount of memory, in MB, that is allocated to your Lambda function.
-   * Lambda uses this value to proportionally allocate the amount of CPU
-   * power. For more information, see Resource Model in the AWS Lambda
-   * Developer Guide.
+   * Q-ENHANCED-PROPERTY
+   * Optional memory allocation in MB for function execution enabling performance optimization and resource management. Defines the amount of memory allocated to the function affecting CPU power allocation and execution performance for data processing operations.
    *
-   * @default 128
-   */
+   * Use cases: Performance optimization; Memory allocation; CPU power; Resource management
+   *
+   * AWS: AWS Lambda memory size for function performance and resource allocation
+   *
+   * Validation: Must be between 128 and 10240 MB if provided; defaults to 128 MB; affects performance and cost
+   **/
   readonly memorySizeMB?: number;
   /**
    * The size of the function’s /tmp directory in MB.
-   *
    * @default 512 MiB
    */
   readonly ephemeralStorageSizeMB?: number;
 }
-
+/**
+ * Q-ENHANCED-INTERFACE
+ * LayerProps configuration interface for serverless data processing and event-driven workflows.
+ *
+ * Use cases: Serverless data processing; Event-driven workflows; S3 event handling; Data transformation
+ *
+ * AWS: AWS Lambda configuration for serverless data processing and event-driven workflows
+ *
+ * Validation: Configuration must be valid for deployment; properties must conform to AWS Lambda and MDAA requirements
+ */
 export interface LayerProps {
   /**
-   * The source directory or zip file
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required source directory or ZIP file path for Lambda layer code deployment enabling shared library and dependency management. Defines the location of the layer code that will be packaged and deployed as a Lambda layer for reuse across multiple Lambda functions.
+   *
+   * Use cases: Shared library deployment; Dependency management; Code reuse; Lambda layer creation; Common utilities
+   *
+   * AWS: AWS Lambda layer source code path for shared library deployment and dependency management
+   *
+   * Validation: Must be valid directory path or ZIP file path; required for layer code deployment
+   **/
   readonly src: string;
   /**
    * Description of the layer
@@ -211,24 +412,40 @@ export interface LayerProps {
    */
   readonly dockerBuild?: boolean;
 }
-
 export interface LambdaFunctionL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Arn of KMS key which will be used to encrypt the function environments and dead letter queues
-   */
-  readonly kmsArn: string;
+   * Q-ENHANCED-PROPERTY
+   * Required KMS key ARN for Lambda function encryption enabling secure environment variable and dead letter queue encryption. Provides customer-managed KMS key for encrypting Lambda function environment variables and dead letter queues ensuring data protection and security compliance.
+   *
+   * Use cases: Function encryption; Environment variable security; Dead letter queue encryption; Data protection
+   *
+   * AWS: KMS key ARN for Lambda function encryption and secure data protection
+   *
+   * Validation: Must be valid KMS key ARN; required for Lambda function encryption and security compliance
+   **/
+  readonly kmsArn?: string;
   /**
-   * List of layer definitions
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional array of Lambda layer definitions for code sharing and dependency management enabling reusable components and optimized deployment. Provides layer configurations for shared code, libraries, and dependencies across multiple Lambda functions for efficient deployment and management.
+   *
+   * Use cases: Code sharing; Dependency management; Reusable components; Deployment optimization
+   *
+   * AWS: Lambda layers for code sharing and dependency management across functions
+   *
+   * Validation: Must be array of valid LayerProps if provided; enables layer-based code sharing and dependency management
+   *   **/
   readonly layers?: LayerProps[];
   /**
-   * List of function definitions
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional array of Lambda function definitions for serverless application deployment enabling function configuration and management. Provides function configurations for serverless application components providing deployment and operational settings.
+   *
+   * Use cases: Function deployment; Serverless applications; Function configuration; Application components
+   *
+   * AWS: Lambda functions for serverless application deployment and function management
+   *
+   * Validation: Must be array of valid FunctionProps if provided; enables function deployment and configuration
+   *   **/
   readonly functions?: FunctionProps[];
-  /**
-   * Option to override the scope to current construct of parent's construct
-   * @default false
-   */
   readonly overrideScope?: boolean;
 }
 
@@ -241,6 +458,9 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
     super(scope, id, props);
     this.props = props;
 
+    if (!this.props.kmsArn) {
+      throw new Error('Project kms key must be defined');
+    }
     this.projectKmsKey = MdaaKmsKey.fromKeyArn(
       props.overrideScope ? this : this.scope,
       'project-kms',

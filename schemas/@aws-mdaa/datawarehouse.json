@@ -67,6 +67,7 @@
         },
         "DatabaseUsersProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nRedshift database user configuration interface for automated user management with Secrets Manager integration and password rotation. Defines database user properties including username specification, database assignment, password policy configuration, and automated secret rotation for secure Redshift user lifecycle management.\n\nUse cases: Database user management; Automated password rotation; Secrets management; Database access control; User lifecycle automation; Secure credential management\n\nAWS: Amazon Redshift database users with AWS Secrets Manager integration for automated password rotation and secure credential management\n\nValidation: userName must be valid Redshift username; dbName must be valid database name; excludeCharacters must be valid password exclusion pattern; secretRotationDays must be positive integer",
             "properties": {
                 "dbName": {
                     "description": "The DB to which the user will be added",
@@ -111,20 +112,24 @@
         },
         "EventNotificationsProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nRedshift event notification configuration interface for SNS-based cluster monitoring with event category filtering and severity-based alerting. Defines event notification properties for monitoring Redshift cluster events including configuration changes, management operations, and security events with email notification integration.\n\nUse cases: Cluster monitoring; Event-based alerting; SNS notifications; Email alerts; Operational monitoring; Security event tracking; Cluster health monitoring\n\nAWS: Amazon Redshift event notifications with SNS integration for cluster monitoring and email-based alerting with event category and severity filtering\n\nValidation: eventCategories must be valid EventCategories enum values if specified; severity must be valid EventSeverity enum value if specified; email must be valid email addresses",
             "properties": {
                 "email": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of email addresses for Redshift event notification delivery enabling email-based alerting and monitoring. Defines email recipients for SNS notifications triggered by Redshift cluster events, providing direct email delivery of cluster alerts and operational notifications.\n\nUse cases: Email alerting; Direct notification delivery; Operational monitoring; Event-based notifications; Team alerting\n\nAWS: Amazon SNS email notification delivery for Redshift event notifications with email-based alerting\n\nValidation: Must be array of valid email addresses if provided; optional for email notification delivery",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "eventCategories": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of event categories for Redshift event notification filtering enabling selective monitoring of specific cluster events. Defines which types of Redshift events will trigger SNS notifications, allowing focused monitoring on configuration changes, management operations, security events, or maintenance activities.\n\nUse cases: Selective event monitoring; Event category filtering; Focused alerting; Operational monitoring; Event-based notifications\n\nAWS: Amazon Redshift event notification categories for selective SNS-based cluster monitoring and alerting\n\nValidation: Must be array of valid EventCategories enum values if provided; optional for event category filtering",
                     "items": {
                         "$ref": "#/definitions/EventCategories"
                     },
                     "type": "array"
                 },
                 "severity": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional event severity level for Redshift event notification filtering enabling severity-based alerting and monitoring. Defines the minimum severity level of events that will trigger SNS notifications, allowing filtering based on event importance and impact level.\n\nUse cases: Severity-based filtering; Critical event alerting; Event importance filtering; Alert prioritization; Monitoring optimization\n\nAWS: Amazon Redshift event notification severity filtering for SNS-based alerting with severity-level control\n\nValidation: Must be valid EventSeverity enum value if provided; optional for severity-based filtering",
                     "enum": [
                         "ERROR",
                         "INFO"
@@ -136,6 +141,7 @@
         },
         "FederationProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nRedshift federated authentication configuration interface for SAML-based identity provider integration with IAM provider mapping. Defines federation properties for Redshift data warehouse including federation name specification, IAM identity provider ARN, and deprecated URL configuration for secure federated access to analytics workloads.\n\nUse cases: Federated authentication; SAML identity integration; IAM provider mapping; Secure data warehouse access; Identity federation; Single sign-on integration\n\nAWS: Redshift federated authentication with SAML identity provider integration for secure data warehouse access and identity management\n\nValidation: federationName must be valid federation identifier; providerArn must be valid IAM identity provider ARN; url is deprecated and should not be used",
             "properties": {
                 "federationName": {
                     "description": "Name of the federation for reference elsewhere in the config.",
@@ -158,11 +164,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -190,8 +199,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -205,30 +216,30 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Reference role by arn",
+                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Reference role by id",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Reference role by name",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "A string which uniquely identifies the MdaaRoleRef within a scope.",
+                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
                     "type": "boolean"
                 }
             },
@@ -236,14 +247,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -255,11 +269,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -275,15 +292,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -294,12 +314,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -309,23 +332,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -342,6 +371,7 @@
         },
         "ScheduledActionProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nRedshift scheduled action configuration interface for automated cluster management with pause/resume scheduling and cron-based timing. Defines scheduled action properties for cost optimization through automated cluster lifecycle management including pause and resume operations based on business hours and usage patterns.\n\nUse cases: Cost optimization automation; Cluster lifecycle management; Business hours scheduling; Automated pause/resume; Resource cost control; Usage-based scheduling\n\nAWS: Amazon Redshift scheduled actions with cron scheduling for automated cluster pause and resume operations for cost optimization\n\nValidation: name must be valid scheduled action identifier; targetAction must be 'pauseCluster' or 'resumeCluster'; schedule must be valid cron expression; dates must be valid UTC timestamps",
             "properties": {
                 "enable": {
                     "description": "Scheduled action is enabled if true",
@@ -352,19 +382,19 @@
                     "type": "string"
                 },
                 "name": {
-                    "description": "Named of the scheduled action",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired unique name identifier for the Redshift scheduled action enabling action identification and management. Provides a descriptive name for the scheduled action that will be used for tracking, logging, and management of automated cluster operations within the Redshift environment.\n\nUse cases: Action identification; Scheduled action management; Logging and tracking; Action naming; Operational visibility\n\nAWS: Amazon Redshift scheduled action name for action identification and management\n\nValidation: Must be unique string identifier; required for scheduled action creation and management",
                     "type": "string"
                 },
                 "schedule": {
-                    "description": "The scheduled action schedule in cron format",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired cron expression defining the schedule for Redshift scheduled action execution enabling precise timing control. Specifies when the scheduled action will be executed using standard cron format for flexible scheduling based on business hours, usage patterns, and cost optimization requirements.\n\nUse cases: Business hours scheduling; Cost optimization timing; Usage pattern alignment; Automated scheduling; Precise timing control\n\nAWS: Amazon Redshift scheduled action cron schedule for automated execution timing\n\nValidation: Must be valid cron expression; required for scheduled action timing specification",
                     "type": "string"
                 },
                 "startTime": {
-                    "description": "The scheduled action Start Date & Time in UTC format from when the scheduled action is effective.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional start date and time in UTC format defining when the Redshift scheduled action becomes effective enabling time-bounded scheduling. Specifies the earliest date and time when the scheduled action will begin executing, providing control over when automated cluster operations start.\n\nUse cases: Time-bounded scheduling; Action activation timing; Scheduled start control; Deployment timing; Operational planning\n\nAWS: Amazon Redshift scheduled action start time for time-bounded execution control\n\nValidation: Must be valid UTC timestamp if provided; optional for scheduled action start time control",
                     "type": "string"
                 },
                 "targetAction": {
-                    "description": "One of \"pauseCluster\", \"resumeCluster\"",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired target action type for Redshift scheduled action specifying the cluster operation to be performed. Defines the specific action that will be executed on the Redshift cluster, typically either pausing or resuming the cluster for cost optimization and resource management.\n\nUse cases: Cluster pause operations; Cluster resume operations; Cost optimization automation; Resource lifecycle management\n\nAWS: Amazon Redshift scheduled action target operation for automated cluster lifecycle management\n\nValidation: Must be \"pauseCluster\" or \"resumeCluster\"; required for scheduled action operation specification",
                     "type": "string"
                 }
             },
@@ -379,101 +409,101 @@
     },
     "properties": {
         "additionalBucketKmsKeyArns": {
-            "description": "Additional KMS keys which can be used to write to the cluster bucket",
+            "description": "Q-ENHANCED-PROPERTY\nOptional additional KMS key ARNs for cluster bucket encryption enabling multi-key encryption scenarios and cross-account access. Provides additional KMS keys that can be used for writing to the cluster bucket beyond the default cluster encryption key.\n\nUse cases: Multi-key encryption; Cross-account access; Additional encryption keys; Flexible key management\n\nAWS: AWS KMS key ARNs for additional cluster bucket encryption and access control\n\nValidation: Must be array of valid KMS key ARNs if provided; keys must be accessible for bucket operations",
             "items": {
                 "type": "string"
             },
             "type": "array"
         },
         "adminPasswordRotationDays": {
-            "description": "Set the number of days between admin password rotations",
+            "description": "Q-ENHANCED-PROPERTY\nRequired number of days between automatic admin password rotations for enhanced security compliance. Enables automated credential management and compliance with password rotation policies for improved cluster security posture.\n\nUse cases: Automated credential rotation; Security policy compliance; Password management automation\n\nAWS: Amazon Redshift automatic password rotation configuration for security management\n\nValidation: Must be positive integer; required; defines password rotation frequency for security compliance",
             "type": "number"
         },
         "adminUsername": {
-            "description": "Set the admin username for the cluster",
+            "description": "Q-ENHANCED-PROPERTY\nRequired admin username for the Redshift cluster providing administrative access to the data warehouse. Defines the master user account for cluster administration, database management, and initial user provisioning.\n\nUse cases: Cluster administration; Database management; Initial user provisioning\n\nAWS: Amazon Redshift cluster master username for administrative access and database management\n\nValidation: Must be valid Redshift username; required; used for cluster administrative access",
             "type": "string"
         },
         "automatedSnapshotRetentionDays": {
-            "description": "Number of days that automated snapshots are retained",
+            "description": "Q-ENHANCED-PROPERTY\nOptional retention period for automated snapshots enabling backup management and data protection. Specifies the number of days automated snapshots are retained for point-in-time recovery and data protection requirements.\n\nUse cases: Backup management; Data protection; Point-in-time recovery; Compliance requirements\n\nAWS: Amazon Redshift automated snapshot retention for backup management and data protection\n\nValidation: Must be positive integer if specified; defines snapshot retention period for backup management",
             "type": "number"
         },
         "clusterPort": {
-            "description": "The cluster port (default: 54390)",
+            "description": "Q-ENHANCED-PROPERTY\nOptional cluster port number for client connections enabling custom port configuration and network security. Defines the TCP port on which the Redshift cluster accepts client connections, supporting custom networking requirements and security configurations.\n\nUse cases: Custom port configuration; Network security; Client connection management; Port standardization\n\nAWS: Amazon Redshift cluster port configuration for client connection management\n\nValidation: Must be valid port number if specified; defaults to 54390; must be accessible through security groups",
             "type": "number"
         },
         "createWarehouseBucket": {
-            "description": "If true(default), a Data Warehouse bucket will be created",
+            "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling data warehouse bucket creation for cluster storage operations. When enabled (default), creates dedicated S3 bucket for data warehouse operations including data loading, unloading, and backup storage.\n\nUse cases: Storage resource management; Data operations; Backup storage; ETL operations\n\nAWS: Amazon S3 bucket creation for Redshift data warehouse storage operations\n\nValidation: Boolean value; defaults to true; creates dedicated warehouse bucket when enabled",
             "type": "boolean"
         },
         "dataAdminRoles": {
-            "description": "List of admin roles which will be provided access to cluster resources (like KMS/Bucket)",
+            "description": "Q-ENHANCED-PROPERTY\nRequired array of admin role references with full access to cluster resources including KMS keys and S3 buckets. Provides administrative permissions for data warehouse management, security administration, and resource access control.\n\nUse cases: Administrative access control; Security management; Resource administration\n\nAWS: AWS IAM roles with full Redshift cluster and resource access permissions\n\nValidation: Must be array of valid MdaaRoleRef objects; required; roles receive full cluster access",
             "items": {
                 "$ref": "#/definitions/MdaaRoleRef"
             },
             "type": "array"
         },
         "databaseUsers": {
-            "description": "List of Users to be created in Redshift Database, then stored & rotated in secrets manager -> ssm",
+            "description": "Q-ENHANCED-PROPERTY\nOptional database users for automated user creation and credential management enabling secure user provisioning and rotation. Creates database users in Redshift with automated credential storage and rotation through Secrets Manager and SSM.\n\nUse cases: Automated user provisioning; Credential management; Security automation; User lifecycle management\n\nAWS: Amazon Redshift database users with Secrets Manager and SSM integration for credential management\n\nValidation: Must be array of valid DatabaseUsersProps if provided; enables automated user and credential management\n  *",
             "items": {
                 "$ref": "#/definitions/DatabaseUsersProps"
             },
             "type": "array"
         },
         "dbName": {
-            "description": "database name for the db to be created. defaults to \"default_db\"",
+            "description": "Q-ENHANCED-PROPERTY\nOptional database name for initial database creation enabling custom database naming and organization. Specifies the name of the initial database created in the cluster, supporting custom naming conventions and database organization.\n\nUse cases: Custom database naming; Database organization; Initial database setup; Naming conventions\n\nAWS: Amazon Redshift initial database name for cluster database creation and organization\n\nValidation: Must be valid database name if specified; defaults to \"default_db\"; used for initial database creation",
             "type": "string"
         },
         "enableAuditLoggingToS3": {
-            "description": "If enabled, cluster audit logging will be written to an S3 bucket created for this purpose.\nNote that Redshift supports audit logging only to SSE-S3 encrypted buckets, so this audit bucket\nwill not be created with SSE-KMS or use a customer master key.",
+            "description": "Q-ENHANCED-PROPERTY\nRequired flag enabling audit logging to S3 for compliance and security monitoring. When enabled, creates dedicated S3 bucket for Redshift audit logs with SSE-S3 encryption as required by Redshift audit logging constraints.\n\nUse cases: Compliance auditing; Security monitoring; Audit trail management\n\nAWS: Amazon Redshift audit logging to S3 for compliance and security monitoring\n\nValidation: Boolean value; required; creates SSE-S3 encrypted audit bucket when enabled",
             "type": "boolean"
         },
         "eventNotifications": {
             "$ref": "#/definitions/EventNotificationsProps",
-            "description": "Configuration of cluster and scheduled action event notifications"
+            "description": "Q-ENHANCED-PROPERTY\nOptional event notification configuration for cluster and scheduled action monitoring enabling operational awareness and alerting. Configures SNS notifications for cluster events and scheduled action status for operational monitoring.\n\nUse cases: Operational monitoring; Event alerting; Cluster status tracking; Automated notifications\n\nAWS: Amazon SNS notifications for Redshift cluster events and operational monitoring\n\nValidation: Must be valid EventNotificationsProps if provided; enables cluster event monitoring and alerting"
         },
         "executionRoles": {
-            "description": "List of external roles which will be associated to the redshift cluster\nIf a role requires access to datawarehouse bucket, then role should be added to 'warehouseBucketUserRoles' in application config",
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of external execution role references for Redshift cluster operations and integrations. Enables cluster to assume external roles for cross-service operations, data access, and integration with other AWS services.\n\nUse cases: Cross-service operations; External data access; Service integration workflows\n\nAWS: AWS IAM roles for Redshift cluster cross-service operations and integrations\n\nValidation: Must be array of valid MdaaRoleRef objects if provided; roles must be assumable by Redshift service",
             "items": {
                 "$ref": "#/definitions/MdaaRoleRef"
             },
             "type": "array"
         },
         "federations": {
-            "description": "List of federations/roles to be created for federated access to the cluster",
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of federation configurations for SAML or OIDC identity provider integration with the data warehouse. Enables federated access to Redshift through external identity providers for centralized identity management and SSO capabilities.\n\nUse cases: SAML federation setup; OIDC provider integration; Centralized identity management for data warehouse access\n\nAWS: AWS IAM identity provider configuration for federated Redshift access and SSO integration\n\nValidation: Must be array of valid FederationProps if provided; enables federated authentication when specified",
             "items": {
                 "$ref": "#/definitions/FederationProps"
             },
             "type": "array"
         },
         "multiNode": {
-            "description": "If true, cluster will be of type MULTI_NODE, otherwise SINGLE_NODE",
+            "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling cluster node configuration for single-node or multi-node deployment. When true, creates multi-node cluster for distributed processing; when false, creates single-node cluster for development or small workloads.\n\nUse cases: Cluster architecture selection; Development vs production deployment; Cost optimization; Performance scaling\n\nAWS: Amazon Redshift cluster type configuration for single-node or multi-node deployment\n\nValidation: Boolean value; determines cluster architecture and node distribution; affects performance and cost",
             "type": "boolean"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "nodeType": {
-            "description": "Node type of the cluster.",
+            "description": "Q-ENHANCED-PROPERTY\nRequired node type specification determining compute and storage capacity for cluster nodes. Controls the underlying EC2 instance type and affects performance, storage, and cost characteristics of the data warehouse.\n\nUse cases: Performance optimization; Cost management; Workload-specific sizing\n\nAWS: Amazon Redshift node type for compute and storage capacity configuration\n\nValidation: Must be valid Redshift node type; required; determines cluster compute and storage capacity",
             "type": "string"
         },
         "numberOfNodes": {
-            "description": "Number of cluster nodes",
+            "description": "Q-ENHANCED-PROPERTY\nRequired number of nodes for the Redshift cluster determining total compute capacity and parallel processing capability. Controls cluster size and affects performance, cost, and data distribution characteristics.\n\nUse cases: Cluster sizing; Performance scaling; Cost optimization\n\nAWS: Amazon Redshift cluster node count for compute capacity and parallel processing\n\nValidation: Must be positive integer; required; determines cluster size and processing capacity",
             "type": "number"
         },
         "parameterGroupParams": {
             "$ref": "#/definitions/Record<string,string>",
-            "description": "Additional parameters for the cluster parameter group. Certain security-sensitive values will be overridden."
+            "description": "Q-ENHANCED-PROPERTY\nOptional parameter group parameters for cluster configuration customization enabling performance tuning and operational optimization. Provides additional cluster parameters while security-sensitive values are automatically overridden for compliance and security.\n\nUse cases: Performance tuning; Operational optimization; Custom cluster configuration; Workload-specific settings\n\nAWS: Amazon Redshift parameter group configuration for cluster customization and optimization\n\nValidation: Must be object with string key-value pairs if provided; security-sensitive values will be overridden\n  *"
         },
         "preferredMaintenanceWindow": {
-            "description": "The preferred maintenance window for the cluster\nExample: 'Sun:23:45-Mon:00:15'",
+            "description": "Q-ENHANCED-PROPERTY\nRequired preferred maintenance window for automated cluster maintenance operations. Specifies the weekly time range during which system maintenance can occur, minimizing impact on business operations and ensuring predictable maintenance scheduling.\n\nUse cases: Maintenance scheduling; Business continuity; Operational planning; Downtime management\n\nAWS: Amazon Redshift preferred maintenance window for automated system maintenance\n\nValidation: Must be valid time window format (e.g., 'Sun:23:45-Mon:00:15'); required; defines maintenance scheduling",
             "type": "string"
         },
         "redshiftManageMasterPassword": {
             "type": "boolean"
         },
         "scheduledActions": {
-            "description": "List of scheduled actions (pause,resume) which can be applied to the cluster",
+            "description": "Q-ENHANCED-PROPERTY\nOptional scheduled actions for automated cluster pause and resume operations enabling cost optimization and operational automation. Defines scheduled pause and resume actions for the cluster to optimize costs during non-business hours.\n\nUse cases: Cost optimization; Automated operations; Scheduled maintenance; Resource management\n\nAWS: Amazon Redshift scheduled actions for automated cluster pause and resume operations\n\nValidation: Must be array of valid ScheduledActionProps if provided; defines automated cluster operations",
             "items": {
                 "$ref": "#/definitions/ScheduledActionProps"
             },
@@ -481,7 +511,7 @@
         },
         "securityGroupIngress": {
             "additionalProperties": false,
-            "description": "Additional ingress rules to be added to the cluster security group, permitting tcp traffic on the cluster port",
+            "description": "Q-ENHANCED-PROPERTY\nRequired security group ingress configuration defining allowed inbound connections to the cluster. Specifies IPv4 CIDR blocks and security group IDs that can connect to the cluster port for controlled network access.\n\nUse cases: Network access control; Client connectivity; Security group management\n\nAWS: Amazon VPC security group ingress rules for Redshift cluster access control\n\nValidation: Must be object with ipv4 and/or sg arrays; required; defines allowed inbound connections\n  *",
             "properties": {
                 "ipv4": {
                     "items": {
@@ -500,10 +530,10 @@
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         },
         "snapshotIdentifier": {
-            "description": "SnapshotIdentifier id, if restoring the cluster from snapshot\nOptional - only provide this if restoring from snapshot",
+            "description": "Q-ENHANCED-PROPERTY\nOptional snapshot identifier for cluster restoration from existing snapshot enabling disaster recovery and data migration. Specifies the snapshot ID to restore the cluster from, supporting disaster recovery scenarios and data migration operations.\n\nUse cases: Disaster recovery; Data migration; Cluster restoration; Backup recovery\n\nAWS: Amazon Redshift snapshot identifier for cluster restoration and disaster recovery\n\nValidation: Must be valid snapshot identifier if specified; only provide when restoring from snapshot",
             "type": "string"
         },
         "snapshotOwnerAccount": {
@@ -511,25 +541,25 @@
             "type": "number"
         },
         "subnetIds": {
-            "description": "The ID of the subnets on which the cluster will be deployed.",
+            "description": "Q-ENHANCED-PROPERTY\nRequired array of subnet IDs for Redshift cluster node placement within the VPC. Defines the network subnets where cluster nodes will be deployed for secure VPC connectivity and availability zone distribution.\n\nUse cases: VPC network placement; Subnet-specific deployment; Multi-AZ cluster distribution\n\nAWS: Amazon VPC subnets for Redshift cluster node placement and network configuration\n\nValidation: Must be array of valid subnet IDs; required; subnets must exist in specified VPC",
             "items": {
                 "type": "string"
             },
             "type": "array"
         },
         "vpcId": {
-            "description": "The ID of the VPC on which the cluster will be deployed.",
+            "description": "Q-ENHANCED-PROPERTY\nRequired VPC ID for Redshift cluster deployment providing network isolation and security controls. Ensures cluster operates within the specified VPC for secure networking and integration with other VPC resources.\n\nUse cases: VPC network isolation; Secure networking; VPC resource integration\n\nAWS: Amazon VPC for Redshift cluster network isolation and security controls\n\nValidation: Must be valid VPC ID; required; VPC must exist and be accessible",
             "type": "string"
         },
         "warehouseBucketUserRoles": {
-            "description": "List of user roles which will be provided access to cluster resources (like KMS/Bucket)",
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of user role references with access to data warehouse S3 buckets for data loading and unloading operations. Enables controlled access to warehouse storage resources for ETL operations and data management workflows.\n\nUse cases: Data loading operations; ETL workflow access; Controlled storage access\n\nAWS: AWS IAM roles with S3 bucket access for Redshift data operations\n\nValidation: Must be array of valid MdaaRoleRef objects if provided; roles receive bucket access permissions",
             "items": {
                 "$ref": "#/definitions/MdaaRoleRef"
             },
             "type": "array"
         },
         "workloadManagement": {
-            "description": "The cluster workload management configuration.",
+            "description": "Q-ENHANCED-PROPERTY\nOptional workload management configuration for query performance optimization and resource allocation. Defines WLM configuration elements for managing query queues, memory allocation, and concurrency for optimal cluster performance.\n\nUse cases: Query performance optimization; Resource allocation; Workload management; Concurrency control\n\nAWS: Amazon Redshift workload management configuration for query optimization and resource control\n\nValidation: Must be array of valid ConfigurationElement objects if provided; defines WLM configuration",
             "items": {
                 "additionalProperties": {},
                 "type": "object"

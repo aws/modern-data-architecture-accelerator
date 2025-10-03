@@ -4,13 +4,14 @@
     "definitions": {
         "BucketInventoryProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nS3 bucket inventory configuration interface for automated bucket content reporting with inventory name specification and bucket targeting. Defines inventory properties for audit infrastructure including source bucket identification and inventory configuration naming for automated S3 object metadata collection and compliance reporting.\n\nUse cases: S3 inventory management; Bucket content auditing; Automated reporting; Compliance monitoring; Object metadata collection; Storage analytics\n\nAWS: S3 bucket inventory configuration for automated bucket content reporting and audit data collection\n\nValidation: bucketName must be valid S3 bucket name; inventoryName must be valid inventory configuration identifier; inventory configuration must be unique per bucket",
             "properties": {
                 "bucketName": {
-                    "description": "Name of the bucket being inventoried",
+                    "description": "Q-ENHANCED-PROPERTY\nTarget S3 bucket name for inventory data collection enabling automated bucket content reporting and audit data generation. Specifies the source bucket for which inventory data will be collected, supporting audit infrastructure and compliance monitoring through automated S3 object metadata collection.\n\nUse cases: Bucket content auditing; Inventory data collection; Audit infrastructure; Compliance monitoring\n\nAWS: AWS S3 bucket identification for inventory configuration and automated content reporting\n\nValidation: Must be valid S3 bucket name; required; bucket must exist and be accessible for inventory collection",
                     "type": "string"
                 },
                 "inventoryName": {
-                    "description": "Name of the inventory configuration",
+                    "description": "Q-ENHANCED-PROPERTY\nUnique inventory configuration identifier for inventory management and reporting organization enabling systematic inventory tracking. Provides a unique name for the inventory configuration to distinguish between multiple inventory setups and enable organized inventory data management.\n\nUse cases: Inventory configuration management; Systematic tracking; Inventory organization; Configuration identification\n\nAWS: AWS S3 inventory configuration name for inventory management and reporting organization\n\nValidation: Must be valid inventory configuration identifier; required; must be unique per bucket for proper inventory management",
                     "type": "string"
                 }
             },
@@ -85,11 +86,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -117,8 +121,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -132,30 +138,30 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Reference role by arn",
+                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Reference role by id",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Reference role by name",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "A string which uniquely identifies the MdaaRoleRef within a scope.",
+                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
                     "type": "boolean"
                 }
             },
@@ -163,14 +169,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -182,11 +191,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -202,15 +214,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -221,12 +236,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -236,23 +254,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -266,22 +290,22 @@
     },
     "properties": {
         "inventories": {
-            "description": "The list of expected inventories",
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of bucket inventory configurations enabling S3 inventory tracking and audit analysis. Provides detailed inventory reporting for S3 buckets across the organization for compliance and audit purposes.\n\nUse cases: S3 inventory tracking; bucket auditing; Storage compliance monitoring\n\nAWS: AWS S3 inventory configuration for bucket tracking and audit analysis\n\nValidation: Must be array of valid BucketInventoryProps if provided; defines S3 inventory tracking configuration",
             "items": {
                 "$ref": "#/definitions/BucketInventoryProps"
             },
             "type": "array"
         },
         "inventoryPrefix": {
-            "description": "Specifies the S3 prefix where inventory data will be accepted on the audit bucket",
+            "description": "Q-ENHANCED-PROPERTY\nOptional S3 prefix specification for inventory data organization within the audit bucket enabling structured inventory management. Provides organized storage of S3 inventory reports for audit analysis and compliance reporting.\n\nUse cases: Inventory data organization; Structured audit storage; S3 inventory management and analysis\n\nAWS: AWS S3 bucket prefix configuration for inventory data organization and management\n\nValidation: Must be valid S3 prefix string if provided; defines inventory data storage organization",
             "type": "string"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "readRoles": {
-            "description": "List of refs to roles which will be provided read access to the audit logs",
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of role references with read access to audit logs enabling controlled access to audit data for compliance and security analysis. Provides secure access to audit trails for authorized personnel and compliance monitoring systems.\n\nUse cases: Controlled audit access; Compliance monitoring; Security analysis; Audit trail review and investigation\n\nAWS: AWS IAM roles with S3 and Athena access for audit log reading and analysis\n\nValidation: Must be array of valid MdaaRoleRef objects if provided; roles receive read access to audit infrastructure",
             "items": {
                 "$ref": "#/definitions/MdaaRoleRef"
             },
@@ -289,17 +313,17 @@
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         },
         "sourceAccounts": {
-            "description": "List of source accounts from which audit logs will be accepted",
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of source account IDs from which audit logs will be accepted enabling cross-account audit log aggregation. Provides centralized audit collection from multiple AWS accounts for organizational audit trails.\n\nUse cases: Cross-account audit aggregation; Centralized audit collection; Multi-account compliance monitoring\n\nAWS: AWS S3 bucket policies for cross-account audit log delivery and aggregation\n\nValidation: Must be array of valid AWS account IDs if provided; enables cross-account audit log acceptance",
             "items": {
                 "type": "string"
             },
             "type": "array"
         },
         "sourceRegions": {
-            "description": "List of source regions from which audit logs will be accepted",
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of source regions from which audit logs will be accepted enabling multi-region audit log collection. Provides regional audit coverage for global AWS deployments and multi-region compliance requirements.\n\nUse cases: Multi-region audit collection; Global audit coverage; Regional compliance monitoring\n\nAWS: AWS S3 bucket policies for multi-region audit log delivery and regional coverage\n\nValidation: Must be array of valid AWS region names if provided; enables multi-region audit log acceptance",
             "items": {
                 "type": "string"
             },

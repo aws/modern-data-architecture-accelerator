@@ -41,77 +41,28 @@ export const DECRYPT_ACTIONS = ['kms:Decrypt'];
 export const USER_ACTIONS = [...DECRYPT_ACTIONS, ...ENCRYPT_ACTIONS];
 
 export interface MdaaKmsKeyProps extends MdaaConstructProps {
-  /**
-   * @param {string[]} keyUserRoles - Array of Role ARNs to provide key usage (Encrypt, Decrypt) access
-   */
   readonly keyUserRoleIds?: string[];
 
-  /**
-   * @param {string[]} keyAdminRoles - Array of Role ARNs to provide key admin access to
-   */
   readonly keyAdminRoleIds?: string[];
 
   /**
-   * A description of the key. Use a description that helps your users decide
-   * whether the key is appropriate for a particular task.
+   * Q-ENHANCED-PROPERTY
+   * Optional human-readable description of the KMS key explaining its purpose and intended usage. Helps users and administrators understand the key's role in the data architecture and make appropriate usage decisions.
    *
-   * @default - No description.
-   */
+   * Use cases: Key purpose documentation; Administrative clarity; Compliance documentation
+   *
+   * AWS: AWS KMS key description for management and identification purposes
+   *
+   * Validation: Must be descriptive text if provided; recommended for key management clarity
+   **/
   readonly description?: string;
 
-  /**
-   * Initial alias to add to the key
-   *
-   * More aliases can be added later by calling `addAlias`.
-   *
-   * @default - No alias is added for the key.
-   */
   readonly alias?: string;
 
-  /**
-   * The cryptographic configuration of the key. The valid value depends on usage of the key.
-   *
-   * IMPORTANT: If you change this property of an existing key, the existing key is scheduled for deletion
-   * and a new key is created with the specified value.
-   *
-   * @default KeySpec.SYMMETRIC_DEFAULT
-   */
   readonly keySpec?: KeySpec;
-  /**
-   * The cryptographic operations for which the key can be used.
-   *
-   * IMPORTANT: If you change this property of an existing key, the existing key is scheduled for deletion
-   * and a new key is created with the specified value.
-   *
-   * @default KeyUsage.ENCRYPT_DECRYPT
-   */
   readonly keyUsage?: KeyUsage;
-  /**
-   * Custom policy document to attach to the KMS key.
-   *
-   * NOTE - If the `@aws-cdk/aws-kms:defaultKeyPolicies` feature flag is set (the default for new projects),
-   * this policy will *override* the default key policy and become the only key policy for the key. If the
-   * feature flag is not set, this policy will be appended to the default key policy.
-   *
-   * @default - A policy document with permissions for the account root to
-   * administer the key will be created.
-   */
   readonly policy?: PolicyDocument;
 
-  /**
-   * Specifies the number of days in the waiting period before
-   * AWS KMS deletes a CMK that has been removed from a CloudFormation stack.
-   *
-   * When you remove a customer master key (CMK) from a CloudFormation stack, AWS KMS schedules the CMK for deletion
-   * and starts the mandatory waiting period. The PendingWindowInDays property determines the length of waiting period.
-   * During the waiting period, the key state of CMK is Pending Deletion, which prevents the CMK from being used in
-   * cryptographic operations. When the waiting period expires, AWS KMS permanently deletes the CMK.
-   *
-   * Enter a value between 7 and 30 days.
-   *
-   * @see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kms-key.html#cfn-kms-key-pendingwindowindays
-   * @default - 30 days
-   */
   readonly pendingWindow?: Duration;
 }
 

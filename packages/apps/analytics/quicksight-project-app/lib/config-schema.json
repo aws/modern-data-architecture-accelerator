@@ -74,6 +74,7 @@
         },
         "DataSourceCredentialPairProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nQuickSight data source credential pair configuration interface for secure database authentication with username and password credentials. Defines credential properties for authenticating to external data sources including databases, data warehouses, and other data systems requiring username/password authentication in QuickSight data connections.\n\nUse cases: Database authentication; Secure data source connections; Credential management; Data warehouse access; External system authentication\n\nAWS: Amazon QuickSight data source credentials for secure authentication to external databases and data systems\n\nValidation: username and password must be non-empty strings; credentials must be valid for target data source; password should be stored securely",
             "properties": {
                 "alternateDataSourceParameters": {
                     "items": [
@@ -87,11 +88,11 @@
                     "type": "array"
                 },
                 "password": {
-                    "description": "Password",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired password for QuickSight data source authentication enabling secure access to external databases and data systems. Provides the password credential for username/password authentication to data sources requiring secure database connectivity.\n\nUse cases: Database authentication; Secure data access; Credential-based connections; Data source security\n\nAWS: Amazon QuickSight data source password for secure authentication to external databases\n\nValidation: Must be non-empty string; required for credential-based authentication; should be stored securely",
                     "type": "string"
                 },
                 "username": {
-                    "description": "Username",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired username for QuickSight data source authentication enabling secure access to external databases and data systems. Provides the username credential for username/password authentication to data sources requiring secure database connectivity.\n\nUse cases: Database authentication; User identification; Credential-based connections; Data source access\n\nAWS: Amazon QuickSight data source username for secure authentication to external databases\n\nValidation: Must be non-empty string; required for credential-based authentication",
                     "type": "string"
                 }
             },
@@ -103,6 +104,7 @@
         },
         "DataSourceCredentialsProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nDataSourceCredentialsProps configuration interface for business intelligence and data visualization.\n\nUse cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting\n\nAWS: Amazon QuickSight configuration for business intelligence and data visualization\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements",
             "properties": {
                 "copySourceArn": {
                     "description": "The Amazon Resource Name (ARN) of a data source that has the credential pair that you want to use.",
@@ -121,6 +123,7 @@
         },
         "DataSourceErrorInfoProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nQuickSight data source error information configuration interface for capturing and managing data connection error details with diagnostic information. Defines error properties for troubleshooting data source connectivity issues including error messages, types, and diagnostic information for QuickSight data source management.\n\nUse cases: Data source troubleshooting; Connection error diagnosis; Data connectivity monitoring; Error reporting; Data source health management\n\nAWS: Amazon QuickSight data source error information for connection troubleshooting and diagnostic reporting\n\nValidation: type must be valid error type (ACCESS_DENIED, CONFLICT, COPY_SOURCE_NOT_FOUND, etc.); message should be descriptive error text",
             "properties": {
                 "message": {
                     "description": "Error message(Optional)",
@@ -135,6 +138,7 @@
         },
         "DataSourcePermissionsProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nQuickSight data source permissions configuration interface for controlling user access to BI data sources with role-based data access management. Defines principal-specific data source permissions enabling secure data access control for QuickSight users with reader or author permissions on underlying data connections.\n\nUse cases: Data source access control; Role-based data permissions; Secure BI data access; User data authorization; Data source security management\n\nAWS: Amazon QuickSight data source permissions with principal-based access control for secure BI data connectivity\n\nValidation: principal must be valid QuickSight user or group ARN; actions must be 'READER_DATA_SOURCE' or 'AUTHOR_DATA_SOURCE'",
             "properties": {
                 "actions": {
                     "$ref": "#/definitions/DataSourceActions",
@@ -153,6 +157,7 @@
         },
         "DataSourceProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nDataSourceProps configuration interface for business intelligence and data visualization.\n\nUse cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting\n\nAWS: Amazon QuickSight configuration for business intelligence and data visualization\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements",
             "properties": {
                 "awsAccountId": {
                     "description": "The AWS account ID.",
@@ -199,6 +204,7 @@
         },
         "DataSourceSSLProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nQuickSight data source SSL configuration interface for secure data connections with SSL/TLS encryption control. Defines SSL properties for enabling or disabling encrypted connections to external data sources, ensuring secure data transmission between QuickSight and underlying data systems with configurable encryption settings.\n\nUse cases: Secure data connections; SSL/TLS encryption control; Data transmission security; Compliance requirements; Network security configuration\n\nAWS: Amazon QuickSight data source SSL configuration for encrypted connections to external data systems\n\nValidation: disableSsl must be boolean value; SSL should be enabled (false) for production data sources containing sensitive data",
             "properties": {
                 "disableSsl": {
                     "description": "Enable to Disable SSL: Default value is false(SSL is enabled)",
@@ -212,6 +218,7 @@
         },
         "DataSourceVPCProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nDataSourceVPCProps configuration interface for business intelligence and data visualization.\n\nUse cases: Business intelligence; Data visualization; Interactive dashboards; BI reporting\n\nAWS: Amazon QuickSight configuration for business intelligence and data visualization\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon QuickSight and MDAA requirements",
             "properties": {
                 "vpcConnectionArn": {
                     "description": "QuickSight VPC(created in QS) ARN",
@@ -232,11 +239,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -264,8 +274,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -279,14 +291,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -298,11 +313,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -318,15 +336,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -337,12 +358,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -352,23 +376,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -381,13 +411,14 @@
         },
         "SharedFoldersPermissionsProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nQuickSight shared folder permissions configuration interface for controlling user access to shared BI folders with role-based permissions. Defines principal-specific folder access permissions enabling collaborative BI development with controlled access to shared dashboards, analyses, and datasets within QuickSight projects.\n\nUse cases: Collaborative BI development; Shared folder access control; Team-based dashboard sharing; Role-based BI permissions; Project folder organization\n\nAWS: Amazon QuickSight shared folder permissions with principal-based access control for collaborative BI project management\n\nValidation: principal must be valid QuickSight user or group ARN; actions must be 'READER_FOLDER' or 'AUTHOR_FOLDER'",
             "properties": {
                 "actions": {
                     "$ref": "#/definitions/FolderActions",
-                    "description": "Either READER_FOLDER or AUTHOR_FOLDER"
+                    "description": "Q-ENHANCED-PROPERTY\nRequired folder action permissions for QuickSight shared folder access control enabling role-based folder operations. Defines the specific actions that the principal can perform on the shared folder, controlling whether users have read-only access or full authoring capabilities for collaborative BI development.\n\nUse cases: Role-based permissions; Folder operation control; Access level management; Collaborative BI security; Action-based access control\n\nAWS: Amazon QuickSight folder actions for shared folder operation control and role-based access management\n\nValidation: Must be valid FolderActions enum value (READER_FOLDER or AUTHOR_FOLDER); required for folder permission specification"
                 },
                 "principal": {
-                    "description": "List of Principals",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired principal identifier for QuickSight shared folder access control enabling user or group-based permissions. Defines the specific QuickSight user or group that will be granted access to the shared folder, providing identity-based access control for collaborative BI development and dashboard sharing.\n\nUse cases: User-based access control; Group permissions; Identity management; Collaborative BI access; Principal-based security\n\nAWS: Amazon QuickSight principal identifier for shared folder access control and identity-based permissions\n\nValidation: Must be valid QuickSight user or group identifier; required for principal-based access control",
                     "type": "string"
                 }
             },
@@ -399,16 +430,17 @@
         },
         "SharedFoldersProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nQuickSight shared folder configuration interface for creating collaborative BI workspaces with hierarchical folder organization and permission management. Defines shared folder properties including folder hierarchy, permissions, and organizational structure for team-based BI development and dashboard sharing within QuickSight projects.\n\nUse cases: BI workspace organization; Hierarchical folder structure; Team collaboration spaces; Dashboard organization; Project-based BI management\n\nAWS: Amazon QuickSight shared folder creation with hierarchical organization and permission management for collaborative BI development\n\nValidation: folderName must be unique within parent folder; folderPermissions must contain valid permission configurations; parentFolderArn must reference existing folder if specified",
             "properties": {
                 "folders": {
                     "additionalProperties": {
                         "$ref": "#/definitions/SharedFoldersProps"
                     },
-                    "description": "Sub-folders if any",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional nested folder structure for QuickSight shared folder hierarchy enabling organized BI workspace management and hierarchical content organization. Defines sub-folders within the current folder providing multi-level organization for dashboards, analyses, and BI assets.\n\nUse cases: Hierarchical folder organization; Nested BI workspaces; Multi-level content organization; Structured BI asset management; Project organization\n\nAWS: Amazon QuickSight nested shared folder structure for hierarchical BI workspace organization and content management\n\nValidation: Must be object with string keys and valid SharedFoldersProps values if provided; optional for nested folder structure",
                     "type": "object"
                 },
                 "permissions": {
-                    "description": "Permissions to be tied to the folder",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired array of permission configurations for QuickSight shared folder access control enabling role-based folder security and collaboration management. Defines the specific permissions that will be applied to the shared folder including user access rights, group permissions, and action-based security for collaborative BI development.\n\nUse cases: Folder access control; Role-based permissions; Collaboration security; User access management; BI workspace security\n\nAWS: Amazon QuickSight shared folder permissions for access control and collaborative BI security management\n\nValidation: Must be array of valid SharedFoldersPermissionsProps; required for folder permission configuration",
                     "items": {
                         "$ref": "#/definitions/SharedFoldersPermissionsProps"
                     },
@@ -429,29 +461,29 @@
                 },
                 "type": "object"
             },
-            "description": "(Optional) Details about the Data Sources to be created",
+            "description": "Q-ENHANCED-PROPERTY\nOptional nested map of data source types to data source configurations enabling data connectivity for QuickSight projects. Provides flexible data source setup with support for multiple data source types and configurations for business intelligence operations.\n\nUse cases: Data source connectivity; Multi-source data integration; Flexible data connection management\n\nAWS: Amazon QuickSight data sources for data connectivity and integration\n\nValidation: Must be nested object with string keys and valid DataSourceProps values if provided; enables data connectivity\n  *",
             "type": "object"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "principals": {
             "additionalProperties": {
                 "type": "string"
             },
-            "description": "(Required) QS API Actions",
+            "description": "Q-ENHANCED-PROPERTY\nRequired map of principal names to principal identifiers enabling access control and permission management for QuickSight projects. Defines all principals who will have access to the project resources and capabilities for controlled business intelligence operations.\n\nUse cases: Access control; Principal management; Permission assignment for QuickSight project resources\n\nAWS: Amazon QuickSight principal configuration for project access control and permission management\n\nValidation: Must be object with string keys and valid principal identifier values; required; defines project access control\n  *",
             "type": "object"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         },
         "sharedFolders": {
             "additionalProperties": {
                 "$ref": "#/definitions/SharedFoldersProps"
             },
-            "description": "(Optional) QS Shared Folders",
+            "description": "Q-ENHANCED-PROPERTY\nOptional map of shared folder names to shared folder configurations enabling collaborative workspace management within QuickSight projects. Provides organized, shared workspace areas for collaborative business intelligence development and asset sharing.\n\nUse cases: Collaborative workspaces; Shared asset management; Organized project resource sharing\n\nAWS: Amazon QuickSight shared folders for collaborative workspace and asset management\n\nValidation: Must be object with string keys and valid SharedFoldersProps values if provided; enables collaborative workspaces\n  *",
             "type": "object"
         }
     },

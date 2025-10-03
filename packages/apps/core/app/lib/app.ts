@@ -46,8 +46,28 @@ export interface MdaaPackageNameVersion {
   readonly version: string;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Deployment interface.
+ *
+ * Use cases: Application deployment; Schema validation; Configuration management; MDAA app orchestration
+ *
+ * AWS: AWS service configuration and deployment
+ *
+ * Validation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements
+ */
 export interface Deployment {
   readonly region?: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * AWS account ID for deployment targeting in multi-account architectures. Specifies the target AWS account where resources should be deployed, enabling cross-account deployments and multi-account data architectures.
+   *
+   * Use cases: Multi-account deployment; Cross-account resource targeting; Account-specific stack deployment
+   *
+   * AWS: AWS CDK Stack environment account property for cross-account deployment
+   *
+   * Validation: Must be valid 12-digit AWS account ID; optional string for deployment targeting
+   **/
   readonly account?: string;
 }
 
@@ -473,7 +493,6 @@ export abstract class MdaaCdkApp extends App {
   }
 
   /**
-   *
    * @returns A standard set of MDAA Stack Props for use in Mdaa App Configs
    */
   private getConfigParserProps(): MdaaAppConfigParserProps {

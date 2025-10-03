@@ -10,29 +10,9 @@ import { Construct } from 'constructs';
 import { updateProps } from './utils';
 
 export interface MdaaLogGroupProps extends MdaaConstructProps {
-  /**
-   * The KMS customer managed key to encrypt the log group with.
-   *
-   * @default Server-side encryption managed by the CloudWatch Logs service
-   */
   readonly encryptionKey: IKey;
-  /**
-   * Path Prefix Name of the log group.
-   *
-   */
   readonly logGroupNamePathPrefix: string;
-  /**
-   * Name of the log group.
-   *
-   * @default Automatically generated
-   */
   readonly logGroupName?: string;
-  /**
-   * How long, in days, the log contents will be retained.
-   *
-   * To retain all logs, set this value to RetentionDays.INFINITE.
-   *
-   */
   readonly retention: RetentionDays;
 }
 
@@ -47,13 +27,32 @@ export type IMdaaLogGroup = ILogGroup;
 export class MdaaLogGroup extends LogGroup implements IMdaaLogGroup {
   constructor(scope: Construct, id: string, props: MdaaLogGroupProps) {
     super(scope, id, updateProps(props));
-
     if (props.retention == RetentionDays.INFINITE) {
       MdaaNagSuppressions.addCodeResourceSuppressions(
         this,
         [
           {
+            /**
+             * Q-ENHANCED-PROPERTY
+             * Required CDK Nag rule identifier for CloudWatch log group retention period compliance suppression. Specifies the exact NIST 800-53 R5 security rule being suppressed for log retention configuration enabling compliance exception management and audit documentation.
+             *
+             * Use cases: Compliance exception management; Security rule suppression; Audit documentation; Log retention policy exceptions
+             *
+             * AWS: CDK Nag NIST 800-53 R5 rule identifier for CloudWatch log group retention compliance validation
+             *
+             * Validation: Must be valid CDK Nag rule ID; required for specific security rule suppression targeting
+             */
             id: 'NIST.800.53.R5-CloudWatchLogGroupRetentionPeriod',
+            /**
+             * Q-ENHANCED-PROPERTY
+             * Required justification for suppressing CloudWatch log group retention period security rule providing audit trail and compliance documentation. Documents the business reason for using infinite retention enabling compliance review and security audit processes.
+             *
+             * Use cases: Compliance documentation; Audit justification; Security review; Exception reasoning for infinite retention
+             *
+             * AWS: CDK Nag suppression reason for CloudWatch log group retention compliance exception documentation
+             *
+             * Validation: Must be descriptive justification text; required for audit trail and compliance documentation
+             */
             reason: 'LogGroup retention is set to RetentionDays.INFINITE.',
           },
           {

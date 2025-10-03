@@ -14,19 +14,20 @@ import {
 } from '@aws-cdk/aws-glue-alpha';
 import { Construct } from 'constructs';
 
-/**
- * Interface representing a compliant Glue Security Config
- */
 export interface MdaaSecurityConfigProps extends MdaaConstructProps {
-  /** The CloudWatch KMS Key */
   readonly cloudWatchKmsKey: IMdaaKmsKey;
-  /** The Job Bookmark KMS Key */
   readonly jobBookMarkKmsKey: IMdaaKmsKey;
-  /** The S3 Output KMS Key */
   readonly s3OutputKmsKey: IMdaaKmsKey;
   /**
-   * The name of the security configuration.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional security configuration name for custom identification overriding automatic MDAA naming conventions. When specified, provides custom naming for the security configuration for specific organizational or integration requirements.
+   *
+   * Use cases: Custom naming; Organizational requirements; Integration needs; Specific naming conventions
+   *
+   * AWS: Glue security configuration name for custom identification and configuration management
+   *
+   * Validation: Must be valid configuration name string if provided; overrides automatic MDAA naming
+   **/
   readonly securityConfigurationName?: string;
 }
 

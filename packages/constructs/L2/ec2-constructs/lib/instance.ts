@@ -33,65 +33,70 @@ import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 /**
  * Properties for creating a Compliance EC2 instance
  */
-
 export interface MdaaEC2InstanceProps extends MdaaConstructProps {
   /**
-   * Type of instance to launch.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required EC2 instance type determining compute capacity, memory, and network performance characteristics. Controls the underlying hardware configuration and affects performance, cost, and capability of the compute instance.
+   *
+   * Use cases: Performance optimization; Cost management; Workload-specific sizing
+   *
+   * AWS: Amazon EC2 instance type for compute capacity and performance configuration
+   *
+   * Validation: Must be valid InstanceType; required; determines compute resources and capabilities
+   **/
   readonly instanceType: InstanceType;
-  /**
-   * AMI to launch.
-   */
   readonly machineImage: IMachineImage;
   /**
-   * VPC to launch the instance in.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required VPC for instance deployment providing network isolation and security controls. Enables secure networking, private communication, and integration with other VPC resources for security architecture.
+   *
+   * Use cases: Network isolation; Secure communication; VPC resource integration
+   *
+   * AWS: Amazon VPC for EC2 instance network isolation and security controls
+   *
+   * Validation: Must be valid IVpc instance; required; provides network security and isolation
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
+   **/
   readonly vpc: IVpc;
-  /**
-   * Where to place the instance within the VPC.
-   */
   readonly instanceSubnet: ISubnet;
-  /**
-   * list of configs for block device to be mapped to instance
-   */
   readonly blockDeviceProps: BlockDeviceProps[];
-  /**
-   * Specific kms key to encrypt root volume.
-   */
   readonly kmsKey: IKey;
-  /**
-   * Whether the instance could initiate connections to anywhere by default.
-   */
   readonly allowAllOutbound?: boolean;
   /**
-   * In which AZ to place the instance within the VPC.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional availability zone specification for precise instance placement within the VPC. Enables control over instance location for proximity to other resources, compliance requirements, or disaster recovery strategies.
+   *
+   * Use cases: Resource proximity; Compliance placement; Disaster recovery planning
+   *
+   * AWS: Amazon EC2 availability zone placement for instance location control
+   *
+   * Validation: Must be valid AZ within the VPC region if provided; controls instance placement
+   **/
   readonly availabilityZone?: string;
   /**
-   * Apply the given CloudFormation Init configuration to the instance at startup.
-   * For Linux
-   * @link https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
-   * For Windows
-   * @link https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2-windows-user-data.html
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional CloudFormation Init configuration for automated instance setup and software installation. Enables declarative configuration management and automated application deployment during instance launch for consistent environments.
+   *
+   * Use cases: Automated instance setup; Software installation; Configuration management
+   *
+   * AWS: AWS CloudFormation Init for EC2 instance automated configuration and setup
+   *
+   * Validation: Must be valid CloudFormationInit if provided; executed during instance launch
+   *   **/
   readonly init?: CloudFormationInit;
   /**
-   * Use the given options for applying CloudFormation Init.
+   * Q-ENHANCED-PROPERTY
+   * Optional configuration options for CloudFormation Init execution controlling timeout, retry behavior, and signal handling. Enables fine-tuned control over automated configuration processes and error handling during instance setup.
    *
-   * @link https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ApplyCloudFormationInitOptions.html
-   */
+   * Use cases: Configuration timeout control; Retry behavior management; Error handling customization
+   *
+   * AWS: AWS CloudFormation Init options for configuration execution control
+   *
+   * Validation: Must be valid ApplyCloudFormationInitOptions if provided; controls Init execution behavior
+   *   **/
   readonly initOptions?: ApplyCloudFormationInitOptions;
-  /**
-   * The name of the instance.
-   */
   readonly instanceName?: string;
-  /**
-   * Name of SSH keypair to grant access to instance.
-   */
   readonly keyName?: string;
-  /**
-   * Defines a private IP address to associate with an instance.
-   */
   readonly privateIpAddress?: string;
   /**
    * Propagate the EC2 instance tags to the EBS volumes.
@@ -128,31 +133,60 @@ export interface MdaaEC2InstanceProps extends MdaaConstructProps {
    */
   readonly userDataCausesReplacement?: boolean;
 }
-
+/**
+ * Q-ENHANCED-INTERFACE
+ * BlockDeviceProps configuration interface for compute infrastructure and instance management.
+ *
+ * Use cases: Compute infrastructure; Instance management; Network configuration; Security groups
+ *
+ * AWS: Amazon EC2 configuration for compute infrastructure and instance management
+ *
+ * Validation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements
+ */
 export interface BlockDeviceProps {
   /**
-   * Name of dievice to be mapped
-   * for Linux
-   * @link https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html
-   * for Windows
-   * @link https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/device_naming.html
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required device name for block device mapping following AWS EC2 device naming conventions. Specifies the device identifier for storage attachment with platform-specific naming patterns for Linux and Windows instances.
+   *
+   * Use cases: Device identification; Storage mapping; Platform-specific device naming; Storage organization
+   *
+   * AWS: Amazon EC2 block device mapping device name for storage attachment and identification
+   *
+   * Validation: Must follow AWS EC2 device naming conventions; required; platform-specific format (Linux: /dev/sd*, Windows: xvd*)
+   **/
   readonly deviceName: string;
   /**
-   * Size of ebs volume
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required EBS volume size in gigabytes determining storage capacity for the block device. Controls the amount of storage available for the device with direct impact on storage costs and performance characteristics.
+   *
+   * Use cases: Storage capacity planning; Cost optimization; Performance configuration; Data storage requirements
+   *
+   * AWS: Amazon EBS volume size configuration for storage capacity and performance
+   *
+   * Validation: Must be positive integer in GB; required; minimum and maximum values depend on EBS volume type
+   **/
   readonly volumeSizeInGb: number;
   /**
-   * Type of EBS to use for root volume.
-   * Possible choices below
-   * @link https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.EbsDeviceVolumeType.html
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional EBS volume type determining performance characteristics and cost structure for the storage device. Specifies the underlying EBS volume technology with different IOPS, throughput, and cost profiles for workload optimization.
+   *
+   * Use cases: Performance optimization; Cost management; Workload-specific storage; IOPS requirements
+   *
+   * AWS: Amazon EBS volume type for performance and cost optimization (gp3, io1, io2, st1, sc1)
+   *
+   * Validation: Must be valid EbsDeviceVolumeType if provided; defaults to gp3; affects performance and cost
+   *   **/
   readonly ebsType?: EbsDeviceVolumeType;
   /**
-   * The number of I/O operations per second (IOPS).
-   * This parameter is required for io1 and io2 volumes.
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-blockdev-template.html#cfn-ec2-blockdev-template-volumetype:~:text=%3A%20No%20interruption-,Iops,-The%20number%20of
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional IOPS (Input/Output Operations Per Second) specification for high-performance EBS volumes requiring specific performance guarantees. Required for io1 and io2 volume types to define the provisioned IOPS performance level for demanding workloads requiring consistent storage performance.
+   *
+   * Use cases: High-performance storage; Database workloads; IOPS-intensive applications; Performance guarantees; Storage optimization
+   *
+   * AWS: Amazon EBS provisioned IOPS configuration for io1 and io2 volume types with guaranteed performance levels
+   *
+   * Validation: Must be positive integer if provided; required for io1/io2 volumes; must be within volume type IOPS limits
+   **/
   readonly iops?: number;
 }
 
@@ -170,6 +204,16 @@ export class MdaaEC2Instance extends Instance {
           encrypted: true,
           deleteOnTermination: false,
           kmsKey: kmsKey,
+          /**
+           * Q-ENHANCED-PROPERTY
+           * Optional EBS volume type determining performance characteristics and cost structure for the storage device. Specifies the underlying EBS volume technology with different IOPS, throughput, and cost profiles for workload optimization and performance requirements.
+           *
+           * Use cases: Performance optimization; Cost management; Workload-specific storage; IOPS requirements; Storage performance tuning
+           *
+           * AWS: Amazon EBS volume type for performance and cost optimization (gp3, io1, io2, st1, sc1)
+           *
+           * Validation: Must be valid EbsDeviceVolumeType if provided; defaults to gp3; affects performance and cost characteristics
+           */
           volumeType: blockDeviceProps.ebsType,
           iops: blockDeviceProps.iops,
         }),

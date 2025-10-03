@@ -8,43 +8,22 @@ import { CustomResource, Duration, Token } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { MdaaEKSCluster } from './cluster';
 
-/**
- * Properties for KubernetesCmd.
- */
 export interface KubernetesCmdProps {
-  /**
-   * The EKS cluster to fetch attributes from.
-   *
-   * [disable-awslint:ref-via-interface]
-   */
   readonly cluster: MdaaEKSCluster;
-
-  /**
-   * The command to run.
-   */
   readonly cmd: string[];
-
-  /**
-   * The namespace the object belongs to.
-   *
-   * @default 'default'
-   * @jsii ignore
-   */
   readonly namespace?: string;
-
   /**
-   * Timeout for waiting on a value.
+   * Q-ENHANCED-PROPERTY
+   * Optional timeout duration for kubectl command execution enabling controlled operation timing and failure handling. Defines the maximum time to wait for kubectl command completion preventing indefinite execution and enabling proper error handling.
    *
-   * @default Duration.minutes(5)
-   */
+   * Use cases: Command timeout control; Execution timing; Failure handling; Operation limits
+   *
+   * AWS: Timeout configuration for kubectl command execution against EKS cluster
+   *
+   * Validation: Must be valid Duration if provided; defaults to 5 minutes; controls command execution timing
+   **/
   readonly timeout?: Duration;
-
-  /**
-   * If specified, causes re-execution of the cmd only if this key changes across deployments.
-   * If not specified, the cmd will run only once.
-   */
   readonly executionKey?: string;
-
   readonly expectedOutput?: string;
 }
 

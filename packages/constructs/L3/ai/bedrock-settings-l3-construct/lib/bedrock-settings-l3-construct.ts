@@ -33,32 +33,39 @@ const LAMBDA_SRC_DIR = '../src/python/bedrock-settings';
  */
 export interface BedrockSettingsL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Enable S3 bucket creation for model invocation audit logs.
-   * When enabled, creates an encrypted S3 bucket to store Bedrock model invocation logs.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Enable S3 bucket creation for model invocation audit logs providing audit trail and compliance support for generative AI usage. Creates an encrypted S3 bucket with appropriate IAM policies and KMS encryption to store detailed Bedrock model invocation logs for regulatory compliance, security monitoring, and long-term audit retention.
+   *
+   * Use cases: HIPAA compliance for healthcare AI applications; Financial services regulatory audit requirements; Government security monitoring for AI model usage; Long-term audit retention for compliance frameworks
+   *
+   * AWS: Amazon Bedrock ModelInvocationLogging configuration with S3 destination and encrypted bucket storage
+   *
+   * Validation: Boolean value (true/false); When true, creates encrypted S3 bucket with Bedrock service permissions and KMS key policies
+   **/
   readonly enableAuditLoggingToS3: boolean;
   /**
-   * Enable CloudWatch Log Group creation for model invocation audit logs.
-   * When enabled, creates an encrypted CloudWatch Log Group for real-time log monitoring.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Enable CloudWatch Log Group creation for model invocation audit logs providing real-time monitoring and alerting capabilities for generative AI usage. Creates an encrypted CloudWatch Log Group with infinite retention for real-time log analysis, automated alerting, and operational monitoring of AI model usage patterns and performance metrics.
+   *
+   * Use cases: Real-time monitoring of AI model usage patterns; Automated alerting for unusual AI activity; Performance monitoring for model response times; Cost tracking and analysis for model invocation volumes
+   *
+   * AWS: Amazon Bedrock ModelInvocationLogging configuration with CloudWatch Logs destination and encrypted log group
+   *
+   * Validation: Boolean value (true/false); When true, creates encrypted CloudWatch Log Group with infinite retention and Bedrock service permissions
+   **/
   readonly enableAuditLoggingToCloudwatch: boolean;
 }
 
 /**
  * Bedrock Settings L3 Construct
- *
  * This construct configures Amazon Bedrock model invocation logging to capture audit trails
  * of all model interactions. It supports logging to S3 buckets for long-term storage and/or
  * CloudWatch Log Groups for real-time monitoring and analysis.
- *
  * Features:
  * - Creates encrypted storage resources (S3 bucket and/or CloudWatch Log Group)
  * - Configures appropriate IAM roles and policies for Bedrock service access
  * - Implements security best practices with KMS encryption
- * - Uses custom resource to configure Bedrock logging settings
- *
- * @example
- * new BedrockSettingsL3Construct(this, 'BedrockSettings', {
+ * - Uses custom resource to configure Bedrock logging settings * new BedrockSettingsL3Construct(this, 'BedrockSettings', {
  *   enableAuditLoggingToS3: true,
  *   enableAuditLoggingToCloudwatch: true,
  *   naming: namingConvention
@@ -69,7 +76,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates a new Bedrock Settings L3 Construct
-   *
    * @param scope - The parent construct
    * @param id - The construct identifier
    * @param props - Configuration properties
@@ -93,7 +99,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Validates the construct properties to ensure at least one logging destination is enabled
-   *
    * @throws Error if both logging options are disabled
    */
   private validateProps(): void {
@@ -104,7 +109,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates all storage resources needed for Bedrock logging
-   *
    * @returns Object containing the created encryption key, logging bucket, and log group
    */
   private createStorageResources() {
@@ -122,7 +126,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates a KMS key for encrypting Bedrock logging resources
-   *
    * @returns The created KMS key with appropriate policies for Bedrock, CloudWatch, and S3 access
    */
   private createEncryptionKey(): MdaaKmsKey {
@@ -138,7 +141,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates the KMS key policy allowing access from Bedrock, CloudWatch Logs, and S3
-   *
    * @returns PolicyDocument with statements for all required services
    */
   private createKmsKeyPolicy(): PolicyDocument {
@@ -194,7 +196,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates a CloudWatch Log Group for Bedrock model invocation logs if enabled
-   *
    * @param encryptionKey - KMS key for encrypting log data
    * @returns The created log group or undefined if CloudWatch logging is disabled
    */
@@ -214,7 +215,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates an S3 bucket for storing Bedrock model invocation logs
-   *
    * @param encryptionKey - KMS key for encrypting bucket contents
    * @returns The created S3 bucket with appropriate policies and suppressions
    */
@@ -236,7 +236,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Adds a bucket policy allowing Bedrock service to write log objects
-   *
    * @param bucket - The S3 bucket to add the policy to
    */
   private addBucketPolicy(bucket: MdaaBucket): void {
@@ -256,7 +255,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Adds CDK Nag suppressions for compliance rules that don't apply to log storage buckets
-   *
    * @param bucket - The S3 bucket to add suppressions to
    */
   private addBucketSuppressions(bucket: MdaaBucket): void {
@@ -271,7 +269,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates IAM resources required for Bedrock logging service
-   *
    * @param encryptionKey - KMS key for encryption permissions
    * @param logGroup - CloudWatch Log Group for logging permissions (optional)
    * @returns Object containing the created service role
@@ -285,7 +282,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates a managed policy for the Bedrock logging service role
-   *
    * @param encryptionKey - KMS key for encryption permissions
    * @param logGroup - CloudWatch Log Group for logging permissions (optional)
    * @returns The created managed policy with appropriate permissions
@@ -319,7 +315,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates the IAM service role for Bedrock logging
-   *
    * @param serviceRolePolicy - The managed policy to attach to the role
    * @returns The created service role that Bedrock can assume for logging operations
    */
@@ -337,7 +332,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
 
   /**
    * Creates a custom resource to configure Bedrock model invocation logging settings
-   *
    * @param loggingBucket - S3 bucket for log storage
    * @param logGroup - CloudWatch Log Group for real-time logs (optional)
    * @param serviceRole - IAM role for Bedrock logging service

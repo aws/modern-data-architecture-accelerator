@@ -27,7 +27,6 @@ import * as path from 'path';
 export class CompliantKubectlProvider extends NestedStack implements IKubectlProvider {
   /**
    * Take existing provider or create new based on cluster
-   *
    * @param scope Construct
    * @param cluster k8s cluster
    */
@@ -51,7 +50,6 @@ export class CompliantKubectlProvider extends NestedStack implements IKubectlPro
 
   /**
    * Import an existing provider
-   *
    * @param scope Construct
    * @param id an id of resource
    * @param attrs attributes for the provider

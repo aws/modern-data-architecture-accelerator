@@ -12,13 +12,27 @@ import * as configSchema from './config-schema.json';
 
 export interface GlueCrawlerConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Name of the Data Ops project. The crawler config will be autowired to use existing resources deployed by the project.
-   */
-  projectName: string;
+   * Q-ENHANCED-PROPERTY
+   * Required DataOps project name for crawler integration and resource autowiring with existing project infrastructure. Enables seamless integration with deployed project resources including databases, IAM roles, and security configurations for coordinated data operations.
+   *
+   * Use cases: Project resource integration; Coordinated data operations; Infrastructure autowiring and resource sharing
+   *
+   * AWS: AWS Glue crawler project integration for resource coordination and shared infrastructure
+   *
+   * Validation: Must be valid DataOps project name; required; project must exist with deployed resources
+   **/
+  readonly projectName: string;
   /**
-   * Map of crawler names to crawler definitions
-   */
-  crawlers: { [key: string]: CrawlerDefinition };
+   * Q-ENHANCED-PROPERTY
+   * Required map of crawler names to crawler definitions enabling multiple data source discovery and cataloging operations. Provides crawler configuration for different data sources, formats, and discovery patterns within the data lake architecture.
+   *
+   * Use cases: Multi-source data discovery; cataloging; Data source-specific crawler configuration
+   *
+   * AWS: AWS Glue crawler definitions for data source discovery and catalog population
+   *
+   * Validation: Must be object with string keys and valid CrawlerDefinition values; required; defines all crawler operations
+   *   **/
+  readonly crawlers: { [key: string]: CrawlerDefinition };
 }
 
 export class GlueCrawlerConfigParser extends MdaaDataOpsConfigParser<GlueCrawlerConfigContents> {

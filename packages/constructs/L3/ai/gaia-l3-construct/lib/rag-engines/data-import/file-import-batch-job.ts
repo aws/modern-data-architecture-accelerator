@@ -23,7 +23,7 @@ export interface FileImportBatchJobProps extends MdaaL3ConstructProps {
   readonly processingBucket: s3.Bucket;
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraDatabase?: rds.DatabaseCluster;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class FileImportBatchJob extends MdaaL3Construct {

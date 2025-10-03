@@ -2,7 +2,17 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 export interface ImageRepositoryMappingProps {
-  region: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required AWS region for SageMaker image repository mapping enabling region-specific container image selection for model deployment. Specifies the target AWS region for SageMaker container image resolution affecting model deployment and serving capabilities.
+   *
+   * Use cases: Regional image selection; Container mapping; Model deployment; Cross-region compatibility
+   *
+   * AWS: AWS region specification for SageMaker container image repository mapping
+   *
+   * Validation: Must be valid AWS region string; required for SageMaker image repository mapping and model deployment
+   **/
+  readonly region: string;
 }
 
 export class ImageRepositoryMapping extends Construct {

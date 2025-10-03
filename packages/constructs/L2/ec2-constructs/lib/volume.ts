@@ -13,43 +13,56 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 /**
  * Properties for creating a Compliance EC2 instance
  */
-
 export interface MdaaEC2VolumeProps extends MdaaConstructProps {
   /**
-   * The Availability Zone in which to create the volume.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required AWS Availability Zone for EBS volume placement enabling zone-specific storage deployment and EC2 instance attachment. Specifies the AZ where the volume will be created affecting instance attachment capabilities and regional availability for data analytics workloads.
+   *
+   * Use cases: Zone-specific deployment; Instance attachment; Regional availability; Storage placement
+   *
+   * AWS: AWS Availability Zone for EBS volume placement and EC2 instance attachment
+   *
+   * Validation: Must be valid AWS Availability Zone string; required for volume creation and instance attachment
+   **/
   readonly availabilityZone: string;
-  /**
-   * Indicates whether the volume is auto-enabled for I/O operations.
-   */
   readonly autoEnableIo?: boolean;
-  /**
-   * Indicates whether Amazon EBS Multi-Attach is enabled.
-   */
   readonly enableMultiAttach?: boolean;
-  /**
-   * The customer-managed encryption key that is used to encrypt the Volume.
-   */
   readonly encryptionKey: IMdaaKmsKey;
   /**
-   * The number of I/O operations per second (IOPS) to provision for the volume.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional IOPS provisioning for EBS volume performance optimization enabling high-performance I/O operations for data-intensive workloads. Specifies the number of I/O operations per second for performance-optimized volume types affecting analytics performance and throughput.
+   *
+   * Use cases: Performance optimization; High IOPS workloads; Analytics performance; I/O intensive operations
+   *
+   * AWS: AWS EBS provisioned IOPS for volume performance optimization and I/O operations
+   *
+   * Validation: Must be valid IOPS number if provided; requires compatible volume types (io1, io2, gp3)
+   **/
   readonly iops?: number;
   /**
-   * The size of the volume, in GiBs.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional size of the EBS volume in GiBs for data storage and processing capacity in analytics environments. Configures the storage capacity for EC2 instances, data processing nodes, and analytics workloads enabling adequate disk space for data operations.
+   *
+   * Use cases: Data storage; Processing capacity; Temporary storage; Analytics workloads; Instance storage configuration
+   *
+   * AWS: AWS EBS volume size configuration for EC2 instance storage and data processing capacity
+   *
+   * Validation: Must be valid Size object in GiBs if provided; affects storage capacity and cost
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.Size.html
+   **/
   readonly size?: Size;
-  /**
-   * The snapshot from which to create the volume.
-   */
   readonly snapshotId?: string;
-  /**
-   * The value of the physicalName property of this resource.
-   */
   readonly volumeName?: string;
   /**
-   * The type of the volume.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional EBS volume type determining performance characteristics and cost optimization for data storage workloads. Configures the volume type affecting IOPS performance, throughput, and cost optimization for data processing, analytics operations, and storage requirements.
+   *
+   * Use cases: Performance optimization; Cost management; Storage performance; Analytics workloads; I/O requirements
+   *
+   * AWS: AWS EBS volume type configuration for storage performance and cost characteristics
+   *
+   * Validation: Must be valid EbsDeviceVolumeType if provided; affects performance and cost; default type applied if not specified
+   *   **/
   readonly volumeType?: EbsDeviceVolumeType;
 }
 

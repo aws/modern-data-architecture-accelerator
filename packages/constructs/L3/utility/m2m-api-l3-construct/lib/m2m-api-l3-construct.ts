@@ -44,6 +44,13 @@ import {
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Machine-to-Machine API Gateway configuration for programmatic data lake access with Cognito client credentials authentication. Defines REST API deployment with WAF protection, CIDR-based access control, and event metadata mapping for secure service-to-service data lake interactions.
+ * Use cases: Automated data lake access; Service-to-service authentication; Programmatic data operations; API-based data integration
+ * AWS: API Gateway REST API with Cognito User Pool client credentials flow and WAF WebACL for secure machine-to-machine access
+ * Validation: adminRoles must be valid IAM role ARNs; allowedCidrs must be valid CIDR block format; eventMetadataMappings must be valid key-value pairs
+ */
 export interface M2MApiProps {
   /**
    * Roles which will be provided Admin access to the
@@ -51,12 +58,22 @@ export interface M2MApiProps {
    */
   readonly adminRoles: MdaaRoleRef[];
   /**
-   * API stage name. Defaults to 'prod'
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional API Gateway stage name for machine-to-machine API deployment enabling environment-specific API endpoints. Defines the deployment stage for the API Gateway REST API, allowing for development, staging, and production environment separation.
+   *
+   * Use cases: Environment separation; API versioning; Deployment stages; Environment-specific endpoints
+   * AWS: API Gateway deployment stage name for environment-specific API endpoints
+   * Validation: Must be valid API Gateway stage name if provided; defaults to 'prod' if not specified
+   *   */
   readonly stageName?: string;
   /**
-   * Required. Identifies the target bucket
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required S3 bucket name for machine-to-machine API data operations specifying the target data lake bucket. Identifies the primary S3 bucket where API operations will read from and write data, enabling programmatic data lake access and manipulation.
+   *
+   * Use cases: Data lake access; Programmatic data operations; API data storage; Automated data processing
+   * AWS: S3 bucket target for API Gateway Lambda integration data operations
+   * Validation: Must be valid S3 bucket name; bucket must exist and be accessible; required for API functionality
+   *   */
   readonly targetBucketName: string;
   /**
    * Required. Identifies the target prefix within the bucket
@@ -68,13 +85,22 @@ export interface M2MApiProps {
    */
   readonly metadataTargetPrefix?: string;
   /**
-   * List in CIDR ranges which will be permitted to connect to the API resource policy
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required array of CIDR blocks defining network access restrictions for the machine-to-machine API enabling IP-based access control. Specifies allowed IP ranges that can connect to the API Gateway resource policy, providing network-level security for automated data lake access.
+   *
+   * Use cases: Network access control; IP-based security; Corporate network restrictions; API access limitations
+   * AWS: API Gateway resource policy IP restrictions for network-based access control
+   * Validation: Must be array of valid CIDR block format (e.g., "10.0.0.0/8"); required for API security
+   *   */
   readonly allowedCidrs: string[];
   /**
-   * Concurrency limits to be placed on API Lambda functions. This will essentially limit the number of concurrent
-   * API requests.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required concurrency limit for API Lambda functions controlling the maximum number of concurrent API requests. Defines the Lambda reserved concurrency to prevent resource exhaustion and ensure predictable API performance for machine-to-machine data lake operations.
+   *
+   * Use cases: Performance control; Resource management; Cost optimization; API throttling; Concurrent request limiting
+   * AWS: AWS Lambda reserved concurrency for API Gateway integration performance control
+   * Validation: Must be positive integer; required for Lambda concurrency management
+   *   */
   readonly concurrencyLimit: number;
 
   /**
@@ -114,33 +140,56 @@ export interface M2MApiProps {
   readonly eventMetadataMappings?: { [dest: string]: string };
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Named Cognito app client collection for multi-application machine-to-machine authentication. Maps client names to app client configurations, enabling organized credential management for multiple applications accessing the M2M API.
+ * Use cases: Multi-application API access; Named client credential sets; Organized application authentication
+ * AWS: Multiple Cognito User Pool app clients with organized naming for systematic client credential management
+ * Validation: Client names must be unique identifiers; each AppClientProps must be valid Cognito app client configuration
+ */
 export interface NamedAppClientProps {
   /** @jsii ignore */
   readonly [name: string]: AppClientProps;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Configuration interface for Cognito User Pool app client properties defining token validity periods for machine-to-machine API authentication. Configures authentication token lifetimes for secure API access with customizable validity periods for different token types.
+ * Use cases: M2M API authentication configuration; Token lifetime management; Secure API client credential setup
+ * AWS: Configures AWS Cognito User Pool app client with token validity settings for API Gateway authentication
+ * Validation: Token validity values must be within AWS Cognito limits - ID/access tokens: 5 minutes to 1 day; refresh tokens: 60 minutes to 10 years
+ */
 export interface AppClientProps {
   /**
-   * The validity period of the ID Token in minutes (default 60 minutes).
-   * Valid values are between 5 minutes and 1 day
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional ID token validity period in minutes for machine-to-machine API authentication controlling identity token lifespan. Determines how long ID tokens remain valid for user identity verification in API Gateway authentication flows.
+   *
+   * Use cases: Identity verification duration; Authentication security; Token lifecycle management; User session control
+   * AWS: AWS Cognito User Pool app client ID token validity configuration for API Gateway authentication
+   * Validation: Must be between 5 minutes and 1440 minutes (1 day); defaults to 60 minutes if not specified
+   *   */
   readonly idTokenValidityMinutes?: number;
   /**
-   * The validity period of the Refresh Token in hours (default 30 days).
-   * Valid values between 60 minutes and 10 years
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional refresh token validity period in hours for machine-to-machine API authentication controlling token refresh capability. Determines how long refresh tokens remain valid for obtaining new access tokens without re-authentication.
+   *
+   * Use cases: Long-term authentication; Token refresh capability; Session persistence; Automated API access
+   * AWS: AWS Cognito User Pool app client refresh token validity configuration for API Gateway authentication
+   * Validation: Must be between 1 hour and 87600 hours (10 years); defaults to 720 hours (30 days) if not specified
+   *   */
   readonly refreshTokenValidityHours?: number;
   /**
-   * The validity period of the access token (default 60 minutes).
-   * Valid values are between 5 minutes and 1 day
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional access token validity period in minutes for machine-to-machine API authentication controlling how long access tokens remain valid. Determines the lifespan of access tokens used for API Gateway authentication, balancing security with operational convenience.
+   *
+   * Use cases: API authentication security; Token lifecycle management; Security policy compliance; Access control duration
+   * AWS: AWS Cognito User Pool app client access token validity configuration for API Gateway authentication
+   * Validation: Must be between 5 minutes and 1440 minutes (1 day); defaults to 60 minutes if not specified
+   *   */
   readonly accessTokenValidityMinutes?: number;
 }
 
 export interface M2MApiL3ConstructProps extends MdaaL3ConstructProps {
-  /**
-   * The Ingestion App definition.
-   */
   readonly m2mApiProps: M2MApiProps;
 }
 

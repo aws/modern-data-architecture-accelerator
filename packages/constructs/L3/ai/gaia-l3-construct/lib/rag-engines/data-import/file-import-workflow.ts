@@ -18,7 +18,7 @@ export interface FileImportWorkflowProps extends MdaaConstructProps {
   readonly shared: Shared;
   readonly fileImportBatchJob: FileImportBatchJob;
   readonly ragDynamoDBTables: RagDynamoDBTables;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class FileImportWorkflow extends Construct {

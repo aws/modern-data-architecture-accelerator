@@ -7,17 +7,39 @@ import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //
 import { CfnSchedule, CfnScheduleProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
-/**
- * Properties for creating a Mdaa Databrew Schedule
- */
 export interface MdaaDataBrewScheduleProps extends MdaaConstructProps {
-  // 	The name of the schedule.
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required name for the DataBrew schedule enabling schedule identification and management. Provides the schedule identifier for DataBrew operations and serves as the primary reference for automated job execution and workflow orchestration.
+   *
+   * Use cases: Schedule identification; Workflow management; Job orchestration; Automation organization
+   *
+   * AWS: AWS Glue DataBrew schedule name for schedule identification and management
+   *
+   * Validation: Must be unique schedule name string; required for schedule creation and identification
+   **/
   readonly name: string;
-
-  // The dates and times when the job is to run.
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required cron expression defining when the scheduled jobs should run for automated execution timing. Specifies the schedule timing using standard cron format for precise control over job execution frequency and timing patterns.
+   *
+   * Use cases: Job timing control; Automated execution; Schedule frequency; Workflow timing
+   *
+   * AWS: AWS Glue DataBrew schedule cron expression for automated job execution timing
+   *
+   * Validation: Must be valid cron expression format; required for schedule timing and automated execution
+   **/
   readonly cronExpression: string;
-
-  // A list of jobs to be run, according to the schedule.
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of DataBrew job names to be executed according to the schedule for automated workflow orchestration. Specifies which DataBrew jobs will be triggered by this schedule, enabling coordinated execution of multiple data preparation jobs.
+   *
+   * Use cases: Job orchestration; Multi-job workflows; Coordinated execution; Batch processing automation
+   *
+   * AWS: AWS Glue DataBrew job names for scheduled execution and workflow orchestration
+   *
+   * Validation: Must be array of valid DataBrew job names if provided; jobs must exist for schedule association
+   **/
   readonly jobNames?: string[];
 }
 

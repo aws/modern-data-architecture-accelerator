@@ -24,105 +24,54 @@ import { SecretRotationApplication } from 'aws-cdk-lib/aws-secretsmanager';
 import { IRole } from 'aws-cdk-lib/aws-iam';
 import { getSanitizeClusterIdentifier } from './utils';
 
-/**
- * Properties for creating a compliant RDS Serverless Cluster
- */
 export interface MdaaRdsServerlessClusterProps extends MdaaConstructProps {
-  /**
-   * Kind of database to deploy
-   * Valid values: "aurora-mysql" | "aurora-postgresql"
-   */
   readonly engine: 'aurora-mysql' | 'aurora-postgresql';
   /**
+   * Q-ENHANCED-PROPERTY
+   * Required engine version specification controlling Aurora database version and feature availability for compatibility and security. Defines the specific Aurora engine version for feature access, security updates, and application compatibility requirements.
    *
-   */
+   * Use cases: Version management; Feature access; Security updates; Application compatibility
+   *
+   * AWS: Aurora Serverless engine version for feature access and compatibility management
+   *
+   * Validation: Must be valid AuroraPostgresEngineVersion or AuroraMysqlEngineVersion; required for version specification
+   *   **/
   readonly engineVersion: AuroraPostgresEngineVersion | AuroraMysqlEngineVersion;
-  /**
-   * Monitoring Role.
-   *
-   */
   readonly monitoringRole: IRole;
-  /**
-   * The number of days during which automatic DB snapshots are retained.
-   * Automatic backup retention cannot be disabled on serverless clusters.
-   * @default: 1
-   * Must be a value from 1 day to 35 days.
-   */
-
   readonly backupRetention?: number;
-
-  /**
-   * Intervals in second between points of collecting metrics
-   * @see: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseCluster.html#monitoringinterval
-   */
   readonly monitoringIntervalsInSeconds?: number;
-
-  /**
-   * An optional identifier for the cluster.
-   * @default: - A name is automatically generated.
-   */
   readonly clusterIdentifier?: string;
-
-  /**
-   * Whether to copy tags to the snapshot when a snapshot is created.
-   * @default: true
-   */
   readonly copyTagsToSnapshot?: boolean;
-  /**
-   * A username for the administrative user.
-   * @default: false
-   */
   readonly masterUsername: string;
-
-  /**
-   * Name of a database which is automatically created inside the cluster
-   * @default: Database is not created in cluster
-   */
   readonly defaultDatabaseName?: string;
-
-  /**
-   * Whether to enable the Data API.
-   * @see: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html
-   * @default: false
-   */
   readonly enableDataApi?: boolean;
-
-  /**
-   * Additional parameters to pass to the database engine.
-   * @default: no parameter group
-   *
-   */
   readonly parameterGroup?: IParameterGroup;
-
-  /**
-   * Scaling configuration of an Aurora Serverless database cluster
-   * @default: Serverless cluster is automatically paused after 5 minutes of being idle.
-   * minimum capacity: 2 ACU
-   * maximum capacity: 16 ACU
-   *
-   */
   readonly scaling?: ServerlessScalingOptions;
-
   /**
-   * Security groups.
+   * Q-ENHANCED-PROPERTY
+   * Optional array of security groups for Aurora cluster network access control defining inbound and outbound traffic rules for database security. Provides network-level security controls for Aurora cluster ensuring secure database communication.
    *
-   */
+   * Use cases: Network security; Database access control; Traffic filtering; Security group management
+   *
+   * AWS: VPC security groups for Aurora Serverless cluster network security and access control
+   *
+   * Validation: Must be array of valid ISecurityGroup interfaces if provided; enables network security control
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ISecurityGroup.html
+   **/
   readonly securityGroups?: ISecurityGroup[];
-
-  /**
-   * The KMS key for storage encryption.
-   */
   readonly encryptionKey: IMdaaKmsKey;
-
   /**
-   * The VPC that this Aurora Serverless cluster should be created.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required VPC for Aurora cluster deployment providing network isolation and security controls for serverless database operations. Defines the network environment where the Aurora Serverless cluster will be deployed for secure networking.
+   *
+   * Use cases: Network isolation; VPC integration; Secure networking; Database connectivity
+   *
+   * AWS: Amazon VPC for Aurora Serverless cluster network isolation and secure database deployment
+   *
+   * Validation: Must be valid IVpc interface; required for Aurora cluster network deployment and security
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
+   **/
   readonly vpc: IVpc;
-
-  /**
-   * Where to place the instances within the VPC. If provided, the vpc property must also be specified.
-   * @default: the VPC default strategy if not specified
-   */
   readonly vpcSubnets: SubnetSelection;
 
   /**

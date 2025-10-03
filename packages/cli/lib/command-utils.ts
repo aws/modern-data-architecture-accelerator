@@ -6,9 +6,29 @@
 import * as fs from 'fs';
 
 export interface ExecutionError {
-  status: number;
-  signal: string | null;
-  message?: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required numeric status code indicating the exit status of the failed command execution enabling programmatic error handling. Provides the process exit code for command execution failures allowing automated error detection and appropriate response handling in MDAA CLI operations.
+   *
+   * Use cases: Exit code handling; Programmatic error detection; Automated response; Error classification
+   *
+   * AWS: Process exit codes from AWS CLI, CDK, and CloudFormation operations
+   *
+   * Validation: Must be numeric exit status code; required for error classification and handling
+   **/
+  readonly status: number;
+  readonly signal: string | null;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional error message providing detailed information about command execution failures in the MDAA CLI. Contains descriptive text explaining the nature of the execution error, command failure reasons, or system-level issues encountered during MDAA deployment operations and configuration processing.
+   *
+   * Use cases: Error reporting; Debugging assistance; Failure diagnosis; User feedback; Troubleshooting guidance
+   *
+   * AWS: CLI error handling and logging for AWS CDK and service deployment operations
+   *
+   * Validation: Optional string containing human-readable error description; used for diagnostic and user feedback purposes
+   **/
+  readonly message?: string;
 }
 
 export function executeCommand(cmd: string): void {

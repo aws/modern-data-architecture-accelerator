@@ -8,25 +8,56 @@ import { Construct } from 'constructs';
 import { CfnOutput, Token } from 'aws-cdk-lib';
 import { ParameterTier, StringParameter } from 'aws-cdk-lib/aws-ssm';
 
-/** Common properties for MDAA Constructs */
 export interface MdaaConstructProps {
-  /** The MDAA naming class to be used for resource naming */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required MDAA naming implementation for consistent resource naming across all MDAA constructs enabling standardized naming conventions and operational consistency. Provides the naming strategy that will be applied to all resources created by MDAA constructs for consistent identification and management.
+   *
+   * Use cases: Consistent naming; Resource identification; Naming conventions; Operational consistency
+   *
+   * AWS: MDAA resource naming for consistent resource identification and naming convention compliance
+   *
+   * Validation: Must be valid IMdaaResourceNaming implementation; required for all MDAA construct naming
+   *   **/
   readonly naming: IMdaaResourceNaming;
-  /** If true (default), creates SSM Params for each construct */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional flag controlling SSM parameter creation for construct resource references enabling infrastructure integration and cross-stack communication. When enabled, creates SSM parameters for construct resources allowing other stacks and applications to reference deployed resources.
+   *
+   * Use cases: Infrastructure integration; Cross-stack references; Resource discovery; Parameter management
+   *
+   * AWS: SSM parameter creation for MDAA construct resource references and infrastructure integration
+   *
+   * Validation: Boolean value; defaults to true; enables SSM parameter creation for resource references
+   **/
   readonly createParams?: boolean;
-  /** If true (default), creates Cfn outputs and stack exports for each construct */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional flag controlling CloudFormation output and stack export creation for construct resources enabling infrastructure integration and external references. When enabled, creates CloudFormation outputs and exports for construct resources allowing external access and integration.
+   *
+   * Use cases: CloudFormation outputs; Stack exports; External integration; Infrastructure references
+   *
+   * AWS: CloudFormation outputs and exports for MDAA construct resource references and external integration
+   *
+   * Validation: Boolean value; defaults to true; enables CloudFormation output and export creation
+   **/
   readonly createOutputs?: boolean;
 }
 
-/** Props for creating MDAA SSM params and Cfn outputs */
 export interface MdaaParamAndOutputProps extends MdaaConstructProps {
-  /** Used to form part of the SSM Param and Cfn Output names. Will be passed to the MDAA naming implementation to generate the full name */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required name component for SSM parameter and CloudFormation output naming enabling consistent resource identification and reference management. Provides the primary name component that will be processed through MDAA naming conventions for parameter and output generation.
+   *
+   * Use cases: Resource naming; Parameter identification; Output naming; Reference management
+   *
+   * AWS: Name component for SSM parameter and CloudFormation output naming and resource identification
+   *
+   * Validation: Must be descriptive name string; required; processed through MDAA naming conventions
+   **/
   readonly name: string;
-  /** Used to form part of the SSM Param and Cfn Output names. Will be passed to the MDAA naming implementation to generate the full name */
   readonly resourceType: string;
-  /** Used to form part of the SSM Param and Cfn Output names. Will be passed to the MDAA naming implementation to generate the full name */
   readonly resourceId?: string;
-  /** Set the construct resource ID, without impacting SSM Param and Cfn Output names */
   readonly overrideResourceId?: string;
   /** Will be the value of the SSM Param and Cfn Output */
   readonly value: string;

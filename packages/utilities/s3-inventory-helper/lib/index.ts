@@ -11,8 +11,28 @@ import { IBucket, Inventory, InventoryFormat, InventoryFrequency, InventoryObjec
 import { Construct } from 'constructs';
 
 export interface BucketInventory {
-  bucketName: string;
-  inventoryName: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Name of the S3 bucket for which inventory data has been generated. Identifies the source bucket in inventory data organization and enables bucket-specific inventory querying through Glue table partitions.
+   *
+   * Use cases: Source bucket identification; Inventory data organization; Multi-bucket inventory management
+   *
+   * AWS: AWS S3 bucket name for inventory source identification in Glue table partitions
+   *
+   * Validation: Must be valid S3 bucket name (3-63 characters, lowercase, no underscores)
+   **/
+  readonly bucketName: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Name of the S3 inventory configuration that generated the inventory data for the specified bucket. Enables multiple inventory configurations per bucket and organized inventory data management.
+   *
+   * Use cases: Inventory configuration identification; Multiple inventories per bucket; Inventory data organization
+   *
+   * AWS: AWS S3 inventory configuration name for inventory data identification in Glue table partitions
+   *
+   * Validation: Must be valid S3 inventory configuration name matching the inventory ID used in S3 inventory setup
+   **/
+  readonly inventoryName: string;
 }
 
 /** Helper class for creating S3 Inventories and associated Glue/Athena resources for querying these inventories. */
@@ -33,10 +53,19 @@ export class InventoryHelper {
     destinationAccount?: string,
   ): Inventory {
     const bucketOwner = destinationAccount ? `${destinationAccount}` : destinationAccount;
-
     return {
       destination: {
         bucket: destinationBucket,
+        /**
+         * Q-ENHANCED-PROPERTY
+         * Required S3 prefix for inventory report destination organization enabling systematic inventory file organization and management. Provides the S3 key prefix for inventory report storage enabling organized inventory data management and efficient retrieval of inventory reports.
+         *
+         * Use cases: Inventory organization; Report storage; Data management; Systematic file organization
+         *
+         * AWS: S3 inventory configuration destination prefix for inventory report organization and storage
+         *
+         * Validation: Must be valid S3 prefix string; required for inventory report destination organization
+         */
         prefix: MdaaBucket.formatS3Prefix(destinationPrefix),
         bucketOwner: bucketOwner,
       },

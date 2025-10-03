@@ -4,13 +4,14 @@
     "definitions": {
         "AwsManagedPolicySpec": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nAwsManagedPolicySpec interface.\n\nUse cases: Data flow orchestration; Event-driven processing; Data routing; Flow management\n\nAWS: Apache NiFi configuration for data flow orchestration and event-driven processing\n\nValidation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements",
             "properties": {
                 "policyName": {
-                    "description": "Name of the AWS Managed Policy",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired AWS managed policy name for NiFi cluster IAM permissions enabling AWS service access and integration. Specifies the name of the AWS managed policy that will be attached to the NiFi cluster service account for accessing AWS services and resources.\n\nUse cases: AWS service access; Managed policy attachment; Service integration; Permission management\n\nAWS: AWS IAM managed policy name for NiFi cluster service account permissions\n\nValidation: Must be valid AWS managed policy name string; required for policy attachment and service access",
                     "type": "string"
                 },
                 "suppressionReason": {
-                    "description": "A suppression reason to be recorded in order to suppress AWSSolutions-IAM4",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired suppression reason for CDK Nag compliance enabling security control exception documentation. Provides justification for using AWS managed policies in compliance with security controls and audit requirements for transparent security exception management.\n\nUse cases: Compliance documentation; Security exception justification; Audit requirements; Control suppression\n\nAWS: CDK Nag suppression reason for AWS managed policy usage compliance\n\nValidation: Must be descriptive suppression reason string; required for compliance and audit documentation",
                     "type": "string"
                 }
             },
@@ -150,8 +151,10 @@
         },
         "MdaaCidrPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaCidrPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "cidr": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired CIDR block specification for network access control in security group rules enabling IP range-based access control. Defines the IP address range that will be allowed or denied access through security group rules for network-level access control and security boundaries.\n\nUse cases: IP range access control; Network security boundaries; CIDR-based filtering; Network access management\n\nAWS: Amazon EC2 security group CIDR block for IP range-based network access control\n\nValidation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-based security group rules",
                     "type": "string"
                 },
                 "description": {
@@ -170,6 +173,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -181,11 +185,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -213,8 +220,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -228,6 +237,7 @@
         },
         "MdaaPrefixListPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaPrefixListPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -236,6 +246,7 @@
                     "type": "number"
                 },
                 "prefixList": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired prefix list identifier for managed IP range access control in security group rules enabling AWS service and managed IP range-based access control. Defines the prefix list ID that contains managed IP ranges for AWS services or custom IP ranges for streamlined security group rule management.\n\nUse cases: AWS service access; Managed IP ranges; Prefix list-based filtering; Streamlined rule management\n\nAWS: Amazon EC2 prefix list identifier for managed IP range-based network access control\n\nValidation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for prefix list-based security group rules",
                     "type": "string"
                 },
                 "protocol": {
@@ -248,6 +259,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -259,30 +271,30 @@
         },
         "MdaaRoleRef": {
             "additionalProperties": false,
-            "description": "A reference to an IAM role. Roles can be referenced by name, arn, and/or id.",
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for referencing IAM roles across MDAA modules using multiple identification methods. Enables flexible role resolution for cross-module dependencies, external role integration, and SSO-managed roles while supporting both mutable and immutable role references.\n\nUse cases: Cross-module IAM role sharing; External role integration from Landing Zone Accelerator; SSO-managed role references for federated access\n\nAWS: References AWS IAM roles for service permissions, cross-account access, and federated identity integration\n\nValidation: At least one of name, arn, or id must be provided; arn must be valid IAM role ARN format; name must be valid IAM role name",
             "properties": {
                 "arn": {
-                    "description": "Reference role by arn",
+                    "description": "Q-ENHANCED-PROPERTY\nFull IAM role ARN for cross-account role references and explicit role identification. Enables precise role targeting across AWS accounts and regions, essential for cross-account data sharing and federated access scenarios.\n\nUse cases: Cross-account role references; External role integration; Precise role identification with account/region context\n\nAWS: AWS IAM role ARN for cross-account permissions and explicit role targeting\n\nValidation: Must be valid IAM role ARN format (arn:aws:iam::account-id:role/role-name)",
                     "type": "string"
                 },
                 "id": {
-                    "description": "Reference role by id",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role unique identifier for role resolution using the role's AWS-generated ID. Provides the most stable role reference method that persists across role name changes and enables precise role targeting.\n\nUse cases: Stable role references across name changes; Precise role identification; Role references in automated systems\n\nAWS: AWS IAM role unique ID for stable role identification\n\nValidation: Must be valid IAM role ID format (typically AROA followed by alphanumeric characters)",
                     "type": "string"
                 },
                 "immutable": {
-                    "description": "Indicates whether the role should be considered immutable (defaults false)",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating whether the referenced role should be treated as immutable and not modified by MDAA operations. Prevents accidental role modifications for externally managed roles and ensures role integrity for critical system roles.\n\nUse cases: External role protection; System role preservation; Landing Zone Accelerator role integration\n\nAWS: Role modification protection flag for IAM role management\n\nValidation: Boolean value, defaults to false if not specified",
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Reference role by name",
+                    "description": "Q-ENHANCED-PROPERTY\nIAM role name for role resolution within the same AWS account. Enables simple role references when the role exists in the current account and provides the most straightforward method for role identification.\n\nUse cases: Same-account role references; MDAA-generated role references; Simple role configuration\n\nAWS: AWS IAM role name for role lookup and permission assignment\n\nValidation: Must be valid IAM role name (1-64 characters, alphanumeric plus +=,.@-_ characters)",
                     "type": "string"
                 },
                 "refId": {
-                    "description": "A string which uniquely identifies the MdaaRoleRef within a scope.",
+                    "description": "Q-ENHANCED-PROPERTY\nUnique identifier for the role reference within a configuration scope, enabling role reference management and resolution tracking. Provides a logical name for the role reference that can be used for cross-referencing and dependency management.\n\nUse cases: Role reference tracking in complex configurations; Cross-module role dependency mapping; Configuration validation and debugging\n\nAWS: Logical identifier for IAM role references in MDAA configurations\n\nValidation: Must be unique within the configuration scope if provided; alphanumeric and hyphens recommended",
                     "type": "string"
                 },
                 "sso": {
-                    "description": "If true, role name will be resolved to an SSO auto-generated role. Also implies immutability.",
+                    "description": "Q-ENHANCED-PROPERTY\nFlag indicating the role should be resolved as an AWS SSO auto-generated role, enabling integration with AWS Identity Center managed roles. Automatically implies immutability and enables federated access patterns for MDAA resources.\n\nUse cases: AWS Identity Center integration; Federated user access; SSO-managed role references\n\nAWS: AWS Identity Center (SSO) role resolution for federated access\n\nValidation: Boolean value, implies immutable=true when set to true",
                     "type": "boolean"
                 }
             },
@@ -290,6 +302,7 @@
         },
         "MdaaSecurityGroupPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -301,6 +314,7 @@
                     "type": "string"
                 },
                 "sgId": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired security group identifier for security group-based access control in network rules enabling security group reference-based access control. Defines the security group ID that will be referenced in security group rules for allowing access between security groups and resources.\n\nUse cases: Security group reference; Cross-security group access; Resource-based access control; Security group chaining\n\nAWS: Amazon EC2 security group identifier for security group-based network access control\n\nValidation: Must be valid security group ID format (sg-xxxxxxxxx); required for security group-based rules",
                     "type": "string"
                 },
                 "suppressions": {
@@ -310,6 +324,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -321,20 +336,24 @@
         },
         "MdaaSecurityGroupRuleProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupRuleProps configuration interface for compute infrastructure and instance management.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "ipv4": {
+                    "description": "Q-ENHANCED-PROPERTY\nIPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions. Specifies IPv4 CIDR blocks that are allowed or denied access through the security group for network-level access control and IP-based security policies.\n\nUse cases: IP-based access control; Network segmentation; CIDR-based restrictions; Geographic access control; Network security policies\n\nAWS: AWS EC2 SecurityGroup rules with IPv4 CIDR block sources/destinations\n\nValidation: Must be valid MdaaCidrPeer array with valid CIDR notation; optional array for IP-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaCidrPeer"
                     },
                     "type": "array"
                 },
                 "prefixList": {
+                    "description": "Q-ENHANCED-PROPERTY\nPrefix list rules for security group traffic control defining managed prefix list-based access restrictions. Specifies AWS-managed or customer-managed prefix lists for scalable IP address range management and centralized network access control.\n\nUse cases: Managed IP ranges; Scalable access control; Centralized IP management; AWS service access; Regional IP restrictions\n\nAWS: AWS EC2 SecurityGroup rules with prefix list sources/destinations\n\nValidation: Must be valid MdaaPrefixListPeer array with valid prefix list IDs; optional array for prefix list-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaPrefixListPeer"
                     },
                     "type": "array"
                 },
                 "sg": {
+                    "description": "Q-ENHANCED-PROPERTY\nSecurity group rules for cross-security group traffic control defining security group-based access restrictions. Specifies other security groups that are allowed access through this security group for resource-level access control and security group chaining.\n\nUse cases: Cross-security group access; Resource-based access control; Security group chaining; Service-to-service communication; Layered security\n\nAWS: AWS EC2 SecurityGroup rules with security group sources/destinations\n\nValidation: Must be valid MdaaSecurityGroupPeer array with valid security group IDs; optional array for SG-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaSecurityGroupPeer"
                     },
@@ -345,14 +364,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -364,11 +386,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -384,15 +409,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -403,12 +431,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -418,23 +449,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -447,27 +484,33 @@
         },
         "MgmtInstanceProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for EKS cluster management instance providing tooling and connectivity for Kubernetes cluster administration. Defines EC2 instance properties for EKS cluster management including networking, permissions, and administrative tooling setup.\n\nUse cases: Cluster management; Administrative access; Kubernetes tooling; Operational management\n\nAWS: EC2 management instance for EKS cluster administration and Kubernetes operations\n\nValidation: subnetId and availabilityZone are required; various management configuration options available",
             "properties": {
                 "availabilityZone": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired availability zone specification for management instance placement controlling geographic distribution and network proximity. Defines the specific availability zone for management instance deployment ensuring proper placement and connectivity.\n\nUse cases: Geographic placement; Availability zone specification; Network proximity; Instance placement\n\nAWS: Availability zone for EKS management instance geographic placement and network optimization\n\nValidation: Must be valid availability zone string; required for management instance placement",
                     "type": "string"
                 },
                 "instanceType": {
                     "$ref": "#/definitions/InstanceType",
-                    "description": "Instance type for EC2 instances\n\nThis class takes a literal string, good if you already\nknow the identifier of the type you want."
+                    "description": "Q-ENHANCED-PROPERTY\nOptional EC2 instance type for management instance sizing controlling compute resources and performance characteristics. Defines the instance size for EKS cluster management operations and administrative tooling with appropriate resource allocation.\n\nUse cases: Instance sizing; Performance requirements; Cost optimization; Resource allocation\n\nAWS: EC2 instance type for EKS management instance compute resources and performance\n\nValidation: Must be valid InstanceType if provided; controls management instance compute capacity"
                 },
                 "keyPairName": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional EC2 key pair name for SSH access to management instance enabling secure administrative access and troubleshooting. Provides SSH key pair for secure access to the management instance for administrative operations and troubleshooting.\n\nUse cases: SSH access; Administrative access; Secure connectivity; Troubleshooting support\n\nAWS: EC2 key pair for SSH access to EKS management instance and administrative operations\n\nValidation: Must be valid key pair name if provided; enables SSH access to management instance",
                     "type": "string"
                 },
                 "mgmtPolicyStatements": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM policy statements array for management instance permissions enabling EKS cluster administration and AWS service access. Provides additional IAM permissions for management instance operations and EKS cluster administration tasks.\n\nUse cases: IAM permissions; Cluster administration; AWS service access; Administrative operations\n\nAWS: IAM policy statements for EKS management instance permissions and cluster administration\n\nValidation: Must be array of valid PolicyStatement objects if provided; enables administrative permissions\n  * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_iam.PolicyStatement.html",
                     "items": {
                         "$ref": "#/definitions/PolicyStatement"
                     },
                     "type": "array"
                 },
                 "subnetId": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired subnet ID for management instance network placement enabling VPC connectivity and network isolation. Defines the specific subnet where the management instance will be deployed for proper network connectivity and security.\n\nUse cases: Network placement; VPC connectivity; Subnet specification; Network isolation\n\nAWS: VPC subnet ID for EKS management instance network placement and connectivity\n\nValidation: Must be valid subnet ID string; required for management instance network placement",
                     "type": "string"
                 },
                 "userDataCommands": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional user data commands array for management instance initialization enabling custom setup and tooling installation. Provides custom initialization commands for management instance setup including EKS tooling and administrative utilities.\n\nUse cases: Instance initialization; Custom setup; Tooling installation; Administrative configuration\n\nAWS: EC2 user data commands for EKS management instance initialization and tooling setup\n\nValidation: Must be array of valid command strings if provided; enables custom instance initialization",
                     "items": {
                         "type": "string"
                     },
@@ -521,36 +564,43 @@
             "additionalProperties": {
                 "$ref": "#/definitions/NifiClusterOptionsWithPeers"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNamed NiFi cluster configuration interface for systematic cluster organization and management. Defines named cluster mappings for organized NiFi cluster deployment including cluster identification and configuration management for multi-cluster data flow architectures.\n\nUse cases: Named cluster sets; Cluster organization; Multi-environment NiFi deployments; Cluster management; Data flow architecture\n\nAWS: NiFi cluster configuration with named mappings for systematic cluster deployment and management\n\nValidation: Names must be unique cluster identifiers; each entry must map to valid NifiClusterOptions configuration",
             "type": "object"
         },
         "NamedNifiRegistryClientProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/NifiRegistryClientProps"
             },
+            "description": "Q-ENHANCED-INTERFACE\nNiFi Registry configuration interface for flow versioning and template management.\n\nUse cases: Data flow orchestration; Event-driven processing; Data routing; Flow management\n\nAWS: Apache NiFi configuration for data flow orchestration and event-driven processing\n\nValidation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements",
             "type": "object"
         },
         "NifiAuthorization": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nNiFi authorization configuration interface for access control with pattern-based resource matching and multi-action permissions. Defines authorization rules for NiFi resources including resource pattern matching, action permissions, and identity/group assignments for flexible and scalable access control management.\n\nUse cases: Pattern-based access control; Multi-action permissions; Identity authorization; Group-based access\n\nAWS: NiFi authorization configuration for EKS-based cluster access control and security management\n\nValidation: policyResourcePattern and actions are required; identities and groups are optional",
             "properties": {
                 "actions": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired array of policy actions for NiFi authorization enabling multi-action permission specification. Defines the specific actions (read, write, delete) that the authorization rule grants for the matched resources providing permission control.\n\nUse cases: Multi-action permissions; access control; Permission specification; Action authorization\n\nAWS: NiFi policy actions for authorization rule permission specification and access control\n\nValidation: Must be array of valid PolicyAction enum values; required for authorization permission specification\n  *",
                     "items": {
                         "$ref": "#/definitions/PolicyAction"
                     },
                     "type": "array"
                 },
                 "groups": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of user groups for NiFi authorization enabling group-based access control. Specifies user groups that the authorization rule applies to for organized group access control and simplified permission management.\n\nUse cases: Group-based access; Organized permissions; Group authorization; Simplified management\n\nAWS: NiFi user groups for authorization rule application and group access control\n\nValidation: Must be array of valid group name strings if provided; enables group-based authorization when specified",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "identities": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of user identities for NiFi authorization enabling user-specific access control. Specifies user identities that the authorization rule applies to for individual user access control and permission management.\n\nUse cases: User-specific access; Individual permissions; Identity-based authorization; User access control\n\nAWS: NiFi user identities for authorization rule application and user access control\n\nValidation: Must be array of valid identity strings if provided; enables user-specific authorization when specified",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "policyResourcePattern": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired policy resource pattern for NiFi authorization targeting enabling pattern-based resource access control. Specifies a resource pattern that matches multiple NiFi resources for scalable and flexible authorization rule application across similar resources.\n\nUse cases: Pattern-based targeting; Scalable authorization; Resource matching; Flexible access control\n\nAWS: NiFi resource pattern for authorization rule targeting and access control\n\nValidation: Must be valid NiFi resource pattern string; required for authorization targeting and access control",
                     "type": "string"
                 }
             },
@@ -562,6 +612,7 @@
         },
         "NifiClusterOptionsWithPeers": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nNiFi cluster configuration interface with peer cluster networking for multi-cluster data flow architectures. Extends base NiFi cluster options with peer cluster definitions enabling secure cross-cluster communication and distributed data processing workflows.\n\nUse cases: Multi-cluster NiFi deployments; Cross-cluster data flows; Distributed processing; Cluster federation; Secure inter-cluster communication\n\nAWS: NiFi cluster configuration with VPC security group rules for peer cluster access and cross-cluster networking\n\nValidation: peerClusters must reference valid cluster names within the same module; security groups must allow inter-cluster communication",
             "properties": {
                 "additionalEfsIngressSecurityGroupIds": {
                     "description": "Security groups which will be provided ingress access to the Nifi cluster EFS security group.\nThese may also be specified globally.",
@@ -571,12 +622,14 @@
                     "type": "array"
                 },
                 "adminIdentities": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired array of admin identities for NiFi cluster administration enabling administrative access and cluster management. Specifies user identities or distinguished names that have administrative privileges for NiFi cluster configuration, user management, and system administration.\n\nUse cases: Administrative access; Cluster management; User administration; System configuration\n\nAWS: NiFi admin identities for EKS-based cluster administration and management\n\nValidation: Must be array of valid identity strings; required for cluster administration and management access",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "authorizations": {
+                    "description": "Q-ENHANCED-PROPERTY\nAuthorization configurations for Apache NiFi access control defining user and group permissions for NiFi resources. Specifies authorization rules including resource access permissions, user privileges, and group-based access control for secure NiFi cluster operation and data flow management.\n\nUse cases: User access control; Resource permissions; Group-based authorization; Security policy enforcement; NiFi cluster security\n\nAWS: Apache NiFi on EKS authorization configuration for access control and security management\n\nValidation: Must be valid NifiAuthorization array with proper resource and permission specifications; optional array for authorization rules\n  *",
                     "items": {
                         "$ref": "#/definitions/NifiAuthorization"
                     },
@@ -587,20 +640,21 @@
                     "type": "number"
                 },
                 "clusterRoleAwsManagedPolicies": {
-                    "description": "AWS managed policies which will be granted to the Nifi cluster role for access to AWS services.",
+                    "description": "Q-ENHANCED-PROPERTY\nAWS managed policies which will be granted to the NiFi cluster role for access to AWS services enabling integration with AWS data services. Defines AWS-managed IAM policies that provide the NiFi cluster with necessary permissions for accessing S3, DynamoDB, and other AWS services for data processing workflows.\n\nUse cases: AWS service integration; S3 data access; DynamoDB connectivity; AWS service permissions; Data pipeline integration\n\nAWS: AWS IAM managed policies attached to EKS service account role for NiFi cluster\n\nValidation: Must be valid AwsManagedPolicySpec array with valid AWS managed policy names; optional array for AWS service access\n  *",
                     "items": {
                         "$ref": "#/definitions/AwsManagedPolicySpec"
                     },
                     "type": "array"
                 },
                 "clusterRoleManagedPolicies": {
-                    "description": "Customer managed policies which will be granted to the Nifi cluster role for access to AWS services.",
+                    "description": "Q-ENHANCED-PROPERTY\nCustomer managed policies which will be granted to the NiFi cluster role for access to AWS services enabling custom permission configurations. Defines customer-managed IAM policies that provide the NiFi cluster with specific custom permissions for accessing AWS resources and services based on organizational requirements.\n\nUse cases: Custom AWS permissions; Organization-specific access; Custom resource access; Tailored security policies; Custom service integration\n\nAWS: Customer-managed IAM policies attached to EKS service account role for NiFi cluster\n\nValidation: Must be valid policy ARN strings for customer-managed policies; optional array for custom permissions",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "externalNodeIdentities": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional external node identities for Apache NiFi cluster configuration defining trusted external nodes that can participate in the NiFi cluster. Specifies identity certificates or distinguished names for external NiFi nodes that are authorized to join the cluster for distributed data processing and flow management.\n\nUse cases: Multi-cluster connectivity; External node integration; Distributed NiFi deployment; Cross-cluster communication\n\nAWS: Apache NiFi on EKS external node identity configuration for cluster membership and security\n\nValidation: Must be array of valid identity strings if provided; enables external node authorization when specified",
                     "items": {
                         "type": "string"
                     },
@@ -613,13 +667,15 @@
                         },
                         "type": "array"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional user groups configuration for NiFi cluster access control enabling group-based permission management. Defines user groups with member lists for organized access control and simplified permission management in NiFi cluster environments.\n\nUse cases: Group-based access; Permission management; Organized access control; User group management\n\nAWS: NiFi user groups for EKS-based cluster group access control and permission management\n\nValidation: Must be valid group name to member array mapping if provided; enables group-based access control when specified\n  *",
                     "type": "object"
                 },
                 "httpsPort": {
-                    "description": "The port on which the cluster HTTPS interfaces will listen",
+                    "description": "Q-ENHANCED-PROPERTY\nThe port on which the cluster HTTPS interfaces will listen for secure web-based access to the Apache NiFi cluster. Configures the HTTPS port for the NiFi web interface, API access, and secure cluster communication enabling encrypted access to the NiFi management console and REST API endpoints.\n\nUse cases: Secure web access; API connectivity; Management console access; Encrypted communication; Custom port configuration\n\nAWS: EKS service port configuration for NiFi HTTPS interface and load balancer target port\n\nValidation: Must be valid port number between 1024-65535; defaults to standard HTTPS port if not specified",
                     "type": "number"
                 },
                 "identities": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of user identities for NiFi cluster access enabling user-level access control and authentication. Specifies user identities or distinguished names that are authorized to access the NiFi cluster for data flow development and management operations.\n\nUse cases: User access control; Authentication management; User authorization; Access control\n\nAWS: NiFi user identities for EKS-based cluster access control and authentication\n\nValidation: Must be array of valid identity strings if provided; enables user access control when specified",
                     "items": {
                         "type": "string"
                     },
@@ -630,11 +686,11 @@
                     "type": "string"
                 },
                 "nodeCount": {
-                    "description": "Initial number of nodes in the cluster.\nDefaults to 1.",
+                    "description": "Q-ENHANCED-PROPERTY\nInitial number of nodes in the Apache NiFi cluster for distributed data processing and high availability. Configures the cluster size for horizontal scaling, load distribution, and fault tolerance enabling parallel data flow processing across multiple NiFi instances.\n\nUse cases: Horizontal scaling; High availability; Load distribution; Performance optimization; Fault tolerance\n\nAWS: EKS deployment replica count for NiFi StatefulSet pods in the cluster\n\nValidation: Must be positive integer; defaults to 1 for single-node deployment; recommended 3+ for production clusters",
                     "type": "number"
                 },
                 "nodeSize": {
-                    "description": "Size of the Nifi cluster nodes.\nDefaults to SMALL.",
+                    "description": "Q-ENHANCED-PROPERTY\nSize of the Apache NiFi cluster nodes determining compute resources and processing capacity for data flow operations. Configures the EC2 instance type equivalent for NiFi pods affecting memory, CPU, and throughput capabilities for data processing workloads and flow management.\n\nUse cases: Performance tuning; Resource allocation; Cost optimization; Workload sizing; Processing capacity planning\n\nAWS: EKS pod resource requests and limits corresponding to EC2 instance types for NiFi containers\n\nValidation: Must be one of: SMALL, MEDIUM, LARGE, XLARGE, 2XLARGE; defaults to SMALL for basic workloads\n  *",
                     "enum": [
                         "2XLARGE",
                         "LARGE",
@@ -645,23 +701,25 @@
                     "type": "string"
                 },
                 "peerClusters": {
-                    "description": "Other clusters within this module which will be provided SecurityGroup and Node remote access to this cluster.",
+                    "description": "Q-ENHANCED-PROPERTY\nOther clusters within this module which will be provided SecurityGroup and Node remote access to this cluster. Defines peer cluster relationships enabling secure cross-cluster communication and distributed data processing workflows between multiple NiFi clusters.\n\nUse cases: Multi-cluster communication; Distributed processing; Cluster federation; Cross-cluster data flows\n\nAWS: EC2 security group rules for inter-cluster NiFi communication and networking\n\nValidation: Optional array of cluster name strings; cluster names must reference valid clusters within the same module",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "policies": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional NiFi policies for fine-grained access control enabling resource-level permission management. Defines access policies for NiFi resources including processors, process groups, and system resources for detailed authorization and security control.\n\nUse cases: Fine-grained access control; Resource-level permissions; Policy-based security; Authorization management\n\nAWS: NiFi access policies for EKS-based cluster resource access control and authorization\n\nValidation: Must be array of valid NifiPolicy objects if provided; enables fine-grained access control when specified\n  *",
                     "items": {
                         "$ref": "#/definitions/NifiPolicy"
                     },
                     "type": "array"
                 },
                 "registryClients": {
-                    "$ref": "#/definitions/NamedNifiRegistryClientProps"
+                    "$ref": "#/definitions/NamedNifiRegistryClientProps",
+                    "description": "Q-ENHANCED-INTERFACE\nNiFi Registry configuration interface for flow versioning and template management.\n\nUse cases: Data flow orchestration; Event-driven processing; Data routing; Flow management\n\nAWS: Apache NiFi configuration for data flow orchestration and event-driven processing\n\nValidation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements"
                 },
                 "remotePort": {
-                    "description": "The port on which the cluster remote RAW interfaces will listen",
+                    "description": "Q-ENHANCED-PROPERTY\nThe port on which the cluster remote RAW interfaces will listen for site-to-site communication and data transfer. Configures the port for NiFi's site-to-site protocol enabling secure data transfer between NiFi instances, remote process groups, and external systems for distributed data flow management.\n\nUse cases: Site-to-site communication; Remote data transfer; Inter-cluster connectivity; External system integration; Distributed data flows\n\nAWS: EKS service port configuration for NiFi site-to-site communication and load balancer target port\n\nValidation: Must be valid port number between 1024-65535; used for RAW socket communication protocol",
                     "type": "number"
                 },
                 "saml": {
@@ -695,11 +753,14 @@
         },
         "NifiPolicy": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nNifiPolicy interface.\n\nUse cases: Data flow orchestration; Event-driven processing; Data routing; Flow management\n\nAWS: Apache NiFi configuration for data flow orchestration and event-driven processing\n\nValidation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements",
             "properties": {
                 "action": {
-                    "$ref": "#/definitions/PolicyAction"
+                    "$ref": "#/definitions/PolicyAction",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired policy action specification for NiFi resource access control enabling permission-level security management. Defines the specific action (read, write, delete, etc.) that the policy grants or denies for the specified resource.\n\nUse cases: Permission specification; Action control; Security management; Access authorization\n\nAWS: NiFi policy action for resource access control and permission management\n\nValidation: Must be valid PolicyAction enum value; required for policy action specification and access control\n  *"
                 },
                 "resource": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired resource identifier for NiFi policy targeting enabling specific resource access control. Specifies the NiFi resource (processor, process group, system resource) that the policy applies to for fine-grained access control and security management.\n\nUse cases: Resource targeting; Access control; Security management; Policy specification\n\nAWS: NiFi resource identifier for policy-based access control and authorization\n\nValidation: Must be valid NiFi resource identifier string; required for policy targeting and access control",
                     "type": "string"
                 }
             },
@@ -711,75 +772,79 @@
         },
         "NifiProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nNiFi configuration interface for data flow orchestration and processing.\n\nUse cases: Data flow orchestration; Event-driven processing; Data routing; Flow management\n\nAWS: Apache NiFi configuration for data flow orchestration and event-driven processing\n\nValidation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements",
             "properties": {
                 "additionalEfsIngressSecurityGroupIds": {
-                    "description": "Security groups which will be provided ingress access to all Nifi cluster EFS security groups.\nThese may also be specified for each cluster.",
+                    "description": "Q-ENHANCED-PROPERTY\nSecurity groups which will be provided ingress access to all NiFi cluster EFS security groups. Defines security groups that receive access to the Elastic File System used by NiFi clusters for persistent storage and shared configuration. These may also be specified for each cluster.\n\nUse cases: EFS access; Persistent storage; Shared configuration; File system connectivity\n\nAWS: EFS security group ingress rules for NiFi cluster file system access\n\nValidation: Optional array of security group IDs; security groups must exist within the same VPC",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "adminRoles": {
-                    "description": "List of admin roles which will be provided access to EKS cluster resources",
+                    "description": "Q-ENHANCED-PROPERTY\nList of admin roles which will be provided access to EKS cluster resources. Defines IAM roles that receive administrative permissions to the NiFi EKS cluster including kubectl access, cluster management, and NiFi flow administration capabilities.\n\nUse cases: EKS cluster administration; Role-based access control; Administrative permissions; Cluster management\n\nAWS: EKS cluster RBAC configuration and IAM role mapping for administrative access\n\nValidation: Must be array of valid MdaaRoleRef objects; roles must exist and be assumable",
                     "items": {
                         "$ref": "#/definitions/MdaaRoleRef"
                     },
                     "type": "array"
                 },
                 "caCertDuration": {
-                    "description": "The certificate validity period for the internal CA cert. If using an ACM Private CA with short-term certificates,\nthis should be set to less than 7 days. Defaults to 6 days.",
+                    "description": "Q-ENHANCED-PROPERTY\nThe certificate validity period for the internal CA cert. If using an ACM Private CA with short-term certificates, this should be set to less than 7 days. Defaults to 6 days. Controls the lifespan of the Certificate Authority certificate used for NiFi cluster TLS security.\n\nUse cases: Certificate management; TLS security; Short-term certificates; Security compliance\n\nAWS: ACM Private CA certificate validity configuration for NiFi cluster TLS\n\nValidation: Optional string in duration format; must be less than 7 days for ACM Private CA compatibility",
                     "type": "string"
                 },
                 "caCertRenewBefore": {
-                    "description": "The time before CA cert expiration at which point the internal CA cert will be renewed.\nDefaults to 12 hours.",
+                    "description": "Q-ENHANCED-PROPERTY\nThe time before CA cert expiration at which point the internal CA cert will be renewed. Defaults to 12 hours. Defines the renewal window for Certificate Authority certificates ensuring continuous TLS security without service interruption.\n\nUse cases: Certificate renewal; Continuous security; Service availability; Automated certificate management\n\nAWS: Certificate renewal timing configuration for NiFi cluster TLS certificate management\n\nValidation: Optional string in duration format; should be reasonable time before certificate expiration",
                     "type": "string"
                 },
                 "certKeyAlg": {
+                    "description": "Q-ENHANCED-PROPERTY\nCertificate key algorithm specification for NiFi cluster TLS certificates. Defines the cryptographic algorithm used for certificate key generation enabling customization of security parameters and compliance with organizational security policies.\n\nUse cases: Security algorithm selection; Compliance requirements; Cryptographic standards; Certificate customization\n\nAWS: Certificate key algorithm configuration for NiFi cluster TLS certificate generation\n\nValidation: Optional string specifying valid key algorithm (e.g., RSA, ECDSA); must be supported algorithm",
                     "type": "string"
                 },
                 "certKeySize": {
+                    "description": "Q-ENHANCED-PROPERTY\nCertificate key size specification for NiFi cluster TLS certificates. Defines the bit length of cryptographic keys used in certificate generation enabling customization of security strength and compliance with organizational security requirements.\n\nUse cases: Security strength configuration; Compliance requirements; Key size standards; Certificate customization\n\nAWS: Certificate key size configuration for NiFi cluster TLS certificate generation\n\nValidation: Optional number specifying valid key size in bits (e.g., 2048, 4096); must be supported key size",
                     "type": "number"
                 },
                 "clusters": {
                     "$ref": "#/definitions/NamedNifiClusterOptions",
-                    "description": "Nifi cluster configurations to be created."
+                    "description": "Q-ENHANCED-PROPERTY\nNiFi cluster configurations to be created. Defines named NiFi cluster configurations for multi-cluster data flow architectures enabling organized deployment of multiple NiFi clusters with individual configuration settings and peer cluster relationships.\n\nUse cases: Multi-cluster deployments; Cluster organization; Data flow architecture; Environment separation\n\nAWS: NiFi cluster configuration with EKS deployment and cluster-specific settings\n\nValidation: Optional NamedNifiClusterOptions object; cluster names must be unique identifiers\n  *"
                 },
                 "eksSecurityGroupIngressRules": {
                     "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
-                    "description": "Ingress rules to be added to the EKS control plane security group"
+                    "description": "Q-ENHANCED-PROPERTY\nIngress rules to be added to the EKS control plane security group. Defines network access rules for the EKS control plane enabling secure communication between administrative clients and the Kubernetes API server for NiFi cluster management.\n\nUse cases: EKS API access; Administrative connectivity; Kubectl access; Control plane security\n\nAWS: EKS control plane security group ingress rules for Kubernetes API access\n\nValidation: Optional property; when specified must be valid MdaaSecurityGroupRuleProps configuration\n  *"
                 },
                 "existingPrivateCaArn": {
-                    "description": "(Optional) If specified, this ACM Private CA will be used to sign the internal CA running\nwithin EKS. If not specified, an ACM Private CA will be created.",
+                    "description": "Q-ENHANCED-PROPERTY\n(Optional) If specified, this ACM Private CA will be used to sign the internal CA running within EKS. If not specified, an ACM Private CA will be created. Enables integration with existing certificate infrastructure for organizational certificate management and compliance.\n\nUse cases: Existing CA integration; Certificate infrastructure; Organizational compliance; Certificate hierarchy\n\nAWS: ACM Private CA ARN for signing NiFi cluster internal Certificate Authority\n\nValidation: Optional valid ACM Private CA ARN; CA must be active and accessible for certificate signing",
                     "type": "string"
                 },
                 "mgmtInstance": {
                     "$ref": "#/definitions/MgmtInstanceProps",
-                    "description": "If defined, an EC2 instance will be created with connectivity, permissions, and tooling to manage the EKS cluster"
+                    "description": "Q-ENHANCED-PROPERTY\nIf defined, an EC2 instance will be created with connectivity, permissions, and tooling to manage the EKS cluster. Provides administrative access to the NiFi EKS cluster through a dedicated management instance with kubectl and other Kubernetes management tools pre-configured for cluster operations.\n\nUse cases: EKS cluster administration; Kubectl access; Cluster troubleshooting; Administrative operations\n\nAWS: EC2 instance with EKS cluster access and Kubernetes management tools\n\nValidation: Optional property; when specified must be valid MgmtInstanceProps configuration"
                 },
                 "nodeCertDuration": {
-                    "description": "The certificate validity period for the Zookeeper and Nifi Node certs. If using an ACM Private CA with short-term certificates,\nthis should be set to less than 6 days. Defaults to 5 days.",
+                    "description": "Q-ENHANCED-PROPERTY\nThe certificate validity period for the Zookeeper and NiFi Node certs. If using an ACM Private CA with short-term certificates, this should be set to less than 6 days. Defaults to 5 days. Controls the lifespan of individual node certificates for secure inter-node communication.\n\nUse cases: Node certificate management; Inter-node TLS; Short-term certificates; Security compliance\n\nAWS: Node certificate validity configuration for NiFi and Zookeeper TLS communication\n\nValidation: Optional string in duration format; must be less than 6 days for ACM Private CA compatibility",
                     "type": "string"
                 },
                 "nodeCertRenewBefore": {
-                    "description": "The time before CA cert expiration at which point the Zookeeper and Nifi Node certs will be renewed.\nDefaults to 12 hours.",
+                    "description": "Q-ENHANCED-PROPERTY\nThe time before CA cert expiration at which point the Zookeeper and NiFi Node certs will be renewed. Defaults to 12 hours. Defines the renewal window for node certificates ensuring continuous secure communication between NiFi and Zookeeper nodes.\n\nUse cases: Node certificate renewal; Inter-node security; Service availability; Automated certificate management\n\nAWS: Node certificate renewal timing for NiFi and Zookeeper TLS certificate management\n\nValidation: Optional string in duration format; should be reasonable time before certificate expiration",
                     "type": "string"
                 },
                 "registry": {
-                    "$ref": "#/definitions/NifiRegistryProps"
+                    "$ref": "#/definitions/NifiRegistryProps",
+                    "description": "Q-ENHANCED-PROPERTY\nNiFi Registry configuration for flow versioning and template management. Defines NiFi Registry deployment settings enabling version control of data flows, template sharing, and collaborative flow development across NiFi clusters.\n\nUse cases: Flow versioning; Template management; Collaborative development; Flow sharing; Version control\n\nAWS: NiFi Registry deployment configuration for data flow version control and management\n\nValidation: Optional NifiRegistryProps configuration; when specified must be valid registry configuration"
                 },
                 "securityGroupEgressRules": {
                     "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
-                    "description": "Egress rules to be added to all Nifi cluster security groups.\nThese may also be specified for each cluster."
+                    "description": "Q-ENHANCED-PROPERTY\nEgress rules to be added to all NiFi cluster security groups. Defines outbound network access rules applied globally to all NiFi clusters enabling controlled external connectivity for data sources, destinations, and service integrations. These may also be specified for each cluster.\n\nUse cases: External data source access; Service integrations; Internet connectivity; Global egress policies\n\nAWS: EC2 security group egress rules for NiFi cluster outbound network access\n\nValidation: Optional property; when specified must be valid MdaaSecurityGroupRuleProps configuration\n  *"
                 },
                 "securityGroupIngressIPv4s": {
-                    "description": "IPv4 CIDRs which will be provided ingress access to all Nifi cluster security groups.\nThese may also be specified for each cluster.",
+                    "description": "Q-ENHANCED-PROPERTY\nIPv4 CIDRs which will be provided ingress access to all NiFi cluster security groups. Defines IP address ranges that receive inbound access to NiFi clusters enabling secure connectivity from specific networks or on-premises systems. These may also be specified for each cluster.\n\nUse cases: On-premises connectivity; Specific network access; Administrative access; External system integration\n\nAWS: EC2 security group ingress rules with IPv4 CIDR blocks for NiFi cluster access\n\nValidation: Optional array of valid IPv4 CIDR notation strings; must be properly formatted CIDR blocks",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "securityGroupIngressSGs": {
-                    "description": "Security groups which will be provided ingress access to all Nifi cluster security groups.\nThese may also be specified for each cluster.",
+                    "description": "Q-ENHANCED-PROPERTY\nSecurity groups which will be provided ingress access to all NiFi cluster security groups. Defines security groups that receive inbound access to NiFi clusters enabling secure communication from other AWS resources and services. These may also be specified for each cluster.\n\nUse cases: Inter-service communication; Database access; Load balancer connectivity; Service integration\n\nAWS: EC2 security group ingress rules referencing other security groups for NiFi access\n\nValidation: Optional array of security group IDs; security groups must exist within the same VPC",
                     "items": {
                         "type": "string"
                     },
@@ -789,11 +854,11 @@
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "description": "Subnets on which EKS and Nifi clusters will be deployed",
+                    "description": "Q-ENHANCED-PROPERTY\nSubnets on which EKS and NiFi clusters will be deployed. Defines named subnet mappings for NiFi cluster deployment across multiple availability zones enabling high availability and fault tolerance for data flow processing infrastructure.\n\nUse cases: Multi-AZ deployments; High availability; Subnet organization; Network segmentation\n\nAWS: EKS cluster subnet configuration and EC2 subnet placement for NiFi nodes\n\nValidation: Must be object with named subnet ID mappings; subnets must exist within specified VPC\n  *",
                     "type": "object"
                 },
                 "vpcId": {
-                    "description": "VPC on which EKS and Nifi clusters will be deployed",
+                    "description": "Q-ENHANCED-PROPERTY\nVPC on which EKS and NiFi clusters will be deployed. Defines the network isolation boundary for the entire NiFi data flow infrastructure including EKS worker nodes, load balancers, and inter-cluster communication enabling secure network segmentation.\n\nUse cases: Network isolation; VPC-based security boundaries; Multi-AZ deployments; Private subnet deployments\n\nAWS: EKS cluster VPC configuration and EC2 VPC networking for NiFi infrastructure\n\nValidation: Must be existing VPC ID; requires sufficient IP address space and private subnets for EKS nodes",
                     "type": "string"
                 }
             },
@@ -866,8 +931,10 @@
         },
         "NifiRegistryClientProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nNiFi Registry configuration interface for flow versioning and template management.\n\nUse cases: Data flow orchestration; Event-driven processing; Data routing; Flow management\n\nAWS: Apache NiFi configuration for data flow orchestration and event-driven processing\n\nValidation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements",
             "properties": {
                 "url": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired NiFi Registry URL for flow versioning and template management enabling centralized flow version control. Specifies the URL of the NiFi Registry instance for storing, versioning, and managing NiFi flow templates and process group configurations.\n\nUse cases: Flow versioning; Template management; Version control; Flow sharing\n\nAWS: NiFi Registry URL for flow versioning and template management integration\n\nValidation: Must be valid URL string; required for NiFi Registry integration and flow version control",
                     "type": "string"
                 }
             },
@@ -878,6 +945,7 @@
         },
         "NifiRegistryProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nNiFi Registry configuration interface for flow versioning and template management.\n\nUse cases: Data flow orchestration; Event-driven processing; Data routing; Flow management\n\nAWS: Apache NiFi configuration for data flow orchestration and event-driven processing\n\nValidation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements",
             "properties": {
                 "additionalEfsIngressSecurityGroupIds": {
                     "description": "Security groups which will be provided ingress access to the Nifi cluster EFS security group.\nThese may also be specified globally.",
@@ -887,12 +955,14 @@
                     "type": "array"
                 },
                 "adminIdentities": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired array of admin identities for NiFi cluster administration enabling administrative access and cluster management. Specifies user identities or distinguished names that have administrative privileges for NiFi cluster configuration, user management, and system administration.\n\nUse cases: Administrative access; Cluster management; User administration; System configuration\n\nAWS: NiFi admin identities for EKS-based cluster administration and management\n\nValidation: Must be array of valid identity strings; required for cluster administration and management access",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "authorizations": {
+                    "description": "Q-ENHANCED-PROPERTY\nAuthorization configurations for Apache NiFi access control defining user and group permissions for NiFi resources. Specifies authorization rules including resource access permissions, user privileges, and group-based access control for secure NiFi cluster operation and data flow management.\n\nUse cases: User access control; Resource permissions; Group-based authorization; Security policy enforcement; NiFi cluster security\n\nAWS: Apache NiFi on EKS authorization configuration for access control and security management\n\nValidation: Must be valid NifiAuthorization array with proper resource and permission specifications; optional array for authorization rules\n  *",
                     "items": {
                         "$ref": "#/definitions/NifiAuthorization"
                     },
@@ -902,9 +972,11 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/NifiRegistryBucketProps"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nNiFi Registry bucket configurations with policy-based access control. Defines named bucket configurations for NiFi Registry flow storage with granular access permissions enabling organized flow management and role-based access to flow versions and templates.\n\nUse cases: Flow organization; Access control; Bucket management; Role-based permissions; Flow versioning\n\nAWS: NiFi Registry bucket configuration with policy-based access control for flow storage\n\nValidation: Optional object mapping bucket names to NifiRegistryBucketProps; bucket names must be unique",
                     "type": "object"
                 },
                 "externalNodeIdentities": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional external node identities for Apache NiFi cluster configuration defining trusted external nodes that can participate in the NiFi cluster. Specifies identity certificates or distinguished names for external NiFi nodes that are authorized to join the cluster for distributed data processing and flow management.\n\nUse cases: Multi-cluster connectivity; External node integration; Distributed NiFi deployment; Cross-cluster communication\n\nAWS: Apache NiFi on EKS external node identity configuration for cluster membership and security\n\nValidation: Must be array of valid identity strings if provided; enables external node authorization when specified",
                     "items": {
                         "type": "string"
                     },
@@ -917,37 +989,40 @@
                         },
                         "type": "array"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional user groups configuration for NiFi cluster access control enabling group-based permission management. Defines user groups with member lists for organized access control and simplified permission management in NiFi cluster environments.\n\nUse cases: Group-based access; Permission management; Organized access control; User group management\n\nAWS: NiFi user groups for EKS-based cluster group access control and permission management\n\nValidation: Must be valid group name to member array mapping if provided; enables group-based access control when specified\n  *",
                     "type": "object"
                 },
                 "httpsPort": {
-                    "description": "The port on which the cluster HTTPS interfaces will listen",
+                    "description": "Q-ENHANCED-PROPERTY\nThe port on which the cluster HTTPS interfaces will listen for secure web-based access to the Apache NiFi cluster. Configures the HTTPS port for the NiFi web interface, API access, and secure cluster communication enabling encrypted access to the NiFi management console and REST API endpoints.\n\nUse cases: Secure web access; API connectivity; Management console access; Encrypted communication; Custom port configuration\n\nAWS: EKS service port configuration for NiFi HTTPS interface and load balancer target port\n\nValidation: Must be valid port number between 1024-65535; defaults to standard HTTPS port if not specified",
                     "type": "number"
                 },
                 "identities": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of user identities for NiFi cluster access enabling user-level access control and authentication. Specifies user identities or distinguished names that are authorized to access the NiFi cluster for data flow development and management operations.\n\nUse cases: User access control; Authentication management; User authorization; Access control\n\nAWS: NiFi user identities for EKS-based cluster access control and authentication\n\nValidation: Must be array of valid identity strings if provided; enables user access control when specified",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "policies": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional NiFi policies for fine-grained access control enabling resource-level permission management. Defines access policies for NiFi resources including processors, process groups, and system resources for detailed authorization and security control.\n\nUse cases: Fine-grained access control; Resource-level permissions; Policy-based security; Authorization management\n\nAWS: NiFi access policies for EKS-based cluster resource access control and authorization\n\nValidation: Must be array of valid NifiPolicy objects if provided; enables fine-grained access control when specified\n  *",
                     "items": {
                         "$ref": "#/definitions/NifiPolicy"
                     },
                     "type": "array"
                 },
                 "registryImageTag": {
-                    "description": "The tag of the Nifi docker image to use. If not specified,\ndefaults to the latest tested version (currently 1.25.0). Specify 'latest' to pull\nthe latest version (might be untested).",
+                    "description": "Q-ENHANCED-PROPERTY\nThe tag of the NiFi docker image to use. If not specified, defaults to the latest tested version (currently 1.25.0). Specify 'latest' to pull the latest version (might be untested). Controls the NiFi Registry container version for deployment consistency and compatibility.\n\nUse cases: Version control; Container deployment; Compatibility management; Testing environments\n\nAWS: EKS container image specification for NiFi Registry deployment\n\nValidation: Optional string specifying valid Docker image tag; should use tested versions for production",
                     "type": "string"
                 },
                 "registryRoleAwsManagedPolicies": {
-                    "description": "AWS managed policies which will be granted to the Nifi cluster role for access to AWS services.",
+                    "description": "Q-ENHANCED-PROPERTY\nAWS managed policies which will be granted to the NiFi Registry cluster role for access to AWS services. Defines AWS-managed IAM policies attached to the NiFi Registry service role enabling access to AWS services for flow storage, data access, and service integrations.\n\nUse cases: AWS service access; S3 integration; Service permissions; Registry operations\n\nAWS: IAM role policy attachments for NiFi Registry AWS service access\n\nValidation: Optional array of AwsManagedPolicySpec objects; policies must be valid AWS managed policies\n  *",
                     "items": {
                         "$ref": "#/definitions/AwsManagedPolicySpec"
                     },
                     "type": "array"
                 },
                 "registryRoleManagedPolicies": {
-                    "description": "Customer managed policies which will be granted to the Nifi cluster role for access to AWS services.",
+                    "description": "Q-ENHANCED-PROPERTY\nCustomer managed policies which will be granted to the NiFi Registry cluster role for access to AWS services. Defines customer-created IAM policies attached to the NiFi Registry service role enabling customized access permissions for specific organizational requirements.\n\nUse cases: Custom permissions; Organizational policies; Specific access requirements; Fine-grained control\n\nAWS: IAM role policy attachments for NiFi Registry custom service access permissions\n\nValidation: Optional array of policy ARN strings; policies must exist and be customer-managed policies",
                     "items": {
                         "type": "string"
                     },
@@ -975,9 +1050,10 @@
         },
         "NifiSamlProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nNiFi configuration interface for data flow orchestration and processing.\n\nUse cases: Data flow orchestration; Event-driven processing; Data routing; Flow management\n\nAWS: Apache NiFi configuration for data flow orchestration and event-driven processing\n\nValidation: Configuration must be valid for deployment; properties must conform to Apache NiFi and MDAA requirements",
             "properties": {
                 "idpMetadataUrl": {
-                    "description": "URL from which the IDP SAML Metadata is available.",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired SAML Identity Provider metadata URL for NiFi authentication configuration enabling enterprise SSO integration. Specifies the URL from which NiFi will retrieve SAML metadata for identity provider configuration and user authentication in enterprise environments.\n\nUse cases: Enterprise SSO integration; SAML authentication; Identity provider configuration; User authentication\n\nAWS: NiFi SAML configuration for identity provider integration and enterprise authentication\n\nValidation: Must be valid HTTPS URL string; required for SAML authentication and identity provider integration",
                     "type": "string"
                 }
             },
@@ -1156,44 +1232,45 @@
     },
     "properties": {
         "deploymentRole": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.\n\nUse cases: Deployment operations; Resource management; IAM permissions; Secure deployment\n\nAWS: IAM role ARN for DataOps deployment operations and resource management\n\nValidation: Must be valid IAM role ARN; required for deployment operations and resource management",
             "type": "string"
         },
         "kmsArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.\n\nUse cases: Data encryption; Security compliance; Key management; Data protection\n\nAWS: KMS key ARN for DataOps encryption and data protection compliance\n\nValidation: Must be valid KMS key ARN; required for encryption and data protection compliance",
             "type": "string"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "nifi": {
-            "$ref": "#/definitions/NifiProps"
+            "$ref": "#/definitions/NifiProps",
+            "description": "Q-ENHANCED-PROPERTY\nRequired Apache Nifi cluster configuration defining data flow orchestration and processing capabilities including cluster setup, security, networking, and data flow management. Provides complete Nifi deployment with event-driven processing and real-time data integration.\n\nUse cases: Data flow orchestration; Real-time processing; Event-driven data integration and flow management\n\nAWS: Apache Nifi cluster deployment for data flow orchestration and real-time processing capabilities\n\nValidation: Must be valid NifiProps; required; defines all Nifi cluster characteristics and processing capabilities"
         },
         "projectBucket": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
             "type": "string"
         },
         "projectName": {
-            "description": "Name of the DataOps Project",
+            "description": "Q-ENHANCED-PROPERTY\nRequired DataOps project name for Nifi cluster association enabling project-based organization and resource management. Links the Nifi deployment to a specific DataOps project for organized data flow management and governance within the data operations framework.\n\nUse cases: Project-based organization; Resource management; DataOps project association for governance\n\nAWS: DataOps project association for Nifi cluster organization and resource management\n\nValidation: Must be non-empty string; required; links Nifi deployment to specific DataOps project",
             "type": "string"
         },
         "projectTopicArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
             "type": "string"
         },
         "securityConfigurationName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired Glue security configuration name for DataOps job security enabling encryption and access control for data processing operations. Provides the security configuration that will be used by Glue jobs for encryption at rest, in transit, and CloudWatch logs encryption.\n\nUse cases: Glue job security; Encryption configuration; Security compliance; Data protection\n\nAWS: Glue security configuration for DataOps job encryption and security compliance\n\nValidation: Must be valid security configuration name; required for Glue job security and encryption",
             "type": "string"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         }
     },
     "required": [
-        "deploymentRole",
-        "kmsArn",
         "nifi",
-        "projectBucket",
-        "projectName",
-        "projectTopicArn",
-        "securityConfigurationName"
+        "projectName"
     ],
     "type": "object"
 }

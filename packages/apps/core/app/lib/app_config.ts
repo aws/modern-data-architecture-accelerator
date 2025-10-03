@@ -23,25 +23,75 @@ import * as yaml from 'yaml';
 
 export interface MdaaBaseConfigContents {
   /**
-   * Service Catalog Config
-   * If specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.
+   *
+   * Use cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access
+   *
+   * AWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning
+   *
+   * Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode
+   **/
   readonly service_catalog_product_config?: MdaaServiceCatalogProductConfig;
   /**
-   * Nag suppressions
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.
+   *
+   * Use cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions
+   *
+   * AWS: CDK Nag suppressions for compliance rule management and security exception documentation
+   *
+   * Validation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management
+   **/
   readonly nag_suppressions?: MdaaNagSuppressionConfigs;
 }
 
-/**
- * Standard set of props for use with MdaaConfigs.
- */
 export interface MdaaAppConfigParserProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required organization identifier providing top-level organizational context for resource naming and configuration processing. Defines the organization scope for all configuration processing and resource naming ensuring organizational consistency and uniqueness.
+   *
+   * Use cases: Organizational context; Resource naming; Configuration scope; Organizational consistency
+   *
+   * AWS: Organization identifier for MDAA configuration processing and resource naming context
+   *
+   * Validation: Must be valid organization identifier; required for organizational context and resource naming
+   **/
   readonly org: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required domain identifier providing logical grouping context for configuration processing and resource organization. Defines the domain scope within the organization for configuration processing and resource naming ensuring logical organization and management.
+   *
+   * Use cases: Domain context; Logical grouping; Resource organization; Domain-based management
+   *
+   * AWS: Domain identifier for MDAA configuration processing and logical resource organization
+   *
+   * Validation: Must be valid domain identifier; required for domain context and resource organization
+   **/
   readonly domain: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required environment identifier providing deployment context for configuration processing and environment-specific resource management. Defines the target environment for configuration processing ensuring environment-appropriate resource deployment and management.
+   *
+   * Use cases: Environment context; Deployment targeting; Environment-specific configuration; Resource management
+   *
+   * AWS: Environment identifier for MDAA configuration processing and environment-specific deployment
+   *
+   * Validation: Must be valid environment identifier; required for environment context and deployment targeting
+   **/
   readonly environment: string;
   readonly module_name: string;
   readonly rawConfig: ConfigurationElement;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required MDAA naming implementation providing consistent resource naming across configuration processing and deployment. Defines the naming strategy that will be applied during configuration processing for consistent resource identification and management.
+   *
+   * Use cases: Resource naming; Naming consistency; Configuration processing; Resource identification
+   *
+   * AWS: MDAA naming implementation for consistent resource naming and configuration processing
+   *
+   * Validation: Must be valid IMdaaResourceNaming implementation; required for consistent resource naming
+   *   **/
   readonly naming: IMdaaResourceNaming;
 }
 

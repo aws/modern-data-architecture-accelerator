@@ -36,42 +36,48 @@ class TestDataOpsSharedApp extends MdaaCdkApp {
     parserProps: MdaaAppConfigParserProps,
   ) {
     const configParser = new TestDataOpsConfigParser(stack, parserProps);
-
-    new StringParameter(stack, 'SecurityConfigParam', {
-      parameterName: l3ConstructProps.naming.ssmPath('security-config-name', true, false),
-      stringValue: configParser.securityConfigurationName,
-      description: 'DataOps security configuration name',
-    });
-
-    new StringParameter(stack, 'ProjectNameParam', {
-      parameterName: l3ConstructProps.naming.ssmPath('project-name', true, false),
-      stringValue: configParser.projectName,
-      description: 'DataOps project name',
-    });
-
-    new StringParameter(stack, 'ProjectBucketParam', {
-      parameterName: l3ConstructProps.naming.ssmPath('project-bucket', true, false),
-      stringValue: configParser.projectBucket,
-      description: 'DataOps project bucket reference',
-    });
-
-    new StringParameter(stack, 'ProjectTopicParam', {
-      parameterName: l3ConstructProps.naming.ssmPath('project-topic-arn', true, false),
-      stringValue: configParser.projectTopicArn,
-      description: 'DataOps project topic ARN reference',
-    });
-
-    new StringParameter(stack, 'DeploymentRoleParam', {
-      parameterName: l3ConstructProps.naming.ssmPath('deployment-role', true, false),
-      stringValue: configParser.deploymentRole,
-      description: 'DataOps deployment role reference',
-    });
-
-    new StringParameter(stack, 'KmsArnParam', {
-      parameterName: l3ConstructProps.naming.ssmPath('kms-arn', true, false),
-      stringValue: configParser.kmsArn,
-      description: 'DataOps KMS ARN reference',
-    });
+    if (configParser.securityConfigurationName) {
+      new StringParameter(stack, 'SecurityConfigParam', {
+        parameterName: l3ConstructProps.naming.ssmPath('security-config-name', true, false),
+        stringValue: configParser.securityConfigurationName,
+        description: 'DataOps security configuration name',
+      });
+    }
+    if (configParser.projectName) {
+      new StringParameter(stack, 'ProjectNameParam', {
+        parameterName: l3ConstructProps.naming.ssmPath('project-name', true, false),
+        stringValue: configParser.projectName,
+        description: 'DataOps project name',
+      });
+    }
+    if (configParser.projectBucket) {
+      new StringParameter(stack, 'ProjectBucketParam', {
+        parameterName: l3ConstructProps.naming.ssmPath('project-bucket', true, false),
+        stringValue: configParser.projectBucket,
+        description: 'DataOps project bucket reference',
+      });
+    }
+    if (configParser.projectTopicArn) {
+      new StringParameter(stack, 'ProjectTopicParam', {
+        parameterName: l3ConstructProps.naming.ssmPath('project-topic-arn', true, false),
+        stringValue: configParser.projectTopicArn,
+        description: 'DataOps project topic ARN reference',
+      });
+    }
+    if (configParser.deploymentRole) {
+      new StringParameter(stack, 'DeploymentRoleParam', {
+        parameterName: l3ConstructProps.naming.ssmPath('deployment-role', true, false),
+        stringValue: configParser.deploymentRole,
+        description: 'DataOps deployment role reference',
+      });
+    }
+    if (configParser.kmsArn) {
+      new StringParameter(stack, 'KmsArnParam', {
+        parameterName: l3ConstructProps.naming.ssmPath('kms-arn', true, false),
+        stringValue: configParser.kmsArn,
+        description: 'DataOps KMS ARN reference',
+      });
+    }
 
     if (configParser.testParameter) {
       new StringParameter(stack, 'TestParam', {

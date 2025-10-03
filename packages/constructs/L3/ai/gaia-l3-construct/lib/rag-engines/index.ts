@@ -15,7 +15,7 @@ import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 export interface RagEnginesProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class RagEngines extends MdaaL3Construct {

@@ -41,28 +41,160 @@ export interface NifiClusterProps extends NifiClusterOptions, NifiIdentityAuthor
   readonly eksCluster: MdaaEKSCluster;
   readonly clusterName: string;
   readonly kmsKey: IKey;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required VPC for NiFi cluster deployment providing network isolation and security controls. Specifies the VPC where NiFi cluster will be deployed for secure networking and integration with other VPC resources.
+   *
+   * Use cases: Network isolation; VPC integration; Security controls; Private networking
+   *
+   * AWS: Amazon VPC for NiFi cluster network isolation and security controls
+   *
+   * Validation: Must be valid IVpc instance; required for NiFi network deployment and security
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
+   **/
   readonly vpc: IVpc;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required array of subnets for NiFi node placement within the VPC enabling multi-AZ deployment and availability. Specifies the subnets where NiFi nodes will be deployed for high availability and fault tolerance.
+   *
+   * Use cases: Multi-AZ deployment; High availability; Fault tolerance; Subnet placement
+   *
+   * AWS: VPC subnets for NiFi node placement and multi-AZ deployment
+   *
+   * Validation: Must be array of valid ISubnet instances; required for NiFi node placement and availability
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ISubnet.html
+   **/
   readonly subnets: ISubnet[];
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required MDAA resource naming implementation for consistent NiFi resource naming conventions. Provides standardized naming patterns for all NiFi-related resources including services, volumes, and configurations.
+   *
+   * Use cases: Resource naming consistency; Operational management; Resource identification; Naming standardization
+   *
+   * AWS: Resource naming conventions for NiFi cluster resources and components
+   *
+   * Validation: Must be valid IMdaaResourceNaming implementation; required for consistent resource naming
+   *   **/
   readonly naming: IMdaaResourceNaming;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required AWS region for NiFi cluster deployment enabling region-specific resource configuration and compliance. Specifies the target AWS region for NiFi deployment affecting resource availability and compliance requirements.
+   *
+   * Use cases: Regional deployment; Compliance requirements; Resource availability; Geographic distribution
+   *
+   * AWS: AWS region specification for NiFi cluster deployment and resource configuration
+   *
+   * Validation: Must be valid AWS region string; required for regional deployment and resource configuration
+   **/
   readonly region: string;
   readonly zkConnectString: string;
   readonly nifiHostedZone: IHostedZone;
   readonly nifiCAIssuerName: string;
   readonly nifiCertDuration: string;
   readonly nifiCertRenewBefore: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required certificate key algorithm specification for NiFi TLS certificate cryptographic configuration. Defines the cryptographic algorithm used for certificate key generation affecting security strength and compatibility.
+   *
+   * Use cases: Cryptographic configuration; Security strength; Algorithm selection; Certificate generation
+   *
+   * AWS: Certificate key algorithm for NiFi TLS certificate cryptographic configuration
+   *
+   * Validation: Must be valid key algorithm string; required for NiFi certificate cryptographic configuration
+   **/
   readonly certKeyAlg: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required certificate key size specification for NiFi TLS certificate cryptographic strength. Defines the key size in bits for certificate generation affecting security level and computational requirements.
+   *
+   * Use cases: Cryptographic strength; Security level; Key size configuration; Certificate security
+   *
+   * AWS: Certificate key size for NiFi TLS certificate cryptographic strength configuration
+   *
+   * Validation: Must be valid key size number; required for NiFi certificate cryptographic strength
+   **/
   readonly certKeySize: number;
   readonly nifiManagerImage: DockerImageAsset;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional named NiFi registry client configurations for external registry integration enabling centralized flow management. Provides registry client configurations for connecting to external NiFi registries for flow versioning and sharing.
+   *
+   * Use cases: Registry integration; Flow versioning; Centralized management; Flow sharing
+   *
+   * AWS: NiFi registry client configuration for external registry integration and flow management
+   *
+   * Validation: Must be valid NamedNifiRegistryClientProps if provided; enables registry integration when specified
+   **/
   readonly registryClients?: NamedNifiRegistryClientProps;
   readonly fargateProfile: FargateProfile;
 }
 
 interface CreateEfsPvsProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required CDK construct scope for EFS resource creation enabling proper resource hierarchy and management. Provides the parent construct context for EFS file system and mount target creation within the CDK application structure.
+   *
+   * Use cases: Resource hierarchy; CDK construct management; Resource organization; Parent context
+   *
+   * AWS: CDK construct scope for EFS resource creation and management hierarchy
+   *
+   * Validation: Must be valid Construct instance; required for EFS resource creation and hierarchy
+   */
   scope: Construct;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required MDAA resource naming implementation for consistent EFS resource naming conventions. Provides standardized naming patterns for EFS file systems, mount targets, and access points following organizational naming standards.
+   *
+   * Use cases: Resource naming consistency; Operational management; EFS identification; Naming standardization
+   *
+   * AWS: Resource naming conventions for EFS file system and related resources
+   *
+   * Validation: Must be valid IMdaaResourceNaming implementation; required for consistent EFS resource naming
+   */
   naming: IMdaaResourceNaming;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required name identifier for the EFS persistent volume enabling volume identification and management. Provides the base name for EFS resources and serves as the primary identifier for persistent volume operations and management.
+   *
+   * Use cases: Volume identification; Resource management; EFS naming; Storage organization
+   *
+   * AWS: EFS file system name for identification and management operations
+   *
+   * Validation: Must be valid name string; required for EFS volume identification and management
+   */
   name: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required number of NiFi nodes requiring EFS access enabling proper mount target and access point configuration. Specifies the node count for EFS access configuration affecting mount target distribution and performance optimization.
+   *
+   * Use cases: Node count configuration; Mount target planning; Access optimization; Performance tuning
+   *
+   * AWS: EFS mount target configuration based on NiFi node count and access requirements
+   *
+   * Validation: Must be positive integer; required for EFS access configuration and mount target planning
+   */
   nodeCount: number;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required VPC for EFS file system deployment providing network isolation and security controls. Specifies the VPC where EFS mount targets will be created for secure file system access from NiFi nodes.
+   *
+   * Use cases: Network isolation; VPC integration; Security controls; File system networking
+   *
+   * AWS: Amazon VPC for EFS file system network isolation and mount target deployment
+   *
+   * Validation: Must be valid IVpc instance; required for EFS network deployment and security
+   */
   vpc: IVpc;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required array of subnets for EFS mount target placement enabling multi-AZ file system access. Specifies the subnets where EFS mount targets will be deployed for high availability and fault tolerance.
+   *
+   * Use cases: Multi-AZ deployment; High availability; Mount target placement; Fault tolerance
+   *
+   * AWS: VPC subnets for EFS mount target placement and multi-AZ file system access
+   *
+   * Validation: Must be array of valid ISubnet instances; required for EFS mount target placement
+   */
   subnets: ISubnet[];
   kmsKey: IKey;
   efsSecurityGroup: ISecurityGroup;

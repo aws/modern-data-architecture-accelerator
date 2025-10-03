@@ -12,14 +12,28 @@ import * as configSchema from './config-schema.json';
 
 export interface QuickSightNamespaceConfigContents extends MdaaBaseConfigContents {
   /**
-   * Objects representing federations to create
-   */
-  federations: { [name: string]: FederationProps };
+   * Q-ENHANCED-PROPERTY
+   * Required map of federation names to federation configurations enabling identity provider integration with QuickSight namespaces. Provides identity federation setup for multi-tenant QuickSight environments with external identity system integration.
+   *
+   * Use cases: Identity federation; Multi-tenant QuickSight setup; External identity system integration
+   *
+   * AWS: Amazon QuickSight namespace federation for identity provider integration and multi-tenancy
+   *
+   * Validation: Must be object with string keys and valid FederationProps values; required; defines all federation configurations
+   *   **/
+  readonly federations: { [name: string]: FederationProps };
 
   /**
-   * Glue resources
-   */
-  glueResourceAccess?: string[];
+   * Q-ENHANCED-PROPERTY
+   * Optional array of Glue resource names for QuickSight namespace access enabling data catalog integration and data source connectivity. Provides access to specific Glue databases and tables for business intelligence and data visualization operations.
+   *
+   * Use cases: Data catalog integration; Glue resource access; Data source connectivity for QuickSight analytics
+   *
+   * AWS: AWS Glue resource access permissions for QuickSight namespace data integration
+   *
+   * Validation: Must be array of valid Glue resource names if provided; enables data catalog access for analytics
+   **/
+  readonly glueResourceAccess?: string[];
 }
 
 export class QuickSightNamespaceConfigParser extends MdaaAppConfigParser<QuickSightNamespaceConfigContents> {

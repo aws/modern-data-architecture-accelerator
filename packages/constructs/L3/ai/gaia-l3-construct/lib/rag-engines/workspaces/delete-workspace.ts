@@ -27,7 +27,7 @@ export interface DeleteWorkspaceProps extends MdaaL3ConstructProps {
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraPgVector?: AuroraPgVector;
   readonly kendraRetrieval?: KendraRetrieval;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class DeleteWorkspace extends MdaaL3Construct {

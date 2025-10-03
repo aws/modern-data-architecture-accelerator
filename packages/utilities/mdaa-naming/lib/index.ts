@@ -7,83 +7,105 @@ import { Node } from 'constructs';
 import { validateResourceName } from './utils';
 
 /**
- * Basic config for a MDAA naming implementation.
- * Standard config properties are passed directly, while
- * additional config values can be pulled from CDK context using
- * the provided cdkNode.tryGetContext()
- * */
+ * Q-ENHANCED-INTERFACE
+ * Configuration interface for MDAA resource naming implementations that standardize AWS resource naming across domains, environments, and modules. This interface enables consistent, collision-free resource naming in multi-tenant MDAA deployments by providing organizational context and CDK node access for custom naming strategies.
+ *
+ * Use cases: Multi-domain data lake deployments requiring unique resource names; Cross-account data mesh architectures with consistent naming; Custom naming implementations for compliance requirements
+ *
+ * AWS: Configures naming patterns for all AWS resources deployed by MDAA modules including S3 buckets, IAM roles, Glue databases, and CloudFormation stacks
+ *
+ * Validation: All properties required; org/env/domain/moduleName must be valid AWS resource name components (alphanumeric, hyphens, underscores)
+ */
 export interface MdaaResourceNamingConfig {
-  /** A CDK node on which tryGetContext()
-   * can be used to obtain additional naming config context
-   * for use in non-default implementations */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * CDK construct node providing access to context values for custom naming implementations. Enables retrieval of additional configuration through tryGetContext() for advanced naming strategies beyond the standard org/env/domain/module pattern.
+   *
+   * Use cases: Custom naming with environment-specific prefixes; Integration with external naming services; Context-driven naming for compliance requirements
+   *
+   * AWS: CDK context system for CloudFormation template generation
+   *
+   * Validation: Must be valid CDK Node instance with accessible context
+   *   **/
   readonly cdkNode: Node;
-  /** 'org' from the MDAA config */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Organization identifier from MDAA configuration that serves as the top-level namespace for all AWS resource names. Forms the first component of the default naming pattern and ensures global uniqueness across multiple MDAA deployments.
+   *
+   * Use cases: Multi-organization AWS accounts; Shared service accounts with multiple tenants; Resource name collision prevention
+   *
+   * AWS: Prefix for all AWS resource names including S3 buckets, IAM roles, and CloudFormation stacks
+   *
+   * Validation: Must be valid AWS resource name component (3-63 characters, alphanumeric and hyphens only, no consecutive hyphens)
+   **/
   readonly org: string;
-  /** 'env' from the MDAA config */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Environment identifier from MDAA configuration that distinguishes deployment stages within the same domain. Forms the second component of the default naming pattern enabling parallel dev/test/prod deployments without resource conflicts.
+   *
+   * Use cases: Multi-stage deployments in same account; Environment-specific resource isolation; Progressive deployment strategies
+   *
+   * AWS: Environment component in all AWS resource names and CloudFormation stack names
+   *
+   * Validation: Must be valid AWS resource name component (typically 'dev', 'test', 'prod', 'staging')
+   **/
   readonly env: string;
-  /** 'domain' from the MDAA config */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Domain identifier from MDAA configuration representing logical business or organizational boundaries within the data architecture. Forms the third component of the default naming pattern and enables data mesh architectures with domain-specific resource isolation.
+   *
+   * Use cases: Data mesh domain separation; Line-of-business resource isolation; Cross-domain data sharing with clear ownership
+   *
+   * AWS: Domain component in all AWS resource names, SSM parameter paths, and CloudFormation export names
+   *
+   * Validation: Must be valid AWS resource name component (typically business domain names like 'finance', 'marketing', 'shared')
+   **/
   readonly domain: string;
-  /** 'module_name' from the MDAA config */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Module name from MDAA configuration identifying the specific MDAA module deployment within a domain/environment. Forms the final component of the default naming pattern and enables multiple instances of the same module type within the same scope.
+   *
+   * Use cases: Multiple data lake instances per domain; Separate analytics workloads; Module-specific resource grouping
+   *
+   * AWS: Module component in all AWS resource names, SSM parameter paths, and CloudFormation stack names
+   *
+   * Validation: Must be valid AWS resource name component (typically module function like 'datalake', 'warehouse', 'analytics')
+   **/
   readonly moduleName: string;
 }
 
 /**
- * Interface specification for a MDAA naming implementation.
- * Can be implemented in any way, but should ensure that naming
- * semantics support deployment of multiple domains/envs/modules
- * within the same account, otherwise resource naming collisions may occur.
+ * Q-ENHANCED-INTERFACE
+ * Interface specification for MDAA resource naming implementations that generate consistent, unique, and compliant AWS resource names. Implementations must support multi-tenant deployments by ensuring naming semantics prevent collisions across domains, environments, and modules within the same AWS account.
+ *
+ * Use cases: Custom naming for regulatory compliance; Integration with enterprise naming standards; Multi-tenant resource isolation
+ *
+ * AWS: Generates names for all AWS resources including S3 buckets, IAM roles, Glue databases, CloudFormation stacks, SSM parameters, and CloudFormation exports
+ *
+ * Validation: All generated names must comply with AWS service-specific naming requirements and be unique within account scope
  */
 export interface IMdaaResourceNaming {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Configuration properties containing organizational context and CDK node access for the naming implementation. Provides the foundational data required to generate consistent resource names across all MDAA modules.
+   *
+   * Use cases: Access to org/env/domain/module context; CDK context retrieval for custom naming; Immutable naming configuration
+   *
+   * AWS: Source data for all AWS resource name generation
+   *
+   * Validation: Must contain valid MdaaResourceNamingConfig with all required properties
+   **/
   readonly props: MdaaResourceNamingConfig;
 
-  /**
-   * Returns this naming object but with a new moduleName
-   *
-   * @param moduleName The new module name
-   */
+  withModuleName(moduleName: string): IMdaaResourceNaming;
   withModuleName(moduleName: string): IMdaaResourceNaming;
 
-  /**
-   * Should produce unique but stable resource names.
-   *
-   * @param resourceNameSuffix Optional naming suffix to be added to the generated resource name.
-   * Useful when multiple resources of the same type are created within the same stack.
-   *
-   * @param maxLength Should be used to truncate the generated resource names to a specified length.
-   * The result should still be unique and stable.
-   */
   resourceName(resourceNameSuffix?: string, maxLength?: number): string;
 
-  /**
-   * Generates an SSM param name.
-   *
-   * @param path The generated name will be suffixed by the path component.
-   * The base path should provide uniqueness across stacks, and the path component should provide uniqueness within stacks.
-   *
-   * @param includeModuleName Optionally include the module name in the base path of the SSM param name.
-   * Usefull when scoping params at the domain/env level instead of the module level.
-   *
-   * @param lowerCase Optionally force the generated param name to lower case
-   */
   ssmPath(path: string, includeModuleName?: boolean, lowerCase?: boolean): string;
 
-  /**
-   * Generates a compliance stack name
-   * @param stackName The base stack name. Should be used to implement a globally unique stack name.
-   */
   stackName(stackName?: string): string;
 
-  /**
-   * Generates an CFN Stack Export name.
-   *
-   * @param path The generated name will be suffixed by the path component.
-   * The base path should provide uniqueness across stacks, and the path component should provide uniqueness within stacks.
-   *
-   * @param includeModuleName Optionally include the module name in the base path of the export name.
-   * Usefull when scoping params at the domain/env level instead of the module level.
-   *
-   * @param lowerCase Optionally force the generated export name to lower case
-   */
   exportName(path: string, includeModuleName?: boolean, lowerCase?: boolean): string;
 }
 
@@ -99,7 +121,6 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
 
   /**
    * Returns this naming object but with a new moduleName
-   *
    * @param moduleName The new module name
    */
   public withModuleName(moduleName: string): IMdaaResourceNaming {
@@ -117,7 +138,6 @@ export class MdaaDefaultResourceNaming implements IMdaaResourceNaming {
    * Generates a resource name in the format of <org>-<env>-<domain>-<module_name>
    * @param resourceNameSuffix Optional naming suffix to be added to the generated resource name.
    * Useful when multiple resources of the same type are created within the same stack.
-   *
    * @param maxLength Should be used to truncate the generated resource names to a specified length.
    * The result should still be unique and stable.
    * Caution: Known bug - names exactly equal to `maxLength` are unnecessarily truncated with hash suffix

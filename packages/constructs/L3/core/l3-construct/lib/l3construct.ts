@@ -8,13 +8,9 @@ import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
-/**
- * Interface for MDAA-specific L3 construct baseprops.
- */
 export interface MdaaL3ConstructProps extends MdaaConstructProps {
   readonly roleHelper: MdaaRoleHelper;
   readonly crossAccountStacks?: { [account: string]: { [region: string]: Stack } };
-  /** Tags to be applied directly to resources. */
   readonly tags?: {
     [key: string]: string;
   };

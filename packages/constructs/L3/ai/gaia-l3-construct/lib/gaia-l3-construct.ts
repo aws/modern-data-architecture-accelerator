@@ -21,14 +21,33 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * GAIA GenAI Accelerator configuration interface for GenAI application deployment with RAG capabilities, model integration, and conversational AI infrastructure. Defines complete GenAI platform setup including API Gateway, WebSocket connections, Lambda functions, DynamoDB tables, S3 buckets, and vector databases for production-ready conversational AI applications with document ingestion and retrieval capabilities.
+ *
+ * Use cases: Conversational AI applications; RAG-powered chatbots; Document-based AI assistants; GenAI platform deployment; Multi-model AI integration
+ *
+ * AWS: Complete GenAI platform with API Gateway, Lambda functions, DynamoDB, S3, Step Functions, and Bedrock/SageMaker integration for conversational AI
+ *
+ * Validation: Must extend SystemConfig validation; admin roles must have appropriate permissions; RAG configuration must specify valid vector database settings
+ */
 export interface GAIAProps extends SystemConfig {
   /**
    * List of admin roles which will be provided access to team resources (like KMS/Bucket)
    */
   readonly dataAdminRoles: MdaaRoleRef[];
 }
-
 export interface GAIAL3ConstructProps extends MdaaL3ConstructProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required GAIA configuration defining generative AI platform setup including chatbot infrastructure, RAG engines, authentication, and AI model integration. Provides complete GenAI platform configuration with system settings, security controls, and AI application capabilities for enterprise AI deployment.
+   *
+   * Use cases: GenAI platform configuration; AI system setup; Chatbot deployment; RAG system configuration
+   *
+   * AWS: GAIA platform configuration for generative AI infrastructure and application deployment
+   *
+   * Validation: Must be valid GAIAProps extending SystemConfig; required for GAIA platform deployment and AI infrastructure
+   **/
   readonly gaia: GAIAProps;
 }
 

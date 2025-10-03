@@ -13,16 +13,39 @@ import * as configSchema from './config-schema.json';
 
 export interface LambdaFunctionConfigContents extends MdaaDataOpsConfigContents {
   /**
-   * Name of the DataOps Project
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required name of the DataOps project that will contain and manage the Lambda functions. Provides organizational context and enables resource sharing, permissions management, and operational coordination within the DataOps framework.
+   *
+   * Use cases: DataOps project organization; Resource sharing and permissions; Operational coordination and monitoring
+   *
+   * AWS: DataOps project reference for Lambda function organization and resource management
+   *
+   * Validation: Must be valid DataOps project name; required; project must exist or be created in the same deployment
+   **/
+
   readonly projectName: string;
+
   /**
-   * Layers to create
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional array of Lambda layer definitions for shared code, libraries, and dependencies across multiple functions. Enables code reuse, dependency management, and consistent runtime environments for efficient serverless data processing operations.
+   *
+   * Use cases: Shared code libraries; Dependency management; Runtime environment consistency across functions
+   *
+   * AWS: AWS Lambda layers for shared code and dependency management across multiple functions
+   *
+   * Validation: Must be array of valid LayerProps objects if provided; layers can be referenced by functions
+   *   **/
   readonly layers?: LayerProps[];
   /**
-   * Functions to create
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional array of Lambda function definitions for serverless data processing operations within the DataOps project. Each function can process data events, perform transformations, and integrate with other AWS services for data workflows.
+   *
+   * Use cases: Event-driven data processing; Serverless ETL operations; Data transformation and validation workflows
+   *
+   * AWS: AWS Lambda function creation with DataOps integration, event sources, and IAM permissions
+   *
+   * Validation: Must be array of valid FunctionProps objects if provided; functions inherit project context and permissions
+   *   **/
   readonly functions?: FunctionProps[];
 }
 

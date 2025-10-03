@@ -34,7 +34,7 @@ export interface DataImportProps extends MdaaL3ConstructProps {
   readonly documentsTable: dynamodb.Table;
   readonly workspacesByObjectTypeIndexName: string;
   readonly documentsByCompountKeyIndexName: string;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class DataImportWorkflows extends MdaaL3Construct {

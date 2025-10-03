@@ -8,20 +8,40 @@ import { IResolvable } from 'aws-cdk-lib';
 import { CfnRuleset, CfnRulesetProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
-/**
- * Properties for creating a Mdaa Databrew Ruleset
- */
 export interface MdaaDataBrewRulesetProps extends MdaaConstructProps {
-  // The name of the ruleset.
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required name for the DataBrew ruleset enabling ruleset identification and management. Provides the ruleset identifier for DataBrew operations and serves as the primary reference for data quality validation and profiling workflows.
+   *
+   * Use cases: Ruleset identification; Quality management; Validation workflows; Rule organization
+   *
+   * AWS: AWS Glue DataBrew ruleset name for identification and quality management
+   *
+   * Validation: Must be unique ruleset name string; required for ruleset creation and identification
+   **/
   readonly name: string;
-
-  // A list of steps that are defined by the recipe.
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required array of data quality rules defining validation logic and profiling criteria for dataset assessment. Specifies the data quality rules that will be applied to datasets for automated validation, profiling, and quality assessment operations.
+   *
+   * Use cases: Data quality validation; Rule definition; Quality criteria; Automated assessment
+   *
+   * AWS: AWS Glue DataBrew rule definitions for data quality validation and assessment
+   *
+   * Validation: Must be array of valid CfnRuleset.RuleProperty objects; required for data quality validation
+   *   **/
   readonly rules: IResolvable | (CfnRuleset.RuleProperty | IResolvable)[];
-
-  //The Amazon Resource Name (ARN) of a resource (dataset) that the ruleset is associated with.
   readonly targetArn: string;
-
-  // The description of the ruleset.
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional description of the ruleset explaining its purpose and validation criteria for documentation and management. Provides human-readable description of the ruleset's purpose and the data quality criteria it enforces.
+   *
+   * Use cases: Ruleset documentation; Management clarity; Quality criteria explanation; Operational understanding
+   *
+   * AWS: AWS Glue DataBrew ruleset description for documentation and management
+   *
+   * Validation: Must be descriptive text if provided; recommended for ruleset documentation and clarity
+   **/
   readonly description?: string;
 }
 

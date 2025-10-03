@@ -25,7 +25,7 @@ export interface ChatBotApiProps extends MdaaL3ConstructProps {
   readonly userPoolClient: cognito.IUserPoolClient;
   readonly modelsParameter: ssm.StringParameter;
   readonly models: SageMakerModelEndpoint[];
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class ChatBotApi extends MdaaL3Construct {

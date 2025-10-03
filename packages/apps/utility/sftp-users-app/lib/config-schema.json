@@ -4,13 +4,14 @@
     "definitions": {
         "BucketConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for SFTP bucket access management enabling secure S3 bucket integration with SFTP servers. Provides bucket configuration for SFTP user home directories with encryption and access control capabilities.\n\nUse cases: SFTP home directory configuration; S3 bucket integration; Encrypted file storage for SFTP operations\n\nAWS: Configures S3 buckets for AWS Transfer Family SFTP user home directories with KMS encryption\n\nValidation: bucketName and kmsKeyArn are required; bucket must exist and be accessible",
             "properties": {
                 "bucketName": {
-                    "description": "The bucket name",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for SFTP user home directory storage enabling secure file storage and organization. Provides the target S3 bucket where SFTP users will store and retrieve files with proper access controls and organization.\n\nUse cases: SFTP file storage; User home directory configuration; S3 integration for file management\n\nAWS: Amazon S3 bucket for Transfer Family SFTP user file storage and home directory\n\nValidation: Must be valid S3 bucket name; required; bucket must exist and be accessible by SFTP service",
                     "type": "string"
                 },
                 "kmsKeyArn": {
-                    "description": "The KMS key to be used when writing to the bucket via the SFTP server",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for encrypting files written through the SFTP server ensuring data protection compliance. Provides encryption at rest for all files uploaded via SFTP with customer-controlled key management for enhanced security.\n\nUse cases: File encryption; Data protection compliance; Customer key management for SFTP uploads\n\nAWS: AWS KMS key for S3 object encryption in Transfer Family SFTP operations\n\nValidation: Must be valid KMS key ARN; required; used for all SFTP file encryption operations",
                     "type": "string"
                 }
             },
@@ -85,11 +86,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -117,8 +121,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -132,14 +138,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -151,11 +160,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -171,15 +183,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -190,12 +205,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -205,23 +223,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -234,9 +258,10 @@
         },
         "PublicKeyConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for SFTP public key management enabling secure SSH key-based authentication for SFTP users. Provides public key configuration for secure, password-less authentication to SFTP servers with proper key management.\n\nUse cases: SSH key-based authentication; Secure SFTP access; Public key management for user authentication\n\nAWS: Configures public keys for AWS Transfer Family SFTP user authentication and secure access\n\nValidation: publicKey is required and must be valid SSH public key format",
             "properties": {
                 "publicKey": {
-                    "description": "Public key contents",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired SSH public key contents for secure SFTP user authentication enabling password-less access to SFTP servers. Provides secure authentication mechanism using SSH public key cryptography for enhanced security and access control.\n\nUse cases: SSH key authentication; Secure SFTP access; Password-less authentication for enhanced security\n\nAWS: AWS Transfer Family user public key for SSH-based authentication and secure access\n\nValidation: Must be valid SSH public key format; required; used for secure user authentication",
                     "type": "string"
                 }
             },
@@ -247,21 +272,22 @@
         },
         "UserConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for SFTP user management enabling user setup with bucket access, authentication, and directory configuration. Provides complete user configuration for SFTP access with home directory mapping and security controls.\n\nUse cases: SFTP user configuration; Home directory setup; User access control and authentication management\n\nAWS: Configures AWS Transfer Family SFTP users with S3 access, authentication, and directory permissions\n\nValidation: bucket, homeDirectory, and publicKeys are required; bucket and publicKeys must reference valid configurations",
             "properties": {
                 "accessRoleArn": {
-                    "description": "Arn of the role which will be used to access the home directory",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role ARN for user S3 access permissions enabling fine-grained access control beyond home directory. Provides custom IAM role for specific access patterns and permissions beyond the default home directory access.\n\nUse cases: Custom access permissions; Fine-grained S3 access control; Specialized user access patterns\n\nAWS: AWS IAM role for Transfer Family user S3 access permissions and custom access control\n\nValidation: Must be valid IAM role ARN if provided; enables custom access permissions for user operations",
                     "type": "string"
                 },
                 "bucket": {
-                    "description": "Reference to the name of the bucket (in 'buckets' section of config) to be used as the home directory bucket",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired reference to bucket configuration name for user home directory storage enabling organized file access and storage. Links the user to a specific S3 bucket configuration for home directory operations and file management.\n\nUse cases: Home directory configuration; Bucket access mapping; User-specific storage organization\n\nAWS: AWS Transfer Family user home directory bucket configuration for file storage\n\nValidation: Must reference valid bucket name from buckets configuration; required; defines user storage location",
                     "type": "string"
                 },
                 "homeDirectory": {
-                    "description": "S3 prefix to be used as the home directory on the home bucket",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired S3 prefix for user home directory within the configured bucket enabling user-specific file organization. Provides isolated directory space for each user within the shared bucket for organized file management and access control.\n\nUse cases: User directory isolation; File organization; User-specific storage space within shared buckets\n\nAWS: AWS Transfer Family user home directory prefix for S3 object organization\n\nValidation: Must be valid S3 prefix string; required; defines user-specific directory within bucket",
                     "type": "string"
                 },
                 "publicKeys": {
-                    "description": "References to names of public keys (in 'publicKeys' section of config)",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired array of public key references for user authentication enabling multi-key access and key rotation capabilities. Links the user to configured public keys for SSH authentication with support for multiple keys and key management.\n\nUse cases: Multi-key authentication; Key rotation support; Flexible authentication configuration\n\nAWS: AWS Transfer Family user public key references for SSH authentication and access\n\nValidation: Must be array of valid public key names from publicKeys configuration; required; defines user authentication keys",
                     "items": {
                         "type": "string"
                     },
@@ -281,29 +307,33 @@
             "additionalProperties": {
                 "$ref": "#/definitions/BucketConfig"
             },
+            "description": "Q-ENHANCED-PROPERTY\nRequired map of bucket names to bucket configurations enabling S3 storage management for SFTP operations. Provides centralized bucket configuration for user home directories with encryption and access control settings.\n\nUse cases: S3 storage configuration; Home directory management; Centralized bucket settings and encryption\n\nAWS: Amazon S3 bucket configuration for Transfer Family user storage and file management\n\nValidation: Must be object with string keys and valid BucketConfig values; required; defines storage configuration\n  *",
             "type": "object"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "publicKeys": {
             "additionalProperties": {
                 "$ref": "#/definitions/PublicKeyConfig"
             },
+            "description": "Q-ENHANCED-PROPERTY\nRequired map of public key names to public key configurations enabling SSH key management for user authentication. Provides centralized public key management for secure, password-less authentication across SFTP users.\n\nUse cases: SSH key management; Centralized authentication configuration; Public key organization and reuse\n\nAWS: AWS Transfer Family public key configuration for SSH authentication and key management\n\nValidation: Must be object with string keys and valid PublicKeyConfig values; required; defines authentication keys\n  *",
             "type": "object"
         },
         "serverId": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired SFTP server ID for user association enabling user management on specific SFTP servers. Links users to the target SFTP server for access control and user provisioning operations.\n\nUse cases: Server-specific user management; User provisioning; SFTP server association and access control\n\nAWS: AWS Transfer Family server ID for user association and server-specific management\n\nValidation: Must be valid Transfer Family server ID; required; server must exist and be accessible",
             "type": "string"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         },
         "users": {
             "additionalProperties": {
                 "$ref": "#/definitions/UserConfig"
             },
+            "description": "Q-ENHANCED-PROPERTY\nRequired map of user names to user configurations enabling SFTP user management and provisioning. Provides complete user setup with authentication, storage access, and directory configuration for secure file transfer operations.\n\nUse cases: SFTP user provisioning; Access control management; User-specific configuration and permissions\n\nAWS: AWS Transfer Family user configuration for complete user management and access control\n\nValidation: Must be object with string keys and valid UserConfig values; required; defines all user configurations\n  *",
             "type": "object"
         }
     },

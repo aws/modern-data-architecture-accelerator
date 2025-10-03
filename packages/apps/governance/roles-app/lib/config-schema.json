@@ -67,13 +67,14 @@
         },
         "FederationProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nSAML identity federation configuration interface for IAM identity provider setup with SAML document integration and provider ARN management. Defines federation properties for establishing trust relationships between AWS and external identity providers using SAML 2.0 for federated access to AWS resources.\n\nUse cases: SAML identity federation; External identity provider integration; Federated access control; SSO integration; Identity provider trust relationships; Enterprise authentication\n\nAWS: IAM SAML identity provider configuration with SAML metadata document for federated authentication and access control\n\nValidation: providerArn must be valid IAM SAML provider ARN if specified; samlDoc must be valid SAML metadata document; exactly one of providerArn or samlDoc must be provided",
             "properties": {
                 "providerArn": {
-                    "description": "Arn of an existing provider",
+                    "description": "Q-ENHANCED-PROPERTY\nExisting SAML identity provider ARN for federated authentication with pre-configured identity provider integration. References an existing IAM SAML provider for establishing trust relationships with external identity systems, enabling federated access to AWS resources without creating new providers.\n\nUse cases: Existing provider integration; Pre-configured SAML federation; Identity provider reuse; Established trust relationships\n\nAWS: AWS IAM SAML identity provider ARN reference for federated authentication and access control\n\nValidation: Must be valid IAM SAML provider ARN if specified; provider must exist in the account; mutually exclusive with samlDoc",
                     "type": "string"
                 },
                 "samlDoc": {
-                    "description": "Path to a SAML doc to be used to create a new provider",
+                    "description": "Q-ENHANCED-PROPERTY\nSAML metadata document file path for creating new identity provider with custom federation configuration. Specifies the path to a SAML metadata document that will be used to create a new IAM SAML provider, enabling custom federation setup with external identity systems.\n\nUse cases: New provider creation; Custom federation setup; SAML metadata integration; Identity provider configuration\n\nAWS: AWS IAM SAML identity provider creation using SAML metadata document for federated authentication\n\nValidation: Must be valid file path to SAML metadata document if specified; document must be valid SAML format; mutually exclusive with providerArn",
                     "type": "string"
                 }
             },
@@ -81,18 +82,22 @@
         },
         "GenerateManagedPolicyConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for managed policy generation providing policy document and suppression management. Enables creation of IAM managed policies with custom policy documents, CDK Nag suppressions, and flexible naming conventions for compliant policy management.\n\nUse cases: Custom managed policy creation; Policy document management; CDK Nag suppression handling\n\nAWS: Creates AWS IAM managed policies with custom policy documents and compliance controls\n\nValidation: policyDocument is required; suppressions and verbatimPolicyName are optional",
             "properties": {
                 "policyDocument": {
                     "additionalProperties": {},
+                    "description": "Q-ENHANCED-PROPERTY\nRequired policy document configuration element defining the IAM policy permissions and statements. Specifies the complete policy document with permissions, resources, and conditions for the managed policy creation.\n\nUse cases: IAM policy definition; Permission specification; Resource access control configuration\n\nAWS: AWS IAM managed policy document for permission and access control definition\n\nValidation: Must be valid ConfigurationElement; required; defines complete policy document and permissions",
                     "type": "object"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of CDK Nag suppression configurations for policy compliance management enabling controlled suppression of specific compliance rules. Provides mechanism to suppress specific CDK Nag rules when justified for policy requirements.\n\nUse cases: Compliance rule suppression; CDK Nag management; Justified policy exception handling\n\nAWS: CDK Nag suppression configuration for IAM policy compliance management\n\nValidation: Must be array of valid SuppressionProps if provided; enables controlled compliance rule suppression",
                     "items": {
                         "$ref": "#/definitions/SuppressionProps"
                     },
                     "type": "array"
                 },
                 "verbatimPolicyName": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling policy naming convention enabling verbatim policy names without MDAA prefixes. When enabled, uses the exact policy name specified without applying MDAA naming conventions for specific naming requirements.\n\nUse cases: Exact policy naming; Custom naming requirements; Integration with existing policy naming schemes\n\nAWS: AWS IAM managed policy naming configuration for custom naming patterns\n\nValidation: Boolean value; controls policy naming convention application; enables verbatim naming when true",
                     "type": "boolean"
                 }
             },
@@ -103,9 +108,10 @@
         },
         "GenerateRoleProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nIAM role generation configuration interface for automated role creation with persona-based permissions and trust policy management. Defines role generation properties including base persona selection, trusted principal configuration, additional trust relationships, and conditional access controls for secure role-based access management.\n\nUse cases: Automated role creation; Persona-based permissions; Trust policy management; Conditional access control; Multi-principal trust; Role template generation\n\nAWS: IAM role generation with persona-based policies and configurable trust relationships for automated access management\n\nValidation: trustedPrincipal must be valid AWS principal; basePersona must be valid BasePersona enum if specified; additionalTrustedPrincipals must be valid TrustedPrincipalProps; assumeRoleTrustConditions must be valid IAM conditions",
             "properties": {
                 "additionalTrustedPrincipals": {
-                    "description": "Additional assume role trust configs.",
+                    "description": "Q-ENHANCED-PROPERTY\nAdditional trusted principals for multi-principal role assumption enabling complex trust relationships and flexible access patterns. Provides additional principals that can assume the role beyond the primary trusted principal, supporting multi-user and cross-account access scenarios.\n\nUse cases: Multi-principal access; Complex trust relationships; Cross-account role sharing; Flexible access patterns\n\nAWS: AWS IAM role trust policy additional principals for multi-principal assume role capabilities\n\nValidation: Must be array of valid TrustedPrincipalProps if specified; enables multiple trust relationships for role assumption",
                     "items": {
                         "$ref": "#/definitions/TrustedPrincipalProps"
                     },
@@ -113,18 +119,18 @@
                 },
                 "assumeRoleTrustConditions": {
                     "additionalProperties": {},
-                    "description": "Conditions to apply to the assume role trust policy",
+                    "description": "Q-ENHANCED-PROPERTY\nConditional access controls for assume role trust policy enabling context-aware access restrictions and enhanced security. Defines IAM conditions that must be met for successful role assumption, providing fine-grained access control based on request context, time, source IP, or other factors.\n\nUse cases: Context-aware access control; Enhanced security restrictions; Conditional role assumption; Fine-grained access management\n\nAWS: AWS IAM role trust policy conditions for context-aware assume role access control\n\nValidation: Must be object with valid IAM condition keys and Condition values if specified; conditions must be valid IAM policy conditions\n  *",
                     "type": "object"
                 },
                 "awsManagedPolicies": {
-                    "description": "List of AWS Managed policies to associate to the role.",
+                    "description": "Q-ENHANCED-PROPERTY\nAWS managed policy ARNs for standardized permission attachment enabling consistent access patterns and AWS best practices. Provides list of AWS-managed policies to attach to the role, leveraging AWS-maintained policies for common access patterns and security best practices.\n\nUse cases: Standardized permissions; AWS best practices; Common access patterns; Managed policy leverage\n\nAWS: AWS IAM role with AWS managed policy attachments for standardized permission management\n\nValidation: Must be array of valid AWS managed policy ARNs if specified; policies must exist and be accessible",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "basePersona": {
-                    "description": "Intended base persona that the generated role should mimic\nAll the policies associated with specified persona will get associated with the generated role",
+                    "description": "Q-ENHANCED-PROPERTY\nBase persona template for automated role policy assignment enabling persona-based permission management. Specifies the foundational persona (data-admin, data-engineer, data-scientist) that determines the base set of policies and permissions automatically associated with the generated role.\n\nUse cases: Persona-based permissions; Automated policy assignment; Role template application; Standardized access patterns\n\nAWS: AWS IAM role with persona-based managed policy attachments for standardized permission sets\n\nValidation: Must be valid BasePersona enum value if specified; determines base policy set for role generation\n  *",
                     "enum": [
                         "data-admin",
                         "data-engineer",
@@ -133,14 +139,14 @@
                     "type": "string"
                 },
                 "customerManagedPolicies": {
-                    "description": "List of AWS Managed policies to associate to the role.",
+                    "description": "Q-ENHANCED-PROPERTY\nCustomer managed policy names for custom permission attachment enabling organization-specific access control. Provides list of customer-managed policies to attach to the role, supporting custom permission sets and organization-specific access requirements.\n\nUse cases: Custom permissions; Organization-specific access; Custom policy attachment; Tailored access control\n\nAWS: AWS IAM role with customer managed policy attachments for custom permission management\n\nValidation: Must be array of valid customer managed policy names if specified; policies must exist in the account",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "generatedPolicies": {
-                    "description": "List of generated policies to associate to the role.",
+                    "description": "Q-ENHANCED-PROPERTY\nGenerated policy names for dynamic permission attachment enabling automated policy creation and management. Provides list of policies that will be generated and attached to the role, supporting dynamic permission creation and automated policy management.\n\nUse cases: Dynamic policy creation; Automated permission management; Generated policy attachment; Custom policy automation\n\nAWS: AWS IAM role with generated policy attachments for automated permission management\n\nValidation: Must be array of valid policy names if specified; policies will be generated and attached during role creation",
                     "items": {
                         "type": "string"
                     },
@@ -154,11 +160,11 @@
                     "type": "array"
                 },
                 "trustedPrincipal": {
-                    "description": "The assume role trust config.",
+                    "description": "Q-ENHANCED-PROPERTY\nPrimary trusted principal for role assumption enabling secure access delegation and trust relationship establishment. Defines the main AWS principal that can assume this role, establishing the primary trust relationship for secure access control and delegation.\n\nUse cases: Primary trust relationship; Secure access delegation; Role assumption control; Principal-based access\n\nAWS: AWS IAM role trust policy primary principal for assume role permissions and access control\n\nValidation: Must be valid AWS principal ARN or identifier; required; establishes primary trust relationship for role assumption",
                     "type": "string"
                 },
                 "verbatimRoleName": {
-                    "description": "If true (default false), role name will be set verbatim instead of using the naming class",
+                    "description": "Q-ENHANCED-PROPERTY\nVerbatim role naming control bypassing naming convention application for precise role name specification. When enabled, creates the role with the exact specified name without applying organizational naming conventions, supporting legacy integration and specific naming requirements.\n\nUse cases: Legacy integration; Exact naming requirements; Naming convention bypass; Specific role naming\n\nAWS: AWS IAM role name without naming convention transformation for precise naming control\n\nValidation: Must be boolean; defaults to false; when true, naming conventions do not apply to role creation",
                     "type": "boolean"
                 }
             },
@@ -169,11 +175,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -201,8 +210,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -216,14 +227,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -235,11 +249,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -255,15 +272,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -274,12 +294,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -289,23 +312,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -318,11 +347,14 @@
         },
         "SuppressionProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nSuppressionProps configuration interface for resource configuration and infrastructure management.\n\nUse cases: Identity management; Access control; Role-based permissions; Security policies\n\nAWS: AWS service configuration and deployment\n\nValidation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements",
             "properties": {
                 "id": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired suppression rule identifier for CDK Nag rule suppression enabling specific security rule bypassing. Defines the specific CDK Nag rule ID that will be suppressed for this resource, allowing controlled bypassing of security checks when justified by business requirements or architectural constraints.\n\nUse cases: Security rule suppression; CDK Nag rule bypassing; Compliance exception handling; Justified security exceptions; Rule-specific suppression\n\nAWS: CDK Nag suppression rule identifier for controlled security rule bypassing and compliance exception management\n\nValidation: Must be valid CDK Nag rule ID; required for rule suppression identification",
                     "type": "string"
                 },
                 "reason": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired justification reason for CDK Nag rule suppression enabling documented security exception rationale. Provides business justification and technical reasoning for why a specific security rule is being suppressed, ensuring proper documentation and audit trail for security exceptions.\n\nUse cases: Security exception documentation; Audit trail maintenance; Compliance justification; Business requirement documentation; Technical reasoning\n\nAWS: CDK Nag suppression justification for documented security exception rationale and audit compliance\n\nValidation: Must be descriptive string explaining suppression rationale; required for security exception documentation",
                     "type": "string"
                 }
             },
@@ -334,15 +366,17 @@
         },
         "TrustedPrincipalProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nIAM trusted principal configuration interface for role trust policy management with principal specification and additional action permissions. Defines trusted principal properties for IAM role trust relationships including principal identification and optional additional trusted actions for flexible assume role configurations.\n\nUse cases: Trust policy configuration; Principal trust relationships; Assume role permissions; Multi-action trust; Principal-based access; Trust relationship management\n\nAWS: IAM role trust policy configuration with trusted principal specification and additional assume role actions\n\nValidation: trustedPrincipal must be valid AWS principal ARN or identifier; additionalTrustedActions must be valid IAM actions if specified",
             "properties": {
                 "additionalTrustedActions": {
+                    "description": "Q-ENHANCED-PROPERTY\nAdditional trusted actions beyond standard assume role for extended trust policy capabilities enabling multi-action trust relationships. Provides additional IAM actions that the trusted principal can perform, extending beyond basic assume role functionality for trust management.\n\nUse cases: Extended trust capabilities; Multi-action trust relationships; Advanced trust policy configuration; principal permissions\n\nAWS: AWS IAM role trust policy additional actions for extended principal capabilities and trust management\n\nValidation: Must be array of valid IAM action strings if specified; actions must be appropriate for trust policy context",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "trustedPrincipal": {
-                    "description": "The assume role trust config.",
+                    "description": "Q-ENHANCED-PROPERTY\nTrusted principal identifier for IAM role assume role trust policy configuration enabling secure principal-based access control. Specifies the AWS principal (user, role, service, or account) that is allowed to assume the role, establishing trust relationships for secure access delegation.\n\nUse cases: Trust relationship establishment; Principal-based access control; Secure access delegation; Cross-account role assumption\n\nAWS: AWS IAM role trust policy principal specification for assume role permissions and access control\n\nValidation: Must be valid AWS principal ARN or identifier; required; establishes trust relationship for role assumption",
                     "type": "string"
                 }
             },
@@ -354,37 +388,37 @@
     },
     "properties": {
         "createPersonaManagedPolicies": {
-            "description": "If true (default), a set of Managed Policies will be generated by MDAA for use in pre-defined role personas",
+            "description": "Q-ENHANCED-PROPERTY\nOptional flag controlling automatic generation of MDAA persona-based managed policies for common data platform roles. When enabled, creates standardized permission sets for data engineers, analysts, and administrators following MDAA best practices.\n\nUse cases: Standardized role personas; Best practice permissions; Simplified role management\n\nAWS: AWS IAM managed policy generation for common data platform role patterns\n\nValidation: Boolean value; defaults to true; enables automatic persona policy creation when true",
             "type": "boolean"
         },
         "federations": {
             "additionalProperties": {
                 "$ref": "#/definitions/FederationProps"
             },
-            "description": "List of federations which may be referenced by generated roles.",
+            "description": "Q-ENHANCED-PROPERTY\nOptional map of federation configurations for SAML or OIDC identity provider integration. Enables federated access to AWS resources through external identity providers for centralized identity management and SSO capabilities.\n\nUse cases: SAML federation setup; OIDC provider integration; Centralized identity management\n\nAWS: AWS IAM identity provider configuration for federated access and SSO integration\n\nValidation: Must be object with string keys and FederationProps values if provided; federation names must be unique\n  *",
             "type": "object"
         },
         "generatePolicies": {
             "additionalProperties": {
                 "$ref": "#/definitions/GenerateManagedPolicyConfig"
             },
-            "description": "List of managed policies to generate.",
+            "description": "Q-ENHANCED-PROPERTY\nOptional map of named managed policies to generate with custom policy documents and suppression configurations. Enables creation of reusable permission sets for consistent access control across multiple roles and services.\n\nUse cases: Reusable permission sets; Standardized access policies; Custom permission templates\n\nAWS: AWS IAM managed policy creation with custom policy documents and MDAA naming\n\nValidation: Must be object with string keys and GenerateManagedPolicyConfig values if provided; policy names must be unique\n  *",
             "type": "object"
         },
         "generateRoles": {
             "additionalProperties": {
                 "$ref": "#/definitions/GenerateRoleProps"
             },
-            "description": "List of roles to generate.",
+            "description": "Q-ENHANCED-PROPERTY\nOptional map of named IAM roles to generate providing configuration including trust policies, permissions, and federation settings. Enables automated provisioning of compliant IAM roles for data platform services and users.\n\nUse cases: Service role automation; User role provisioning; Cross-account access role creation\n\nAWS: AWS IAM role creation with trust policies, permissions, and MDAA naming conventions\n\nValidation: Must be object with string keys and GenerateRoleProps values if provided; role names must be unique\n  *",
             "type": "object"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         }
     },
     "type": "object"

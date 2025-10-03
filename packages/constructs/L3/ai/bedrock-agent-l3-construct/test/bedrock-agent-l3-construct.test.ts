@@ -697,7 +697,7 @@ describe('BedrockAgentL3Construct Unit Tests', () => {
       });
     });
 
-    test('should create comprehensive policy with all features', () => {
+    test('should create policy with all features', () => {
       const mockKnowledgeBase = {
         attrKnowledgeBaseId: 'kb-comprehensive',
       } as CfnKnowledgeBase;

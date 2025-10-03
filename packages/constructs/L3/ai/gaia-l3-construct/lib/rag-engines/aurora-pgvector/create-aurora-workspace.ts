@@ -22,7 +22,7 @@ export interface CreateAuroraWorkspaceProps extends MdaaL3ConstructProps {
   readonly shared: Shared;
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly dbCluster: rds.DatabaseCluster;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class CreateAuroraWorkspace extends MdaaL3Construct {

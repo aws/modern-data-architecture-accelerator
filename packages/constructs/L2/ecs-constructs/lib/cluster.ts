@@ -19,42 +19,34 @@ import { Construct } from 'constructs';
 /**
  * Properties for creating a Compliance ECS cluster
  */
-
 export interface MdaaECSClusterProps extends MdaaConstructProps {
-  /**
-   * The name for the cluster.
-   */
   readonly clusterName?: string;
   /**
-   * The VPC where your ECS instances will be running or your ENIs will be deployed
-   */
-  readonly vpc: IVpc;
-  /**
-   * The service discovery namespace created in this cluster
+   * Q-ENHANCED-PROPERTY
+   * Required VPC for ECS cluster deployment providing network isolation and security controls for containerized applications. Defines the network environment where ECS instances and ENIs will be deployed for secure container networking and connectivity.
    *
-   * @default - no service discovery namespace created, you can use `addDefaultCloudMapNamespace` to add a
-   * default service discovery namespace later.
-   */
+   * Use cases: Network isolation; VPC integration; Secure networking; Container connectivity
+   *
+   * AWS: Amazon VPC for ECS cluster network isolation and secure container deployment
+   *
+   * Validation: Must be valid IVpc interface; required for ECS cluster network deployment and security
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
+   **/
+  readonly vpc: IVpc;
   readonly defaultCloudMapNamespace?: CloudMapNamespaceOptions;
   /**
-   * The ec2 capacity to add to the cluster
+   * Q-ENHANCED-PROPERTY
+   * Optional EC2 capacity configuration for ECS cluster compute resources enabling container hosting and scaling capabilities. Provides EC2-based compute capacity for container workloads with auto-scaling and resource management capabilities.
    *
-   * @default - no EC2 capacity will be added, you can use `addCapacity` to add capacity later.
-   */
+   * Use cases: EC2 capacity; Container hosting; Compute scaling; Resource management
+   *
+   * AWS: Amazon EC2 capacity for ECS cluster compute resources and container hosting
+   *
+   * Validation: Must be valid AddCapacityOptions if provided; enables EC2-based container compute capacity
+   *   **/
   readonly capacity?: AddCapacityOptions;
-  /**
-   * Whether to enable Fargate Capacity Providers
-   *
-   * @default false
-   */
   readonly enableFargateCapacityProviders?: boolean;
-  /**
-   * The KMS Key to be used to encrypt resources related to the cluster
-   */
   readonly kmsKey: IKey;
-  /**
-   * The Log Group to be used for cluster logging.
-   */
   readonly logGroup: ILogGroup;
 }
 

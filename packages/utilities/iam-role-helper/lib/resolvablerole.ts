@@ -21,7 +21,6 @@ export class MdaaResolvableRole {
   private roleCr?: CustomResource;
 
   /**
-   *
    * @param scope The scope in which custom resources for role resolution will be created (if required)
    * @param naming The MDAA naming implementation which will be used to name custom resources
    * @param roleHelper The MDAA role helper which will be used as a custom resource Provider
@@ -35,7 +34,6 @@ export class MdaaResolvableRole {
   }
 
   /**
-   *
    * @returns The unique reference id for the role ref
    */
   public refId(): string {
@@ -43,7 +41,6 @@ export class MdaaResolvableRole {
   }
 
   /**
-   *
    * @returns The immutability flag of the ref (defaults false)
    */
   public immutable(): boolean {
@@ -58,7 +55,6 @@ export class MdaaResolvableRole {
   }
 
   /**
-   *
    * @returns Either directly the role ref id (if already populated) or a CR attribute token which will contain the id at deployment time.
    */
   public id(): string {
@@ -67,7 +63,6 @@ export class MdaaResolvableRole {
   }
 
   /**
-   *
    * @returns Either directly the role ref arn (if already populated) or a CR attribute token which will contain the arn at deployment time.
    */
   public arn(): string {
@@ -76,7 +71,6 @@ export class MdaaResolvableRole {
   }
 
   /**
-   *
    * @returns Either directly the role ref name (if already populated) or a CR attribute token which will contain the name at deployment time.
    */
   public name(): string {

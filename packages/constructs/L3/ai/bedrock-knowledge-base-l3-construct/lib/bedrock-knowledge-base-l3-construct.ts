@@ -39,219 +39,674 @@ import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-co
 
 /** Supported parsing modality for multimodal data */
 type ParsingModality = 'MULTIMODAL';
-
 /** Supported vector store types */
 type VectorStoreType = 'AURORA_SERVERLESS' | 'OPENSEARCH_SERVERLESS';
-
 /** Supported parsing strategies */
 type ParsingStrategy = 'BEDROCK_DATA_AUTOMATION' | 'BEDROCK_FOUNDATION_MODEL';
-
 /** Supported chunking strategies */
 type ChunkingStrategy = 'FIXED_SIZE' | 'HIERARCHICAL' | 'SEMANTIC' | 'NONE';
-
 /** Supported standby replicas flag values for vector store */
 type StandbyReplicas = 'ENABLE' | 'DISABLE';
 export interface BedrockDataAutomationConfig {
   /**
-   * Specifies whether to enable parsing of multimodal data, including both text and/or images.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional parsing modality specification for multimodal data processing enabling content extraction from text and image sources. Enables parsing of both textual and visual content within documents for enhanced knowledge base capabilities and information extraction.
+   *
+   * Use cases: Multimodal document processing; Image content extraction; data parsing; Visual information retrieval
+   *
+   * AWS: Bedrock Data Automation parsing modality for multimodal content extraction and processing
+   *
+   * Validation: Must be MULTIMODAL if provided; enables text and image content extraction capabilities
+   *   **/
   readonly parsingModality?: ParsingModality;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Configuration for Bedrock foundation model used in knowledge base parsing providing model specification and parsing customization. Defines foundation model settings for document parsing including model selection and parsing instructions for optimized content extraction.
+ *
+ * Use cases: Foundation model configuration; Document parsing; Model selection; Parsing optimization
+ *
+ * AWS: Amazon Bedrock foundation model for knowledge base document parsing and content extraction
+ *
+ * Validation: modelArn is required; parsingPromptText and parsingModality are optional customization options
+ */
 export interface BedrockFoundationModelConfig {
   /**
-   * The ARN of the foundation model to use for parsing
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required foundation model ARN for document parsing operations enabling AI-powered content extraction and processing. Specifies the Bedrock foundation model that will be used for parsing documents and extracting content for knowledge base ingestion.
+   *
+   * Use cases: Model specification; AI-powered parsing; Content extraction; Document processing
+   *
+   * AWS: Bedrock foundation model ARN for document parsing and AI-powered content extraction
+   *
+   * Validation: Must be valid foundation model ARN; required for document parsing and content extraction
+   **/
   readonly modelArn: string;
   /**
-   * Optional parsing instructions for the foundation model
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional parsing instructions for foundation model customization enabling tailored content extraction and processing behavior. Provides custom instructions to guide the foundation model's parsing behavior for specific document types and content extraction requirements.
+   *
+   * Use cases: Custom parsing instructions; Tailored extraction; Processing customization; Model guidance
+   *
+   * AWS: Bedrock foundation model parsing instructions for customized content extraction and processing
+   *
+   * Validation: Must be valid instruction text if provided; enables custom parsing behavior and content extraction
+   **/
   readonly parsingPromptText?: string;
   /**
-   * Specifies whether to enable parsing of multimodal data, including both text and/or images.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional parsing modality specification for multimodal foundation model processing enabling content extraction from text and image sources. Enables foundation model-based parsing of both textual and visual content within documents for enhanced knowledge base capabilities and AI-powered information extraction.
+   *
+   * Use cases: AI-powered multimodal processing; Foundation model content extraction; document parsing; Visual and textual information retrieval
+   *
+   * AWS: Bedrock foundation model parsing modality for AI-powered multimodal content extraction and processing
+   *
+   * Validation: Must be MULTIMODAL if provided; enables AI-powered text and image content extraction capabilities
+   *   **/
   readonly parsingModality?: ParsingModality;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Configuration for document parsing strategies providing parsing options and AI-powered content extraction. Defines parsing strategy selection and configuration for knowledge base document processing including automation and foundation model approaches.
+ *
+ * Use cases: Document parsing strategy; Content extraction; AI-powered processing; Parsing configuration
+ *
+ * AWS: Amazon Bedrock parsing configuration for knowledge base document processing and content extraction
+ *
+ * Validation: parsingStrategy is required; configuration objects required based on strategy selection
+ */
 export interface ParsingConfiguration {
   /**
-   * The parsing strategy to use for processing documents
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required parsing strategy specification for document processing workflow enabling selection between automated and AI-powered parsing approaches. Defines the parsing method for document content extraction including Bedrock Data Automation for streamlined processing or foundation model-based parsing for advanced AI-powered content extraction.
+   *
+   * Use cases: Document processing strategy; Parsing method selection; Content extraction approach; AI-powered vs automated processing
+   *
+   * AWS: Bedrock parsing strategy for document processing and content extraction workflow configuration
+   *
+   * Validation: Must be BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL; required for document parsing configuration
+   *   **/
   readonly parsingStrategy: ParsingStrategy;
   /**
-   * Configuration for Bedrock Data Automation parsing
-   * Optional when parsingStrategy is BEDROCK_DATA_AUTOMATION
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional Bedrock Data Automation configuration for automated document parsing enabling streamlined content extraction and processing. Provides configuration for Bedrock Data Automation when using automated parsing strategy for document processing.
+   *
+   * Use cases: Automated parsing; Streamlined processing; Data automation; Content extraction automation
+   *
+   * AWS: Bedrock Data Automation configuration for automated document parsing and content extraction
+   *
+   * Validation: Must be valid BedrockDataAutomationConfig if provided; optional when using BEDROCK_DATA_AUTOMATION strategy
+   **/
   readonly bedrockDataAutomationConfiguration?: BedrockDataAutomationConfig;
   /**
-   * Configuration for foundation model parsing
-   * Required when parsingStrategy is BEDROCK_FOUNDATION_MODEL
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional foundation model configuration for AI-powered document parsing enabling customized content extraction and processing. Provides foundation model configuration when using foundation model strategy for document parsing and content extraction.
+   *
+   * Use cases: AI-powered parsing; Custom extraction; Foundation model processing; Tailored content extraction
+   *
+   * AWS: Bedrock foundation model configuration for AI-powered document parsing and content extraction
+   *
+   * Validation: Must be valid BedrockFoundationModelConfig if provided; required when using BEDROCK_FOUNDATION_MODEL strategy
+   **/
   readonly bedrockFoundationModelConfiguration?: BedrockFoundationModelConfig;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Configuration for custom transformation processing with Lambda-based document transformation and intermediate storage. Defines custom transformation workflow for advanced document processing and content manipulation before knowledge base ingestion.
+ *
+ * Use cases: Custom document transformation; Advanced processing; Lambda-based transformation; Content manipulation
+ *
+ * AWS: Custom transformation configuration for advanced document processing and content manipulation
+ *
+ * Validation: intermediateS3Location and transformationLambda are required for custom transformation workflow
+ */
 export interface CustomTransformationConfiguration {
   /**
-   * Intermediate bucket to store input documents to run custom Lambda function on and to also store the output of the documents
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required intermediate S3 bucket name for custom transformation workflow enabling document processing and Lambda function integration. Provides temporary storage for input documents before Lambda processing and output documents after transformation for advanced document processing workflows.
+   *
+   * Use cases: Document transformation; Lambda processing; Intermediate storage; Custom processing workflows
+   *
+   * AWS: S3 bucket for Bedrock knowledge base custom transformation intermediate storage and processing
+   *
+   * Validation: Must be valid S3 bucket name; required for custom transformation workflow and Lambda processing
+   **/
   readonly intermediateStorageBucket: string;
   /**
-   * Intermediate bucket S3 prefix to store input documents to run custom Lambda function on and to also store the output of the documents
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required S3 prefix for intermediate storage organization enabling structured document processing and workflow management. Provides organized storage structure for input and output documents during custom transformation processing with clear separation and management.
+   *
+   * Use cases: Storage organization; Document workflow; Processing structure; File management
+   *
+   * AWS: S3 prefix for Bedrock knowledge base custom transformation storage organization and workflow management
+   *
+   * Validation: Must be valid S3 prefix string; required for organized intermediate storage and processing workflow
+   **/
   readonly intermediateStoragePrefix: string;
   /**
-   * List of ARNs of Custom Transformation Lambda functions
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required array of Lambda function ARNs for custom document transformation enabling advanced processing and content manipulation. Provides Lambda functions for custom document processing, content transformation, and advanced manipulation before knowledge base ingestion.
+   *
+   * Use cases: Custom document processing; Content transformation; Advanced manipulation; Lambda-based processing
+   *
+   * AWS: Lambda function ARNs for Bedrock knowledge base custom transformation and document processing
+   *
+   * Validation: Must be array of valid Lambda function ARNs; required for custom transformation and processing capabilities
+   **/
   readonly transformLambdaArns: string[];
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Fixed size chunking configuration interface for Bedrock knowledge bases providing document segmentation and chunk management capabilities. Defines fixed size chunking properties for knowledge base document processing including chunk size configuration, document segmentation, and content chunking for optimized AI knowledge retrieval.
+ *
+ * Use cases: Document segmentation; Chunk management; Content chunking; Document processing; AI knowledge retrieval; Chunk optimization
+ *
+ * AWS: Amazon Bedrock fixed size chunking configuration with document segmentation and chunk management
+ *
+ * Validation: Configuration must be valid for Bedrock knowledge base deployment; properties must conform to AWS Bedrock and AI service requirements
+ */
 export interface FixedSizeChunking {
   /**
-   * Maximum tokens per chunk
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required maximum token count per document chunk for fixed-size chunking strategy enabling consistent chunk sizing and optimized knowledge retrieval. Defines the maximum number of tokens that each document chunk can contain for balanced processing and effective vector embedding generation.
+   *
+   * Use cases: Chunk size control; Token management; Processing optimization; Embedding generation
+   *
+   * AWS: Bedrock knowledge base fixed-size chunking maximum tokens for document segmentation and processing
+   *
+   * Validation: Must be positive integer; required for fixed-size chunking configuration and document processing
+   **/
   readonly maxTokens: number;
   /**
-   * Percentage of overlap between chunks
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required overlap percentage between adjacent document chunks for fixed-size chunking strategy enabling context preservation and improved retrieval accuracy. Defines the percentage of content overlap between consecutive chunks to maintain context continuity and enhance information retrieval.
+   *
+   * Use cases: Context preservation; Retrieval accuracy; Content continuity; Information overlap
+   *
+   * AWS: Bedrock knowledge base fixed-size chunking overlap percentage for context preservation and retrieval optimization
+   *
+   * Validation: Must be percentage value between 0-100; required for chunk overlap configuration and context preservation
+   **/
   readonly overlapPercentage: number;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Hierarchical chunking level configuration interface for Bedrock knowledge bases providing multi-level document processing and hierarchical segmentation capabilities. Defines hierarchical chunking level properties for knowledge base document processing including level configuration, hierarchical segmentation, and multi-level content organization for advanced AI knowledge management.
+ *
+ * Use cases: Multi-level document processing; Hierarchical segmentation; Level configuration; Advanced knowledge management; Content organization; Hierarchical chunking
+ *
+ * AWS: Amazon Bedrock hierarchical chunking level configuration with multi-level document processing and hierarchical segmentation
+ *
+ * Validation: Configuration must be valid for Bedrock knowledge base deployment; properties must conform to AWS Bedrock and AI service requirements
+ */
 export interface HierarchicalChunkingLevelConfig {
   /**
-   * Maximum tokens for this level
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required maximum token count for hierarchical chunking level enabling multi-level document segmentation and structured content organization. Defines the token limit for this specific hierarchical level to create structured document chunks with varying granularity for optimized knowledge retrieval and hierarchical information access.
+   *
+   * Use cases: Hierarchical segmentation; Multi-level chunking; Structured organization; Granular content control
+   *
+   * AWS: Bedrock knowledge base hierarchical chunking level token limit for structured document segmentation
+   *
+   * Validation: Must be positive integer; required for hierarchical chunking level configuration and multi-level processing
+   **/
   readonly maxTokens: number;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Configuration interface for hierarchical chunking strategy in Bedrock knowledge bases enabling multi-level document segmentation. Defines hierarchical chunking with multiple token levels and overlap settings for sophisticated document processing and enhanced AI knowledge understanding.
+ *
+ * Use cases: Multi-level document chunking; Hierarchical text segmentation; Advanced knowledge base document processing
+ *
+ * AWS: Configures AWS Bedrock knowledge base hierarchical chunking strategy for vector ingestion
+ *
+ * Validation: levelConfigurations array is required with valid HierarchicalChunkingLevelConfig objects; overlapTokens must be non-negative integer
+ */
 export interface HierarchicalChunking {
   /**
-   * Level configurations for hierarchical chunking
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required array of hierarchical chunking level configurations enabling multi-level document segmentation with varying granularity. Provides level-specific configurations for hierarchical document processing with different token limits per level for structured content organization and optimized knowledge retrieval.
+   *
+   * Use cases: Multi-level segmentation; Hierarchical organization; Structured chunking; Granular content control
+   *
+   * AWS: Bedrock knowledge base hierarchical chunking level configurations for multi-level document processing
+   *
+   * Validation: Must be array of valid HierarchicalChunkingLevelConfig objects; required for hierarchical chunking strategy
+   **/
   readonly levelConfigurations: HierarchicalChunkingLevelConfig[];
   /**
-   * Number of tokens to overlap between chunks
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required token overlap count between hierarchical chunks enabling context preservation across chunk boundaries and improved information continuity. Defines the number of tokens that overlap between adjacent chunks to maintain context flow and enhance retrieval accuracy in hierarchical processing.
+   *
+   * Use cases: Context preservation; Information continuity; Chunk boundary management; Retrieval accuracy
+   *
+   * AWS: Bedrock knowledge base hierarchical chunking token overlap for context preservation and continuity
+   *
+   * Validation: Must be non-negative integer; required for hierarchical chunk overlap configuration and context management
+   **/
   readonly overlapTokens: number;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Semantic chunking configuration interface for Bedrock knowledge bases providing semantic document processing and intelligent segmentation capabilities. Defines semantic chunking properties for knowledge base document processing including semantic analysis, intelligent segmentation, and meaning-based content organization for enhanced AI knowledge understanding.
+ *
+ * Use cases: Semantic document processing; Intelligent segmentation; Semantic analysis; Meaning-based organization; Enhanced AI understanding; Semantic content processing
+ *
+ * AWS: Amazon Bedrock semantic chunking configuration with intelligent document processing and semantic content organization
+ *
+ * Validation: Configuration must be valid for Bedrock knowledge base deployment; properties must conform to AWS Bedrock and AI service requirements
+ */
 export interface SemanticChunking {
   /**
-   * Maximum tokens per chunk
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required maximum token count per semantic chunk enabling intelligent document segmentation based on meaning and context. Defines the token limit for semantic chunks while preserving semantic coherence and meaning-based boundaries for optimized knowledge retrieval and contextual understanding.
+   *
+   * Use cases: Semantic segmentation; Meaning preservation; Intelligent chunking; Context-aware processing
+   *
+   * AWS: Bedrock knowledge base semantic chunking maximum tokens for intelligent document segmentation
+   *
+   * Validation: Must be positive integer; required for semantic chunking configuration and meaning-based processing
+   **/
   readonly maxTokens: number;
   /**
-   * Buffer size (number of surrounding sentences)
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required buffer size specification for semantic context preservation enabling enhanced semantic boundary detection and improved content coherence. Defines the number of surrounding sentences to consider for semantic analysis and boundary determination in intelligent document segmentation.
+   *
+   * Use cases: Context preservation; Semantic boundary detection; Content coherence; Intelligent analysis
+   *
+   * AWS: Bedrock knowledge base semantic chunking buffer size for context preservation and boundary detection
+   *
+   * Validation: Must be positive integer; required for semantic chunking buffer configuration and context analysis
+   **/
   readonly bufferSize: number;
   /**
-   * Breakpoint percentile threshold
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required breakpoint percentile threshold for semantic boundary detection enabling intelligent chunk separation based on semantic similarity analysis. Defines the percentile threshold for determining semantic breakpoints in document content for optimal chunk boundaries and meaning preservation.
+   *
+   * Use cases: Semantic boundary detection; Intelligent separation; Similarity analysis; Optimal chunking
+   *
+   * AWS: Bedrock knowledge base semantic chunking breakpoint threshold for intelligent boundary detection
+   *
+   * Validation: Must be valid percentile value (0-100); required for semantic breakpoint detection and boundary analysis
+   **/
   readonly breakpointPercentileThreshold: number;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Chunking configuration interface for Bedrock knowledge bases providing document chunking strategy and content segmentation capabilities. Defines chunking configuration properties for knowledge base document processing including chunking strategies, segmentation methods, and content organization for optimized AI knowledge retrieval and processing.
+ *
+ * Use cases: Document chunking strategies; Content segmentation; Chunking methods; AI knowledge retrieval optimization; Content organization; Document processing
+ *
+ * AWS: Amazon Bedrock chunking configuration providing document segmentation and content organization strategies
+ *
+ * Validation: Configuration must be valid for Bedrock knowledge base deployment; properties must conform to AWS Bedrock and AI service requirements
+ */
 export interface ChunkingConfiguration {
   /**
-   * The chunking strategy to use for processing documents
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required chunking strategy specification for document processing workflow enabling selection between different segmentation approaches. Defines the chunking method for document content segmentation including fixed-size, hierarchical, semantic, or no chunking strategies for optimized knowledge base processing and retrieval.
+   *
+   * Use cases: Chunking strategy selection; Document segmentation; Processing workflow; Content organization
+   *
+   * AWS: Bedrock knowledge base chunking strategy for document segmentation and content processing workflow
+   *
+   * Validation: Must be FIXED_SIZE, HIERARCHICAL, SEMANTIC, or NONE; required for chunking configuration and processing strategy
+   *   **/
   readonly chunkingStrategy: ChunkingStrategy;
   /**
-   * Configuration for fixed-size chunking
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional fixed-size chunking configuration for consistent document segmentation enabling uniform chunk sizes and predictable processing. Provides configuration for fixed-size chunking strategy with token limits and overlap settings for consistent document processing and retrieval optimization.
+   *
+   * Use cases: Consistent segmentation; Uniform chunk sizes; Predictable processing; Fixed-size strategy
+   *
+   * AWS: Bedrock knowledge base fixed-size chunking configuration for consistent document segmentation
+   *
+   * Validation: Must be valid FixedSizeChunking if provided; required when using FIXED_SIZE chunking strategy
+   *   **/
   readonly fixedSizeChunkingConfiguration?: FixedSizeChunking;
   /**
-   * Configuration for hierarchical chunking
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional hierarchical chunking configuration for multi-level document segmentation enabling structured content organization with varying granularity. Provides configuration for hierarchical chunking strategy with level-based processing and structured content organization for advanced knowledge management.
+   *
+   * Use cases: Multi-level segmentation; Structured organization; Hierarchical processing; Advanced knowledge management
+   *
+   * AWS: Bedrock knowledge base hierarchical chunking configuration for multi-level document processing
+   *
+   * Validation: Must be valid HierarchicalChunking if provided; required when using HIERARCHICAL chunking strategy
+   *   **/
   readonly hierarchicalChunkingConfiguration?: HierarchicalChunking;
   /**
-   * Configuration for semantic chunking
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional semantic chunking configuration for intelligent document segmentation enabling meaning-based content organization and context preservation. Provides configuration for semantic chunking strategy with AI-powered boundary detection and semantic coherence for enhanced knowledge understanding.
+   *
+   * Use cases: Intelligent segmentation; Meaning-based organization; Context preservation; Semantic coherence
+   *
+   * AWS: Bedrock knowledge base semantic chunking configuration for intelligent document segmentation
+   *
+   * Validation: Must be valid SemanticChunking if provided; required when using SEMANTIC chunking strategy
+   *   **/
   readonly semanticChunkingConfiguration?: SemanticChunking;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Vector ingestion configuration interface for Bedrock knowledge bases providing vector processing and embedding management capabilities. Defines vector ingestion properties for knowledge base vector processing including embedding generation, vector storage, and ingestion workflows for AI-powered semantic search and retrieval.
+ *
+ * Use cases: Vector processing; Embedding generation; Vector storage; Semantic search; AI retrieval; Vector ingestion workflows
+ *
+ * AWS: Amazon Bedrock vector ingestion configuration with embedding generation and vector processing for semantic search
+ *
+ * Validation: Configuration must be valid for Bedrock knowledge base deployment; properties must conform to AWS Bedrock and AI service requirements
+ */
 export interface VectorIngestionConfiguration {
   /**
-   * Configuration for document parsing
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional document parsing configuration for content extraction and processing enabling document analysis and content preparation. Provides parsing configuration for document content extraction including parsing strategies and processing methods for knowledge base ingestion and vector generation.
+   *
+   * Use cases: Document parsing; Content extraction; Processing configuration; Content preparation
+   *
+   * AWS: Bedrock knowledge base parsing configuration for document content extraction and processing
+   *
+   * Validation: Must be valid ParsingConfiguration if provided; enables document parsing and content extraction capabilities
+   **/
   readonly parsingConfiguration?: ParsingConfiguration;
   /**
-   * Configuration for document chunking
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional document chunking configuration for content segmentation and organization enabling optimized vector processing and retrieval. Provides chunking configuration for document content segmentation including chunking strategies and processing methods for enhanced knowledge base performance.
+   *
+   * Use cases: Content segmentation; Document organization; Vector processing; Retrieval optimization
+   *
+   * AWS: Bedrock knowledge base chunking configuration for document segmentation and vector processing
+   *
+   * Validation: Must be valid ChunkingConfiguration if provided; enables document chunking and content segmentation capabilities
+   **/
   readonly chunkingConfiguration?: ChunkingConfiguration;
   /**
-   * Configuration for custom transformation
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional custom transformation configuration for advanced document processing enabling Lambda-based content manipulation and custom processing workflows. Provides custom transformation configuration for advanced document processing including Lambda functions and custom processing pipelines for specialized content handling.
+   *
+   * Use cases: Custom processing; Advanced transformation; Lambda-based processing; Specialized content handling
+   *
+   * AWS: Bedrock knowledge base custom transformation configuration for advanced document processing and manipulation
+   *
+   * Validation: Must be valid CustomTransformationConfiguration if provided; enables custom processing and transformation capabilities
+   **/
   readonly customTransformationConfiguration?: CustomTransformationConfiguration;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * S3 data source configuration interface for Bedrock knowledge bases providing S3 integration and data source management capabilities. Defines S3 data source properties for knowledge base data ingestion including S3 bucket configuration, data source management, and content ingestion for AI knowledge base population from S3 storage.
+ *
+ * Use cases: S3 data integration; Data source management; Content ingestion; Knowledge base population; S3 bucket configuration; AI data sources
+ *
+ * AWS: Amazon Bedrock S3 data source configuration with S3 integration and automated content ingestion for knowledge bases
+ *
+ * Validation: Configuration must be valid for Bedrock knowledge base deployment; properties must conform to AWS Bedrock and AI service requirements
+ */
 export interface S3DataSource {
   /**
-   * The name of the S3 bucket containing the data
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required S3 bucket name containing source documents for knowledge base ingestion enabling centralized document storage and automated content processing. Provides the S3 bucket that contains documents to be processed and ingested into the knowledge base for AI-powered search and retrieval capabilities.
+   *
+   * Use cases: Document storage; Content ingestion; Centralized data source; Knowledge base population
+   *
+   * AWS: S3 bucket name for Bedrock knowledge base data source and automated document ingestion
+   *
+   * Validation: Must be valid S3 bucket name; required for S3 data source configuration and document ingestion
+   **/
   readonly bucketName: string;
   /**
-   * Optional prefix to limit which objects in the bucket are included
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional S3 object prefix for selective document ingestion enabling targeted content processing and organized data source management. Provides prefix-based filtering to limit which objects in the bucket are included in knowledge base processing for focused content ingestion and management.
+   *
+   * Use cases: Selective ingestion; Content filtering; Organized processing; Targeted data source management
+   *
+   * AWS: S3 object prefix for Bedrock knowledge base selective document ingestion and content filtering
+   *
+   * Validation: Must be valid S3 prefix if provided; enables selective document processing and content organization
+   **/
   readonly prefix?: string;
   /**
-   * Vector ingestion configuration for this data source
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional vector ingestion configuration for document processing and embedding generation enabling customized content processing and vector optimization. Provides vector ingestion settings for document parsing, chunking, and transformation to optimize knowledge base performance and retrieval accuracy.
+   *
+   * Use cases: Document processing; Embedding generation; Vector optimization; Content customization
+   *
+   * AWS: Bedrock knowledge base vector ingestion configuration for document processing and embedding optimization
+   *
+   * Validation: Must be valid VectorIngestionConfiguration if provided; enables customized document processing and vector generation
+   **/
   readonly vectorIngestionConfiguration?: VectorIngestionConfiguration;
   /**
-   * Enable automatic sync when S3 objects are created/updated
+   * Q-ENHANCED-PROPERTY
+   * Optional automatic synchronization flag for real-time document processing enabling dynamic content updates and automated knowledge base maintenance. Enables automatic processing of new or updated S3 objects for real-time knowledge base updates and continuous content synchronization.
+   *
+   * Use cases: Real-time updates; Automatic synchronization; Dynamic content processing; Continuous maintenance
+   *
+   * AWS: Bedrock knowledge base automatic sync for real-time S3 document processing and content updates
+   *
+   * Validation: Boolean value; defaults to false; enables automatic document synchronization and real-time processing
    * @default false
    */
   readonly enableSync?: boolean;
 }
 
 export interface SharepointDataSource {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required SharePoint data source configuration for enterprise document integration enabling SharePoint connectivity and content ingestion. Provides SharePoint-specific configuration including authentication, site access, and document retrieval for enterprise knowledge base population from SharePoint repositories.
+   *
+   * Use cases: Enterprise document integration; SharePoint connectivity; Corporate content ingestion; Enterprise knowledge management
+   *
+   * AWS: Bedrock knowledge base SharePoint data source configuration for enterprise document integration and content ingestion
+   *
+   * Validation: Must be valid SharepointDataSourceConfiguration; required for SharePoint integration and document access
+   **/
   readonly dataSource: SharepointDataSourceConfiguration;
   /**
-   * Vector ingestion configuration for this data source
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional vector ingestion configuration for SharePoint document processing enabling customized content extraction and embedding generation. Provides vector ingestion settings for SharePoint document parsing, chunking, and transformation to optimize knowledge base performance with enterprise content.
+   *
+   * Use cases: SharePoint document processing; Enterprise content optimization; Vector generation; Content customization
+   *
+   * AWS: Bedrock knowledge base vector ingestion configuration for SharePoint document processing and optimization
+   *
+   * Validation: Must be valid VectorIngestionConfiguration if provided; enables customized SharePoint document processing and vector generation
+   **/
   readonly vectorIngestionConfiguration?: VectorIngestionConfiguration;
 }
 
 export interface SharepointDataSourceConfiguration {
-  /** The supported authentication type to authenticate and connect to your SharePoint site/sites.
-   *  Valid values: OAUTH2_CLIENT_CREDENTIALS, OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS
-   */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required authentication type for SharePoint connectivity enabling secure access to SharePoint sites and document repositories. Specifies the OAuth2 authentication method for connecting to SharePoint including client credentials or SharePoint app-only authentication for enterprise document access.
+   *
+   * Use cases: SharePoint authentication; Secure connectivity; Enterprise access; OAuth2 integration
+   *
+   * AWS: Bedrock knowledge base SharePoint authentication type for secure site connectivity and document access
+   *
+   * Validation: Must be OAUTH2_CLIENT_CREDENTIALS or OAUTH2_SHAREPOINT_APP_ONLY_CLIENT_CREDENTIALS; required for SharePoint authentication
+   **/
   readonly authType: string;
-  /** The Amazon Resource Name of an AWS Secrets Manager secret that stores your authentication credentials for your SharePoint site/sites. */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required AWS Secrets Manager secret ARN containing SharePoint authentication credentials enabling secure credential management and access control. Provides the secret that stores SharePoint authentication credentials for secure and managed access to SharePoint sites and documents.
+   *
+   * Use cases: Credential management; Secure authentication; Access control; Secret management
+   *
+   * AWS: AWS Secrets Manager secret ARN for Bedrock knowledge base SharePoint authentication credentials
+   *
+   * Validation: Must be valid Secrets Manager ARN; required for SharePoint authentication and credential management
+   **/
   readonly credentialsSecretArn: string;
-  /** The domain of your SharePoint instance or site URL/URLs.
-   *  Valid Pattern: ^arn:aws(|-cn|-us-gov):secretsmanager:[a-z0-9-]{1,20}:([0-9]{12}|):secret:[a-zA-Z0-9!/_+=.@-]{1,512}$
-   */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required SharePoint domain specification for site connectivity enabling targeted SharePoint instance access and domain-specific configuration. Provides the SharePoint domain or site URL for establishing connectivity to the specific SharePoint instance containing target documents.
+   *
+   * Use cases: Domain connectivity; Site targeting; Instance specification; SharePoint access
+   *
+   * AWS: Bedrock knowledge base SharePoint domain for site connectivity and instance targeting
+   *
+   * Validation: Must be valid SharePoint domain or URL; required for SharePoint site connectivity and access
+   **/
   readonly domain: string;
-  /** The supported host type, whether online/cloud or server/on-premises.
-   *  Valid values: ONLINE
-   *  Default: ONLINE
-   */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional SharePoint host type specification for deployment environment targeting enabling cloud or on-premises SharePoint connectivity. Specifies whether the SharePoint instance is online/cloud-based or server/on-premises for appropriate connectivity configuration.
+   *
+   * Use cases: Deployment targeting; Environment specification; Connectivity configuration; SharePoint type
+   *
+   * AWS: Bedrock knowledge base SharePoint host type for deployment environment and connectivity configuration
+   *
+   * Validation: Must be ONLINE if provided; defaults to ONLINE for cloud-based SharePoint connectivity
+   **/
   readonly hostType?: string;
-  /** A list of one or more SharePoint site URLs. */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required array of SharePoint site URLs for multi-site document access enabling SharePoint content ingestion. Provides the specific SharePoint site URLs that contain documents to be ingested into the knowledge base for enterprise content coverage.
+   *
+   * Use cases: Multi-site access; ingestion; Site targeting; Enterprise content coverage
+   *
+   * AWS: Bedrock knowledge base SharePoint site URLs for multi-site document access and content ingestion
+   *
+   * Validation: Must be array of valid SharePoint site URLs; required for SharePoint site access and document ingestion
+   **/
   readonly siteUrls: string[];
-  /** The identifier of your Microsoft 365 tenant.
-   *  Valid Pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
-   */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required Microsoft 365 tenant identifier for enterprise SharePoint access enabling tenant-specific authentication and authorization. Provides the unique tenant ID for Microsoft 365 SharePoint access ensuring proper tenant isolation and security for enterprise document access.
+   *
+   * Use cases: Tenant identification; Enterprise access; Security isolation; M365 integration
+   *
+   * AWS: Bedrock knowledge base Microsoft 365 tenant ID for SharePoint enterprise access and tenant isolation
+   *
+   * Validation: Must be valid UUID format; required for Microsoft 365 tenant identification and SharePoint access
+   **/
   readonly tenantId: string;
 }
 interface BaseVectorStoreProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional vector store type specification for storage backend selection enabling choice between Aurora Serverless and OpenSearch Serverless. Defines the vector storage backend type for knowledge base vector storage with different performance and cost characteristics.
+   *
+   * Use cases: Storage backend selection; Performance optimization; Cost management; Technology choice
+   *
+   * AWS: Bedrock knowledge base vector store type for storage backend and technology selection
+   *
+   * Validation: Must be AURORA_SERVERLESS or OPENSEARCH_SERVERLESS if provided; enables storage backend selection
+   *   **/
   readonly vectorStoreType?: VectorStoreType;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required VPC identifier for vector store network isolation enabling secure deployment and network control. Provides the VPC where the vector store will be deployed for network isolation, security controls, and private connectivity within the specified network environment.
+   *
+   * Use cases: Network isolation; Security deployment; VPC connectivity; Private networking
+   *
+   * AWS: VPC ID for Bedrock knowledge base vector store network deployment and isolation
+   *
+   * Validation: Must be valid VPC ID; required for vector store network deployment and security isolation
+   **/
   readonly vpcId: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required array of subnet identifiers for vector store deployment enabling multi-AZ deployment and network distribution. Provides the subnets where vector store components will be deployed for high availability, fault tolerance, and distributed network access.
+   *
+   * Use cases: Multi-AZ deployment; High availability; Network distribution; Fault tolerance
+   *
+   * AWS: Subnet IDs for Bedrock knowledge base vector store multi-AZ deployment and network distribution
+   *
+   * Validation: Must be array of valid subnet IDs; required for vector store deployment and high availability
+   **/
   readonly subnetIds: string[];
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Aurora Serverless PostgreSQL vector store properties interface for Bedrock knowledge bases providing database configuration and vector storage capabilities. Extends base vector store properties with Aurora-specific configuration including database connectivity, engine settings, and capacity management for scalable vector storage.
+ *
+ * Use cases: Aurora vector storage; PostgreSQL configuration; Serverless database; Vector database management
+ *
+ * AWS: Aurora Serverless PostgreSQL configuration for Bedrock knowledge base vector storage and database management
+ *
+ * Validation: Extends BaseVectorStoreProps validation; Aurora-specific properties are optional with sensible defaults
+ */
 export interface AuroraServerlessPgVectorProps extends BaseVectorStoreProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional database port specification for Aurora PostgreSQL connectivity enabling custom port configuration and network access control. Defines the port number for Aurora PostgreSQL database connections with default PostgreSQL port if not specified.
+   *
+   * Use cases: Port configuration; Network access; Database connectivity; Custom networking
+   *
+   * AWS: Aurora PostgreSQL port for Bedrock knowledge base database connectivity and network configuration
+   *
+   * Validation: Must be valid port number if provided; defaults to standard PostgreSQL port for database connectivity
+   **/
   readonly port?: number;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional PostgreSQL engine version specification for Aurora database configuration enabling version control and feature compatibility. Defines the PostgreSQL engine version for Aurora Serverless with specific feature sets and compatibility requirements for vector operations.
+   *
+   * Use cases: Version control; Feature compatibility; Engine configuration; Database capabilities
+   *
+   * AWS: Aurora PostgreSQL engine version for Bedrock knowledge base database configuration and feature compatibility
+   *
+   * Validation: Must be valid PostgreSQL version if provided; enables version-specific features and compatibility
+   **/
   readonly engineVersion?: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional minimum capacity specification for Aurora Serverless scaling enabling cost optimization and performance baseline. Defines the minimum Aurora Capacity Units (ACUs) for serverless scaling to ensure baseline performance while optimizing costs during low-usage periods.
+   *
+   * Use cases: Cost optimization; Performance baseline; Scaling configuration; Resource management
+   *
+   * AWS: Aurora Serverless minimum capacity for Bedrock knowledge base cost optimization and performance baseline
+   *
+   * Validation: Must be valid AuroraCapacityUnit if provided; enables minimum capacity configuration and cost control
+   *   **/
   readonly minCapacity?: AuroraCapacityUnit;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional maximum capacity specification for Aurora Serverless scaling enabling performance limits and cost control. Defines the maximum Aurora Capacity Units (ACUs) for serverless scaling to ensure performance limits and prevent unexpected costs during high-usage periods.
+   *
+   * Use cases: Performance limits; Cost control; Scaling boundaries; Resource management
+   *
+   * AWS: Aurora Serverless maximum capacity for Bedrock knowledge base performance limits and cost control
+   *
+   * Validation: Must be valid AuroraCapacityUnit if provided; enables maximum capacity configuration and cost management
+   *   **/
   readonly maxCapacity?: AuroraCapacityUnit;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * OpenSearch Serverless vector store properties interface for Bedrock knowledge bases providing search configuration and vector storage capabilities. Extends base vector store properties with OpenSearch-specific configuration including replica management and serverless search capabilities for scalable vector operations.
+ *
+ * Use cases: OpenSearch vector storage; Serverless search; Vector operations; Search configuration
+ *
+ * AWS: OpenSearch Serverless configuration for Bedrock knowledge base vector storage and search capabilities
+ *
+ * Validation: Extends BaseVectorStoreProps validation; standbyReplicas is required for replica configuration
+ */
 export interface OpensearchServerlessProps extends BaseVectorStoreProps {
   /**
-   * Enable or Disable standby replicas
-   * This cannot be changed after creation of the Opensearch Serverless Collection
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required standby replica configuration for OpenSearch Serverless high availability enabling fault tolerance and performance optimization. Defines whether to enable or disable standby replicas for the OpenSearch Serverless collection with permanent configuration that cannot be changed after creation.
+   *
+   * Use cases: High availability; Fault tolerance; Performance optimization; Replica management
+   *
+   * AWS: OpenSearch Serverless standby replicas for Bedrock knowledge base high availability and fault tolerance
+   *
+   * Validation: Must be ENABLE or DISABLE; required for replica configuration and cannot be changed after collection creation
+   *   **/
   readonly standbyReplicas: StandbyReplicas;
 }
 /** Named collection of SharePoint data sources for configuration mapping */
@@ -259,58 +714,113 @@ export interface NamedSharepointDataSources {
   /** @jsii ignore */
   [dsName: string]: SharepointDataSource;
 }
-
 /** Named collection of S3 data sources for configuration mapping */
 export interface NamedS3DataSource {
   /** @jsii ignore */
   [dsName: string]: S3DataSource;
 }
-
 /** Named collection of vector store configurations for mapping */
 export interface NamedVectorStoreProps {
   /** @jsii ignore */
   [storeName: string]: AuroraServerlessPgVectorProps | OpensearchServerlessProps;
 }
-
+/**
+ * Q-ENHANCED-INTERFACE
+ * Comprehensive Bedrock knowledge base properties interface with complete RAG configuration including data sources, vector storage, and embedding management. Defines knowledge base configuration for document ingestion, vector processing, and intelligent retrieval with support for multiple data sources and advanced AI capabilities.
+ *
+ * Use cases: RAG implementation; Knowledge management; Document retrieval; AI-powered search; Enterprise knowledge bases
+ *
+ * AWS: Amazon Bedrock knowledge base configuration for RAG implementation and intelligent document retrieval
+ *
+ * Validation: vectorStore, embeddingModel, and role are required; data sources and advanced features are optional
+ */
 export interface BedrockKnowledgeBaseProps {
   /**
-   * List of Sharepoint data sources to be used for ingestion into knowledge base
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional SharePoint data sources configuration for enterprise document integration enabling SharePoint content ingestion and knowledge base population. Provides SharePoint-specific data source configurations for enterprise document repositories and corporate knowledge management.
+   *
+   * Use cases: Enterprise document integration; SharePoint connectivity; Corporate knowledge management; Enterprise content ingestion
+   *
+   * AWS: Bedrock knowledge base SharePoint data sources for enterprise document integration and corporate content ingestion
+   *
+   * Validation: Must be valid NamedSharepointDataSources if provided; enables SharePoint integration and enterprise document access
+   *   **/
   readonly sharepointDataSources?: NamedSharepointDataSources;
   /**
-   * Array of S3 data sources to be used for the knowledge base
-   * Each data source specifies a bucket and optional prefix
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional S3 data sources configuration for cloud document integration enabling scalable document ingestion and knowledge base population. Provides S3-specific data source configurations for cloud document repositories with bucket and prefix-based organization for flexible content management.
+   *
+   * Use cases: Cloud document integration; S3 connectivity; Scalable ingestion; Flexible content management
+   *
+   * AWS: Bedrock knowledge base S3 data sources for cloud document integration and scalable content ingestion
+   *
+   * Validation: Must be valid NamedS3DataSource if provided; enables S3 integration and cloud document access
+   *   **/
   readonly s3DataSources?: NamedS3DataSource;
   /**
-   * Configuration for the vector store database
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required vector store reference for knowledge base vector storage enabling semantic search and retrieval capabilities. Specifies the vector store configuration that will be used for storing and retrieving document embeddings for AI-powered semantic search and intelligent document retrieval.
+   *
+   * Use cases: Vector storage; Semantic search; Document retrieval; AI-powered search
+   *
+   * AWS: Bedrock knowledge base vector store reference for semantic search and intelligent document retrieval
+   *
+   * Validation: Must be valid vector store name; required for knowledge base vector storage and retrieval capabilities
+   **/
   readonly vectorStore: string;
   /**
-   * Embedding model ID to use for generating vector embeddings.
-   * Example: "amazon.titan-embed-text-v1"
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required embedding model specification for vector generation enabling semantic understanding and similarity matching. Defines the Bedrock embedding model used for generating document vectors with specific dimensionality and semantic capabilities for optimal knowledge retrieval performance.
+   *
+   * Use cases: Vector generation; Semantic understanding; Similarity matching; Embedding optimization
+   *
+   * AWS: Bedrock embedding model for knowledge base vector generation and semantic understanding
+   *
+   * Validation: Must be valid Bedrock embedding model ID; required for vector generation and semantic processing
+   **/
   readonly embeddingModel: string;
   /**
-   * Field size where the vector embeddings will be stored
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional vector field size specification for embedding dimensionality enabling vector storage optimization and performance tuning. Defines the dimensionality of vector embeddings for storage optimization and retrieval performance with model-specific requirements and storage efficiency.
+   *
+   * Use cases: Vector optimization; Storage efficiency; Performance tuning; Dimensionality control
+   *
+   * AWS: Bedrock knowledge base vector field size for embedding dimensionality and storage optimization
+   *
+   * Validation: Must be positive integer matching embedding model dimensions if provided; enables vector storage optimization
+   **/
   readonly vectorFieldSize?: number;
   /**
-   * Name of the S3 bucket for supplemental data storage.
-   * Required when using advanced parsing strategies like BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional supplemental S3 bucket name for advanced parsing workflows enabling enhanced document processing and AI-powered content extraction. Required when using advanced parsing strategies like Bedrock Data Automation or foundation model parsing for sophisticated document analysis and content extraction.
+   *
+   * Use cases: Advanced parsing; Enhanced processing; AI-powered extraction; Sophisticated document analysis
+   *
+   * AWS: S3 bucket for Bedrock knowledge base advanced parsing workflows and enhanced document processing
+   *
+   * Validation: Must be valid S3 bucket name if provided; required when using BEDROCK_DATA_AUTOMATION or BEDROCK_FOUNDATION_MODEL parsing
+   **/
   readonly supplementalBucketName?: string;
   /**
-   * Reference to role which will be used as execution role on knowledge base.
-   * The role must have assume-role trust with bedrock.amazonaws.com
-   * The role must have access to S3 data sources granted within MDAA bucket config
-   * Optionally:
-   * a) Role must have assume-role trust with lambda.amazonaws.com to enable sync functionality for datasources
-   * b) If datasource is configured with BedrockDataAutomation or Foundation Model Parsing, Role must have access to the Root of a supplementalBucket
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required IAM role reference for knowledge base execution enabling secure access to AWS services and data sources. Provides the execution role for knowledge base operations with required permissions for Bedrock services, S3 data access, and optional Lambda sync functionality for knowledge base management.
+   *
+   * Use cases: Execution permissions; Service access; Data source connectivity; Security management
+   *
+   * AWS: IAM role for Bedrock knowledge base execution and secure service access
+   *
+   * Validation: Must be valid MdaaRoleRef with Bedrock trust policy; required for knowledge base execution and service access
+   **/
   readonly role: MdaaRoleRef;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Named knowledge base collection interface for managing multiple Bedrock Knowledge Bases with string-based naming for organized RAG application deployment. Enables configuration of multiple knowledge bases with unique identifiers, supporting multi-domain knowledge management and organized document retrieval systems for complex AI applications.
+ * Use cases: Multi-domain knowledge bases; Named knowledge base collections; Organized RAG architecture; Knowledge base management; Domain-specific AI assistants
+ * AWS: Multiple Amazon Bedrock Knowledge Bases with organized naming for multi-domain RAG applications and knowledge management
+ * Validation: Knowledge base names must be valid identifiers; each BedrockKnowledgeBaseProps must be valid knowledge base configuration; names must be unique within collection
+ */
 export interface NamedKnowledgeBaseProps {
   /** @jsii ignore */
   [knowledgeBaseName: string]: BedrockKnowledgeBaseProps;

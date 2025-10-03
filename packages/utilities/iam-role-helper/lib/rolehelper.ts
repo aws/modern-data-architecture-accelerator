@@ -27,7 +27,6 @@ export class MdaaRoleHelper {
   private readonly resolveArnCache: { [key: string]: MdaaResolvableRole } = {};
   private readonly resolveNameCache: { [key: string]: MdaaResolvableRole } = {};
   /**
-   *
    * @param scope The scope in which role resolution CR Provider will be created.
    * @param naming The MDAA naming implementation which will be used to name resources
    * from the perspective of the calling module.
@@ -58,7 +57,6 @@ export class MdaaRoleHelper {
   }
 
   /**
-   *
    * @param roleRefs The role references to be resolved
    * @returns Resolvable roles.
    */
@@ -68,7 +66,6 @@ export class MdaaRoleHelper {
     });
   }
   /**
-   *
    * @param roleRef The role references to be resolved
    * @param refId The id of the reference to be used in creating the custom resource
    * @returns Resolvable roles.
@@ -81,7 +78,6 @@ export class MdaaRoleHelper {
     return this.resolveRoleRef(resolvableRoleRef);
   }
   /**
-   *
    * @param roleRef The role reference to be resolved
    * @returns Resolvable roles.
    */
@@ -116,7 +112,6 @@ export class MdaaRoleHelper {
   }
 
   /**
-   *
    * @returns A Custom Resource Provider Service Token which can be used to create role resolver custom resources.
    */
   public createProviderServiceToken(): string {

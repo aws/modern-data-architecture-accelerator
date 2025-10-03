@@ -14,15 +14,27 @@ import * as configSchema from './config-schema.json';
  */
 export interface BedrockSettingsConfigContents extends MdaaBaseConfigContents {
   /**
-   * Enables audit logging to S3 for Bedrock model invocations.
-   * When enabled, creates a dedicated S3 bucket for storing model invocation audit logs.
+   * Q-ENHANCED-PROPERTY
+   * Enables audit logging to S3 for Bedrock model invocations providing audit trail and compliance support for generative AI usage. Creates a dedicated encrypted S3 bucket for storing detailed model invocation logs including request/response data, timestamps, and user context for regulatory compliance and security monitoring.
+   *
+   * Use cases: HIPAA compliance for healthcare AI applications; Financial services regulatory audit requirements; Government security monitoring for AI model usage; Enterprise governance for generative AI adoption
+   *
+   * AWS: Amazon Bedrock ModelInvocationLogging configuration with S3 destination
+   *
+   * Validation: Boolean value (true/false); When true, requires S3 bucket creation permissions and KMS encryption configuration
    * @default false
    */
   enableAuditLoggingToS3: boolean;
 
   /**
-   * Enables audit logging to CloudWatch for Bedrock model invocations.
-   * When enabled, creates a dedicated CloudWatch Log Group for storing model invocation audit logs.
+   * Q-ENHANCED-PROPERTY
+   * Enables audit logging to CloudWatch for Bedrock model invocations providing real-time monitoring and alerting capabilities for generative AI usage. Creates a dedicated CloudWatch Log Group for storing model invocation logs with configurable retention periods enabling real-time analysis, alerting, and operational monitoring of AI model usage patterns.
+   *
+   * Use cases: Real-time monitoring of AI model usage patterns; Automated alerting for unusual AI activity; Performance monitoring for model response times; Cost tracking for model invocation volumes
+   *
+   * AWS: Amazon Bedrock ModelInvocationLogging configuration with CloudWatch Logs destination
+   *
+   * Validation: Boolean value (true/false); When true, requires CloudWatch Logs permissions and log group creation capabilities
    * @default false
    */
   enableAuditLoggingToCloudwatch: boolean;
@@ -30,10 +42,7 @@ export interface BedrockSettingsConfigContents extends MdaaBaseConfigContents {
 
 /**
  * Configuration parser for Bedrock Settings application.
- * Validates and parses YAML configuration files for Bedrock audit logging settings.
- *
- * @example
- * ```typescript
+ * Validates and parses YAML configuration files for Bedrock audit logging settings. * ```typescript
  * const parser = new BedrockSettingsConfigParser(stack, {
  *   configFilePath: 'bedrock-config.yaml'
  * });
@@ -49,7 +58,6 @@ export class BedrockSettingsConfigParser extends MdaaAppConfigParser<BedrockSett
 
   /**
    * Creates a new BedrockSettingsConfigParser instance.
-   *
    * @param stack - The CDK stack context
    * @param props - Configuration parser properties including config file path
    */

@@ -10,61 +10,83 @@ import { IResolvable, CfnTag } from 'aws-cdk-lib';
 import { CfnWorkGroup, CfnWorkGroupProps } from 'aws-cdk-lib/aws-athena';
 import { Construct } from 'constructs';
 
-/**
- * Props for creating a MDAA Athena Workgroup.
- */
 export interface MdaaAthenaWorkgroupProps extends MdaaConstructProps {
-  /** The KMS CMK to be used to encrypt all Athena query results */
   readonly kmsKey: IMdaaKmsKey;
-  /** The S3 Bucket where Athena query results will be stored. */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required S3 bucket for storing Athena query results with appropriate security controls. Must be an MDAA-compliant bucket with encryption and access controls for secure query result storage.
+   *
+   * Use cases: Secure query result storage; Centralized analytics output; Encrypted result management
+   *
+   * AWS: Amazon Athena workgroup result configuration for S3 query result storage
+   *
+   * Validation: Must be valid IMdaaBucket instance; required for result storage; must have appropriate permissions
+   *   **/
   readonly bucket: IMdaaBucket;
-  /** The S3 prefix under which results will be stored */
   readonly resultsPrefix?: string;
   /**
-   * The workgroup name.
+   * Q-ENHANCED-PROPERTY
+   * Optional workgroup name that will be processed through MDAA naming conventions. If not specified, a name will be generated automatically following organizational naming standards.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-athena-workgroup.html#cfn-athena-workgroup-name
-   */
+   * Use cases: Predictable workgroup naming; Cross-service integration; Operational management
+   *
+   * AWS: Amazon Athena workgroup name for resource identification and management
+   *
+   * Validation: Must be valid Athena workgroup name if provided; processed through MDAA naming conventions
+   **/
   readonly name?: string;
   /**
-   * The workgroup description.
+   * Q-ENHANCED-PROPERTY
+   * Optional human-readable description of the Athena workgroup explaining its purpose and intended usage. Provides documentation for workgroup management and helps users understand workgroup capabilities.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-athena-workgroup.html#cfn-athena-workgroup-description
-   */
+   * Use cases: Workgroup documentation; User guidance; Operational clarity
+   *
+   * AWS: Amazon Athena workgroup description for management and user understanding
+   *
+   * Validation: Must be descriptive text if provided; recommended for workgroup documentation
+   **/
   readonly description?: string;
-  /**
-   * The option to delete a workgroup and its contents even if the workgroup contains any named queries. The default is false.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-athena-workgroup.html#cfn-athena-workgroup-recursivedeleteoption
-   */
   readonly recursiveDeleteOption?: boolean | IResolvable;
-  /**
-   * The state of the workgroup: ENABLED or DISABLED.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-athena-workgroup.html#cfn-athena-workgroup-state
-   */
   readonly state?: string;
-  /**
-   * Workgroup Configuration
-   *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-athena-workgroup-workgroupconfiguration.html
-   */
   readonly workGroupConfiguration?: MdaaAthenaWorkgroupConfigurationProps;
-  /**
-   * The tags (key-value pairs) to associate with this resource.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-athena-workgroup.html#cfn-athena-workgroup-tags
-   */
   readonly tags?: CfnTag[];
 }
 
 export interface MdaaAthenaWorkgroupConfigurationProps {
   /**
-   * The upper limit (cutoff) for the amount of bytes a single query in a workgroup is allowed to scan. No default is defined.
+   * Q-ENHANCED-PROPERTY
+   * Optional upper limit in bytes for the amount of data a single query can scan within the workgroup. Provides cost control by preventing runaway queries from scanning excessive amounts of data and incurring high charges.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-athena-workgroup-workgroupconfiguration.html#cfn-athena-workgroup-workgroupconfiguration-bytesscannedcutoffperquery
-   */
+   * Use cases: Cost control; Query optimization; Resource usage limits
+   *
+   * AWS: Amazon Athena workgroup bytes scanned cutoff for query cost control
+   *
+   * Validation: Must be positive integer if provided; enforced per query execution; no default limit
+   **/
   readonly bytesScannedCutoffPerQuery?: number;
+  readonly enforceWorkGroupConfiguration?: boolean;
+  readonly publishCloudWatchMetricsEnabled?: boolean;
+  readonly resultConfiguration?: MdaaAthenaResultConfigurationProps;
+}
+
+export interface MdaaAthenaResultConfigurationProps {
+  readonly encryptionConfiguration: MdaaAthenaEncryptionConfigurationProps;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * S3 URI location for storing query results with optional prefix for organization. Defines the exact S3 location where Athena will store query outputs with appropriate access controls and encryption.
+   *
+   * Use cases: Centralized result storage; Organized query outputs; Secure result access
+   *
+   * AWS: Amazon Athena result output location for S3 query result storage
+   *
+   * Validation: Must be valid S3 URI format (s3://bucket-name/optional-prefix/)
+   **/
+  readonly outputLocation: string;
+}
+
+export interface MdaaAthenaEncryptionConfigurationProps {
+  readonly encryptionOption: string;
+  readonly kmsKey: string;
 }
 
 /**

@@ -45,7 +45,9 @@ describe('CompliantKubectlProvider Unit Tests', () => {
         moduleName: 'test-module',
       },
       withModuleName: jest.fn().mockReturnThis(),
-      resourceName: jest.fn().mockImplementation((suffix?: string) => (suffix ? `test-resource-${suffix}` : 'test-resource')),
+      resourceName: jest
+        .fn()
+        .mockImplementation((suffix?: string) => (suffix ? `test-resource-${suffix}` : 'test-resource')),
       ssmPath: jest.fn().mockImplementation((path: string) => `/test/${path}`),
       stackName: jest.fn().mockImplementation((name?: string) => (name ? `test-stack-${name}` : 'test-stack')),
       exportName: jest.fn().mockImplementation((path: string) => `test-export-${path}`),
@@ -156,7 +158,7 @@ describe('CompliantKubectlProvider Unit Tests', () => {
 
       const provider1 = CompliantKubectlProvider.getOrCreate(stack, cluster);
       const provider2 = CompliantKubectlProvider.getOrCreate(stack, cluster);
-      
+
       expect(provider1).toBe(provider2);
     });
 

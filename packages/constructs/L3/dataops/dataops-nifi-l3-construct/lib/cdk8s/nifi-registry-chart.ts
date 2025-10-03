@@ -56,6 +56,16 @@ export interface NifiRegistryChartProps extends cdk8s.ChartProps, NifiIdentityAu
   readonly certKeyAlg: string;
   readonly certKeySize: number;
   readonly nifiManagerImageUri: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * NiFi Registry buckets configuration defining versioned flow storage containers for managing NiFi data flow versions. Specifies bucket definitions for organizing and versioning NiFi process groups, templates, and flow configurations enabling version control and deployment management for data processing workflows.
+   *
+   * Use cases: Flow version control; Template management; Process group versioning; Deployment management; Flow organization
+   *
+   * AWS: NiFi Registry bucket configuration for flow versioning and management in EKS deployment
+   *
+   * Validation: Must be valid bucket name to NifiRegistryBucketProps mapping; optional for custom bucket definitions
+   *   **/
   readonly buckets?: { [bucketName: string]: NifiRegistryBucketProps };
 }
 

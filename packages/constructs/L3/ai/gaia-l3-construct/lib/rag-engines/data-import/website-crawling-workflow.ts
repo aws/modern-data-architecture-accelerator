@@ -22,10 +22,32 @@ import { Effect, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 export interface WebsiteCrawlingWorkflowProps extends MdaaConstructProps {
   readonly config: SystemConfig;
   readonly shared: Shared;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional flag controlling SSM parameter creation for website crawling workflow configuration and state management. When enabled, creates SSM parameters for workflow configuration, status tracking, and cross-service integration enabling operational visibility and configuration management.
+   *
+   * Use cases: Configuration management; State tracking; Cross-service integration; Operational visibility; Parameter-based configuration
+   *
+   * AWS: AWS Systems Manager Parameter Store for GAIA website crawling workflow configuration and state management
+   *
+   * Validation: Boolean value; defaults to false; enables SSM parameter creation when true
+   **/
+  readonly createParams?: boolean;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional flag controlling CloudFormation output creation for website crawling workflow resource references and integration endpoints. When enabled, creates stack outputs for workflow resources enabling cross-stack references and service integration for downstream GAIA components.
+   *
+   * Use cases: Cross-stack references; Service integration; Resource identification; Downstream component integration; Stack output management
+   *
+   * AWS: AWS CloudFormation stack outputs for GAIA website crawling workflow resource references and integration
+   *
+   * Validation: Boolean value; defaults to false; enables CloudFormation output creation when true
+   **/
+  readonly createOutputs?: boolean;
   readonly ragDynamoDBTables: RagDynamoDBTables;
   readonly auroraDatabase?: rds.DatabaseCluster;
   readonly processingBucket: s3.Bucket;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class WebsiteCrawlingWorkflow extends Construct {

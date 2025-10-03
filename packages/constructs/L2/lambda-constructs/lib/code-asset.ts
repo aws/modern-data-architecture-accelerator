@@ -12,6 +12,16 @@ import * as path from 'path';
 export type PythonVersion = '3.12' | '3.13';
 export interface MdaaPythonCodeAssetProps {
   readonly pythonRequirementsPath: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Python runtime version for Lambda function code asset compilation and dependency management. Specifies the Python interpreter version used for building Lambda deployment packages, installing dependencies, and ensuring runtime compatibility for serverless data processing functions.
+   *
+   * Use cases: Runtime compatibility; Dependency management; Lambda deployment; Python version control; Asset compilation
+   *
+   * AWS: AWS Lambda Python runtime version for function execution environment and dependency compatibility
+   *
+   * Validation: Must be one of: 3.12, 3.13; defaults to 3.12 if not specified; affects Docker build and pip installation process
+   *   **/
   readonly pythonVersion?: PythonVersion;
 }
 

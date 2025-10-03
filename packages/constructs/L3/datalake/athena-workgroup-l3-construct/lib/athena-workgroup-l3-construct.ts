@@ -18,40 +18,64 @@ import { Construct } from 'constructs';
 
 export interface AthenaWorkgroupL3ConstructProps extends MdaaL3ConstructProps {
   /**
-   * Ids of roles which will be provided administrator access to Workgroup resources
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required array of data admin role references for Athena workgroup administration enabling administrative access and resource management. Provides IAM roles that will be granted administrator access to workgroup resources for configuration, monitoring, and administrative operations.
+   *
+   * Use cases: Administrative access; Workgroup management; Resource administration; Configuration control
+   *
+   * AWS: IAM role references for Athena workgroup administrative access and resource management
+   *
+   * Validation: Must be array of valid MdaaRoleRef objects; required for workgroup administration and management
+   **/
   readonly dataAdminRoles: MdaaRoleRef[];
   /**
-   * Roles which will be granted access to all Workgroup resources
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required array of Athena user role references for workgroup access enabling query execution and data analysis capabilities. Provides IAM roles that will be granted access to workgroup resources for executing queries and performing data analysis operations.
+   *
+   * Use cases: Query execution; Data analysis; User access; Analytics operations
+   *
+   * AWS: IAM role references for Athena workgroup user access and query execution capabilities
+   *
+   * Validation: Must be array of valid MdaaRoleRef objects; required for workgroup user access and query execution
+   **/
   readonly athenaUserRoles: MdaaRoleRef[];
   /**
-   * Workgroup Configuration
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional workgroup configuration for Athena query management enabling performance optimization and cost control. Provides workgroup settings including query limits, result encryption, and performance configurations for optimized query execution and cost management.
+   *
+   * Use cases: Query optimization; Cost control; Performance tuning; Workgroup configuration
+   *
+   * AWS: Athena workgroup configuration for query optimization and performance management
+   *
+   * Validation: Must be valid MdaaAthenaWorkgroupConfigurationProps if provided; enables workgroup optimization and control
+   **/
   readonly workgroupConfiguration?: MdaaAthenaWorkgroupConfigurationProps;
-  /**
-   * If specified, will be used as WorkGroup Results Bucket.
-   * Otherwise a new bucket will be created.
-   */
   readonly workgroupBucketName?: string;
-  /**
-   * If specified, will be used as WorkGroup KMS Key.
-   * Otherwise a key will be created.
-   */
   readonly workgroupKmsKeyArn?: string;
   /**
-   * If specified, policy names will be created using this prefix instead of using the naming module.
-   * This is useful when policy names need to be portable across accounts (such as for integration with SSO permission sets)
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional verbatim policy name prefix for portable policy naming enabling cross-account policy consistency and SSO integration. When specified, creates policy names using this prefix instead of naming module for portable policies across accounts and SSO permission set integration.
+   *
+   * Use cases: Portable policies; Cross-account consistency; SSO integration; Policy naming control
+   *
+   * AWS: Policy name prefix for portable Athena workgroup policies and cross-account consistency
+   *
+   * Validation: Must be valid policy name prefix if provided; enables portable policy naming and SSO integration
+   **/
   readonly verbatimPolicyNamePrefix?: string;
 }
 
 export interface MdaaAthenaWorkgroupConfigurationProps {
   /**
-   * The upper limit (cutoff) for the amount of bytes a single query in a workgroup is allowed to scan. No default is defined.
+   * Q-ENHANCED-PROPERTY
+   * Maximum bytes per query scan limit for cost control and query optimization enabling data scan restrictions and cost management. Sets the upper limit for data scanning per query execution, preventing runaway queries and controlling costs while maintaining query performance for efficient data lake analytics.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-athena-workgroup-workgroupconfiguration.html#cfn-athena-workgroup-workgroupconfiguration-bytesscannedcutoffperquery
-   */
+   * Use cases: Cost control; Query optimization; Data scan limits; Runaway query prevention; Analytics cost management
+   *
+   * AWS: AWS Athena workgroup bytesScannedCutoffPerQuery for query cost control and scan limit enforcement
+   *
+   * Validation: Must be positive integer if specified; no default value defined; controls maximum data scan per query execution
+   **/
   readonly bytesScannedCutoffPerQuery?: number;
 }
 

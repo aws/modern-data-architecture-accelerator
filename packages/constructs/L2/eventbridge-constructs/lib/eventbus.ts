@@ -10,17 +10,28 @@ import { Effect, PolicyStatement, PrincipalBase } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 export interface MdaaEventBusProps extends MdaaConstructProps {
-  /**
-   * Unique name that defines the event bus
-   */
   readonly eventBusName: string;
   /**
-   * The retention of events
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional event archive retention period in days for event replay and audit capabilities enabling event history management and compliance. Provides event archival for replay scenarios, audit requirements, and event history analysis with configurable retention periods.
+   *
+   * Use cases: Event replay; Audit compliance; Event history; Disaster recovery; Event analysis
+   *
+   * AWS: EventBridge event archive retention for event replay capabilities and audit compliance
+   *
+   * Validation: Must be positive integer if provided; defines event retention period for archival and replay
+   **/
   readonly archiveRetention?: number;
   /**
-   * Principals which will be granted PutEvent access via the Event Bus resource policy
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional array of principals for PutEvent access control enabling cross-account and service integration with secure event publishing. Provides IAM principals that will be granted permission to publish events to the event bus through resource-based policies.
+   *
+   * Use cases: Cross-account access; Service integration; Event publishing permissions; Secure event access
+   *
+   * AWS: IAM principals for EventBridge event bus PutEvent permissions and cross-account access control
+   *
+   * Validation: Must be array of valid PrincipalBase objects if provided; enables secure event publishing access
+   *   **/
   readonly principals?: PrincipalBase[];
 }
 

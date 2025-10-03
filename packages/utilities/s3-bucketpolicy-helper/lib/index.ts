@@ -7,68 +7,22 @@ import { IPrincipal, PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 
 export interface IRestrictObjectPrefixToRoles {
-  /**
-   * S3 Bucket to use for the resource ARN while constructing the policy
-   */
-  s3Bucket: IBucket;
-  /**
-   * S3 Object key prefix to restrict.
-   */
-  s3Prefix: string;
-  /**
-   * Array of Role ARNs to provide Read Access to the prefix.
-   *                        Must be resolvable to AROAs using the MdaaRoleResolver class included.
-   */
-  readRoleIds?: string[];
-  /**
-   * Array of Role ARNs to provide Read/Write access to the prefix.
-   *                        Must be resolvable to AROAs using the MdaaRoleResolver class included.
-   */
-  readWriteRoleIds?: string[];
-  /**
-   * Array of Role ARNs to provide Read/Write/Super (Permanent Delete) access to the prefix.
-   *                        Must be resolvable to AROAs using the MdaaRoleResolver class included.
-   */
-  readWriteSuperRoleIds?: string[];
-  /**
-   * Array of Principals to provide Read Access to the prefix.
-   */
-  readPrincipals?: IPrincipal[];
-  /**
-   * Array of Principals to provide Read/Write access to the prefix.
-   */
-  readWritePrincipals?: IPrincipal[];
-  /**
-   *  Array of Principals to provide Read/Write/Super (Permanent Delete) access to the prefix.
-   */
-  readWriteSuperPrincipals?: IPrincipal[];
+  readonly s3Bucket: IBucket;
+  readonly s3Prefix: string;
+  readonly readRoleIds?: string[];
+  readonly readWriteRoleIds?: string[];
+  readonly readWriteSuperRoleIds?: string[];
+  readonly readPrincipals?: IPrincipal[];
+  readonly readWritePrincipals?: IPrincipal[];
+  readonly readWriteSuperPrincipals?: IPrincipal[];
 }
 
 export interface IRestrictBucketToRoles {
-  /**
-   * S3 Bucket to use for the resource ARN while constructing the policy
-   */
-  s3Bucket: IBucket;
-  /**
-   * Array of Role ARNs to provide Access to the bucket.
-   *                        Must be resolvable to AROAs using the MdaaRoleResolver class included.
-   */
-  roleExcludeIds: string[];
-  /**
-   * Set of principals to exclude from the Deny Restrictions.
-   *                        NOTE: this doesn't permit or deny that principal
-   */
-  principalExcludes?: string[];
-  /**
-   * S3 object prefixes to exclude from the Deny Restrictions.
-   *                        Results in the deny applying to *All Prefixes* except the ones here.
-   */
-  prefixExcludes?: string[];
-  /**
-   * S3 object prefixes to include in the Deny Restrictions.
-   *                       Results in the deny only applying to the the prefixes specified here.
-   */
-  prefixIncludes?: string[];
+  readonly s3Bucket: IBucket;
+  readonly roleExcludeIds: string[];
+  readonly principalExcludes?: string[];
+  readonly prefixExcludes?: string[];
+  readonly prefixIncludes?: string[];
 }
 
 /** Helper class for generating S3 bucket policy statements which grant access to specific object prefixes */

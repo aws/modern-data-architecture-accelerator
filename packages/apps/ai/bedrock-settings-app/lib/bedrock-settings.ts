@@ -11,15 +11,10 @@ import { BedrockSettingsConfigParser } from './bedrock-settings-config';
 
 /**
  * MDAA CDK Application for configuring Amazon Bedrock audit logging settings.
- *
  * This application deploys infrastructure to enable audit logging for Bedrock model invocations
  * to either S3 buckets, CloudWatch Log Groups, or both, based on the provided configuration.
- *
  * The application follows MDAA patterns for security compliance and governance,
- * ensuring all deployed resources meet organizational security requirements.
- *
- * @example
- * ```typescript
+ * ensuring all deployed resources meet organizational security requirements. * ```typescript
  * // Deploy via CDK CLI with configuration
  * const app = new BedrockSettingsApp();
  * app.generateStack();
@@ -28,7 +23,6 @@ import { BedrockSettingsConfigParser } from './bedrock-settings-config';
 export class BedrockSettingsApp extends MdaaCdkApp {
   /**
    * Creates a new BedrockSettingsApp instance.
-   *
    * @param props - CDK application properties (optional)
    */
   constructor(props: AppProps = {}) {
@@ -37,12 +31,10 @@ export class BedrockSettingsApp extends MdaaCdkApp {
 
   /**
    * Generates the Bedrock settings resources within the provided stack.
-   *
    * This method:
    * 1. Parses the Bedrock configuration from the provided config file
    * 2. Combines app-specific config with L3 construct properties
    * 3. Creates the BedrockSettingsL3Construct with the merged configuration
-   *
    * @param stack - The CDK stack to deploy resources into
    * @param l3ConstructProps - Base L3 construct properties (naming, tagging, etc.)
    * @param parserProps - Configuration parser properties including config file path

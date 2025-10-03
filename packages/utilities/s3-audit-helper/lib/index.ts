@@ -25,9 +25,29 @@ export class AuditHelper {
    * @returns A CloudTrail which captures S3 Data Events.
    */
   public static createCloudTrail(
+    /**
+     * Q-ENHANCED-PROPERTY
+     * Required CDK construct scope for CloudTrail resource creation and hierarchy management within the CDK application. Provides the parent construct context for CloudTrail deployment enabling proper resource organization and lifecycle management.
+     *
+     * Use cases: CDK resource hierarchy; CloudTrail deployment context; Resource organization; Lifecycle management
+     *
+     * AWS: CDK construct scope for CloudTrail resource creation and AWS resource deployment
+     *
+     * Validation: Must be valid Construct instance; required for CDK resource creation and hierarchy management
+     */
     scope: Construct,
     destinationBucket: IMdaaBucket,
     encryptionKey: IMdaaKmsKey,
+    /**
+     * Q-ENHANCED-PROPERTY
+     * Required MDAA resource naming implementation for consistent CloudTrail naming conventions and resource identification. Provides standardized naming patterns for CloudTrail resources enabling predictable resource naming and operational management across audit infrastructure.
+     *
+     * Use cases: CloudTrail naming consistency; Resource identification; Operational management; Cross-service integration
+     *
+     * AWS: CloudTrail resource naming conventions for audit trail identification and management
+     *
+     * Validation: Must be valid IMdaaResourceNaming implementation; required for consistent CloudTrail resource naming
+     */
     naming: IMdaaResourceNaming,
     trailName: string,
     includeManagementEvents?: boolean,
@@ -36,6 +56,16 @@ export class AuditHelper {
     //Create the trail
     const trail = new Trail(scope, `audit-trail-${trailName}`, {
       trailName: naming.resourceName(trailName),
+      /**
+       * Q-ENHANCED-PROPERTY
+       * Required S3 destination bucket for CloudTrail audit log storage enabling centralized audit data collection and management. Provides the target S3 bucket where CloudTrail events will be stored for audit, compliance, and security analysis purposes.
+       *
+       * Use cases: Audit log storage; Compliance data collection; Security analysis; Centralized logging; Event storage
+       *
+       * AWS: Amazon S3 bucket for CloudTrail audit log storage and centralized audit data management
+       *
+       * Validation: Must be valid IMdaaBucket instance; required for CloudTrail log storage and audit data collection
+       */
       bucket: destinationBucket,
       encryptionKey: encryptionKey,
       isMultiRegionTrail: false,

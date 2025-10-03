@@ -587,9 +587,9 @@ export class MdaaDeploy {
     if (!fs.existsSync(`${prefix}/package.json`)) {
       console.log(`Module ${logPrefix}: Installing ${npmPackage} to ${prefix}.`);
       //Install the module CDK App NPM package
-      const npmInstallCmd = `npm install --no-fund --save-exact --tag '${this.npmTag}' --prefix '${prefix}' '${npmPackage}' ${
-        this.npmDebug ? '-d' : ' > /dev/null'
-      }`;
+      const npmInstallCmd = `npm install --no-fund --save-exact --tag '${
+        this.npmTag
+      }' --prefix '${prefix}' '${npmPackage}' ${this.npmDebug ? '-d' : ' > /dev/null'}`;
       // console.log( `Running NPM Install Cmd: ${ npmInstallCmd }` )
       this.execCmd(`mkdir -p '${prefix}' && ${npmInstallCmd}`);
     } else {

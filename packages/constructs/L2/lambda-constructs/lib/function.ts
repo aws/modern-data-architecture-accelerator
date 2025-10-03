@@ -47,7 +47,6 @@ export interface MdaaDockerImageFunctionProps extends MdaaLambdaFunctionOptions 
    */
   readonly code: DockerImageCode;
 }
-
 /**
  * Properties for creating a compliant Lambda function
  */
@@ -56,7 +55,6 @@ export interface MdaaLambdaFunctionProps extends MdaaLambdaFunctionOptions {
    * The runtime environment for the Lambda function that you are uploading.
    * For valid values, see the Runtime property in the AWS Lambda Developer
    * Guide.
-   *
    * Use `Runtime.FROM_IMAGE` when when defining a function from a Docker image.
    */
   readonly runtime: Runtime;
@@ -71,260 +69,147 @@ export interface MdaaLambdaFunctionProps extends MdaaLambdaFunctionOptions {
    * your function. The format includes the file name. It can also include
    * namespaces and other qualifiers, depending on the runtime.
    * For more information, see https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-features.html#gettingstarted-features-programmingmodel.
-   *
    * Use `Handler.FROM_IMAGE` when defining a function from a Docker image.
-   *
    * NOTE: If you specify your source code as inline text by specifying the
    * ZipFile property within the Code property, specify index.function_name as
    * the handler.
    */
   readonly handler: string;
 }
-
 export interface MdaaLambdaFunctionOptions extends MdaaConstructProps {
   /**
-   * A description of the function.
+   * Q-ENHANCED-PROPERTY
+   * Optional human-readable description of the Lambda function explaining its purpose and functionality. Provides documentation for function management and helps identify function roles in data processing workflows.
    *
-   * @default - No description.
-   */
+   * Use cases: Function documentation; Management clarity; Operational understanding
+   *
+   * AWS: AWS Lambda function description for management and identification
+   *
+   * Validation: Must be descriptive text if provided; recommended for function documentation
+   **/
   readonly description?: string;
   /**
-   * The function execution time (in seconds) after which Lambda terminates
-   * the function. Because the execution time affects cost, set this value
-   * based on the function's expected execution time.
+   * Q-ENHANCED-PROPERTY
+   * Optional Lambda function timeout duration controlling maximum execution time for data processing operations. Defines the maximum time the function can run before being terminated, critical for data processing workflows and cost control.
    *
-   * @default Duration.seconds(3)
-   */
+   * Use cases: Data processing time limits; Cost control; Workflow timeout management; Long-running data operations
+   *
+   * AWS: AWS Lambda function timeout configuration for execution time control
+   *
+   * Validation: Must be Duration between 1 second and 15 minutes; defaults to 3 minutes for data processing functions
+   **/
   readonly timeout?: Duration;
   /**
-   * Key-value pairs that Lambda caches and makes available for your Lambda
-   * functions. Use environment variables to apply configuration changes, such
-   * as test and production environment configurations, without changing your
-   * Lambda function source code.
+   * Q-ENHANCED-PROPERTY
+   * Optional environment variables for Lambda function configuration and runtime behavior. Enables dynamic configuration without code changes for different environments and processing parameters.
    *
-   * @default - No environment variables.
-   */
+   * Use cases: Environment-specific configuration; Runtime parameters; Processing settings
+   *
+   * AWS: AWS Lambda environment variables for runtime configuration
+   *
+   * Validation: Must be object with string keys and values if provided; cached by Lambda runtime
+   *   **/
   readonly environment?: {
     [key: string]: string;
   };
   /**
-   * A name for the function.
+   * Q-ENHANCED-PROPERTY
+   * Required name for the Lambda function that will be processed through MDAA naming conventions. Provides predictable function naming for cross-service integration and operational management.
    *
-   * @default - AWS CloudFormation generates a unique physical ID and uses that
-   * ID for the function's name. For more information, see Name Type.
-   */
+   * Use cases: Predictable function naming; Cross-service integration; Operational management
+   *
+   * AWS: AWS Lambda function name for resource identification and invocation
+   *
+   * Validation: Must be valid function name; required; processed through MDAA naming with 64 character limit
+   **/
   readonly functionName: string;
-  /**
-   * The amount of memory, in MB, that is allocated to your Lambda function.
-   * Lambda uses this value to proportionally allocate the amount of CPU
-   * power. For more information, see Resource Model in the AWS Lambda
-   * Developer Guide.
-   *
-   * @default 128
-   */
   readonly memorySize?: number;
   /**
    * The size of the function’s /tmp directory in MB.
-   *
    * @default 512 MiB
    */
   readonly ephemeralStorageSize?: Size;
-  /**
-   * Initial policy statements to add to the created Lambda Role.
-   *
-   * You can call `addToRolePolicy` to the created lambda to add statements post creation.
-   *
-   * @default - No policy statements are added to the created Lambda role.
-   */
   readonly initialPolicy?: PolicyStatement[];
   /**
-   * Lambda execution role.
+   * Q-ENHANCED-PROPERTY
+   * Required Lambda execution role providing the function with permissions to access AWS services and resources. Must be assumable by lambda.amazonaws.com service principal and include appropriate managed policies for Lambda execution and VPC access if needed.
    *
-   * This is the role that will be assumed by the function upon execution.
-   * It controls the permissions that the function will have. The Role must
-   * be assumable by the 'lambda.amazonaws.com' service principal.
+   * Use cases: Service permissions; AWS resource access; VPC connectivity permissions
    *
-   * The default Role automatically has permissions granted for Lambda execution. If you
-   * provide a Role, you must add the relevant AWS managed policies yourself.
+   * AWS: AWS Lambda execution role for service permissions and resource access
    *
-   * The relevant managed policies are "service-role/AWSLambdaBasicExecutionRole" and
-   * "service-role/AWSLambdaVPCAccessExecutionRole".
-   *
-   * Both supplied and generated roles can always be changed by calling `addToRolePolicy`.
-   */
+   * Validation: Must be valid IMdaaLambdaRole instance; required; must be assumable by lambda.amazonaws.com
+   *   **/
   readonly role: IMdaaLambdaRole;
   /**
-   * VPC network to place Lambda network interfaces
+   * Q-ENHANCED-PROPERTY
+   * Optional VPC for placing Lambda network interfaces enabling access to VPC resources. When specified, Lambda function can access VPC-only resources like RDS databases, ElastiCache clusters, and internal load balancers.
    *
-   * Specify this if the Lambda function needs to access resources in a VPC.
+   * Use cases: VPC resource access; Database connectivity; Internal service communication
    *
-   * @default - Function is not placed within a VPC.
-   */
+   * AWS: AWS Lambda VPC configuration for network interface placement and resource access
+   *
+   * Validation: Must be valid IVpc instance if provided; requires NAT gateway for internet access
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.IVpc.html
+   **/
   readonly vpc?: IVpc;
-  /**
-   * Where to place the network interfaces within the VPC.
-   *
-   * Only used if 'vpc' is supplied. Note: internet access for Lambdas
-   * requires a NAT gateway, so picking Public subnets is not allowed.
-   *
-   * @default - the Vpc default strategy if not specified
-   */
   readonly vpcSubnets?: SubnetSelection;
   /**
-   * The list of security groups to associate with the Lambda's network interfaces.
+   * Q-ENHANCED-PROPERTY
+   * Optional array of security groups for Lambda network interface access control. Defines network-level permissions for VPC-enabled Lambda functions to control inbound and outbound traffic patterns.
    *
-   * Only used if 'vpc' is supplied.
+   * Use cases: Network access control; Traffic filtering; Security group management
    *
-   * @default - If the function is placed within a VPC and a security group is
-   * not specified, either by this or securityGroup prop, a dedicated security
-   * group will be created for this function.
-   */
+   * AWS: AWS Lambda VPC security group association for network access control
+   *
+   * Validation: Must be array of valid ISecurityGroup instances if provided; only used with VPC
+   *   * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.ISecurityGroup.html
+   **/
   readonly securityGroups?: ISecurityGroup[];
-  /**
-   * Whether to allow the Lambda to send all network traffic
-   *
-   * If set to false, you must individually add traffic rules to allow the
-   * Lambda to connect to network targets.
-   *
-   * @default true
-   */
   readonly allowAllOutbound?: boolean;
-  /**
-   * Enabled DLQ. If `deadLetterQueue` is undefined,
-   * an SQS queue with default options will be defined for your Function.
-   *
-   * @default - false unless `deadLetterQueue` is set, which implies DLQ is enabled.
-   */
   readonly deadLetterQueueEnabled?: boolean;
-  /**
-   * The SQS queue to use if DLQ is enabled.
-   * If SNS topic is desired, specify `deadLetterTopic` property instead.
-   *
-   * @default - SQS queue with 14 day retention period if `deadLetterQueueEnabled` is `true`
-   */
   readonly deadLetterQueue?: IQueue;
-  /**
-   * The SNS topic to use as a DLQ.
-   * Note that if `deadLetterQueueEnabled` is set to `true`, an SQS queue will be created
-   * rather than an SNS topic. Using an SNS topic as a DLQ requires this property to be set explicitly.
-   *
-   * @default - no SNS topic
-   */
   readonly deadLetterTopic?: ITopic;
-  /**
-   * Enable AWS X-Ray Tracing for Lambda Function.
-   *
-   * @default Tracing.Disabled
-   */
   readonly tracing?: Tracing;
-  /**
-   * Enable SnapStart for Lambda Function.
-   * SnapStart is currently supported only for Java 11, 17 runtime
-   *
-   * @default - No snapstart
-   */
   readonly snapStart?: SnapStartConf;
-  /**
-   * Enable profiling.
-   * @see https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html
-   *
-   * @default - No profiling.
-   */
   readonly profiling?: boolean;
-  /**
-   * Profiling Group.
-   * @see https://docs.aws.amazon.com/codeguru/latest/profiler-ug/setting-up-lambda.html
-   *
-   * @default - A new profiling group will be created if `profiling` is set.
-   */
   readonly profilingGroup?: IProfilingGroup;
-  /**
-   * Specify the version of CloudWatch Lambda insights to use for monitoring
-   * @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html
-   *
-   * When used with `DockerImageFunction` or `DockerImageCode`, the Docker image should have
-   * the Lambda insights agent installed.
-   * @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights-Getting-Started-docker.html
-   *
-   * @default - No Lambda Insights
-   */
   readonly insightsVersion?: LambdaInsightsVersion;
-  /**
-   * Specify the configuration of AWS Distro for OpenTelemetry (ADOT) instrumentation
-   * @see https://aws-otel.github.io/docs/getting-started/lambda
-   *
-   * @default - No ADOT instrumentation
-   */
   readonly adotInstrumentation?: AdotInstrumentationConfig;
 
-  /**
-   * Specify the configuration of Parameters and Secrets Extension
-   * @see https://docs.aws.amazon.com/secretsmanager/latest/userguide/retrieving-secrets_lambda.html
-   * @see https://docs.aws.amazon.com/systems-manager/latest/userguide/ps-integration-lambda-extensions.html
-   *
-   * @default - No Parameters and Secrets Extension
-   */
   readonly paramsAndSecrets?: ParamsAndSecretsLayerVersion;
   /**
-   * A list of layers to add to the function's execution environment. You can configure your Lambda function to pull in
-   * additional code during initialization in the form of layers. Layers are packages of libraries or other dependencies
-   * that can be used by multiple functions.
+   * Q-ENHANCED-PROPERTY
+   * Optional array of Lambda layers to add to the function's execution environment for shared code and dependencies. Enables code reuse across multiple functions and provides pre-packaged libraries and runtime dependencies for efficient function deployment.
    *
+   * Use cases: Code reuse across functions; Shared library dependencies; Runtime optimization
+   *
+   * AWS: AWS Lambda layers for shared code and dependency management
+   *
+   * Validation: Must be array of valid ILayerVersion instances if provided; layers loaded during function initialization
    * @default - No layers.
    */
   readonly layers?: ILayerVersion[];
   /**
-   * The maximum of concurrent executions you want to reserve for the function.
+   * Q-ENHANCED-PROPERTY
+   * Optional maximum number of concurrent executions reserved for this function enabling performance isolation and cost control. Reserves capacity from the account's concurrent execution limit to ensure predictable performance and prevent resource contention.
    *
+   * Use cases: Performance isolation; Cost control; Resource reservation for critical functions
+   *
+   * AWS: AWS Lambda reserved concurrency for function-specific execution limits
+   *
+   * Validation: Must be positive integer if provided; reserves capacity from account limit; affects function scaling
    * @default - No specific limit - account limit.
-   * @see https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html
+   * See: https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html
    */
   readonly reservedConcurrentExecutions?: number;
-  /**
-   * Event sources for this function.
-   *
-   * You can also add event sources using `addEventSource`.
-   *
-   * @default - No event sources.
-   */
   readonly events?: IEventSource[];
-  /**
-   * The number of days log events are kept in CloudWatch Logs. When updating
-   * this property, unsetting it doesn't remove the log retention policy. To
-   * remove the retention policy, set the value to `INFINITE`.
-   *
-   * This is a legacy API and we strongly recommend you move away from it if you can.
-   * Instead create a fully customizable log group with `logs.LogGroup` and use the `logGroup` property
-   * to instruct the Lambda function to send logs to it.
-   * Migrating from `logRetention` to `logGroup` will cause the name of the log group to change.
-   * Users and code and referencing the name verbatim will have to adjust.
-   *
-   * In AWS CDK code, you can access the log group name directly from the LogGroup construct:
-   * ```ts
-   * import * as logs from 'aws-cdk-lib/aws-logs';
-   *
-   * declare const myLogGroup: logs.LogGroup;
-   * myLogGroup.logGroupName;
-   * ```
-   *
-   * @default logs.RetentionDays.INFINITE
-   */
   readonly logRetention?: RetentionDays;
 
-  /**
-   * The IAM role for the Lambda function associated with the custom resource
-   * that sets the retention policy.
-   *
-   * This is a legacy API and we strongly recommend you migrate to `logGroup` if you can.
-   * `logGroup` allows you to create a fully customizable log group and instruct the Lambda function to send logs to it.
-   *
-   * @default - A new role is created.
-   */
   readonly logRetentionRole?: IRole;
   /**
    * When log retention is specified, a custom resource attempts to create the CloudWatch log group.
    * These options control the retry policy when interacting with CloudWatch APIs.
-   *
    * @default - Default AWS SDK retry options.
    */
   readonly logRetentionRetryOptions?: LogRetentionRetryOptions;
@@ -334,98 +219,38 @@ export interface MdaaLambdaFunctionOptions extends MdaaConstructProps {
    * @default - default options as described in `VersionOptions`
    */
   readonly currentVersionOptions?: VersionOptions;
-  /**
-   * The filesystem configuration for the lambda function
-   *
-   * @default - will not mount any filesystem
-   */
   readonly filesystem?: FileSystem;
-  /**
-   * Lambda Functions in a public subnet can NOT access the internet.
-   * Use this property to acknowledge this limitation and still place the function in a public subnet.
-   * @see https://stackoverflow.com/questions/52992085/why-cant-an-aws-lambda-function-inside-a-public-subnet-in-a-vpc-connect-to-the/52994841#52994841
-   *
-   * @default false
-   */
   readonly allowPublicSubnet?: boolean;
-  /**
-   * The AWS KMS key that's used to encrypt your function's environment variables.
-   *
-   * @default - AWS Lambda creates and uses an AWS managed customer master key (CMK).
-   */
   readonly environmentEncryption?: IKey;
-  /**
-   * Code signing config associated with this function
-   *
-   * @default - Not Sign the Code
-   */
   readonly codeSigningConfig?: ICodeSigningConfig;
   /**
-   * The system architectures compatible with this lambda function.
-   * @default Architecture.X86_64
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional system architecture specification for Lambda function execution environment controlling processor architecture and performance characteristics. Determines whether the function runs on x86_64 or ARM64 architecture affecting performance and cost characteristics.
+   *
+   * Use cases: Architecture selection; Performance optimization; Cost management; ARM64 compatibility
+   *
+   * AWS: AWS Lambda function architecture for processor type and performance characteristics
+   *
+   * Validation: Must be valid Architecture enum if provided; defaults to X86_64; affects performance and pricing
+   **/
   readonly architecture?: Architecture;
-  /**
-   * Sets the runtime management configuration for a function's version.
-   * @default Auto
-   */
   readonly runtimeManagementMode?: RuntimeManagementMode;
-  /**
-   * The maximum age of a request that Lambda sends to a function for
-   * processing.
-   *
-   * Minimum: 60 seconds
-   * Maximum: 6 hours
-   *
-   * @default Duration.hours(6)
-   */
   readonly maxEventAge?: Duration;
   /**
-   * The maximum number of times to retry when the function returns an error.
+   * Q-ENHANCED-PROPERTY
+   * Optional maximum number of retry attempts when the function returns an error controlling error handling resilience and failure management. Defines how many times Lambda retries failed function executions before sending to dead letter queue or discarding.
    *
-   * Minimum: 0
-   * Maximum: 2
+   * Use cases: Error handling resilience; Failure management; Retry control; Reliability configuration
    *
-   * @default 2
-   */
+   * AWS: AWS Lambda retry configuration for error handling and failure management
+   *
+   * Validation: Must be integer between 0 and 2 if provided; defaults to 2 retry attempts
+   **/
   readonly retryAttempts?: number;
-  /**
-   * The log group the function sends logs to.
-   *
-   * By default, Lambda functions send logs to an automatically created default log group named /aws/lambda/\<function name\>.
-   * However you cannot change the properties of this auto-created log group using the AWS CDK, e.g. you cannot set a different log retention.
-   *
-   * Use the `logGroup` property to create a fully customizable LogGroup ahead of time, and instruct the Lambda function to send logs to it.
-   *
-   * Providing a user-controlled log group was rolled out to commercial regions on 2023-11-16.
-   * If you are deploying to another type of region, please check regional availability first.
-   *
-   * @default `/aws/lambda/${this.functionName}` - default log group created by Lambda
-   */
   readonly logGroup?: ILogGroup;
-
-  /**
-   * Sets the logFormat for the function.
-   * @default "Text"
-   */
   readonly logFormat?: string;
-
-  /**
-   * Sets the loggingFormat for the function.
-   * @default LoggingFormat.TEXT
-   */
   readonly loggingFormat?: LoggingFormat;
-
-  /**
-   * Sets the application log level for the function.
-   * @default "INFO"
-   */
   readonly applicationLogLevel?: string;
-
-  /**
-   * Sets the system log level for the function.
-   * @default "INFO"
-   */
   readonly systemLogLevel?: string;
 }
 

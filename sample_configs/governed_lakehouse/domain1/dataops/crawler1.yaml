@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../../../../schemas/@aws-mdaa/dataops-crawler.json
 projectName: project1
 
 crawlers:
@@ -12,5 +13,3 @@ crawlers:
       # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
       s3Targets:
         - path: s3://{{resolve:ssm:/{{org}}/data1/datalake/bucket/transformed/name}}/data/sample-database1/
-        
-

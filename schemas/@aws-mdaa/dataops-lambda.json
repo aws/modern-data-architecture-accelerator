@@ -4,21 +4,22 @@
     "definitions": {
         "AdditionalResourcePermission": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for Lambda resource permission management enabling fine-grained access control for data processing operations. Defines specific permissions for AWS principals to access Lambda functions with optional source restrictions for enhanced security in data workflows.\n\nUse cases: S3 service permissions for event processing; EventBridge rule access; Cross-account data processing; Service-to-service integration\n\nAWS: Lambda resource policy permissions for controlled data processing function access and service integration\n\nValidation: principal and action are required; sourceAccount and sourceArn provide additional security for service principals",
             "properties": {
                 "action": {
-                    "description": "Action to be granted to the principal",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired Lambda action specification for data processing function permissions. Defines the specific Lambda action that will be granted to the principal for controlled access to data processing functions and workflow orchestration.\n\nUse cases: lambda:InvokeFunction for S3 event processing; lambda:InvokeAsync for asynchronous data operations; Custom actions for specific data workflows\n\nAWS: Lambda action permission for data processing function access and operation authorization\n\nValidation: Must be valid Lambda action (lambda:InvokeFunction, lambda:InvokeAsync, etc.); action must be appropriate for data processing use case",
                     "type": "string"
                 },
                 "principal": {
-                    "description": "ARN of principal to which permission is to be granted.",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired AWS principal ARN for Lambda function access in data processing workflows. Specifies the AWS principal (IAM role, user, service, or account) that will be granted permission to access the Lambda function for S3 event processing and data operations.\n\nUse cases: S3 service principal for event notifications; EventBridge service for rule triggers; Cross-account data processing roles; Step Functions execution roles\n\nAWS: Lambda resource policy principal for data processing function access and service integration\n\nValidation: Must be valid AWS principal ARN format; principal must exist and be accessible for data operations",
                     "type": "string"
                 },
                 "sourceAccount": {
-                    "description": "The source account from which actions are allowed in case the principal is a service principal",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional source AWS account restriction for enhanced security in cross-account data processing scenarios. When specified with service principals, restricts Lambda function access to originate from the specified account for additional security in data operations.\n\nUse cases: Cross-account S3 event processing; Multi-account data lake architectures; Secure service-to-service data operations; Account-based access control\n\nAWS: Lambda resource policy source account condition for enhanced cross-account data processing security\n\nValidation: Must be valid 12-digit AWS account ID if specified; used with service principals for additional data processing security",
                     "type": "string"
                 },
                 "sourceArn": {
-                    "description": "ARN of source resource from which actions are allowed in case the principal is a service principal",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional source resource ARN restriction for fine-grained access control in data processing workflows. When specified with service principals, restricts Lambda function access to originate from specific AWS resources for enhanced security in data operations.\n\nUse cases: Specific S3 bucket event processing; EventBridge rule source restrictions; Resource-specific data processing access; Fine-grained security controls\n\nAWS: Lambda resource policy source ARN condition for resource-specific data processing access control\n\nValidation: Must be valid AWS resource ARN if specified; used with service principals for resource-specific data processing access",
                     "type": "string"
                 }
             },
@@ -93,48 +94,48 @@
         },
         "EventBridgeProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for EventBridge integration that combines S3 event rules and general event rules with retry configuration. Enables event-driven data processing with both S3-specific and general event handling capabilities including error handling and retry policies.\n\nUse cases: Comprehensive event-driven data pipelines; S3 and multi-source event processing; Event handling with retry policies\n\nAWS: Configures Amazon EventBridge rules for S3 events and general events with retry and error handling\n\nValidation: Inherits retry configuration validation; s3EventBridgeRules and eventBridgeRules must be valid if provided",
             "properties": {
                 "eventBridgeRules": {
                     "$ref": "#/definitions/NamedEventBridgeRuleProps",
-                    "description": "List of EventBridge rules to trigger the Lambda function from S3 EventBridge notifications"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional collection of named general EventBridge rules that trigger processing workflows based on various AWS service events and custom events. Enables event-driven architectures beyond S3 events with flexible event pattern matching.\n\nUse cases: Multi-service event processing; Custom event handling; Scheduled workflow triggers\n\nAWS: Amazon EventBridge rules for general AWS service events and custom event processing\n\nValidation: Must be valid NamedEventBridgeRuleProps object if provided with valid rule names and configurations\n  *"
                 },
                 "maxEventAgeSeconds": {
-                    "default": "86400 (24 hours)",
-                    "description": "The maximum age of a request that EventBridge sends to target\n\nMinimum value of 60.\nMaximum value of 86400.",
+                    "description": "Q-ENHANCED-PROPERTY\nMaximum age in seconds that EventBridge will attempt to deliver an event to the target before discarding it. Controls event freshness and prevents processing of stale events in time-sensitive data processing workflows.\n\nUse cases: Event freshness control; Time-sensitive processing; Stale event prevention\n\nAWS: Amazon EventBridge maximum event age configuration for event delivery time limits\n\nValidation: Must be between 60 and 86400 seconds (1 minute to 24 hours); defaults to 86400 if not specified",
                     "type": "number"
                 },
                 "retryAttempts": {
-                    "default": 185,
-                    "description": "The maximum number of times to retry when the target returns an error.\n\nMinimum value of 0.\nMaximum value of 185.",
+                    "description": "Q-ENHANCED-PROPERTY\nMaximum number of retry attempts EventBridge will make when the target returns an error. Controls event delivery resilience and helps ensure reliable processing of critical data events with configurable retry behavior.\n\nUse cases: Event delivery resilience; Error recovery; Reliable event processing\n\nAWS: Amazon EventBridge retry attempt configuration for event delivery reliability\n\nValidation: Must be between 0 and 185 attempts; defaults to 185 if not specified",
                     "type": "number"
                 },
                 "s3EventBridgeRules": {
                     "$ref": "#/definitions/NamedS3EventBridgeRuleProps",
-                    "description": "List of EventBridge rules to trigger the Lambda function from S3 EventBridge notifications"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional collection of named S3 EventBridge rules that trigger processing workflows based on S3 object events. Enables event-driven data processing pipelines that respond to S3 object creation, deletion, and modification events with bucket and prefix filtering.\n\nUse cases: S3 object processing workflows; Event-driven ETL pipelines; Multi-bucket event handling\n\nAWS: Amazon EventBridge rules for S3 event notifications and data processing triggers\n\nValidation: Must be valid NamedS3EventBridgeRuleProps object if provided with valid rule names and configurations\n  *"
                 }
             },
             "type": "object"
         },
         "EventBridgeRuleProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for EventBridge rules that define event patterns, schedules, and input transformations for triggering data processing workflows. Supports both event-driven and schedule-driven processing with flexible event pattern matching and custom input handling.\n\nUse cases: Event-driven data processing; Scheduled workflow triggers; Custom event pattern matching with input transformation\n\nAWS: Configures Amazon EventBridge rules with event patterns, schedules, and input transformations for workflow automation\n\nValidation: Either eventPattern or scheduleExpression must be provided; eventBusArn must be valid ARN if specified",
             "properties": {
                 "description": {
-                    "description": "Description of the rule",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional human-readable description of the EventBridge rule explaining its purpose and trigger conditions. Provides documentation for rule management and helps identify rule functionality in the AWS console.\n\nUse cases: Rule documentation; Management clarity; AWS console identification\n\nAWS: Amazon EventBridge rule description for management and identification\n\nValidation: Must be descriptive text if provided; recommended for rule documentation",
                     "type": "string"
                 },
                 "eventBusArn": {
-                    "description": "If specified, rule will be created against this event bus.\nIf not specified, default event bus will be used.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional ARN of the custom EventBridge event bus where the rule should be created. If not specified, the default event bus will be used. Enables cross-account event routing and custom event bus architectures for organized event processing.\n\nUse cases: Custom event bus routing; Cross-account event processing; Event bus isolation and organization\n\nAWS: Amazon EventBridge custom event bus ARN for rule creation and event routing\n\nValidation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)",
                     "type": "string"
                 },
                 "eventPattern": {
                     "$ref": "#/definitions/EventPattern",
-                    "description": "The Event Pattern to be passed to the rule"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional EventBridge event pattern that defines which events should trigger the rule. Specifies event source, detail type, and detail content matching criteria for precise event filtering and routing to appropriate processing workflows.\n\nUse cases: Event source filtering; Detail-based event routing; Multi-service event processing\n\nAWS: Amazon EventBridge event pattern for event matching and filtering\n\nValidation: Must be valid EventBridge event pattern format if provided; cannot be used with scheduleExpression\n  * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_events.EventPattern.html"
                 },
                 "input": {
-                    "description": "If specified, this input will be provided as event payload to the target. Otherwise\nthe target input will be the matched event content."
+                    "description": "Q-ENHANCED-PROPERTY\nOptional custom input payload that will be provided to the rule target instead of the original event content. Enables event transformation and custom payload injection for specialized processing requirements.\n\nUse cases: Event payload transformation; Custom processing parameters; Static configuration injection\n\nAWS: Amazon EventBridge rule target input transformation for custom payload delivery\n\nValidation: Must be valid JSON-serializable object if provided; replaces original event content\n  *"
                 },
                 "scheduleExpression": {
-                    "description": "If specified, the rule will be schedule according to this expression.\nExpression should follow the EventBridge specification: https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-cron-expressions.html",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional schedule expression for time-based rule triggering using EventBridge cron or rate expressions. Enables scheduled data processing workflows and periodic batch operations with flexible timing configurations.\n\nUse cases: Scheduled ETL jobs; Periodic data processing; Time-based workflow automation\n\nAWS: Amazon EventBridge schedule expression for time-based rule triggering\n\nValidation: Must be valid EventBridge cron or rate expression if provided; cannot be used with eventPattern",
                     "type": "string"
                 }
             },
@@ -219,29 +220,28 @@
         },
         "FunctionProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for DataOps Lambda function deployment with S3 event processing and EventBridge integration capabilities. Defines Lambda function properties for data processing workflows triggered by S3 object events and EventBridge rules in data lake operations.\n\nUse cases: S3 event-driven data processing; CSV to Parquet transformation; Data validation workflows; EventBridge-triggered data operations\n\nAWS: AWS Lambda function configuration for data processing with S3 EventBridge notifications and custom event rules\n\nValidation: srcDir must exist and contain deployable code; runtime must be valid Lambda runtime; handler must match code structure",
             "properties": {
                 "additionalResourcePermissions": {
                     "additionalProperties": {
                         "$ref": "#/definitions/AdditionalResourcePermission"
                     },
-                    "description": "Additional permissions to be added to Lambda resource policy",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional additional resource permissions for Lambda function access control in data processing workflows. Provides fine-grained permissions beyond basic invoke for complex S3 data operations and cross-service integration scenarios.\n\nUse cases: S3 bucket access for data processing; Glue catalog permissions; DynamoDB table access; SNS notification permissions\n\nAWS: Lambda resource policy permissions for data processing access control and service integration\n\nValidation: Must be valid SID to AdditionalResourcePermission mapping; enables complex data processing permission scenarios\n  *",
                     "type": "object"
                 },
                 "description": {
-                    "default": "- No description.",
-                    "description": "A description of the function.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional description of the Lambda function explaining its purpose and data processing operations for documentation and management clarity. Provides human-readable description of the function's purpose and the data operations it performs.\n\nUse cases: Function documentation; Operational clarity; Data processing explanation; Management understanding\n\nAWS: AWS Lambda function description for documentation and operational clarity\n\nValidation: Must be descriptive text if provided; recommended for function documentation and operational understanding",
                     "type": "string"
                 },
                 "dockerBuild": {
-                    "description": "If true, srcDir is expected to contain a DockerFile",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional Docker container build flag for custom data processing environments. When enabled, expects srcDir to contain Dockerfile for custom runtime environments with specialized data processing libraries and dependencies.\n\nUse cases: Custom Python environments with ML libraries; Specialized data processing containers; Complex dependency management; Custom data science stacks\n\nAWS: Lambda container image deployment for custom data processing runtime environments and specialized libraries\n\nValidation: When true, srcDir must contain valid Dockerfile; container must be compatible with Lambda execution environment",
                     "type": "boolean"
                 },
                 "environment": {
                     "additionalProperties": {
                         "type": "string"
                     },
-                    "default": "- No environment variables.",
-                    "description": "Key-value pairs that Lambda caches and makes available for your Lambda\nfunctions. Use environment variables to apply configuration changes, such\nas test and production environment configurations, without changing your\nLambda function source code.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional environment variables for function configuration enabling runtime configuration and parameter passing. Defines key-value pairs that Lambda caches and makes available for function execution enabling configuration changes without code modifications.\n\nUse cases: Runtime configuration; Parameter passing; Environment-specific settings; Configuration management\n\nAWS: AWS Lambda environment variables for function configuration and runtime parameters\n\nValidation: Must be valid key-value string pairs if provided; enables runtime configuration when specified\n  *",
                     "type": "object"
                 },
                 "ephemeralStorageSizeMB": {
@@ -251,73 +251,69 @@
                 },
                 "eventBridge": {
                     "$ref": "#/definitions/EventBridgeProps",
-                    "description": "EventBridge props"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional EventBridge configuration for event-driven function execution enabling automated data processing workflows. Defines EventBridge integration for triggering Lambda functions based on events for automated data processing and workflow orchestration.\n\nUse cases: Event-driven processing; Workflow automation; Data pipeline triggers; Event orchestration\n\nAWS: Amazon EventBridge integration for Lambda function event-driven execution\n\nValidation: Must be valid EventBridgeProps object if provided; enables event-driven function execution when configured"
                 },
                 "functionName": {
-                    "description": "The basic function name",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired basic function name for Lambda function identification and management. Provides the function identifier for Lambda operations and serves as the primary reference for function management and invocation.\n\nUse cases: Function identification; Lambda management; Function invocation; Resource tracking\n\nAWS: AWS Lambda function name for identification and management operations\n\nValidation: Must be unique function name string; required for function creation and identification",
                     "type": "string"
                 },
                 "generatedLayerNames": {
-                    "description": "List of layer names generated by this config to be added to the function",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of generated layer names to be added to the function enabling code reuse and dependency management. Specifies layers generated by the configuration that will be attached to the function for shared code and dependencies.\n\nUse cases: Code reuse; Dependency management; Shared libraries; Layer management\n\nAWS: AWS Lambda layers for code reuse and dependency management\n\nValidation: Must be array of valid layer names if provided; enables layer attachment when specified",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "grantInvoke": {
-                    "description": "ARN of principal to which lambda:InvokeFunction will be granted",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional principal ARN for Lambda invoke permissions enabling controlled access to data processing functions. Specifies AWS principals that can invoke the Lambda function for S3 event processing and data transformation operations.\n\nUse cases: S3 service principal for event triggers; EventBridge service access; Cross-account data processing; Step Functions integration\n\nAWS: Lambda function invoke permission for S3 EventBridge notifications and data processing service integration\n\nValidation: Must be valid AWS principal ARN; principal must exist and have appropriate permissions for data operations",
                     "type": "string"
                 },
                 "handler": {
-                    "description": "The Lambda handler in the source code",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional Lambda function handler specification for data processing entry point. Defines the specific function handler within the source code that Lambda will invoke for S3 events and EventBridge triggers in data operations.\n\nUse cases: Python data processing handlers; Node.js transformation functions; Custom event processing entry points; Data pipeline orchestration\n\nAWS: Lambda function handler for S3 event processing and data transformation execution\n\nValidation: Must match handler format for specified runtime (e.g., 'index.handler' for Node.js, 'main.lambda_handler' for Python)",
                     "type": "string"
                 },
                 "layerArns": {
                     "additionalProperties": {
                         "type": "string"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional map of existing layer version ARNs to be directly added to the function enabling external dependency integration. Provides direct layer ARN references for attaching existing layers to the function for external dependencies and shared code.\n\nUse cases: External dependencies; Existing layer integration; Shared code; Layer reuse\n\nAWS: AWS Lambda layer ARNs for external layer integration and dependency management\n\nValidation: Must be valid layer name to ARN mapping if provided; enables external layer integration when specified\n  *",
                     "type": "object"
                 },
                 "maxEventAgeSeconds": {
-                    "default": "21600 seconds (6 hours)",
-                    "description": "The maximum age of a request (in seconds) that Lambda sends to a function for\nprocessing.\n\nMinimum: 60 seconds\nMaximum: 6 hours",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional maximum event age in seconds controlling event processing time limits for data processing workflows. Defines the maximum age of events that Lambda will process before discarding them for event freshness and processing relevance.\n\nUse cases: Event freshness; Processing time limits; Data relevance; Event lifecycle management\n\nAWS: AWS Lambda maximum event age for event processing time control\n\nValidation: Must be between 60 and 21600 seconds if provided; defaults to 21600 seconds (6 hours)",
                     "type": "number"
                 },
                 "memorySizeMB": {
-                    "default": 128,
-                    "description": "The amount of memory, in MB, that is allocated to your Lambda function.\nLambda uses this value to proportionally allocate the amount of CPU\npower. For more information, see Resource Model in the AWS Lambda\nDeveloper Guide.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional memory allocation in MB for function execution enabling performance optimization and resource management. Defines the amount of memory allocated to the function affecting CPU power allocation and execution performance for data processing operations.\n\nUse cases: Performance optimization; Memory allocation; CPU power; Resource management\n\nAWS: AWS Lambda memory size for function performance and resource allocation\n\nValidation: Must be between 128 and 10240 MB if provided; defaults to 128 MB; affects performance and cost",
                     "type": "number"
                 },
                 "reservedConcurrentExecutions": {
-                    "default": "- No specific limit - account limit.",
-                    "description": "The maximum of concurrent executions you want to reserve for the function.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional reserved concurrent executions for function capacity management enabling performance control and cost optimization. Defines the maximum number of concurrent executions reserved for the function affecting performance isolation and resource allocation.\n\nUse cases: Performance control; Capacity management; Cost optimization; Resource isolation\n\nAWS: AWS Lambda reserved concurrent executions for function capacity and performance management\n\nValidation: Must be positive integer if provided; affects function concurrency and account limits",
                     "type": "number"
                 },
                 "retryAttempts": {
-                    "default": 2,
-                    "description": "The maximum number of times to retry when the function returns an error.\n\nMinimum: 0\nMaximum: 2",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional maximum retry attempts for failed function executions enabling fault tolerance and reliability. Defines the maximum number of times Lambda will retry function execution after errors for improved reliability and fault tolerance in data processing workflows.\n\nUse cases: Fault tolerance; Function reliability; Error recovery; Retry logic\n\nAWS: AWS Lambda retry attempts for failed function execution recovery and fault tolerance\n\nValidation: Must be between 0 and 2 if provided; defaults to 2; enables automatic retry for failed executions",
                     "type": "number"
                 },
                 "roleArn": {
-                    "description": "The arn of the role with which the function will be executed",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for Lambda function execution permissions enabling secure access to AWS services and resources. Provides the execution role that Lambda assumes to execute the function and access data sources, outputs, and other AWS services.\n\nUse cases: Function permissions; Service access; Security roles; Resource authorization\n\nAWS: AWS IAM role ARN for Lambda function execution permissions and service access\n\nValidation: Must be valid IAM role ARN string; required for function execution permissions and resource access",
                     "type": "string"
                 },
                 "runtime": {
-                    "description": "The name of the Lambda runtime. IE 'python3.8' 'nodejs14.x'",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional Lambda runtime specification for data processing execution environment. Defines the runtime environment for executing data transformation and S3 event processing functions with support for Python and Node.js data operations.\n\nUse cases: Python 3.9 for pandas data processing; Node.js 18.x for JSON transformations; Custom runtime environments; Data science libraries\n\nAWS: Lambda runtime environment for data processing function execution and library support\n\nValidation: Must be valid Lambda runtime (python3.9, nodejs18.x, etc.); must be compatible with source code and data processing libraries",
                     "type": "string"
                 },
                 "srcDir": {
-                    "description": "Function source code location",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired source code directory path containing Lambda function code for data processing operations. Specifies the local directory with function source code that will be packaged and deployed for S3 event processing and data transformation workflows.\n\nUse cases: CSV to Parquet transformation code; Data validation scripts; S3 event processing logic; Custom data pipeline functions\n\nAWS: Lambda function source code location for deployment packaging and data processing function creation\n\nValidation: Must be valid directory path containing deployable Lambda code; directory must exist and be readable",
                     "type": "string"
                 },
                 "timeoutSeconds": {
-                    "default": 3,
-                    "description": "The function execution time (in seconds) after which Lambda terminates\nthe function. Because the execution time affects cost, set this value\nbased on the function's expected execution time.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional function execution timeout in seconds controlling maximum execution time for data processing operations. Defines the maximum time the function can run before Lambda terminates it, critical for processing workflows and cost management.\n\nUse cases: Execution timeout; Cost control; Processing time limits; Resource management\n\nAWS: AWS Lambda function timeout for execution time control and resource management\n\nValidation: Must be positive integer in seconds if provided; defaults to 3 seconds; affects function execution and cost",
                     "type": "number"
                 },
                 "vpcConfig": {
                     "$ref": "#/definitions/VpcConfigProps",
-                    "description": "If specified, function will be VPC bound"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional VPC configuration for function network deployment enabling secure networking and resource access within VPC environments. Defines VPC networking configuration for Lambda functions including subnet placement and security groups.\n\nUse cases: VPC deployment; Secure networking; Private resource access; Network isolation\n\nAWS: AWS VPC configuration for Lambda function networking and security\n\nValidation: Must be valid VpcConfigProps object if provided; enables VPC deployment when configured"
                 }
             },
             "required": [
@@ -329,6 +325,7 @@
         },
         "LayerProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nLayerProps configuration interface for serverless data processing and event-driven workflows.\n\nUse cases: Serverless data processing; Event-driven workflows; S3 event handling; Data transformation\n\nAWS: AWS Lambda configuration for serverless data processing and event-driven workflows\n\nValidation: Configuration must be valid for deployment; properties must conform to AWS Lambda and MDAA requirements",
             "properties": {
                 "description": {
                     "description": "Description of the layer",
@@ -343,7 +340,7 @@
                     "type": "string"
                 },
                 "src": {
-                    "description": "The source directory or zip file",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired source directory or ZIP file path for Lambda layer code deployment enabling shared library and dependency management. Defines the location of the layer code that will be packaged and deployed as a Lambda layer for reuse across multiple Lambda functions.\n\nUse cases: Shared library deployment; Dependency management; Code reuse; Lambda layer creation; Common utilities\n\nAWS: AWS Lambda layer source code path for shared library deployment and dependency management\n\nValidation: Must be valid directory path or ZIP file path; required for layer code deployment",
                     "type": "string"
                 }
             },
@@ -355,8 +352,10 @@
         },
         "MdaaCidrPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaCidrPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "cidr": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired CIDR block specification for network access control in security group rules enabling IP range-based access control. Defines the IP address range that will be allowed or denied access through security group rules for network-level access control and security boundaries.\n\nUse cases: IP range access control; Network security boundaries; CIDR-based filtering; Network access management\n\nAWS: Amazon EC2 security group CIDR block for IP range-based network access control\n\nValidation: Must be valid CIDR notation (e.g., 10.0.0.0/16); required for CIDR-based security group rules",
                     "type": "string"
                 },
                 "description": {
@@ -375,6 +374,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -386,11 +386,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -418,8 +421,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -433,6 +438,7 @@
         },
         "MdaaPrefixListPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaPrefixListPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -441,6 +447,7 @@
                     "type": "number"
                 },
                 "prefixList": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired prefix list identifier for managed IP range access control in security group rules enabling AWS service and managed IP range-based access control. Defines the prefix list ID that contains managed IP ranges for AWS services or custom IP ranges for streamlined security group rule management.\n\nUse cases: AWS service access; Managed IP ranges; Prefix list-based filtering; Streamlined rule management\n\nAWS: Amazon EC2 prefix list identifier for managed IP range-based network access control\n\nValidation: Must be valid prefix list ID format (pl-xxxxxxxxx); required for prefix list-based security group rules",
                     "type": "string"
                 },
                 "protocol": {
@@ -453,6 +460,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -464,6 +472,7 @@
         },
         "MdaaSecurityGroupPeer": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupPeer interface.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "description": {
                     "type": "string"
@@ -475,6 +484,7 @@
                     "type": "string"
                 },
                 "sgId": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired security group identifier for security group-based access control in network rules enabling security group reference-based access control. Defines the security group ID that will be referenced in security group rules for allowing access between security groups and resources.\n\nUse cases: Security group reference; Cross-security group access; Resource-based access control; Security group chaining\n\nAWS: Amazon EC2 security group identifier for security group-based network access control\n\nValidation: Must be valid security group ID format (sg-xxxxxxxxx); required for security group-based rules",
                     "type": "string"
                 },
                 "suppressions": {
@@ -484,6 +494,7 @@
                     "type": "array"
                 },
                 "toPort": {
+                    "description": "Q-ENHANCED-PROPERTY\nThe ending port number for the security group rule defining the upper bound of the port range. Specifies the ending port for port range rules enabling flexible port range configuration for network access control and service-specific traffic management.\n\nUse cases: Port range configuration; Service port ranges; Flexible port access; Multi-port services; Port range restrictions\n\nAWS: AWS EC2 SecurityGroup rule ToPort property for port range specification\n\nValidation: Must be valid port number (1-65535); should be >= port (fromPort); optional number for port range rules",
                     "type": "number"
                 }
             },
@@ -495,20 +506,24 @@
         },
         "MdaaSecurityGroupRuleProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nMdaaSecurityGroupRuleProps configuration interface for compute infrastructure and instance management.\n\nUse cases: Compute infrastructure; Instance management; Network configuration; Security groups\n\nAWS: Amazon EC2 configuration for compute infrastructure and instance management\n\nValidation: Configuration must be valid for deployment; properties must conform to Amazon EC2 and MDAA requirements",
             "properties": {
                 "ipv4": {
+                    "description": "Q-ENHANCED-PROPERTY\nIPv4 CIDR block rules for security group traffic control defining IP address-based access restrictions. Specifies IPv4 CIDR blocks that are allowed or denied access through the security group for network-level access control and IP-based security policies.\n\nUse cases: IP-based access control; Network segmentation; CIDR-based restrictions; Geographic access control; Network security policies\n\nAWS: AWS EC2 SecurityGroup rules with IPv4 CIDR block sources/destinations\n\nValidation: Must be valid MdaaCidrPeer array with valid CIDR notation; optional array for IP-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaCidrPeer"
                     },
                     "type": "array"
                 },
                 "prefixList": {
+                    "description": "Q-ENHANCED-PROPERTY\nPrefix list rules for security group traffic control defining managed prefix list-based access restrictions. Specifies AWS-managed or customer-managed prefix lists for scalable IP address range management and centralized network access control.\n\nUse cases: Managed IP ranges; Scalable access control; Centralized IP management; AWS service access; Regional IP restrictions\n\nAWS: AWS EC2 SecurityGroup rules with prefix list sources/destinations\n\nValidation: Must be valid MdaaPrefixListPeer array with valid prefix list IDs; optional array for prefix list-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaPrefixListPeer"
                     },
                     "type": "array"
                 },
                 "sg": {
+                    "description": "Q-ENHANCED-PROPERTY\nSecurity group rules for cross-security group traffic control defining security group-based access restrictions. Specifies other security groups that are allowed access through this security group for resource-level access control and security group chaining.\n\nUse cases: Cross-security group access; Resource-based access control; Security group chaining; Service-to-service communication; Layered security\n\nAWS: AWS EC2 SecurityGroup rules with security group sources/destinations\n\nValidation: Must be valid MdaaSecurityGroupPeer array with valid security group IDs; optional array for SG-based rules\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaSecurityGroupPeer"
                     },
@@ -519,14 +534,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -538,11 +556,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -558,15 +579,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -577,12 +601,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -592,23 +619,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -660,12 +693,14 @@
             "additionalProperties": {
                 "$ref": "#/definitions/EventBridgeRuleProps"
             },
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for named EventBridge rules that define multiple event patterns for triggering data processing workflows. Enables complex event-driven architectures with multiple named rules for different event sources and processing requirements.\n\nUse cases: Multi-source event processing; Named event routing patterns; Complex event-driven data pipelines\n\nAWS: Configures multiple Amazon EventBridge rules with custom names for diverse event processing scenarios\n\nValidation: Object keys must be valid rule names; values must be valid EventBridgeRuleProps configurations",
             "type": "object"
         },
         "NamedS3EventBridgeRuleProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/S3EventBridgeRuleProps"
             },
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for named S3 EventBridge rules that trigger data processing workflows based on S3 object events. Enables event-driven data pipelines with multiple named rules for different S3 event patterns and processing requirements.\n\nUse cases: Event-driven ETL pipelines; S3 object processing workflows; Multi-bucket event handling with different processing logic\n\nAWS: Configures Amazon EventBridge rules for S3 event notifications to trigger data processing workflows\n\nValidation: Object keys must be valid rule names; values must be valid S3EventBridgeRuleProps configurations",
             "type": "object"
         },
         "RegexAppliesTo": {
@@ -684,20 +719,21 @@
         },
         "S3EventBridgeRuleProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for S3 EventBridge rules that define event patterns for S3 object notifications. Enables event-driven data processing by specifying which S3 buckets and object prefixes should trigger EventBridge rules for downstream processing.\n\nUse cases: S3 object creation event processing; Prefix-based event filtering; Cross-account S3 event handling\n\nAWS: Configures Amazon EventBridge rules for S3 event notifications with bucket and prefix filtering\n\nValidation: buckets array must contain valid S3 bucket names; prefixes must be valid S3 object key prefixes; eventBusArn must be valid EventBridge bus ARN",
             "properties": {
                 "buckets": {
-                    "description": "Name of the buckets on which to match",
+                    "description": "Q-ENHANCED-PROPERTY\nArray of S3 bucket names that should trigger the EventBridge rule when object events occur. Enables multi-bucket event processing and centralized event handling for distributed data lake architectures.\n\nUse cases: Multi-bucket event processing; Data lake event consolidation; Cross-bucket event handling\n\nAWS: Amazon S3 bucket names for EventBridge event pattern matching\n\nValidation: Must be array of valid S3 bucket names (3-63 characters, lowercase, no underscores)",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "eventBusArn": {
-                    "description": "If specified, rule will be created against this event bus.\nIf not specified, default event bus will be used.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional ARN of the custom EventBridge event bus where the rule should be created. If not specified, the default event bus will be used. Enables cross-account event routing and custom event bus architectures.\n\nUse cases: Custom event bus routing; Cross-account event processing; Event bus isolation and organization\n\nAWS: Amazon EventBridge custom event bus ARN for rule creation and event routing\n\nValidation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)",
                     "type": "string"
                 },
                 "prefixes": {
-                    "description": "Object key prefixes on which to match",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of S3 object key prefixes that filter which objects trigger the EventBridge rule. Enables fine-grained event filtering based on object location and naming patterns for targeted data processing workflows.\n\nUse cases: Folder-based event filtering; File type-specific processing; Hierarchical data organization event handling\n\nAWS: Amazon S3 object key prefixes for EventBridge event pattern filtering\n\nValidation: Must be array of valid S3 object key prefixes if provided; prefixes should not start with '/' (automatically handled)",
                     "items": {
                         "type": "string"
                     },
@@ -711,24 +747,25 @@
         },
         "VpcConfigProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nVPC configuration properties for Lambda function deployment providing networking and security controls. Defines VPC networking configuration for Lambda functions including subnet placement, security groups, and network access controls for secure function deployment.\n\nUse cases: VPC Lambda deployment; Network isolation; Security group configuration; Subnet placement\n\nAWS: VPC configuration for Lambda function networking and security controls\n\nValidation: vpcId and subnetIds are required; securityGroupId and securityGroupEgressRules are optional",
             "properties": {
                 "securityGroupEgressRules": {
                     "$ref": "#/definitions/MdaaSecurityGroupRuleProps",
-                    "description": "List of egress rules to be added to the function SG"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional security group egress rules for Lambda function outbound traffic control enabling fine-grained network access management and security controls. Provides custom egress rules for Lambda function security group controlling outbound network access.\n\nUse cases: Egress control; Outbound traffic filtering; Network security; Access management\n\nAWS: Security group egress rules for Lambda function outbound traffic control and network security\n\nValidation: Must be valid MdaaSecurityGroupRuleProps if provided; enables custom egress rule configuration\n  *"
                 },
                 "securityGroupId": {
-                    "description": "If specified, the function will use this security group for\nits VPC connection. Otherwise, a new security group will\nbe created.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional security group ID for Lambda function network access control enabling custom security group configuration and traffic filtering. When specified, uses existing security group for Lambda function network access control; otherwise creates new security group.\n\nUse cases: Custom security group; Network access control; Traffic filtering; Security configuration\n\nAWS: Security group ID for Lambda function network access control and traffic filtering\n\nValidation: Must be valid security group ID if provided; enables custom security group configuration",
                     "type": "string"
                 },
                 "subnetIds": {
-                    "description": "The IDs of the subnets on which the Lambda will be deployed",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired array of subnet IDs for Lambda function placement controlling availability zone distribution and network segmentation. Defines the specific subnets within the VPC where Lambda function ENIs will be created for network connectivity and availability.\n\nUse cases: Subnet placement; Availability zone distribution; Network segmentation; ENI placement\n\nAWS: Subnet IDs for Lambda function ENI placement and network connectivity\n\nValidation: Must be array of valid subnet ID strings; required for Lambda subnet placement and connectivity",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "vpcId": {
-                    "description": "The ID of the VPC on which the Lambda will be deployed",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired VPC ID for Lambda function deployment enabling network isolation and VPC connectivity for secure function execution. Defines the specific VPC where the Lambda function will be deployed for network isolation and secure connectivity to VPC resources.\n\nUse cases: VPC deployment; Network isolation; Secure connectivity; VPC resource access\n\nAWS: AWS VPC ID for Lambda function VPC deployment and network isolation\n\nValidation: Must be valid VPC ID; required for VPC Lambda deployment; enables secure network connectivity",
                     "type": "string"
                 }
             },
@@ -741,20 +778,22 @@
     },
     "properties": {
         "deploymentRole": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.\n\nUse cases: Deployment operations; Resource management; IAM permissions; Secure deployment\n\nAWS: IAM role ARN for DataOps deployment operations and resource management\n\nValidation: Must be valid IAM role ARN; required for deployment operations and resource management",
             "type": "string"
         },
         "functions": {
-            "description": "Functions to create",
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of Lambda function definitions for serverless data processing operations within the DataOps project. Each function can process data events, perform transformations, and integrate with other AWS services for data workflows.\n\nUse cases: Event-driven data processing; Serverless ETL operations; Data transformation and validation workflows\n\nAWS: AWS Lambda function creation with DataOps integration, event sources, and IAM permissions\n\nValidation: Must be array of valid FunctionProps objects if provided; functions inherit project context and permissions\n  *",
             "items": {
                 "$ref": "#/definitions/FunctionProps"
             },
             "type": "array"
         },
         "kmsArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.\n\nUse cases: Data encryption; Security compliance; Key management; Data protection\n\nAWS: KMS key ARN for DataOps encryption and data protection compliance\n\nValidation: Must be valid KMS key ARN; required for encryption and data protection compliance",
             "type": "string"
         },
         "layers": {
-            "description": "Layers to create",
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of Lambda layer definitions for shared code, libraries, and dependencies across multiple functions. Enables code reuse, dependency management, and consistent runtime environments for efficient serverless data processing operations.\n\nUse cases: Shared code libraries; Dependency management; Runtime environment consistency across functions\n\nAWS: AWS Lambda layers for shared code and dependency management across multiple functions\n\nValidation: Must be array of valid LayerProps objects if provided; layers can be referenced by functions\n  *",
             "items": {
                 "$ref": "#/definitions/LayerProps"
             },
@@ -762,33 +801,31 @@
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "projectBucket": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
             "type": "string"
         },
         "projectName": {
-            "description": "Name of the DataOps Project",
+            "description": "Q-ENHANCED-PROPERTY\nRequired name of the DataOps project that will contain and manage the Lambda functions. Provides organizational context and enables resource sharing, permissions management, and operational coordination within the DataOps framework.\n\nUse cases: DataOps project organization; Resource sharing and permissions; Operational coordination and monitoring\n\nAWS: DataOps project reference for Lambda function organization and resource management\n\nValidation: Must be valid DataOps project name; required; project must exist or be created in the same deployment",
             "type": "string"
         },
         "projectTopicArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
             "type": "string"
         },
         "securityConfigurationName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired Glue security configuration name for DataOps job security enabling encryption and access control for data processing operations. Provides the security configuration that will be used by Glue jobs for encryption at rest, in transit, and CloudWatch logs encryption.\n\nUse cases: Glue job security; Encryption configuration; Security compliance; Data protection\n\nAWS: Glue security configuration for DataOps job encryption and security compliance\n\nValidation: Must be valid security configuration name; required for Glue job security and encryption",
             "type": "string"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         }
     },
     "required": [
-        "deploymentRole",
-        "kmsArn",
-        "projectBucket",
-        "projectName",
-        "projectTopicArn",
-        "securityConfigurationName"
+        "projectName"
     ],
     "type": "object"
 }

@@ -16,34 +16,93 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
 export interface LakeFormationSettingsL3ConstructProps extends MdaaL3ConstructProps {
-  /** Cross account sharing version. If not specified, defaults to latest. */
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional cross-account sharing version specification for LakeFormation cross-account data sharing enabling multi-account data governance and collaboration. When not specified, defaults to latest version for cross-account sharing capabilities and data collaboration features.
+   *
+   * Use cases: Cross-account sharing; Multi-account governance; Data collaboration; Version control
+   *
+   * AWS: LakeFormation cross-account sharing version for multi-account data governance and collaboration
+   *
+   * Validation: Must be valid version string if provided; defaults to latest for cross-account sharing capabilities
+   **/
   readonly crossAccountVersion?: string;
   /**
-   * If true (default false), IAMAllowedPrincipal grants will automatically be added to all new databases and tables
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional flag controlling automatic IAMAllowedPrincipal grants for new databases and tables enabling simplified access management and backward compatibility. When enabled, automatically adds IAMAllowedPrincipal grants to new databases and tables for simplified IAM-based access control.
+   *
+   * Use cases: Simplified access management; Backward compatibility; Automatic grants; IAM integration
+   *
+   * AWS: LakeFormation IAMAllowedPrincipal automatic grants for simplified access management and IAM integration
+   *
+   * Validation: Boolean value if provided; defaults to false; enables automatic IAM principal grants for new resources
+   **/
   readonly iamAllowedPrincipalsDefault?: boolean;
   /**
-   * If true (default false), then CDK Exec Role will be automatically added as a LF Admin
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional flag controlling CDK execution role LakeFormation admin privileges enabling automated deployment and administrative access. When enabled, automatically adds the CDK execution role as a LakeFormation administrator for deployment automation and administrative operations.
+   *
+   * Use cases: Deployment automation; Administrative access; CDK integration; Automated administration
+   *
+   * AWS: CDK execution role LakeFormation admin privileges for deployment automation and administrative access
+   *
+   * Validation: Boolean value if provided; defaults to false; enables CDK role as LakeFormation administrator
+   **/
   readonly createCdkLFAdmin?: boolean;
-  /**
-   * List of arns for roles which will administer LakeFormation
-   */
   readonly lakeFormationAdminRoleRefs: MdaaRoleRef[];
-
   /**
-   * If provided, will configure LakeFormation and IAMIdentityCenter integration
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional IAM Identity Center configuration for LakeFormation integration enabling centralized identity management and SSO capabilities. When provided, configures LakeFormation integration with IAM Identity Center for centralized user management and federated access control.
+   *
+   * Use cases: Centralized identity management; SSO integration; Federated access; Identity Center integration
+   *
+   * AWS: IAM Identity Center integration for LakeFormation centralized identity management and SSO
+   *
+   * Validation: Must be valid IdentityCenterConfig if provided; enables Identity Center integration and centralized identity management
+   **/
   readonly iamIdentityCenter?: IdentityCenterConfig;
-
   /**
-   * If true, a role will be created as an LF admin for DataZone to use to manage LF permissions within the account.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional flag controlling DataZone admin role creation for LakeFormation integration enabling DataZone-managed permissions and automated governance. When enabled, creates dedicated role for DataZone to manage LakeFormation permissions within the account for integrated data governance.
+   *
+   * Use cases: DataZone integration; Automated governance; Permission management; Integrated data governance
+   *
+   * AWS: DataZone admin role for LakeFormation permission management and integrated data governance
+   *
+   * Validation: Boolean value if provided; enables DataZone admin role creation for integrated governance capabilities
+   **/
   readonly createDataZoneAdminRole?: boolean;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * IdentityCenterConfig configuration interface for resource configuration and infrastructure management.
+ * Use cases: Data lake security; Access control; Fine-grained permissions; Data governance
+ * AWS: AWS service configuration and deployment
+ * Validation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements
+ */
 export interface IdentityCenterConfig {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required AWS IAM Identity Center instance identifier for LakeFormation integration enabling centralized identity management and federated access control. Defines the Identity Center instance that will be used for user and group management in LakeFormation data lake access control scenarios.
+   *
+   * Use cases: Centralized identity management; Federated access control; Identity Center integration; User management; Group-based permissions
+   *
+   * AWS: AWS IAM Identity Center instance ID for LakeFormation federated access control and centralized identity management
+   *
+   * Validation: Must be valid Identity Center instance identifier; required for Identity Center integration
+   **/
   readonly instanceId: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of resource share identifiers for cross-account LakeFormation data sharing enabling multi-account data lake access. Defines AWS Resource Access Manager (RAM) shares that will be associated with the Identity Center configuration for cross-account data lake resource sharing.
+   *
+   * Use cases: Cross-account data sharing; Multi-account data lakes; Resource sharing; Federated data access; Account-level data governance
+   *
+   * AWS: AWS Resource Access Manager share identifiers for cross-account LakeFormation data sharing with Identity Center integration
+   *
+   * Validation: Must be array of valid RAM share identifiers if provided; optional for cross-account sharing
+   **/
   readonly shares?: string[];
 }
 

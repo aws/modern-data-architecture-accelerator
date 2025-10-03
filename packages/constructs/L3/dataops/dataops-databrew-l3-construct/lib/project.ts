@@ -8,19 +8,31 @@ import { IResolvable } from 'aws-cdk-lib';
 import { CfnProject, CfnProjectProps } from 'aws-cdk-lib/aws-databrew';
 import { Construct } from 'constructs';
 
-/**
- * Properties for creating a compliant Mdaa Databrew Project
- */
 export interface MdaaDataBrewProjectProps extends MdaaConstructProps {
-  // The unique name of a project.
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required unique name for the DataBrew project enabling project identification and management. Provides the project identifier for DataBrew operations and serves as the primary reference for data preparation workflows and recipe development.
+   *
+   * Use cases: Project identification; Workflow management; Recipe development; Data preparation organization
+   *
+   * AWS: AWS Glue DataBrew project name for project identification and management
+   *
+   * Validation: Must be unique project name string; required for project creation and identification
+   **/
   readonly name: string;
-  // The dataset that the project is to act upon.
   readonly datasetName: string;
-  // The name of a recipe that will be developed during a project session.
   readonly recipeName: string;
-  // The Amazon Resource Name (ARN) of the role that will be assumed for this project.
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required IAM role ARN that will be assumed for project operations enabling secure access to data sources and destinations. Provides the execution role for DataBrew project operations including data access, profiling, and recipe development with appropriate permissions.
+   *
+   * Use cases: Secure data access; Project execution permissions; Role-based access control; Service integration
+   *
+   * AWS: AWS IAM role ARN for DataBrew project execution and secure data access
+   *
+   * Validation: Must be valid IAM role ARN; required for project execution and data access permissions
+   **/
   readonly roleArn: string;
-  // The sample size and sampling type to apply to the data.
   readonly sample?: CfnProject.SampleProperty | IResolvable;
 }
 

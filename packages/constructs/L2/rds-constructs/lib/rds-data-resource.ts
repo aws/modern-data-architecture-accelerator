@@ -14,10 +14,30 @@ import { MdaaRdsServerlessCluster } from './serverless-cluster';
 
 export interface MdaaRdsDataResourceProps extends MdaaConstructProps {
   readonly rdsCluster: MdaaRdsServerlessCluster;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional database name for SQL execution context enabling targeted database operations within the cluster. Specifies the database context for SQL statement execution when multiple databases exist in the cluster.
+   *
+   * Use cases: Database targeting; Multi-database clusters; SQL execution context; Database isolation
+   *
+   * AWS: RDS Data API database name parameter for SQL execution context and targeting
+   *
+   * Validation: Must be valid database name if provided; enables targeted database operations within cluster
+   **/
   readonly databaseName?: string;
   readonly onCreateSqlStatements: string[];
   readonly onUpdateSqlStatements?: string[];
   readonly onDeleteSqlStatements?: string[];
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional timeout duration for Lambda function execution controlling maximum execution time for database operations. Defines the maximum time allowed for SQL statement execution and database operations to prevent long-running operations.
+   *
+   * Use cases: Execution time control; Operation timeout management; Performance optimization; Resource management
+   *
+   * AWS: AWS Lambda function timeout for RDS Data API operations and execution time control
+   *
+   * Validation: Must be valid Duration if provided; defaults to 11 minutes; controls Lambda execution timeout
+   **/
   readonly timeout?: Duration;
 }
 

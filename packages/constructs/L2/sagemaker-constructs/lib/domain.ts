@@ -14,69 +14,74 @@ import { Construct } from 'constructs';
 // nosemgrep
 const _ = require('lodash');
 
-/**
- * Properties for creating a Compliance SageMaker Studio Domain
- */
 export interface MdaaStudioDomainProps extends MdaaConstructProps {
   /**
-   * The security group id which will be configured on all interfaces for Studio Apps which are connected to the VPC
-   */
+   * Q-ENHANCED-PROPERTY
+   * Required primary security group ID for all Studio app network interfaces providing baseline network access control. Defines the primary network security rules for all SageMaker Studio applications and notebooks within the VPC environment.
+   *
+   * Use cases: Primary network security; Studio app access control; VPC network isolation
+   *
+   * AWS: Amazon SageMaker Studio domain security group for network access control
+   *
+   * Validation: Must be valid security group ID; required; applied to all Studio app interfaces
+   **/
   readonly securityGroupId: string;
-  /**
-   * Additional security group ids which may be configured on all interfaces for Studio Apps which are connected to the VPC
-   */
   readonly securityGroupIds?: string[];
   /**
-   * The mode of authentication that members use to access the Domain.
+   * Q-ENHANCED-PROPERTY
+   * Required authentication mode controlling how users access the SageMaker Studio domain. Determines whether users authenticate through AWS SSO or IAM for centralized identity management and access control.
    *
-   * *Valid Values* : `SSO | IAM`
+   * Use cases: User authentication control; Identity management integration; Access method specification
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-domain.html#cfn-sagemaker-domain-authmode
-   */
+   * AWS: Amazon SageMaker Studio domain authentication mode for user access control
+   *
+   * Validation: Must be 'SSO' or 'IAM'; required; determines user authentication method
+   **/
   readonly authMode: string;
   /**
-   * The default user settings.
+   * Q-ENHANCED-PROPERTY
+   * Required default user settings configuration defining permissions, execution roles, and environment settings for all domain users. Provides baseline configuration for user workspaces including compute resources, security settings, and access permissions.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-domain.html#cfn-sagemaker-domain-defaultusersettings
-   */
+   * Use cases: User workspace configuration; Default permissions; Environment standardization
+   *
+   * AWS: Amazon SageMaker Studio domain default user settings for workspace configuration
+   *
+   * Validation: Must be valid CfnDomain.UserSettingsProperty; required; defines default user environment
+   *   **/
   readonly defaultUserSettings: CfnDomain.UserSettingsProperty;
   /**
-   * The domain name.
+   * Q-ENHANCED-PROPERTY
+   * Optional name for the SageMaker Studio domain that will be processed through MDAA naming conventions. If not specified, a name will be generated automatically following organizational naming standards.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-domain.html#cfn-sagemaker-domain-domainname
-   */
+   * Use cases: Predictable domain naming; Cross-service integration; Operational management
+   *
+   * AWS: Amazon SageMaker Studio domain name for resource identification and management
+   *
+   * Validation: Must be valid SageMaker domain name if provided; processed through MDAA naming conventions
+   **/
   readonly domainName?: string;
   /**
-   * The VPC subnets that Studio uses for communication.
+   * Q-ENHANCED-PROPERTY
+   * Required array of VPC subnet IDs for Studio communication and resource placement. Defines the network subnets where SageMaker Studio applications and notebooks will be deployed for secure VPC connectivity.
    *
-   * *Length Constraints* : Maximum length of 32.
+   * Use cases: VPC network placement; Subnet-specific deployment; Network isolation control
    *
-   * *Array members* : Minimum number of 1 item. Maximum number of 16 items.
+   * AWS: Amazon SageMaker Studio domain subnet configuration for VPC resource placement
    *
-   * *Pattern* : `[-0-9a-zA-Z]+`
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-domain.html#cfn-sagemaker-domain-subnetids
-   */
+   * Validation: Must be array of 1-16 valid subnet IDs; required; subnets must exist in specified VPC
+   **/
   readonly subnetIds: string[];
   /**
-   * The ID of the Amazon Virtual Private Cloud (Amazon VPC) that Studio uses for communication.
+   * Q-ENHANCED-PROPERTY
+   * Required VPC ID for SageMaker Studio domain deployment providing network isolation and security controls. Ensures Studio domain operates within the specified VPC for secure networking and integration with other VPC resources.
    *
-   * *Length Constraints* : Maximum length of 32.
+   * Use cases: VPC network isolation; Secure networking; VPC resource integration
    *
-   * *Pattern* : `[-0-9a-zA-Z]+`
+   * AWS: Amazon VPC for SageMaker Studio domain network isolation and security
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-domain.html#cfn-sagemaker-domain-vpcid
-   */
+   * Validation: Must be valid VPC ID; required; VPC must exist and be accessible
+   **/
   readonly vpcId: string;
-  /**
-   * SageMaker uses AWS KMS to encrypt the EFS volume attached to the Domain with an AWS managed customer master key (CMK) by default. For more control, specify a customer managed CMK.
-   *
-   * *Length Constraints* : Maximum length of 2048.
-   *
-   * *Pattern* : `.*`
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sagemaker-domain.html#cfn-sagemaker-domain-kmskeyid
-   */
   readonly kmsKeyId: string;
 }
 

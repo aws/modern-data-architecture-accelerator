@@ -10,18 +10,75 @@ import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * SageMaker lifecycle script configuration interface for notebook and Studio environment setup with asset deployment and command execution. Defines lifecycle script properties including asset management and shell command execution for automated environment configuration during SageMaker instance startup and creation phases.
+ *
+ * Use cases: Environment setup automation; Package installation scripts; Custom configuration deployment; Asset provisioning; Development environment preparation; Automated ML environment setup
+ *
+ * AWS: SageMaker lifecycle configuration scripts with asset deployment and command execution for automated notebook and Studio environment setup
+ *
+ * Validation: assets must be valid NamedAssetProps if specified; cmds must be valid shell commands executable in SageMaker environment; commands must return appropriate exit codes
+ */
 export interface LifecycleScriptProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Named assets for SageMaker lifecycle configuration script deployment including files, directories, and resources. Defines asset deployment configuration for lifecycle scripts enabling custom file deployment and resource provisioning during SageMaker environment initialization.
+   *
+   * Use cases: Custom file deployment; Resource provisioning; Script dependencies; Configuration files; Asset management
+   *
+   * AWS: SageMaker lifecycle configuration asset deployment for environment customization
+   *
+   * Validation: Must be valid NamedAssetProps configuration; assets must be accessible during lifecycle execution; optional configuration
+   **/
   readonly assets?: NamedAssetProps;
   readonly cmds: string[];
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * NamedAssetProps configuration interface for resource configuration and infrastructure management.
+ *
+ * Use cases: Reusable infrastructure components; CDK construct deployment; Compliance controls; Infrastructure patterns
+ *
+ * AWS: AWS service configuration and deployment
+ *
+ * Validation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements
+ */
 export interface NamedAssetProps {
   /** @jsii ignore */
   readonly [name: string]: AssetProps;
 }
-
+/**
+ * Q-ENHANCED-INTERFACE
+ * SageMaker asset configuration interface for file and directory deployment with source path specification and exclusion patterns. Defines asset properties for packaging and deploying local files, scripts, and directories to SageMaker environments with support for file exclusion patterns and target path specification.
+ *
+ * Use cases: Script deployment; Configuration file deployment; Asset packaging; File provisioning; Development resource deployment; Custom asset management
+ *
+ * AWS: S3 asset deployment with CDK asset bundling for SageMaker environment file provisioning and script deployment
+ *
+ * Validation: sourcePath must be valid local file or directory path; exclude patterns must be valid glob patterns; targetPath must be valid target directory if specified
+ */
 export interface AssetProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required local file or directory path for SageMaker asset deployment specifying the source location of files to be packaged and deployed. Defines the local filesystem path containing scripts, configurations, or other resources to be made available in SageMaker environments.
+   *
+   * Use cases: Script deployment; Configuration file deployment; Asset packaging; Local resource deployment; Development file provisioning
+   * AWS: CDK asset source path for S3 deployment and SageMaker environment file provisioning
+   * Validation: Must be valid local file or directory path; path must exist and be accessible
+   *   */
   readonly sourcePath: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Exclusion patterns for asset deployment filtering out unwanted files and directories from asset packaging. Defines glob patterns to exclude specific files or directories during asset deployment for optimized asset size and security compliance.
+   *
+   * Use cases: Asset filtering; Security compliance; Size optimization; Unwanted file exclusion; Deployment optimization
+   *
+   * AWS: CDK asset bundling exclusion patterns for optimized asset deployment
+   *
+   * Validation: Must be valid glob patterns; patterns applied during asset bundling; optional array for file exclusion
+   **/
   readonly exclude?: string[];
 }
 export interface AssetDeploymentProps {

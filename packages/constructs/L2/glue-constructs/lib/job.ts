@@ -10,140 +10,174 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { ConfigurationElement, TagElement } from '@aws-mdaa/config';
 
-/**
- * Interface representing a compliant Glue Crawler Config
- */
 export interface MdaaCfnJobProps extends MdaaConstructProps {
   /**
-   * The code that executes a job.
+   * Q-ENHANCED-PROPERTY
+   * Required job command configuration defining the code execution environment and script location for ETL processing. Specifies the job command including script location, job type, and execution parameters for data transformation workflows.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-command
-   */
+   * Use cases: ETL script execution; Job type specification; Code deployment; Data transformation processing
+   *
+   * AWS: AWS Glue job command configuration for ETL script execution and job type specification
+   *
+   * Validation: Must be valid CfnJob.JobCommandProperty; required for job execution and script deployment
+   *   **/
   readonly command: CfnJob.JobCommandProperty | IResolvable;
   /**
-   * The name or Amazon Resource Name (ARN) of the IAM role associated with this job.
+   * Q-ENHANCED-PROPERTY
+   * Required IAM role name or ARN for Glue service permissions enabling secure access to AWS services and resources. Provides the execution role that Glue assumes to perform ETL operations and access data sources and targets.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-role
-   */
+   * Use cases: Service permissions; AWS resource access; Security roles; Data source access
+   *
+   * AWS: AWS IAM role for Glue job service permissions and resource access
+   *
+   * Validation: Must be valid IAM role name or ARN string; required for Glue service operations and resource access
+   **/
   readonly role: string;
   /**
-   * The number of capacity units that are allocated to this job.
+   * Q-ENHANCED-PROPERTY
+   * Optional allocated capacity in DPUs for legacy job types with fixed compute resource provisioning. Defines the compute capacity allocated to the Glue job for processing data transformation workloads with predictable resource requirements.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-allocatedcapacity
-   */
+   * Use cases: Fixed capacity ETL jobs; Predictable workload sizing; Cost-controlled processing; Legacy job compatibility
+   *
+   * AWS: AWS Glue job allocated capacity for compute resource allocation
+   *
+   * Validation: Must be positive integer if provided; deprecated in favor of NumberOfWorkers and WorkerType for newer job types
+   **/
   readonly allocatedCapacity?: number;
   /**
-   * The connections used for this job.
+   * Q-ENHANCED-PROPERTY
+   * Optional connections configuration for accessing external data sources and databases during ETL processing. Defines the network connections that the Glue job can use to access data sources, databases, and external systems.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-connections
-   */
+   * Use cases: Database connections; External data source access; Network connectivity; Data source integration
+   *
+   * AWS: AWS Glue job connections for external data source and database access
+   *
+   * Validation: Must be valid CfnJob.ConnectionsListProperty if provided; enables external data source access when specified
+   *   **/
   readonly connections?: CfnJob.ConnectionsListProperty | IResolvable;
   /**
-   * The default arguments for this job, specified as name-value pairs.
+   * Q-ENHANCED-PROPERTY
+   * Optional default arguments for job configuration and parameter passing enabling flexible ETL script configuration. Defines default job arguments including AWS Glue system parameters and custom job parameters for ETL script configuration and execution control.
    *
-   * You can specify arguments here that your own job-execution script consumes, in addition to arguments that AWS Glue itself consumes.
+   * Use cases: Job parameter configuration; ETL script arguments; System parameter settings; Job execution control; Custom configuration
    *
-   * For information about how to specify and consume your own job arguments, see [Calling AWS Glue APIs in Python](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-calling.html) in the *AWS Glue Developer Guide* .
+   * AWS: AWS Glue job default arguments for job parameter configuration and script execution
    *
-   * For information about the key-value pairs that AWS Glue consumes to set up your job, see [Special Parameters Used by AWS Glue](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html) in the *AWS Glue Developer Guide* .
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-defaultarguments
-   */
+   * Validation: Must be valid key-value pairs if provided; supports AWS Glue system parameters and custom arguments
+   **/
   readonly defaultArguments?: ConfigurationElement | IResolvable;
   /**
-   * A description of the job.
+   * Q-ENHANCED-PROPERTY
+   * Optional description of the Glue job explaining its purpose and ETL operations for documentation and management clarity. Provides human-readable description of the job's purpose and the data transformations it performs.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-description
-   */
+   * Use cases: Job documentation; Management clarity; ETL operation explanation; Operational understanding
+   *
+   * AWS: AWS Glue job description for documentation and management
+   *
+   * Validation: Must be descriptive text if provided; recommended for job documentation and operational clarity
+   **/
   readonly description?: string;
   /**
-   * The maximum number of concurrent runs that are allowed for this job.
+   * Q-ENHANCED-PROPERTY
+   * Optional execution properties controlling concurrent runs and job execution limits for resource management. Defines execution property configuration including maximum concurrent runs for job execution control and resource management in ETL workflows.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-executionproperty
-   */
+   * Use cases: Concurrent execution control; Resource management; Job scheduling limits; Performance optimization; Workload management
+   *
+   * AWS: AWS Glue job execution properties for concurrent execution control and resource management
+   *
+   * Validation: Must be valid CfnJob.ExecutionPropertyProperty if provided; controls job execution limits and concurrency
+   *   **/
   readonly executionProperty?: CfnJob.ExecutionPropertyProperty | IResolvable;
   /**
-   * Glue version determines the versions of Apache Spark and Python that AWS Glue supports. The Python version indicates the version supported for jobs of type Spark.
+   * Q-ENHANCED-PROPERTY
+   * Optional Glue version determining Apache Spark and Python versions for job execution runtime environment. Defines the AWS Glue version which controls the underlying Spark and Python versions available for ETL job execution and feature compatibility.
    *
-   * For more information about the available AWS Glue versions and corresponding Spark and Python versions, see [Glue version](https://docs.aws.amazon.com/glue/latest/dg/add-job.html) in the developer guide.
+   * Use cases: Runtime version control; Feature compatibility; Spark version selection; Python version targeting; ETL environment specification
    *
-   * Jobs that are created without specifying a Glue version default to Glue 0.9.
+   * AWS: AWS Glue job version for runtime environment specification and feature compatibility
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-glueversion
-   */
+   * Validation: Must be valid AWS Glue version string if provided; affects available features and runtime environment
+   **/
   readonly glueVersion?: string;
-  /**
-   * This field is reserved for future use.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-loguri
-   */
   readonly logUri?: string;
   /**
-   * The number of AWS Glue data processing units (DPUs) that can be allocated when this job runs. A DPU is a relative measure of processing power that consists of 4 vCPUs of compute capacity and 16 GB of memory.
+   * Q-ENHANCED-PROPERTY
+   * Optional maximum capacity in DPUs for job execution resource allocation enabling performance and cost optimization. Defines the maximum number of DPUs that can be allocated when the job runs affecting processing power and cost.
    *
-   * Do not set `Max Capacity` if using `WorkerType` and `NumberOfWorkers` .
+   * Use cases: Performance optimization; Cost control; Resource allocation; Processing capacity; ETL scaling
    *
-   * The value that can be allocated for `MaxCapacity` depends on whether you are running a Python shell job or an Apache Spark ETL job:
+   * AWS: AWS Glue job maximum capacity for DPU allocation and resource management
    *
-   * - When you specify a Python shell job ( `JobCommand.Name` ="pythonshell"), you can allocate either 0.0625 or 1 DPU. The default is 0.0625 DPU.
-   * - When you specify an Apache Spark ETL job ( `JobCommand.Name` ="glueetl"), you can allocate from 2 to 100 DPUs. The default is 10 DPUs. This job type cannot have a fractional DPU allocation.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-maxcapacity
-   */
+   * Validation: Must be positive number if provided; cannot be used with WorkerType and NumberOfWorkers; affects job performance and cost
+   **/
   readonly maxCapacity?: number;
   /**
-   * The maximum number of times to retry this job after a JobRun fails.
+   * Q-ENHANCED-PROPERTY
+   * Optional maximum retry attempts for failed job runs enabling fault tolerance and reliability. Defines the maximum number of times to retry the job after a JobRun fails for improved reliability and fault tolerance.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-maxretries
-   */
+   * Use cases: Fault tolerance; Job reliability; Error recovery; Retry logic; ETL resilience
+   *
+   * AWS: AWS Glue job maximum retries for failed job run recovery and fault tolerance
+   *
+   * Validation: Must be non-negative integer if provided; enables automatic retry for failed job executions
+   **/
   readonly maxRetries?: number;
   /**
-   * The name you assign to this job definition.
+   * Q-ENHANCED-PROPERTY
+   * Required name for the Glue job enabling job identification and management in ETL workflows. Provides the job identifier for Glue operations and serves as the primary reference for job management and monitoring.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-name
-   */
+   * Use cases: Job identification; ETL workflow management; Job monitoring; Resource tracking
+   *
+   * AWS: AWS Glue job name for identification and management operations
+   *
+   * Validation: Must be unique job name string; required for job creation and identification
+   **/
   readonly name: string;
   /**
-   * Specifies configuration properties of a notification.
+   * Q-ENHANCED-PROPERTY
+   * Optional notification configuration for job status and completion alerts enabling monitoring and alerting. Defines notification configuration including SNS topic settings for job execution status notifications enabling monitoring and alerting for ETL job workflows.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-notificationproperty
-   */
+   * Use cases: Job monitoring; Status notifications; Failure alerts; Completion notifications; ETL workflow monitoring
+   *
+   * AWS: AWS Glue job notification properties for SNS-based job notifications and monitoring
+   *
+   * Validation: Must be valid CfnJob.NotificationPropertyProperty if provided; enables job status notifications when configured
+   *   **/
   readonly notificationProperty?: CfnJob.NotificationPropertyProperty | IResolvable;
   /**
-   * The number of workers of a defined `workerType` that are allocated when a job runs.
+   * Q-ENHANCED-PROPERTY
+   * Optional number of workers for parallel processing capacity enabling horizontal scaling and performance optimization. Defines the worker count for job execution enabling horizontal scaling and parallel processing for ETL workloads with performance and cost optimization.
    *
-   * The maximum number of workers you can define are 299 for `G.1X` , and 149 for `G.2X` .
+   * Use cases: Parallel processing; Performance scaling; Cost optimization; Workload sizing; ETL performance tuning
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-numberofworkers
-   */
+   * AWS: AWS Glue job number of workers for worker allocation and parallel processing
+   *
+   * Validation: Must be positive integer if provided; maximum varies by worker type; enables horizontal scaling when specified
+   **/
   readonly numberOfWorkers?: number;
-  /**
-   * The name of the `SecurityConfiguration` structure to be used with this job.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-securityconfiguration
-   */
   readonly securityConfiguration: string;
-  /**
-   * The tags to use with this job.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-tags
-   */
   readonly tags?: TagElement;
   /**
-   * The job timeout in minutes. This is the maximum time that a job run can consume resources before it is terminated and enters TIMEOUT status. The default is 2,880 minutes (48 hours).
+   * Q-ENHANCED-PROPERTY
+   * Optional job timeout in minutes controlling maximum execution time for ETL operations enabling cost control and SLA management. Defines the maximum time the job can run before being terminated, critical for ETL workflows and resource management.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-timeout
-   */
+   * Use cases: ETL timeout management; Cost control; SLA enforcement; Long-running data transformation operations
+   *
+   * AWS: AWS Glue job timeout configuration for ETL execution time control and resource management
+   *
+   * Validation: Must be positive integer in minutes if provided; defaults to 2880 minutes (48 hours) for data processing jobs
+   **/
   readonly timeout?: number;
   /**
-   * The type of predefined worker that is allocated when a job runs. Accepts a value of Standard, G.1X, or G.2X.
+   * Q-ENHANCED-PROPERTY
+   * Optional worker type defining compute resource specifications for job execution enabling performance and cost optimization. Specifies worker type (Standard, G.1X, G.2X) that determines CPU, memory, and disk allocation per worker for ETL job execution.
    *
-   * - For the `Standard` worker type, each worker provides 4 vCPU, 16 GB of memory and a 50GB disk, and 2 executors per worker.
-   * - For the `G.1X` worker type, each worker maps to 1 DPU (4 vCPU, 16 GB of memory, 64 GB disk), and provides 1 executor per worker. We recommend this worker type for memory-intensive jobs.
-   * - For the `G.2X` worker type, each worker maps to 2 DPU (8 vCPU, 32 GB of memory, 128 GB disk), and provides 1 executor per worker. We recommend this worker type for memory-intensive jobs.
+   * Use cases: Performance optimization; Memory-intensive jobs; Cost optimization; Resource specification; ETL workload tuning
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-job.html#cfn-glue-job-workertype
-   */
+   * AWS: AWS Glue job worker type for worker resource specification and performance optimization
+   *
+   * Validation: Must be 'Standard', 'G.1X', or 'G.2X' if provided; each type has different resource specifications
+   **/
   readonly workerType?: string;
 }
 

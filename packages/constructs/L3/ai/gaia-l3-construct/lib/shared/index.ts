@@ -21,7 +21,7 @@ process.env.DOCKER_DEFAULT_PLATFORM = lambdaArchitecture.dockerPlatform;
 
 export interface GAIASharedL3ConstructProps extends MdaaL3ConstructProps {
   readonly config: SystemConfig;
-  encryptionKey: MdaaKmsKey;
+  readonly encryptionKey: MdaaKmsKey;
 }
 
 export class Shared extends Construct {

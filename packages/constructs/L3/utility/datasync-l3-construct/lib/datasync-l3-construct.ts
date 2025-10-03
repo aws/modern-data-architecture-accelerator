@@ -46,12 +46,38 @@ import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * VPC configuration interface for DataSync deployment with VPC endpoint creation and network isolation. Defines VPC parameters for DataSync service deployment including VPC identification and CIDR block specification enabling secure, private network communication for data transfer operations.
+ *
+ * Use cases: Private network data transfers; VPC endpoint creation; Network isolation; Secure data synchronization
+ *
+ * AWS: VPC configuration for DataSync service with VPC endpoint and private network communication
+ *
+ * Validation: vpcId must be existing VPC; vpcCidrBlock must be valid CIDR notation matching the VPC
+ */
 export interface VpcProps {
   /**
-   * The ID of the VPC for the DataSync deployment
-   * MDAA will create a VPC Endpoint for DataSync service forn this VPC ID that will be used for communication between the agent and task
-   */
+   * Q-ENHANCED-PROPERTY
+   * The ID of the VPC for the DataSync deployment. MDAA will create a VPC Endpoint for DataSync service for this VPC ID that will be used for communication between the agent and task enabling private network data transfer without internet gateway dependency.
+   *
+   * Use cases: VPC identification; Private network deployment; VPC endpoint creation; Network isolation
+   *
+   * AWS: VPC ID for DataSync VPC endpoint creation and private network communication
+   *
+   * Validation: Must be existing VPC ID; required for DataSync VPC endpoint and private network deployment
+   **/
   readonly vpcId: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * CIDR block specification for the DataSync VPC enabling network range definition and security group configuration. Defines the IP address range of the VPC for proper security group rule creation and network access control for DataSync operations.
+   *
+   * Use cases: Network range specification; Security group configuration; IP address management; Network access control
+   *
+   * AWS: VPC CIDR block for DataSync security group rules and network access configuration
+   *
+   * Validation: Must be valid CIDR notation; should match the actual VPC CIDR block for proper network configuration
+   **/
   readonly vpcCidrBlock: string;
 }
 
@@ -59,41 +85,71 @@ export interface AgentWithNameProps extends AgentProps {
   readonly agentName: string;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * DataSync agent configuration interface for on-premises to AWS data transfer operations. Defines agent deployment parameters including activation, networking, and security configuration enabling secure, efficient data synchronization between on-premises storage systems and AWS services.
+ *
+ * Use cases: On-premises data migration; Hybrid cloud data sync; Agent-based data transfer; Secure data movement
+ *
+ * AWS: DataSync agent configuration for on-premises to AWS data transfer and synchronization operations
+ *
+ * Validation: agentIpAddress is required; activation key or VPC configuration required for agent registration
+ */
 export interface AgentProps {
   /**
-   * Your agent activation key. You can get the activation key either by sending an HTTP GET request with redirects that enable you to get the agent IP address (port 80). Alternatively, you can get it from the DataSync console.
+   * Q-ENHANCED-PROPERTY
+   * Your agent activation key. You can get the activation key either by sending an HTTP GET request with redirects that enable you to get the agent IP address (port 80). Alternatively, you can get it from the DataSync console. The redirect URL returned in the response provides you the activation key for your agent in the query string parameter `activationKey`. It might also include other activation-related parameters; however, these are merely defaults. The arguments you pass to this API call determine the actual configuration of your agent. For more information, see [Creating and activating an agent](https://docs.aws.amazon.com/datasync/latest/userguide/activating-agent.html) in the *AWS DataSync User Guide.* If this parameter is not provided, and the VPC ID is specified in vpcEndpoint configuration, MDAA will assume this is the first pass and will create VPC endpoint and security group.
    *
-   * The redirect URL returned in the response provides you the activation key for your agent in the query string parameter `activationKey` . It might also include other activation-related parameters; however, these are merely defaults. The arguments you pass to this API call determine the actual configuration of your agent.
-   * For more information, see [Creating and activating an agent](https://docs.aws.amazon.com/datasync/latest/userguide/activating-agent.html) in the *AWS DataSync User Guide.*
+   * Use cases: Agent activation; Initial agent setup; Agent registration; First-time deployment
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-agent.html#cfn-datasync-agent-activationkey
+   * AWS: DataSync agent activation key for agent registration and initial configuration
    *
-   * If this parameter is not provided, and the VPC ID is specified in vpcEndpoint configuration, MDAA will assume this is the first pass and will create VPC endpoint and security group.
-   */
+   * Validation: Optional string; if not provided, VPC configuration must be specified for automatic setup
+   **/
   readonly activationKey?: string;
   /**
+   * Q-ENHANCED-PROPERTY
    * The identifiers of the subnets in which DataSync will create elastic network interfaces for each data transfer task. The agent that runs a task must be private. When you start a task that is associated with an agent created in a VPC, or one that has access to an IP address in a VPC, then the task is also private. In this case, DataSync creates four network interfaces for each task in your subnet. For a data transfer to work, the agent must be able to route to all these four network interfaces.
-   */
+   *
+   * Use cases: Private network deployment; ENI creation; Task networking; VPC-based data transfer
+   *
+   * AWS: EC2 subnet ID for DataSync agent ENI creation and private network deployment
+   *
+   * Validation: Must be existing subnet ID within the specified VPC; required for private agent deployment
+   **/
   readonly subnetId: string;
   /**
-   * The ID of the virtual private cloud (VPC) endpoint that the agent has access to. This is the client-side VPC endpoint, powered by AWS PrivateLink . If you don't have an AWS PrivateLink VPC endpoint, see [AWS PrivateLink and VPC endpoints](https://docs.aws.amazon.com//vpc/latest/userguide/endpoint-services-overview.html) in the *Amazon VPC User Guide* .
+   * Q-ENHANCED-PROPERTY
+   * The ID of the virtual private cloud (VPC) endpoint that the agent has access to. This is the client-side VPC endpoint, powered by AWS PrivateLink. If you don't have an AWS PrivateLink VPC endpoint, see [AWS PrivateLink and VPC endpoints](https://docs.aws.amazon.com//vpc/latest/userguide/endpoint-services-overview.html) in the *Amazon VPC User Guide*. For more information about activating your agent in a private network based on a VPC, see [Using AWS DataSync in a Virtual Private Cloud](https://docs.aws.amazon.com/datasync/latest/userguide/datasync-in-vpc.html) in the *AWS DataSync User Guide.* A VPC endpoint ID looks like this: `vpce-01234d5aff67890e1`. If the parameter is not provided and the VPC ID is specified in vpcEndpoint configuration, MDAA will create VPC endpoint and security group for agent registration.
    *
-   * For more information about activating your agent in a private network based on a VPC, see [Using AWS DataSync in a Virtual Private Cloud](https://docs.aws.amazon.com/datasync/latest/userguide/datasync-in-vpc.html) in the *AWS DataSync User Guide.*
-   * A VPC endpoint ID looks like this: `vpce-01234d5aff67890e1`.
+   * Use cases: Private network connectivity; VPC endpoint access; PrivateLink integration; Secure agent communication
    *
-   * If the parameter is not provided and the VPC ID is specified in vpcEndpoint configuration, MDAA will create VPC endpoint and security group for agent registration.
+   * AWS: VPC endpoint ID for DataSync agent private network connectivity and PrivateLink access
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-agent.html#cfn-datasync-agent-vpcendpointid
-   */
+   * Validation: Optional VPC endpoint ID; if not provided, MDAA will create VPC endpoint when VPC configuration specified
+   **/
   readonly vpcEndpointId?: string;
   /**
-   * The ID of the security group to be used to protect your data transfer task subnets, if created outside MDAA.
-   * Otherwise, if not provided and the VPC ID is specified in vpcEndpoint configuration, MDAA will create VPC endpoint and security group and the security group will be used for this agent registration.
-   */
+   * Q-ENHANCED-PROPERTY
+   * The ID of the security group to be used to protect your data transfer task subnets, if created outside MDAA. Otherwise, if not provided and the VPC ID is specified in vpcEndpoint configuration, MDAA will create VPC endpoint and security group and the security group will be used for this agent registration.
+   *
+   * Use cases: Network security; Task protection; Custom security groups; Network access control
+   *
+   * AWS: EC2 security group ID for DataSync agent network security and access control
+   *
+   * Validation: Optional security group ID; if not provided, MDAA will create security group when VPC configuration specified
+   **/
   readonly securityGroupId?: string;
   /**
-   * The IP address of the agent host. The values will be used to create an ingress rule for the task security group.
-   */
+   * Q-ENHANCED-PROPERTY
+   * The IP address of the agent host. The values will be used to create an ingress rule for the task security group enabling secure communication between the DataSync service and the on-premises agent for data transfer operations.
+   *
+   * Use cases: Agent connectivity; Security group rules; On-premises integration; Network access control
+   *
+   * AWS: IP address for DataSync agent security group ingress rules and network connectivity
+   *
+   * Validation: Must be valid IPv4 address; required for agent connectivity and security group configuration
+   **/
   readonly agentIpAddress: string;
 }
 
@@ -108,191 +164,319 @@ export type S3StorageClassType =
 export type SmbVersion = 'AUTOMATIC' | 'SMB2' | 'SMB3';
 export type NfsVersion = 'AUTOMATIC' | 'NFS3' | 'NFSv4_0' | 'NFSv4_1';
 
-// Cannot use CfnLocationS3Props as some values allow IResolvable
+/**
+ * Q-ENHANCED-INTERFACE
+ * S3 location configuration interface for DataSync transfers to Amazon S3 storage. Defines S3 destination parameters including bucket specification, access roles, storage classes, and subdirectory configuration enabling automated data transfer to S3 with proper access control and storage optimization.
+ *
+ * Use cases: Data migration to S3; S3 storage class optimization; Automated S3 transfers; S3 destination configuration
+ *
+ * AWS: DataSync LocationS3 resource for S3 destination configuration and data transfer operations
+ *
+ * Validation: s3BucketArn and bucketAccessRoleArn are required; storage class must be valid S3 storage class
+ */
 export interface LocationS3Props {
   /**
-   * The ARN of the Amazon S3 bucket.
+   * Q-ENHANCED-PROPERTY
+   * The ARN of the Amazon S3 bucket for DataSync destination configuration enabling S3 bucket identification and access control. Specifies the target S3 bucket where DataSync will transfer data, providing the foundation for S3-based data storage and management.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locations3.html#cfn-datasync-locations3-s3bucketarn
-   */
+   * Use cases: S3 bucket identification; Data transfer destination; S3 access control; Bucket specification
+   *
+   * AWS: S3 bucket ARN for DataSync LocationS3 configuration and data transfer destination
+   *
+   * Validation: Must be valid S3 bucket ARN; required for S3 location configuration and data transfer operations
+   **/
   readonly s3BucketArn: string;
   /**
-   * MDAA custom parameter to simplify the configuration. This value will be use to construct S3Config.
-   * The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that is used to access an Amazon S3 bucket.
-   */
+   * Q-ENHANCED-PROPERTY
+   * MDAA custom parameter to simplify the configuration. This value will be used to construct S3Config. The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that is used to access an Amazon S3 bucket enabling secure S3 access with proper permissions and access control.
+   *
+   * Use cases: S3 access permissions; IAM role configuration; Secure S3 access; Access control management
+   *
+   * AWS: IAM role ARN for DataSync S3 access permissions and secure bucket operations
+   *
+   * Validation: Must be valid IAM role ARN; required for S3 access permissions and secure data transfer operations
+   **/
   readonly bucketAccessRoleArn: string;
   /**
-   * The Amazon S3 storage class that you want to store your files in when this location is used as a task destination.
+   * Q-ENHANCED-PROPERTY
+   * The Amazon S3 storage class that you want to store your files in when this location is used as a task destination enabling S3 storage cost optimization and lifecycle management. Specifies the S3 storage class for transferred data supporting cost optimization and data lifecycle strategies.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locations3.html#cfn-datasync-locations3-s3storageclass
-   */
+   * Use cases: Storage cost optimization; S3 lifecycle management; Storage class selection; Cost-effective storage
+   *
+   * AWS: S3 storage class specification for DataSync transferred data and storage optimization
+   *
+   * Validation: Must be valid S3StorageClassType if specified; enables storage cost optimization and lifecycle management
+   *   **/
   readonly s3StorageClass?: S3StorageClassType;
   /**
-   * A subdirectory in the Amazon S3 bucket.
+   * Q-ENHANCED-PROPERTY
+   * A subdirectory in the Amazon S3 bucket enabling organized data placement and hierarchical storage structure. `Subdirectory` must be specified with forward slashes. For example, `/path/to/folder`. Provides organized data placement within the S3 bucket for systematic data management.
    *
-   * > `Subdirectory` must be specified with forward slashes. For example, `/path/to/folder` .
+   * Use cases: Organized data placement; Hierarchical storage; Data organization; Systematic file management
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locations3.html#cfn-datasync-locations3-subdirectory
-   */
+   * AWS: S3 object key prefix for DataSync data placement and organized storage structure
+   *
+   * Validation: Must use forward slash format if specified; enables organized data placement and hierarchical storage
+   **/
   readonly subdirectory?: string;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * SMB file share location configuration for AWS DataSync transfers from on-premises SMB servers to AWS storage services. Defines SMB protocol connection parameters including server details, authentication, and mount options for automated data migration from Windows file shares and NAS devices.
+ *
+ * Use cases: Migrating Windows file shares to S3; NAS device data transfer; SMB protocol file system synchronization
+ *
+ * AWS: AWS DataSync LocationSMB resource for SMB file share connectivity and data transfer operations
+ *
+ * Validation: agentName must reference valid DataSync agent; serverHostname must be resolvable SMB server; subdirectory must be valid SMB path format
+ */
 export interface LocationSmbProps {
   /**
-   * MDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents)
-   */
+   * Q-ENHANCED-PROPERTY
+   * MDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents) enabling simplified agent reference and automatic ARN resolution for SMB location configuration.
+   *
+   * Use cases: Agent reference; Automatic ARN resolution; Simplified configuration; Agent management
+   *
+   * AWS: DataSync agent ARN resolution for SMB location agent configuration
+   *
+   * Validation: Must reference valid generated agent names; mutually exclusive with agentArns
+   **/
   readonly agentNames?: string[];
   /**
-   * The Amazon Resource Names (ARNs) of agents to use for a Server Message Block (SMB) location.
+   * Q-ENHANCED-PROPERTY
+   * The Amazon Resource Names (ARNs) of agents to use for a Server Message Block (SMB) location enabling direct agent ARN specification for SMB file share connectivity and data transfer operations.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationsmb.html#cfn-datasync-locationsmb-agentarns
-   */
+   * Use cases: Direct agent specification; SMB connectivity; Agent ARN configuration; File share access
+   *
+   * AWS: DataSync agent ARNs for SMB location configuration and file share connectivity
+   *
+   * Validation: Must be valid DataSync agent ARNs; mutually exclusive with agentNames
+   **/
   readonly agentArns?: string[];
   /**
-   * The name of the secret in Secrets Manager that stores the credential (domain, user and password) of the user in SMB File Server that can mount the share and has the permissions to access files and folders in the SMB share.
+   * Q-ENHANCED-PROPERTY
+   * The name of the secret in Secrets Manager that stores the credential (domain, user and password) of the user in SMB File Server that can mount the share and has the permissions to access files and folders in the SMB share. The secret must have "user" and "password" fields. For example (in JSON format): {"user":"<username>","password":"<password>"} enabling secure credential management for SMB authentication.
    *
-   * The secret must have "user" and "password" fields.
+   * Use cases: SMB authentication; Secure credential storage; File share access; Domain user credentials
    *
-   * For example (in JSON format): {"user":"<username>","password":"<password>"}
+   * AWS: Secrets Manager secret name for SMB file share authentication and credential management
    *
-   */
+   * Validation: Must be valid Secrets Manager secret name; secret must contain required user and password fields
+   **/
   readonly secretName: string;
   /**
-   * The name of the SMB server. This value is the IP address or Domain Name Service (DNS) name of the SMB server. An agent that is installed on-premises uses this hostname to mount the SMB server in a network.
+   * Q-ENHANCED-PROPERTY
+   * The name of the SMB server. This value is the IP address or Domain Name Service (DNS) name of the SMB server. An agent that is installed on-premises uses this hostname to mount the SMB server in a network. This name must either be DNS-compliant or must be an IP version 4 (IPv4) address.
    *
-   * > This name must either be DNS-compliant or must be an IP version 4 (IPv4) address.
+   * Use cases: SMB server identification; Network connectivity; Server mounting; DNS resolution
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationsmb.html#cfn-datasync-locationsmb-serverhostname
-   */
+   * AWS: SMB server hostname for DataSync agent connectivity and file share mounting
+   *
+   * Validation: Must be valid DNS name or IPv4 address; required for SMB server connectivity
+   **/
   readonly serverHostname: string;
   /**
-   * The subdirectory in the SMB file system that is used to read data from the SMB source location or write data to the SMB destination. The SMB path should be a path that's exported by the SMB server, or a subdirectory of that path. The path should be such that it can be mounted by other SMB clients in your network.
+   * Q-ENHANCED-PROPERTY
+   * The subdirectory in the SMB file system that is used to read data from the SMB source location or write data to the SMB destination. The SMB path should be a path that's exported by the SMB server, or a subdirectory of that path. The path should be such that it can be mounted by other SMB clients in your network. `Subdirectory` must be specified with forward slashes. For example, `/path/to/folder`. To transfer all the data in the folder you specified, DataSync must have permissions to mount the SMB share, as well as to access all the data in that share. To ensure this, either make sure that the user name and password specified belongs to the user who can mount the share, and who has the appropriate permissions for all of the files and directories that you want DataSync to access, or use credentials of a member of the Backup Operators group to mount the share. Doing either one enables the agent to access the data. For the agent to access directories, you must additionally enable all execute access.
    *
-   * > `Subdirectory` must be specified with forward slashes. For example, `/path/to/folder` .
+   * Use cases: SMB path specification; Data access control; File system navigation; Permission management
    *
-   * To transfer all the data in the folder you specified, DataSync must have permissions to mount the SMB share, as well as to access all the data in that share. To ensure this, either make sure that the user name and password specified belongs to the user who can mount the share, and who has the appropriate permissions for all of the files and directories that you want DataSync to access, or use credentials of a member of the Backup Operators group to mount the share. Doing either one enables the agent to access the data. For the agent to access directories, you must additionally enable all execute access.
+   * AWS: SMB subdirectory path for DataSync data access and file system operations
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationsmb.html#cfn-datasync-locationsmb-subdirectory
-   */
+   * Validation: Must be valid SMB path with forward slashes; required for SMB data access and transfer operations
+   **/
   readonly subdirectory: string;
   /**
-   * The name of the Windows domain that the SMB server belongs to.
+   * Q-ENHANCED-PROPERTY
+   * The name of the Windows domain that the SMB server belongs to enabling domain-based authentication and access control for SMB file share connectivity and domain user credential validation.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationsmb.html#cfn-datasync-locationsmb-domain
-   */
+   * Use cases: Domain authentication; Windows domain integration; Domain user access; Enterprise authentication
+   *
+   * AWS: Windows domain name for SMB server domain authentication and access control
+   *
+   * Validation: Must be valid Windows domain name if specified; enables domain-based SMB authentication
+   **/
   readonly domain?: string;
   /**
-   * MDAA custom parameter to simplify configuration. The value will be used to construct MountOptions object.
-   * Valid values: "AUTOMATIC" | "SMB2" | "SMB3"
-   * The mount options used by DataSync to access the SMB server.
+   * Q-ENHANCED-PROPERTY
+   * MDAA custom parameter to simplify configuration. The value will be used to construct MountOptions object. Valid values: "AUTOMATIC" | "SMB2" | "SMB3". The mount options used by DataSync to access the SMB server enabling SMB protocol version specification and compatibility control.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationsmb.html#cfn-datasync-locationsmb-mountoptions
-   */
+   * Use cases: SMB protocol version; Compatibility control; Mount options; Protocol specification
+   *
+   * AWS: SMB mount options for DataSync SMB server connectivity and protocol configuration
+   *
+   * Validation: Must be valid SmbVersion if specified; enables SMB protocol version control and compatibility
+   *   **/
   readonly smbVersion?: SmbVersion;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * NFS file system location configuration for AWS DataSync transfers from on-premises NFS servers to AWS storage services. Defines NFS protocol connection parameters including server details, mount options, and version specifications for automated data migration from Linux/Unix file systems.
+ *
+ * Use cases: Migrating Linux NFS exports to S3; Unix file system data transfer; NFS protocol file system synchronization
+ *
+ * AWS: AWS DataSync LocationNFS resource for NFS file system connectivity and data transfer operations
+ *
+ * Validation: agentName must reference valid DataSync agent; serverHostname must be resolvable NFS server; subdirectory must be valid NFS export path
+ */
 export interface LocationNfsProps {
   /**
-   * MDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents) and be constructed as onPremConfig object.
-   * Only either agentNames or agentArns can be specified, not both.
+   * Q-ENHANCED-PROPERTY
+   * MDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents) and be constructed as onPremConfig object. Only either agentNames or agentArns can be specified, not both, enabling simplified agent reference and automatic ARN resolution for NFS location configuration.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-datasync-locationnfs-mountoptions.html
-   */
+   * Use cases: Agent reference; Automatic ARN resolution; Simplified configuration; NFS agent management
+   *
+   * AWS: DataSync agent ARN resolution for NFS location agent configuration and onPremConfig construction
+   *
+   * Validation: Must reference valid generated agent names; mutually exclusive with agentArns
+   **/
   readonly agentNames?: string[];
   /**
-   * MDAA custom parameter that refers to the generated agent name. The value will be used constructed as onPremConfig object.
-   * Only either agentNames or agentArns can be specified, not both.
+   * Q-ENHANCED-PROPERTY
+   * MDAA custom parameter that refers to the generated agent name. The value will be used constructed as onPremConfig object. Only either agentNames or agentArns can be specified, not both, enabling direct agent ARN specification for NFS file system connectivity.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-datasync-locationnfs-mountoptions.html
-   */
-  readonly agentArns?: string[]; // to construct onPremConfig
+   * Use cases: Direct agent specification; NFS connectivity; Agent ARN configuration; OnPrem configuration
+   *
+   * AWS: DataSync agent ARNs for NFS location configuration and onPremConfig object construction
+   *
+   * Validation: Must be valid DataSync agent ARNs; mutually exclusive with agentNames
+   **/
+  readonly agentArns?: string[];
   /**
-   * The name of the NFS server. This value is the IP address or Domain Name Service (DNS) name of the NFS server. An agent that is installed on-premises uses this hostname to mount the NFS server in a network.
+   * Q-ENHANCED-PROPERTY
+   * The name of the NFS server. This value is the IP address or Domain Name Service (DNS) name of the NFS server. An agent that is installed on-premises uses this hostname to mount the NFS server in a network. If you are copying data to or from your AWS Snowcone device, see [NFS Server on AWS Snowcone](https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html#nfs-on-snowcone) for more information.
    *
-   * If you are copying data to or from your AWS Snowcone device, see [NFS Server on AWS Snowcone](https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html#nfs-on-snowcone) for more information.
+   * Use cases: NFS server identification; Network connectivity; Server mounting; DNS resolution; Snowcone integration
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationnfs.html#cfn-datasync-locationnfs-serverhostname
-   */
+   * AWS: NFS server hostname for DataSync agent connectivity and file system mounting
+   *
+   * Validation: Must be valid DNS name or IPv4 address; required for NFS server connectivity
+   **/
   readonly serverHostname: string;
   /**
-   * The subdirectory in the NFS file system that is used to read data from the NFS source location or write data to the NFS destination.
-   * The NFS path should be a path that's exported by the NFS server, or a subdirectory of that path. The path should be such that it can be mounted by other NFS clients in your network.
+   * Q-ENHANCED-PROPERTY
+   * The subdirectory in the NFS file system that is used to read data from the NFS source location or write data to the NFS destination. The NFS path should be a path that's exported by the NFS server, or a subdirectory of that path. The path should be such that it can be mounted by other NFS clients in your network. To see all the paths exported by your NFS server, run "showmount -e nfs-server-name" from an NFS client that has access to your server. You can specify any directory that appears in the results, and any subdirectory of that directory. Ensure that the NFS export is accessible without Kerberos authentication. To transfer all the data in the folder you specified, DataSync needs to have permissions to read all the data. To ensure this, either configure the NFS export with no_root_squash, or ensure that the permissions for all of the files that you want DataSync allow read access for all users. Doing either enables the agent to read the files. For the agent to access directories, you must additionally enable all execute access. If you are copying data to or from your AWS Snowcone device, see [NFS Server on AWS Snowcone](https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html#nfs-on-snowcone) for more information.
    *
-   * To see all the paths exported by your NFS server, run "showmount -e nfs-server-name" from an NFS client that has access to your server.
-   * You can specify any directory that appears in the results, and any subdirectory of that directory. Ensure that the NFS export is accessible without Kerberos authentication.
+   * Use cases: NFS path specification; Data access control; Export mounting; Permission management; Snowcone integration
    *
-   * To transfer all the data in the folder you specified, DataSync needs to have permissions to read all the data.
-   * To ensure this, either configure the NFS export with no_root_squash, or ensure that the permissions for all of the files that you want DataSync allow read access for all users. Doing either enables the agent to read the files. For the agent to access directories, you must additionally enable all execute access.
+   * AWS: NFS subdirectory path for DataSync data access and file system operations
    *
-   * If you are copying data to or from your AWS Snowcone device, see [NFS Server on AWS Snowcone](https://docs.aws.amazon.com/datasync/latest/userguide/create-nfs-location.html#nfs-on-snowcone) for more information.
-   *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationnfs.html#cfn-datasync-locationnfs-subdirectory
-   */
+   * Validation: Must be valid NFS export path; required for NFS data access and transfer operations
+   **/
   readonly subdirectory: string;
   /**
-   * MDAA custom parameter to simplify configuration. The value will be used to construct MountOptions object.
-   * Valid values: "AUTOMATIC" | "NFS3" | "NFSv4_0" | "NFSv4_1"
+   * Q-ENHANCED-PROPERTY
+   * MDAA custom parameter to simplify configuration. The value will be used to construct MountOptions object. Valid values: "AUTOMATIC" | "NFS3" | "NFSv4_0" | "NFSv4_1". The NFS mount options that DataSync can use to mount your NFS share enabling NFS protocol version specification and compatibility control.
    *
-   * The NFS mount options that DataSync can use to mount your NFS share.
+   * Use cases: NFS protocol version; Compatibility control; Mount options; Protocol specification
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationnfs.html#cfn-datasync-locationnfs-mountoptions
-   */
+   * AWS: NFS mount options for DataSync NFS server connectivity and protocol configuration
+   *
+   * Validation: Must be valid NFS version string if specified; enables NFS protocol version control and compatibility
+   **/
   readonly nfsVersion?: string;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * Object storage location configuration for AWS DataSync transfers from cloud-based object storage systems to AWS services. Defines S3-compatible object storage connection parameters including bucket details, access credentials, and server specifications for automated data migration from third-party cloud storage.
+ *
+ * Use cases: Migrating from Google Cloud Storage to S3; Azure Blob to S3 transfers; Third-party object storage synchronization
+ *
+ * AWS: AWS DataSync LocationObjectStorage resource for S3-compatible object storage connectivity and data transfer operations
+ *
+ * Validation: agentName must reference valid DataSync agent; bucketName must be valid object storage bucket; serverHostname must be accessible object storage endpoint
+ */
 export interface LocationObjectStorageProps {
   /**
-   * MDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents).
-   * Only either agentNames or agentArns can be specified, not both.
+   * Q-ENHANCED-PROPERTY
+   * MDAA custom parameter that refers to the generated agent name. The value will resolve to agent ARN (looked up from the generatedAgents). Only either agentNames or agentArns can be specified, not both, enabling simplified agent reference and automatic ARN resolution for object storage location configuration.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationobjectstorage.html#cfn-datasync-locationobjectstorage-agentarns
-   */
+   * Use cases: Agent reference; Automatic ARN resolution; Simplified configuration; Object storage agent management
+   *
+   * AWS: DataSync agent ARN resolution for object storage location agent configuration
+   *
+   * Validation: Must reference valid generated agent names; mutually exclusive with agentArns
+   **/
   readonly agentNames?: string[];
   /**
-   * Specifies the Amazon Resource Names (ARNs) of the DataSync agents that can securely connect with your location.
-   * Only either agentNames or agentArns can be specified, not both.
+   * Q-ENHANCED-PROPERTY
+   * Specifies the Amazon Resource Names (ARNs) of the DataSync agents that can securely connect with your location. Only either agentNames or agentArns can be specified, not both, enabling direct agent ARN specification for object storage connectivity.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationobjectstorage.html#cfn-datasync-locationobjectstorage-agentarns
-   */
+   * Use cases: Direct agent specification; Object storage connectivity; Agent ARN configuration; Secure connection
+   *
+   * AWS: DataSync agent ARNs for object storage location configuration and secure connectivity
+   *
+   * Validation: Must be valid DataSync agent ARNs; mutually exclusive with agentNames
+   **/
   readonly agentArns?: string[];
   /**
-   * Specifies the name of the object storage bucket involved in the transfer.
+   * Q-ENHANCED-PROPERTY
+   * Specifies the name of the object storage bucket involved in the transfer enabling bucket identification and data transfer target specification for S3-compatible object storage systems.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationobjectstorage.html#cfn-datasync-locationobjectstorage-bucketname
-   */
+   * Use cases: Bucket identification; Data transfer target; Object storage specification; Transfer destination
+   *
+   * AWS: Object storage bucket name for DataSync transfer operations and data destination
+   *
+   * Validation: Must be valid object storage bucket name; required for object storage transfer operations
+   **/
   readonly bucketName: string;
   /**
-   * Specifies the domain name or IP address of the object storage server. A DataSync agent uses this hostname to mount the object storage server in a network.
+   * Q-ENHANCED-PROPERTY
+   * Specifies the domain name or IP address of the object storage server. A DataSync agent uses this hostname to mount the object storage server in a network enabling network connectivity and server identification for object storage access.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationobjectstorage.html#cfn-datasync-locationobjectstorage-serverhostname
-   */
+   * Use cases: Server identification; Network connectivity; Object storage mounting; Server access
+   *
+   * AWS: Object storage server hostname for DataSync agent connectivity and server mounting
+   *
+   * Validation: Must be valid domain name or IP address; required for object storage server connectivity
+   **/
   readonly serverHostname: string;
   /**
-   * The name of the secret in Secrets Manager that stores the credential (accessKey/user name and secretKey) of the object storage server.
+   * Q-ENHANCED-PROPERTY
+   * The name of the secret in Secrets Manager that stores the credential (accessKey/user name and secretKey) of the object storage server. The secret must have "accessKey" and "secretKey" fields. For example (in JSON format): {"accessKey":"<access_key>","secretKey":"<secret_key>"} enabling secure credential management for object storage authentication.
    *
-   * The secret must have "accessKey" and "secretKey" fields.
+   * Use cases: Object storage authentication; Secure credential storage; Access key management; Server authentication
    *
-   * For example (in JSON format): {"accessKey":"<access_key>","secretKey":"<secret_key>"}
+   * AWS: Secrets Manager secret name for object storage authentication and credential management
    *
-   */
+   * Validation: Must be valid Secrets Manager secret name; secret must contain required accessKey and secretKey fields
+   **/
   readonly secretName: string;
   /**
-   * Specifies the port that your object storage server accepts inbound network traffic on. Set to port 80 (HTTP), 443 (HTTPS), or a custom port if needed.
+   * Q-ENHANCED-PROPERTY
+   * Specifies the port that your object storage server accepts inbound network traffic on. Set to port 80 (HTTP), 443 (HTTPS), or a custom port if needed, enabling network connectivity configuration and protocol specification for object storage access.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationobjectstorage.html#cfn-datasync-locationobjectstorage-serverport
-   */
+   * Use cases: Network port configuration; Protocol specification; Custom port access; Connectivity control
+   *
+   * AWS: Object storage server port for DataSync network connectivity and protocol configuration
+   *
+   * Validation: Must be valid port number if specified; typically 80 for HTTP or 443 for HTTPS
+   **/
   readonly serverPort?: number;
   /**
-   * Specifies the protocol that your object storage server uses to communicate.
+   * Q-ENHANCED-PROPERTY
+   * Specifies the protocol that your object storage server uses to communicate enabling protocol specification and secure communication configuration for object storage connectivity and data transfer operations.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationobjectstorage.html#cfn-datasync-locationobjectstorage-serverprotocol
-   */
+   * Use cases: Protocol specification; Secure communication; Object storage connectivity; Transfer protocol
+   *
+   * AWS: Object storage server protocol for DataSync communication and data transfer operations
+   *
+   * Validation: Must be valid protocol specification if provided; typically HTTP or HTTPS for object storage
+   **/
   readonly serverProtocol?: string;
   /**
-   * Specifies the object prefix that DataSync reads from or writes to.
+   * Q-ENHANCED-PROPERTY
+   * Specifies the object prefix that DataSync reads from or writes to enabling organized data placement and hierarchical object storage structure for systematic data management and transfer operations.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-locationobjectstorage.html#cfn-datasync-locationobjectstorage-subdirectory
-   */
+   * Use cases: Object prefix specification; Organized data placement; Hierarchical storage; Data organization
+   *
+   * AWS: Object storage prefix for DataSync data placement and organized storage structure
+   *
+   * Validation: Must be valid object prefix if specified; enables organized data placement and hierarchical storage
+   **/
   readonly subdirectory?: string;
 }
 
@@ -303,106 +487,159 @@ export interface GeneratedLocations {
   /** @jsii ignore */
   [key: string]: CfnLocationNFS | CfnLocationSMB | CfnLocationS3 | CfnLocationObjectStorage;
 }
-
 export interface TaskWithNameProps extends TaskProps {
   /**
    * The name of a task. This value is a text reference that is used to identify the task in the console.
-   *
    * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-task.html#cfn-datasync-task-name
    */
   readonly name: string;
 }
-
+/**
+ * Q-ENHANCED-INTERFACE
+ * DataSync task configuration for automated data transfer operations between source and destination locations. Defines task execution parameters including location references, transfer options, scheduling, and data verification settings for systematic data migration and synchronization workflows.
+ *
+ * Use cases: One-time data migration tasks; Scheduled data synchronization; Incremental backup operations
+ *
+ * AWS: AWS DataSync Task resource for automated data transfer with configurable verification, filtering, and scheduling options
+ *
+ * Validation: sourceLocationName and destinationLocationName must reference valid DataSync locations; schedule must be valid cron expression if specified
+ */
 export interface TaskProps {
   /**
-   * MDAA custom parameter that refers to the generated source location name. The value will resolve to source location ARN (looked up from the generatedLocations).
-   * Only either sourceLocationName or sourceLocationArn can be specified, not both.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional MDAA-managed source location name reference for DataSync task source configuration enabling location name-based referencing. Refers to a generated source location name that will be resolved to the actual location ARN from the generatedLocations registry, providing simplified location referencing within MDAA configurations.
+   *
+   * Use cases: MDAA location referencing; Simplified location configuration; Generated location usage; Location name resolution; MDAA-managed locations
+   *
+   * AWS: AWS DataSync task source location reference resolved from MDAA-generated location registry
+   *
+   * Validation: Must reference valid generated location name if provided; mutually exclusive with sourceLocationArn; optional for source location specification
+   **/
   readonly sourceLocationName?: string; // to be resolved from the generatedLocations
   /**
-   * MDAA custom parameter that refers to the generated destination location name. The value will resolve to destination location ARN (looked up from the generatedLocations).
-   * Only either destinationLocationName or destinationLocationArn can be specified, not both.
-   */
+   * Q-ENHANCED-PROPERTY
+   * Optional MDAA-managed destination location name reference for DataSync task destination configuration enabling location name-based referencing. Refers to a generated destination location name that will be resolved to the actual location ARN from the generatedLocations registry, providing simplified location referencing within MDAA configurations.
+   *
+   * Use cases: MDAA location referencing; Simplified location configuration; Generated location usage; Location name resolution; MDAA-managed locations
+   *
+   * AWS: AWS DataSync task destination location reference resolved from MDAA-generated location registry
+   *
+   * Validation: Must reference valid generated location name if provided; mutually exclusive with destinationLocationArn; optional for destination location specification
+   **/
   readonly destinationLocationName?: string; // to be resolved from the generatedLocations
   /**
    * The Amazon Resource Name (ARN) of the source location for the task.
-   *
    * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-task.html#cfn-datasync-task-sourcelocationarn
    */
   readonly sourceLocationArn?: string;
   /**
    * The Amazon Resource Name (ARN) of an AWS storage resource's location.
-   *
    * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-task.html#cfn-datasync-task-destinationlocationarn
    */
   readonly destinationLocationArn?: string;
-
   /**
    * MDAA custom parameter. The ARN of the KMS key that will be used to encrypt the Task logging.
    * If this parameter is not specified, MDAA will create a new KMS key.
    */
   readonly logGroupEncryptionKeyArn?: string;
-
   /**
-   * Specifies a list of filter rules that exclude specific data during your transfer.
-   * For more information and examples, see [Filtering data transferred by DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/filtering.html).
+   * Q-ENHANCED-PROPERTY
+   * Optional array of filter rules to exclude specific data during DataSync transfer operations enabling selective data transfer and filtering. Defines patterns and rules that specify which files and directories should be excluded from the transfer, providing fine-grained control over data migration scope and reducing transfer time and costs.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-task.html#cfn-datasync-task-excludes
-   */
+   * Use cases: Selective data transfer; File filtering; Transfer optimization; Data exclusion patterns; Cost optimization; Transfer scope control
+   *
+   * AWS: AWS DataSync task exclude filter rules for selective data transfer and file filtering
+   *
+   * Validation: Must be array of valid CfnTask.FilterRuleProperty if provided; filter patterns must follow DataSync filtering syntax; optional for transfer filtering
+   **/
   readonly excludes?: CfnTask.FilterRuleProperty[];
   /**
-   * Specifies a list of filter rules that include specific data during your transfer.
-   * For more information and examples, see [Filtering data transferred by DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/filtering.html).
+   * Q-ENHANCED-PROPERTY
+   * Optional array of filter rules to include specific data during DataSync transfer operations enabling selective data transfer and inclusion patterns. Defines patterns and rules that specify which files and directories should be included in the transfer, providing fine-grained control over data migration scope and ensuring only required data is transferred.
    *
-   * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-task.html#cfn-datasync-task-includes
-   */
+   * Use cases: Selective data transfer; File inclusion patterns; Transfer optimization; Data inclusion filtering; Targeted data migration; Transfer scope control
+   *
+   * AWS: AWS DataSync task include filter rules for selective data transfer and file inclusion
+   *
+   * Validation: Must be array of valid CfnTask.FilterRuleProperty if provided; filter patterns must follow DataSync filtering syntax; optional for transfer filtering
+   **/
   readonly includes?: CfnTask.FilterRuleProperty[];
-
   /**
    * Specifies the configuration options for a task. Some options include preserving file or object metadata and verifying data integrity.
-   *
    * You can also override these options before starting an individual run of a task (also known as a task execution).
    * For more information, see [StartTaskExecution](https://docs.aws.amazon.com/datasync/latest/userguide/API_StartTaskExecution.html).
-   *
    * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-task.html#cfn-datasync-task-options
    */
   readonly options?: CfnTask.OptionsProperty | IResolvable;
   /**
    * Specifies a schedule used to periodically transfer files from a source to a destination location. The schedule should be specified in UTC time.
    * For more information, see [Scheduling your task](https://docs.aws.amazon.com/datasync/latest/userguide/task-scheduling.html).
-   *
    * @link https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-datasync-task.html#cfn-datasync-task-schedule
    */
   readonly schedule?: CfnTask.TaskScheduleProperty | IResolvable;
 }
-
 export interface LocationS3WithNameProps extends LocationS3Props {
   readonly locationName: string;
 }
-
 export interface LocationSmbWithNameProps extends LocationSmbProps {
   readonly locationName: string;
 }
-
 export interface LocationNfsWithNameProps extends LocationNfsProps {
   readonly locationName: string;
 }
-
 export interface LocationObjectStorageWithNameProps extends LocationObjectStorageProps {
   readonly locationName: string;
 }
-
 export interface LocationsByTypeWithNameProps {
   readonly s3?: LocationS3WithNameProps[];
   readonly smb?: LocationSmbWithNameProps[];
   readonly nfs?: LocationNfsWithNameProps[];
   readonly objectStorage?: LocationObjectStorageWithNameProps[];
 }
-
 export interface DataSyncL3ConstructProps extends MdaaL3ConstructProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional VPC configuration for DataSync agent deployment enabling secure network connectivity and private data transfer operations. Provides VPC networking setup for agents requiring private network access to on-premises or VPC-based storage systems for secure data transfer.
+   *
+   * Use cases: Private networking; Secure connectivity; VPC deployment; Network isolation
+   *
+   * AWS: VPC configuration for DataSync agent deployment and secure network connectivity
+   *
+   * Validation: Must be valid VpcProps if provided; enables secure VPC-based agent deployment and connectivity
+   **/
   readonly vpc?: VpcProps;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of DataSync agent configurations for on-premises and hybrid connectivity enabling data transfer between on-premises storage and AWS. Provides agent deployment for connecting on-premises storage systems to AWS for data movement and synchronization operations.
+   *
+   * Use cases: On-premises connectivity; Hybrid data transfer; Agent deployment; Storage system integration
+   *
+   * AWS: DataSync agents for on-premises and hybrid storage connectivity and data transfer
+   *
+   * Validation: Must be array of valid AgentWithNameProps if provided; enables on-premises storage connectivity
+   *   **/
   readonly agents?: AgentWithNameProps[];
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional location configuration organized by storage type enabling data source and destination management. Provides structured location configuration for different storage protocols and systems including S3, SMB, NFS, and object storage for flexible data movement operations.
+   *
+   * Use cases: Storage location management; Multi-protocol support; Data source configuration; Destination management
+   *
+   * AWS: DataSync locations for multi-protocol storage connectivity and data transfer operations
+   *
+   * Validation: Must be valid LocationsByTypeWithNameProps if provided; enables multi-protocol storage connectivity
+   *   **/
   readonly locations?: LocationsByTypeWithNameProps;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of DataSync task configurations for automated data transfer and synchronization workflows enabling scheduled and on-demand data movement between configured locations. Provides task configuration for data transfer operations with filtering, scheduling, and monitoring capabilities.
+   *
+   * Use cases: Data transfer automation; Scheduled synchronization; Task management; Data movement workflows
+   *
+   * AWS: DataSync tasks for automated data transfer and synchronization workflows
+   *
+   * Validation: Must be array of valid TaskWithNameProps if provided; enables automated data transfer and synchronization
+   **/
   readonly tasks?: TaskWithNameProps[];
 }
 

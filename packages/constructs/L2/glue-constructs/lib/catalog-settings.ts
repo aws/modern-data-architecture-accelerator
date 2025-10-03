@@ -8,22 +8,19 @@ import { IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { CfnDataCatalogEncryptionSettings, CfnDataCatalogEncryptionSettingsProps } from 'aws-cdk-lib/aws-glue';
 import { Construct } from 'constructs';
 
-/**
- * Interface representing a compliant Glue Security Config
- */
 export interface MdaaCatalogSettingsProps extends MdaaConstructProps {
   /**
-   * The ID of the Data Catalog in which the settings are created.
+   * Q-ENHANCED-PROPERTY
+   * Required AWS account ID for the Data Catalog where encryption settings will be applied enabling account-specific catalog configuration. Specifies the target account for Glue Data Catalog encryption settings and metadata protection.
    *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-glue-datacatalogencryptionsettings.html#cfn-glue-datacatalogencryptionsettings-catalogid
-   */
+   * Use cases: Account-specific configuration; Cross-account catalog management; Catalog identification; Account isolation
+   *
+   * AWS: AWS Glue Data Catalog account identifier for encryption settings and metadata protection
+   *
+   * Validation: Must be valid 12-digit AWS account ID; required; identifies target account for catalog encryption
+   **/
   readonly catalogId: string;
 
-  /**
-   * The ID of the AWS KMS key to use for encryption at rest of the catalog.
-   *
-   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-datacatalogencryptionsettings-encryptionatrest.html#cfn-glue-datacatalogencryptionsettings-encryptionatrest-sseawskmskeyid
-   */
   readonly catalogKmsKey: IMdaaKmsKey;
 }
 

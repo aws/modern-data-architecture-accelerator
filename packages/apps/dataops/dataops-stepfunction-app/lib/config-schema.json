@@ -67,48 +67,48 @@
         },
         "EventBridgeProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for EventBridge integration that combines S3 event rules and general event rules with retry configuration. Enables event-driven data processing with both S3-specific and general event handling capabilities including error handling and retry policies.\n\nUse cases: Comprehensive event-driven data pipelines; S3 and multi-source event processing; Event handling with retry policies\n\nAWS: Configures Amazon EventBridge rules for S3 events and general events with retry and error handling\n\nValidation: Inherits retry configuration validation; s3EventBridgeRules and eventBridgeRules must be valid if provided",
             "properties": {
                 "eventBridgeRules": {
                     "$ref": "#/definitions/NamedEventBridgeRuleProps",
-                    "description": "List of EventBridge rules to trigger the Lambda function from S3 EventBridge notifications"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional collection of named general EventBridge rules that trigger processing workflows based on various AWS service events and custom events. Enables event-driven architectures beyond S3 events with flexible event pattern matching.\n\nUse cases: Multi-service event processing; Custom event handling; Scheduled workflow triggers\n\nAWS: Amazon EventBridge rules for general AWS service events and custom event processing\n\nValidation: Must be valid NamedEventBridgeRuleProps object if provided with valid rule names and configurations\n  *"
                 },
                 "maxEventAgeSeconds": {
-                    "default": "86400 (24 hours)",
-                    "description": "The maximum age of a request that EventBridge sends to target\n\nMinimum value of 60.\nMaximum value of 86400.",
+                    "description": "Q-ENHANCED-PROPERTY\nMaximum age in seconds that EventBridge will attempt to deliver an event to the target before discarding it. Controls event freshness and prevents processing of stale events in time-sensitive data processing workflows.\n\nUse cases: Event freshness control; Time-sensitive processing; Stale event prevention\n\nAWS: Amazon EventBridge maximum event age configuration for event delivery time limits\n\nValidation: Must be between 60 and 86400 seconds (1 minute to 24 hours); defaults to 86400 if not specified",
                     "type": "number"
                 },
                 "retryAttempts": {
-                    "default": 185,
-                    "description": "The maximum number of times to retry when the target returns an error.\n\nMinimum value of 0.\nMaximum value of 185.",
+                    "description": "Q-ENHANCED-PROPERTY\nMaximum number of retry attempts EventBridge will make when the target returns an error. Controls event delivery resilience and helps ensure reliable processing of critical data events with configurable retry behavior.\n\nUse cases: Event delivery resilience; Error recovery; Reliable event processing\n\nAWS: Amazon EventBridge retry attempt configuration for event delivery reliability\n\nValidation: Must be between 0 and 185 attempts; defaults to 185 if not specified",
                     "type": "number"
                 },
                 "s3EventBridgeRules": {
                     "$ref": "#/definitions/NamedS3EventBridgeRuleProps",
-                    "description": "List of EventBridge rules to trigger the Lambda function from S3 EventBridge notifications"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional collection of named S3 EventBridge rules that trigger processing workflows based on S3 object events. Enables event-driven data processing pipelines that respond to S3 object creation, deletion, and modification events with bucket and prefix filtering.\n\nUse cases: S3 object processing workflows; Event-driven ETL pipelines; Multi-bucket event handling\n\nAWS: Amazon EventBridge rules for S3 event notifications and data processing triggers\n\nValidation: Must be valid NamedS3EventBridgeRuleProps object if provided with valid rule names and configurations\n  *"
                 }
             },
             "type": "object"
         },
         "EventBridgeRuleProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for EventBridge rules that define event patterns, schedules, and input transformations for triggering data processing workflows. Supports both event-driven and schedule-driven processing with flexible event pattern matching and custom input handling.\n\nUse cases: Event-driven data processing; Scheduled workflow triggers; Custom event pattern matching with input transformation\n\nAWS: Configures Amazon EventBridge rules with event patterns, schedules, and input transformations for workflow automation\n\nValidation: Either eventPattern or scheduleExpression must be provided; eventBusArn must be valid ARN if specified",
             "properties": {
                 "description": {
-                    "description": "Description of the rule",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional human-readable description of the EventBridge rule explaining its purpose and trigger conditions. Provides documentation for rule management and helps identify rule functionality in the AWS console.\n\nUse cases: Rule documentation; Management clarity; AWS console identification\n\nAWS: Amazon EventBridge rule description for management and identification\n\nValidation: Must be descriptive text if provided; recommended for rule documentation",
                     "type": "string"
                 },
                 "eventBusArn": {
-                    "description": "If specified, rule will be created against this event bus.\nIf not specified, default event bus will be used.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional ARN of the custom EventBridge event bus where the rule should be created. If not specified, the default event bus will be used. Enables cross-account event routing and custom event bus architectures for organized event processing.\n\nUse cases: Custom event bus routing; Cross-account event processing; Event bus isolation and organization\n\nAWS: Amazon EventBridge custom event bus ARN for rule creation and event routing\n\nValidation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)",
                     "type": "string"
                 },
                 "eventPattern": {
                     "$ref": "#/definitions/EventPattern",
-                    "description": "The Event Pattern to be passed to the rule"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional EventBridge event pattern that defines which events should trigger the rule. Specifies event source, detail type, and detail content matching criteria for precise event filtering and routing to appropriate processing workflows.\n\nUse cases: Event source filtering; Detail-based event routing; Multi-service event processing\n\nAWS: Amazon EventBridge event pattern for event matching and filtering\n\nValidation: Must be valid EventBridge event pattern format if provided; cannot be used with scheduleExpression\n  * See: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_events.EventPattern.html"
                 },
                 "input": {
-                    "description": "If specified, this input will be provided as event payload to the target. Otherwise\nthe target input will be the matched event content."
+                    "description": "Q-ENHANCED-PROPERTY\nOptional custom input payload that will be provided to the rule target instead of the original event content. Enables event transformation and custom payload injection for specialized processing requirements.\n\nUse cases: Event payload transformation; Custom processing parameters; Static configuration injection\n\nAWS: Amazon EventBridge rule target input transformation for custom payload delivery\n\nValidation: Must be valid JSON-serializable object if provided; replaces original event content\n  *"
                 },
                 "scheduleExpression": {
-                    "description": "If specified, the rule will be schedule according to this expression.\nExpression should follow the EventBridge specification: https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-cron-expressions.html",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional schedule expression for time-based rule triggering using EventBridge cron or rate expressions. Enables scheduled data processing workflows and periodic batch operations with flexible timing configurations.\n\nUse cases: Scheduled ETL jobs; Periodic data processing; Time-based workflow automation\n\nAWS: Amazon EventBridge schedule expression for time-based rule triggering\n\nValidation: Must be valid EventBridge cron or rate expression if provided; cannot be used with eventPattern",
                     "type": "string"
                 }
             },
@@ -193,11 +193,14 @@
         },
         "MdaaNagSuppressionByPath": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
             "properties": {
                 "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
                     "type": "string"
                 },
                 "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
                     "items": {
                         "additionalProperties": false,
                         "properties": {
@@ -225,8 +228,10 @@
         },
         "MdaaNagSuppressionConfigs": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
             "properties": {
                 "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
                     "items": {
                         "$ref": "#/definitions/MdaaNagSuppressionByPath"
                     },
@@ -240,14 +245,17 @@
         },
         "MdaaServiceCatalogConstraintConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
             "properties": {
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
                     "type": "string"
                 },
                 "rules": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
                     "type": "object"
                 }
             },
@@ -259,11 +267,14 @@
         },
         "MdaaServiceCatalogConstraintRuleAssertionConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
             "properties": {
                 "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
                     "type": "string"
                 },
                 "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
                     "type": "string"
                 }
             },
@@ -279,15 +290,18 @@
         },
         "MdaaServiceCatalogConstraintRuleConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
             "properties": {
                 "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
                     "items": {
                         "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
                     },
                     "type": "array"
                 },
                 "condition": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
                 }
             },
             "required": [
@@ -298,12 +312,15 @@
         },
         "MdaaServiceCatalogParameterConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
             "properties": {
                 "constraints": {
-                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig"
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
                 },
                 "props": {
-                    "$ref": "#/definitions/CfnParameterProps"
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
                 }
             },
             "required": [
@@ -313,23 +330,29 @@
         },
         "MdaaServiceCatalogProductConfig": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
             "properties": {
                 "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
                     "type": "string"
                 },
                 "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
                     "type": "string"
                 },
                 "parameters": {
                     "additionalProperties": {
                         "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
                     },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
                     "type": "object"
                 },
                 "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
                     "type": "string"
                 }
             },
@@ -344,30 +367,33 @@
             "additionalProperties": {
                 "$ref": "#/definitions/EventBridgeRuleProps"
             },
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for named EventBridge rules that define multiple event patterns for triggering data processing workflows. Enables complex event-driven architectures with multiple named rules for different event sources and processing requirements.\n\nUse cases: Multi-source event processing; Named event routing patterns; Complex event-driven data pipelines\n\nAWS: Configures multiple Amazon EventBridge rules with custom names for diverse event processing scenarios\n\nValidation: Object keys must be valid rule names; values must be valid EventBridgeRuleProps configurations",
             "type": "object"
         },
         "NamedS3EventBridgeRuleProps": {
             "additionalProperties": {
                 "$ref": "#/definitions/S3EventBridgeRuleProps"
             },
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for named S3 EventBridge rules that trigger data processing workflows based on S3 object events. Enables event-driven data pipelines with multiple named rules for different S3 event patterns and processing requirements.\n\nUse cases: Event-driven ETL pipelines; S3 object processing workflows; Multi-bucket event handling with different processing logic\n\nAWS: Configures Amazon EventBridge rules for S3 event notifications to trigger data processing workflows\n\nValidation: Object keys must be valid rule names; values must be valid S3EventBridgeRuleProps configurations",
             "type": "object"
         },
         "S3EventBridgeRuleProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for S3 EventBridge rules that define event patterns for S3 object notifications. Enables event-driven data processing by specifying which S3 buckets and object prefixes should trigger EventBridge rules for downstream processing.\n\nUse cases: S3 object creation event processing; Prefix-based event filtering; Cross-account S3 event handling\n\nAWS: Configures Amazon EventBridge rules for S3 event notifications with bucket and prefix filtering\n\nValidation: buckets array must contain valid S3 bucket names; prefixes must be valid S3 object key prefixes; eventBusArn must be valid EventBridge bus ARN",
             "properties": {
                 "buckets": {
-                    "description": "Name of the buckets on which to match",
+                    "description": "Q-ENHANCED-PROPERTY\nArray of S3 bucket names that should trigger the EventBridge rule when object events occur. Enables multi-bucket event processing and centralized event handling for distributed data lake architectures.\n\nUse cases: Multi-bucket event processing; Data lake event consolidation; Cross-bucket event handling\n\nAWS: Amazon S3 bucket names for EventBridge event pattern matching\n\nValidation: Must be array of valid S3 bucket names (3-63 characters, lowercase, no underscores)",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "eventBusArn": {
-                    "description": "If specified, rule will be created against this event bus.\nIf not specified, default event bus will be used.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional ARN of the custom EventBridge event bus where the rule should be created. If not specified, the default event bus will be used. Enables cross-account event routing and custom event bus architectures.\n\nUse cases: Custom event bus routing; Cross-account event processing; Event bus isolation and organization\n\nAWS: Amazon EventBridge custom event bus ARN for rule creation and event routing\n\nValidation: Must be valid EventBridge event bus ARN format if provided (arn:aws:events:region:account:event-bus/bus-name)",
                     "type": "string"
                 },
                 "prefixes": {
-                    "description": "Object key prefixes on which to match",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of S3 object key prefixes that filter which objects trigger the EventBridge rule. Enables fine-grained event filtering based on object location and naming patterns for targeted data processing workflows.\n\nUse cases: Folder-based event filtering; File type-specific processing; Hierarchical data organization event handling\n\nAWS: Amazon S3 object key prefixes for EventBridge event pattern filtering\n\nValidation: Must be array of valid S3 object key prefixes if provided; prefixes should not start with '/' (automatically handled)",
                     "items": {
                         "type": "string"
                     },
@@ -381,38 +407,39 @@
         },
         "StepFunctionProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for Step Functions state machine properties providing workflow orchestration and execution management capabilities. Defines state machine configuration including execution roles, logging, monitoring, and EventBridge integration for DataOps workflow automation and orchestration.\n\nUse cases: Workflow orchestration; State machine configuration; DataOps automation; Process coordination\n\nAWS: Step Functions state machine configuration for workflow orchestration and process automation\n\nValidation: stateMachineName, stateMachineType, stateMachineExecutionRole, logExecutionData, and rawStepFunctionDef are required",
             "properties": {
                 "eventBridge": {
                     "$ref": "#/definitions/EventBridgeProps",
-                    "description": "EventBridge props"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional EventBridge configuration for Step Functions integration enabling event-driven workflow triggering and external system integration. Provides EventBridge setup for triggering state machines based on events and integrating with external systems and services.\n\nUse cases: Event-driven workflows; External integration; Automated triggering; Event processing\n\nAWS: EventBridge integration for Step Functions event-driven workflow triggering and external integration\n\nValidation: Must be valid EventBridgeProps if provided; enables event-driven workflow triggering and integration"
                 },
                 "logExecutionData": {
-                    "description": "Logs parameter values and other execution data used during step function execution",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired flag controlling execution data logging for Step Functions monitoring and debugging enabling detailed execution tracking and troubleshooting. When enabled, logs parameter values and execution data during state machine execution for monitoring and debugging capabilities.\n\nUse cases: Execution monitoring; Debugging support; Operational visibility; Troubleshooting assistance\n\nAWS: Step Functions execution data logging for monitoring and debugging capabilities\n\nValidation: Must be boolean value; required for execution data logging configuration and monitoring",
                     "type": "boolean"
                 },
                 "logGroupRetentionDays": {
-                    "description": "Optional. Number of days the Logs will be retained in Cloudwatch.\nFor allowed values, refer https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.RetentionDays.html\nPossible values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653, and 0.\nIf you specify 0, the events in the log group are always retained and never expire.\nDefault, if property not specified, is 731 days.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch log group retention period in days for execution log management and compliance requirements. Defines how long execution logs are retained in CloudWatch with specific allowed values for log retention and compliance management.\n\nUse cases: Log retention management; Compliance requirements; Storage cost optimization; Audit trail management\n\nAWS: CloudWatch log group retention for Step Functions execution logs and audit trail management\n\nValidation: Must be 1,3,5,7,14,30,60,90,120,150,180,365,400,545,731,1827,3653, or 0 if provided; defaults to 731 days",
                     "type": "number"
                 },
                 "rawStepFunctionDef": {
                     "additionalProperties": {},
-                    "description": "StepFunction definition exported as JSON from Step Functions console",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired state machine definition as JSON object exported from Step Functions console enabling workflow logic specification and state transitions. Provides the complete state machine definition including states, transitions, and workflow logic for Step Functions execution.\n\nUse cases: Workflow definition; State transitions; Business logic; Process specification\n\nAWS: Step Functions state machine definition for workflow logic and state transitions\n\nValidation: Must be valid JSON object with state machine definition; required for workflow logic and execution\n  *",
                     "type": "object"
                 },
                 "stateMachineExecutionRole": {
-                    "description": "StepFunction definition exported as JSON from Step Functions console",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired execution role ARN for Step Functions state machine permissions enabling secure workflow execution and AWS service integration. Provides the IAM role that the state machine will assume for executing workflow steps and accessing AWS services during workflow execution.\n\nUse cases: Workflow permissions; Service integration; Secure execution; IAM role management\n\nAWS: IAM role ARN for Step Functions state machine execution permissions and service access\n\nValidation: Must be valid IAM role ARN; required for state machine execution permissions and service access",
                     "type": "string"
                 },
                 "stateMachineName": {
-                    "description": "StepFunction definition exported as JSON from Step Functions console",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired state machine name for Step Functions identification and workflow management enabling unique state machine identification and operational management. Provides the name for the Step Functions state machine for workflow identification and management within the DataOps environment.\n\nUse cases: State machine identification; Workflow naming; Operational management; Resource identification\n\nAWS: Step Functions state machine name for workflow identification and management\n\nValidation: Must be valid state machine name; required for state machine creation and identification",
                     "type": "string"
                 },
                 "stateMachineType": {
-                    "description": "StepFunction type STANDARD or EXPRESS",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired state machine type specification controlling execution model and performance characteristics for workflow optimization. Defines whether to use STANDARD for long-running workflows or EXPRESS for high-volume, short-duration executions with different pricing and feature sets.\n\nUse cases: Execution model selection; Performance optimization; Cost management; Workflow characteristics\n\nAWS: Step Functions state machine type for execution model and performance optimization\n\nValidation: Must be STANDARD or EXPRESS; required for state machine type and execution model selection",
                     "type": "string"
                 },
                 "suppressions": {
-                    "description": "CDK Nag suppressions if policyDocument generates Nags.",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppressions array for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification for compliance auditing and security review.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for Step Functions compliance rule management and security exception documentation\n\nValidation: Must be array of valid SuppressionProps if provided; enables structured compliance rule management",
                     "items": {
                         "$ref": "#/definitions/SuppressionProps"
                     },
@@ -430,11 +457,14 @@
         },
         "SuppressionProps": {
             "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag suppression properties with structured compliance rule exception management. Defines suppression configuration for managing security rule exceptions with proper identification and justification for compliance auditing and security review processes.\n\nUse cases: Compliance rule exceptions; Security suppressions; Audit documentation; Structured exception management\n\nAWS: CDK Nag suppression configuration for compliance rule exception management and audit documentation\n\nValidation: id and reason are required for proper suppression identification and justification",
             "properties": {
                 "id": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired suppression rule ID for CDK Nag rule identification enabling specific security rule exception management. Provides the specific CDK Nag rule identifier that will be suppressed for targeted compliance rule exception handling.\n\nUse cases: Rule identification; Specific suppressions; Compliance management; Security rule exceptions\n\nAWS: CDK Nag rule ID for specific security rule suppression and compliance exception management\n\nValidation: Must be valid CDK Nag rule ID; required for specific rule suppression and compliance management",
                     "type": "string"
                 },
                 "reason": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired suppression justification reason for compliance documentation and audit trail enabling proper exception documentation and security review. Provides the business or technical justification for suppressing the security rule for compliance auditing and security review processes.\n\nUse cases: Exception justification; Compliance documentation; Audit trail; Security review support\n\nAWS: Suppression reason for CDK Nag rule exception justification and compliance documentation\n\nValidation: Must be descriptive justification text; required for proper exception documentation and audit trail",
                     "type": "string"
                 }
             },
@@ -447,34 +477,39 @@
     },
     "properties": {
         "deploymentRole": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.\n\nUse cases: Deployment operations; Resource management; IAM permissions; Secure deployment\n\nAWS: IAM role ARN for DataOps deployment operations and resource management\n\nValidation: Must be valid IAM role ARN; required for deployment operations and resource management",
             "type": "string"
         },
         "kmsArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.\n\nUse cases: Data encryption; Security compliance; Key management; Data protection\n\nAWS: KMS key ARN for DataOps encryption and data protection compliance\n\nValidation: Must be valid KMS key ARN; required for encryption and data protection compliance",
             "type": "string"
         },
         "nag_suppressions": {
             "$ref": "#/definitions/MdaaNagSuppressionConfigs",
-            "description": "Nag suppressions"
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
         },
         "projectBucket": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
             "type": "string"
         },
         "projectName": {
-            "description": "Name of the DataOps Project",
+            "description": "Q-ENHANCED-PROPERTY\nRequired DataOps project name for Step Functions integration and resource autowiring with existing project infrastructure. Enables seamless integration with deployed project resources including Lambda functions, Glue jobs, and other AWS services for coordinated serverless orchestration.\n\nUse cases: Project resource integration; Coordinated serverless orchestration; Infrastructure autowiring and service coordination\n\nAWS: AWS Step Functions project integration for resource coordination and shared infrastructure\n\nValidation: Must be valid DataOps project name; required; project must exist with deployed resources",
             "type": "string"
         },
         "projectTopicArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
             "type": "string"
         },
         "securityConfigurationName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired Glue security configuration name for DataOps job security enabling encryption and access control for data processing operations. Provides the security configuration that will be used by Glue jobs for encryption at rest, in transit, and CloudWatch logs encryption.\n\nUse cases: Glue job security; Encryption configuration; Security compliance; Data protection\n\nAWS: Glue security configuration for DataOps job encryption and security compliance\n\nValidation: Must be valid security configuration name; required for Glue job security and encryption",
             "type": "string"
         },
         "service_catalog_product_config": {
             "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
-            "description": "Service Catalog Config\nIf specified, the configured module will be deployed as a Service Catalog product instead of directly to the environment"
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
         },
         "stepfunctionDefinitions": {
-            "description": "List of StepFunctions to create",
+            "description": "Q-ENHANCED-PROPERTY\nRequired array of Step Functions definitions enabling complex serverless workflow orchestration and state machine coordination. Provides state machine configuration for conditional execution, error handling, and service integration patterns within the data processing architecture.\n\nUse cases: Serverless workflow orchestration; State machine coordination; Complex conditional execution and error handling patterns\n\nAWS: AWS Step Functions state machine definitions for serverless workflow orchestration and coordination\n\nValidation: Must be array of valid StepFunctionProps objects; required; defines all state machine orchestration operations\n  *",
             "items": {
                 "$ref": "#/definitions/StepFunctionProps"
             },
@@ -482,12 +517,7 @@
         }
     },
     "required": [
-        "deploymentRole",
-        "kmsArn",
-        "projectBucket",
         "projectName",
-        "projectTopicArn",
-        "securityConfigurationName",
         "stepfunctionDefinitions"
     ],
     "type": "object"
