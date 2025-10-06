@@ -6,6 +6,7 @@ codescan*
 .DS_Store
 *.js
 !jest.config.js
+!eslint.config.js
 *.d.ts
 *.d.ts.map
 node_modules

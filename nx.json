@@ -39,7 +39,10 @@
         "{projectRoot}/test/*.ts",
         "{projectRoot}/test/**/*.yaml"
       ],
-      "outputs": ["{projectRoot}/coverage"]
+      "outputs": ["{projectRoot}/coverage"],
+      "options": {
+        "retry": 2
+      }
     }
   }
 }

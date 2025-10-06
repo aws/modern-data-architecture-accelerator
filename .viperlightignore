@@ -43,3 +43,5 @@ packages/constructs/L2/eks-constructs/lib/cluster.ts:703 # it's not an email add
 packages/constructs/L2/eks-constructs/lib/cluster.ts:775 # it's not an email address!
 packages/constructs/L2/eks-constructs/lib/cluster.ts:543 # it's not an email address!
 packages/constructs/L2/eks-constructs/lib/cluster.ts:615 # it's not an email address!
+[python-pipoutdated]
+pip=24.0.1

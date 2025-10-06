@@ -1,13 +1,13 @@
 aws_xray_sdk==2.12.1
 boto3==1.35.63
-numpy==1.26.4
+numpy>=2.1.0,<3.0.0
 cfnresponse==1.1.2
 aws_requests_auth==0.4.3
 requests-aws4auth==1.2.3
 opensearch-py==3.0.0
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 pgvector==0.3.1
-pydantic==2.7.4
+pydantic==2.10.3
 urllib3==2.5.0
 openai==0.28.1
 beautifulsoup4==4.12.3
