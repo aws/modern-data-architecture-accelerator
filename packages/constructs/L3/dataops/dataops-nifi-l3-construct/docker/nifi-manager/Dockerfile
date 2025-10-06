@@ -7,9 +7,9 @@ RUN apt-get update \
     && apt-get install -y python3.10 pip \
     && apt-get -y autoremove \
     && apt-get clean autoclean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN pip install --no-cache-dir boto3 pexpect 
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --upgrade pip \
+    && pip install --no-cache-dir boto3 pexpect 
 
 ENV NIFI_SCRIPTS_HOME=/opt/nifi/scripts
 

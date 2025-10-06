@@ -15,9 +15,6 @@ include:
   - template: Jobs/SAST.latest.gitlab-ci.yml
   - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
   # AWS Solutions SAST
-  - project: $CI_PROJECT_NAMESPACE/mdaa-delivery
-    ref: main
-    file: "/aws-solutions/viperlight.yaml"
   - project: $CI_PROJECT_NAMESPACE/mdaa-testing
     ref: main
     file: "/gitlab-ci/mdaa-testing.yaml"
@@ -44,12 +41,6 @@ semgrep-sast:
 
 secret_detection:
   stage: prebuild
-
-viperlight_prebuild:
-  stage: prebuild
-
-viperlight_postbuild:
-  stage: analyze
 
 # Build image has CDK, Node/NPM, Lerna, Python, SonarQube pre installed
 image: $MDAA_BUILD_IMAGE
