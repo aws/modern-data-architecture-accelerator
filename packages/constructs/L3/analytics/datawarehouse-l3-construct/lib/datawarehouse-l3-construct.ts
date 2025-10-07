@@ -15,7 +15,6 @@ import {
   Cluster,
   ClusterSubnetGroup,
   ClusterType,
-  NodeType,
   RotationMultiUserOptions,
   User,
   UserProps,
@@ -40,7 +39,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { ConfigurationElement } from '@aws-mdaa/config';
-import { sanitizeScheduledActionName } from './utils';
+import { ensureNodeType, sanitizeScheduledActionName } from './utils';
 
 /**
  * Q-ENHANCED-INTERFACE
@@ -748,7 +747,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       port: clusterPort,
       roles: executionRoles,
       encryptionKey: warehouseKmsKey,
-      nodeType: NodeType[this.props.nodeType as keyof typeof NodeType],
+      nodeType: ensureNodeType(this.props.nodeType),
       numberOfNodes: this.props.numberOfNodes,
       securityGroup: securityGroup,
       subnetGroup: subnetGroup,

@@ -12,7 +12,7 @@ import {
   FederationProps,
   SecurityGroupIngressProps,
 } from '../lib';
-import { DatabaseUsersProps, ScheduledActionProps } from '../lib/datawarehouse-l3-construct';
+import { DatabaseUsersProps, ScheduledActionProps } from '../lib';
 
 describe('MDAA Compliance Stack Tests', () => {
   const securityGroupIngresProps: SecurityGroupIngressProps = {
@@ -291,6 +291,159 @@ describe('MDAA Compliance Stack Tests', () => {
         SourceIds: ['test-org-test-env-test-domain-test-module-test-name'],
         SourceType: 'scheduled-action',
       });
+    });
+  });
+
+  describe('Non-CDK NodeType name Cluster Tests', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: DataWarehouseL3ConstructProps = {
+      adminUsername: 'admin',
+      adminPasswordRotationDays: 10,
+      dataAdminRoleRefs: [dataAdminRoleRef],
+      vpcId: 'vpcId',
+      subnetIds: ['test1'],
+      securityGroupIngress: securityGroupIngresProps,
+      nodeType: 'ra3.large',
+      numberOfNodes: 4,
+      enableAuditLoggingToS3: true,
+      clusterPort: 54390,
+      preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      federations: [federationProps],
+      warehouseBucketUserRoleRefs: [warehouseBucketUserRoleRef],
+      executionRoleRefs: [executionRoleTeamA, executionRoleTeamB],
+      multiNode: true,
+      parameterGroupParams: { key1: 'value1' },
+      workloadManagement: [{ key1: 'value1' }],
+      additionalBucketKmsKeyArns: [
+        'arn:test-partition:kms:us-east-1:test-account:key/e4bfacbf-06c4-431e-b3ca-9a4d86eb94b4',
+      ],
+      scheduledActions: [scheduledAction],
+      databaseUsers: [databaseUsers],
+      createWarehouseBucket: true,
+      automatedSnapshotRetentionDays: 10,
+      eventNotifications: {
+        email: ['test@example.com'],
+        severity: 'INFO',
+        eventCategories: ['management', 'security'],
+      },
+    };
+    new DataWarehouseL3Construct(stack, 'teststack', constructProps);
+    testApp.checkCdkNagCompliance(testApp.testStack);
+    const template = Template.fromStack(testApp.testStack);
+
+    test('Redshift cluster properties', () => {
+      template.hasResourceProperties('AWS::Redshift::Cluster', {
+        ClusterType: 'multi-node',
+        DBName: 'default_db',
+        MasterUsername: {
+          'Fn::Join': [
+            '',
+            [
+              '{{resolve:secretsmanager:',
+              {
+                Ref: 'clusterSecretE349B730',
+              },
+              ':SecretString:username::}}',
+            ],
+          ],
+        },
+        MasterUserPassword: {
+          'Fn::Join': [
+            '',
+            [
+              '{{resolve:secretsmanager:',
+              {
+                Ref: 'clusterSecretE349B730',
+              },
+              ':SecretString:password::}}',
+            ],
+          ],
+        },
+        NodeType: 'ra3.large',
+        AllowVersionUpgrade: true,
+        AutomatedSnapshotRetentionPeriod: 10,
+        ClusterIdentifier: 'test-org-test-env-test-domain-test-module',
+        ClusterParameterGroupName: {
+          Ref: 'clusterparamgroup14144A79',
+        },
+        ClusterSubnetGroupName: {
+          Ref: 'subnetgroup',
+        },
+        Encrypted: true,
+        EnhancedVpcRouting: true,
+        IamRoles: [
+          'arn:test-partition:iam::test-account:role/ex-role-team-a',
+          {
+            'Fn::GetAtt': ['RoleResExecutionRoleArns1', 'arn'],
+          },
+        ],
+        KmsKeyId: {
+          Ref: 'warehousekey618891EF',
+        },
+        LoggingProperties: {
+          BucketName: {
+            Ref: 'testorgtestenvtestdomaintestmoduleloggingF7553636',
+          },
+          S3KeyPrefix: 'logging/',
+        },
+        NumberOfNodes: 4,
+        Port: 54390,
+        PreferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+        PubliclyAccessible: false,
+        VpcSecurityGroupIds: [
+          {
+            'Fn::GetAtt': ['warehousesg47CB2460', 'GroupId'],
+          },
+        ],
+      });
+    });
+  });
+  describe('Fake NodeType name Cluster Tests', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const constructProps: DataWarehouseL3ConstructProps = {
+      adminUsername: 'admin',
+      adminPasswordRotationDays: 10,
+      dataAdminRoleRefs: [dataAdminRoleRef],
+      vpcId: 'vpcId',
+      subnetIds: ['test1'],
+      securityGroupIngress: securityGroupIngresProps,
+      nodeType: 'fb2.teeny',
+      numberOfNodes: 4,
+      enableAuditLoggingToS3: true,
+      clusterPort: 54390,
+      preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
+
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      federations: [federationProps],
+      warehouseBucketUserRoleRefs: [warehouseBucketUserRoleRef],
+      executionRoleRefs: [executionRoleTeamA, executionRoleTeamB],
+      multiNode: true,
+      parameterGroupParams: { key1: 'value1' },
+      workloadManagement: [{ key1: 'value1' }],
+      additionalBucketKmsKeyArns: [
+        'arn:test-partition:kms:us-east-1:test-account:key/e4bfacbf-06c4-431e-b3ca-9a4d86eb94b4',
+      ],
+      scheduledActions: [scheduledAction],
+      databaseUsers: [databaseUsers],
+      createWarehouseBucket: true,
+      automatedSnapshotRetentionDays: 10,
+      eventNotifications: {
+        email: ['test@example.com'],
+        severity: 'INFO',
+        eventCategories: ['management', 'security'],
+      },
+    };
+
+    test('Redshift cluster properties', () => {
+      expect(() => new DataWarehouseL3Construct(stack, 'teststack', constructProps)).toThrow(
+        'Invalid node type: fb2.teeny',
+      );
     });
   });
 });
