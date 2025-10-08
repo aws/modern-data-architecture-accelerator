@@ -27,7 +27,7 @@ const knowledgeBase = new BedrockKnowledgeBaseL3Construct(this, 'MyKB', {
       documents: {
         bucketName: 'my-docs-bucket',
         prefix: 'documents/',
-        enableSync: true
+        enableMultiSync: true
       }
     }
   },
@@ -62,7 +62,8 @@ const knowledgeBase = new BedrockKnowledgeBaseL3Construct(this, 'MyKB', {
 ### S3 Data Source Options
 - `bucketName`: S3 bucket name (required)
 - `prefix`: Optional S3 prefix filter
-- `enableSync`: Enable automatic sync on S3 changes
+- `enableSync`: Enable automatic sync on S3 changes limiting only one file at a time
+- `enableMultiSync`: Enable automatic sync on S3 bucket changes processing multiple file changes at the same time
 - `vectorIngestionConfiguration`: Advanced parsing and chunking options
 
 ### Vector Ingestion Configuration

@@ -21,12 +21,20 @@ import {
   MdaaOpensearchServerlessCollection,
   MdaaOpensearchServerlessCollectionProps,
 } from '@aws-mdaa/opensearch-constructs';
-import { aws_bedrock as bedrock, aws_s3 as s3, CfnResource, Duration } from 'aws-cdk-lib';
+import {
+  aws_bedrock as bedrock,
+  aws_s3 as s3,
+  aws_sqs as sqs,
+  aws_s3_notifications as s3n,
+  CfnResource,
+  Duration,
+} from 'aws-cdk-lib';
 import { IVpc, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { Effect, IRole, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Effect, IRole, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { AuroraCapacityUnit } from 'aws-cdk-lib/aws-rds';
 import { CfnDelivery, CfnDeliveryDestination, CfnDeliverySource, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Construct } from 'constructs';
 import { join } from 'path';
 import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct';
@@ -488,16 +496,39 @@ export interface S3DataSource {
   readonly vectorIngestionConfiguration?: VectorIngestionConfiguration;
   /**
    * Q-ENHANCED-PROPERTY
-   * Optional automatic synchronization flag for real-time document processing enabling dynamic content updates and automated knowledge base maintenance. Enables automatic processing of new or updated S3 objects for real-time knowledge base updates and continuous content synchronization.
+   * Optional automatic synchronization flag for real-time document processing enabling single object processing and sequential knowledge base updates. Enables automatic processing of new or updated S3 objects one at a time for controlled knowledge base synchronization and sequential content ingestion.
    *
-   * Use cases: Real-time updates; Automatic synchronization; Dynamic content processing; Continuous maintenance
+   * Use cases: Single object processing; Sequential updates; Controlled synchronization; One-at-a-time processing
    *
-   * AWS: Bedrock knowledge base automatic sync for real-time S3 document processing and content updates
+   * AWS: Bedrock knowledge base automatic sync for single object S3 document processing and sequential updates
    *
-   * Validation: Boolean value; defaults to false; enables automatic document synchronization and real-time processing
+   * Validation: Boolean value; defaults to false; enables single object automatic synchronization and sequential processing
    * @default false
    */
   readonly enableSync?: boolean;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional comprehensive multi-event synchronization flag for batch document processing enabling simultaneous multiple object processing and parallel knowledge base updates. Enables automatic processing of multiple S3 objects simultaneously with comprehensive event handling (CREATE, PUT, POST, DELETE) for efficient batch synchronization.
+   *
+   * Use cases: Batch processing; Multiple object handling; Parallel updates; Comprehensive event processing
+   *
+   * AWS: Bedrock knowledge base multi-event sync for simultaneous multiple object processing and batch updates
+   *
+   * Validation: Boolean value; defaults to false; enables multiple object simultaneous processing and batch synchronization
+   * @default false
+   */
+  readonly enableMultiSync?: boolean;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional IAM role ARN for batch sync Lambda function execution enabling multi-object processing and comprehensive S3 event handling. Provides execution role for batch synchronization Lambda functions when enableMultiSync is enabled, requiring specific permissions for CloudWatch Logs, SQS, Bedrock ingestion jobs, and KMS operations.
+   *
+   * Use cases: Batch processing; Multi-object sync; Lambda execution; Comprehensive event handling
+   *
+   * AWS: IAM role ARN for Bedrock knowledge base batch sync Lambda function execution and multi-object processing
+   *
+   * Validation: Must be valid IAM role ARN when enableMultiSync is true; role must have lambda.amazonaws.com trust policy and required permissions
+   */
+  readonly syncLambdaRoleArn?: string;
 }
 
 export interface SharepointDataSource {
@@ -875,6 +906,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     MIN: 1,
     MAX: 900,
     DEFAULT: 300,
+    BATCH_SYNC: 900, // 15 minutes for batch processing
   } as const;
 
   /**
@@ -1361,6 +1393,100 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     return new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, baseDataSourceProps);
   }
 
+  private createS3DataSourceBatchSyncLambda(
+    kbName: string,
+    dsName: string,
+    knowledgeBaseId: string,
+    dataSourceId: string,
+    dsProps: S3DataSource,
+    kmsKey: IKey,
+    roleArn: string,
+  ): void {
+    // Shorten names to avoid conflicts: first 5 chars of KB + first 5 chars of DS + sync-dlq + unique suffix
+    const shortKbName = kbName.substring(0, 5);
+    const shortDsName = dsName.substring(0, 5);
+    const uniqueSuffix = this.node.addr.substring(0, 8);
+
+    const dlq = new sqs.Queue(this, `${kbName}-${dsName}-sync-dlq`, {
+      queueName: this.props.naming.resourceName(`${shortKbName}-${shortDsName}-sync-dlq-${uniqueSuffix}`, 80),
+      encryptionMasterKey: kmsKey,
+      retentionPeriod: Duration.days(14),
+      enforceSSL: true,
+    });
+
+    const syncQueue = new sqs.Queue(this, `${kbName}-${dsName}-sync-queue`, {
+      queueName: this.props.naming.resourceName(`${shortKbName}-${shortDsName}-sync-queue-${uniqueSuffix}`, 80),
+      encryptionMasterKey: kmsKey,
+      visibilityTimeout: Duration.minutes(15),
+      receiveMessageWaitTime: Duration.seconds(20),
+      deadLetterQueue: {
+        queue: dlq,
+        maxReceiveCount: 3,
+      },
+      enforceSSL: true,
+    });
+    // Create Lambda function
+    const syncFunctionProps: FunctionProps = {
+      functionName: `${kbName}-${dsName}-sync`,
+      description: `Batch sync data source ${dsName} for knowledge base ${kbName}`,
+      srcDir: join(__dirname, 'lambda-functions/datasource'),
+      handler: 'datasource_batch_sync.lambda_handler',
+      runtime: 'python3.13',
+      roleArn: roleArn,
+      timeoutSeconds: BedrockKnowledgeBaseL3Construct.LAMBDA_TIMEOUT.BATCH_SYNC, // 15 minutes
+      environment: {
+        KNOWLEDGE_BASE_ID: knowledgeBaseId,
+        DATA_SOURCE_ID: dataSourceId,
+      },
+    };
+
+    const lambdaConstruct = new LambdaFunctionL3Construct(this, `${kbName}-${dsName}-sync-lambda`, {
+      kmsArn: kmsKey.keyArn,
+      roleHelper: this.props.roleHelper,
+      naming: this.props.naming,
+      functions: [syncFunctionProps],
+      overrideScope: true,
+    });
+
+    // Add SQS trigger to the Lambda function
+    const lambdaFunction = lambdaConstruct.functionsMap[syncFunctionProps.functionName];
+    if (lambdaFunction) {
+      lambdaFunction.addEventSource(
+        new SqsEventSource(syncQueue, {
+          batchSize: 25,
+          maxBatchingWindow: Duration.minutes(5), // Max 300 seconds (5 minutes)
+          reportBatchItemFailures: true,
+        }),
+      );
+    }
+
+    // Configure S3 bucket notification to SQS
+    const bucket = s3.Bucket.fromBucketName(this, `${kbName}-${dsName}-sync-bucket`, dsProps.bucketName);
+
+    // Add SQS permissions for S3 to send messages
+    syncQueue.addToResourcePolicy(
+      new PolicyStatement({
+        sid: 'AllowS3ToSendMessage',
+        effect: Effect.ALLOW,
+        principals: [new ServicePrincipal('s3.amazonaws.com')],
+        actions: ['sqs:SendMessage'],
+        resources: [syncQueue.queueArn],
+        conditions: {
+          ArnEquals: {
+            'aws:SourceArn': bucket.bucketArn,
+          },
+        },
+      }),
+    );
+
+    // Add S3 event notification
+    bucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED,
+      new s3n.SqsDestination(syncQueue),
+      dsProps.prefix ? { prefix: dsProps.prefix } : {},
+    );
+  }
+
   private createS3DataSourceSyncLambda(
     kbName: string,
     dsName: string,
@@ -1466,6 +1592,19 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
           this.kbRole.roleArn,
           kmsKey,
         );
+      } else if (dsProps.enableMultiSync) {
+        if (!dsProps.syncLambdaRoleArn) {
+          throw new Error(`syncLambdaRoleArn is required when enableMultiSync is true for data source ${dsName}`);
+        }
+        this.createS3DataSourceBatchSyncLambda(
+          kbName,
+          dsName,
+          knowledgeBase.attrKnowledgeBaseId,
+          dataSource.attrDataSourceId,
+          dsProps,
+          kmsKey,
+          dsProps.syncLambdaRoleArn,
+        );
       }
     });
 
@@ -1495,7 +1634,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       [
         {
           id: 'AwsSolutions-IAM5',
-          reason: 'Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity',
+          reason: 'Permissions scoped to datasources restricted to specific Knowledgebase for sync activity',
         },
       ],
       true,

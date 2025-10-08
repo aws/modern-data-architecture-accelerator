@@ -403,4 +403,93 @@ describe('MDAA Compliance Stack Tests', () => {
       },
     });
   });
+
+  describe('Error condition tests', () => {
+    test('Should throw error when projectKMSArn is missing', () => {
+      const testApp2 = new MdaaTestApp();
+      const propsWithoutKMS: StepFunctionL3ConstructProps = {
+        ...constructProps,
+        projectKMSArn: undefined,
+        roleHelper: new MdaaRoleHelper(testApp2.testStack, testApp2.naming),
+        naming: testApp2.naming,
+      };
+
+      expect(() => {
+        new StepFunctionL3Construct(testApp2.testStack, 'test-no-kms', propsWithoutKMS);
+      }).toThrow('Project KMS ARN is required for Step Function L3 Construct');
+    });
+
+    test('Should use INFINITE retention when logGroupRetentionDays is 0', () => {
+      const testApp3 = new MdaaTestApp();
+      const stepfunctionWithZeroRetention: StepFunctionProps = {
+        ...stepfunctionDefinition,
+        logGroupRetentionDays: 0,
+      };
+      const propsWithZeroRetention: StepFunctionL3ConstructProps = {
+        ...constructProps,
+        stepfunctionDefinitions: [stepfunctionWithZeroRetention],
+        roleHelper: new MdaaRoleHelper(testApp3.testStack, testApp3.naming),
+        naming: testApp3.naming,
+      };
+
+      new StepFunctionL3Construct(testApp3.testStack, 'test-zero-retention', propsWithZeroRetention);
+      const template = Template.fromStack(testApp3.testStack);
+
+      template.hasResourceProperties('AWS::Logs::LogGroup', {
+        RetentionInDays: Match.absent(),
+      });
+    });
+
+    test('Should use TWO_YEARS retention when logGroupRetentionDays is undefined', () => {
+      const testApp4 = new MdaaTestApp();
+      const stepfunctionWithUndefinedRetention: StepFunctionProps = {
+        ...stepfunctionDefinition,
+        logGroupRetentionDays: undefined,
+      };
+      const propsWithUndefinedRetention: StepFunctionL3ConstructProps = {
+        ...constructProps,
+        stepfunctionDefinitions: [stepfunctionWithUndefinedRetention],
+        roleHelper: new MdaaRoleHelper(testApp4.testStack, testApp4.naming),
+        naming: testApp4.naming,
+      };
+
+      new StepFunctionL3Construct(testApp4.testStack, 'test-undefined-retention', propsWithUndefinedRetention);
+      const template = Template.fromStack(testApp4.testStack);
+
+      template.hasResourceProperties('AWS::Logs::LogGroup', {
+        RetentionInDays: 731,
+      });
+    });
+
+    test('Should use maxEventAgeSeconds when provided', () => {
+      const testApp5 = new MdaaTestApp();
+      const stepfunctionWithMaxEventAge: StepFunctionProps = {
+        ...stepfunctionDefinition,
+        eventBridge: {
+          ...stepfunctionDefinition.eventBridge,
+          maxEventAgeSeconds: 7200,
+        },
+      };
+      const propsWithMaxEventAge: StepFunctionL3ConstructProps = {
+        ...constructProps,
+        stepfunctionDefinitions: [stepfunctionWithMaxEventAge],
+        roleHelper: new MdaaRoleHelper(testApp5.testStack, testApp5.naming),
+        naming: testApp5.naming,
+      };
+
+      new StepFunctionL3Construct(testApp5.testStack, 'test-max-event-age', propsWithMaxEventAge);
+      const template = Template.fromStack(testApp5.testStack);
+
+      template.hasResourceProperties('AWS::Events::Rule', {
+        Targets: Match.arrayWith([
+          Match.objectLike({
+            DeadLetterConfig: Match.anyValue(),
+            RetryPolicy: Match.objectLike({
+              MaximumEventAgeInSeconds: 7200,
+            }),
+          }),
+        ]),
+      });
+    });
+  });
 });

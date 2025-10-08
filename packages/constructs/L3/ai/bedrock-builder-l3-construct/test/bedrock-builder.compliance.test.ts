@@ -1361,6 +1361,110 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     });
   });
 
+  describe('Bedrock Builder L3 Construct with enableMultiSync', () => {
+    const testApp = new MdaaTestApp();
+    const vectorStore: AuroraServerlessPgVectorProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['test-subnet'],
+    };
+
+    const knowledgeBase: BedrockKnowledgeBaseProps = {
+      role: kbRoleRef,
+      vectorStore: 'test-vector-store',
+      s3DataSources: {
+        multiSyncDataSource: {
+          bucketName: 'test-multi-docs-bucket',
+          prefix: 'multi-docs/',
+          enableMultiSync: true,
+          syncLambdaRoleArn: 'arn:test-partition:iam::test-account:role/batch-sync-lambda-role',
+          vectorIngestionConfiguration: {
+            chunkingConfiguration: {
+              chunkingStrategy: 'FIXED_SIZE',
+              fixedSizeChunkingConfiguration: {
+                maxTokens: 500,
+                overlapPercentage: 20,
+              },
+            },
+          },
+        },
+      },
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorFieldSize: 1024,
+    };
+
+    const template = generateTemplateFromTestInput(
+      testApp,
+      dataAdminRoleRef,
+      undefined,
+      { 'test-vector-store': vectorStore },
+      { 'test-kb-multi-sync': knowledgeBase },
+      undefined,
+      undefined,
+    );
+
+    test('Test enableMultiSync Creates Batch Sync Lambda Function', () => {
+      template.hasResourceProperties('AWS::Lambda::Function', {
+        Description: 'Batch sync data source multiSyncDataSource for knowledge base test-kb-multi-sync',
+        Handler: 'datasource_batch_sync.lambda_handler',
+        Role: 'arn:test-partition:iam::test-account:role/batch-sync-lambda-role',
+        Runtime: 'python3.13',
+        Timeout: 900,
+      });
+    });
+
+    test('Test enableMultiSync Creates SQS Queue for Batch Processing', () => {
+      template.hasResourceProperties('AWS::SQS::Queue', {
+        ReceiveMessageWaitTimeSeconds: 20,
+        VisibilityTimeout: 900,
+      });
+    });
+
+    test('Test enableMultiSync Creates S3 Event Notification', () => {
+      template.hasResourceProperties('Custom::S3BucketNotifications', {
+        BucketName: 'test-multi-docs-bucket',
+        NotificationConfiguration: {
+          QueueConfigurations: [
+            {
+              Events: ['s3:ObjectCreated:*'],
+              Filter: {
+                Key: {
+                  FilterRules: [
+                    {
+                      Name: 'prefix',
+                      Value: 'multi-docs/',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      });
+    });
+
+    test('Test Data Source Configuration with enableMultiSync', () => {
+      template.hasResourceProperties('AWS::Bedrock::DataSource', {
+        Name: 'multiSyncDataSource',
+        DataSourceConfiguration: {
+          Type: 'S3',
+          S3Configuration: {
+            BucketArn: 'arn:test-partition:s3:::test-multi-docs-bucket',
+            InclusionPrefixes: ['multi-docs/'],
+          },
+        },
+        VectorIngestionConfiguration: {
+          ChunkingConfiguration: {
+            ChunkingStrategy: 'FIXED_SIZE',
+            FixedSizeChunkingConfiguration: {
+              MaxTokens: 500,
+              OverlapPercentage: 20,
+            },
+          },
+        },
+      });
+    });
+  });
+
   describe('Error Handling Tests', () => {
     test('Test Agent with Config Knowledge Base Reference Error', () => {
       const testApp1 = new MdaaTestApp();

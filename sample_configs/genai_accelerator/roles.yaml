@@ -459,6 +459,61 @@ generatePolicies:
       - id: "AwsSolutions-IAM5"
         reason: "These actions require wildcard resources for Lambda functionality"
 
+  KnowledgeBaseSyncLambdaExecutionPolicy:
+    policyDocument:
+      Statement:
+        # CloudWatch Logs permissions
+        - SID: CloudWatchLogsAccess
+          Effect: Allow
+          Action:
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+          Resource:
+            - "arn:{{partition}}:logs:{{region}}:{{account}}:log-group:/aws/lambda/*"
+        
+        - SID: SQSAccess
+          Effect: Allow
+          Action:
+            - "sqs:ReceiveMessage"
+            - "sqs:DeleteMessage"
+            - "sqs:GetQueueAttributes"
+            - "sqs:SendMessage"
+          Resource:
+            - "arn:{{partition}}:sqs:{{region}}:{{account}}:{{org}}-*"
+        
+        - SID: BedrockIngestionAccess
+          Effect: Allow
+          Action:
+            - "bedrock:StartIngestionJob"
+            - "bedrock:GetIngestionJob"
+            - "bedrock:ListIngestionJobs"
+            - "bedrock:DeleteDataSource"
+            - "bedrock:GetDataSource"
+            - "bedrock:ListDataSources"
+          Resource:
+            - "arn:{{partition}}:bedrock:{{region}}:{{account}}:knowledge-base/*"
+        
+        - SID: KMSAccess
+          Effect: Allow
+          Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+          Resource:
+            - "arn:{{partition}}:kms:{{region}}:{{account}}:key/*"
+          Condition:
+            StringLike:
+              "kms:ViaService": "s3.{{region}}.amazonaws.com"
+        
+        - SID: CloudWatchMetricsAccess
+          Effect: Allow
+          Action:
+            - "cloudwatch:PutMetricData"
+          Resource: "*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "Wildcards required for org-scoped resources and KMS condition-based access"
+
 # The list of roles which will be generated
 generateRoles:
   # Data Admin role with permissions for Bedrock Builder resources
@@ -503,6 +558,27 @@ generateRoles:
       - "service-role/AWSLambdaBasicExecutionRole"
     generatedPolicies:
       - AgentLambdaExecutionPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for usage"
+
+  # Lambda Execution Role for Knowledge Base Sync Functions
+  kb-sync-lambda-role-support-docs:
+    trustedPrincipal: service:lambda.amazonaws.com
+    awsManagedPolicies:
+      - "service-role/AWSLambdaBasicExecutionRole"
+    generatedPolicies:
+      - KnowledgeBaseSyncLambdaExecutionPolicy
+    suppressions:
+      - id: "AwsSolutions-IAM4"
+        reason: "AWSLambdaBasicExecutionRole approved for usage"
+
+  kb-sync-lambda-role-product-docs:
+    trustedPrincipal: service:lambda.amazonaws.com
+    awsManagedPolicies:
+      - "service-role/AWSLambdaBasicExecutionRole"
+    generatedPolicies:
+      - KnowledgeBaseSyncLambdaExecutionPolicy
     suppressions:
       - id: "AwsSolutions-IAM4"
         reason: "AWSLambdaBasicExecutionRole approved for usage"

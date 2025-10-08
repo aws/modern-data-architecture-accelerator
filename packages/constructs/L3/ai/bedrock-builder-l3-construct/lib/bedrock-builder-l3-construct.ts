@@ -8,8 +8,9 @@ import { FunctionProps, LambdaFunctionL3Construct, LayerProps } from '@aws-mdaa/
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaNagSuppressions } from '@aws-mdaa/construct';
 
-import { aws_bedrock as bedrock, aws_kms as kms } from 'aws-cdk-lib';
+import { aws_bedrock as bedrock, aws_kms as kms, Stack } from 'aws-cdk-lib';
 
 import { Effect, PolicyStatement, ServicePrincipal, ArnPrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
@@ -224,6 +225,9 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         });
       });
     }
+
+    // Add suppressions for internal CDK constructs
+    this.addInternalConstructSuppressions();
   }
 
   // ---------------------------------------------
@@ -476,5 +480,75 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       ...kbConfig,
       s3DataSources: resolvedDataSources,
     };
+  }
+
+  private addInternalConstructSuppressions(): void {
+    // Add suppressions for internal CDK constructs like BucketNotificationsHandler
+    Stack.of(this).node.children.forEach(child => {
+      if (
+        child.node.id.includes('Custom::CDKBucketDeployment') ||
+        child.node.id.includes('BucketNotificationsHandler') ||
+        child.node.id.includes('DatabaseSetupFunction') ||
+        child.node.id.includes('LogRetention')
+      ) {
+        MdaaNagSuppressions.addCodeResourceSuppressions(
+          child,
+          [
+            { id: 'AwsSolutions-L1', reason: 'Function is used only as custom resource during CDK deployment.' },
+            {
+              id: 'NIST.800.53.R5-LambdaConcurrency',
+              reason: 'Function is used only as custom resource during CDK deployment.',
+            },
+            {
+              id: 'NIST.800.53.R5-LambdaInsideVPC',
+              reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.',
+            },
+            {
+              id: 'NIST.800.53.R5-LambdaDLQ',
+              reason:
+                'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.',
+            },
+            {
+              id: 'HIPAA.Security-LambdaConcurrency',
+              reason: 'Function is used only as custom resource during CDK deployment.',
+            },
+            {
+              id: 'PCI.DSS.321-LambdaConcurrency',
+              reason: 'Function is used only as custom resource during CDK deployment.',
+            },
+            {
+              id: 'HIPAA.Security-LambdaInsideVPC',
+              reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.',
+            },
+            {
+              id: 'PCI.DSS.321-LambdaInsideVPC',
+              reason: 'Function is used only as custom resource during CDK deployment and interacts only with S3.',
+            },
+            {
+              id: 'HIPAA.Security-LambdaDLQ',
+              reason:
+                'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.',
+            },
+            {
+              id: 'PCI.DSS.321-LambdaDLQ',
+              reason:
+                'Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.',
+            },
+            { id: 'AwsSolutions-IAM4', reason: 'Function is used only as custom resource during CDK deployment.' },
+            { id: 'AwsSolutions-IAM5', reason: 'Function is used only as custom resource during CDK deployment.' },
+            {
+              id: 'HIPAA.Security-IAMNoInlinePolicy',
+              reason: 'Policy managed by CDK and only used during deployment.',
+            },
+            { id: 'PCI.DSS.321-IAMNoInlinePolicy', reason: 'Policy managed by CDK and only used during deployment.' },
+            {
+              id: 'NIST.800.53.R5-IAMNoInlinePolicy',
+              reason: 'Policy managed by CDK and only used during deployment.',
+            },
+          ],
+          true,
+        );
+      }
+    });
   }
 }

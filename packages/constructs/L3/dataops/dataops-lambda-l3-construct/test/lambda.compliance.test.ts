@@ -335,6 +335,28 @@ describe('Bad function config', () => {
       Template.fromStack(testApp.testStack);
     }).toThrow();
   });
+
+  test('Should throw error when kmsArn is missing', () => {
+    const testApp = new MdaaTestApp();
+    const stack = testApp.testStack;
+    const testFunctionProps: FunctionProps = {
+      functionName: 'test-function',
+      srcDir: './test/src/lambda/test',
+      handler: 'test_handler',
+      roleArn: 'arn:test-partition:iam::test-acct:role/test-lambda-role',
+      runtime: 'python3.13',
+    };
+    const constructProps: LambdaFunctionL3ConstructProps = {
+      roleHelper: new MdaaRoleHelper(stack, testApp.naming),
+      naming: testApp.naming,
+      kmsArn: undefined,
+      functions: [testFunctionProps],
+    };
+
+    expect(() => {
+      new LambdaFunctionL3Construct(stack, 'test-no-kms', constructProps);
+    }).toThrow('Project kms key must be defined');
+  });
 });
 
 describe('MDAA test with override scope', () => {

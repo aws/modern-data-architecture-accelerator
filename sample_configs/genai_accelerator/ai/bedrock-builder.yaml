@@ -87,8 +87,9 @@ knowledgeBases:
     s3DataSources:
       support-docs:
         bucketName: ssm:/{{org}}/shared/datalake/bucket/customer-support-docs/name
-        prefix: 'support-docs/'
-        enableSync: true
+        prefix: 'data/'
+        enableMultiSync: true
+        syncLambdaRoleArn: ssm:/{{org}}/shared/generated-role/kb-sync-lambda-role-support-docs/arn
         vectorIngestionConfiguration:
           chunkingConfiguration:
             chunkingStrategy: 'FIXED_SIZE'
@@ -97,9 +98,10 @@ knowledgeBases:
               overlapPercentage: 20
       
       product-docs:
-        bucketName: ssm:/{{org}}/shared/datalake/bucket/customer-support-docs/name
-        prefix: 'product-docs/'
-        enableSync: true
+        bucketName: ssm:/{{org}}/shared/datalake/bucket/product-docs/name
+        prefix: 'data/'
+        enableMultiSync: true
+        syncLambdaRoleArn: ssm:/{{org}}/shared/generated-role/kb-sync-lambda-role-product-docs/arn
         vectorIngestionConfiguration:
           parsingConfiguration:
             parsingStrategy: 'BEDROCK_FOUNDATION_MODEL'
@@ -110,7 +112,7 @@ knowledgeBases:
           
           customTransformationConfiguration:
             intermediateStorageBucket: ssm:/{{org}}/shared/datalake/bucket/custom-transform-intermediate/name
-            intermediateStoragePrefix: 'product-docs/transformed'
+            intermediateStoragePrefix: 'transformed/'
             transformLambdaArns:
               - generated-function:knowledge-base-transformer
 

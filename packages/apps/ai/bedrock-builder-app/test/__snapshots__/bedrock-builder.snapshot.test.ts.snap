@@ -3402,7 +3402,7 @@ Provide responses in markdown format with source citations
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
               },
             ],
           },
@@ -3489,7 +3489,7 @@ Provide responses in markdown format with source citations
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
               },
             ],
           },
@@ -3516,7 +3516,7 @@ Provide responses in markdown format with source citations
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
               },
             ],
           },
@@ -5308,7 +5308,7 @@ Provide responses in markdown format with source citations
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
               },
             ],
           },
@@ -5395,7 +5395,7 @@ Provide responses in markdown format with source citations
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
               },
             ],
           },
@@ -5422,7 +5422,7 @@ Provide responses in markdown format with source citations
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-IAM5",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
               },
             ],
           },
@@ -13398,7 +13398,7 @@ Provide responses in markdown format with source citations
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
             },
           ],
         },
@@ -13485,7 +13485,7 @@ Provide responses in markdown format with source citations
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
             },
           ],
         },
@@ -13512,7 +13512,7 @@ Provide responses in markdown format with source citations
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
             },
           ],
         },
@@ -15304,7 +15304,7 @@ Provide responses in markdown format with source citations
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
             },
           ],
         },
@@ -15391,7 +15391,7 @@ Provide responses in markdown format with source citations
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
             },
           ],
         },
@@ -15418,7 +15418,7 @@ Provide responses in markdown format with source citations
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync acitvity",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-knowledge-base-l3-construct/lib/bedrock-knowledge-base-l3-construct.ts:LINE:COL] Permissions scoped to datasources restricted to specific Knowledgebase for sync activity",
             },
           ],
         },

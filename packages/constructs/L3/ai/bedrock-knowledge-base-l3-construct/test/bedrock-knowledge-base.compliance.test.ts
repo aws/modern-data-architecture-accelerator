@@ -229,6 +229,53 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
+  test('Test Knowledge Base with Batch Sync Lambda', () => {
+    const testApp = new MdaaTestApp();
+    const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+    const kbWithBatchSync: BedrockKnowledgeBaseProps = {
+      ...basicKnowledgeBase,
+      s3DataSources: {
+        testBatchSync: {
+          bucketName: 'test-docs-bucket',
+          prefix: 'test-prefix/',
+          enableMultiSync: true,
+          syncLambdaRoleArn: 'arn:test-partition:iam::test-account:role/batch-sync-lambda-role',
+        },
+      },
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-batch-sync',
+      kbConfig: kbWithBatchSync,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper,
+      naming: testApp.naming,
+    };
+
+    new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-batch-sync-construct', constructProps);
+    const template = Template.fromStack(testApp.testStack);
+
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      Handler: 'datasource_batch_sync.lambda_handler',
+      Runtime: 'python3.13',
+      Role: 'arn:test-partition:iam::test-account:role/batch-sync-lambda-role',
+    });
+
+    // Verify SQS queue is created
+    template.hasResourceProperties('AWS::SQS::Queue', {
+      VisibilityTimeout: 900,
+      ReceiveMessageWaitTimeSeconds: 20,
+    });
+
+    // Verify Dead Letter Queue is created
+    template.hasResourceProperties('AWS::SQS::Queue', {
+      MessageRetentionPeriod: 1209600, // 14 days
+    });
+  });
+
   test('Test RDS Aurora Cluster Creation', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
@@ -902,5 +949,132 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     expect(() => {
       new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-unknown-model-construct', constructProps);
     }).toThrow('Unable to determine vector field size from Embedding Model ID : unknown.embedding-model. ');
+  });
+
+  test('Should throw error when syncLambdaRoleArn is missing for enableMultiSync', () => {
+    const testApp = new MdaaTestApp();
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+    const kbWithMissingRoleArn: BedrockKnowledgeBaseProps = {
+      role: kbRoleRef,
+      vectorStore: 'test-vector-store',
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      s3DataSources: {
+        testSource: {
+          bucketName: 'test-bucket',
+          enableMultiSync: true,
+          // syncLambdaRoleArn is missing
+        },
+      },
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-missing-role',
+      kbConfig: kbWithMissingRoleArn,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+    };
+
+    expect(() => {
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-missing-role-construct', constructProps);
+    }).toThrow('syncLambdaRoleArn is required when enableMultiSync is true for data source testSource');
+  });
+
+  test('Should throw error when hierarchicalChunkingConfiguration is missing', () => {
+    const testApp = new MdaaTestApp();
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+    const kbWithMissingHierarchical: BedrockKnowledgeBaseProps = {
+      role: kbRoleRef,
+      vectorStore: 'test-vector-store',
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      s3DataSources: {
+        testSource: {
+          bucketName: 'test-bucket',
+          vectorIngestionConfiguration: {
+            chunkingConfiguration: {
+              chunkingStrategy: 'HIERARCHICAL',
+              // hierarchicalChunkingConfiguration is missing
+            },
+          },
+        },
+      },
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-missing-hierarchical',
+      kbConfig: kbWithMissingHierarchical,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+    };
+
+    expect(() => {
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-missing-hierarchical-construct', constructProps);
+    }).toThrow('hierarchicalChunkingConfiguration is required when chunkingStrategy is HIERARCHICAL');
+  });
+
+  test('Should throw error when semanticChunkingConfiguration is missing', () => {
+    const testApp = new MdaaTestApp();
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+    const kbWithMissingSemantic: BedrockKnowledgeBaseProps = {
+      role: kbRoleRef,
+      vectorStore: 'test-vector-store',
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      s3DataSources: {
+        testSource: {
+          bucketName: 'test-bucket',
+          vectorIngestionConfiguration: {
+            chunkingConfiguration: {
+              chunkingStrategy: 'SEMANTIC',
+              // semanticChunkingConfiguration is missing
+            },
+          },
+        },
+      },
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-missing-semantic',
+      kbConfig: kbWithMissingSemantic,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+    };
+
+    expect(() => {
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-missing-semantic-construct', constructProps);
+    }).toThrow('semanticChunkingConfiguration is required when chunkingStrategy is SEMANTIC');
+  });
+
+  test('Should handle prefix in data source configuration', () => {
+    const testApp = new MdaaTestApp();
+    const kmsKey = new Key(testApp.testStack, 'TestKey');
+    const kbWithPrefix: BedrockKnowledgeBaseProps = {
+      role: kbRoleRef,
+      vectorStore: 'test-vector-store',
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      s3DataSources: {
+        testSource: {
+          bucketName: 'test-bucket',
+          prefix: 'test-prefix/',
+        },
+      },
+    };
+
+    const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+      kbName: 'test-kb-prefix',
+      kbConfig: kbWithPrefix,
+      vectorStoreConfig,
+      kmsKey,
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+      naming: testApp.naming,
+    };
+
+    expect(() => {
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-prefix-construct', constructProps);
+    }).not.toThrow();
   });
 });

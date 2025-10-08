@@ -50,6 +50,13 @@ buckets:
       - DataReadPolicy
       - KnowledgeBasePolicy
     
+  product-docs:
+    enableEventBridgeNotifications: true
+    accessPolicies:
+      - AdminPolicy
+      - DataReadPolicy
+      - KnowledgeBasePolicy
+    
   # Bucket for supplemental images
   customer-support-supplemental-images:
     accessPolicies:

@@ -13,10 +13,11 @@ This configuration deploys:
 
 1. A GenAI platform with Bedrock integration for the core GenAI capabilities
 2. Bedrock Agents with action groups for customer support use cases
-3. Bedrock Knowledge Bases for RAG (Retrieval Augmented Generation)
+3. Bedrock Knowledge Bases for RAG (Retrieval Augmented Generation) with auto-sync capabilities
 4. Vector stores for efficient knowledge retrieval
 5. Guardrails to ensure appropriate AI responses
 6. IAM roles including a data-admin role with all necessary permissions
+7. Multi-sync architecture for handling concurrent file uploads
 
 ***
 
@@ -60,6 +61,38 @@ This configuration deploys:
    ```
 
 For detailed deployment procedures, see [DEPLOYMENT](../../DEPLOYMENT.md).
+
+***
+
+## Auto-Sync Architecture
+
+### Multi-Sync Solution for Concurrent File Processing
+
+This configuration implements an advanced auto-sync architecture to address AWS Knowledge Base service limitations that allow only one concurrent ingestion job per knowledge base.
+
+#### Solution Architecture
+
+The multi-sync architecture uses event batching and serialized processing:
+
+1. **Event Batching**: S3 events are collected and batched using SQS queues
+2. **Serialized Processing**: A dedicated Lambda function processes batches sequentially
+3. **State Management**: Tracks ingestion status to prevent duplicate processing
+4. **Error Handling**: Implements retry mechanisms and dead letter queues
+
+#### AWS Service Constraints Handled
+
+| Constraint | Limit | Solution |
+|------------|-------|----------|
+| Concurrent ingestion jobs per knowledge base | 1 | Event batching and serialization |
+| Concurrent ingestion jobs per data source | 1 | Sequential processing |
+| Concurrent ingestion jobs per account | 5 | Account-level coordination |
+| Maximum documents per API call | 25 | Batch size optimization |
+| Maximum file size per ingestion | 50 MB | File validation |
+
+#### Components
+- **SQS Queues**: Buffer S3 events for batch processing
+- **Batch Sync Lambda**: Processes events in serialized batches
+- **Dead Letter Queues**: Handle failed processing attempts
 
 ***
 
@@ -145,6 +178,7 @@ The roles module deploys:
 - **agent-execution-role**: Service role for Bedrock agents to invoke models and access knowledge bases
 - **kb-execution-role**: Service role for Knowledge Base operations and data ingestion
 - **agent-lambda-role**: Execution role for Lambda functions used in agent action groups
+- **kb-sync-lambda role**: Execution role for multi-sync Lambda functions that handle concurrent file processing
 
 ***
 
@@ -184,19 +218,19 @@ The customer support agent uses Amazon Bedrock Knowledge Bases for document inge
 
 #### Upload Locations
 
-You have two main data sources configured:
+You have two separate data sources configured in different buckets:
 
-1. **Support Documents** (`support-docs`) - **Auto-sync enabled**:
-   - **Bucket**: `${org}-${env}-shared-datalake-customer-support-docs`
-   - **Prefix**: `support-docs/`
-   - **Full S3 path**: `s3://${org}-${env}-shared-datalake-customer-support-docs/support-docs/`
+1. **Support Documents** (`support-docs`) - **Auto-sync enabled with multi-sync**:
+   - **Bucket**: `${org}-${env}-shared-datalake-support-docs`
+   - **Prefix**: `data/`
+   - **Full S3 path**: `s3://${org}-${env}-shared-datalake-support-docs/data/`
 
-2. **Product Documents** (`product-docs`) - **Manual sync required**:
-   - **Bucket**: `${org}-${env}-shared-datalake-customer-support-docs`
-   - **Prefix**: `product-docs/`
-   - **Full S3 path**: `s3://${org}-${env}-shared-datalake-customer-support-docs/product-docs/`
+2. **Product Documents** (`product-docs`) - **Auto-sync enabled with multi-sync**:
+   - **Bucket**: `${org}-${env}-shared-datalake-product-docs`
+   - **Prefix**: `data/`
+   - **Full S3 path**: `s3://${org}-${env}-shared-datalake-product-docs/data/`
 
-**Note**: Both the `support-docs` and `product-docs` prefix has auto-sync enabled
+**Note**: Both data sources have `enableMultiSync: true` configured to handle concurrent file uploads and synced to Knowledge base
 
 #### How to Upload Documents
 
@@ -229,17 +263,22 @@ KMS_KEY_ID="arn:aws:kms:${REGION}:${ACCOUNT_ID}:key/your-kms-key-id"
 
 # Upload support documents
 aws s3 cp your-support-doc.pdf \
-  s3://${ORG}-${ENV}-shared-datalake-customer-support-docs/support-docs/ \
+  s3://${ORG}-${ENV}-shared-datalake-support-docs/data/ \
   --sse aws:kms --sse-kms-key-id ${KMS_KEY_ID}
 
 # Upload product documents
 aws s3 cp your-product-doc.pdf \
-  s3://${ORG}-${ENV}-shared-datalake-customer-support-docs/product-docs/ \
+  s3://${ORG}-${ENV}-shared-datalake-product-docs/data/ \
   --sse aws:kms --sse-kms-key-id ${KMS_KEY_ID}
 
-# Bulk upload
-aws s3 sync ./documents/ \
-  s3://${ORG}-${ENV}-shared-datalake-customer-support-docs/support-docs/ \
+# Bulk upload to support docs
+aws s3 sync ./support-documents/ \
+  s3://${ORG}-${ENV}-shared-datalake-support-docs/data/ \
+  --sse aws:kms --sse-kms-key-id ${KMS_KEY_ID}
+
+# Bulk upload to product docs
+aws s3 sync ./product-documents/ \
+  s3://${ORG}-${ENV}-shared-datalake-product-docs/data/ \
   --sse aws:kms --sse-kms-key-id ${KMS_KEY_ID}
 ```
 
@@ -321,6 +360,7 @@ echo "Testing accessibility of: $MODEL_TO_USE"
    - Verify S3 bucket permissions and KMS key access
    - Check that documents are uploaded with proper encryption
    - Monitor CloudWatch logs for detailed error messages
+   - For multi-sync issues, check SQS queue status and batch processing lambda logs
 
 3. **Agent not responding**:
    - Ensure the agent is in "Prepared" state

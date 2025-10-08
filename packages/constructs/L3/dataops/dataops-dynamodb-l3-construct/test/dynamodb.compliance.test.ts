@@ -78,4 +78,18 @@ describe('MDAA DynamoDB Construct Tests', () => {
       },
     });
   });
+
+  test('Should throw error when projectKMSArn is missing', () => {
+    const testApp2 = new MdaaTestApp();
+    const propsWithoutKMS: DynamodbL3ConstructProps = {
+      ...constructProps,
+      projectKMSArn: undefined,
+      roleHelper: new MdaaRoleHelper(testApp2.testStack, testApp2.naming),
+      naming: testApp2.naming,
+    };
+
+    expect(() => {
+      new DynamodbL3Construct(testApp2.testStack, 'test-ddb-no-kms', propsWithoutKMS);
+    }).toThrow('Project KMS ARN is required for DynamoDB L3 construct');
+  });
 });

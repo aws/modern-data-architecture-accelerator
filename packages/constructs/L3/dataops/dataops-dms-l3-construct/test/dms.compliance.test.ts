@@ -595,4 +595,38 @@ describe('MDAA Compliance Stack Tests', () => {
       });
     });
   });
+
+  describe('Error condition tests', () => {
+    test('Should throw error when kmsArn is missing', () => {
+      const testApp = new MdaaTestApp();
+      const propsWithoutKMS: DMSL3ConstructProps = {
+        projectName: 'test-project',
+        projectBucket: 'test-project-bucket',
+        kmsArn: undefined,
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+        dms: {},
+      };
+
+      expect(() => {
+        new DMSL3Construct(testApp.testStack, 'test-no-kms', propsWithoutKMS);
+      }).toThrow('Please provide kmsArn');
+    });
+
+    test('Should throw error when projectBucket is missing', () => {
+      const testApp = new MdaaTestApp();
+      const propsWithoutBucket: DMSL3ConstructProps = {
+        projectName: 'test-project',
+        projectBucket: undefined,
+        kmsArn: 'arn:test-partition:kms:test-region:test-acct:key/test-key-id',
+        naming: testApp.naming,
+        roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+        dms: {},
+      };
+
+      expect(() => {
+        new DMSL3Construct(testApp.testStack, 'test-no-bucket', propsWithoutBucket);
+      }).toThrow('Please provide projectBucket');
+    });
+  });
 });
