@@ -1,5 +1,89 @@
 # Change Log
 
+## [1.2.0] - 2025-10-08
+
+### General Changes
+
+- Enhanced CI/CD pipeline with cornerstone publishing and improved test coverage
+- Added Python testing framework integration to CI/CD pipelines
+- Improved documentation generation and configuration object documentation
+- Enhanced release management with proper versioning and prerelease handling
+- Added support for issue and merge request templates
+- Improved build processes with better dependency management
+- Enhanced error handling and validation across modules
+- Added support for testing published NPM packages
+- Improved Docker command handling in CI/CD processes
+
+### Security Changes
+
+- Enhanced PCI compliance with additional CDK Nag ruleset validation
+- Improved security documentation with consolidated SECURITY.md
+- Enhanced AppSec review compliance and findings resolution
+- Strengthened KMS encryption actions to remove unnecessary wildcards
+- Added Bedrock Guardrail for PII removal capabilities
+- Improved least privilege principles for DataZone policies
+
+### Governance Changes
+
+- Enhanced DataZone module with domain units support and improved version handling
+- Added Identity Center (IdC) support in Lake Formation settings
+- Improved SageMaker Catalog module compatibility with DataZone changes
+- Enhanced cross-account lambda invocation samples
+- Added Macie session support for account-level deployment
+- Improved governance category organization of modules
+
+### Data Lake Changes
+
+- Enhanced multi-region support for MDAA module deployment
+- Improved Athena workgroup configurations
+- Enhanced S3 bucket lifecycle policy management
+- Added support for unique bucket naming with UUID suffixes
+- Improved Lake Formation role permissions for bucket write access
+
+### DataOps Changes
+
+- Added support for Scala Glue ETL jobs
+- Enhanced DynamoDB app module with new functionality
+- Improved DMS module with bug fixes and enhanced endpoint configurations
+- Added support for external library references in Glue jobs
+- Enhanced DataOps Lambda module with scope override options
+- Improved Nifi module with Kubernetes version updates and registry integration
+- Added support for custom EventBridge rule inputs
+- Enhanced Step Function orchestration blueprints
+- Improved Glue workflow timeout handling
+- Added continuous log groups for Glue jobs
+- Enhanced DataOps project module with improved database and role grant handling
+
+### Data Science/AI/ML Changes
+
+- Enhanced Bedrock Builder module with improved Knowledge Bases and Guardrails support
+- Added OpenSearch Serverless Vector DB support
+- Enhanced Aurora Serverless Vector DB with sizing parameters
+- Improved model invocation logging configuration
+- Added support for inference profile endpoint IDs
+- Enhanced Bedrock region configuration and resource dependencies
+- Improved GenAI Accelerator (GAIA) with v2 enhancements
+- Added support for Bedrock Agent deployment independence
+- Enhanced knowledge base resyncing functionality based on S3 sources
+- Improved SageMaker Studio experience with new default settings
+- Added support for custom parsing strategies and chunking configuration
+
+### Data Analytics Changes
+
+- Enhanced Redshift Data Warehouse with support for actual AWS node types
+- Added support for Redshift cluster creation from existing snapshots
+- Improved QuickSight IP address restrictions
+- Enhanced OpenSearch domain configurations
+
+### Core/Utility Changes
+
+- Enhanced EC2 module with improved security group configurations
+- Improved SFTP Transfer Family server and user management
+- Enhanced EventBridge module with better event bus policy handling
+- Added DataSync improvements for data movement services
+- Enhanced Lambda layer builds with specific Python runtime support
+- Improved CDK asset builds with Docker fallback to pip
+
 ## [1.1.0] - 2025-08-15
 
 ### General Changes
