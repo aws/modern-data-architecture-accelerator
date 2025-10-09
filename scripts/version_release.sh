@@ -10,11 +10,11 @@ export CURRENT_VERSION=$(jq -r .version < lerna.json )
 case "${RELEASE_TYPE}" in
   "alpha"|"beta"|"rc")
     echo "Creating ${RELEASE_TYPE} prerelease version"
-    npx lerna version pre${VERSION_BUMP_LEVEL} --preid=${RELEASE_TYPE} --no-git-tag-version --no-push --force-publish -y || true
+    npx lerna version pre${VERSION_BUMP_LEVEL} --preid=${RELEASE_TYPE} --exact --no-git-tag-version --no-push --force-publish -y || true
     ;;
   "release"|"")
     echo "Creating release version"
-    npx lerna version $VERSION_BUMP_LEVEL --no-git-tag-version --no-push --force-publish -y || true
+    npx lerna version $VERSION_BUMP_LEVEL --exact --no-git-tag-version --no-push --force-publish -y || true
     ;;
   *)
     echo "Invalid RELEASE_TYPE: ${RELEASE_TYPE}. Must be alpha, beta, rc, release, or empty."
