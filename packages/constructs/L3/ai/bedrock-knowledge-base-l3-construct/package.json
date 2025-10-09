@@ -47,6 +47,7 @@
   },
   "peerDependencies": {
     "@aws-mdaa/cloudwatch-constructs": "1.1.0",
+    "@aws-mdaa/opensearch-constructs": "1.1.0",
     "@aws-mdaa/construct": "1.1.0",
     "@aws-mdaa/dataops-lambda-l3-construct": "1.1.0",
     "@aws-mdaa/ec2-constructs": "1.1.0",
@@ -64,6 +65,7 @@
   },
   "dependencies": {
     "@aws-mdaa/cloudwatch-constructs": "1.1.0",
+    "@aws-mdaa/opensearch-constructs": "1.1.0",
     "@aws-mdaa/construct": "1.1.0",
     "@aws-mdaa/dataops-lambda-l3-construct": "1.1.0",
     "@aws-mdaa/ec2-constructs": "1.1.0",

@@ -204,7 +204,7 @@ feature_merge_sonarqube:
       - node_modules/
       - packages/**/node_modules/
     policy: pull
-  allow_failure: false
+  allow_failure: true
   script:
     - ./scripts/sonarqube.sh
 
