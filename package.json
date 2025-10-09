@@ -11,7 +11,6 @@
     "prettier": "lerna run prettier --stream",
     "test:snapshots": "jest --config jest.config.snapshot.js",
     "test:snapshots:update": "jest --config jest.config.snapshot.js --updateSnapshot",
-    "test": "./scripts/test.sh",
     "test:python": "lerna run test:python --stream",
     "test:python:install": "lerna run test:python:install --stream",
     "test:python:all": "./scripts/python_test.sh",

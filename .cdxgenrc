@@ -1,0 +1,13 @@
+{
+  "cache": true,
+  "cache-dir": ".cdxgen-cache",
+  "use-lock-files": true,
+  "exclude-dev": true,
+  "max-depth": 2,
+  "verbose": true,
+  "debug": false,
+  "retry-count": 2,
+  "no-recurse": false,
+  "exclude-type": ["test", "example"],
+  "batch-size": 50
+}

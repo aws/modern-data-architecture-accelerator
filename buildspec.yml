@@ -47,7 +47,10 @@ artifacts:
     - CHANGELOG.md
     - SECURITY.md
     - .viperlightignore
+    - .gitleaksignore
+    - .semgrepignore
     - solution-manifest.yaml
+    - .cdxgenrc
     - deployment/**/*
   exclude-paths:
     - '**/node_modules/**'
