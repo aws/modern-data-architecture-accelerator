@@ -754,6 +754,7 @@ release_version_package:
     - ./scripts/npm_install.sh
     - ./scripts/version_release.sh
     - ./scripts/build_test.sh
+    - npm run test:snapshots:update
     - ./scripts/package.sh
 
 release:
