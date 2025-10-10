@@ -79,7 +79,7 @@
     "@aws-cdk/lambda-layer-kubectl-v30": "^2.0.4",
     "@aws-cdk/lambda-layer-kubectl-v31": "^2.1.0",
     "@aws-cdk/lambda-layer-kubectl-v32": "^2.1.0",
-    "@aws-cdk/lambda-layer-kubectl-v33": "^2.1.0"
+    "@aws-cdk/lambda-layer-kubectl-v33": "^2.0.0"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",
   "stability": "experimental",

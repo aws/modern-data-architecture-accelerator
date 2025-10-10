@@ -55,10 +55,20 @@ before_script:
   - git config --global user.name "CICD"
   - git config --global user.email "ci@example.com"
 
+feature_validate_dependencies:
+  tags:
+    - arch:amd64
+    - size:medium
+  only:
+    - merge_requests
+  stage: prebuild
+  script:
+    - ./scripts/validate_dependencies.sh
+
 feature_merge_lint:
   tags:
     - arch:amd64
-    - size:3xlarge
+    - size:medium
   only:
     - merge_requests
   stage: prebuild
@@ -75,7 +85,7 @@ feature_merge_lint:
 feature_merge_main:
   tags:
     - arch:amd64
-    - size:3xlarge
+    - size:medium
   only:
     - merge_requests
   stage: prebuild
@@ -127,7 +137,7 @@ feature_merge_python_test:
   stage: build  # Same stage = parallel execution
   tags:
     - arch:amd64
-    - size:large  # Smaller than 3xlarge since no TypeScript build
+    - size:large
   only:
     - merge_requests
   needs:
@@ -160,7 +170,7 @@ feature_merge_python_test:
 feature_merge_snapshot_test:
   tags:
     - arch:amd64
-    - size:3xlarge
+    - size:large
   only:
     - merge_requests
   stage: analyze
@@ -190,7 +200,7 @@ feature_merge_snapshot_test:
 feature_merge_sonarqube:
   tags:
     - arch:amd64
-    - size:3xlarge
+    - size:large
   only:
     - merge_requests
   stage: analyze
@@ -286,7 +296,7 @@ feature_python_test:
   stage: build  # Same stage = parallel execution
   tags:
     - arch:amd64
-    - size:large  # Smaller than 3xlarge since no TypeScript build
+    - size:large
   except:
     refs:
       - main
@@ -501,7 +511,7 @@ prerelease_build_test:
 prerelease_analyze:
   tags:
     - arch:amd64
-    - size:3xlarge
+    - size:large
   only:
     refs:
       - main
@@ -533,7 +543,7 @@ prerelease_analyze:
 prerelease_package:
   tags:
     - arch:amd64
-    - size:3xlarge
+    - size:large
   only:
     refs:
       - main
@@ -749,7 +759,7 @@ release_version_package:
 release:
   tags:
     - arch:amd64
-    - size:small
+    - size:medium
   environment: release
   when: manual
   manual_confirmation: "Are you sure you want to create a $VERSION_BUMP_LEVEL $RELEASE_TYPE version?"
