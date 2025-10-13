@@ -13,7 +13,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
         ],
       },
     },
-    "Description": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.1.0",
+    "Description": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.2.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -577,7 +577,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/ea5f733a74b8b9601352b74e9177280b7ada38afb7e291fab428040cf2952d0a.json",
+                "/2aff5f5725980e50dcaac0e1c4222e252d5d3cfb122165428fc9c6f9c98809cd.json",
               ],
             ],
           },
@@ -700,7 +700,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.1.0",
+          "Value": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.2.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -831,7 +831,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/8f4b053fdea83cc908028a89418da250421b90d4fb2c7c9d1cebf5af08f40fbb.json",
+                "/f596493946ad206044a676e579767dcda582f7eca3afcefe48710fcf841aa036.json",
               ],
             ],
           },
@@ -955,7 +955,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/fe4f61bd7563b6f45c7e81c02e53f9ea36b139b816644a16c905c39289dae898.json",
+                "/08425d685188cd3f10d4731859e1b382d08823973598a9b0c2b8375651a37b90.json",
               ],
             ],
           },
@@ -13007,7 +13007,7 @@ openssl pkcs12 -export -in /root/mgmt-instance.cert.pem -inkey /root/mgmt-instan
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-nificluster-main-ec--3e8248bf",
@@ -13705,7 +13705,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
       ],
     },
   },
-  "Description": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.1.0",
+  "Description": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.2.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -14269,7 +14269,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/ea5f733a74b8b9601352b74e9177280b7ada38afb7e291fab428040cf2952d0a.json",
+              "/2aff5f5725980e50dcaac0e1c4222e252d5d3cfb122165428fc9c6f9c98809cd.json",
             ],
           ],
         },
@@ -14392,7 +14392,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.1.0",
+        "Value": "(SO0320-dataops-nifi) Modern Data Architecture Accelerator. Version 1.2.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -14523,7 +14523,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/8f4b053fdea83cc908028a89418da250421b90d4fb2c7c9d1cebf5af08f40fbb.json",
+              "/f596493946ad206044a676e579767dcda582f7eca3afcefe48710fcf841aa036.json",
             ],
           ],
         },
@@ -14647,7 +14647,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/fe4f61bd7563b6f45c7e81c02e53f9ea36b139b816644a16c905c39289dae898.json",
+              "/08425d685188cd3f10d4731859e1b382d08823973598a9b0c2b8375651a37b90.json",
             ],
           ],
         },
@@ -26699,7 +26699,7 @@ openssl pkcs12 -export -in /root/mgmt-instance.cert.pem -inkey /root/mgmt-instan
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-nificluster-main-ec--3e8248bf",

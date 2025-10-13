@@ -3,7 +3,7 @@
 exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-glue-workflow-main": {
-    "Description": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version 1.1.0",
+    "Description": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version 1.2.0",
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -122,7 +122,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version 1.1.0",
+          "Value": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version 1.2.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -163,7 +163,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -205,7 +205,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -258,7 +258,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -288,7 +288,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -318,7 +318,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -872,7 +872,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
 
 exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version 1.1.0",
+  "Description": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version 1.2.0",
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -991,7 +991,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version 1.1.0",
+        "Value": "(SO0320-dataops-workflow) Modern Data Architecture Accelerator. Version 1.2.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -1032,7 +1032,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1074,7 +1074,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1127,7 +1127,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1157,7 +1157,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1187,7 +1187,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },

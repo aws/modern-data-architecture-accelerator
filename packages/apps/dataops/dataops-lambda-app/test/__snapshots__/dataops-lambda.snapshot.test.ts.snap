@@ -3,7 +3,7 @@
 exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-lambda-main": {
-    "Description": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.1.0",
+    "Description": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.2.0",
     "Outputs": {
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
@@ -344,7 +344,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.1.0",
+          "Value": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.2.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -462,7 +462,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -504,7 +504,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -554,7 +554,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -584,7 +584,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -614,7 +614,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -642,7 +642,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -684,7 +684,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -735,7 +735,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -777,7 +777,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -888,7 +888,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -918,7 +918,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -948,7 +948,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -975,7 +975,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1005,7 +1005,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1035,7 +1035,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1063,7 +1063,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1105,7 +1105,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1156,7 +1156,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1198,7 +1198,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1248,7 +1248,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1278,7 +1278,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1308,7 +1308,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1335,7 +1335,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1365,7 +1365,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1395,7 +1395,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1423,7 +1423,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1465,7 +1465,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1515,7 +1515,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1545,7 +1545,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1575,7 +1575,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1840,7 +1840,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testdock-5e6dbf4e",
@@ -2063,7 +2063,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           "Description": "Function descriptions",
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
               "env-var-name": "value",
             },
           },
@@ -2252,7 +2252,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc",
@@ -2350,7 +2350,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunv--8d6e081",
@@ -2639,7 +2639,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testlaye-5fa26813",
@@ -2813,7 +2813,7 @@ exports[`dataops-lambda Snapshot Tests Lambda App App Snapshot Test 1`] = `
 
 exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.1.0",
+  "Description": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.2.0",
   "Outputs": {
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -3154,7 +3154,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.1.0",
+        "Value": "(SO0320-dataops-lambda) Modern Data Architecture Accelerator. Version 1.2.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -3272,7 +3272,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3314,7 +3314,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3364,7 +3364,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3394,7 +3394,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3424,7 +3424,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3452,7 +3452,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3494,7 +3494,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3545,7 +3545,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3587,7 +3587,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3698,7 +3698,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3728,7 +3728,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3758,7 +3758,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3785,7 +3785,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3815,7 +3815,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3845,7 +3845,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3873,7 +3873,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3915,7 +3915,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -3966,7 +3966,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4008,7 +4008,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4058,7 +4058,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4088,7 +4088,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4118,7 +4118,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4145,7 +4145,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4175,7 +4175,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4205,7 +4205,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4233,7 +4233,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4275,7 +4275,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4325,7 +4325,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4355,7 +4355,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4385,7 +4385,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -4650,7 +4650,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testdock-5e6dbf4e",
@@ -4873,7 +4873,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         "Description": "Function descriptions",
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
             "env-var-name": "value",
           },
         },
@@ -5062,7 +5062,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunvpc",
@@ -5160,7 +5160,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testfunv--8d6e081",
@@ -5449,7 +5449,7 @@ exports[`dataops-lambda Snapshot Tests Lambda Stack Snapshot Test 1`] = `
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.1.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-lambda-main-testlaye-5fa26813",

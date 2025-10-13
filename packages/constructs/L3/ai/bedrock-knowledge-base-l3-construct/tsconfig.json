@@ -60,6 +60,9 @@
       "path": "../../core/l3-construct"
     },
     {
+      "path": "../../../L2/opensearch-constructs"
+    },
+    {
       "path": "../../../L2/rds-constructs"
     },
     {
