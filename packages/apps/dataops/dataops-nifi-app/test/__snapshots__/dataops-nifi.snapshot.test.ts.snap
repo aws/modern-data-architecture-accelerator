@@ -55,6 +55,9 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
         "ap-southeast-5": {
           "value": "nodejs22.x",
         },
+        "ap-southeast-6": {
+          "value": "nodejs22.x",
+        },
         "ap-southeast-7": {
           "value": "nodejs22.x",
         },
@@ -77,7 +80,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
           "value": "nodejs22.x",
         },
         "eu-isoe-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "eu-north-1": {
           "value": "nodejs22.x",
@@ -95,6 +98,9 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
           "value": "nodejs22.x",
         },
         "eu-west-3": {
+          "value": "nodejs22.x",
+        },
+        "eusc-de-east-1": {
           "value": "nodejs22.x",
         },
         "il-central-1": {
@@ -125,16 +131,22 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
           "value": "nodejs22.x",
         },
         "us-iso-east-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-iso-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-isob-east-1": {
           "value": "nodejs18.x",
         },
         "us-isob-west-1": {
           "value": "nodejs18.x",
+        },
+        "us-isof-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-isof-south-1": {
+          "value": "nodejs22.x",
         },
         "us-west-1": {
           "value": "nodejs22.x",
@@ -577,7 +589,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/2aff5f5725980e50dcaac0e1c4222e252d5d3cfb122165428fc9c6f9c98809cd.json",
+                "/f5fefc44dc8a59a6848817b58f8ecd32f7070d7ab8b11d49d30296c96657369f.json",
               ],
             ],
           },
@@ -831,7 +843,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/f596493946ad206044a676e579767dcda582f7eca3afcefe48710fcf841aa036.json",
+                "/aec6d7c7f94129c7e026711d4f19114c48cbdea8c11945fb8302be3e10f26082.json",
               ],
             ],
           },
@@ -955,7 +967,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                 {
                   "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                 },
-                "/08425d685188cd3f10d4731859e1b382d08823973598a9b0c2b8375651a37b90.json",
+                "/7a0579043acbde58b936832c60a1d00edc4c3241b14947065dde4c96b45ef9d8.json",
               ],
             ],
           },
@@ -2513,7 +2525,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster App App Snapshot Test 1`] = `
                   {
                     "Ref": "AWS::Partition",
                   },
-                  ":iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                  ":iam::aws:policy/AmazonEC2ContainerRegistryPullOnly",
                 ],
               ],
             },
@@ -13424,6 +13436,10 @@ openssl pkcs12 -export -in /root/mgmt-instance.cert.pem -inkey /root/mgmt-instan
           },
           "FunctionName": "test-org-test-env-test-domain-test-nificluster-main-ec2-333da4da",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -13747,6 +13763,9 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
       "ap-southeast-5": {
         "value": "nodejs22.x",
       },
+      "ap-southeast-6": {
+        "value": "nodejs22.x",
+      },
       "ap-southeast-7": {
         "value": "nodejs22.x",
       },
@@ -13769,7 +13788,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
         "value": "nodejs22.x",
       },
       "eu-isoe-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "eu-north-1": {
         "value": "nodejs22.x",
@@ -13787,6 +13806,9 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
         "value": "nodejs22.x",
       },
       "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "eusc-de-east-1": {
         "value": "nodejs22.x",
       },
       "il-central-1": {
@@ -13817,16 +13839,22 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
         "value": "nodejs22.x",
       },
       "us-iso-east-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-iso-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-isob-east-1": {
         "value": "nodejs18.x",
       },
       "us-isob-west-1": {
         "value": "nodejs18.x",
+      },
+      "us-isof-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-isof-south-1": {
+        "value": "nodejs22.x",
       },
       "us-west-1": {
         "value": "nodejs22.x",
@@ -14269,7 +14297,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/2aff5f5725980e50dcaac0e1c4222e252d5d3cfb122165428fc9c6f9c98809cd.json",
+              "/f5fefc44dc8a59a6848817b58f8ecd32f7070d7ab8b11d49d30296c96657369f.json",
             ],
           ],
         },
@@ -14523,7 +14551,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/f596493946ad206044a676e579767dcda582f7eca3afcefe48710fcf841aa036.json",
+              "/aec6d7c7f94129c7e026711d4f19114c48cbdea8c11945fb8302be3e10f26082.json",
             ],
           ],
         },
@@ -14647,7 +14675,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
               {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
               },
-              "/08425d685188cd3f10d4731859e1b382d08823973598a9b0c2b8375651a37b90.json",
+              "/7a0579043acbde58b936832c60a1d00edc4c3241b14947065dde4c96b45ef9d8.json",
             ],
           ],
         },
@@ -16205,7 +16233,7 @@ exports[`dataops-nifi Snapshot Tests NifiCluster Stack Snapshot Test 1`] = `
                 {
                   "Ref": "AWS::Partition",
                 },
-                ":iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+                ":iam::aws:policy/AmazonEC2ContainerRegistryPullOnly",
               ],
             ],
           },
@@ -27116,6 +27144,10 @@ openssl pkcs12 -export -in /root/mgmt-instance.cert.pem -inkey /root/mgmt-instan
         },
         "FunctionName": "test-org-test-env-test-domain-test-nificluster-main-ec2-333da4da",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",

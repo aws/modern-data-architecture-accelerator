@@ -45,6 +45,9 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
         "ap-southeast-5": {
           "value": "nodejs22.x",
         },
+        "ap-southeast-6": {
+          "value": "nodejs22.x",
+        },
         "ap-southeast-7": {
           "value": "nodejs22.x",
         },
@@ -67,7 +70,7 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
           "value": "nodejs22.x",
         },
         "eu-isoe-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "eu-north-1": {
           "value": "nodejs22.x",
@@ -85,6 +88,9 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
           "value": "nodejs22.x",
         },
         "eu-west-3": {
+          "value": "nodejs22.x",
+        },
+        "eusc-de-east-1": {
           "value": "nodejs22.x",
         },
         "il-central-1": {
@@ -115,16 +121,22 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
           "value": "nodejs22.x",
         },
         "us-iso-east-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-iso-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-isob-east-1": {
           "value": "nodejs18.x",
         },
         "us-isob-west-1": {
           "value": "nodejs18.x",
+        },
+        "us-isof-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-isof-south-1": {
+          "value": "nodejs22.x",
         },
         "us-west-1": {
           "value": "nodejs22.x",
@@ -319,15 +331,15 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
               },
               {
                 "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
               {
                 "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
               {
                 "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
             ],
           },
@@ -408,15 +420,15 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
               },
               {
                 "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
               {
                 "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
               {
                 "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
             ],
           },
@@ -579,15 +591,15 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
               {
                 "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
               {
                 "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
             ],
           },
@@ -617,15 +629,15 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
               {
                 "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
               {
                 "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
             ],
           },
@@ -1462,6 +1474,10 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
           },
           "FunctionName": "test-org-test-env-test-domain-test-bedrock-settings-ap--60b4d37b",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -1775,6 +1791,9 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
       "ap-southeast-5": {
         "value": "nodejs22.x",
       },
+      "ap-southeast-6": {
+        "value": "nodejs22.x",
+      },
       "ap-southeast-7": {
         "value": "nodejs22.x",
       },
@@ -1797,7 +1816,7 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
         "value": "nodejs22.x",
       },
       "eu-isoe-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "eu-north-1": {
         "value": "nodejs22.x",
@@ -1815,6 +1834,9 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
         "value": "nodejs22.x",
       },
       "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "eusc-de-east-1": {
         "value": "nodejs22.x",
       },
       "il-central-1": {
@@ -1845,16 +1867,22 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
         "value": "nodejs22.x",
       },
       "us-iso-east-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-iso-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-isob-east-1": {
         "value": "nodejs18.x",
       },
       "us-isob-west-1": {
         "value": "nodejs18.x",
+      },
+      "us-isof-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-isof-south-1": {
+        "value": "nodejs22.x",
       },
       "us-west-1": {
         "value": "nodejs22.x",
@@ -2049,15 +2077,15 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
             },
             {
               "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
             {
               "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
             {
               "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
           ],
         },
@@ -2138,15 +2166,15 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
             },
             {
               "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
             {
               "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
             {
               "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
           ],
         },
@@ -2309,15 +2337,15 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
             {
               "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
             {
               "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
           ],
         },
@@ -2347,15 +2375,15 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
             {
               "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
             {
               "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.js:LINE:COL] Bucket does not contain data assets. Replication not required.",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
           ],
         },
@@ -3192,6 +3220,10 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
         },
         "FunctionName": "test-org-test-env-test-domain-test-bedrock-settings-ma--70ceb88d",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",

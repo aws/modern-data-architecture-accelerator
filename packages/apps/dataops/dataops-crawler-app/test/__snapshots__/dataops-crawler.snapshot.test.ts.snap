@@ -93,6 +93,28 @@ exports[`dataops-crawler Snapshot Tests Glue Crawler App App Snapshot Test 1`] =
           },
           "Name": "test-org-test-env-test-domain-test-glue-crawler-main-t--4ff29561",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-crawler",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-crawler-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -110,7 +132,7 @@ exports[`dataops-crawler Snapshot Tests Glue Crawler App App Snapshot Test 1`] =
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-GL1",
-                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
               },
             ],
           },
@@ -275,6 +297,28 @@ exports[`dataops-crawler Snapshot Tests Glue Crawler Stack Snapshot Test 1`] = `
         },
         "Name": "test-org-test-env-test-domain-test-glue-crawler-main-t--4ff29561",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-crawler",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-crawler-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -292,7 +336,7 @@ exports[`dataops-crawler Snapshot Tests Glue Crawler Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-GL1",
-              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
             },
           ],
         },

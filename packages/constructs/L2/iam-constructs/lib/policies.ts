@@ -170,15 +170,22 @@ export class MdaaManagedPolicy extends ManagedPolicy {
    * in order to allow partition name literals
    */
   public static fromAwsManagedPolicyNameWithPartition(scope: Construct, managedPolicyName: string): IManagedPolicy {
-    return {
-      managedPolicyArn: Arn.format({
-        partition: Stack.of(scope).partition,
-        service: 'iam',
-        region: '', // no region for managed policy
-        account: 'aws', // the account for a managed policy is 'aws'
-        resource: 'policy',
-        resourceName: managedPolicyName,
-      }),
-    };
+    const constructId = managedPolicyName.replace(/[/-]/g, '--');
+
+    const existing = scope.node.tryFindChild(constructId);
+    if (existing) {
+      return existing as IManagedPolicy;
+    }
+
+    const arn = Arn.format({
+      partition: Stack.of(scope).partition,
+      service: 'iam',
+      region: '', // no region for managed policy
+      account: 'aws', // the account for a managed policy is 'aws'
+      resource: 'policy',
+      resourceName: managedPolicyName,
+    });
+
+    return ManagedPolicy.fromManagedPolicyArn(scope, constructId, arn);
   }
 }

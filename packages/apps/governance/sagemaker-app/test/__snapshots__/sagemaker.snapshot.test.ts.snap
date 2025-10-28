@@ -45,6 +45,9 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
         "ap-southeast-5": {
           "value": "nodejs22.x",
         },
+        "ap-southeast-6": {
+          "value": "nodejs22.x",
+        },
         "ap-southeast-7": {
           "value": "nodejs22.x",
         },
@@ -67,7 +70,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           "value": "nodejs22.x",
         },
         "eu-isoe-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "eu-north-1": {
           "value": "nodejs22.x",
@@ -85,6 +88,9 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           "value": "nodejs22.x",
         },
         "eu-west-3": {
+          "value": "nodejs22.x",
+        },
+        "eusc-de-east-1": {
           "value": "nodejs22.x",
         },
         "il-central-1": {
@@ -115,16 +121,22 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           "value": "nodejs22.x",
         },
         "us-iso-east-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-iso-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-isob-east-1": {
           "value": "nodejs18.x",
         },
         "us-isob-west-1": {
           "value": "nodejs18.x",
+        },
+        "us-isof-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-isof-south-1": {
+          "value": "nodejs22.x",
         },
         "us-west-1": {
           "value": "nodejs22.x",
@@ -860,6 +872,10 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-addpo-77b93a8c",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -1588,6 +1604,10 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-doma--216d9445",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -2319,6 +2339,10 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -3028,6 +3052,10 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-ramas-54896590",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -6093,6 +6121,9 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
       "ap-southeast-5": {
         "value": "nodejs22.x",
       },
+      "ap-southeast-6": {
+        "value": "nodejs22.x",
+      },
       "ap-southeast-7": {
         "value": "nodejs22.x",
       },
@@ -6115,7 +6146,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         "value": "nodejs22.x",
       },
       "eu-isoe-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "eu-north-1": {
         "value": "nodejs22.x",
@@ -6133,6 +6164,9 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         "value": "nodejs22.x",
       },
       "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "eusc-de-east-1": {
         "value": "nodejs22.x",
       },
       "il-central-1": {
@@ -6163,16 +6197,22 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         "value": "nodejs22.x",
       },
       "us-iso-east-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-iso-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-isob-east-1": {
         "value": "nodejs18.x",
       },
       "us-isob-west-1": {
         "value": "nodejs18.x",
+      },
+      "us-isof-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-isof-south-1": {
+        "value": "nodejs22.x",
       },
       "us-west-1": {
         "value": "nodejs22.x",
@@ -6908,6 +6948,10 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-addpo-77b93a8c",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -7636,6 +7680,10 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-doma--216d9445",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -8367,6 +8415,10 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-envbl-1cdddacd",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -9076,6 +9128,10 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-ramas-54896590",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",

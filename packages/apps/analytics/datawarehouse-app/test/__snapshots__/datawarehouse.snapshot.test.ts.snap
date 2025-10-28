@@ -45,6 +45,9 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
         "ap-southeast-5": {
           "value": "nodejs22.x",
         },
+        "ap-southeast-6": {
+          "value": "nodejs22.x",
+        },
         "ap-southeast-7": {
           "value": "nodejs22.x",
         },
@@ -67,7 +70,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
           "value": "nodejs22.x",
         },
         "eu-isoe-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "eu-north-1": {
           "value": "nodejs22.x",
@@ -85,6 +88,9 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
           "value": "nodejs22.x",
         },
         "eu-west-3": {
+          "value": "nodejs22.x",
+        },
+        "eusc-de-east-1": {
           "value": "nodejs22.x",
         },
         "il-central-1": {
@@ -115,16 +121,22 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
           "value": "nodejs22.x",
         },
         "us-iso-east-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-iso-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-isob-east-1": {
           "value": "nodejs18.x",
         },
         "us-isob-west-1": {
           "value": "nodejs18.x",
+        },
+        "us-isof-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-isof-south-1": {
+          "value": "nodejs22.x",
         },
         "us-west-1": {
           "value": "nodejs22.x",
@@ -136,7 +148,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
       "REPLACED-CFN-LOGICAL-ID": {
         "aws": {
           "applicationId": arn:aws:serverlessrepo:us-east-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationSingleUser,
-          "semanticVersion": "1.1.367",
+          "semanticVersion": "1.1.618",
         },
         "aws-cn": {
           "applicationId": arn:aws-cn:serverlessrepo:cn-north-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationSingleUser,
@@ -150,7 +162,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
       "REPLACED-CFN-LOGICAL-ID": {
         "aws": {
           "applicationId": arn:aws:serverlessrepo:us-east-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationMultiUser,
-          "semanticVersion": "1.1.367",
+          "semanticVersion": "1.1.618",
         },
         "aws-cn": {
           "applicationId": arn:aws-cn:serverlessrepo:cn-north-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationMultiUser,
@@ -164,7 +176,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
       "REPLACED-CFN-LOGICAL-ID": {
         "aws": {
           "applicationId": arn:aws:serverlessrepo:us-east-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationMultiUser,
-          "semanticVersion": "1.1.367",
+          "semanticVersion": "1.1.618",
         },
         "aws-cn": {
           "applicationId": arn:aws-cn:serverlessrepo:cn-north-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationMultiUser,
@@ -2523,6 +2535,10 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
             },
           },
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -3374,6 +3390,10 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
             },
           },
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -5832,6 +5852,9 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
       "ap-southeast-5": {
         "value": "nodejs22.x",
       },
+      "ap-southeast-6": {
+        "value": "nodejs22.x",
+      },
       "ap-southeast-7": {
         "value": "nodejs22.x",
       },
@@ -5854,7 +5877,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
         "value": "nodejs22.x",
       },
       "eu-isoe-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "eu-north-1": {
         "value": "nodejs22.x",
@@ -5872,6 +5895,9 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
         "value": "nodejs22.x",
       },
       "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "eusc-de-east-1": {
         "value": "nodejs22.x",
       },
       "il-central-1": {
@@ -5902,16 +5928,22 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
         "value": "nodejs22.x",
       },
       "us-iso-east-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-iso-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-isob-east-1": {
         "value": "nodejs18.x",
       },
       "us-isob-west-1": {
         "value": "nodejs18.x",
+      },
+      "us-isof-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-isof-south-1": {
+        "value": "nodejs22.x",
       },
       "us-west-1": {
         "value": "nodejs22.x",
@@ -5923,7 +5955,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
     "REPLACED-CFN-LOGICAL-ID": {
       "aws": {
         "applicationId": arn:aws:serverlessrepo:us-east-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationSingleUser,
-        "semanticVersion": "1.1.367",
+        "semanticVersion": "1.1.618",
       },
       "aws-cn": {
         "applicationId": arn:aws-cn:serverlessrepo:cn-north-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationSingleUser,
@@ -5937,7 +5969,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
     "REPLACED-CFN-LOGICAL-ID": {
       "aws": {
         "applicationId": arn:aws:serverlessrepo:us-east-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationMultiUser,
-        "semanticVersion": "1.1.367",
+        "semanticVersion": "1.1.618",
       },
       "aws-cn": {
         "applicationId": arn:aws-cn:serverlessrepo:cn-north-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationMultiUser,
@@ -5951,7 +5983,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
     "REPLACED-CFN-LOGICAL-ID": {
       "aws": {
         "applicationId": arn:aws:serverlessrepo:us-east-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationMultiUser,
-        "semanticVersion": "1.1.367",
+        "semanticVersion": "1.1.618",
       },
       "aws-cn": {
         "applicationId": arn:aws-cn:serverlessrepo:cn-north-1:REPLACED-ACCOUNT-ID:applications/SecretsManagerRedshiftRotationMultiUser,
@@ -8310,6 +8342,10 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
           },
         },
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -9161,6 +9197,10 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
           },
         },
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",

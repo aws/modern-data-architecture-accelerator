@@ -211,7 +211,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -253,7 +253,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -364,7 +364,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -394,7 +394,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -424,7 +424,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -459,6 +459,28 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
           },
           "Name": "test-org-test-env-test-domain-test-stepfunction-main-t--6f7329e6",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-stepfunction",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-stepfunction-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -516,6 +538,28 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
           },
           "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-7547f2b3",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-stepfunction",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-stepfunction-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -551,6 +595,28 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction App App Snapshot Test 
           "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-67677cea",
           "ScheduleExpression": "cron(0 20 * * ? *)",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-stepfunction",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-stepfunction-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -1077,7 +1143,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1119,7 +1185,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1230,7 +1296,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1260,7 +1326,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1290,7 +1356,7 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1325,6 +1391,28 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
         },
         "Name": "test-org-test-env-test-domain-test-stepfunction-main-t--6f7329e6",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -1382,6 +1470,28 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
         },
         "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-7547f2b3",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -1417,6 +1527,28 @@ exports[`dataops-stepfunction Snapshot Tests StepFunction Stack Snapshot Test 1`
         "Name": "test-org-test-env-test-domain-test-stepfunction-main-te-67677cea",
         "ScheduleExpression": "cron(0 20 * * ? *)",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-stepfunction",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-stepfunction-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {

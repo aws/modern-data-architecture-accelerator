@@ -1364,7 +1364,7 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
         },
         "Type": "AWS::SSM::Parameter",
       },
-      "m2mapirestapiDeployment58E38CDEa36d235fabaaa26660b820c643bbc1f3": {
+      "m2mapirestapiDeployment58E38CDEe3b715903cadb227832ab94cecb91162": {
         "DependsOn": [
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
@@ -1372,6 +1372,7 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
           "REPLACED-CFN-LOGICAL-ID",
         ],
         "Metadata": {
+          "aws:cdk:do-not-refactor": true,
           "cdk_nag": {
             "rules_to_suppress": [
               {
@@ -1451,7 +1452,7 @@ exports[`m2m-api Snapshot Tests M2M App App Snapshot Test 1`] = `
             "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","user":"$context.identity.user","caller":"$context.identity.caller","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}",
           },
           "DeploymentId": {
-            "Ref": "m2mapirestapiDeployment58E38CDEa36d235fabaaa26660b820c643bbc1f3",
+            "Ref": "m2mapirestapiDeployment58E38CDEe3b715903cadb227832ab94cecb91162",
           },
           "MethodSettings": [
             {
@@ -3546,7 +3547,7 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
       },
       "Type": "AWS::SSM::Parameter",
     },
-    "m2mapirestapiDeployment58E38CDEa36d235fabaaa26660b820c643bbc1f3": {
+    "m2mapirestapiDeployment58E38CDEe3b715903cadb227832ab94cecb91162": {
       "DependsOn": [
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
@@ -3554,6 +3555,7 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
         "REPLACED-CFN-LOGICAL-ID",
       ],
       "Metadata": {
+        "aws:cdk:do-not-refactor": true,
         "cdk_nag": {
           "rules_to_suppress": [
             {
@@ -3633,7 +3635,7 @@ exports[`m2m-api Snapshot Tests M2M Stack Snapshot Test 1`] = `
           "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","user":"$context.identity.user","caller":"$context.identity.caller","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}",
         },
         "DeploymentId": {
-          "Ref": "m2mapirestapiDeployment58E38CDEa36d235fabaaa26660b820c643bbc1f3",
+          "Ref": "m2mapirestapiDeployment58E38CDEe3b715903cadb227832ab94cecb91162",
         },
         "MethodSettings": [
           {

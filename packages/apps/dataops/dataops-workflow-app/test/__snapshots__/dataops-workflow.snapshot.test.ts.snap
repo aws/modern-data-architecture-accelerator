@@ -163,7 +163,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -205,7 +205,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -258,7 +258,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -288,7 +288,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -318,7 +318,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -492,6 +492,28 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
           },
           "Name": "test-org-test-env-test-domain-test-glue-workflow-main---2ec3ee9f",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-workflow",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-workflow-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -566,6 +588,28 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
           },
           "Name": "test-org-test-env-test-domain-test-glue-workflow-main---22d4e1f4",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-workflow",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-workflow-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -618,6 +662,28 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
           "Name": "test-org-test-env-test-domain-test-glue-workflow-main-t-29090183",
           "ScheduleExpression": "cron(0 20 * * ? *)",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "dataops-workflow",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-workflow-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -1032,7 +1098,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1074,7 +1140,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1127,7 +1193,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1157,7 +1223,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1187,7 +1253,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1361,6 +1427,28 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
         },
         "Name": "test-org-test-env-test-domain-test-glue-workflow-main---2ec3ee9f",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-workflow",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-workflow-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -1435,6 +1523,28 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
         },
         "Name": "test-org-test-env-test-domain-test-glue-workflow-main---22d4e1f4",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-workflow",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-workflow-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -1487,6 +1597,28 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
         "Name": "test-org-test-env-test-domain-test-glue-workflow-main-t-29090183",
         "ScheduleExpression": "cron(0 20 * * ? *)",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "dataops-workflow",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-workflow-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {

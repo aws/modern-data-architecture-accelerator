@@ -45,6 +45,9 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
         "ap-southeast-5": {
           "value": "nodejs22.x",
         },
+        "ap-southeast-6": {
+          "value": "nodejs22.x",
+        },
         "ap-southeast-7": {
           "value": "nodejs22.x",
         },
@@ -67,7 +70,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "value": "nodejs22.x",
         },
         "eu-isoe-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "eu-north-1": {
           "value": "nodejs22.x",
@@ -85,6 +88,9 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "value": "nodejs22.x",
         },
         "eu-west-3": {
+          "value": "nodejs22.x",
+        },
+        "eusc-de-east-1": {
           "value": "nodejs22.x",
         },
         "il-central-1": {
@@ -115,16 +121,22 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "value": "nodejs22.x",
         },
         "us-iso-east-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-iso-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-isob-east-1": {
           "value": "nodejs18.x",
         },
         "us-isob-west-1": {
           "value": "nodejs18.x",
+        },
+        "us-isof-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-isof-south-1": {
+          "value": "nodejs22.x",
         },
         "us-west-1": {
           "value": "nodejs22.x",
@@ -1024,7 +1036,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               "Arn",
             ],
           },
-          "Runtime": "python3.11",
+          "Runtime": "python3.13",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -2004,6 +2016,10 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-do--1af50b7c",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -2735,6 +2751,10 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-do--145444c1",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -3285,6 +3305,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "SourceObjectKeys": [
             "REPLACED-GENERATED-NAME.zip",
           ],
+          "WaitForDistributionInvalidation": true,
         },
         "Type": "Custom::CDKBucketDeployment",
         "UpdateReplacePolicy": "Delete",
@@ -3325,6 +3346,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "SourceObjectKeys": [
             "REPLACED-GENERATED-NAME.zip",
           ],
+          "WaitForDistributionInvalidation": true,
         },
         "Type": "Custom::CDKBucketDeployment",
         "UpdateReplacePolicy": "Delete",
@@ -4307,6 +4329,9 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
       "ap-southeast-5": {
         "value": "nodejs22.x",
       },
+      "ap-southeast-6": {
+        "value": "nodejs22.x",
+      },
       "ap-southeast-7": {
         "value": "nodejs22.x",
       },
@@ -4329,7 +4354,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "value": "nodejs22.x",
       },
       "eu-isoe-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "eu-north-1": {
         "value": "nodejs22.x",
@@ -4347,6 +4372,9 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "value": "nodejs22.x",
       },
       "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "eusc-de-east-1": {
         "value": "nodejs22.x",
       },
       "il-central-1": {
@@ -4377,16 +4405,22 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "value": "nodejs22.x",
       },
       "us-iso-east-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-iso-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-isob-east-1": {
         "value": "nodejs18.x",
       },
       "us-isob-west-1": {
         "value": "nodejs18.x",
+      },
+      "us-isof-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-isof-south-1": {
+        "value": "nodejs22.x",
       },
       "us-west-1": {
         "value": "nodejs22.x",
@@ -5286,7 +5320,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             "Arn",
           ],
         },
-        "Runtime": "python3.11",
+        "Runtime": "python3.13",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -6266,6 +6300,10 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-do--1af50b7c",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -6997,6 +7035,10 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-studio-do--145444c1",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -7547,6 +7589,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "SourceObjectKeys": [
           "REPLACED-GENERATED-NAME.zip",
         ],
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
@@ -7587,6 +7630,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "SourceObjectKeys": [
           "REPLACED-GENERATED-NAME.zip",
         ],
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",

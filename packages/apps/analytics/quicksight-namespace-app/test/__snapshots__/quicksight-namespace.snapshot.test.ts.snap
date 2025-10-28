@@ -45,6 +45,9 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
         "ap-southeast-5": {
           "value": "nodejs22.x",
         },
+        "ap-southeast-6": {
+          "value": "nodejs22.x",
+        },
         "ap-southeast-7": {
           "value": "nodejs22.x",
         },
@@ -67,7 +70,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
           "value": "nodejs22.x",
         },
         "eu-isoe-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "eu-north-1": {
           "value": "nodejs22.x",
@@ -85,6 +88,9 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
           "value": "nodejs22.x",
         },
         "eu-west-3": {
+          "value": "nodejs22.x",
+        },
+        "eusc-de-east-1": {
           "value": "nodejs22.x",
         },
         "il-central-1": {
@@ -115,16 +121,22 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
           "value": "nodejs22.x",
         },
         "us-iso-east-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-iso-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-isob-east-1": {
           "value": "nodejs18.x",
         },
         "us-isob-west-1": {
           "value": "nodejs18.x",
+        },
+        "us-isof-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-isof-south-1": {
+          "value": "nodejs22.x",
         },
         "us-west-1": {
           "value": "nodejs22.x",
@@ -515,6 +527,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
           },
           "Name": "test-org-test-env-test-domain-test-quicksight-namespac--4c84f345",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "quicksight-namespace",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-quicksight-namespace-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -558,6 +592,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
           },
           "Name": "test-org-test-env-test-domain-test-quicksight-namespace-284d68a4",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "quicksight-namespace",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-quicksight-namespace-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -639,6 +695,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
           },
           "Name": "test-org-test-env-test-domain-test-quicksight-namespace-1a69bc83",
           "State": "ENABLED",
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "quicksight-namespace",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-quicksight-namespace-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
           "Targets": [
             {
               "Arn": {
@@ -1519,6 +1597,10 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace App App Snapsh
           },
           "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace--7c2de66",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -3050,6 +3132,9 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
       "ap-southeast-5": {
         "value": "nodejs22.x",
       },
+      "ap-southeast-6": {
+        "value": "nodejs22.x",
+      },
       "ap-southeast-7": {
         "value": "nodejs22.x",
       },
@@ -3072,7 +3157,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
         "value": "nodejs22.x",
       },
       "eu-isoe-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "eu-north-1": {
         "value": "nodejs22.x",
@@ -3090,6 +3175,9 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
         "value": "nodejs22.x",
       },
       "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "eusc-de-east-1": {
         "value": "nodejs22.x",
       },
       "il-central-1": {
@@ -3120,16 +3208,22 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
         "value": "nodejs22.x",
       },
       "us-iso-east-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-iso-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-isob-east-1": {
         "value": "nodejs18.x",
       },
       "us-isob-west-1": {
         "value": "nodejs18.x",
+      },
+      "us-isof-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-isof-south-1": {
+        "value": "nodejs22.x",
       },
       "us-west-1": {
         "value": "nodejs22.x",
@@ -3520,6 +3614,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
         },
         "Name": "test-org-test-env-test-domain-test-quicksight-namespac--4c84f345",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -3563,6 +3679,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
         },
         "Name": "test-org-test-env-test-domain-test-quicksight-namespace-284d68a4",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -3644,6 +3782,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
         },
         "Name": "test-org-test-env-test-domain-test-quicksight-namespace-1a69bc83",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -4524,6 +4684,10 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB1 Stack Sna
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace--7c2de66",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -6054,6 +6218,9 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
       "ap-southeast-5": {
         "value": "nodejs22.x",
       },
+      "ap-southeast-6": {
+        "value": "nodejs22.x",
+      },
       "ap-southeast-7": {
         "value": "nodejs22.x",
       },
@@ -6076,7 +6243,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
         "value": "nodejs22.x",
       },
       "eu-isoe-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "eu-north-1": {
         "value": "nodejs22.x",
@@ -6094,6 +6261,9 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
         "value": "nodejs22.x",
       },
       "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "eusc-de-east-1": {
         "value": "nodejs22.x",
       },
       "il-central-1": {
@@ -6124,16 +6294,22 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
         "value": "nodejs22.x",
       },
       "us-iso-east-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-iso-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-isob-east-1": {
         "value": "nodejs18.x",
       },
       "us-isob-west-1": {
         "value": "nodejs18.x",
+      },
+      "us-isof-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-isof-south-1": {
+        "value": "nodejs22.x",
       },
       "us-west-1": {
         "value": "nodejs22.x",
@@ -6524,6 +6700,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
         },
         "Name": "test-org-test-env-test-domain-test-quicksight-namespac--4c84f345",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -6567,6 +6765,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
         },
         "Name": "test-org-test-env-test-domain-test-quicksight-namespace-284d68a4",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -6648,6 +6868,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
         },
         "Name": "test-org-test-env-test-domain-test-quicksight-namespace-1a69bc83",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -7528,6 +7770,10 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB2 Stack Sna
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace--7c2de66",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -9058,6 +9304,9 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
       "ap-southeast-5": {
         "value": "nodejs22.x",
       },
+      "ap-southeast-6": {
+        "value": "nodejs22.x",
+      },
       "ap-southeast-7": {
         "value": "nodejs22.x",
       },
@@ -9080,7 +9329,7 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
         "value": "nodejs22.x",
       },
       "eu-isoe-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "eu-north-1": {
         "value": "nodejs22.x",
@@ -9098,6 +9347,9 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
         "value": "nodejs22.x",
       },
       "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "eusc-de-east-1": {
         "value": "nodejs22.x",
       },
       "il-central-1": {
@@ -9128,16 +9380,22 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
         "value": "nodejs22.x",
       },
       "us-iso-east-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-iso-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-isob-east-1": {
         "value": "nodejs18.x",
       },
       "us-isob-west-1": {
         "value": "nodejs18.x",
+      },
+      "us-isof-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-isof-south-1": {
+        "value": "nodejs22.x",
       },
       "us-west-1": {
         "value": "nodejs22.x",
@@ -9476,6 +9734,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
         },
         "Name": "test-org-test-env-test-domain-test-quicksight-namespac--4c84f345",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -9538,6 +9818,28 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
         },
         "Name": "test-org-test-env-test-domain-test-quicksight-namespace-1a69bc83",
         "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "quicksight-namespace",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-quicksight-namespace-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
         "Targets": [
           {
             "Arn": {
@@ -10313,6 +10615,10 @@ exports[`quicksight-namespace Snapshot Tests Quicksight Namespace LOB3 Stack Sna
         },
         "FunctionName": "test-org-test-env-test-domain-test-quicksight-namespace--7c2de66",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",

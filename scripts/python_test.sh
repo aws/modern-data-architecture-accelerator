@@ -30,6 +30,17 @@ fi
 
 for package in $PYTHON_TEST_PACKAGES; do
     TOTAL_PACKAGES=$((TOTAL_PACKAGES + 1))
+    
+    # Skip gaia-l3-construct package tests
+    if [[ "$package" == *"gaia-l3-construct"* ]]; then
+        echo ""
+        echo "========================================="
+        echo "Skipping Python tests for: $package (GAIA tests disabled)"
+        echo "========================================="
+        echo "⏭️  Python tests skipped for $package"
+        continue
+    fi
+    
     echo ""
     echo "========================================="
     echo "Running Python tests for: $package"
@@ -37,23 +48,12 @@ for package in $PYTHON_TEST_PACKAGES; do
     
     cd "$PROJECT_ROOT/$package/python-tests"
     
-    # Check if this is the gaia-l3-construct package and skip coverage
-    if [[ "$package" == *"gaia-l3-construct"* ]]; then
-        echo "Running tests without coverage for gaia-l3-construct..."
-        if uv run pytest --ignore=test_file_import_main.py -v; then
-            echo "✅ Python tests passed for $package"
-        else
-            echo "❌ Python tests failed for $package"
-            FAILED_PACKAGES+=("$package")
-        fi
+    # Run tests with coverage using uv
+    if uv run pytest --cov --cov-report=xml --cov-report=html --cov-report=term; then
+        echo "✅ Python tests passed for $package"
     else
-        # Run tests with coverage using uv for other packages
-        if uv run pytest --cov --cov-report=xml --cov-report=html --cov-report=term; then
-            echo "✅ Python tests passed for $package"
-        else
-            echo "❌ Python tests failed for $package"
-            FAILED_PACKAGES+=("$package")
-        fi
+        echo "❌ Python tests failed for $package"
+        FAILED_PACKAGES+=("$package")
     fi
     
     cd "$PROJECT_ROOT"

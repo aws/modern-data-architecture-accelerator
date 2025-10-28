@@ -44,6 +44,9 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
       "ap-southeast-5": {
         "value": "nodejs22.x",
       },
+      "ap-southeast-6": {
+        "value": "nodejs22.x",
+      },
       "ap-southeast-7": {
         "value": "nodejs22.x",
       },
@@ -66,7 +69,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "value": "nodejs22.x",
       },
       "eu-isoe-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "eu-north-1": {
         "value": "nodejs22.x",
@@ -84,6 +87,9 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "value": "nodejs22.x",
       },
       "eu-west-3": {
+        "value": "nodejs22.x",
+      },
+      "eusc-de-east-1": {
         "value": "nodejs22.x",
       },
       "il-central-1": {
@@ -114,16 +120,22 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "value": "nodejs22.x",
       },
       "us-iso-east-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-iso-west-1": {
-        "value": "nodejs18.x",
+        "value": "nodejs22.x",
       },
       "us-isob-east-1": {
         "value": "nodejs18.x",
       },
       "us-isob-west-1": {
         "value": "nodejs18.x",
+      },
+      "us-isof-east-1": {
+        "value": "nodejs22.x",
+      },
+      "us-isof-south-1": {
+        "value": "nodejs22.x",
       },
       "us-west-1": {
         "value": "nodejs22.x",
@@ -652,7 +664,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
             "Arn",
           ],
         },
-        "Runtime": "python3.11",
+        "Runtime": "python3.13",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -1543,6 +1555,10 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         },
         "FunctionName": "test-org-test-env-test-domain-test-data-science-team-st-16d84841",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -2274,6 +2290,10 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         },
         "FunctionName": "test-org-test-env-test-domain-test-data-science-team-st-70cf7262",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -4005,6 +4025,10 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         },
         "FunctionName": "test-org-test-env-test-domain-test-data-science-team-mi-60472015",
         "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+        },
         "Role": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -8332,6 +8356,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "SourceObjectKeys": [
           "REPLACED-GENERATED-NAME.zip",
         ],
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
@@ -8378,6 +8403,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "SourceObjectKeys": [
           "REPLACED-GENERATED-NAME.zip",
         ],
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
@@ -9607,6 +9633,9 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
         "ap-southeast-5": {
           "value": "nodejs22.x",
         },
+        "ap-southeast-6": {
+          "value": "nodejs22.x",
+        },
         "ap-southeast-7": {
           "value": "nodejs22.x",
         },
@@ -9629,7 +9658,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "value": "nodejs22.x",
         },
         "eu-isoe-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "eu-north-1": {
           "value": "nodejs22.x",
@@ -9647,6 +9676,9 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "value": "nodejs22.x",
         },
         "eu-west-3": {
+          "value": "nodejs22.x",
+        },
+        "eusc-de-east-1": {
           "value": "nodejs22.x",
         },
         "il-central-1": {
@@ -9677,16 +9709,22 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "value": "nodejs22.x",
         },
         "us-iso-east-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-iso-west-1": {
-          "value": "nodejs18.x",
+          "value": "nodejs22.x",
         },
         "us-isob-east-1": {
           "value": "nodejs18.x",
         },
         "us-isob-west-1": {
           "value": "nodejs18.x",
+        },
+        "us-isof-east-1": {
+          "value": "nodejs22.x",
+        },
+        "us-isof-south-1": {
+          "value": "nodejs22.x",
         },
         "us-west-1": {
           "value": "nodejs22.x",
@@ -10215,7 +10253,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
               "Arn",
             ],
           },
-          "Runtime": "python3.11",
+          "Runtime": "python3.13",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -11106,6 +11144,10 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           },
           "FunctionName": "test-org-test-env-test-domain-test-data-science-team-app-6d77f95",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -11837,6 +11879,10 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           },
           "FunctionName": "test-org-test-env-test-domain-test-data-science-team-ap-25970a8e",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -13568,6 +13614,10 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           },
           "FunctionName": "test-org-test-env-test-domain-test-data-science-team-ap-218f2169",
           "Handler": "framework.onEvent",
+          "LoggingConfig": {
+            "ApplicationLogLevel": "FATAL",
+            "LogFormat": "JSON",
+          },
           "Role": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -17895,6 +17945,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "SourceObjectKeys": [
             "REPLACED-GENERATED-NAME.zip",
           ],
+          "WaitForDistributionInvalidation": true,
         },
         "Type": "Custom::CDKBucketDeployment",
         "UpdateReplacePolicy": "Delete",
@@ -17941,6 +17992,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "SourceObjectKeys": [
             "REPLACED-GENERATED-NAME.zip",
           ],
+          "WaitForDistributionInvalidation": true,
         },
         "Type": "Custom::CDKBucketDeployment",
         "UpdateReplacePolicy": "Delete",

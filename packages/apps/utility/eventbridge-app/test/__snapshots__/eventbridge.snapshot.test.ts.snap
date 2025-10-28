@@ -102,6 +102,7 @@ exports[`eventbridge Snapshot Tests Eventbridge App App Snapshot Test 1`] = `
               },
             ],
           },
+          "KmsKeyIdentifier": "",
           "RetentionDays": 100,
           "SourceArn": {
             "Fn::GetAtt": [
@@ -306,6 +307,7 @@ exports[`eventbridge Snapshot Tests Eventbridge Stack Snapshot Test 1`] = `
             },
           ],
         },
+        "KmsKeyIdentifier": "",
         "RetentionDays": 100,
         "SourceArn": {
           "Fn::GetAtt": [

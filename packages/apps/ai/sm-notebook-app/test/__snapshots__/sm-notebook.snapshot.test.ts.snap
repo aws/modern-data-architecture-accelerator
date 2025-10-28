@@ -208,7 +208,7 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook App App Snapshot Test 1`]
               ],
             ],
           },
-          "Runtime": "python3.11",
+          "Runtime": "python3.13",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -299,6 +299,7 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook App App Snapshot Test 1`]
           "SourceObjectKeys": [
             "REPLACED-GENERATED-NAME.zip",
           ],
+          "WaitForDistributionInvalidation": true,
         },
         "Type": "Custom::CDKBucketDeployment",
         "UpdateReplacePolicy": "Delete",
@@ -1287,7 +1288,7 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook Stack Snapshot Test 1`] =
             ],
           ],
         },
-        "Runtime": "python3.11",
+        "Runtime": "python3.13",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -1378,6 +1379,7 @@ exports[`sm-notebook Snapshot Tests Sagemaker Notebook Stack Snapshot Test 1`] =
         "SourceObjectKeys": [
           "REPLACED-GENERATED-NAME.zip",
         ],
+        "WaitForDistributionInvalidation": true,
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",

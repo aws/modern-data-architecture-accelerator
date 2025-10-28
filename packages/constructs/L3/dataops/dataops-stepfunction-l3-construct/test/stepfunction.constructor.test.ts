@@ -29,7 +29,6 @@ describe('StepFunctionL3Construct Constructor Exception Tests', () => {
   const testApp = new MdaaTestApp();
   const stack = testApp.testStack;
 
-
   test('should throw error when projectKMSArn is undefined', () => {
     const constructProps: StepFunctionL3ConstructProps = {
       projectKMSArn: undefined,
@@ -71,10 +70,12 @@ describe('StepFunctionL3Construct Log Group Retention Tests', () => {
   test('should use specified retention days when provided', () => {
     const constructProps: StepFunctionL3ConstructProps = {
       projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
-      stepfunctionDefinitions: [{
-        ...validStepfunctionDefinition,
-        logGroupRetentionDays: 30,
-      }],
+      stepfunctionDefinitions: [
+        {
+          ...validStepfunctionDefinition,
+          logGroupRetentionDays: 30,
+        },
+      ],
       projectName: 'test-project',
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
       naming: testApp.naming,
@@ -82,7 +83,7 @@ describe('StepFunctionL3Construct Log Group Retention Tests', () => {
 
     new StepFunctionL3Construct(stack, 'test-retention-specified', constructProps);
     const template = Template.fromStack(stack);
-    
+
     template.hasResourceProperties('AWS::Logs::LogGroup', {
       RetentionInDays: 30,
     });
@@ -91,10 +92,12 @@ describe('StepFunctionL3Construct Log Group Retention Tests', () => {
   test('should use infinite retention when logGroupRetentionDays is 0', () => {
     const constructProps: StepFunctionL3ConstructProps = {
       projectKMSArn: 'arn:test-partition:kms:test-region:test-account:key/test-key',
-      stepfunctionDefinitions: [{
-        ...validStepfunctionDefinition,
-        logGroupRetentionDays: 0,
-      }],
+      stepfunctionDefinitions: [
+        {
+          ...validStepfunctionDefinition,
+          logGroupRetentionDays: 0,
+        },
+      ],
       projectName: 'test-project',
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
       naming: testApp.naming,
@@ -102,10 +105,14 @@ describe('StepFunctionL3Construct Log Group Retention Tests', () => {
 
     new StepFunctionL3Construct(stack, 'test-retention-infinite', constructProps);
     const template = Template.fromStack(stack);
-    
+
     template.hasResourceProperties('AWS::Logs::LogGroup', {
-      RetentionInDays: { Ref: 'AWS::NoValue' },
+      LogGroupName: '/aws/stepfunction/test-org-test-env-test-domain-test-module-test-state-machine',
     });
+
+    const logGroups = template.findResources('AWS::Logs::LogGroup');
+    const logGroup = Object.values(logGroups)[0];
+    expect(logGroup.Properties.RetentionInDays).toBeUndefined();
   });
 
   test('should use default TWO_YEARS retention when logGroupRetentionDays is undefined', () => {
@@ -119,7 +126,7 @@ describe('StepFunctionL3Construct Log Group Retention Tests', () => {
 
     new StepFunctionL3Construct(stack, 'test-retention-default', constructProps);
     const template = Template.fromStack(stack);
-    
+
     template.hasResourceProperties('AWS::Logs::LogGroup', {
       RetentionInDays: 731,
     });
