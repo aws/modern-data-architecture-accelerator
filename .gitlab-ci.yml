@@ -823,6 +823,42 @@ release_publish_npm_prerelease:
   script:
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest
 
+release_npm_readiness_check:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: release_npm
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: release_publish
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  dependencies:
+    - release_version_package
+  needs:
+    - release
+    - release_version_package
+    - prerelease_analyze
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+  script:
+    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - echo 'Testing NPM readiness for version:' $RELEASE_VERSION
+    - ./scripts/test_published_artifacts.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest --download
+    - ./scripts/validate_dependencies.sh --npm-ready
+    - ./scripts/test_npm_readiness.sh
+
 release_publish_npm:
   tags:
     - arch:amd64
@@ -860,6 +896,7 @@ release_publish_npm:
     - release
     - release_version_package
     - prerelease_analyze
+    - release_npm_readiness_check  # Wait for readiness check
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
