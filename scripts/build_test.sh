@@ -8,7 +8,7 @@ cd "$PROJECT_ROOT"
 npx nx reset
 
 echo "Running build/test script from $(pwd)"
-npx lerna run test --stream --no-ci --verbose -- --testPathIgnorePatterns=".*\.snapshot.test.ts*" || npx lerna --version
+npx lerna run test --stream --no-ci -- --testPathIgnorePatterns=".*\.snapshot.test.ts*" || npx lerna --version
 parent_path=$SCRIPT_DIR
 echo "Parent Path: $parent_path"
 python3 "$parent_path/fix_license_headers.py"

@@ -17,9 +17,7 @@ license_header_reorder_regex = re.compile(
 
 
 def reorder_license(contents):
-    print("Checking license position in file")
     if re.search(license_header_reorder_regex, contents):
-        print("License out of position. Moving to top of file")
         fixed_contents = re.sub(license_header_reorder_regex,
                                 f'{license_header_contents}\n\n\g<1>', contents)
     else:
@@ -28,25 +26,20 @@ def reorder_license(contents):
 
 
 def add_license(contents):
-    print("Adding license")
     fixed_contents = license_header_contents + "\n\n" + contents
     return fixed_contents
 
 
 def detect_license_header(path):
-    print(f"\n\nProcessing {path}:")
     # nosemgrep
     with open(path, encoding="utf-8") as f:
         contents = ''.join(f.readlines())
     if re.search(license_header_regex, contents):
-        print("Found license")
         fixed_contents = reorder_license(contents)
     else:
-        print("No license found")
         fixed_contents = add_license(contents)
 
     if fixed_contents is not None:
-        print(f"Writing updated contents to {path}")
         with open(path, "w", encoding="utf-8") as f:
             f.write(fixed_contents)
 
