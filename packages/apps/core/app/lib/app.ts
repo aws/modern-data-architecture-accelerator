@@ -30,7 +30,7 @@ import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents }
 import * as configSchema from './config-schema.json';
 import { MdaaProductStack, MdaaProductStackProps, MdaaStack } from './stack';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
-import { cleanContextStringValue, readYamlFile } from './utils';
+import { cleanContextStringValue, getNodeValue, readYamlFile } from './utils';
 // nosemgrep
 import assert = require('assert');
 
@@ -177,8 +177,8 @@ export abstract class MdaaCdkApp extends App {
     this.deployAccount = process.env.CDK_DEPLOY_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT;
     this.deployRegion = process.env.CI_SUPPLIED_TARGET_REGION || process.env.CDK_DEFAULT_REGION;
 
-    this.additionalStacks = this.node.tryGetContext('additional_stacks');
     this.stack = this.createEmptyStack(packageName);
+    this.additionalStacks = getNodeValue(this.node, 'additional_stacks', []);
     this.additionalStacksMap = Object.fromEntries(
       this.additionalStacks?.map(deployment => {
         const account = deployment.account ?? this.stack.account;
@@ -225,11 +225,11 @@ export abstract class MdaaCdkApp extends App {
   }
 
   private loadTagConfigDataFromContext(): { [key: string]: string } {
-    return this.node.tryGetContext('tag_config_data') ?? {};
+    return getNodeValue(this.node, 'tag_config_data', {});
   }
 
   private loadAppConfigDataFromContext(): ConfigurationElement {
-    return this.node.tryGetContext('module_config_data') ?? {};
+    return getNodeValue(this.node, 'module_config_data', {});
   }
 
   private loadTagConfigFromFiles(): TagElement {
@@ -293,9 +293,9 @@ export abstract class MdaaCdkApp extends App {
   }
 
   private applyCustomAspects() {
-    const customAspects: MdaaCustomAspect[] | undefined = this.node.tryGetContext('custom_aspects');
+    const customAspects: MdaaCustomAspect[] = getNodeValue(this.node, 'custom_aspects', []);
     console.log(typeof customAspects);
-    customAspects?.forEach(customAspect => this.applyCustomAspect(customAspect));
+    customAspects.forEach(customAspect => this.applyCustomAspect(customAspect));
   }
 
   private applyCustomAspect(customAspect: MdaaCustomAspect) {

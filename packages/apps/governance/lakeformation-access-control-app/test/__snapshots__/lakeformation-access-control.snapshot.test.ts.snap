@@ -406,7 +406,7 @@ exports[`lakeformation-access-control Snapshot Tests Lakeformation App App Snaps
       },
     },
   },
-  "test-org-test-env-test-domain-test-lakeformation-main-xxxxxxxxxxxxx-us-east-1": {
+  "test-org-test-env-test-domain-test-lakeformation-main-xxxxxxxxxxxxx": {
     "Parameters": {
       "BootstrapVersion": {
         "Default": "/cdk-bootstrap/hnb659fds/version",

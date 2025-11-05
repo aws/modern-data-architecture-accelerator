@@ -23,19 +23,12 @@ describe('lakeformation-access-control Snapshot Tests', () => {
     Create.stackProvider(
       'LakeformationStackMain',
       (_, context) => {
-        const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
-
         const moduleApp = new LakeFormationCdkApp({
           context: {
             ...context,
             module_configs: path.join(__dirname, 'test-config.yaml'),
-            additional_accounts: 'xxxxxxxxxxxxx',
-            additional_stacks: [
-              {
-                account: 'xxxxxxxxxxxxx',
-                region: region,
-              },
-            ],
+            additional_accounts: 'xxxxxxxxxxxx',
+            additional_stacks: '[{"account":"xxxxxxxxxxxx"}]',
           },
         });
         return moduleApp.generateStack();
@@ -53,19 +46,12 @@ describe('lakeformation-access-control Snapshot Tests', () => {
     'Lakeformation App',
     Create.appProvider(
       context => {
-        const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
-
         const moduleApp = new LakeFormationCdkApp({
           context: {
             ...context,
             module_configs: path.join(__dirname, 'test-config.yaml'),
             additional_accounts: 'xxxxxxxxxxxxx',
-            additional_stacks: [
-              {
-                account: 'xxxxxxxxxxxxx',
-                region: region,
-              },
-            ],
+            additional_stacks: '[{"account":"xxxxxxxxxxxxx"}]',
           },
         });
         moduleApp.generateStack();

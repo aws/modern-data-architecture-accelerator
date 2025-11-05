@@ -5,7 +5,8 @@
 
 import * as fs from 'fs';
 import * as yaml from 'yaml';
-import { cleanContextStringValue, readYamlFile } from '../lib/utils';
+import { Node } from 'constructs/lib/construct';
+import { cleanContextStringValue, readYamlFile, getNodeValue } from '../lib/utils';
 
 jest.mock('fs');
 jest.mock('yaml');
@@ -45,6 +46,41 @@ describe('Utils', () => {
       expect(mockedFs.readFileSync).toHaveBeenCalledWith('test.yaml', 'utf8');
       expect(mockedYaml.parse).toHaveBeenCalledWith(mockContent);
       expect(result).toBe(mockParsed);
+    });
+  });
+
+  describe('getNodeValue', () => {
+    let mockNode: jest.Mocked<Node>;
+
+    beforeEach(() => {
+      mockNode = {
+        tryGetContext: jest.fn(),
+      } as any;
+    });
+
+    test('returns parsed value when context exists', () => {
+      mockNode.tryGetContext.mockReturnValue('{"test": "value"}');
+      
+      const result = getNodeValue(mockNode, 'testKey', { default: 'value' });
+      
+      expect(mockNode.tryGetContext).toHaveBeenCalledWith('testKey');
+      expect(result).toEqual({ test: 'value' });
+    });
+
+    test('returns default value when context is null', () => {
+      mockNode.tryGetContext.mockReturnValue(null);
+      
+      const result = getNodeValue(mockNode, 'testKey', { default: 'value' });
+      
+      expect(result).toEqual({ default: 'value' });
+    });
+
+    test('returns default value when context is undefined', () => {
+      mockNode.tryGetContext.mockReturnValue(undefined);
+      
+      const result = getNodeValue(mockNode, 'testKey', 'defaultString');
+      
+      expect(result).toBe('defaultString');
     });
   });
 });

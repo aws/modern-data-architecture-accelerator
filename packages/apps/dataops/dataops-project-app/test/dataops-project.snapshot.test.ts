@@ -29,14 +29,14 @@ describe('dataops-project Snapshot Tests', () => {
           context: {
             ...context,
             module_configs: path.join(__dirname, 'test-config.yaml'),
-            additional_accounts: '12312412',
+            additional_accounts: 'xxxxxxxxxxxxx',
             // Add additional_stacks to create the cross-account stack with the correct account ID and region
-            additional_stacks: [
+            additional_stacks: JSON.stringify([
               {
-                account: '12312412',
+                account: 'xxxxxxxxxxxxx',
                 region: region,
               },
-            ],
+            ]),
           },
         });
         return moduleApp.generateStack();
@@ -60,13 +60,13 @@ describe('dataops-project Snapshot Tests', () => {
           context: {
             ...context,
             module_configs: path.join(__dirname, 'test-config.yaml'),
-            additional_accounts: '12312412',
-            additional_stacks: [
+            additional_accounts: 'xxxxxxxxxxxxx',
+            additional_stacks: JSON.stringify([
               {
-                account: '12312412',
+                account: 'xxxxxxxxxxxxx',
                 region: region,
               },
-            ],
+            ]),
           },
         });
         moduleApp.generateStack();

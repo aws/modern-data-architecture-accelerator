@@ -5772,7 +5772,7 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       },
     },
   },
-  "test-org-test-env-test-domain-test-dataops-project-main-12312412-us-east-1": {
+  "test-org-test-env-test-domain-test-dataops-project-main-xxxxxxxxxxxxx-us-east-1": {
     "Parameters": {
       "BootstrapVersion": {
         "Default": "/cdk-bootstrap/hnb659fds/version",
