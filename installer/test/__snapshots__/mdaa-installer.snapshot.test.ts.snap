@@ -659,7 +659,7 @@ exports[`MdaaInstallerStack Snapshots Full CloudFormation template snapshot: ful
     "RepositoryBranchName": {
       "AllowedPattern": ".+",
       "ConstraintDescription": "Repository Branch Name is required when GitHub is selected as the repository source",
-      "Default": "release/v1.0.0",
+      "Default": "release/v1.2.0",
       "Description": "The name of the branch (e.g., "release/v1.0.0") (Required for GitHub)",
       "Type": "String",
     },
@@ -1447,15 +1447,9 @@ exports[`MdaaInstallerStack Snapshots Full CloudFormation template snapshot: ful
               "Effect": "Allow",
               "Principal": {
                 "AWS": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":iam::xxxxxx:root",
-                    ],
+                  "Fn::GetAtt": [
+                    "GitHubPipelineRole6F4DEF1B",
+                    "Arn",
                   ],
                 },
               },
@@ -2028,6 +2022,14 @@ exports[`MdaaInstallerStack Snapshots Full CloudFormation template snapshot: ful
           "AssertDescription": "Subnet ID is required.",
         },
       ],
+      "RuleCondition": {
+        "Fn::Equals": [
+          {
+            "Ref": "SampleName",
+          },
+          "basic_datascience_platform",
+        ],
+      },
     },
     "ValidateOrganizationName": {
       "Assertions": [
@@ -2722,15 +2724,9 @@ exports[`MdaaInstallerStack Snapshots IAM resources snapshot: iam-resources.json
               "Effect": "Allow",
               "Principal": {
                 "AWS": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":iam::xxxxxx:root",
-                    ],
+                  "Fn::GetAtt": [
+                    "GitHubPipelineRole6F4DEF1B",
+                    "Arn",
                   ],
                 },
               },
@@ -3013,7 +3009,7 @@ exports[`MdaaInstallerStack Snapshots Parameters section snapshot: parameters.js
   "RepositoryBranchName": {
     "AllowedPattern": ".+",
     "ConstraintDescription": "Repository Branch Name is required when GitHub is selected as the repository source",
-    "Default": "release/v1.0.0",
+    "Default": "release/v1.2.0",
     "Description": "The name of the branch (e.g., "release/v1.0.0") (Required for GitHub)",
     "Type": "String",
   },
@@ -3978,15 +3974,9 @@ exports[`MdaaInstallerStack Snapshots Resources section snapshot: resources.json
             "Effect": "Allow",
             "Principal": {
               "AWS": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition",
-                    },
-                    ":iam::xxxxxx:root",
-                  ],
+                "Fn::GetAtt": [
+                  "GitHubPipelineRole6F4DEF1B",
+                  "Arn",
                 ],
               },
             },
@@ -4562,6 +4552,14 @@ exports[`MdaaInstallerStack Snapshots Rules section snapshot: rules.json 1`] = `
         "AssertDescription": "Subnet ID is required.",
       },
     ],
+    "RuleCondition": {
+      "Fn::Equals": [
+        {
+          "Ref": "SampleName",
+        },
+        "basic_datascience_platform",
+      ],
+    },
   },
   "ValidateOrganizationName": {
     "Assertions": [

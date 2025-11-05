@@ -1,16 +1,27 @@
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import * as MdaaInstaller from '../lib/mdaa-installer-stack';
+import * as pjson from '../package.json';
 
 describe('MdaaInstallerStack', () => {
   let app: cdk.App;
   let stack: MdaaInstaller.MdaaInstallerStack;
   let template: Template;
+  const packageName = pjson.name.split('/')[1] ?? 'unknown';
+  const packageVersion = pjson.version ?? 'unknown';
 
   beforeEach(() => {
     app = new cdk.App();
-    stack = new MdaaInstaller.MdaaInstallerStack(app, 'TestMdaaInstallerStack');
+    stack = new MdaaInstaller.MdaaInstallerStack(app, 'TestMdaaInstallerStack', {
+      description: `(${pjson.solution_id}-${packageName}) ${pjson.solution_name}. Version ${packageVersion}`,
+    });
     template = Template.fromStack(stack);
+  });
+
+  test('Stack has correct solution name and description', () => {
+    expect(stack.templateOptions.description).toBe(
+      `(${pjson.solution_id}-${packageName}) ${pjson.solution_name}. Version ${packageVersion}`,
+    );
   });
 
   test('Stack creates successfully', () => {
