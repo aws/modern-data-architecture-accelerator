@@ -110,24 +110,22 @@ test_cli_functionality() {
     return 0
 }
 
-# Get list of published packages
-get_published_packages() {
-    aws codeartifact list-packages \
-        --domain "$MDAA_CODEARTIFACT_DOMAIN" \
-        --repository "$MDAA_CODEARTIFACT_REPO" \
-        --format npm \
-        --query "packages[?namespace==\`aws-mdaa\`].package" \
-        --output text | tr '\t' '\n' | grep -v '^$'
+# Get list of local packages from monorepo
+get_local_packages() {
+    find "${CI_PROJECT_DIR:-$(dirname "$0")/..}/packages" -name "package.json" -exec jq -r '.name' {} \; | \
+        grep "^${NAMESPACE}/" | \
+        sed "s|^${NAMESPACE}/||" | \
+        sort -u
 }
 
 # Test 2: Discover and verify published packages
 test_package_discovery() {
     echo "Test 2: Discovering published packages..."
     
-    local published_packages
-    published_packages=$(get_published_packages)
-    
-    if [ -z "$published_packages" ]; then
+    local expected_packages
+    expected_packages=$(get_local_packages)
+
+    if [ -z "$expected_packages" ]; then
         echo "❌ No @aws-mdaa packages found in repository"
         return 1
     fi
@@ -144,7 +142,7 @@ test_package_discovery() {
                 failed_packages="$failed_packages $pkg"
             fi
         fi
-    done <<< "$published_packages"
+    done <<< "$expected_packages"
     
     if [ -n "$failed_packages" ]; then
         echo "ERROR: Some packages not found at version $SNAPSHOT_VERSION:$failed_packages"
@@ -159,8 +157,8 @@ test_package_discovery() {
 test_package_metadata() {
     echo "Test 3: Validating package metadata..."
     
-    local published_packages
-    published_packages=$(get_published_packages)
+    local expected_packages
+    expected_packages=$(get_local_packages)
     
     while IFS= read -r pkg; do
         if [ -n "$pkg" ] && [ "$pkg" != "None" ]; then
@@ -174,7 +172,7 @@ test_package_metadata() {
                 echo "  📦 ${NAMESPACE}/${pkg}: license=$license, repo=$repository"
             fi
         fi
-    done <<< "$published_packages"
+    done <<< "$expected_packages"
 }
 
 # Test 4: Test different config scenarios
@@ -202,8 +200,8 @@ download_packages() {
     mkdir -p "$download_dir"
     cd "$download_dir"
     
-    local published_packages
-    published_packages=$(get_published_packages)
+    local expected_packages
+    expected_packages=$(get_local_packages)
     
     # Download packages
     while IFS= read -r package; do
@@ -214,7 +212,7 @@ download_packages() {
                 continue
             fi
         fi
-    done <<< "$published_packages"
+    done <<< "$expected_packages"
     
     extract_packages
     validate_package_integrity

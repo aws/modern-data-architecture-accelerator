@@ -400,10 +400,12 @@ feature_test_published_npm:
       - packages/**/node_modules/
     policy: pull
   dependencies:
+    - feature_package
     - feature_publish_npm
   needs:
+    - feature_package
     - feature_publish_npm
-  allow_failure: true
+  allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
