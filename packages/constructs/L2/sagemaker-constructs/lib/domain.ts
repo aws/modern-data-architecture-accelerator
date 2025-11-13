@@ -101,6 +101,11 @@ export class MdaaStudioDomain extends CfnDomain {
       },
       lifecycleConfigArns: [],
     },
+    jupyterLabAppSettings: {
+      // Note: JupyterLab does not support 'system' instance type
+      // defaultResourceSpec is optional for JupyterLab
+      lifecycleConfigArns: [],
+    },
     kernelGatewayAppSettings: {
       defaultResourceSpec: {
         instanceType: 'system',

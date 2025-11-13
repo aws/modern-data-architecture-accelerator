@@ -8894,6 +8894,9 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
               "arn",
             ],
           },
+          "JupyterLabAppSettings": {
+            "LifecycleConfigArns": [],
+          },
           "JupyterServerAppSettings": {
             "DefaultResourceSpec": {
               "InstanceType": "system",
@@ -18499,6 +18502,9 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
                 "RoleResteamexecutionrole",
                 "arn",
               ],
+            },
+            "JupyterLabAppSettings": {
+              "LifecycleConfigArns": [],
             },
             "JupyterServerAppSettings": {
               "DefaultResourceSpec": {

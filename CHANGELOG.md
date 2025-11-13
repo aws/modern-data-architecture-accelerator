@@ -5,6 +5,10 @@
 ### Data Science/AI/ML Changes
 
 - Added EFS CreateFileSystem permission with encryption enforcement to SageMaker Studio Domain handler for domain creation support
+- Added JupyterLab lifecycle configuration support for SageMaker Studio domains
+  - JupyterLab apps now support lifecycle configurations similar to Jupyter Server apps
+  - Enables custom environment setup and package installation for Studio (Latest) JupyterLab environments
+  - Lifecycle configurations can include assets and commands that run when JupyterLab containers launch
 
 ## [1.2.0] - 2025-10-08
 

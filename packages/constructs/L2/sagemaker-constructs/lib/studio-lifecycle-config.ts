@@ -11,7 +11,7 @@ import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 
 import { Construct } from 'constructs';
 
-export type LifecycleConfigAppType = 'JupyterServer' | 'KernelGateway';
+export type LifecycleConfigAppType = 'JupyterServer' | 'JupyterLab' | 'KernelGateway';
 
 export interface MdaaStudioLifecycleConfigProps extends MdaaConstructProps {
   /**

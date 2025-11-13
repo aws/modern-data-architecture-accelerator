@@ -54,3 +54,24 @@ describe('MDAA Construct Compliance Tests', () => {
     });
   });
 });
+
+describe('MDAA JupyterLab Lifecycle Config Tests', () => {
+  const testApp = new MdaaTestApp();
+
+  const testContstructProps: MdaaStudioLifecycleConfigProps = {
+    naming: testApp.naming,
+    lifecycleConfigContent: 'testing-jupyterlab',
+    lifecycleConfigAppType: 'JupyterLab',
+  };
+
+  new MdaaStudioLifecycleConfig(testApp.testStack, 'test-jupyterlab-construct', testContstructProps);
+
+  const template = Template.fromStack(testApp.testStack);
+
+  test('Create JupyterLab Lifecycle Config', () => {
+    template.hasResourceProperties('Custom::StudioLifecycleConfig', {
+      lifecycleConfigContent: 'testing-jupyterlab',
+      lifecycleConfigAppType: 'JupyterLab',
+    });
+  });
+});

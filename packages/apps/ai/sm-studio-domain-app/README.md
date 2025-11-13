@@ -135,6 +135,21 @@ domain:
         - echo "testing jupyter"
         - sh $ASSETS_DIR/testing/test.sh
 
+    # Lifecycle config for JupyterLab App (Studio Latest).
+    # This will be run each time the JupyterLab app container is launched.
+    # Required for lifecycle scripts to run in SageMaker Studio (Latest).
+    jupyterLab:
+      # Assets which will be staged in S3, then copied to SageMaker container
+      # before the lifecycle commands run.
+      # The assets will be available in the container under
+      # $ASSETS_DIR/<asset_name>/
+      assets:
+        testing:
+          sourcePath: ./testing_asset_dir
+      cmds:
+        - echo "testing jupyterlab"
+        - sh $ASSETS_DIR/testing/test.sh
+
     # Kernel gateway app lifecycle config. This will run each time
     # a kernel gateway container is launched.
     kernel:

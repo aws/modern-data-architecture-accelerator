@@ -48,6 +48,11 @@ export interface DomainUserSettings {
    */
   readonly jupyterServerAppSettings?: CfnDomain.JupyterServerAppSettingsProperty;
   /**
+   * The JupyterLab app settings.
+   * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sagemaker-domain-usersettings.html#cfn-sagemaker-domain-usersettings-jupyterlabappsettings
+   */
+  readonly jupyterLabAppSettings?: CfnDomain.JupyterLabAppSettingsProperty;
+  /**
    * The kernel gateway app settings.
    * @link http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sagemaker-domain-usersettings.html#cfn-sagemaker-domain-usersettings-kernelgatewayappsettings
    */
@@ -267,26 +272,37 @@ export interface DomainProps {
 }
 /**
  * Q-ENHANCED-INTERFACE
- * SageMaker Studio lifecycle configuration interface for domain-level environment setup with JupyterServer and KernelGateway script management. Defines lifecycle scripts that execute during Studio app startup, enabling custom environment configuration, package installation, and standardized development environment setup across all domain users.
+ * SageMaker Studio lifecycle configuration interface for domain-level environment setup with JupyterServer, JupyterLab, and KernelGateway script management. Defines lifecycle scripts that execute during Studio app startup, enabling custom environment configuration, package installation, and standardized development environment setup across all domain users.
  *
  * Use cases: Studio environment standardization; Custom package installation; Development environment setup; Domain-wide configuration; ML environment preparation; Team environment consistency
  *
- * AWS: SageMaker Studio Domain lifecycle configuration with JupyterServer and KernelGateway script execution for standardized ML development environments
+ * AWS: SageMaker Studio Domain lifecycle configuration with JupyterServer, JupyterLab, and KernelGateway script execution for standardized ML development environments
  *
- * Validation: jupyterServerAppSettings and kernelGatewayAppSettings must be valid lifecycle script configurations; scripts must be executable in Studio environment
+ * Validation: jupyterServerAppSettings, jupyterLabAppSettings, and kernelGatewayAppSettings must be valid lifecycle script configurations; scripts must be executable in Studio environment
  */
 export interface StudioLifecycleConfigProps {
   /**
    * Q-ENHANCED-PROPERTY
-   * Optional JupyterServer lifecycle script configuration for Studio domain-wide Jupyter environment setup enabling custom package installation and environment standardization. Defines scripts that execute when JupyterServer applications start, providing consistent development environment setup across all domain users.
+   * Optional JupyterServer lifecycle script configuration for Studio domain-wide Jupyter environment setup enabling custom package installation and environment standardization. Defines scripts that execute when JupyterServer applications start, providing consistent development environment setup across all domain users. Used by Studio Classic.
    *
-   * Use cases: Jupyter environment setup; Custom package installation; Development environment standardization; Domain-wide Jupyter configuration; ML library installation
+   * Use cases: Jupyter environment setup; Custom package installation; Development environment standardization; Domain-wide Jupyter configuration; ML library installation; Studio Classic support
    *
    * AWS: SageMaker Studio JupyterServer lifecycle configuration for domain-wide Jupyter environment setup and standardization
    *
    * Validation: Must be valid LifecycleScriptProps if provided; scripts must be executable in Studio JupyterServer environment; optional for Jupyter configuration
    **/
   readonly jupyter?: LifecycleScriptProps;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional JupyterLab lifecycle script configuration for Studio domain-wide JupyterLab environment setup enabling custom package installation and environment standardization. Defines scripts that execute when JupyterLab applications start, providing consistent development environment setup across all domain users. Used by Studio (Latest).
+   *
+   * Use cases: JupyterLab environment setup; Custom package installation; Development environment standardization; Domain-wide JupyterLab configuration; ML library installation; Studio Latest support
+   *
+   * AWS: SageMaker Studio JupyterLab lifecycle configuration for domain-wide JupyterLab environment setup and standardization
+   *
+   * Validation: Must be valid LifecycleScriptProps if provided; scripts must be executable in Studio JupyterLab environment; optional for JupyterLab configuration
+   **/
+  readonly jupyterLab?: LifecycleScriptProps;
   /**
    * Q-ENHANCED-PROPERTY
    * Optional KernelGateway lifecycle script configuration for Studio domain-wide kernel environment setup enabling custom kernel configuration and package management. Defines scripts that execute when KernelGateway applications start, providing consistent kernel environment setup and ML library availability across all domain users.
@@ -507,6 +523,17 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
         )
       : undefined;
 
+    const jupyterLabLifecycleConfig = this.props.domain.lifecycleConfigs?.jupyterLab
+      ? this.createStudioLifecycleConfig(
+          this.props.domain.lifecycleConfigs.jupyterLab,
+          'JupyterLab',
+          domainBucket,
+          assetPrefix,
+          assetDeploymentRole,
+          assetDeploymentMemoryLimitMB,
+        )
+      : undefined;
+
     const kernelLifecycleConfig = this.props.domain.lifecycleConfigs?.kernel
       ? this.createStudioLifecycleConfig(
           this.props.domain.lifecycleConfigs.kernel,
@@ -521,6 +548,12 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
     if (jupyterLifecycleConfig && kernelLifecycleConfig) {
       kernelLifecycleConfig.node.addDependency(jupyterLifecycleConfig);
     }
+    if (jupyterLabLifecycleConfig && kernelLifecycleConfig) {
+      kernelLifecycleConfig.node.addDependency(jupyterLabLifecycleConfig);
+    }
+    if (jupyterLifecycleConfig && jupyterLabLifecycleConfig) {
+      jupyterLabLifecycleConfig.node.addDependency(jupyterLifecycleConfig);
+    }
 
     const jupyterServerAppSettings = jupyterLifecycleConfig
       ? {
@@ -528,6 +561,15 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
             lifecycleConfigArn: jupyterLifecycleConfig.arn,
           },
           lifecycleConfigArns: [jupyterLifecycleConfig.arn],
+        }
+      : undefined;
+
+    const jupyterLabAppSettings = jupyterLabLifecycleConfig
+      ? {
+          defaultResourceSpec: {
+            lifecycleConfigArn: jupyterLabLifecycleConfig.arn,
+          },
+          lifecycleConfigArns: [jupyterLabLifecycleConfig.arn],
         }
       : undefined;
 
@@ -543,6 +585,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
     const defaultUserSettingsWithLifecycle: CfnDomain.UserSettingsProperty = {
       executionRole: defaultExecutionRole.roleArn,
       jupyterServerAppSettings: jupyterServerAppSettings,
+      jupyterLabAppSettings: jupyterLabAppSettings,
       kernelGatewayAppSettings: kernelGatewayAppSettings,
     };
     // nosemgrep
@@ -572,6 +615,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
 
     const domain = new MdaaStudioDomain(this, 'domain', domainProps);
     if (jupyterLifecycleConfig) domain.node.addDependency(jupyterLifecycleConfig);
+    if (jupyterLabLifecycleConfig) domain.node.addDependency(jupyterLabLifecycleConfig);
     if (kernelLifecycleConfig) domain.node.addDependency(kernelLifecycleConfig);
     return domain;
   }

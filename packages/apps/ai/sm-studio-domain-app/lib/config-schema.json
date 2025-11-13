@@ -30,6 +30,38 @@
             ],
             "type": "string"
         },
+        "CfnDomain.AppLifecycleManagementProperty": {
+            "additionalProperties": false,
+            "description": "Settings that are used to configure and manage the lifecycle of Amazon SageMaker Studio applications.",
+            "properties": {
+                "idleSettings": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "$ref": "#/definitions/CfnDomain.IdleSettingsProperty"
+                        }
+                    ],
+                    "description": "Settings related to idle shutdown of Studio applications."
+                }
+            },
+            "type": "object"
+        },
+        "CfnDomain.CodeRepositoryProperty": {
+            "additionalProperties": false,
+            "description": "A Git repository that SageMaker AI automatically displays to users for cloning in the JupyterServer application.",
+            "properties": {
+                "repositoryUrl": {
+                    "description": "The URL of the Git repository.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "repositoryUrl"
+            ],
+            "type": "object"
+        },
         "CfnDomain.CustomImageProperty": {
             "additionalProperties": false,
             "description": "A custom SageMaker AI image.\n\nFor more information, see [Bring your own SageMaker AI image](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-byoi.html) .",
@@ -51,6 +83,111 @@
                 "appImageConfigName",
                 "imageName"
             ],
+            "type": "object"
+        },
+        "CfnDomain.IdleSettingsProperty": {
+            "additionalProperties": false,
+            "description": "Settings related to idle shutdown of Studio applications.",
+            "properties": {
+                "idleTimeoutInMinutes": {
+                    "description": "The time that SageMaker waits after the application becomes idle before shutting it down.",
+                    "type": "number"
+                },
+                "lifecycleManagement": {
+                    "description": "Indicates whether idle shutdown is activated for the application type.",
+                    "type": "string"
+                },
+                "maxIdleTimeoutInMinutes": {
+                    "description": "The maximum value in minutes that custom idle shutdown can be set to by the user.",
+                    "type": "number"
+                },
+                "minIdleTimeoutInMinutes": {
+                    "description": "The minimum value in minutes that custom idle shutdown can be set to by the user.",
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "CfnDomain.JupyterLabAppSettingsProperty": {
+            "additionalProperties": false,
+            "description": "The settings for the JupyterLab application.",
+            "properties": {
+                "appLifecycleManagement": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "$ref": "#/definitions/CfnDomain.AppLifecycleManagementProperty"
+                        }
+                    ],
+                    "description": "Indicates whether idle shutdown is activated for JupyterLab applications."
+                },
+                "builtInLifecycleConfigArn": {
+                    "description": "The lifecycle configuration that runs before the default lifecycle configuration.\n\nIt can override changes made in the default lifecycle configuration.",
+                    "type": "string"
+                },
+                "codeRepositories": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "items": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/definitions/IResolvable"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/CfnDomain.CodeRepositoryProperty"
+                                    }
+                                ]
+                            },
+                            "type": "array"
+                        }
+                    ],
+                    "description": "A list of Git repositories that SageMaker automatically displays to users for cloning in the JupyterLab application."
+                },
+                "customImages": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "items": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/definitions/IResolvable"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/CfnDomain.CustomImageProperty"
+                                    }
+                                ]
+                            },
+                            "type": "array"
+                        }
+                    ],
+                    "description": "A list of custom SageMaker images that are configured to run as a JupyterLab app."
+                },
+                "defaultResourceSpec": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/IResolvable"
+                        },
+                        {
+                            "$ref": "#/definitions/CfnDomain.ResourceSpecProperty"
+                        }
+                    ],
+                    "description": "The default instance type and the Amazon Resource Name (ARN) of the default SageMaker image used by the JupyterLab app."
+                },
+                "lifecycleConfigArns": {
+                    "description": "The Amazon Resource Name (ARN) of the lifecycle configurations attached to the user profile or domain.\n\nTo remove a lifecycle config, you must set `LifecycleConfigArns` to an empty list.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
             "type": "object"
         },
         "CfnDomain.JupyterServerAppSettingsProperty": {
@@ -388,6 +525,10 @@
             "additionalProperties": false,
             "description": "Q-ENHANCED-INTERFACE\nDomainUserSettings interface.\n\nUse cases: Data mesh domain isolation; Multi-domain deployments; Domain-specific resource targeting; Cross-domain governance; Organizational data boundaries\n\nAWS: AWS service configuration and deployment\n\nValidation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements",
             "properties": {
+                "jupyterLabAppSettings": {
+                    "$ref": "#/definitions/CfnDomain.JupyterLabAppSettingsProperty",
+                    "description": "The JupyterLab app settings."
+                },
                 "jupyterServerAppSettings": {
                     "$ref": "#/definitions/CfnDomain.JupyterServerAppSettingsProperty",
                     "description": "The Jupyter server's app settings."
@@ -871,11 +1012,15 @@
         },
         "StudioLifecycleConfigProps": {
             "additionalProperties": false,
-            "description": "Q-ENHANCED-INTERFACE\nSageMaker Studio lifecycle configuration interface for domain-level environment setup with JupyterServer and KernelGateway script management. Defines lifecycle scripts that execute during Studio app startup, enabling custom environment configuration, package installation, and standardized development environment setup across all domain users.\n\nUse cases: Studio environment standardization; Custom package installation; Development environment setup; Domain-wide configuration; ML environment preparation; Team environment consistency\n\nAWS: SageMaker Studio Domain lifecycle configuration with JupyterServer and KernelGateway script execution for standardized ML development environments\n\nValidation: jupyterServerAppSettings and kernelGatewayAppSettings must be valid lifecycle script configurations; scripts must be executable in Studio environment",
+            "description": "Q-ENHANCED-INTERFACE\nSageMaker Studio lifecycle configuration interface for domain-level environment setup with JupyterServer, JupyterLab, and KernelGateway script management. Defines lifecycle scripts that execute during Studio app startup, enabling custom environment configuration, package installation, and standardized development environment setup across all domain users.\n\nUse cases: Studio environment standardization; Custom package installation; Development environment setup; Domain-wide configuration; ML environment preparation; Team environment consistency\n\nAWS: SageMaker Studio Domain lifecycle configuration with JupyterServer, JupyterLab, and KernelGateway script execution for standardized ML development environments\n\nValidation: jupyterServerAppSettings, jupyterLabAppSettings, and kernelGatewayAppSettings must be valid lifecycle script configurations; scripts must be executable in Studio environment",
             "properties": {
                 "jupyter": {
                     "$ref": "#/definitions/LifecycleScriptProps",
-                    "description": "Q-ENHANCED-PROPERTY\nOptional JupyterServer lifecycle script configuration for Studio domain-wide Jupyter environment setup enabling custom package installation and environment standardization. Defines scripts that execute when JupyterServer applications start, providing consistent development environment setup across all domain users.\n\nUse cases: Jupyter environment setup; Custom package installation; Development environment standardization; Domain-wide Jupyter configuration; ML library installation\n\nAWS: SageMaker Studio JupyterServer lifecycle configuration for domain-wide Jupyter environment setup and standardization\n\nValidation: Must be valid LifecycleScriptProps if provided; scripts must be executable in Studio JupyterServer environment; optional for Jupyter configuration"
+                    "description": "Q-ENHANCED-PROPERTY\nOptional JupyterServer lifecycle script configuration for Studio domain-wide Jupyter environment setup enabling custom package installation and environment standardization. Defines scripts that execute when JupyterServer applications start, providing consistent development environment setup across all domain users. Used by Studio Classic.\n\nUse cases: Jupyter environment setup; Custom package installation; Development environment standardization; Domain-wide Jupyter configuration; ML library installation; Studio Classic support\n\nAWS: SageMaker Studio JupyterServer lifecycle configuration for domain-wide Jupyter environment setup and standardization\n\nValidation: Must be valid LifecycleScriptProps if provided; scripts must be executable in Studio JupyterServer environment; optional for Jupyter configuration"
+                },
+                "jupyterLab": {
+                    "$ref": "#/definitions/LifecycleScriptProps",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional JupyterLab lifecycle script configuration for Studio domain-wide JupyterLab environment setup enabling custom package installation and environment standardization. Defines scripts that execute when JupyterLab applications start, providing consistent development environment setup across all domain users. Used by Studio (Latest).\n\nUse cases: JupyterLab environment setup; Custom package installation; Development environment standardization; Domain-wide JupyterLab configuration; ML library installation; Studio Latest support\n\nAWS: SageMaker Studio JupyterLab lifecycle configuration for domain-wide JupyterLab environment setup and standardization\n\nValidation: Must be valid LifecycleScriptProps if provided; scripts must be executable in Studio JupyterLab environment; optional for JupyterLab configuration"
                 },
                 "kernel": {
                     "$ref": "#/definitions/LifecycleScriptProps",

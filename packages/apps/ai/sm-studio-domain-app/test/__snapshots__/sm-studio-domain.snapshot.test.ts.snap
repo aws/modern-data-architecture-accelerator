@@ -324,6 +324,17 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:studiolifecycleconfig:jupyterlab:arn",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "StudioLifecycleConfigArn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:studiolifecycleconfig:jupyterserver:arn",
         },
         "Value": {
@@ -422,6 +433,10 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
             "RestrictPublicBuckets": true,
           },
           "Tags": [
+            {
+              "Key": "aws-cdk:cr-owned:lifecycle-assets/JupyterLab/testing:119ab514",
+              "Value": "true",
+            },
             {
               "Key": "aws-cdk:cr-owned:lifecycle-assets/JupyterServer/testing:68a834fc",
               "Value": "true",
@@ -903,6 +918,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
         "Properties": {
           "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/bucket/arn",
           "Tags": {
+            "aws-cdk:cr-owned:lifecycle-assets/JupyterLab/testing:119ab514": "true",
             "aws-cdk:cr-owned:lifecycle-assets/JupyterServer/testing:68a834fc": "true",
             "aws-cdk:cr-owned:lifecycle-assets/KernelGateway/testing:82b21974": "true",
             "mdaa_cdk_app": "sm-studio-domain",
@@ -943,6 +959,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
         "Properties": {
           "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/bucket/name",
           "Tags": {
+            "aws-cdk:cr-owned:lifecycle-assets/JupyterLab/testing:119ab514": "true",
             "aws-cdk:cr-owned:lifecycle-assets/JupyterServer/testing:68a834fc": "true",
             "aws-cdk:cr-owned:lifecycle-assets/KernelGateway/testing:82b21974": "true",
             "mdaa_cdk_app": "sm-studio-domain",
@@ -3301,6 +3318,47 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       "REPLACED-CFN-LOGICAL-ID": {
         "DeletionPolicy": "Delete",
         "Properties": {
+          "DestinationBucketKeyPrefix": "lifecycle-assets/JupyterLab/testing",
+          "DestinationBucketName": {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+          "Extract": true,
+          "OutputObjectKeys": true,
+          "Prune": true,
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "SourceBucketNames": [
+            {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+          ],
+          "SourceObjectKeys": [
+            "REPLACED-GENERATED-NAME.zip",
+          ],
+          "WaitForDistributionInvalidation": true,
+        },
+        "Type": "Custom::CDKBucketDeployment",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Content": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "Description": "/opt/awscli/aws",
+        },
+        "Type": "AWS::Lambda::LayerVersion",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
+        "Properties": {
           "DestinationBucketKeyPrefix": "lifecycle-assets/JupyterServer/testing",
           "DestinationBucketName": {
             "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -3710,6 +3768,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
         ],
         "Properties": {
           "AppNetworkAccessType": "VpcOnly",
@@ -3769,6 +3829,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
         ],
         "Properties": {
           "Content": {
@@ -3783,6 +3845,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
@@ -3810,6 +3874,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
         ],
         "Properties": {
           "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/domain/id",
@@ -3833,6 +3899,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
         ],
         "Properties": {
           "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/domain/subnet-ids",
@@ -3850,6 +3918,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
@@ -3876,6 +3946,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
         ],
         "Properties": {
           "DefaultUserSettings": {
@@ -3883,6 +3955,24 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               "Fn::GetAtt": [
                 "REPLACED-CFN-LOGICAL-ID",
                 "Arn",
+              ],
+            },
+            "JupyterLabAppSettings": {
+              "DefaultResourceSpec": {
+                "LifecycleConfigArn": {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "StudioLifecycleConfigArn",
+                  ],
+                },
+              },
+              "LifecycleConfigArns": [
+                {
+                  "Fn::GetAtt": [
+                    "REPLACED-CFN-LOGICAL-ID",
+                    "StudioLifecycleConfigArn",
+                  ],
+                },
               ],
             },
             "JupyterServerAppSettings": {
@@ -4096,6 +4186,67 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DeletionPolicy": "Delete",
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "lifecycleConfigAppType": "JupyterLab",
+          "lifecycleConfigContent": {
+            "Fn::Base64": {
+              "Fn::Join": [
+                "",
+                [
+                  "export ASSETS_DIR=/tmp/lifecycle-assets/JupyterLab
+aws s3 cp --recursive s3://",
+                  {
+                    "Ref": "REPLACED-CFN-LOGICAL-ID",
+                  },
+                  "/lifecycle-assets/JupyterLab/ $ASSETS_DIR
+echo "testing jupyterlab (Studio Latest)"
+pip install --upgrade pandas numpy scikit-learn
+sh $ASSETS_DIR/testing/test.sh",
+                ],
+              ],
+            },
+          },
+          "lifecycleConfigName": "REPLACED-S3-BUCKET-NAME",
+        },
+        "Type": "Custom::StudioLifecycleConfig",
+        "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Properties": {
+          "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/studiolifecycleconfig/jupyterlab/arn",
+          "Tags": {
+            "mdaa_cdk_app": "sm-studio-domain",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-sagemaker-studio-domain-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "StudioLifecycleConfigArn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DeletionPolicy": "Delete",
         "Properties": {
           "ServiceToken": {
             "Fn::GetAtt": [
@@ -4151,6 +4302,8 @@ sh $ASSETS_DIR/testing/test.sh",
         "DependsOn": [
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
         ],
         "Properties": {
           "ServiceToken": {
@@ -4184,6 +4337,8 @@ sh $ASSETS_DIR/testing/test.sh",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
         ],
@@ -4625,6 +4780,17 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:studiolifecycleconfig:jupyterlab:arn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "StudioLifecycleConfigArn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-sagemaker-studio-domain-main:studiolifecycleconfig:jupyterserver:arn",
       },
       "Value": {
@@ -4723,6 +4889,10 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
           "RestrictPublicBuckets": true,
         },
         "Tags": [
+          {
+            "Key": "aws-cdk:cr-owned:lifecycle-assets/JupyterLab/testing:119ab514",
+            "Value": "true",
+          },
           {
             "Key": "aws-cdk:cr-owned:lifecycle-assets/JupyterServer/testing:68a834fc",
             "Value": "true",
@@ -5204,6 +5374,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
       "Properties": {
         "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/bucket/arn",
         "Tags": {
+          "aws-cdk:cr-owned:lifecycle-assets/JupyterLab/testing:119ab514": "true",
           "aws-cdk:cr-owned:lifecycle-assets/JupyterServer/testing:68a834fc": "true",
           "aws-cdk:cr-owned:lifecycle-assets/KernelGateway/testing:82b21974": "true",
           "mdaa_cdk_app": "sm-studio-domain",
@@ -5244,6 +5415,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
       "Properties": {
         "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/bucket/name",
         "Tags": {
+          "aws-cdk:cr-owned:lifecycle-assets/JupyterLab/testing:119ab514": "true",
           "aws-cdk:cr-owned:lifecycle-assets/JupyterServer/testing:68a834fc": "true",
           "aws-cdk:cr-owned:lifecycle-assets/KernelGateway/testing:82b21974": "true",
           "mdaa_cdk_app": "sm-studio-domain",
@@ -7602,6 +7774,47 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     "REPLACED-CFN-LOGICAL-ID": {
       "DeletionPolicy": "Delete",
       "Properties": {
+        "DestinationBucketKeyPrefix": "lifecycle-assets/JupyterLab/testing",
+        "DestinationBucketName": {
+          "Ref": "REPLACED-CFN-LOGICAL-ID",
+        },
+        "Extract": true,
+        "OutputObjectKeys": true,
+        "Prune": true,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": [
+          {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+        ],
+        "SourceObjectKeys": [
+          "REPLACED-GENERATED-NAME.zip",
+        ],
+        "WaitForDistributionInvalidation": true,
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Content": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
         "DestinationBucketKeyPrefix": "lifecycle-assets/JupyterServer/testing",
         "DestinationBucketName": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -8011,6 +8224,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
       ],
       "Properties": {
         "AppNetworkAccessType": "VpcOnly",
@@ -8070,6 +8285,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
       ],
       "Properties": {
         "Content": {
@@ -8084,6 +8301,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
@@ -8111,6 +8330,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
       ],
       "Properties": {
         "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/domain/id",
@@ -8134,6 +8355,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
       ],
       "Properties": {
         "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/domain/subnet-ids",
@@ -8151,6 +8374,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
@@ -8177,6 +8402,8 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
       ],
       "Properties": {
         "DefaultUserSettings": {
@@ -8184,6 +8411,24 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+          "JupyterLabAppSettings": {
+            "DefaultResourceSpec": {
+              "LifecycleConfigArn": {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "StudioLifecycleConfigArn",
+                ],
+              },
+            },
+            "LifecycleConfigArns": [
+              {
+                "Fn::GetAtt": [
+                  "REPLACED-CFN-LOGICAL-ID",
+                  "StudioLifecycleConfigArn",
+                ],
+              },
             ],
           },
           "JupyterServerAppSettings": {
@@ -8397,6 +8642,67 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "lifecycleConfigAppType": "JupyterLab",
+        "lifecycleConfigContent": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "export ASSETS_DIR=/tmp/lifecycle-assets/JupyterLab
+aws s3 cp --recursive s3://",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+                "/lifecycle-assets/JupyterLab/ $ASSETS_DIR
+echo "testing jupyterlab (Studio Latest)"
+pip install --upgrade pandas numpy scikit-learn
+sh $ASSETS_DIR/testing/test.sh",
+              ],
+            ],
+          },
+        },
+        "lifecycleConfigName": "REPLACED-S3-BUCKET-NAME",
+      },
+      "Type": "Custom::StudioLifecycleConfig",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Properties": {
+        "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/studiolifecycleconfig/jupyterlab/arn",
+        "Tags": {
+          "mdaa_cdk_app": "sm-studio-domain",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-sagemaker-studio-domain-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "StudioLifecycleConfigArn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DeletionPolicy": "Delete",
       "Properties": {
         "ServiceToken": {
           "Fn::GetAtt": [
@@ -8452,6 +8758,8 @@ sh $ASSETS_DIR/testing/test.sh",
       "DependsOn": [
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
       ],
       "Properties": {
         "ServiceToken": {
@@ -8485,6 +8793,8 @@ sh $ASSETS_DIR/testing/test.sh",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
       ],
