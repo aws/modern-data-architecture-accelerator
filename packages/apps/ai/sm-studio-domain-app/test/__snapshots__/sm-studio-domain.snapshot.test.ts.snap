@@ -1769,6 +1769,13 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
                 "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/sagemaker-constructs/lib/domain.ts:LINE:COL] EFS CreateFileSystem action requires wildcard resource as file system ARN is not known before creation. Permission is scoped with condition requiring encryption.",
+              },
             ],
           },
         },
@@ -1797,6 +1804,16 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
                     "Arn",
                   ],
                 },
+              },
+              {
+                "Action": "elasticfilesystem:CreateFileSystem",
+                "Condition": {
+                  "Bool": {
+                    "elasticfilesystem:Encrypted": "true",
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": "*",
               },
             ],
             "Version": "2012-10-17",
@@ -6053,6 +6070,13 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
               "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/sagemaker-constructs/lib/domain.ts:LINE:COL] EFS CreateFileSystem action requires wildcard resource as file system ARN is not known before creation. Permission is scoped with condition requiring encryption.",
+            },
           ],
         },
       },
@@ -6081,6 +6105,16 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
                   "Arn",
                 ],
               },
+            },
+            {
+              "Action": "elasticfilesystem:CreateFileSystem",
+              "Condition": {
+                "Bool": {
+                  "elasticfilesystem:Encrypted": "true",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
             },
           ],
           "Version": "2012-10-17",

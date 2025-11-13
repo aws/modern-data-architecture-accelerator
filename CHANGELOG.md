@@ -1,5 +1,11 @@
 # Change Log
 
+## [Unreleased]
+
+### Data Science/AI/ML Changes
+
+- Added EFS CreateFileSystem permission with encryption enforcement to SageMaker Studio Domain handler for domain creation support
+
 ## [1.2.0] - 2025-10-08
 
 ### General Changes

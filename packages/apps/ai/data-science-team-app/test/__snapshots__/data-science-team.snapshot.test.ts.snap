@@ -1308,6 +1308,13 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
               "id": "PCI.DSS.321-IAMNoInlinePolicy",
               "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
             },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/sagemaker-constructs/lib/domain.ts:LINE:COL] EFS CreateFileSystem action requires wildcard resource as file system ARN is not known before creation. Permission is scoped with condition requiring encryption.",
+            },
           ],
         },
       },
@@ -1336,6 +1343,16 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
                   "arn",
                 ],
               },
+            },
+            {
+              "Action": "elasticfilesystem:CreateFileSystem",
+              "Condition": {
+                "Bool": {
+                  "elasticfilesystem:Encrypted": "true",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
             },
           ],
           "Version": "2012-10-17",
@@ -10897,6 +10914,13 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
                 "id": "PCI.DSS.321-IAMNoInlinePolicy",
                 "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource; inline policy use appropriate",
               },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/sagemaker-constructs/lib/domain.ts:LINE:COL] EFS CreateFileSystem action requires wildcard resource as file system ARN is not known before creation. Permission is scoped with condition requiring encryption.",
+              },
             ],
           },
         },
@@ -10925,6 +10949,16 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
                     "arn",
                   ],
                 },
+              },
+              {
+                "Action": "elasticfilesystem:CreateFileSystem",
+                "Condition": {
+                  "Bool": {
+                    "elasticfilesystem:Encrypted": "true",
+                  },
+                },
+                "Effect": "Allow",
+                "Resource": "*",
               },
             ],
             "Version": "2012-10-17",

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
+import { MdaaConstructProps, MdaaParamAndOutput, MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { MdaaBoto3LayerVersion } from '@aws-mdaa/lambda-constructs';
-import { Duration } from 'aws-cdk-lib';
+import { Duration, Stack } from 'aws-cdk-lib';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { CfnDomain, CfnDomainProps } from 'aws-cdk-lib/aws-sagemaker';
@@ -154,6 +154,11 @@ export class MdaaStudioDomain extends CfnDomain {
         resources: [props.defaultUserSettings.executionRole],
         actions: ['iam:PassRole'],
       }),
+      new PolicyStatement({
+        resources: ["*"],
+        actions: ['elasticfilesystem:CreateFileSystem'],
+        conditions: {'Bool': {'elasticfilesystem:Encrypted': 'true'}},
+      })
     ];
 
     const crProps: MdaaCustomResourceProps = {
@@ -179,6 +184,26 @@ export class MdaaStudioDomain extends CfnDomain {
     };
 
     new MdaaCustomResource(this, 'update-domain-cr', crProps);
+
+    // Suppress CDK Nag warnings for EFS CreateFileSystem permission requiring wildcard resource
+    // The EFS CreateFileSystem action requires wildcard resource as the file system ARN is not known before creation
+    // The permission is scoped with a condition requiring encryption for security
+    // Find and suppress the handler policy created by MdaaCustomResource at the stack level
+    const stack = Stack.of(this);
+    const handlerPolicy = stack.node.tryFindChild('custom-StudioDomainUpdate-handler-policy');
+    if (handlerPolicy) {
+      MdaaNagSuppressions.addCodeResourceSuppressions(
+        handlerPolicy,
+        [
+          {
+            id: 'AwsSolutions-IAM5',
+            reason: 'EFS CreateFileSystem action requires wildcard resource as file system ARN is not known before creation. Permission is scoped with condition requiring encryption.',
+            appliesTo: ['Resource::*'],
+          },
+        ],
+        true,
+      );
+    }
 
     new MdaaParamAndOutput(
       this,
