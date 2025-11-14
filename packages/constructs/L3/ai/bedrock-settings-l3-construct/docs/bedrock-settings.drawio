@@ -1,0 +1,113 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.1.1 Chrome/132.0.6834.210 Electron/34.3.3 Safari/537.36" version="26.1.1">
+  <diagram name="Page-1" id="bedrock-settings-high-level">
+    <mxGraphModel dx="1482" dy="878" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="account-boundary" value="" style="rounded=1;whiteSpace=wrap;html=1;fontSize=20;fillColor=none;arcSize=2;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="150" y="80" width="660" height="580" as="geometry" />
+        </mxCell>
+        <mxCell id="account-label" value="Deployment/Target Account" style="outlineConnect=0;dashed=0;verticalLabelPosition=middle;verticalAlign=middle;align=left;html=1;shape=mxgraph.aws3.cloud_2;fillColor=#F58534;gradientColor=none;labelPosition=right;fontSize=20;" parent="1" vertex="1">
+          <mxGeometry x="150" y="80" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="kms-key" value="KMS Key" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.key_management_service;" parent="1" vertex="1">
+          <mxGeometry x="370" y="150" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-bucket" value="S3 Bucket&amp;nbsp;&lt;div&gt;(Optional)&amp;nbsp;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" parent="1" vertex="1">
+          <mxGeometry x="200" y="300" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="cloudwatch-logs" value="CloudWatch Log Group&amp;nbsp;&lt;div&gt;(Optional)&lt;/div&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch;" parent="1" vertex="1">
+          <mxGeometry x="500" y="300" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="service-role" value="Service Role" style="group;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fontSize=14;" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="510" y="530" width="72" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="service-role-bg" value="" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=bottom;fillColor=#C7131F;strokeColor=#ffffff;fontColor=#232F3E;sketch=0;gradientColor=#F54749;gradientDirection=north;dashed=0;fontStyle=0;labelPosition=center;verticalLabelPosition=top;align=center;" parent="service-role" vertex="1">
+          <mxGeometry width="72" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="service-role-icon" value="" style="sketch=0;outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.role;" parent="service-role" vertex="1">
+          <mxGeometry x="5" y="17" width="60.27" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="managed-policy" value="&lt;div&gt;Service Role Policy&lt;/div&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.identity_and_access_management;" parent="1" vertex="1">
+          <mxGeometry x="700" y="529.5" width="69" height="69" as="geometry" />
+        </mxCell>
+        <mxCell id="bedrock-service" value="Amazon Bedrock&amp;nbsp;&lt;div&gt;Model Invocation Logging&lt;/div&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" parent="1" vertex="1">
+          <mxGeometry x="330" y="530" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="kms-to-s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="kms-key" target="s3-bucket" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="390" y="260" />
+              <mxPoint x="239" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kms-to-s3-label" value="Encrypts" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="kms-to-s3" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kms-to-cloudwatch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="kms-key" target="cloudwatch-logs" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="260" />
+              <mxPoint x="539" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kms-to-cloudwatch-label" value="Encrypts" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="kms-to-cloudwatch" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="policy-to-role" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="managed-policy" target="service-role-bg" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="policy-to-role-label" value="Attached to" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="policy-to-role" vertex="1" connectable="0">
+          <mxGeometry x="0.1" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bedrock-to-role" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="bedrock-service" target="service-role-bg" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="570" />
+              <mxPoint x="480" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bedrock-to-role-label" value="Assumes Role" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="bedrock-to-role" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bedrock-to-s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="bedrock-service" target="s3-bucket" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="350" y="450" />
+              <mxPoint x="239" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bedrock-to-s3-label" value="Writes Audit Logs" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="bedrock-to-s3" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint x="-21" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bedrock-to-cloudwatch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="bedrock-service" target="cloudwatch-logs" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="389" y="450" />
+              <mxPoint x="539" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bedrock-to-cloudwatch-label" value="Writes Audit Logs" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="bedrock-to-cloudwatch" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint x="16" y="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
