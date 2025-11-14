@@ -10,5 +10,5 @@ lakeFormationAdminRoles:
 # which may have been granted via IAM policies directly against
 # Glue catalog resources.
 # If false (default), permissions must be explcitely granted in
-# IAM policies (coarse-grained), and in LakeFormation grabts (fine-grained).
+# IAM policies (coarse-grained), and in LakeFormation grants (fine-grained).
 iamAllowedPrincipalsDefault: false
