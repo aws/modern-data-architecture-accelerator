@@ -701,6 +701,17 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
     });
     basicExecutionPolicy.addStatements(studioLifecycleDescStatement);
 
+    //Allow ExecutionRole to describe SageMaker images and image versions
+    const sagemakerImageStatement = new PolicyStatement({
+      effect: Effect.ALLOW,
+      resources: [
+        `arn:${this.partition}:sagemaker:${this.region}:${this.account}:image/*`,
+        `arn:${this.partition}:sagemaker:${this.region}:${this.account}:image-version/*/*`,
+      ],
+      actions: ['sagemaker:DescribeImage', 'sagemaker:DescribeImageVersion'],
+    });
+    basicExecutionPolicy.addStatements(sagemakerImageStatement);
+
     //Allow ExecutionRole to write studio cloudwatch logs
     const studioCloudwatchGroupStatement = new PolicyStatement({
       effect: Effect.ALLOW,

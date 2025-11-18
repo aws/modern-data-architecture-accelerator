@@ -8596,6 +8596,55 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
             },
             {
               "Action": [
+                "sagemaker:DescribeImage",
+                "sagemaker:DescribeImageVersion",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":image/*",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":image-version/*/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
                 "logs:CreateLogGroup",
                 "logs:DescribeLogGroups",
                 "logs:DescribeLogStreams",
@@ -18202,6 +18251,55 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
                     ],
                   ],
                 },
+              },
+              {
+                "Action": [
+                  "sagemaker:DescribeImage",
+                  "sagemaker:DescribeImageVersion",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":sagemaker:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":image/*",
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":sagemaker:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":image-version/*/*",
+                      ],
+                    ],
+                  },
+                ],
               },
               {
                 "Action": [

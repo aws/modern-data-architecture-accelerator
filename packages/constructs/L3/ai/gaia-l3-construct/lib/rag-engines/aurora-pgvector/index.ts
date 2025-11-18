@@ -64,7 +64,7 @@ export class AuroraPgVector extends MdaaL3Construct {
       createParams: false,
       createOutputs: false,
       engine: 'aurora-postgresql',
-      engineVersion: rds.AuroraPostgresEngineVersion.VER_15_3,
+      engineVersion: rds.AuroraPostgresEngineVersion.VER_15_13,
       backupRetention: 20,
       clusterIdentifier: 'test-cluster',
       masterUsername: 'postgres',

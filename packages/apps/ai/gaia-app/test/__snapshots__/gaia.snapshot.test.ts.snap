@@ -10981,7 +10981,7 @@ def sort_filter_rules(json_obj):
           ],
           "EnableIAMDatabaseAuthentication": true,
           "Engine": "aurora-postgresql",
-          "EngineVersion": "15.3",
+          "EngineVersion": "15.13",
           "KmsKeyId": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -29968,7 +29968,7 @@ def sort_filter_rules(json_obj):
         ],
         "EnableIAMDatabaseAuthentication": true,
         "Engine": "aurora-postgresql",
-        "EngineVersion": "15.3",
+        "EngineVersion": "15.13",
         "KmsKeyId": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",

@@ -129,6 +129,14 @@ describe('Studio Domain Mandatory Props', () => {
             Resource: 'arn:test-partition:sagemaker:test-region:test-account:studio-lifecycle-config/*',
           },
           {
+            Action: ['sagemaker:DescribeImage', 'sagemaker:DescribeImageVersion'],
+            Effect: 'Allow',
+            Resource: [
+              'arn:test-partition:sagemaker:test-region:test-account:image/*',
+              'arn:test-partition:sagemaker:test-region:test-account:image-version/*/*',
+            ],
+          },
+          {
             Action: ['logs:CreateLogGroup', 'logs:DescribeLogGroups', 'logs:DescribeLogStreams'],
             Effect: 'Allow',
             Resource: 'arn:test-partition:logs:test-region:test-account:log-group:/aws/sagemaker/studio',

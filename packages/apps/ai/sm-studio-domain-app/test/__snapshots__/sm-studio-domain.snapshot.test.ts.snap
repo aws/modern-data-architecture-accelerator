@@ -3594,6 +3594,55 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               },
               {
                 "Action": [
+                  "sagemaker:DescribeImage",
+                  "sagemaker:DescribeImageVersion",
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":sagemaker:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":image/*",
+                      ],
+                    ],
+                  },
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":sagemaker:",
+                        {
+                          "Ref": "AWS::Region",
+                        },
+                        ":",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":image-version/*/*",
+                      ],
+                    ],
+                  },
+                ],
+              },
+              {
+                "Action": [
                   "logs:CreateLogGroup",
                   "logs:DescribeLogGroups",
                   "logs:DescribeLogStreams",
@@ -8047,6 +8096,55 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
                   ],
                 ],
               },
+            },
+            {
+              "Action": [
+                "sagemaker:DescribeImage",
+                "sagemaker:DescribeImageVersion",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":image/*",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":sagemaker:",
+                      {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":image-version/*/*",
+                    ],
+                  ],
+                },
+              ],
             },
             {
               "Action": [
