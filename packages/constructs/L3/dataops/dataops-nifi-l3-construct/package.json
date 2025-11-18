@@ -74,7 +74,7 @@
     "@aws-mdaa/naming": "1.2.0",
     "@aws-mdaa/sqs-constructs": "1.2.0",
     "aws-cdk-lib": "2.220.0",
-    "cdk-nag": "2.37.1",
+    "cdk-nag": "2.37.55",
     "cdk8s": "2.69.42",
     "constructs": "10.0.96",
     "fast-xml-parser": "4.4.1",

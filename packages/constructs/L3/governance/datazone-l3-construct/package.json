@@ -68,7 +68,7 @@
     "@aws-mdaa/lakeformation-settings-l3-construct": "1.2.0",
     "@aws-mdaa/naming": "1.2.0",
     "aws-cdk-lib": "2.220.0",
-    "cdk-nag": "2.37.1",
+    "cdk-nag": "2.37.55",
     "constructs": "10.0.96",
     "lodash": "4.17.21"
   },
