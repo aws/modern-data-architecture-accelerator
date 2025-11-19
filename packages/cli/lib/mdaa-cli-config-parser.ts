@@ -244,6 +244,12 @@ export interface MdaaModuleConfig {
    *   **/
   readonly custom_naming?: MdaaCustomNaming;
   /**
+   * Enable this flag to allow native cross region stack references.
+   * Enabling this will create a CloudFormation custom resource in both the producing stack and consuming stack in order to perform the export/import.
+   * Required for resources that must be created in us-east-1 but referenced from other regions (e.g., WAF ACLs for CloudFront)
+   */
+  readonly allow_cross_reference_stack?: boolean;
+  /**
    * Q-ENHANCED-PROPERTY
    * Optional array of additional AWS account IDs for cross-account resource deployment enabling multi-account MDAA infrastructure orchestration. Specifies additional accounts where the module may deploy resources beyond the primary target account for cross-account data sharing and multi-account architectures.
    *
@@ -326,6 +332,8 @@ export interface Deployment {
   readonly region?: string;
   /** The target account. If not specified, defaults to the CDK default account. */
   readonly account?: string;
+  /** If true, adds a dependency on the main stack to make sure the main stack is deployed first. If not specified, defaults to true.*/
+  readonly addDependencyMainStack?: boolean;
 }
 /**
  * Q-ENHANCED-INTERFACE

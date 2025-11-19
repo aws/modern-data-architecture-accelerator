@@ -73,6 +73,10 @@
                     "description": "The target account. If not specified, defaults to the CDK default account.",
                     "type": "string"
                 },
+                "addDependencyMainStack": {
+                    "description": "If true, adds a dependency on the main stack to make sure the main stack is deployed first. If not specified, defaults to true.",
+                    "type": "boolean"
+                },
                 "region": {
                     "description": "The target region. If not specified, defaults to the CDK default region.",
                     "type": "string"
@@ -387,6 +391,10 @@
                         "$ref": "#/definitions/Deployment"
                     },
                     "type": "array"
+                },
+                "allow_cross_reference_stack": {
+                    "description": "Enable this flag to allow native cross region stack references.\nEnabling this will create a CloudFormation custom resource in both the producing stack and consuming stack in order to perform the export/import.\nRequired for resources that must be created in us-east-1 but referenced from other regions (e.g., WAF ACLs for CloudFront)",
+                    "type": "boolean"
                 },
                 "app_config_data": {
                     "additionalProperties": {},

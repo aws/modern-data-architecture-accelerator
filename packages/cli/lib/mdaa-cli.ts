@@ -772,6 +772,11 @@ export class MdaaDeploy {
       'tag_configs',
       moduleEffectiveConfig.tagConfigFiles?.map(x => path.resolve(x)).join(','),
     );
+    this.addOptionalCdkContextStringParam(
+      cdkCmd,
+      'allow_cross_reference_stack',
+      moduleEffectiveConfig.allow_cross_reference_stack?.toString(),
+    );
     this.addOptionalCdkContextObjParam(cdkCmd, 'additional_stacks', moduleEffectiveConfig.additionalStacks);
     this.addOptionalCdkContextStringParam(
       cdkCmd,
@@ -902,6 +907,7 @@ export class MdaaDeploy {
       effectiveModuleConfig: { ...(mdaaModule.app_config_data || {}), ...(mdaaModule.module_config_data || {}) }, //NOSONAR
       moduleType: mdaaModule.module_type ?? 'cdk',
       modulePath: modulePath,
+      allow_cross_reference_stack: mdaaModule.allow_cross_reference_stack,
       additionalStacks: additionalStacks,
       mdaaCompliant: mdaaModule.mdaa_compliant,
       effectiveContext: this.computeEffectiveContext(envEffectiveConfig, mdaaModule.context),

@@ -47,6 +47,7 @@ const extraContext = {
   custom_aspects:
     '[{"aspect_module":"./test/custom_aspect","aspect_class":"SampleCustomAspect","aspect_props":{"permissionsBoundaryArn":"some-test-arn"}}]',
   additional_stacks: '[{"account":"109876543210"}]',
+  allow_cross_reference_stack: 'true',
 };
 describe('Test App Stack', () => {
   beforeEach(() => {

@@ -109,6 +109,7 @@ export interface ModuleEffectiveConfig extends EnvEffectiveConfig {
   readonly moduleName: string;
   readonly useBootstrap: boolean;
   readonly additionalStacks?: Deployment[];
+  readonly allow_cross_reference_stack?: boolean;
   readonly effectiveModuleConfig: ConfigurationElement;
   readonly moduleConfigFiles?: string[];
   readonly mdaaCompliant?: boolean;

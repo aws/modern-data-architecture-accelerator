@@ -69,6 +69,7 @@ export interface Deployment {
    * Validation: Must be valid 12-digit AWS account ID; optional string for deployment targeting
    **/
   readonly account?: string;
+  readonly addDependencyMainStack?: boolean;
 }
 
 /**
@@ -183,6 +184,7 @@ export abstract class MdaaCdkApp extends App {
       this.additionalStacks?.map(deployment => {
         const account = deployment.account ?? this.stack.account;
         const region = deployment.region ?? this.stack.region;
+        const addDependencyMainStack = deployment.addDependencyMainStack ?? true;
 
         let stackName: string;
         if (deployment.account && deployment.region) {
@@ -202,7 +204,9 @@ export abstract class MdaaCdkApp extends App {
           },
         };
         const additionalAccountStack = new Stack(this, stackName, stackProps);
-        additionalAccountStack.addDependency(this.stack);
+        if (addDependencyMainStack) {
+          additionalAccountStack.addDependency(this.stack);
+        }
         return [account, Object.fromEntries([[region, additionalAccountStack]])];
       }) || [],
     );
@@ -366,6 +370,7 @@ export abstract class MdaaCdkApp extends App {
         region: this.deployRegion,
         account: this.deployAccount,
       },
+      crossRegionReferences: this.node.tryGetContext('allow_cross_reference_stack')?.toLowerCase() === 'true',
     };
     const stack = new MdaaStack(this, stackName, stackProps);
     new StringParameter(stack, 'StackDescriptionParameter', {
