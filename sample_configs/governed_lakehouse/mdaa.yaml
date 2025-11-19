@@ -5,8 +5,8 @@
 region: default
 
 # One or more tag tags which will be applied to all deployed resources
-tag_config_data:
-  tag1: value1
+tag_configs:
+  - ./tags.yaml
 
 ## Pre-Deployment Instructions
 

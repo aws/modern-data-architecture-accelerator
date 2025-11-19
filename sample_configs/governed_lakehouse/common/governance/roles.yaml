@@ -30,6 +30,18 @@ generatePolicies:
       - id: "AwsSolutions-IAM5"
         reason: "ListDomains requires wildcard resource access."
 
+  GlueKmsLogsPolicy:
+    policyDocument:
+      Statement:
+        - Sid: GlueKmsLogsAccess
+          Effect: Allow
+          Action:
+            - logs:AssociateKmsKey
+          Resource: "*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "AssociateKmsKey requires wildcard resource access for log groups."
+
 # The list of roles which will be generated
 generateRoles:
   glue-etl:
@@ -37,6 +49,8 @@ generateRoles:
     # A list of AWS managed policies which will be added to the role
     awsManagedPolicies:
       - service-role/AWSGlueServiceRole
+    generatedPolicies:
+      - GlueKmsLogsPolicy
     suppressions:
       - id: "AwsSolutions-IAM4"
         reason: "AWSGlueServiceRole approved for usage"
