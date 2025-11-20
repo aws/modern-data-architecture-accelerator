@@ -175,13 +175,22 @@ generatePolicies:
           Action:
             - sagemaker:CreatePresignedDomainUrl
           Resource: "*"
-          Condition:
-            StringEquals:
-              "sagemaker:ResourceTag/userid": "${aws:userid}"
 
     suppressions:
       - id: "AwsSolutions-IAM5"
         reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+  TeamExecutionPolicy:
+    policyDocument:
+      Statement:
+        - Sid: SageMakerExecutionAccess
+          Effect: Allow
+          Action:
+            - sagemaker:CreatePresignedDomainUrl
+          Resource: "*"
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "SageMaker execution requires access to all user profiles in the domain."
   
 # The list of roles which will be generated
 generateRoles:
@@ -235,3 +244,4 @@ generateRoles:
         additionalTrustedActions: ["sts:SetSourceIdentity"]
     generatedPolicies:
       - DataScienceUserPolicy
+      - TeamExecutionPolicy
