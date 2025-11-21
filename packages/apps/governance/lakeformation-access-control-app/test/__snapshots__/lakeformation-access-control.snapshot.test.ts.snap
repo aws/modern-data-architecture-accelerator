@@ -198,6 +198,9 @@ exports[`lakeformation-access-control Snapshot Tests Lakeformation App App Snaps
         "Type": "AWS::LakeFormation::PrincipalPermissions",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
         "Properties": {
           "Permissions": [
             "DESCRIBE",
@@ -642,6 +645,9 @@ exports[`lakeformation-access-control Snapshot Tests Lakeformation Stack Snapsho
       "Type": "AWS::LakeFormation::PrincipalPermissions",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
       "Properties": {
         "Permissions": [
           "DESCRIBE",

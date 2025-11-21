@@ -46,6 +46,17 @@ export abstract class MdaaL3Construct extends Construct {
     return this.baseprops.crossAccountStacks[account ?? this.account][region ?? this.region];
   }
 
+  protected getFirstCrossAccountRegion(account: string): string {
+    if (!this.baseprops.crossAccountStacks || !this.baseprops.crossAccountStacks[account]) {
+      throw new Error(`No cross account stacks defined for account ${account}`);
+    }
+    const regions = Object.keys(this.baseprops.crossAccountStacks[account]);
+    if (regions.length === 0) {
+      throw new Error(`No regions found in cross account stacks for account ${account}`);
+    }
+    return regions[0];
+  }
+
   protected get partition(): string {
     return Stack.of(this).partition;
   }

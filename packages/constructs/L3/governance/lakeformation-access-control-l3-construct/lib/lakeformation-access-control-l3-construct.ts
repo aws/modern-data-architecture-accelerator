@@ -290,7 +290,10 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
       const resourceLinkName = resourceLinkEntry[0];
       const resourceLinkProps = resourceLinkEntry[1];
       const fromAccount = resourceLinkProps.fromAccount || this.account;
-      const createScope = fromAccount != this.account ? this.getCrossAccountStack(fromAccount) : this;
+      const createScope =
+        fromAccount === this.account
+          ? this
+          : this.getCrossAccountStack(fromAccount, this.getFirstCrossAccountRegion(fromAccount));
       if (!createScope) {
         throw new Error('Error determining scope for resource link. Cross account stack not defined.');
       }
@@ -350,6 +353,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
               permissionsWithGrantOption: [],
             },
           );
+          crossAccountResourceLinkGrant.addDependency(createdResourceLinkDatabase);
           this.addToAccountGrants(
             fromAccount,
             crossAccountResourceLinkGrant,
