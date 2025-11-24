@@ -1,6 +1,34 @@
 # Change Log
 
-## [Unreleased]
+## [1.3.0] - 2025-11-24
+
+### General Changes
+
+- Updated CDK version to 2.220.0
+- Updated CDK Nag to 2.37.55
+- Enhanced build pipeline configuration and dependency management
+- Added additional checks and automation for NPM publishing
+- Improved testing framework and snapshot management
+- Added architecture diagrams for resources deployed by applications
+- Fixed build and test pipeline log limits issue
+- Updated package-lock with missing packages
+- Improved lerna version bump logic
+
+### Bug Fixes
+
+- Fixed TypeError with additional_stacks configuration when using map function
+- Fixed cyclic dependencies issue when creating stacks in us-east-1 with additional_stacks config
+- Fixed tag_config_data in governed_lakehouse sample configuration
+- Added description to installer stack template
+- Fixed OpenSearch missing dependency in knowledge base package.json
+- Fixed JS files being incorrectly ignored in builds
+- Fixed publish pipeline stage issues
+- Fixed Macie TypeScript executable reference
+
+### Governance Changes
+
+- Enhanced Lake Formation resource link to assume first region of account from additional stacks
+- Improved Lake Formation access control for multi-region deployments
 
 ### Data Science/AI/ML Changes
 
@@ -9,6 +37,9 @@
   - JupyterLab apps now support lifecycle configurations similar to Jupyter Server apps
   - Enables custom environment setup and package installation for Studio (Latest) JupyterLab environments
   - Lifecycle configurations can include assets and commands that run when JupyterLab containers launch
+- Fixed Data Science config permissions to allow data scientists to open SageMaker AI Studio
+- Enhanced SageMaker AI domain with lifecycle configuration setup capabilities
+- Improved GAIA Aurora PGVector RAG engine configuration
 
 ## [1.2.0] - 2025-10-08
 
