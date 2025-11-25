@@ -3,7 +3,7 @@
 exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-sagemaker-main": {
-    "Description": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.2.0",
+    "Description": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.3.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -377,7 +377,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.2.0",
+          "Value": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.3.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -439,7 +439,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-addpo--ac05cb1",
@@ -1171,7 +1171,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-doma--7b0befc0",
@@ -1903,7 +1903,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee",
@@ -2638,7 +2638,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
           "Environment": {
             "Variables": {
               "LOG_LEVEL": "INFO",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-ramas-6ffc07cb",
@@ -6079,7 +6079,7 @@ exports[`sagemaker Snapshot Tests Sagemaker App App Snapshot Test 1`] = `
 
 exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.2.0",
+  "Description": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.3.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -6453,7 +6453,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.2.0",
+        "Value": "(SO0320-sagemaker) Modern Data Architecture Accelerator. Version 1.3.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -6515,7 +6515,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-addpo--ac05cb1",
@@ -7247,7 +7247,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-doma--7b0befc0",
@@ -7979,7 +7979,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-envblu-2d576ee",
@@ -8714,7 +8714,7 @@ exports[`sagemaker Snapshot Tests Sagemaker Stack Snapshot Test 1`] = `
         "Environment": {
           "Variables": {
             "LOG_LEVEL": "INFO",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-sagemaker-main-ramas-6ffc07cb",

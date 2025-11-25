@@ -3,7 +3,7 @@
 exports[`GAIA Snapshot Tests GAIA App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-gaia-app": {
-    "Description": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.2.0",
+    "Description": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.3.0",
     "Mappings": {
       "LatestNodeRuntimeMap": {
         "af-south-1": {
@@ -807,7 +807,7 @@ def sort_filter_rules(json_obj):
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.2.0",
+          "Value": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.3.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -928,7 +928,7 @@ def sort_filter_rules(json_obj):
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-gaia-app-databaseset-5e3f57a6",
@@ -3298,7 +3298,7 @@ def sort_filter_rules(json_obj):
               "UPLOAD_BUCKET_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
               "WEBSITE_CRAWLING_WORKFLOW_ARN": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
@@ -4361,7 +4361,7 @@ def sort_filter_rules(json_obj):
         },
         "Type": "AWS::ApiGateway::RestApi",
       },
-      "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75ea533802ee774152d8f1a65cf6806bc6": {
+      "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B753992bd55d92b9e3ca095dec99a50b567": {
         "DependsOn": [
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
@@ -4504,7 +4504,7 @@ def sort_filter_rules(json_obj):
             "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","user":"$context.identity.user","caller":"$context.identity.caller","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}",
           },
           "DeploymentId": {
-            "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75ea533802ee774152d8f1a65cf6806bc6",
+            "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B753992bd55d92b9e3ca095dec99a50b567",
           },
           "MethodSettings": [
             {
@@ -6135,7 +6135,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-gaia-app-websocket---74db1ce0",
@@ -6463,7 +6463,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-gaia-app-websocket-c-1fc981d2",
@@ -6851,7 +6851,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
               "WEBSOCKET_API_ENDPOINT": {
                 "Fn::Join": [
                   "",
@@ -7260,7 +7260,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
               "WEBSOCKET_API_ENDPOINT": {
                 "Fn::Join": [
                   "",
@@ -7702,7 +7702,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -7751,7 +7751,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -8412,7 +8412,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -8461,7 +8461,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -8750,7 +8750,7 @@ def sort_filter_rules(json_obj):
               "SESSIONS_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -9848,7 +9848,7 @@ def sort_filter_rules(json_obj):
               "POWERTOOLS_DEV": "true",
               "POWERTOOLS_LOGGER_LOG_EVENT": "true",
               "POWERTOOLS_SERVICE_NAME": "chatbot",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -11934,7 +11934,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -11984,7 +11984,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -14352,7 +14352,7 @@ def sort_filter_rules(json_obj):
               "UPLOAD_BUCKET_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -14442,7 +14442,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -14491,7 +14491,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -15524,7 +15524,7 @@ def sort_filter_rules(json_obj):
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
               "SAGEMAKER_RAG_MODELS_ENDPOINT": "",
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -15611,7 +15611,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -15660,7 +15660,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -17026,7 +17026,7 @@ def sort_filter_rules(json_obj):
               "UPLOAD_BUCKET_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
               },
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
               "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
               "WORKSPACES_TABLE_NAME": {
                 "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -17182,7 +17182,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -17231,7 +17231,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -17931,7 +17931,7 @@ def sort_filter_rules(json_obj):
           },
           "Environment": {
             "Variables": {
-              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+              "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             },
           },
           "FunctionName": "test-org-test-env-test-domain-test-gaia-app-gaiasecrets--7ce725b",
@@ -18990,7 +18990,7 @@ def sort_filter_rules(json_obj):
 
 exports[`GAIA Snapshot Tests GAIA Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.2.0",
+  "Description": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.3.0",
   "Mappings": {
     "LatestNodeRuntimeMap": {
       "af-south-1": {
@@ -19794,7 +19794,7 @@ def sort_filter_rules(json_obj):
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.2.0",
+        "Value": "(SO0320-gaia) Modern Data Architecture Accelerator. Version 1.3.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -19915,7 +19915,7 @@ def sort_filter_rules(json_obj):
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-gaia-main-databasese--70d9798",
@@ -22285,7 +22285,7 @@ def sort_filter_rules(json_obj):
             "UPLOAD_BUCKET_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             "WEBSITE_CRAWLING_WORKFLOW_ARN": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
@@ -23348,7 +23348,7 @@ def sort_filter_rules(json_obj):
       },
       "Type": "AWS::ApiGateway::RestApi",
     },
-    "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75f8d8d09f039014061a724795ee2e7fdb": {
+    "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75a97b9583385f58a8fe760205502539f5": {
       "DependsOn": [
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
@@ -23491,7 +23491,7 @@ def sort_filter_rules(json_obj):
           "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","user":"$context.identity.user","caller":"$context.identity.caller","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}",
         },
         "DeploymentId": {
-          "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75f8d8d09f039014061a724795ee2e7fdb",
+          "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75a97b9583385f58a8fe760205502539f5",
         },
         "MethodSettings": [
           {
@@ -25122,7 +25122,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-gaia-main-websocket--752e6fe2",
@@ -25450,7 +25450,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-gaia-main-websocket--360faf30",
@@ -25838,7 +25838,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             "WEBSOCKET_API_ENDPOINT": {
               "Fn::Join": [
                 "",
@@ -26247,7 +26247,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             "WEBSOCKET_API_ENDPOINT": {
               "Fn::Join": [
                 "",
@@ -26689,7 +26689,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -26738,7 +26738,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -27399,7 +27399,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -27448,7 +27448,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -27737,7 +27737,7 @@ def sort_filter_rules(json_obj):
             "SESSIONS_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -28835,7 +28835,7 @@ def sort_filter_rules(json_obj):
             "POWERTOOLS_DEV": "true",
             "POWERTOOLS_LOGGER_LOG_EVENT": "true",
             "POWERTOOLS_SERVICE_NAME": "chatbot",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -30921,7 +30921,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -30971,7 +30971,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -33339,7 +33339,7 @@ def sort_filter_rules(json_obj):
             "UPLOAD_BUCKET_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -33429,7 +33429,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -33478,7 +33478,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -34511,7 +34511,7 @@ def sort_filter_rules(json_obj):
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
             "SAGEMAKER_RAG_MODELS_ENDPOINT": "",
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -34598,7 +34598,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -34647,7 +34647,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -36013,7 +36013,7 @@ def sort_filter_rules(json_obj):
             "UPLOAD_BUCKET_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
             },
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
             "WORKSPACES_BY_OBJECT_TYPE_INDEX_NAME": "by_object_type_idx",
             "WORKSPACES_TABLE_NAME": {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -36169,7 +36169,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -36218,7 +36218,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -36918,7 +36918,7 @@ def sort_filter_rules(json_obj):
         },
         "Environment": {
           "Variables": {
-            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.2.0",
+            "USER_AGENT_STRING": "AWSSOLUTION/SO0320/v1.3.0",
           },
         },
         "FunctionName": "test-org-test-env-test-domain-test-gaia-main-gaiasecre--7bc3525d",
