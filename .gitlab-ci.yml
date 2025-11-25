@@ -853,11 +853,11 @@ release_npm_readiness_check:
     - prerelease_analyze
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo 'Testing NPM readiness for version:' $RELEASE_VERSION
-    - ./scripts/test_published_artifacts.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest --download
+    - ./scripts/test_published_artifacts.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest --download
     - ./scripts/validate_dependencies.sh --npm-ready
     - ./scripts/test_npm_readiness.sh
 
@@ -946,7 +946,7 @@ release_publish_pip:
   variables:
     AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
   script:
-    - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT
+    - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_RELEASE_PIP_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT
 
 release_publish_s3:
   tags:
