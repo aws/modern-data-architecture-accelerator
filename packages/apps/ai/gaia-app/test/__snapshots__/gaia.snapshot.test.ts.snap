@@ -4361,7 +4361,7 @@ def sort_filter_rules(json_obj):
         },
         "Type": "AWS::ApiGateway::RestApi",
       },
-      "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B753992bd55d92b9e3ca095dec99a50b567": {
+      "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75ea533802ee774152d8f1a65cf6806bc6": {
         "DependsOn": [
           "REPLACED-CFN-LOGICAL-ID",
           "REPLACED-CFN-LOGICAL-ID",
@@ -4504,7 +4504,7 @@ def sort_filter_rules(json_obj):
             "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","user":"$context.identity.user","caller":"$context.identity.caller","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}",
           },
           "DeploymentId": {
-            "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B753992bd55d92b9e3ca095dec99a50b567",
+            "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75ea533802ee774152d8f1a65cf6806bc6",
           },
           "MethodSettings": [
             {
@@ -7702,7 +7702,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -7751,7 +7751,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -8412,7 +8412,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -8461,7 +8461,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -11934,7 +11934,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -11984,7 +11984,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -14442,7 +14442,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -14491,7 +14491,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -15611,7 +15611,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -15660,7 +15660,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -17182,7 +17182,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -17231,7 +17231,7 @@ def sort_filter_rules(json_obj):
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -23348,7 +23348,7 @@ def sort_filter_rules(json_obj):
       },
       "Type": "AWS::ApiGateway::RestApi",
     },
-    "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75a97b9583385f58a8fe760205502539f5": {
+    "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75f8d8d09f039014061a724795ee2e7fdb": {
       "DependsOn": [
         "REPLACED-CFN-LOGICAL-ID",
         "REPLACED-CFN-LOGICAL-ID",
@@ -23491,7 +23491,7 @@ def sort_filter_rules(json_obj):
           "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","user":"$context.identity.user","caller":"$context.identity.caller","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}",
         },
         "DeploymentId": {
-          "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75a97b9583385f58a8fe760205502539f5",
+          "Ref": "gaiaChatBotApiRestApiChatBotApiDeploymentF6C05B75f8d8d09f039014061a724795ee2e7fdb",
         },
         "MethodSettings": [
           {
@@ -26689,7 +26689,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -26738,7 +26738,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -27399,7 +27399,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -27448,7 +27448,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -30921,7 +30921,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -30971,7 +30971,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -33429,7 +33429,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -33478,7 +33478,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -34598,7 +34598,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -34647,7 +34647,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -36169,7 +36169,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -36218,7 +36218,7 @@ def sort_filter_rules(json_obj):
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
             {
               "id": "AwsSolutions-L1",

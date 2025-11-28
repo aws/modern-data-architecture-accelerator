@@ -52,16 +52,26 @@ const optionDefinitions = [
     description: 'Optional - If specified, value will be passed to NPM as a dist-tag during package installation.',
   },
   {
-    name: 'role_arn',
+    name: 'role-arn',
     alias: 'r',
     type: String,
     description: 'Optional - If specified, will be passed to the -r (--roleArn) parameter of the CDK command.',
   },
   {
-    name: 'working_dir',
+    name: 'role_arn',
+    type: String,
+    description: 'Optional - Backwards compatible alias for --role-arn',
+  },
+  {
+    name: 'working-dir',
     alias: 'w',
     type: String,
     description: 'Optional - Override the working dir location (default ./mdaa_working)',
+  },
+  {
+    name: 'working_dir',
+    type: String,
+    description: 'Optional - Backwards compatible alias for --working_dir',
   },
   {
     name: 'clear',
@@ -70,10 +80,15 @@ const optionDefinitions = [
     description: 'Optional - Clears working directory of all installed packages.',
   },
   {
-    name: 'mdaa_version',
+    name: 'mdaa-version',
     alias: 'u',
     type: String,
     description: 'Optional - Specify the MDAA module version to be used.',
+  },
+  {
+    name: 'mdaa_version',
+    type: String,
+    description: 'Optional - Backwards compatible alias for --mdaa-version',
   },
   {
     name: 'version',
@@ -82,16 +97,26 @@ const optionDefinitions = [
     description: 'Provides information about the installed MDAA version',
   },
   {
-    name: 'npm_debug',
+    name: 'npm-debug',
     alias: 'n',
     type: Boolean,
     description: 'Optional - Runs all NPM commands in debug mode',
   },
   {
-    name: 'local_mode',
+    name: 'npm_debug',
+    type: Boolean,
+    description: 'Optional - Backwards compatible alias for --npm-debug.',
+  },
+  {
+    name: 'local-mode',
     alias: 'l',
     type: Boolean,
     description: 'MDAA code will be executed from local source code instead of from installed NPM packages',
+  },
+  {
+    name: 'local_mode',
+    type: Boolean,
+    description: 'Optional - Backwards compatible alias for --local-mode.',
   },
   {
     name: 'devops',
@@ -100,10 +125,15 @@ const optionDefinitions = [
     description: 'Deploys MDAA DevOps Resources and Pipelines.',
   },
   {
-    name: 'cdk_verbose',
+    name: 'cdk-verbose',
     alias: 'b',
     type: Boolean,
     description: 'Increase CDK cli verbosity',
+  },
+  {
+    name: 'cdk_verbose',
+    type: Boolean,
+    description: 'Optional - Backwards compatible alias for --cdk-verbose.',
   },
   {
     name: 'nofail',
@@ -120,6 +150,26 @@ const optionDefinitions = [
 ];
 
 const options = commandLineArgs(optionDefinitions, { partial: true });
+
+// Normalize hyphenated options to underscore format for backward compatibility
+if (options['role-arn'] && !options['role_arn']) {
+  options['role_arn'] = options['role-arn'];
+}
+if (options['working-dir'] && !options['working_dir']) {
+  options['working_dir'] = options['working-dir'];
+}
+if (options['mdaa-version'] && !options['mdaa_version']) {
+  options['mdaa_version'] = options['mdaa-version'];
+}
+if (options['npm-debug'] && !options['npm_debug']) {
+  options['npm_debug'] = options['npm-debug'];
+}
+if (options['local-mode'] && !options['local_mode']) {
+  options['local_mode'] = options['local-mode'];
+}
+if (options['cdk-verbose'] && !options['cdk_verbose']) {
+  options['cdk_verbose'] = options['cdk-verbose'];
+}
 
 console.log(`MDAA Version: ${pjson.version}`);
 if (options['version']) {

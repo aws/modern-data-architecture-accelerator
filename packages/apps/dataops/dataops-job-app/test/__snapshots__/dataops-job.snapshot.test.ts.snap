@@ -152,11 +152,11 @@ exports[`dataops-job Snapshot Tests GlueJob App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-GL1",
-                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
               },
               {
                 "id": "AwsSolutions-GL3",
-                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
+                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -297,11 +297,11 @@ exports[`dataops-job Snapshot Tests GlueJob App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-GL1",
-                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
               },
               {
                 "id": "AwsSolutions-GL3",
-                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
+                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -563,11 +563,11 @@ exports[`dataops-job Snapshot Tests GlueJob App App Snapshot Test 1`] = `
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-GL1",
-                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
               },
               {
                 "id": "AwsSolutions-GL3",
-                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
+                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
               },
             ],
           },
@@ -2724,11 +2724,11 @@ exports[`dataops-job Snapshot Tests GlueJob Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-GL1",
-              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
             },
             {
               "id": "AwsSolutions-GL3",
-              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
             },
             {
               "id": "AwsSolutions-L1",
@@ -2869,11 +2869,11 @@ exports[`dataops-job Snapshot Tests GlueJob Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-GL1",
-              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
             },
             {
               "id": "AwsSolutions-GL3",
-              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
             },
             {
               "id": "AwsSolutions-L1",
@@ -3135,11 +3135,11 @@ exports[`dataops-job Snapshot Tests GlueJob Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-GL1",
-              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
             },
             {
               "id": "AwsSolutions-GL3",
-              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.js:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/job.ts:LINE:COL] Bookmark encryption configured via SecurityConfiguration",
             },
           ],
         },

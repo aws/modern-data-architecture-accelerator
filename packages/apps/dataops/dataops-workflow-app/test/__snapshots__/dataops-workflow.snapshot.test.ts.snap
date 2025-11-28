@@ -163,7 +163,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -205,7 +205,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -258,7 +258,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -288,7 +288,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -318,7 +318,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow App App Snapshot Test 1`] = 
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-SQS3",
-                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+                "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
               },
             ],
           },
@@ -1098,7 +1098,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1140,7 +1140,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1193,7 +1193,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1223,7 +1223,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },
@@ -1253,7 +1253,7 @@ exports[`glue-workflow Snapshot Tests Glue Workflow Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-SQS3",
-              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.js:LINE:COL] Queue is a DLQ.",
+              "reason": "[MDAA:@aws-mdaa/sqs-constructs/lib/index.ts:LINE:COL] Queue is a DLQ.",
             },
           ],
         },

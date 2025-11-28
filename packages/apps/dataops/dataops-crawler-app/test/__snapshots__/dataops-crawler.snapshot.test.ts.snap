@@ -132,7 +132,7 @@ exports[`dataops-crawler Snapshot Tests Glue Crawler App App Snapshot Test 1`] =
             "rules_to_suppress": [
               {
                 "id": "AwsSolutions-GL1",
-                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+                "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
               },
             ],
           },
@@ -336,7 +336,7 @@ exports[`dataops-crawler Snapshot Tests Glue Crawler Stack Snapshot Test 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-GL1",
-              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.js:LINE:COL] Log encryption configured via SecurityConfiguration",
+              "reason": "[MDAA:@aws-mdaa/glue-constructs/lib/crawler.ts:LINE:COL] Log encryption configured via SecurityConfiguration",
             },
           ],
         },
