@@ -28,6 +28,10 @@ export interface ResourceLinkProps {
    */
   readonly targetAccount?: string;
   /**
+   * The region where the target database exists
+   */
+  readonly targetRegion?: string;
+  /**
    * The account in which the resource link should be created.
    * If not specified, will default to the local account.
    */
@@ -304,6 +308,7 @@ export class LakeFormationAccessControlL3Construct extends MdaaL3Construct {
           targetDatabase: {
             catalogId: resourceLinkProps.targetAccount || this.account,
             databaseName: resourceLinkProps.targetDatabase,
+            region: resourceLinkProps.targetRegion,
           },
         },
       };

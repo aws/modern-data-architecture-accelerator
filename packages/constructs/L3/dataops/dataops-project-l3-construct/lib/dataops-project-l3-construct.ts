@@ -76,6 +76,7 @@ export interface NamedDatabaseGrantProps {
   /** @jsii ignore */
   readonly [name: string]: DatabaseGrantProps;
 }
+
 /**
  * Q-ENHANCED-INTERFACE
  * Named principal ARN configuration interface for IAM role and user management with systematic principal organization capabilities. Defines named principal ARN mappings for organized role and user management in DataOps project access control and resource permissions.
@@ -90,6 +91,7 @@ export interface NamedPrincipalArnProps {
   /** @jsii ignore */
   [name: string]: string;
 }
+
 /**
  * Q-ENHANCED-INTERFACE
  * Database grant configuration interface for Lake Formation permissions with database-level access control and principal assignment capabilities. Defines database grant properties for Lake Formation permission management including database targeting, permission types, and principal assignments for data lake governance.
@@ -256,6 +258,7 @@ export interface NamedDatabaseProps {
   /** @jsii ignore */
   readonly [name: string]: DatabaseProps;
 }
+
 /**
  * Q-ENHANCED-INTERFACE
  * Glue database configuration interface for data catalog management with S3 location mapping and naming convention control. Defines database properties for DataOps projects including description, naming options, Iceberg compliance, and S3 bucket location specification for organized data lake metadata management.
@@ -512,6 +515,7 @@ export interface NamedClassifierProps {
   /** @jsii ignore */
   readonly [name: string]: ClassifierProps;
 }
+
 /**
  * Q-ENHANCED-INTERFACE
  * Glue classifier configuration interface for custom data format recognition with type-specific configuration management. Defines classifier properties for DataOps projects including classifier type selection and format-specific configuration for automated data schema detection and parsing in ETL workflows.
@@ -621,6 +625,7 @@ export interface NamedConnectionProps {
   /** @jsii ignore */
   readonly [name: string]: ConnectionProps;
 }
+
 /**
  * Q-ENHANCED-INTERFACE
  * Glue connection configuration interface for external data source connectivity with multi-protocol support and connection property management. Defines connection properties for DataOps projects including connection type specification, authentication properties, and match criteria for database, streaming, and network connections.
@@ -796,6 +801,7 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
 export interface DatazoneProps {
   readonly project?: DatazoneProjectProps;
 }
+
 /**
  * Q-ENHANCED-INTERFACE
  * DataZone project configuration interface for data governance and catalog management with domain integration capabilities. Defines DataZone project properties for DataOps projects including domain configuration, SSM parameter references, and Lake Formation role management for data governance and catalog integration.
@@ -867,6 +873,7 @@ export interface NamedSecurityGroupConfigProps {
   /** @jsii ignore */
   [name: string]: SecurityGroupConfigProps;
 }
+
 /**
  * Q-ENHANCED-INTERFACE
  * EC2 security group configuration interface for network access control with VPC placement and egress rule management. Defines security group properties for DataOps projects including VPC specification and egress rule configuration for controlled network access and secure communication between infrastructure components.
@@ -1697,6 +1704,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         const props: ResourceLinkProps = {
           targetDatabase: dbResourceName,
           targetAccount: this.account,
+          targetRegion: this.region,
           fromAccount: account,
           grantPrincipals: namedAccountPrincipals,
         };

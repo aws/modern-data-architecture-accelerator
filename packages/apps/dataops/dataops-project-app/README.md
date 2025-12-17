@@ -29,6 +29,7 @@ The Data Ops Project CDK application is used to deploy the resources required to
 - Data lake location and read/write data lake permission grants can be automatically created for project execution and engineer roles
 - Data lake permission grants (read or write) can be configured on a per database (and optionally table) basis for additional principals
 - If using LakeFormation across accounts, database resource links and resource link describe grants can be created across accounts (required for cross account access)
+- When cross-account resource links are created, consumer accounts need KMS decrypt permissions on the Glue catalog KMS key (to read encrypted database metadata). If KMS keys are managed by external stacks (e.g., `glue-catalog-app`), you must add consumer account IDs to the `kmsKeyConsumerAccounts` configuration in those stacks. The dataops-project will attempt to grant permissions automatically, but this only works if the KMS keys are managed within the same stack.
 
 **Project Glue Security Config** - Security config which will be used by all jobs under the project
 
