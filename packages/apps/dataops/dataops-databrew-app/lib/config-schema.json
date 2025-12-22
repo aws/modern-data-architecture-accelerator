@@ -977,7 +977,7 @@
                             "$ref": "#/definitions/IResolvable"
                         },
                         {
-                            "$ref": "#/definitions/Record<string,string>"
+                            "$ref": "#/definitions/Record%3Cstring%2Cstring%3E"
                         }
                     ],
                     "description": "A map that includes overrides of an evaluation’s parameters."

@@ -492,7 +492,7 @@
             "type": "number"
         },
         "parameterGroupParams": {
-            "$ref": "#/definitions/Record<string,string>",
+            "$ref": "#/definitions/Record%3Cstring%2Cstring%3E",
             "description": "Q-ENHANCED-PROPERTY\nOptional parameter group parameters for cluster configuration customization enabling performance tuning and operational optimization. Provides additional cluster parameters while security-sensitive values are automatically overridden for compliance and security.\n\nUse cases: Performance tuning; Operational optimization; Custom cluster configuration; Workload-specific settings\n\nAWS: Amazon Redshift parameter group configuration for cluster customization and optimization\n\nValidation: Must be object with string key-value pairs if provided; security-sensitive values will be overridden\n  *"
         },
         "preferredMaintenanceWindow": {

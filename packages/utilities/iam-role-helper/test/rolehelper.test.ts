@@ -14,7 +14,7 @@ describe('Test RoleHelper', () => {
       testRoleHelper.resolveRoleRef({
         refId: 'testRefId',
       });
-    }).toThrowError();
+    }).toThrow();
   });
 
   test('By Id', () => {

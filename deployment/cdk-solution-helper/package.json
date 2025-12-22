@@ -9,8 +9,8 @@
   "author": "AWS Solutions",
   "license": "Apache-2.0",
   "dependencies": {
-    "fs-extra": "^10.0.0",
-    "glob": "^7.2.0"
+    "fs-extra": "10.1.0",
+    "glob": "7.2.3"
   },
   "repository": {
     "type": "git",

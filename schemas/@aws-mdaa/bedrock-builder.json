@@ -406,7 +406,7 @@
                             "$ref": "#/definitions/IResolvable"
                         },
                         {
-                            "$ref": "#/definitions/Record<string,IResolvable|CfnAgent.ParameterDetailProperty>"
+                            "$ref": "#/definitions/Record%3Cstring%2CIResolvable%7CCfnAgent.ParameterDetailProperty%3E"
                         }
                     ],
                     "description": "The parameters that the agent elicits from the user to fulfill the function."

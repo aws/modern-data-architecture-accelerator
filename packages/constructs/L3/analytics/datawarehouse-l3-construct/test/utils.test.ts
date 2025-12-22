@@ -40,11 +40,11 @@ describe('utils', () => {
     });
     test('throws exception if given invalid value', () => {
       const nodeType = 'fb2.teeny';
-      expect(() => ensureNodeType(nodeType)).toThrowError('Invalid node type: fb2.teeny');
+      expect(() => ensureNodeType(nodeType)).toThrow('Invalid node type: fb2.teeny');
     });
     test('throws exception if given invalid CDK key', () => {
       const nodeType = 'BF2_HUGE';
-      expect(() => ensureNodeType(nodeType)).toThrowError('Invalid node type: BF2_HUGE');
+      expect(() => ensureNodeType(nodeType)).toThrow('Invalid node type: BF2_HUGE');
     });
   });
 });

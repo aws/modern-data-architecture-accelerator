@@ -1,6 +1,6 @@
-aws_lambda_powertools
-pytest
-moto
-coverage
-langchain
-langchain-core
+aws_lambda_powertools==2.43.1
+pytest==8.3.4
+moto==5.0.23
+coverage==7.6.9
+langchain==0.3.13
+langchain-core==0.3.28

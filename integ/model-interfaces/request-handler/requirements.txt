@@ -1,20 +1,20 @@
 # Integration test dependencies
-pytest>=7.0.0
-pytest-asyncio>=0.21.0
-pytest-mock>=3.10.0
-boto3>=1.35.0
-botocore>=1.35.0
-requests>=2.32.0
+pytest==8.3.4
+pytest-asyncio==0.24.0
+pytest-mock==3.14.0
+boto3==1.35.63
+botocore==1.35.63
+requests==2.32.3
 
 # AWS Lambda Powertools (needed for mocking in tests)
-aws-lambda-powertools>=2.25.0
+aws-lambda-powertools==2.43.1
 
 # AWS testing utilities
-moto>=4.2.0  # For mocking AWS services when needed
-pytest-xdist>=3.0.0  # For parallel test execution
-pytest-cov>=4.0.0  # For coverage reporting
+moto==5.0.23  # For mocking AWS services when needed
+pytest-xdist==3.6.1  # For parallel test execution
+pytest-cov==6.0.0  # For coverage reporting
 
 # Code quality
-black>=23.0.0
-isort>=5.12.0
-flake8>=6.0.0
+black==24.10.0
+isort==5.13.2
+flake8==7.1.1
