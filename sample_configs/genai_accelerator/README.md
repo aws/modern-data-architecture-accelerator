@@ -27,7 +27,6 @@ This configuration deploys:
 - CDK bootstrapped in target account ([Bootstrap Guide](../../PREDEPLOYMENT.md))
 - MDAA source repo cloned locally
 - AWS CLI configured with appropriate permissions
-- Access to Bedrock foundation models in your region ([Request Model Access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access-modify.html))
 
 ### Step-by-Step Deployment
 
@@ -41,14 +40,14 @@ This configuration deploys:
 2. Edit the `mdaa.yaml` to specify an organization name. This must be a globally unique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
 3. **Determine Model Configuration**
-   
+
    Choose your model ID from the [AWS Bedrock supported models list](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html).
-   
+
    **For cross-region inference capabilities**, use the [Model Configuration Helper Script](#model-configuration-helper-script) to determine the correct model arn.
    - **Single region**: Use model ID directly (e.g., `anthropic.claude-3-5-sonnet-20240620-v1:0`)
 
 4. **Update Configuration Files**
-   
+
    Update the `mdaa.yaml` file under the `context:` section with:
    - VPC and subnet information from your environment
    - `llm_model` value from step 3 (either model ID or inference profile ARN)
@@ -348,9 +347,9 @@ echo "Testing accessibility of: $MODEL_TO_USE"
 
 ### Common Issues
 
-1. **Access Denied when calling Bedrock**: 
-   - Ensure you have model access of llm_model_id specified in the context values
-   - Use the [Model Configuration Helper Script](#model-configuration-helper-script) to verify model access and determine correct configuration
+1. **Access Denied when calling Bedrock**:
+   - Verify the llm_model_id specified in the context values is correct
+   - Use the [Model Configuration Helper Script](#model-configuration-helper-script) to verify model configuration
    - If you want to use models which need cross-region inference, use inference profile arn (e.g., `arn:aws:bedrock:us-east-1:<account_id>:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0`)
    - Ensure the agent execution role has the necessary Bedrock permissions
    - Verify that the foundation model is available in your region
