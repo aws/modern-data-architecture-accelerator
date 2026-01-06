@@ -11,7 +11,9 @@ import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { CfnDomain, CfnDomainProps } from 'aws-cdk-lib/aws-sagemaker';
 import { Construct } from 'constructs';
+
 // nosemgrep
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const _ = require('lodash');
 
 export interface MdaaStudioDomainProps extends MdaaConstructProps {
@@ -160,10 +162,10 @@ export class MdaaStudioDomain extends CfnDomain {
         actions: ['iam:PassRole'],
       }),
       new PolicyStatement({
-        resources: ["*"],
+        resources: ['*'],
         actions: ['elasticfilesystem:CreateFileSystem'],
-        conditions: {'Bool': {'elasticfilesystem:Encrypted': 'true'}},
-      })
+        conditions: { Bool: { 'elasticfilesystem:Encrypted': 'true' } },
+      }),
     ];
 
     const crProps: MdaaCustomResourceProps = {
@@ -202,7 +204,8 @@ export class MdaaStudioDomain extends CfnDomain {
         [
           {
             id: 'AwsSolutions-IAM5',
-            reason: 'EFS CreateFileSystem action requires wildcard resource as file system ARN is not known before creation. Permission is scoped with condition requiring encryption.',
+            reason:
+              'EFS CreateFileSystem action requires wildcard resource as file system ARN is not known before creation. Permission is scoped with condition requiring encryption.',
             appliesTo: ['Resource::*'],
           },
         ],

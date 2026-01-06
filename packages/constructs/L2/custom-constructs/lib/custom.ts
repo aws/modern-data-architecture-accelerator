@@ -16,6 +16,7 @@ import { ConfigurationElement } from '@aws-mdaa/config';
 import { NagPackSuppression } from 'cdk-nag';
 
 // nosemgrep
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const _ = require('lodash');
 
 export interface MdaaCustomResourceProps extends MdaaConstructProps {

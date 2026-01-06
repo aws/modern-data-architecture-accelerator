@@ -10,6 +10,7 @@ import { MdaaDeploy } from '../lib/mdaa-cli';
 import { createConfig, isAccountLevelModule } from './testing_utils';
 import { ConfigurationElement } from '@aws-mdaa/config';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const commandExists = require('command-exists');
 
 // Mock the imported getMdaaConfig function

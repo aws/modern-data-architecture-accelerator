@@ -32,6 +32,7 @@ export interface ExecutionError {
 }
 
 export function executeCommand(cmd: string): void {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   require('child_process').execSync(cmd, {
     stdio: 'inherit', // inherit all stdio streams for real-time output
     env: process.env, // Inherit all environment variables including AWS credentials

@@ -103,7 +103,7 @@ describe('LambdaFunctionL3Construct Constructor Exception Scenarios', () => {
     };
 
     const construct = new LambdaFunctionL3Construct(testApp.testStack, 'TestLambda', props);
-    
+
     expect(construct).toBeDefined();
     expect(construct.functionsMap['test-function']).toBeDefined();
   });
@@ -122,7 +122,7 @@ describe('LambdaFunctionL3Construct Constructor Exception Scenarios', () => {
     };
 
     const construct = new LambdaFunctionL3Construct(testApp.testStack, 'TestLambda', props);
-    
+
     expect(construct).toBeDefined();
   });
 });

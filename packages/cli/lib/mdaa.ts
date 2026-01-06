@@ -5,9 +5,11 @@
 
 import { MdaaDeploy } from './mdaa-cli';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const commandLineArgs = require('command-line-args');
+
 // nosemgrep
-const pjson = require('../package.json');
+import * as pjson from '../package.json';
 
 const optionDefinitions = [
   {

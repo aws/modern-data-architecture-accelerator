@@ -5,7 +5,7 @@
 
 import { App, Stack } from 'aws-cdk-lib';
 // nosemgrep
-import path = require('path');
+import * as path from 'path';
 import {
   MdaaConfigRefValueTransformer,
   MdaaConfigSSMValueTransformer,

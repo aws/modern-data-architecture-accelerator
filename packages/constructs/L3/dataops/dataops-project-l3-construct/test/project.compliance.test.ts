@@ -9,7 +9,7 @@ import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { NamedDatabaseGrantProps, DataOpsProjectL3Construct, DataOpsProjectL3ConstructProps } from '../lib';
 // nosemgrep
-import path = require('path');
+import * as path from 'path';
 import { Protocol } from 'aws-cdk-lib/aws-ec2';
 
 describe('MDAA Compliance Stack Tests', () => {

@@ -8,7 +8,7 @@ import { MdaaTestApp } from '../lib';
 describe('Test App', () => {
   const testApp = new MdaaTestApp();
   test('testStack', () => {
-    expect(testApp.testStack).toBeDefined;
+    expect(testApp.testStack).toBeDefined();
   });
   describe('CDK Nag', () => {
     expect(() => {

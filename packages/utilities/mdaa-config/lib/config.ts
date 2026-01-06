@@ -7,9 +7,9 @@ import { CfnParameter, CfnParameterProps, Stack } from 'aws-cdk-lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 // nosemgrep
-import path = require('path');
+import * as path from 'path';
 // nosemgrep
-import XRegExp = require('xregexp');
+import * as XRegExp from 'xregexp';
 
 export type ConfigurationElement = { [key: string]: unknown };
 export type TagElement = { [key: string]: string };
@@ -540,7 +540,7 @@ export interface MdaaServiceCatalogConstraintRuleAssertionConfig {
 }
 
 // It seems we need this empty interface in the schema even though no one uses it
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface MdaaServiceCatalogConstraintRuleCondititionConfig {}
 
 /**

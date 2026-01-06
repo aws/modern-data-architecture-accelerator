@@ -5,8 +5,8 @@
 
 import { Code } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
-import fs = require('fs');
-import os = require('os');
+import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 
 export type PythonVersion = '3.12' | '3.13';
@@ -38,6 +38,8 @@ export class MdaaPythonCodeAsset extends Construct {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), TEMP_DIR_PREFIX));
     fs.copyFileSync(props.pythonRequirementsPath, `${tempDir}/requirements.txt`);
     const dockerCommand = process.env.CDK_DOCKER ?? 'docker';
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const commandExists = require('command-exists');
     const dockerCommandExists = commandExists.sync(dockerCommand);
     /* istanbul ignore next */

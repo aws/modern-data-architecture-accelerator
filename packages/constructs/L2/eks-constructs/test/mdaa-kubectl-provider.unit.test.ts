@@ -79,7 +79,7 @@ describe('CompliantKubectlProvider Unit Tests', () => {
         kubectlMemory: undefined,
         kubectlLayer: new KubectlV31Layer(stack, 'TestLayer'),
         vpc,
-      } as any;
+      } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       expect(() => {
         new CompliantKubectlProvider(stack, 'TestProvider', { cluster: mockCluster });
@@ -98,7 +98,7 @@ describe('CompliantKubectlProvider Unit Tests', () => {
         kubectlMemory: undefined,
         kubectlLayer: new KubectlV31Layer(stack, 'TestLayer2'),
         vpc,
-      } as any;
+      } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       expect(() => {
         new CompliantKubectlProvider(stack, 'TestProvider', { cluster: mockCluster });
@@ -117,7 +117,7 @@ describe('CompliantKubectlProvider Unit Tests', () => {
         kubectlMemory: undefined,
         kubectlLayer: undefined,
         vpc,
-      } as any;
+      } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       expect(() => {
         new CompliantKubectlProvider(stack, 'TestProvider', { cluster: mockCluster });
@@ -136,7 +136,7 @@ describe('CompliantKubectlProvider Unit Tests', () => {
         kubectlMemory: Size.gibibytes(2),
         kubectlLayer: new KubectlV31Layer(stack, 'TestLayer3'),
         vpc,
-      } as any;
+      } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       expect(() => {
         new CompliantKubectlProvider(stack, 'TestProvider', { cluster: mockCluster });
@@ -177,7 +177,7 @@ describe('CompliantKubectlProvider Unit Tests', () => {
 
       const mockCluster = {
         kubectlProvider: existingProvider,
-      } as any;
+      } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       const provider = CompliantKubectlProvider.getOrCreate(stack, mockCluster);
       expect(provider).toBe(existingProvider);

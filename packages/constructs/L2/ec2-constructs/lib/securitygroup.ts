@@ -408,7 +408,7 @@ export class MdaaSecurityGroup extends SecurityGroup {
 
   public static resolvePeerToPort(peer: MdaaPeer): Port {
     const protocol: Protocol = Protocol[peer.protocol.toUpperCase() as keyof typeof Protocol];
-    if (typeof protocol === undefined || protocol == undefined) {
+    if (typeof protocol === 'undefined' || protocol == undefined) {
       throw new Error(`Unknown protocol defined: ${peer.protocol}`);
     }
     const fromPort = peer.port;

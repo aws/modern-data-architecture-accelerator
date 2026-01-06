@@ -60,6 +60,7 @@ describe('StepFunctionL3Construct Constructor Exception Tests', () => {
 
 describe('StepFunctionL3Construct Log Group Retention Tests', () => {
   let testApp: MdaaTestApp;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let stack: any;
 
   beforeEach(() => {

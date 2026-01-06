@@ -57,7 +57,9 @@ describe('MdaaPythonCodeAsset', () => {
 
   test('uses Docker build when available', () => {
     // Setup mocks
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('fs').existsSync.mockReturnValue(true);
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('command-exists').sync.mockReturnValue(true);
 
     // Execute construct
@@ -73,7 +75,9 @@ describe('MdaaPythonCodeAsset', () => {
 
   test('uses custom command when Docker unavailable', () => {
     // Setup mocks
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('fs').existsSync.mockReturnValue(true);
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('command-exists').sync.mockReturnValue(false);
 
     // Execute construct
@@ -90,6 +94,7 @@ describe('MdaaPythonCodeAsset', () => {
 
   test('throws error if python requirements file does not exist', () => {
     // Mock fs.existsSync to return false for this test
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('fs').existsSync.mockReturnValue(false);
 
     expect(() => {

@@ -98,7 +98,7 @@ describe('NifiL3Construct Constructor Exception Tests', () => {
           },
         ],
         clusters: {
-          'cluster1': {
+          cluster1: {
             adminIdentities: ['test-admin'],
             saml: { idpMetadataUrl: 'test-url' },
             peerClusters: ['nonexistent-cluster'],
@@ -128,7 +128,7 @@ describe('NifiL3Construct Constructor Exception Tests', () => {
           },
         ],
         clusters: {
-          'cluster1': {
+          cluster1: {
             adminIdentities: ['test-admin'],
             saml: { idpMetadataUrl: 'test-url' },
             peerClusters: ['missing-peer'],
@@ -158,11 +158,11 @@ describe('NifiL3Construct Constructor Exception Tests', () => {
           },
         ],
         clusters: {
-          'cluster1': {
+          cluster1: {
             adminIdentities: ['test-admin'],
             saml: { idpMetadataUrl: 'test-url' },
           },
-          'cluster2': {
+          cluster2: {
             adminIdentities: ['test-admin'],
             saml: { idpMetadataUrl: 'test-url' },
             peerClusters: ['cluster1', 'unknown-cluster'],
@@ -202,10 +202,11 @@ describe('NifiL3Construct Constructor Exception Tests', () => {
     };
 
     const construct = new NifiL3Construct(testApp.testStack, 'test-construct', constructProps);
-    
+
     // Access private method through type assertion to test impossible condition
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const privateMethod = (construct as any).addPrivateCAChart;
-    
+
     expect(() => {
       privateMethod.call(construct, {}, {}, undefined);
     }).toThrow('Impossible condition');

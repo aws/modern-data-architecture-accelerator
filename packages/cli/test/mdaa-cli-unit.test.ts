@@ -175,7 +175,7 @@ describe('MdaaDeploy.deployModule', () => {
       moduleType: 'cdk',
       effectiveModuleConfig: {},
       ...overrides,
-    } as ModuleDeploymentConfig);
+    }) as ModuleDeploymentConfig;
 
   beforeEach(() => {
     jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});

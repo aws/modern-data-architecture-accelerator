@@ -17,7 +17,7 @@ import * as yaml from 'yaml';
 import * as configJsonSchema from './config-schema.json';
 import { DevOpsConfigContents } from '@aws-mdaa/devops';
 // nosemgrep
-import path = require('path');
+import * as path from 'path';
 
 const avj = new Ajv();
 

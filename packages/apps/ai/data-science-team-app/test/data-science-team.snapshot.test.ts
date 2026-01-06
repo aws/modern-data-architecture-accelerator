@@ -6,7 +6,7 @@
 import { describe, expect, beforeAll } from '@jest/globals';
 import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { DataScienceTeamApp } from '../lib/datascience-team';
-import path = require('path');
+import * as path from 'path';
 
 describe('data-science-team Snapshot Tests', () => {
   beforeAll(() => {

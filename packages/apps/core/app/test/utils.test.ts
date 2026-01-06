@@ -55,31 +55,31 @@ describe('Utils', () => {
     beforeEach(() => {
       mockNode = {
         tryGetContext: jest.fn(),
-      } as any;
+      } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
     });
 
     test('returns parsed value when context exists', () => {
       mockNode.tryGetContext.mockReturnValue('{"test": "value"}');
-      
+
       const result = getNodeValue(mockNode, 'testKey', { default: 'value' });
-      
+
       expect(mockNode.tryGetContext).toHaveBeenCalledWith('testKey');
       expect(result).toEqual({ test: 'value' });
     });
 
     test('returns default value when context is null', () => {
       mockNode.tryGetContext.mockReturnValue(null);
-      
+
       const result = getNodeValue(mockNode, 'testKey', { default: 'value' });
-      
+
       expect(result).toEqual({ default: 'value' });
     });
 
     test('returns default value when context is undefined', () => {
       mockNode.tryGetContext.mockReturnValue(undefined);
-      
+
       const result = getNodeValue(mockNode, 'testKey', 'defaultString');
-      
+
       expect(result).toBe('defaultString');
     });
   });

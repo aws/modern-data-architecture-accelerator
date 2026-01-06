@@ -118,6 +118,7 @@ export class MdaaDeploy {
   }
 
   private installPython() {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const commandExists = require('command-exists');
     const pipCommandExists = commandExists.sync('pip');
     const pip3CommandExists = commandExists.sync('pip3');
@@ -261,6 +262,7 @@ export class MdaaDeploy {
       const template =
         env.template && domainEffectiveConfig.envTemplates ? domainEffectiveConfig.envTemplates[env.template] : {};
       // nosemgrep
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const _ = require('lodash');
       const envMergedConfig = _.mergeWith(env, template);
       const envEffectiveConfig: EnvEffectiveConfig = this.computeEnvEffectiveConfig(
@@ -648,6 +650,7 @@ export class MdaaDeploy {
     // nosemgrep
     if (fs.existsSync(moduleMdaaDeployConfigFile)) {
       // nosemgrep
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const moduleMdaaDeployConfig = require(moduleMdaaDeployConfigFile);
       if ('DEPLOY_STAGE' in moduleMdaaDeployConfig) {
         const deployStage = moduleMdaaDeployConfig['DEPLOY_STAGE'];
@@ -928,6 +931,8 @@ export class MdaaDeploy {
     parent: EffectiveConfig,
     child?: TerraformConfig,
   ): TerraformConfig | undefined {
+    // nosemgrep
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const _ = require('lodash');
     return _.mergeWith(child, parent.terraform);
   }
@@ -1042,6 +1047,7 @@ export class MdaaDeploy {
     const template =
       env.template && domainEffectiveConfig.envTemplates ? domainEffectiveConfig.envTemplates[env.template] : {};
     // nosemgrep
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const ld = require('lodash');
     const envMergedConfig = ld.mergeWith(env, template);
     return [envMergedConfig, this.computeEnvEffectiveConfig(envName, envMergedConfig, domainEffectiveConfig)];

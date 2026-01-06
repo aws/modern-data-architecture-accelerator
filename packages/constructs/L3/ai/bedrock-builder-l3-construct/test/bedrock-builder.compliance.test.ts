@@ -23,8 +23,8 @@ jest.mock('@aws-mdaa/ai-helper', () => ({
     modelIdentifier.startsWith('arn:')
       ? modelIdentifier
       : modelIdentifier.startsWith('us.')
-      ? `arn:${partition}:bedrock:${region}:${account}:inference-profile/${modelIdentifier}`
-      : `arn:${partition}:bedrock:${region}::foundation-model/${modelIdentifier}`,
+        ? `arn:${partition}:bedrock:${region}:${account}:inference-profile/${modelIdentifier}`
+        : `arn:${partition}:bedrock:${region}::foundation-model/${modelIdentifier}`,
   ),
 }));
 
@@ -1729,9 +1729,8 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
 
       // Verify one uses RDS and one uses OpenSearch Serverless
       const kbResources = Object.values(knowledgeBases);
-      const storageTypes = kbResources.map(
-        (kb: any) => kb.Properties.StorageConfiguration.Type,
-      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const storageTypes = kbResources.map((kb: any) => kb.Properties.StorageConfiguration.Type);
       expect(storageTypes).toContain('RDS');
       expect(storageTypes).toContain('OPENSEARCH_SERVERLESS');
     });

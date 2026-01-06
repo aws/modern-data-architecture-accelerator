@@ -22,7 +22,7 @@ describe('DMSL3Construct Constructor Exception Tests', () => {
 
   test('throws error when kmsArn is undefined', () => {
     const props = { ...baseProps, kmsArn: undefined };
-    
+
     expect(() => {
       new DMSL3Construct(stack, 'test-construct-1', props);
     }).toThrow('Please provide kmsArn');
@@ -30,7 +30,7 @@ describe('DMSL3Construct Constructor Exception Tests', () => {
 
   test('throws error when projectBucket is undefined', () => {
     const props = { ...baseProps, projectBucket: undefined };
-    
+
     expect(() => {
       new DMSL3Construct(stack, 'test-construct-2', props);
     }).toThrow('Please provide projectBucket');

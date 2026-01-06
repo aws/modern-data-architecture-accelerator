@@ -589,6 +589,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
       kernelGatewayAppSettings: kernelGatewayAppSettings,
     };
     // nosemgrep
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const _ = require('lodash');
     function customizer(objValue: unknown[], srcValue: unknown): void | unknown[] {
       if (_.isArray(objValue)) {

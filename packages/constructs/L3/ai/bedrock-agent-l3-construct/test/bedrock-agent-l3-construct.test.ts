@@ -18,8 +18,8 @@ jest.mock('@aws-mdaa/ai-helper', () => ({
     modelIdentifier.startsWith('arn:')
       ? modelIdentifier
       : modelIdentifier.startsWith('us.')
-      ? `arn:${partition}:bedrock:${region}:${account}:inference-profile/${modelIdentifier}`
-      : `arn:${partition}:bedrock:${region}::foundation-model/${modelIdentifier}`,
+        ? `arn:${partition}:bedrock:${region}:${account}:inference-profile/${modelIdentifier}`
+        : `arn:${partition}:bedrock:${region}::foundation-model/${modelIdentifier}`,
   ),
 }));
 

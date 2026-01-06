@@ -297,12 +297,13 @@ export class MdaaEKSCluster extends Cluster {
     // Helper function to try loading a specific kubectl layer
     const tryLoadLayer = (layerPackage: string, LayerClass: string): ILayerVersion | null => {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const module = require(layerPackage);
         const LayerConstructor = module[LayerClass];
         if (LayerConstructor) {
           return new LayerConstructor(scope, 'kubectl-layer');
         }
-      } catch (error) {
+      } catch {
         // Layer package not available
       }
       return null;

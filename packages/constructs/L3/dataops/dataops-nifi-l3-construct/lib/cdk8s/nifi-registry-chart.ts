@@ -12,7 +12,9 @@ import { ExternalSecretStore } from './external-secret-store';
 import * as k8s from './imports/k8s';
 import { NifiClusterChart } from './nifi-cluster-chart';
 // nosemgrep
-const { XMLParser, XMLBuilder } = require('fast-xml-parser');
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
+// nosemgrep
+import * as crypto from 'crypto';
 
 export interface NodeResources {
   readonly memory: string;
@@ -89,8 +91,6 @@ export class NifiRegistryChart extends cdk8s.Chart {
   public hash(): string {
     const json = JSON.stringify(this.toJson(), undefined, 2);
     const stableJson = json.replace(/Token\[.*?\]/g, 'Token');
-    // nosemgrep
-    const crypto = require('crypto');
     // nosemgrep
     const hash = crypto //NOSONAR not used in senstive context
       .createHash('sha1') //NOSONAR not used in senstive context
@@ -743,9 +743,8 @@ export class NifiRegistryChart extends cdk8s.Chart {
     nifiRegistryPropertiesMap['nifi.registry.security.keystoreType'] = 'JKS';
     nifiRegistryPropertiesMap['nifi.registry.security.keystorePasswd'] = 'INIT_KEYSTORE_PASSWORD'; //NOSONAR placeholder value replaced at runtime
     nifiRegistryPropertiesMap['nifi.registry.security.keyPasswd'] = 'INIT_KEYSTORE_PASSWORD'; //NOSONAR placeholder value replaced at runtime
-    nifiRegistryPropertiesMap[
-      'nifi.registry.security.truststore'
-    ] = `${nifiRegistryDataDir}/ssl/truststore/truststore.jks`;
+    nifiRegistryPropertiesMap['nifi.registry.security.truststore'] =
+      `${nifiRegistryDataDir}/ssl/truststore/truststore.jks`;
     nifiRegistryPropertiesMap['nifi.registry.security.truststoreType'] = 'JKS';
     nifiRegistryPropertiesMap['nifi.registry.security.truststorePasswd'] = 'INIT_TRUSTSTORE_PASSWORD'; //NOSONAR placeholder value replaced at runtime
     nifiRegistryPropertiesMap['nifi.registry.security.user.authorizer'] = 'managed-authorizer';

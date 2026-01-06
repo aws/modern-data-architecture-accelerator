@@ -36,8 +36,7 @@ import { ITopic } from 'aws-cdk-lib/aws-sns';
 import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import { IMdaaLambdaRole } from './role';
-
-const pjson = require('../package.json');
+import * as pjson from '../package.json';
 
 export interface MdaaDockerImageFunctionProps extends MdaaLambdaFunctionOptions {
   /**

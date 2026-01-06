@@ -5,6 +5,8 @@
 
 import { MdaaDeploy } from '../lib/mdaa-cli';
 import * as fs from 'fs';
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const commandExists = require('command-exists');
 
 jest.mock('command-exists', () => ({

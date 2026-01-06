@@ -16,10 +16,10 @@ describe('GlueWorkflowL3Construct Constructor Exception Tests', () => {
       Workflow: {
         Name: 'test-workflow',
         Graph: {
-          Nodes: []
-        }
-      }
-    }
+          Nodes: [],
+        },
+      },
+    },
   };
 
   const baseProps: GlueWorkflowL3ConstructProps = {
@@ -33,7 +33,7 @@ describe('GlueWorkflowL3Construct Constructor Exception Tests', () => {
 
   test('throws error when kmsArn is undefined', () => {
     const props = { ...baseProps, kmsArn: undefined };
-    
+
     expect(() => {
       new GlueWorkflowL3Construct(stack, 'test-construct-1', props);
     }).toThrow('Project KMS key must be defined');
@@ -41,7 +41,7 @@ describe('GlueWorkflowL3Construct Constructor Exception Tests', () => {
 
   test('throws error when securityConfigurationName is undefined', () => {
     const props = { ...baseProps, securityConfigurationName: undefined };
-    
+
     expect(() => {
       new GlueWorkflowL3Construct(stack, 'test-construct-2', props);
     }).toThrow('Project Security Configuration must be defined');

@@ -13,8 +13,9 @@ export function getMdaaConfig<T>(
   const moduleMdaaDeployConfigFile = `${moduleDeployConfig.modulePath}/mdaa.config.json`;
   let moduleMdaaDeployConfig;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     moduleMdaaDeployConfig = require(moduleMdaaDeployConfigFile);
-  } catch (ModuleNotFoundError) {
+  } catch {
     return undefined;
   }
   return getPropertyOfType(moduleMdaaDeployConfig, property, typeGuard);

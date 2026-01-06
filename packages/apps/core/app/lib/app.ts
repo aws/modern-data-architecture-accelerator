@@ -32,9 +32,8 @@ import { MdaaProductStack, MdaaProductStackProps, MdaaStack } from './stack';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { cleanContextStringValue, getNodeValue, readYamlFile } from './utils';
 // nosemgrep
-import assert = require('assert');
-
-const pjson = require('../package.json');
+import * as assert from 'assert';
+import * as pjson from '../package.json';
 
 export interface MdaaAppProps extends AppProps {
   readonly appConfigRaw?: ConfigurationElement;
@@ -221,6 +220,7 @@ export abstract class MdaaCdkApp extends App {
 
   protected static parsePackageJson(pjsonPath: string): MdaaPackageNameVersion {
     // nosemgrep
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const pjson = require(pjsonPath);
     return {
       name: pjson.name,
@@ -245,6 +245,7 @@ export abstract class MdaaCdkApp extends App {
 
   private loadConfigFromFiles(fileList: string[]): ConfigurationElement {
     // nosemgrep
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const _ = require('lodash');
 
     function customizer(objValue: unknown, srcValue: unknown): unknown[] | undefined {
@@ -277,6 +278,7 @@ export abstract class MdaaCdkApp extends App {
       // nosemgrep
       const naming_module_path = namingModule.startsWith('./') ? path.resolve(namingModule) : namingModule;
       // nosemgrep
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const customNamingModule = require(naming_module_path);
       return new customNamingModule[namingClass]({
         cdkNode: this.node,
@@ -309,6 +311,7 @@ export abstract class MdaaCdkApp extends App {
       : customAspect.aspect_module;
     console.log(`Applying custom aspect: ${customAspect.aspect_module}:${customAspect.aspect_class}`);
     // nosemgrep
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const customAspectModule = require(customAspectModulePath);
     const aspect = new customAspectModule[customAspect.aspect_class](customAspect.aspect_props);
     Aspects.of(this).add(aspect);
@@ -476,7 +479,7 @@ export abstract class MdaaCdkApp extends App {
         try {
           MdaaNagSuppressions.addConfigResourceSuppressionsByPath(stack, suppression.path, suppression.suppressions);
         } catch (error) {
-          console.log(`Error adding suppression for path ${suppression.path} to stack ${stack}`);
+          console.log(`Error adding suppression for path ${suppression.path} to stack ${stack}:`, error);
         }
       });
       // Apply our tags

@@ -17,7 +17,7 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
   beforeEach(() => {
     testApp = new MdaaTestApp();
     stack = testApp.testStack;
-    
+
     baseJobCommand = {
       name: 'glueetl',
       scriptLocation: './test/src/glue/python/job.py',
@@ -30,7 +30,10 @@ describe('GlueJobL3Construct Constructor Exception Tests', () => {
     };
   });
 
-  function createBaseProps(): Omit<GlueJobL3ConstructProps, 'deploymentRoleArn' | 'projectBucketName' | 'projectKMSArn' | 'securityConfigurationName' | 'notificationTopicArn'> {
+  function createBaseProps(): Omit<
+    GlueJobL3ConstructProps,
+    'deploymentRoleArn' | 'projectBucketName' | 'projectKMSArn' | 'securityConfigurationName' | 'notificationTopicArn'
+  > {
     return {
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
       naming: testApp.naming,

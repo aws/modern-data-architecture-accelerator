@@ -9,6 +9,9 @@ import * as k8s from './imports/k8s';
 import { ExternalSecretStore } from './external-secret-store';
 import * as fs from 'fs';
 
+// nosemgrep
+import * as crypto from 'crypto';
+
 export interface EfsPersistentVolume {
   readonly efsFsId: string;
   readonly efsApId: string;
@@ -83,8 +86,6 @@ export class ZookeeperChart extends cdk8s.Chart {
   public hash(): string {
     const json = JSON.stringify(this.toJson(), undefined, 2);
     const stableJson = json.replace(/Token\[.*?\]/g, 'Token');
-    // nosemgrep
-    const crypto = require('crypto');
     // nosemgrep
     const hash = crypto //NOSONAR not used in senstive context
       .createHash('sha1') //NOSONAR not used in senstive context
@@ -508,9 +509,8 @@ export class ZookeeperChart extends cdk8s.Chart {
     //perform config-driven overrides here
     let nodeIndex = 0;
     nodeList.forEach(nodeName => {
-      zooCfgMap[
-        `server.${nodeIndex}`
-      ] = `${nodeName}.${zookeeperServiceName}.${this.namespace}.svc.cluster.local:2888:3888`;
+      zooCfgMap[`server.${nodeIndex}`] =
+        `${nodeName}.${zookeeperServiceName}.${this.namespace}.svc.cluster.local:2888:3888`;
       nodeIndex = nodeIndex + 1;
     });
 
