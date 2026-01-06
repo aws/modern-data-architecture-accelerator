@@ -12,7 +12,6 @@ coverage
 dist/
 jsii-dist/
 node_modules/
-.jsii
 *.js.map
 *.d.ts.map
 .DS_Store
@@ -20,3 +19,7 @@ node_modules/
 # Include javascript files and typescript declarations
 !*.js
 jest.config.js
+
+# Include .jsii and .jsii.gz
+!.jsii
+!.jsii.gz

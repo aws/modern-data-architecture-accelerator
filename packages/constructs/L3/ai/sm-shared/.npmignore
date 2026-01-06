@@ -14,7 +14,12 @@ test/
 
 dist
 
+# Exclude jsii outdir
+jsii-dist
 
+# Include .jsii and .jsii.gz
+!.jsii
+!.jsii.gz
 
 # Include javascript files and typescript declarations
 !*.js
