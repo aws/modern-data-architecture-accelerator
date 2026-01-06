@@ -29,7 +29,7 @@ import {
   CfnResource,
   Duration,
 } from 'aws-cdk-lib';
-import { IVpc, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { IVpc, SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IRole, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { AuroraCapacityUnit } from 'aws-cdk-lib/aws-rds';
@@ -40,6 +40,7 @@ import { join } from 'path';
 import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { resolveModelArn } from '@aws-mdaa/ai-helper';
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
+import { truncateResourceType } from './resource-type-utils';
 
 // ---------------------------------------------
 // Knowledge Base Interfaces and Types
@@ -624,7 +625,19 @@ export interface SharepointDataSourceConfiguration {
    **/
   readonly tenantId: string;
 }
-interface BaseVectorStoreProps {
+
+/**
+ * Configuration for an existing OpenSearch Serverless VPC endpoint.
+ * When provided, the construct will use this existing VPC endpoint instead of creating a new one.
+ */
+export interface OssVpceConfig {
+  /** The existing VPC endpoint ID */
+  readonly vpceId: string;
+  /** The security group ID associated with the VPC endpoint */
+  readonly securityGroupId: string;
+}
+
+export interface BaseVectorStoreProps {
   /**
    * Q-ENHANCED-PROPERTY
    * Optional vector store type specification for storage backend selection enabling choice between Aurora Serverless and OpenSearch Serverless. Defines the vector storage backend type for knowledge base vector storage with different performance and cost characteristics.
@@ -739,6 +752,17 @@ export interface OpensearchServerlessProps extends BaseVectorStoreProps {
    * Validation: Must be ENABLE or DISABLE; required for replica configuration and cannot be changed after collection creation
    *   **/
   readonly standbyReplicas: StandbyReplicas;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional existing OpenSearch Serverless VPC endpoint configuration for reusing pre-existing VPC endpoints enabling deployment flexibility and avoiding duplicate endpoint creation. When provided, the construct will use the existing VPC endpoint instead of creating a new one, preventing deployment failures when a VPC endpoint already exists for the specified VPC.
+   *
+   * Use cases: Reuse existing endpoints; Avoid duplicate creation; Deployment flexibility; Cost optimization
+   *
+   * AWS: Existing OpenSearch Serverless VPC endpoint configuration for Bedrock knowledge base network connectivity
+   *
+   * Validation: If provided, both vpceId and securityGroupId must be specified
+   **/
+  readonly ossVpce?: OssVpceConfig;
 }
 /** Named collection of SharePoint data sources for configuration mapping */
 export interface NamedSharepointDataSources {
@@ -857,11 +881,21 @@ export interface NamedKnowledgeBaseProps {
   [knowledgeBaseName: string]: BedrockKnowledgeBaseProps;
 }
 
+/** Shared VPC endpoint details for OpenSearch Serverless collections */
+export interface SharedVpcEndpointDetails {
+  readonly vpcEndpointId: string;
+  readonly securityGroupId: string;
+  /** Optional reference to the VPC endpoint resource for dependency management */
+  readonly vpcEndpointResource?: CfnResource;
+}
+
 export interface BedrockKnowledgeBaseL3ConstructProps extends MdaaL3ConstructProps {
   readonly kbName: string;
   readonly kbConfig: BedrockKnowledgeBaseProps;
   readonly vectorStoreConfig: AuroraServerlessPgVectorProps | OpensearchServerlessProps;
   readonly kmsKey: IKey;
+  /** Optional map of VPC IDs to shared VPC endpoint details for OpenSearch Serverless collections */
+  readonly sharedVpcEndpoints?: { [vpcId: string]: SharedVpcEndpointDetails };
 }
 
 // ---------------------------------------------
@@ -1054,16 +1088,43 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     readWriteArns: string[],
     kmsKey: IKey,
   ): [MdaaOpensearchServerlessCollection, ManagedPolicy] {
-    const [vpc, vectorStoreSg] = this.createVpcAndSecurityGroup(vectorStoreName, vectorStoreConfig.vpcId);
+    // Get shared VPC endpoint details for this VPC
+    const sharedVpcEndpoint = this.props.sharedVpcEndpoints?.[vectorStoreConfig.vpcId];
+    if (!sharedVpcEndpoint) {
+      throw new Error(
+        `No shared VPC endpoint found for VPC ${vectorStoreConfig.vpcId}. ` +
+          `This should have been created at the Bedrock builder level.`,
+      );
+    }
+
+    // Import VPC reference
+    const vpc = Vpc.fromVpcAttributes(this, `vpc-import-vectorstore-${vectorStoreName}`, {
+      vpcId: vectorStoreConfig.vpcId,
+      availabilityZones: ['a'],
+      publicSubnetIds: ['a'],
+    });
+
+    // Import the shared security group for Lambda function use
+    const importedSecurityGroup = SecurityGroup.fromSecurityGroupId(
+      this,
+      `${vectorStoreName}-imported-sg`,
+      sharedVpcEndpoint.securityGroupId,
+      { allowAllOutbound: true },
+    );
+    // Cast to MdaaSecurityGroup type for compatibility (it's just an interface)
+    this.vectorStoreSecurityGroup = importedSecurityGroup as unknown as MdaaSecurityGroup;
 
     const opensearchServerlessCollectionProps: MdaaOpensearchServerlessCollectionProps = {
       name: vectorStoreName,
       collectionType: 'VECTORSEARCH',
       standByReplicas: vectorStoreConfig.standbyReplicas,
       encryptionKey: kmsKey,
-      vpc: vpc,
-      subnetIds: vectorStoreConfig.subnetIds,
-      securityGroupIds: [vectorStoreSg.securityGroupId],
+      network: {
+        vpc: vpc,
+        subnetIds: vectorStoreConfig.subnetIds,
+        securityGroupIds: [sharedVpcEndpoint.securityGroupId],
+        vpcEndpointId: sharedVpcEndpoint.vpcEndpointId,
+      },
       sourceServices: ['bedrock.amazonaws.com'],
       readWriteArns: readWriteArns,
       readOnlyArns: readOnlyArns,
@@ -1173,16 +1234,16 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
 
   /**
    * Prepares OpenSearch Serverless vector store parameters
+   * Uses prepareOpenSearchIndexConfiguration() to get the resourceType, ensuring
+   * the Lambda role name in the data access policy matches the actual Lambda role
    */
   private prepareOpensearchVectorStoreParams() {
-    // build vector index name with an 8 character hash for uniqueness
-    const vectorIndexName = `embeddings_${this.cachedEmbeddingModelHash.slice(-8)}_${this.cachedVectorFieldSize}`;
-    const resourceType = `create-index-${vectorIndexName}`;
-    const roleName = `${resourceType}-handler`;
+    const indexConfig = this.prepareOpenSearchIndexConfiguration();
+    const roleName = `${indexConfig.resourceType}-handler`;
     const createIndexLambdaRoleName = this.props.naming.resourceName(roleName, 64);
     const readWriteArns = [this.kbRole.roleArn, `arn:aws:iam::${this.account}:role/${createIndexLambdaRoleName}`];
 
-    return { vectorIndexName, readWriteArns };
+    return { vectorIndexName: indexConfig.vectorIndexName, readWriteArns };
   }
 
   /**
@@ -1656,9 +1717,14 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
   private prepareOpenSearchIndexConfiguration() {
     // build vector index name with an 8 character hash for uniqueness
     const vectorIndexName = `embeddings_${this.cachedEmbeddingModelHash.slice(-8)}_${this.cachedVectorFieldSize}`;
+    // Compute resourceType once here and reuse it for both the custom resource and the data access policy
+    // This ensures the Lambda role name is consistent across both places
+    const rawResourceType = `create-index-${this.props.kbName}-${vectorIndexName}`;
+    const resourceType = truncateResourceType(rawResourceType);
 
     return {
       vectorIndexName,
+      resourceType,
       fieldNames: BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES,
     };
   }
@@ -1835,13 +1901,28 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
   private setupOpenSearchIndex(
     kbName: string,
     opensearchStore: MdaaOpensearchServerlessCollection,
-    indexConfig: { vectorIndexName: string; fieldNames: typeof BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES },
+    indexConfig: {
+      vectorIndexName: string;
+      resourceType: string;
+      fieldNames: typeof BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES;
+    },
   ): MdaaCustomResource {
     const lambdaLayers = this.createLambdaLayers();
     const createIndexProps = this.buildOpenSearchIndexProps(opensearchStore, indexConfig, lambdaLayers);
 
     const createVectorIndex = new MdaaCustomResource(this, `create-index-${kbName}`, createIndexProps);
     createVectorIndex.node.addDependency(opensearchStore);
+
+    // Add CloudFormation-level dependency on VPC endpoint resource if available to ensure the endpoint
+    // is fully operational before the custom resource Lambda tries to access the OpenSearch collection.
+    // Using CfnResource.addDependency() ensures the dependency appears in the CloudFormation template's
+    // DependsOn clause, not just in the CDK construct tree.
+    const vectorStoreConfig = this.props.vectorStoreConfig as OpensearchServerlessProps;
+    const sharedVpcEndpoint = this.props.sharedVpcEndpoints?.[vectorStoreConfig.vpcId];
+    if (sharedVpcEndpoint?.vpcEndpointResource) {
+      const cfnCustomResource = createVectorIndex.node.defaultChild as CfnResource;
+      cfnCustomResource.addDependency(sharedVpcEndpoint.vpcEndpointResource);
+    }
 
     return createVectorIndex;
   }
@@ -1868,15 +1949,20 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
 
   private buildOpenSearchIndexProps(
     opensearchStore: MdaaOpensearchServerlessCollection,
-    indexConfig: { vectorIndexName: string; fieldNames: typeof BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES },
+    indexConfig: {
+      vectorIndexName: string;
+      resourceType: string;
+      fieldNames: typeof BedrockKnowledgeBaseL3Construct.OPENSEARCH_FIELD_NAMES;
+    },
     layers: {
       boto3: MdaaBoto3LayerVersion;
       awsauth: MdaaAwsAuthLayerVersion;
       opensearchPy: MdaaOpensearchPyLayerVersion;
     },
   ): MdaaCustomResourceProps {
+    // Use resourceType from indexConfig to ensure consistency with the data access policy
     return {
-      resourceType: `create-index-${indexConfig.vectorIndexName}`,
+      resourceType: indexConfig.resourceType,
       naming: this.props.naming,
       code: Code.fromAsset(join(__dirname, '..', 'src', 'python', 'create-index-aoss')),
       runtime: Runtime.PYTHON_3_13,

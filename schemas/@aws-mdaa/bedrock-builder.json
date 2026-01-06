@@ -1672,6 +1672,10 @@
             "additionalProperties": false,
             "description": "Q-ENHANCED-INTERFACE\nOpenSearch Serverless vector store properties interface for Bedrock knowledge bases providing search configuration and vector storage capabilities. Extends base vector store properties with OpenSearch-specific configuration including replica management and serverless search capabilities for scalable vector operations.\n\nUse cases: OpenSearch vector storage; Serverless search; Vector operations; Search configuration\n\nAWS: OpenSearch Serverless configuration for Bedrock knowledge base vector storage and search capabilities\n\nValidation: Extends BaseVectorStoreProps validation; standbyReplicas is required for replica configuration",
             "properties": {
+                "ossVpce": {
+                    "$ref": "#/definitions/OssVpceConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional existing OpenSearch Serverless VPC endpoint configuration for reusing pre-existing VPC endpoints enabling deployment flexibility and avoiding duplicate endpoint creation. When provided, the construct will use the existing VPC endpoint instead of creating a new one, preventing deployment failures when a VPC endpoint already exists for the specified VPC.\n\nUse cases: Reuse existing endpoints; Avoid duplicate creation; Deployment flexibility; Cost optimization\n\nAWS: Existing OpenSearch Serverless VPC endpoint configuration for Bedrock knowledge base network connectivity\n\nValidation: If provided, both vpceId and securityGroupId must be specified"
+                },
                 "standbyReplicas": {
                     "$ref": "#/definitions/StandbyReplicas",
                     "description": "Q-ENHANCED-PROPERTY\nRequired standby replica configuration for OpenSearch Serverless high availability enabling fault tolerance and performance optimization. Defines whether to enable or disable standby replicas for the OpenSearch Serverless collection with permanent configuration that cannot be changed after creation.\n\nUse cases: High availability; Fault tolerance; Performance optimization; Replica management\n\nAWS: OpenSearch Serverless standby replicas for Bedrock knowledge base high availability and fault tolerance\n\nValidation: Must be ENABLE or DISABLE; required for replica configuration and cannot be changed after collection creation\n  *"
@@ -1700,6 +1704,25 @@
                 "standbyReplicas",
                 "subnetIds",
                 "vpcId"
+            ],
+            "type": "object"
+        },
+        "OssVpceConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for an existing OpenSearch Serverless VPC endpoint.\nWhen provided, the construct will use this existing VPC endpoint instead of creating a new one.",
+            "properties": {
+                "securityGroupId": {
+                    "description": "The security group ID associated with the VPC endpoint",
+                    "type": "string"
+                },
+                "vpceId": {
+                    "description": "The existing VPC endpoint ID",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "securityGroupId",
+                "vpceId"
             ],
             "type": "object"
         },

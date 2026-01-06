@@ -4,3 +4,4 @@
  */
 
 export * from './bedrock-knowledge-base-l3-construct';
+export * from './resource-type-utils';

@@ -718,6 +718,12 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
       kmsKey,
       roleHelper,
       naming: testApp.naming,
+      sharedVpcEndpoints: {
+        'test-vpc-id': {
+          vpcEndpointId: 'vpce-test-123',
+          securityGroupId: 'sg-test-123',
+        },
+      },
     };
 
     new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-opensearch-construct', constructProps);

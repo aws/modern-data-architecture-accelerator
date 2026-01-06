@@ -13,6 +13,24 @@ import { Construct } from 'constructs';
 type StandByReplicas = 'ENABLE' | 'DISABLE';
 type CollectionType = 'SEARCH' | 'TIMESERIES' | 'VECTORSEARCH';
 
+/**
+ * VPC network configuration for services accessed through VPC endpoints.
+ * Groups all network-related properties for cleaner interface and better maintainability.
+ */
+export interface VpcNetworkConfig {
+  /** The VPC where the service is deployed */
+  readonly vpc: IVpc;
+
+  /** Subnet IDs within the VPC */
+  readonly subnetIds: string[];
+
+  /** Security group IDs for network access control */
+  readonly securityGroupIds: string[];
+
+  /** VPC endpoint ID for private connectivity to the service */
+  readonly vpcEndpointId: string;
+}
+
 export interface MdaaOpensearchServerlessCollectionProps extends MdaaConstructProps {
   /** Functional Name of Opensearch Serverless Collection */
   readonly name: string;
@@ -27,19 +45,17 @@ export interface MdaaOpensearchServerlessCollectionProps extends MdaaConstructPr
    * Possible values are SEARCH, TIMESERIES, and VECTORSEARCH.
    */
   readonly collectionType: CollectionType;
+
   /**
    * ARN of the KMS key to use for encryption of data at rest.
    */
   readonly encryptionKey: IMdaaKmsKey;
 
-  /** The VPC to place the cluster in. */
-  readonly vpc: IVpc;
-
-  /** Where to place the instances within the VPC */
-  readonly subnetIds: string[];
-
-  /** Security groups to allow access to the collection. */
-  readonly securityGroupIds: string[];
+  /**
+   * VPC network configuration including VPC, subnets, security groups, and VPC endpoint.
+   * The VPC endpoint must be created by the caller and shared across collections in the same VPC.
+   */
+  readonly network: VpcNetworkConfig;
 
   /** Service principals to allow access to the collection.
    */
@@ -48,7 +64,7 @@ export interface MdaaOpensearchServerlessCollectionProps extends MdaaConstructPr
   /** IAM principals (role ARNs) to grant read only data access */
   readonly readOnlyArns?: string[];
 
-  /** IAM principals (role ARNs) to grant read only data access */
+  /** IAM principals (role ARNs) to grant read write data access */
   readonly readWriteArns?: string[];
 
   /** Domain Access Policies */
@@ -62,15 +78,6 @@ export class MdaaOpensearchServerlessCollection extends Construct {
     super(scope, id);
     // Opensearch Serverless collection names can be max 32 char long
     const collectionName = props.naming.resourceName(props.name, 32);
-
-    // VPC Endpoint
-    const vpcEndpoint = new aoss.CfnVpcEndpoint(this, 'opensearch-serverless-vpc-endpoint', {
-      // Opensearch Serverless VPC interface endpoint names can be max 32 characters long.
-      name: props.naming.resourceName(`${props.name}-endpoint`, 32),
-      vpcId: props.vpc.vpcId,
-      subnetIds: props.subnetIds,
-      securityGroupIds: props.securityGroupIds,
-    });
 
     // Encryption Policy
     const encryptionPolicy = new aoss.CfnSecurityPolicy(this, 'opensearch-serverless-encryption-policy', {
@@ -101,7 +108,7 @@ export class MdaaOpensearchServerlessCollection extends Construct {
             { ResourceType: 'dashboard', Resource: [`collection/${collectionName}`] },
           ],
           AllowFromPublic: false,
-          SourceVPCEs: [vpcEndpoint.attrId],
+          SourceVPCEs: [props.network.vpcEndpointId],
           SourceServices: props.sourceServices,
         },
       ]),

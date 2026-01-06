@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`] = `
 {
@@ -621,17 +621,6 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-bedrock-builder-app:security-group:testvectorstore2:id",
-        },
-        "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "GroupId",
-          ],
-        },
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Export": {
           "Name": "test-org:test-domain:test-bedrock-builder-app:role:monitoringroletestvectorstore:arn",
         },
         "Value": {
@@ -877,6 +866,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:security-group:bedrockkbvpcetestvpcid:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "GroupId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-bedrock-builder-app:kms:arn",
         },
         "Value": {
@@ -915,7 +915,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:createindexembeddings-2dcaaa33-1024handler:arn",
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:createindextestknowledgebase2embedding7b949e77handler:arn",
         },
         "Value": {
           "Fn::GetAtt": [
@@ -926,7 +926,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:createindexembeddings-2dcaaa33-1024handler:name",
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:createindextestknowledgebase2embedding7b949e77handler:name",
         },
         "Value": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -3636,7 +3636,7 @@ Provide responses in markdown format with source citations
             ],
           },
         },
-        "Type": "Custom::create-index-embeddings_2dcaaa33_1024",
+        "Type": "Custom::create-index-test-knowledge-base2-embedding-7b949e77",
         "UpdateReplacePolicy": "Delete",
       },
       "REPLACED-CFN-LOGICAL-ID": {
@@ -3899,7 +3899,7 @@ Provide responses in markdown format with source citations
                 {
                   "Ref": "AWS::AccountId",
                 },
-                ":role/test-org-test-env-test-domain-test-bedrock-builder-app--24581d3b"]}]",
+                ":role/test-org-test-env-test-domain-test-bedrock-builder-app--7a44f0ea"]}]",
               ],
             ],
           },
@@ -3952,25 +3952,6 @@ Provide responses in markdown format with source citations
           "Type": "network",
         },
         "Type": "AWS::OpenSearchServerless::SecurityPolicy",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "Name": "test-org-test-env-test--247848b9",
-          "SecurityGroupIds": [
-            {
-              "Fn::GetAtt": [
-                "REPLACED-CFN-LOGICAL-ID",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": [
-            "test-subnet-id1",
-            "test-subnet-id2",
-          ],
-          "VpcId": "test-vpc-id",
-        },
-        "Type": "AWS::OpenSearchServerless::VpcEndpoint",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
@@ -4758,100 +4739,6 @@ Provide responses in markdown format with source citations
           "Type": "String",
           "Value": {
             "Ref": "REPLACED-CFN-LOGICAL-ID",
-          },
-        },
-        "Type": "AWS::SSM::Parameter",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "GroupDescription": "test-org-test-env-test-domain-test-bedrock-builder-app/bedrock-builder/bedrock-kb-test-knowledge-base2/test-vector-store2-vector-store-sg",
-          "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-app-test-vector-store2",
-          "SecurityGroupEgress": [
-            {
-              "CidrIp": "0.0.0.0/0",
-              "Description": "Allow all outbound traffic by default",
-              "IpProtocol": "-1",
-            },
-          ],
-          "Tags": [
-            {
-              "Key": "mdaa_cdk_app",
-              "Value": "bedrock-builder",
-            },
-            {
-              "Key": "mdaa_domain",
-              "Value": "test-domain",
-            },
-            {
-              "Key": "mdaa_env",
-              "Value": "test-env",
-            },
-            {
-              "Key": "mdaa_module_name",
-              "Value": "test-bedrock-builder-app",
-            },
-            {
-              "Key": "mdaa_org",
-              "Value": "test-org",
-            },
-          ],
-          "VpcId": "test-vpc-id",
-        },
-        "Type": "AWS::EC2::SecurityGroup",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-EC2RestrictedCommonPorts",
-                "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
-              },
-              {
-                "id": "HIPAA.Security-EC2RestrictedCommonPorts",
-                "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
-              },
-              {
-                "id": "PCI.DSS.321-EC2RestrictedCommonPorts",
-                "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
-              },
-            ],
-          },
-        },
-        "Properties": {
-          "Description": "Self-Ref",
-          "GroupId": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "GroupId",
-            ],
-          },
-          "IpProtocol": "-1",
-          "SourceSecurityGroupId": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "GroupId",
-            ],
-          },
-        },
-        "Type": "AWS::EC2::SecurityGroupIngress",
-      },
-      "REPLACED-CFN-LOGICAL-ID": {
-        "Properties": {
-          "Name": "/test-org/test-domain/test-bedrock-builder-app/security-group/test-vector-store2/id",
-          "Tags": {
-            "mdaa_cdk_app": "bedrock-builder",
-            "mdaa_domain": "test-domain",
-            "mdaa_env": "test-env",
-            "mdaa_module_name": "test-bedrock-builder-app",
-            "mdaa_org": "test-org",
-          },
-          "Type": "String",
-          "Value": {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "GroupId",
-            ],
           },
         },
         "Type": "AWS::SSM::Parameter",
@@ -8070,6 +7957,119 @@ Provide responses in markdown format with source citations
         "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "test-org-test-env-test--5394fefd",
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "REPLACED-CFN-LOGICAL-ID",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": [
+            "test-subnet-id1",
+            "test-subnet-id2",
+          ],
+          "VpcId": "test-vpc-id",
+        },
+        "Type": "AWS::OpenSearchServerless::VpcEndpoint",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "GroupDescription": "test-org-test-env-test-domain-test-bedrock-builder-app/bedrock-builder/vpce-sg-test-vpc-id",
+          "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-app-bedrock-kb-vpce-test-vpc-id",
+          "SecurityGroupEgress": [
+            {
+              "CidrIp": "0.0.0.0/0",
+              "Description": "Allow all outbound traffic by default",
+              "IpProtocol": "-1",
+            },
+          ],
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "bedrock-builder",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-bedrock-builder-app",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "VpcId": "test-vpc-id",
+        },
+        "Type": "AWS::EC2::SecurityGroup",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-EC2RestrictedCommonPorts",
+                "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
+              },
+              {
+                "id": "HIPAA.Security-EC2RestrictedCommonPorts",
+                "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
+              },
+              {
+                "id": "PCI.DSS.321-EC2RestrictedCommonPorts",
+                "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Description": "Self-Ref",
+          "GroupId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "GroupId",
+            ],
+          },
+          "IpProtocol": "-1",
+          "SourceSecurityGroupId": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "GroupId",
+            ],
+          },
+        },
+        "Type": "AWS::EC2::SecurityGroupIngress",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/security-group/bedrock-kb-vpce-test-vpc-id/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "GroupId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "DeletionPolicy": "Retain",
         "Properties": {
           "EnableKeyRotation": true,
@@ -9309,7 +9309,7 @@ Provide responses in markdown format with source citations
               "VECTOR_INDEX_NAME": "embeddings_2dcaaa33_1024",
             },
           },
-          "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--24581d3b",
+          "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--7a44f0ea",
           "Handler": "create_index_aoss.lambda_handler",
           "Layers": [
             {
@@ -9416,7 +9416,7 @@ Provide responses in markdown format with source citations
           },
         },
         "Properties": {
-          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/create-index-embeddings_2dcaaa33_1024-handler/arn",
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/create-index-test-knowledge-base2-embedding-7b949e77-handler/arn",
           "Tags": {
             "mdaa_cdk_app": "bedrock-builder",
             "mdaa_domain": "test-domain",
@@ -9481,7 +9481,7 @@ Provide responses in markdown format with source citations
           },
         },
         "Properties": {
-          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/create-index-embeddings_2dcaaa33_1024-handler/name",
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/create-index-test-knowledge-base2-embedding-7b949e77-handler/name",
           "Tags": {
             "mdaa_cdk_app": "bedrock-builder",
             "mdaa_domain": "test-domain",
@@ -9572,7 +9572,7 @@ Provide responses in markdown format with source citations
             ],
             "Version": "2012-10-17",
           },
-          "PolicyName": "create-index-embeddings_2dcaaa33_1024-handler",
+          "PolicyName": "create-index-test-knowledge-base2-embedding-7b949e77-handler",
           "Roles": [
             {
               "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -9617,7 +9617,7 @@ Provide responses in markdown format with source citations
             ],
             "Version": "2012-10-17",
           },
-          "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-app--24581d3b",
+          "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-app--7a44f0ea",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -9683,7 +9683,7 @@ Provide responses in markdown format with source citations
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-app--24581d3b*",
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-app--7a44f0ea*",
                     ],
                   ],
                 },
@@ -9699,7 +9699,7 @@ Provide responses in markdown format with source citations
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-app--24581d3b*",
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-app--7a44f0ea*",
                     ],
                   ],
                 },
@@ -9774,7 +9774,7 @@ Provide responses in markdown format with source citations
             },
             "S3Key": "REPLACED-GENERATED-NAME.zip",
           },
-          "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-bedrock-builder-app/custom-create-index-embeddings_2dcaaa33_1024-provider)",
+          "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-bedrock-builder-app/custom-create-index-test-knowledge-base2-embedding-7b949e77-provider)",
           "Environment": {
             "Variables": {
               "USER_ON_EVENT_FUNCTION_ARN": {
@@ -9785,7 +9785,7 @@ Provide responses in markdown format with source citations
               },
             },
           },
-          "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--2baffe20",
+          "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-app--6ca25faf",
           "Handler": "framework.onEvent",
           "LoggingConfig": {
             "ApplicationLogLevel": "FATAL",
@@ -9881,7 +9881,7 @@ Provide responses in markdown format with source citations
             "Version": "2012-10-17",
           },
           "Description": "CR Role",
-          "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-app--2baffe20",
+          "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-app--6ca25faf",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -9959,7 +9959,7 @@ Provide responses in markdown format with source citations
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-app--2baffe20*",
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-app--6ca25faf*",
                     ],
                   ],
                 },
@@ -9975,7 +9975,7 @@ Provide responses in markdown format with source citations
                       {
                         "Ref": "AWS::Partition",
                       },
-                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-app--2baffe20*",
+                      ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-app--6ca25faf*",
                     ],
                   ],
                 },
@@ -10681,17 +10681,6 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-main:security-group:testvectorstore2:id",
-      },
-      "Value": {
-        "Fn::GetAtt": [
-          "REPLACED-CFN-LOGICAL-ID",
-          "GroupId",
-        ],
-      },
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-main:role:monitoringroletestvectorstore:arn",
       },
       "Value": {
@@ -10937,6 +10926,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:security-group:bedrockkbvpcetestvpcid:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "GroupId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-main:kms:arn",
       },
       "Value": {
@@ -10975,7 +10975,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:createindexembeddings-2dcaaa33-1024handler:arn",
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:createindextestknowledgebase2embedding7b949e77handler:arn",
       },
       "Value": {
         "Fn::GetAtt": [
@@ -10986,7 +10986,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:createindexembeddings-2dcaaa33-1024handler:name",
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:createindextestknowledgebase2embedding7b949e77handler:name",
       },
       "Value": {
         "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -13696,7 +13696,7 @@ Provide responses in markdown format with source citations
           ],
         },
       },
-      "Type": "Custom::create-index-embeddings_2dcaaa33_1024",
+      "Type": "Custom::create-index-test-knowledge-base2-embedding-7b949e77",
       "UpdateReplacePolicy": "Delete",
     },
     "REPLACED-CFN-LOGICAL-ID": {
@@ -13959,7 +13959,7 @@ Provide responses in markdown format with source citations
               {
                 "Ref": "AWS::AccountId",
               },
-              ":role/test-org-test-env-test-domain-test-bedrock-builder-main--99b9e91"]}]",
+              ":role/test-org-test-env-test-domain-test-bedrock-builder-main-4e6fd8d4"]}]",
             ],
           ],
         },
@@ -14012,25 +14012,6 @@ Provide responses in markdown format with source citations
         "Type": "network",
       },
       "Type": "AWS::OpenSearchServerless::SecurityPolicy",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Name": "test-org-test-env-test--511c021d",
-        "SecurityGroupIds": [
-          {
-            "Fn::GetAtt": [
-              "REPLACED-CFN-LOGICAL-ID",
-              "GroupId",
-            ],
-          },
-        ],
-        "SubnetIds": [
-          "test-subnet-id1",
-          "test-subnet-id2",
-        ],
-        "VpcId": "test-vpc-id",
-      },
-      "Type": "AWS::OpenSearchServerless::VpcEndpoint",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
@@ -14818,100 +14799,6 @@ Provide responses in markdown format with source citations
         "Type": "String",
         "Value": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
-        },
-      },
-      "Type": "AWS::SSM::Parameter",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "GroupDescription": "test-org-test-env-test-domain-test-bedrock-builder-main/bedrock-builder/bedrock-kb-test-knowledge-base2/test-vector-store2-vector-store-sg",
-        "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-main-test-vector-store2",
-        "SecurityGroupEgress": [
-          {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "mdaa_cdk_app",
-            "Value": "bedrock-builder",
-          },
-          {
-            "Key": "mdaa_domain",
-            "Value": "test-domain",
-          },
-          {
-            "Key": "mdaa_env",
-            "Value": "test-env",
-          },
-          {
-            "Key": "mdaa_module_name",
-            "Value": "test-bedrock-builder-main",
-          },
-          {
-            "Key": "mdaa_org",
-            "Value": "test-org",
-          },
-        ],
-        "VpcId": "test-vpc-id",
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-EC2RestrictedCommonPorts",
-              "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
-            },
-            {
-              "id": "HIPAA.Security-EC2RestrictedCommonPorts",
-              "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
-            },
-            {
-              "id": "PCI.DSS.321-EC2RestrictedCommonPorts",
-              "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
-            },
-          ],
-        },
-      },
-      "Properties": {
-        "Description": "Self-Ref",
-        "GroupId": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "-1",
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "GroupId",
-          ],
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
-    },
-    "REPLACED-CFN-LOGICAL-ID": {
-      "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-main/security-group/test-vector-store2/id",
-        "Tags": {
-          "mdaa_cdk_app": "bedrock-builder",
-          "mdaa_domain": "test-domain",
-          "mdaa_env": "test-env",
-          "mdaa_module_name": "test-bedrock-builder-main",
-          "mdaa_org": "test-org",
-        },
-        "Type": "String",
-        "Value": {
-          "Fn::GetAtt": [
-            "REPLACED-CFN-LOGICAL-ID",
-            "GroupId",
-          ],
         },
       },
       "Type": "AWS::SSM::Parameter",
@@ -18130,6 +18017,119 @@ Provide responses in markdown format with source citations
       "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "test-org-test-env-test--36d6b62d",
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "GroupId",
+            ],
+          },
+        ],
+        "SubnetIds": [
+          "test-subnet-id1",
+          "test-subnet-id2",
+        ],
+        "VpcId": "test-vpc-id",
+      },
+      "Type": "AWS::OpenSearchServerless::VpcEndpoint",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "GroupDescription": "test-org-test-env-test-domain-test-bedrock-builder-main/bedrock-builder/vpce-sg-test-vpc-id",
+        "GroupName": "test-org-test-env-test-domain-test-bedrock-builder-main-bedrock-kb-vpce-test-vpc-id",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "VpcId": "test-vpc-id",
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-EC2RestrictedCommonPorts",
+              "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
+            },
+            {
+              "id": "HIPAA.Security-EC2RestrictedCommonPorts",
+              "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
+            },
+            {
+              "id": "PCI.DSS.321-EC2RestrictedCommonPorts",
+              "reason": "[CONFIG:test-config.yaml] Ingress/Egress is limited to this security group",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Description": "Self-Ref",
+        "GroupId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/security-group/bedrock-kb-vpce-test-vpc-id/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
       "DeletionPolicy": "Retain",
       "Properties": {
         "EnableKeyRotation": true,
@@ -19369,7 +19369,7 @@ Provide responses in markdown format with source citations
             "VECTOR_INDEX_NAME": "embeddings_2dcaaa33_1024",
           },
         },
-        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-main--99b9e91",
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-main-4e6fd8d4",
         "Handler": "create_index_aoss.lambda_handler",
         "Layers": [
           {
@@ -19476,7 +19476,7 @@ Provide responses in markdown format with source citations
         },
       },
       "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/create-index-embeddings_2dcaaa33_1024-handler/arn",
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/create-index-test-knowledge-base2-embedding-7b949e77-handler/arn",
         "Tags": {
           "mdaa_cdk_app": "bedrock-builder",
           "mdaa_domain": "test-domain",
@@ -19541,7 +19541,7 @@ Provide responses in markdown format with source citations
         },
       },
       "Properties": {
-        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/create-index-embeddings_2dcaaa33_1024-handler/name",
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/create-index-test-knowledge-base2-embedding-7b949e77-handler/name",
         "Tags": {
           "mdaa_cdk_app": "bedrock-builder",
           "mdaa_domain": "test-domain",
@@ -19632,7 +19632,7 @@ Provide responses in markdown format with source citations
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "create-index-embeddings_2dcaaa33_1024-handler",
+        "PolicyName": "create-index-test-knowledge-base2-embedding-7b949e77-handler",
         "Roles": [
           {
             "Ref": "REPLACED-CFN-LOGICAL-ID",
@@ -19677,7 +19677,7 @@ Provide responses in markdown format with source citations
           ],
           "Version": "2012-10-17",
         },
-        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-main--99b9e91",
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-main-4e6fd8d4",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -19743,7 +19743,7 @@ Provide responses in markdown format with source citations
                     {
                       "Ref": "AWS::Partition",
                     },
-                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-main--99b9e91*",
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-main-4e6fd8d4*",
                   ],
                 ],
               },
@@ -19759,7 +19759,7 @@ Provide responses in markdown format with source citations
                     {
                       "Ref": "AWS::Partition",
                     },
-                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-main--99b9e91*",
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-main-4e6fd8d4*",
                   ],
                 ],
               },
@@ -19834,7 +19834,7 @@ Provide responses in markdown format with source citations
           },
           "S3Key": "REPLACED-GENERATED-NAME.zip",
         },
-        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-bedrock-builder-main/custom-create-index-embeddings_2dcaaa33_1024-provider)",
+        "Description": "AWS CDK resource provider framework - onEvent (test-org-test-env-test-domain-test-bedrock-builder-main/custom-create-index-test-knowledge-base2-embedding-7b949e77-provider)",
         "Environment": {
           "Variables": {
             "USER_ON_EVENT_FUNCTION_ARN": {
@@ -19845,7 +19845,7 @@ Provide responses in markdown format with source citations
             },
           },
         },
-        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-mai--11235876",
+        "FunctionName": "test-org-test-env-test-domain-test-bedrock-builder-main-448fb5a7",
         "Handler": "framework.onEvent",
         "LoggingConfig": {
           "ApplicationLogLevel": "FATAL",
@@ -19941,7 +19941,7 @@ Provide responses in markdown format with source citations
           "Version": "2012-10-17",
         },
         "Description": "CR Role",
-        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-mai--11235876",
+        "RoleName": "test-org-test-env-test-domain-test-bedrock-builder-main-448fb5a7",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -20019,7 +20019,7 @@ Provide responses in markdown format with source citations
                     {
                       "Ref": "AWS::Partition",
                     },
-                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-mai--11235876*",
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-main-448fb5a7*",
                   ],
                 ],
               },
@@ -20035,7 +20035,7 @@ Provide responses in markdown format with source citations
                     {
                       "Ref": "AWS::Partition",
                     },
-                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-mai--11235876*",
+                    ":logs:*:*:log-group:/aws/lambda/test-org-test-env-test-domain-test-bedrock-builder-main-448fb5a7*",
                   ],
                 ],
               },

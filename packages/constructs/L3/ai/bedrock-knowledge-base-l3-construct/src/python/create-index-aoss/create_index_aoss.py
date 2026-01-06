@@ -23,6 +23,10 @@ REGION_NAME = os.environ.get("REGION_NAME")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+session = boto3.Session()
+
+# Get STS client from session
+sts_client = session.client("sts", region_name=REGION_NAME, endpoint_url=f'https://sts.{REGION_NAME}.amazonaws.com')
 
 def log(message):
     logger.info(message)
@@ -34,10 +38,6 @@ def lambda_handler(event, context):
     """
     log(f"Event: {json.dumps(event)}")
 
-    session = boto3.Session()
-
-    # Get STS client from session
-    sts_client = session.client("sts", region_name=REGION_NAME, endpoint_url=f'https://sts.{REGION_NAME}.amazonaws.com')
     # Get caller identity
     caller_identity = sts_client.get_caller_identity()
 
@@ -117,11 +117,18 @@ def lambda_handler(event, context):
                 except Exception as e:
                     log(f"Index not ready yet, retry {retry_count + 1}/{max_retries}: {e}")
                     retry_count += 1
-                    time.sleep(min(2 ** retry_count, 30))  # Exponential backoff, max 30s  
+                    time.sleep(min(2 ** retry_count, 30))  # Exponential backoff, max 30s
+            
+            # Additional delay to allow for eventual consistency propagation
+            # Bedrock accesses OpenSearch via service endpoint which may have different
+            # consistency view than the VPC endpoint used by this Lambda
+            log("Waiting 15 seconds for index to propagate to Bedrock service endpoint...")
+            time.sleep(15)
+            log("Propagation wait complete")  
 
         elif event["RequestType"] == "Delete":
             log(f"Deleting index: {index_name}")
-            response = client.indices.delete(index_name)
+            response = client.indices.delete(index=index_name)
             log(f"Response: {response}")
         else:
             log("Continuing without action.")

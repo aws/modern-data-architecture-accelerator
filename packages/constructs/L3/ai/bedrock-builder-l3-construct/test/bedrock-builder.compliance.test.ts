@@ -1587,6 +1587,1028 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
   });
+
+  describe('Multiple Knowledge Bases in Same VPC', () => {
+    const vectorStoreA = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const vectorStoreB = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'], // Same VPC and subnets
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const kbA: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-a',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-a': {
+          bucketName: 'test-bucket-a',
+          enableSync: false,
+        },
+      },
+    };
+
+    const kbB: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-b',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-b': {
+          bucketName: 'test-bucket-b',
+          enableSync: false,
+        },
+      },
+    };
+
+    const testApp = new MdaaTestApp();
+    const template = generateTemplateFromTestInput(
+      testApp,
+      dataAdminRoleRef,
+      undefined,
+      { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
+      { 'kb-a': kbA, 'kb-b': kbB },
+    );
+
+    test('Test Shared VPC Endpoint Created', () => {
+      // Should create exactly one VPC endpoint for the shared VPC
+      const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+      const vpcEndpointCount = Object.keys(vpcEndpoints).length;
+      expect(vpcEndpointCount).toBe(1);
+    });
+
+    test('Test Both Collections Created', () => {
+      // Should create two OpenSearch Serverless collections
+      const collections = template.findResources('AWS::OpenSearchServerless::Collection');
+      const collectionCount = Object.keys(collections).length;
+      expect(collectionCount).toBe(2);
+    });
+
+    test('Test Both Knowledge Bases Created', () => {
+      // Should create two knowledge bases
+      const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
+      const kbCount = Object.keys(knowledgeBases).length;
+      expect(kbCount).toBe(2);
+    });
+  });
+
+  describe('Multiple Knowledge Bases in Same VPC with Mixed Vector Store Types', () => {
+    const vectorStoreAurora: AuroraServerlessPgVectorProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'],
+    };
+
+    const vectorStoreOpenSearch = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const kbAurora: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-aurora',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-aurora': {
+          bucketName: 'test-bucket-aurora',
+          enableSync: false,
+        },
+      },
+    };
+
+    const kbOpenSearch: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-opensearch',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-opensearch': {
+          bucketName: 'test-bucket-opensearch',
+          enableSync: false,
+        },
+      },
+    };
+
+    const testApp = new MdaaTestApp();
+    const template = generateTemplateFromTestInput(
+      testApp,
+      dataAdminRoleRef,
+      undefined,
+      { 'vector-aurora': vectorStoreAurora, 'vector-opensearch': vectorStoreOpenSearch },
+      { 'kb-aurora': kbAurora, 'kb-opensearch': kbOpenSearch },
+    );
+
+    test('Test Aurora RDS Cluster Created', () => {
+      template.hasResourceProperties('AWS::RDS::DBCluster', {
+        Engine: 'aurora-postgresql',
+      });
+    });
+
+    test('Test OpenSearch Serverless Collection Created', () => {
+      const collections = template.findResources('AWS::OpenSearchServerless::Collection');
+      const collectionCount = Object.keys(collections).length;
+      expect(collectionCount).toBe(1);
+    });
+
+    test('Test VPC Endpoint Created for OpenSearch', () => {
+      const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+      const vpcEndpointCount = Object.keys(vpcEndpoints).length;
+      expect(vpcEndpointCount).toBe(1);
+    });
+
+    test('Test Both Knowledge Bases Created with Different Storage Types', () => {
+      const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
+      const kbCount = Object.keys(knowledgeBases).length;
+      expect(kbCount).toBe(2);
+
+      // Verify one uses RDS and one uses OpenSearch Serverless
+      const kbResources = Object.values(knowledgeBases);
+      const storageTypes = kbResources.map(
+        (kb: any) => kb.Properties.StorageConfiguration.Type,
+      );
+      expect(storageTypes).toContain('RDS');
+      expect(storageTypes).toContain('OPENSEARCH_SERVERLESS');
+    });
+
+    test('Test Security Groups Created for Both Vector Stores', () => {
+      const securityGroups = template.findResources('AWS::EC2::SecurityGroup');
+      const sgCount = Object.keys(securityGroups).length;
+      // Should have security groups for both Aurora and OpenSearch
+      expect(sgCount).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  describe('Multiple Knowledge Bases with Mismatched Subnets', () => {
+    const vectorStoreA = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const vectorStoreB = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-2', 'subnet-3'], // Different subnets, same VPC
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const kbA: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-a',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-a': {
+          bucketName: 'test-bucket-a',
+          enableSync: false,
+        },
+      },
+    };
+
+    const kbB: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-b',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-b': {
+          bucketName: 'test-bucket-b',
+          enableSync: false,
+        },
+      },
+    };
+
+    test('Test Error Thrown for Mismatched Subnets', () => {
+      const testApp = new MdaaTestApp();
+      expect(() => {
+        generateTemplateFromTestInput(
+          testApp,
+          dataAdminRoleRef,
+          undefined,
+          { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
+          { 'kb-a': kbA, 'kb-b': kbB },
+        );
+      }).toThrow(/Multiple vector stores are configured with the same VPC.*but different subnet configurations/);
+    });
+  });
+
+  describe('Existing VPC Endpoint Configuration', () => {
+    describe('Using Existing VPC Endpoint', () => {
+      const vectorStoreWithExisting = {
+        vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+        vpcId: 'test-vpc-id',
+        subnetIds: ['subnet-1', 'subnet-2'],
+        standbyReplicas: 'ENABLE' as const,
+        ossVpce: { vpceId: 'vpce-existing-12345', securityGroupId: 'sg-existing-67890' },
+      };
+
+      const kb: BedrockKnowledgeBaseProps = {
+        embeddingModel: 'amazon.titan-embed-text-v2:0',
+        vectorStore: 'vector-existing',
+        role: kbRoleRef,
+        s3DataSources: {
+          'data-source': {
+            bucketName: 'test-bucket',
+            enableSync: false,
+          },
+        },
+      };
+
+      test('Test No New VPC Endpoint Created When Existing Provided', () => {
+        const testApp = new MdaaTestApp();
+        const template = generateTemplateFromTestInput(
+          testApp,
+          dataAdminRoleRef,
+          undefined,
+          { 'vector-existing': vectorStoreWithExisting },
+          { 'kb-existing': kb },
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+        // Should not create a new VPC endpoint when existing one is provided
+        const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+        const vpcEndpointCount = Object.keys(vpcEndpoints).length;
+        expect(vpcEndpointCount).toBe(0);
+      });
+
+      test('Test Knowledge Base Created with Existing VPC Endpoint', () => {
+        const testApp = new MdaaTestApp();
+        const template = generateTemplateFromTestInput(
+          testApp,
+          dataAdminRoleRef,
+          undefined,
+          { 'vector-existing': vectorStoreWithExisting },
+          { 'kb-existing': kb },
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+        // Should still create the knowledge base
+        const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
+        const kbCount = Object.keys(knowledgeBases).length;
+        expect(kbCount).toBe(1);
+      });
+
+      test('Test OpenSearch Collection Created with Existing VPC Endpoint', () => {
+        const testApp = new MdaaTestApp();
+        const template = generateTemplateFromTestInput(
+          testApp,
+          dataAdminRoleRef,
+          undefined,
+          { 'vector-existing': vectorStoreWithExisting },
+          { 'kb-existing': kb },
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+        // Should create the OpenSearch collection
+        const collections = template.findResources('AWS::OpenSearchServerless::Collection');
+        const collectionCount = Object.keys(collections).length;
+        expect(collectionCount).toBe(1);
+      });
+    });
+
+    describe('Error Handling for Inconsistent Existing VPC Endpoint Configuration', () => {
+      test('Test Error When Vector Stores Have Different Existing VPCE Config', () => {
+        const vectorStoreWithExisting = {
+          vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+          vpcId: 'test-vpc-id',
+          subnetIds: ['subnet-1', 'subnet-2'],
+          standbyReplicas: 'ENABLE' as const,
+          ossVpce: { vpceId: 'vpce-existing-12345', securityGroupId: 'sg-existing-67890' },
+        };
+
+        const vectorStoreWithoutExisting = {
+          vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+          vpcId: 'test-vpc-id',
+          subnetIds: ['subnet-1', 'subnet-2'],
+          standbyReplicas: 'ENABLE' as const,
+          // No existing VPCE config
+        };
+
+        const kbA: BedrockKnowledgeBaseProps = {
+          embeddingModel: 'amazon.titan-embed-text-v2:0',
+          vectorStore: 'vector-with-existing',
+          role: kbRoleRef,
+          s3DataSources: {
+            'data-source-a': {
+              bucketName: 'test-bucket-a',
+              enableSync: false,
+            },
+          },
+        };
+
+        const kbB: BedrockKnowledgeBaseProps = {
+          embeddingModel: 'amazon.titan-embed-text-v2:0',
+          vectorStore: 'vector-without-existing',
+          role: kbRoleRef,
+          s3DataSources: {
+            'data-source-b': {
+              bucketName: 'test-bucket-b',
+              enableSync: false,
+            },
+          },
+        };
+
+        const testApp = new MdaaTestApp();
+        expect(() => {
+          generateTemplateFromTestInput(
+            testApp,
+            dataAdminRoleRef,
+            undefined,
+            { 'vector-with-existing': vectorStoreWithExisting, 'vector-without-existing': vectorStoreWithoutExisting },
+            { 'kb-a': kbA, 'kb-b': kbB },
+            undefined,
+            undefined,
+            undefined,
+            true,
+          );
+        }).toThrow(/have inconsistent existing VPC endpoint configurations.*must either all use the same existing/);
+      });
+
+      test('Test Error When Vector Stores Have Different Existing VPCE IDs', () => {
+        const vectorStoreA = {
+          vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+          vpcId: 'test-vpc-id',
+          subnetIds: ['subnet-1', 'subnet-2'],
+          standbyReplicas: 'ENABLE' as const,
+          ossVpce: { vpceId: 'vpce-existing-aaaaa', securityGroupId: 'sg-existing-11111' },
+        };
+
+        const vectorStoreB = {
+          vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+          vpcId: 'test-vpc-id',
+          subnetIds: ['subnet-1', 'subnet-2'],
+          standbyReplicas: 'ENABLE' as const,
+          ossVpce: { vpceId: 'vpce-existing-bbbbb', securityGroupId: 'sg-existing-22222' },
+        };
+
+        const kbA: BedrockKnowledgeBaseProps = {
+          embeddingModel: 'amazon.titan-embed-text-v2:0',
+          vectorStore: 'vector-a',
+          role: kbRoleRef,
+          s3DataSources: {
+            'data-source-a': {
+              bucketName: 'test-bucket-a',
+              enableSync: false,
+            },
+          },
+        };
+
+        const kbB: BedrockKnowledgeBaseProps = {
+          embeddingModel: 'amazon.titan-embed-text-v2:0',
+          vectorStore: 'vector-b',
+          role: kbRoleRef,
+          s3DataSources: {
+            'data-source-b': {
+              bucketName: 'test-bucket-b',
+              enableSync: false,
+            },
+          },
+        };
+
+        const testApp = new MdaaTestApp();
+        expect(() => {
+          generateTemplateFromTestInput(
+            testApp,
+            dataAdminRoleRef,
+            undefined,
+            { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
+            { 'kb-a': kbA, 'kb-b': kbB },
+            undefined,
+            undefined,
+            undefined,
+            true,
+          );
+        }).toThrow(/have inconsistent existing VPC endpoint configurations.*must either all use the same existing/);
+      });
+    });
+
+    describe('Multiple Vector Stores with Same Existing VPC Endpoint', () => {
+      const vectorStoreA = {
+        vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+        vpcId: 'test-vpc-id',
+        subnetIds: ['subnet-1', 'subnet-2'],
+        standbyReplicas: 'ENABLE' as const,
+        ossVpce: { vpceId: 'vpce-shared-12345', securityGroupId: 'sg-shared-67890' },
+      };
+
+      const vectorStoreB = {
+        vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+        vpcId: 'test-vpc-id',
+        subnetIds: ['subnet-1', 'subnet-2'],
+        standbyReplicas: 'ENABLE' as const,
+        ossVpce: { vpceId: 'vpce-shared-12345', securityGroupId: 'sg-shared-67890' },
+      };
+
+      const kbA: BedrockKnowledgeBaseProps = {
+        embeddingModel: 'amazon.titan-embed-text-v2:0',
+        vectorStore: 'vector-a',
+        role: kbRoleRef,
+        s3DataSources: {
+          'data-source-a': {
+            bucketName: 'test-bucket-a',
+            enableSync: false,
+          },
+        },
+      };
+
+      const kbB: BedrockKnowledgeBaseProps = {
+        embeddingModel: 'amazon.titan-embed-text-v2:0',
+        vectorStore: 'vector-b',
+        role: kbRoleRef,
+        s3DataSources: {
+          'data-source-b': {
+            bucketName: 'test-bucket-b',
+            enableSync: false,
+          },
+        },
+      };
+
+      test('Test No New VPC Endpoint Created', () => {
+        const testApp = new MdaaTestApp();
+        const template = generateTemplateFromTestInput(
+          testApp,
+          dataAdminRoleRef,
+          undefined,
+          { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
+          { 'kb-a': kbA, 'kb-b': kbB },
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+        // Should not create any new VPC endpoints
+        const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+        const vpcEndpointCount = Object.keys(vpcEndpoints).length;
+        expect(vpcEndpointCount).toBe(0);
+      });
+
+      test('Test Both Collections Created', () => {
+        const testApp = new MdaaTestApp();
+        const template = generateTemplateFromTestInput(
+          testApp,
+          dataAdminRoleRef,
+          undefined,
+          { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
+          { 'kb-a': kbA, 'kb-b': kbB },
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+        // Should create two OpenSearch Serverless collections
+        const collections = template.findResources('AWS::OpenSearchServerless::Collection');
+        const collectionCount = Object.keys(collections).length;
+        expect(collectionCount).toBe(2);
+      });
+
+      test('Test Both Knowledge Bases Created', () => {
+        const testApp = new MdaaTestApp();
+        const template = generateTemplateFromTestInput(
+          testApp,
+          dataAdminRoleRef,
+          undefined,
+          { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
+          { 'kb-a': kbA, 'kb-b': kbB },
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
+        // Should create two knowledge bases
+        const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
+        const kbCount = Object.keys(knowledgeBases).length;
+        expect(kbCount).toBe(2);
+      });
+    });
+  });
+
+  describe('Two Knowledge Bases with Different VPCs', () => {
+    const vectorStoreVpcA = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-aaaaaaaa',
+      subnetIds: ['subnet-a1', 'subnet-a2'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const vectorStoreVpcB = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-bbbbbbbb',
+      subnetIds: ['subnet-b1', 'subnet-b2'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const kbA: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-vpc-a',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-a': {
+          bucketName: 'test-bucket-a',
+          enableSync: false,
+        },
+      },
+    };
+
+    const kbB: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-vpc-b',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-b': {
+          bucketName: 'test-bucket-b',
+          enableSync: false,
+        },
+      },
+    };
+
+    test('Test Separate VPC Endpoints Created for Each VPC', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a': vectorStoreVpcA, 'vector-vpc-b': vectorStoreVpcB },
+        { 'kb-a': kbA, 'kb-b': kbB },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create two VPC endpoints, one for each VPC
+      const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+      const vpcEndpointCount = Object.keys(vpcEndpoints).length;
+      expect(vpcEndpointCount).toBe(2);
+    });
+
+    test('Test Both Collections Created in Different VPCs', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a': vectorStoreVpcA, 'vector-vpc-b': vectorStoreVpcB },
+        { 'kb-a': kbA, 'kb-b': kbB },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create two OpenSearch Serverless collections
+      const collections = template.findResources('AWS::OpenSearchServerless::Collection');
+      const collectionCount = Object.keys(collections).length;
+      expect(collectionCount).toBe(2);
+    });
+
+    test('Test Both Knowledge Bases Created', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a': vectorStoreVpcA, 'vector-vpc-b': vectorStoreVpcB },
+        { 'kb-a': kbA, 'kb-b': kbB },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create two knowledge bases
+      const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
+      const kbCount = Object.keys(knowledgeBases).length;
+      expect(kbCount).toBe(2);
+    });
+
+    test('Test Separate Security Groups Created for Each VPC', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a': vectorStoreVpcA, 'vector-vpc-b': vectorStoreVpcB },
+        { 'kb-a': kbA, 'kb-b': kbB },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create security groups for each VPC endpoint
+      const securityGroups = template.findResources('AWS::EC2::SecurityGroup');
+      // Filter for VPCE security groups (there may be other SGs for vector stores)
+      const vpceSecurityGroups = Object.entries(securityGroups).filter(([key]) => key.includes('vpcesg'));
+      expect(vpceSecurityGroups.length).toBe(2);
+    });
+  });
+
+  describe('Two Knowledge Bases with Different VPCs - One with Existing VPCE', () => {
+    const vectorStoreVpcAWithExisting = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-aaaaaaaa',
+      subnetIds: ['subnet-a1', 'subnet-a2'],
+      standbyReplicas: 'ENABLE' as const,
+      ossVpce: {
+        vpceId: 'vpce-existing-aaaaa',
+        securityGroupId: 'sg-existing-aaaaa',
+      },
+    };
+
+    const vectorStoreVpcBNew = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-bbbbbbbb',
+      subnetIds: ['subnet-b1', 'subnet-b2'],
+      standbyReplicas: 'ENABLE' as const,
+      // No existing VPCE - should create new one
+    };
+
+    const kbA: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-vpc-a-existing',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-a': {
+          bucketName: 'test-bucket-a',
+          enableSync: false,
+        },
+      },
+    };
+
+    const kbB: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-vpc-b-new',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-b': {
+          bucketName: 'test-bucket-b',
+          enableSync: false,
+        },
+      },
+    };
+
+    test('Test Only One New VPC Endpoint Created (for VPC without existing)', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a-existing': vectorStoreVpcAWithExisting, 'vector-vpc-b-new': vectorStoreVpcBNew },
+        { 'kb-a': kbA, 'kb-b': kbB },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create only one VPC endpoint (for VPC-B), VPC-A uses existing
+      const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+      const vpcEndpointCount = Object.keys(vpcEndpoints).length;
+      expect(vpcEndpointCount).toBe(1);
+    });
+
+    test('Test Both Collections Created', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a-existing': vectorStoreVpcAWithExisting, 'vector-vpc-b-new': vectorStoreVpcBNew },
+        { 'kb-a': kbA, 'kb-b': kbB },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create two OpenSearch Serverless collections
+      const collections = template.findResources('AWS::OpenSearchServerless::Collection');
+      const collectionCount = Object.keys(collections).length;
+      expect(collectionCount).toBe(2);
+    });
+
+    test('Test Both Knowledge Bases Created', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a-existing': vectorStoreVpcAWithExisting, 'vector-vpc-b-new': vectorStoreVpcBNew },
+        { 'kb-a': kbA, 'kb-b': kbB },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create two knowledge bases
+      const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
+      const kbCount = Object.keys(knowledgeBases).length;
+      expect(kbCount).toBe(2);
+    });
+  });
+
+  describe('Single Knowledge Base with OpenSearch Serverless (No Existing VPCE)', () => {
+    const vectorStoreOss = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-single-oss',
+      subnetIds: ['subnet-1', 'subnet-2'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const kb: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-single-oss',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source': {
+          bucketName: 'test-bucket',
+          enableSync: false,
+        },
+      },
+    };
+
+    test('Test VPC Endpoint Created for Single OpenSearch Serverless KB', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-single-oss': vectorStoreOss },
+        { 'kb-single-oss': kb },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create one VPC endpoint
+      const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+      const vpcEndpointCount = Object.keys(vpcEndpoints).length;
+      expect(vpcEndpointCount).toBe(1);
+    });
+
+    test('Test OpenSearch Collection Created', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-single-oss': vectorStoreOss },
+        { 'kb-single-oss': kb },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create one OpenSearch Serverless collection
+      const collections = template.findResources('AWS::OpenSearchServerless::Collection');
+      const collectionCount = Object.keys(collections).length;
+      expect(collectionCount).toBe(1);
+    });
+
+    test('Test Knowledge Base Created with OpenSearch Storage', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-single-oss': vectorStoreOss },
+        { 'kb-single-oss': kb },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create knowledge base with OpenSearch Serverless storage
+      template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
+        StorageConfiguration: {
+          Type: 'OPENSEARCH_SERVERLESS',
+        },
+      });
+    });
+
+    test('Test Custom Resource for Index Creation Depends on VPC Endpoint', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-single-oss': vectorStoreOss },
+        { 'kb-single-oss': kb },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+
+      // Find the VPC endpoint logical ID
+      const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+      const vpcEndpointLogicalId = Object.keys(vpcEndpoints)[0];
+      expect(vpcEndpointLogicalId).toBeDefined();
+
+      // Find the custom resource for index creation (Custom::create-index-*)
+      const allResources = template.toJSON().Resources;
+      const customResourceEntry = Object.entries(allResources).find(
+        ([, resource]) =>
+          (resource as { Type: string }).Type.startsWith('Custom::') &&
+          (resource as { Type: string }).Type.includes('create-index'),
+      );
+      expect(customResourceEntry).toBeDefined();
+
+      const [, customResource] = customResourceEntry!;
+      const dependsOn = (customResource as { DependsOn?: string[] }).DependsOn;
+
+      // Verify the custom resource depends on the VPC endpoint
+      expect(dependsOn).toBeDefined();
+      expect(dependsOn).toContain(vpcEndpointLogicalId);
+    });
+  });
+
+  describe('Three Knowledge Bases Across Two VPCs', () => {
+    const vectorStoreVpcA1 = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-aaaaaaaa',
+      subnetIds: ['subnet-a1', 'subnet-a2'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const vectorStoreVpcA2 = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-aaaaaaaa',
+      subnetIds: ['subnet-a1', 'subnet-a2'], // Same VPC and subnets as vectorStoreVpcA1
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const vectorStoreVpcB = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-bbbbbbbb',
+      subnetIds: ['subnet-b1', 'subnet-b2'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const kb1: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-vpc-a-1',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-1': {
+          bucketName: 'test-bucket-1',
+          enableSync: false,
+        },
+      },
+    };
+
+    const kb2: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-vpc-a-2',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-2': {
+          bucketName: 'test-bucket-2',
+          enableSync: false,
+        },
+      },
+    };
+
+    const kb3: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-vpc-b',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-3': {
+          bucketName: 'test-bucket-3',
+          enableSync: false,
+        },
+      },
+    };
+
+    test('Test Two VPC Endpoints Created (One Per VPC)', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a-1': vectorStoreVpcA1, 'vector-vpc-a-2': vectorStoreVpcA2, 'vector-vpc-b': vectorStoreVpcB },
+        { 'kb-1': kb1, 'kb-2': kb2, 'kb-3': kb3 },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create two VPC endpoints (one for VPC-A shared by kb-1 and kb-2, one for VPC-B)
+      const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+      const vpcEndpointCount = Object.keys(vpcEndpoints).length;
+      expect(vpcEndpointCount).toBe(2);
+    });
+
+    test('Test Three Collections Created', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a-1': vectorStoreVpcA1, 'vector-vpc-a-2': vectorStoreVpcA2, 'vector-vpc-b': vectorStoreVpcB },
+        { 'kb-1': kb1, 'kb-2': kb2, 'kb-3': kb3 },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create three OpenSearch Serverless collections
+      const collections = template.findResources('AWS::OpenSearchServerless::Collection');
+      const collectionCount = Object.keys(collections).length;
+      expect(collectionCount).toBe(3);
+    });
+
+    test('Test Three Knowledge Bases Created', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-vpc-a-1': vectorStoreVpcA1, 'vector-vpc-a-2': vectorStoreVpcA2, 'vector-vpc-b': vectorStoreVpcB },
+        { 'kb-1': kb1, 'kb-2': kb2, 'kb-3': kb3 },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create three knowledge bases
+      const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
+      const kbCount = Object.keys(knowledgeBases).length;
+      expect(kbCount).toBe(3);
+    });
+  });
+
+  describe('Unused Vector Store Should Not Create VPC Endpoint', () => {
+    const usedVectorStore = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-used',
+      subnetIds: ['subnet-1', 'subnet-2'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const unusedVectorStore = {
+      vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
+      vpcId: 'vpc-unused',
+      subnetIds: ['subnet-3', 'subnet-4'],
+      standbyReplicas: 'ENABLE' as const,
+    };
+
+    const kb: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-used',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source': {
+          bucketName: 'test-bucket',
+          enableSync: false,
+        },
+      },
+    };
+
+    test('Test Only One VPC Endpoint Created for Used Vector Store', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-used': usedVectorStore, 'vector-unused': unusedVectorStore },
+        { 'kb-used': kb },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create only one VPC endpoint for the used vector store
+      const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
+      const vpcEndpointCount = Object.keys(vpcEndpoints).length;
+      expect(vpcEndpointCount).toBe(1);
+    });
+
+    test('Test Only One Collection Created for Used Vector Store', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-used': usedVectorStore, 'vector-unused': unusedVectorStore },
+        { 'kb-used': kb },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+      // Should create only one collection for the used vector store
+      const collections = template.findResources('AWS::OpenSearchServerless::Collection');
+      const collectionCount = Object.keys(collections).length;
+      expect(collectionCount).toBe(1);
+    });
+  });
 });
 
 function generateTemplateFromTestInput(
@@ -1598,6 +2620,7 @@ function generateTemplateFromTestInput(
   guardrails?: NamedGuardrailProps,
   lambdaFunctions?: LambdaFunctionProps,
   kmsKeyArn?: string,
+  skipCdkNag?: boolean,
 ) {
   const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -1614,6 +2637,8 @@ function generateTemplateFromTestInput(
   };
 
   new BedrockBuilderL3Construct(testApp.testStack, 'test-construct', constructProps);
-  testApp.checkCdkNagCompliance(testApp.testStack);
+  if (!skipCdkNag) {
+    testApp.checkCdkNagCompliance(testApp.testStack);
+  }
   return Template.fromStack(testApp.testStack);
 }

@@ -6,6 +6,9 @@ import os
 import sys
 from unittest.mock import MagicMock
 
+# Set AWS region before any boto3 imports to prevent NoRegionError during module loading
+os.environ.setdefault('AWS_DEFAULT_REGION', 'us-east-1')
+
 # Add the source directory to Python path
 src_path = os.path.join(os.path.dirname(__file__), '..', 'src', 'python', 'create-index-aoss')
 sys.path.insert(0, src_path)

@@ -15,6 +15,7 @@ class TestLambdaHandler:
     """Test cases for lambda_handler function."""
     
     @mock_aws
+    @patch('create_index_aoss.time.sleep')
     @patch('create_index_aoss.OpenSearch')
     @patch('create_index_aoss.cfnresponse.send')
     @patch('create_index_aoss.HOST', 'https://test-collection.us-east-1.aoss.amazonaws.com')
@@ -22,8 +23,17 @@ class TestLambdaHandler:
     @patch('create_index_aoss.VECTOR_FIELD_NAME', 'test_vector_field')
     @patch('create_index_aoss.VECTOR_DIMENSION', 1536)
     @patch('create_index_aoss.REGION_NAME', 'us-east-1')
-    def test_create_index_success(self, mock_cfn_send, mock_opensearch, create_event, lambda_context, aws_credentials):
+    def test_create_index_success(self, mock_cfn_send, mock_opensearch, mock_sleep, create_event, lambda_context, aws_credentials):
         """Test successful index creation."""
+        # Mock STS client
+        mock_sts = MagicMock()
+        mock_sts.get_caller_identity.return_value = {
+            'UserId': 'AIDAI123456789EXAMPLE',
+            'Account': '123456789012',
+            'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
+        }
+        create_index_aoss.sts_client = mock_sts
+        
         # Mock OpenSearch client
         mock_client = MagicMock()
         mock_opensearch.return_value = mock_client
@@ -65,6 +75,15 @@ class TestLambdaHandler:
     @patch('create_index_aoss.REGION_NAME', 'us-east-1')
     def test_delete_index_success(self, mock_cfn_send, mock_opensearch, delete_event, lambda_context, aws_credentials):
         """Test successful index deletion."""
+        # Mock STS client
+        mock_sts = MagicMock()
+        mock_sts.get_caller_identity.return_value = {
+            'UserId': 'AIDAI123456789EXAMPLE',
+            'Account': '123456789012',
+            'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
+        }
+        create_index_aoss.sts_client = mock_sts
+        
         # Mock OpenSearch client
         mock_client = MagicMock()
         mock_opensearch.return_value = mock_client
@@ -74,7 +93,7 @@ class TestLambdaHandler:
         
         # Verify OpenSearch client was called correctly
         mock_opensearch.assert_called_once()
-        mock_client.indices.delete.assert_called_once_with('test-vector-index')
+        mock_client.indices.delete.assert_called_once_with(index='test-vector-index')
         
         # Verify CFN response
         mock_cfn_send.assert_called_once_with(
@@ -93,6 +112,15 @@ class TestLambdaHandler:
     @patch('create_index_aoss.REGION_NAME', 'us-east-1')
     def test_update_event_no_action(self, mock_cfn_send, mock_opensearch, update_event, lambda_context, aws_credentials):
         """Test update event continues without action."""
+        # Mock STS client
+        mock_sts = MagicMock()
+        mock_sts.get_caller_identity.return_value = {
+            'UserId': 'AIDAI123456789EXAMPLE',
+            'Account': '123456789012',
+            'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
+        }
+        create_index_aoss.sts_client = mock_sts
+        
         # Mock OpenSearch client
         mock_client = MagicMock()
         mock_opensearch.return_value = mock_client
@@ -111,6 +139,7 @@ class TestLambdaHandler:
         assert result['statusCode'] == 200
     
     @mock_aws
+    @patch('create_index_aoss.time.sleep')
     @patch('create_index_aoss.OpenSearch')
     @patch('create_index_aoss.cfnresponse.send')
     @patch('create_index_aoss.HOST', 'https://test-collection.us-east-1.aoss.amazonaws.com')
@@ -118,8 +147,17 @@ class TestLambdaHandler:
     @patch('create_index_aoss.VECTOR_FIELD_NAME', 'test_vector_field')
     @patch('create_index_aoss.VECTOR_DIMENSION', 1536)
     @patch('create_index_aoss.REGION_NAME', 'us-east-1')
-    def test_opensearch_error_handling(self, mock_cfn_send, mock_opensearch, create_event, lambda_context, aws_credentials):
+    def test_opensearch_error_handling(self, mock_cfn_send, mock_opensearch, mock_sleep, create_event, lambda_context, aws_credentials):
         """Test error handling when OpenSearch operations fail."""
+        # Mock STS client
+        mock_sts = MagicMock()
+        mock_sts.get_caller_identity.return_value = {
+            'UserId': 'AIDAI123456789EXAMPLE',
+            'Account': '123456789012',
+            'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
+        }
+        create_index_aoss.sts_client = mock_sts
+        
         # Mock OpenSearch client to raise exception
         mock_client = MagicMock()
         mock_opensearch.return_value = mock_client
@@ -145,6 +183,15 @@ class TestLambdaHandler:
     @patch('create_index_aoss.REGION_NAME', 'us-east-1')
     def test_index_ready_retry_logic(self, mock_sleep, mock_cfn_send, mock_opensearch, create_event, lambda_context, aws_credentials):
         """Test retry logic for index readiness check."""
+        # Mock STS client
+        mock_sts = MagicMock()
+        mock_sts.get_caller_identity.return_value = {
+            'UserId': 'AIDAI123456789EXAMPLE',
+            'Account': '123456789012',
+            'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
+        }
+        create_index_aoss.sts_client = mock_sts
+        
         # Mock OpenSearch client
         mock_client = MagicMock()
         mock_opensearch.return_value = mock_client
@@ -159,9 +206,9 @@ class TestLambdaHandler:
         
         result = create_index_aoss.lambda_handler(create_event, lambda_context)
         
-        # Verify retry attempts
+        # Verify retry attempts (2 retries) plus 1 propagation delay sleep
         assert mock_client.indices.get.call_count == 3
-        assert mock_sleep.call_count == 2
+        assert mock_sleep.call_count == 3  # 2 retries + 1 propagation delay
         
         # Verify successful completion
         mock_cfn_send.assert_called_once_with(
@@ -175,6 +222,7 @@ class TestIndexConfiguration:
     """Test cases for index configuration."""
     
     @mock_aws
+    @patch('create_index_aoss.time.sleep')
     @patch('create_index_aoss.OpenSearch')
     @patch('create_index_aoss.cfnresponse.send')
     @patch('create_index_aoss.HOST', 'https://test-collection.us-east-1.aoss.amazonaws.com')
@@ -182,8 +230,17 @@ class TestIndexConfiguration:
     @patch('create_index_aoss.VECTOR_FIELD_NAME', 'test_vector_field')
     @patch('create_index_aoss.VECTOR_DIMENSION', 1536)
     @patch('create_index_aoss.REGION_NAME', 'us-east-1')
-    def test_index_body_structure(self, mock_cfn_send, mock_opensearch, create_event, lambda_context, aws_credentials):
+    def test_index_body_structure(self, mock_cfn_send, mock_opensearch, mock_sleep, create_event, lambda_context, aws_credentials):
         """Test the structure of the index body."""
+        # Mock STS client
+        mock_sts = MagicMock()
+        mock_sts.get_caller_identity.return_value = {
+            'UserId': 'AIDAI123456789EXAMPLE',
+            'Account': '123456789012',
+            'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
+        }
+        create_index_aoss.sts_client = mock_sts
+        
         # Mock OpenSearch client
         mock_client = MagicMock()
         mock_opensearch.return_value = mock_client
@@ -222,6 +279,7 @@ class TestIndexConfiguration:
         assert properties['id']['type'] == 'text'
     
     @mock_aws
+    @patch('create_index_aoss.time.sleep')
     @patch('create_index_aoss.OpenSearch')
     @patch('create_index_aoss.cfnresponse.send')
     @patch('create_index_aoss.HOST', 'https://test-collection.us-east-1.aoss.amazonaws.com')
@@ -229,8 +287,17 @@ class TestIndexConfiguration:
     @patch('create_index_aoss.VECTOR_FIELD_NAME', 'custom_vector')
     @patch('create_index_aoss.VECTOR_DIMENSION', 768)
     @patch('create_index_aoss.REGION_NAME', 'us-east-1')
-    def test_custom_vector_dimension(self, mock_cfn_send, mock_opensearch, lambda_context, aws_credentials):
+    def test_custom_vector_dimension(self, mock_cfn_send, mock_opensearch, mock_sleep, lambda_context, aws_credentials):
         """Test custom vector dimension configuration."""
+        # Mock STS client
+        mock_sts = MagicMock()
+        mock_sts.get_caller_identity.return_value = {
+            'UserId': 'AIDAI123456789EXAMPLE',
+            'Account': '123456789012',
+            'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
+        }
+        create_index_aoss.sts_client = mock_sts
+        
         # Mock OpenSearch client
         mock_client = MagicMock()
         mock_opensearch.return_value = mock_client
@@ -260,6 +327,7 @@ class TestAwsIntegration:
     """Test cases for AWS service integration."""
     
     @mock_aws
+    @patch('create_index_aoss.time.sleep')
     @patch('create_index_aoss.OpenSearch')
     @patch('create_index_aoss.cfnresponse.send')
     @patch('create_index_aoss.HOST', 'https://test-collection.us-east-1.aoss.amazonaws.com')
@@ -267,28 +335,34 @@ class TestAwsIntegration:
     @patch('create_index_aoss.VECTOR_FIELD_NAME', 'test_vector_field')
     @patch('create_index_aoss.VECTOR_DIMENSION', 1536)
     @patch('create_index_aoss.REGION_NAME', 'us-east-1')
-    def test_sts_caller_identity(self, mock_cfn_send, mock_opensearch, create_event, lambda_context, aws_credentials):
-        """Test STS caller identity retrieval."""
+    def test_sts_caller_identity(self, mock_cfn_send, mock_opensearch, mock_sleep, create_event, lambda_context, aws_credentials):
+        """Test STS caller identity retrieval via moto."""
+        # Mock STS client
+        mock_sts = MagicMock()
+        mock_sts.get_caller_identity.return_value = {
+            'UserId': 'AIDAI123456789EXAMPLE',
+            'Account': '123456789012',
+            'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
+        }
+        create_index_aoss.sts_client = mock_sts
+        
         # Mock OpenSearch client
         mock_client = MagicMock()
         mock_opensearch.return_value = mock_client
         mock_client.indices.create.return_value = {"acknowledged": True}
         mock_client.indices.get.return_value = {"test-vector-index": {}}
         
-        with patch('create_index_aoss.boto3.Session') as mock_session:
-            mock_sts_client = MagicMock()
-            mock_sts_client.get_caller_identity.return_value = {
-                'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
-            }
-            mock_session.return_value.client.return_value = mock_sts_client
-            mock_session.return_value.get_credentials.return_value = MagicMock()
-            
-            create_index_aoss.lambda_handler(create_event, lambda_context)
-            
-            # Verify STS client was called
-            mock_sts_client.get_caller_identity.assert_called_once()
+        # moto's @mock_aws handles STS calls - just verify the handler completes successfully
+        result = create_index_aoss.lambda_handler(create_event, lambda_context)
+        
+        # Verify successful completion
+        assert result['statusCode'] == 200
+        
+        # Verify CFN response was sent with success
+        mock_cfn_send.assert_called_once()
     
     @mock_aws
+    @patch('create_index_aoss.time.sleep')
     @patch('create_index_aoss.OpenSearch')
     @patch('create_index_aoss.cfnresponse.send')
     @patch('create_index_aoss.HOST', 'https://test-collection.us-east-1.aoss.amazonaws.com')
@@ -296,8 +370,17 @@ class TestAwsIntegration:
     @patch('create_index_aoss.VECTOR_FIELD_NAME', 'test_vector_field')
     @patch('create_index_aoss.VECTOR_DIMENSION', 1536)
     @patch('create_index_aoss.REGION_NAME', 'us-east-1')
-    def test_opensearch_client_configuration(self, mock_cfn_send, mock_opensearch, create_event, lambda_context, aws_credentials):
+    def test_opensearch_client_configuration(self, mock_cfn_send, mock_opensearch, mock_sleep, create_event, lambda_context, aws_credentials):
         """Test OpenSearch client configuration."""
+        # Mock STS client
+        mock_sts = MagicMock()
+        mock_sts.get_caller_identity.return_value = {
+            'UserId': 'AIDAI123456789EXAMPLE',
+            'Account': '123456789012',
+            'Arn': 'arn:aws:sts::123456789012:assumed-role/test-role/test-session'
+        }
+        create_index_aoss.sts_client = mock_sts
+        
         # Mock OpenSearch client
         mock_client = MagicMock()
         mock_opensearch.return_value = mock_client

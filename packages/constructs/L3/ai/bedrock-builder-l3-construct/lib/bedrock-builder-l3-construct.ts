@@ -10,20 +10,25 @@ import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-cons
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct';
 
-import { aws_bedrock as bedrock, aws_kms as kms, Stack } from 'aws-cdk-lib';
+import { aws_bedrock as bedrock, aws_kms as kms, aws_opensearchserverless as aoss, Stack } from 'aws-cdk-lib';
 
 import { Effect, PolicyStatement, ServicePrincipal, ArnPrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 import { Construct } from 'constructs';
+import { MdaaSecurityGroup } from '@aws-mdaa/ec2-constructs';
 import { BedrockAgentL3Construct, NamedAgentProps, BedrockAgentProps } from '@aws-mdaa/bedrock-agent-l3-construct';
 import {
   BedrockKnowledgeBaseL3Construct,
+  BedrockKnowledgeBaseProps,
   NamedKnowledgeBaseProps,
   NamedVectorStoreProps,
-  BedrockKnowledgeBaseProps,
+  OpensearchServerlessProps,
+  SharedVpcEndpointDetails,
 } from '@aws-mdaa/bedrock-knowledge-base-l3-construct';
 import { BedrockGuardrailL3Construct, NamedGuardrailProps } from '@aws-mdaa/bedrock-guardrail-l3-construct';
+import { NamedOpensearchServerlessProps, validateAndGroupVpcEndpoints } from './vpc-endpoint-validator';
 
 /**
  * Q-ENHANCED-INTERFACE
@@ -176,6 +181,9 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
 
     this.generatedFunctions = this.createLambdaFunctions(props, kmsKey);
 
+    // Create shared VPC endpoints for OpenSearch Serverless vector stores
+    const sharedVpcEndpoints = this.createSharedVpcEndpoints(props.vectorStores, props.knowledgeBases);
+
     // Create knowledge bases (each will create its own vector store)
     const knowledgeBases: { [kbName: string]: bedrock.CfnKnowledgeBase } = {};
     Object.entries(props.knowledgeBases || {}).forEach(([kbName, kbConfig]) => {
@@ -192,6 +200,7 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         kbConfig: resolvedKbConfig,
         vectorStoreConfig,
         kmsKey,
+        sharedVpcEndpoints,
       });
       knowledgeBases[kbName] = kbConstruct.knowledgeBase;
     });
@@ -233,6 +242,102 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
   // ---------------------------------------------
   // Common Methods
   // ---------------------------------------------
+
+  /**
+   * Filters vector stores to only include OpenSearch Serverless stores that are used by knowledge bases.
+   * @param vectorStores - All vector store configurations
+   * @param knowledgeBases - The knowledge base configurations
+   * @returns A map of only the used OpenSearch Serverless vector stores
+   */
+  private filterUsedOssVectorStores(
+    vectorStores?: NamedVectorStoreProps,
+    knowledgeBases?: NamedKnowledgeBaseProps,
+  ): NamedOpensearchServerlessProps {
+    if (!vectorStores || !knowledgeBases) {
+      return {};
+    }
+
+    // Find which vector stores are actually used by knowledge bases
+    const usedVectorStores = new Set(Object.values(knowledgeBases).map(kbConfig => kbConfig.vectorStore));
+
+    // Filter to only used OpenSearch Serverless stores
+    const ossStores: NamedOpensearchServerlessProps = {};
+    for (const [storeName, storeConfig] of Object.entries(vectorStores)) {
+      if (!usedVectorStores.has(storeName)) {
+        continue;
+      }
+      const vectorStoreType = storeConfig.vectorStoreType || 'AURORA_SERVERLESS';
+      if (vectorStoreType === 'OPENSEARCH_SERVERLESS') {
+        ossStores[storeName] = storeConfig as OpensearchServerlessProps;
+      }
+    }
+    return ossStores;
+  }
+
+  /**
+   * Creates shared VPC endpoints for OpenSearch Serverless vector stores.
+   * Validates and groups vector stores by VPC, then creates one VPC endpoint per unique VPC,
+   * or uses existing VPC endpoint if provided in the configuration.
+   * @param vectorStores - The vector store configurations
+   * @param knowledgeBases - The knowledge base configurations
+   * @returns A map of VPC IDs to VPC endpoint details (endpoint ID and security group ID)
+   */
+  private createSharedVpcEndpoints(
+    vectorStores?: NamedVectorStoreProps,
+    knowledgeBases?: NamedKnowledgeBaseProps,
+  ): { [vpcId: string]: SharedVpcEndpointDetails } {
+    const vpcEndpoints: { [vpcId: string]: SharedVpcEndpointDetails } = {};
+
+    // Filter to only used OpenSearch Serverless stores
+    const ossVectorStores = this.filterUsedOssVectorStores(vectorStores, knowledgeBases);
+    // Validates subnet consistency and vpceId/securityGroupId consistency per VPC for safe endpoint creation
+    const vpcEndpointConfigs = validateAndGroupVpcEndpoints(ossVectorStores);
+
+    // Create or reference VPC endpoints based on validated configurations
+    for (const [vpcId, config] of vpcEndpointConfigs) {
+      if (config.existingVpce) {
+        // Use existing VPC endpoint
+        vpcEndpoints[vpcId] = {
+          vpcEndpointId: config.existingVpce.vpceId,
+          securityGroupId: config.existingVpce.securityGroupId,
+        };
+      } else {
+        // Create new VPC endpoint for this VPC
+        const vpc = Vpc.fromVpcAttributes(this, `vpc-import-${vpcId}`, {
+          vpcId,
+          availabilityZones: ['a'],
+          publicSubnetIds: ['a'],
+        });
+
+        // Create security group for the VPC endpoint
+        const vpcEndpointSg = new MdaaSecurityGroup(this, `vpce-sg-${vpcId}`, {
+          naming: this.props.naming,
+          securityGroupName: `bedrock-kb-vpce-${vpcId}`,
+          vpc,
+          allowAllOutbound: true,
+          addSelfReferenceRule: true,
+        });
+
+        // Create VPC endpoint
+        const vpcEndpoint = new aoss.CfnVpcEndpoint(this, `opensearch-serverless-vpc-endpoint-${vpcId}`, {
+          name: this.props.naming.resourceName(`bedrock-kb-vpce-${vpcId}`, 32),
+          vpcId: vpcId,
+          subnetIds: config.subnetIds,
+          securityGroupIds: [vpcEndpointSg.securityGroupId],
+        });
+
+        vpcEndpoints[vpcId] = {
+          vpcEndpointId: vpcEndpoint.attrId,
+          securityGroupId: vpcEndpointSg.securityGroupId,
+          // Pass the VPC endpoint resource for dependency management
+          // This ensures the custom resource Lambda waits for the VPC endpoint to be fully operational
+          vpcEndpointResource: vpcEndpoint,
+        };
+      }
+    }
+
+    return vpcEndpoints;
+  }
 
   /**
    * Creates Lambda functions and layers for use by Bedrock agents and knowledge bases.

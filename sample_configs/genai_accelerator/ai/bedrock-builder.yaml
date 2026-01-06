@@ -76,6 +76,12 @@ vectorStores:
       - "{{context:subnet_id_3}}"
     minCapacity: 1.0
     maxCapacity: 8.0
+    # Optional: If you already have an OpenSearch Serverless VPC endpoint for this VPC,
+    # provide the ossVpce configuration to reuse it instead of creating a new one.
+    # This prevents deployment failures when a VPC endpoint already exists.
+    # ossVpce:
+    #   vpceId: "vpce-1234567890abcdef0"
+    #   securityGroupId: "sg-1234567890abcdef0"
 
 knowledgeBases:
   kb-test-customer-support:
