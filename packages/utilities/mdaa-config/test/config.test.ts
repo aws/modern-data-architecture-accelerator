@@ -108,6 +108,24 @@ describe('Test MdaaConfigValueTransformer', () => {
   });
 });
 describe('Test MdaaConfigRefValueTransformer', () => {
+  // Helper function that mimics CLI encoding (copied from packages/cli/lib/utils.ts)
+  // This documents the encoding contract that the decoder must handle
+  function encodeContextValue(contextValue: unknown): string {
+    let encodedContextValue: string;
+    if (contextValue instanceof Array) {
+      encodedContextValue = `"list:${JSON.stringify(contextValue)}"`;
+    } else if (contextValue instanceof Object) {
+      encodedContextValue = `"obj:${JSON.stringify(contextValue)}"`;
+    } else if (typeof contextValue === 'string') {
+      encodedContextValue = contextValue;
+    } else if (typeof contextValue === 'boolean') {
+      encodedContextValue = contextValue ? 'true' : 'false';
+    } else {
+      throw Error(`Don't know how to handle type ${contextValue}`);
+    }
+    return encodedContextValue;
+  }
+
   const testContextObj = {
     testingkey: 'testingobjval',
   };
@@ -117,9 +135,9 @@ describe('Test MdaaConfigRefValueTransformer', () => {
     domain: 'testdomain',
     env: 'testenv',
     module_name: 'testmodule',
-    test_context_obj: `obj:${JSON.stringify(JSON.stringify(testContextObj))}`,
+    test_context_obj: encodeContextValue(testContextObj),
     test_context_name: 'test_context_value',
-    test_context_list: `list:${JSON.stringify(JSON.stringify(testContextList))}`,
+    test_context_list: encodeContextValue(testContextList),
   };
   const testApp = new App({ context: context });
   const testStack = new Stack(testApp, 'testStack');
@@ -188,18 +206,34 @@ describe('Test MdaaConfigRefValueTransformer', () => {
     expect(() => new MdaaConfigRefValueTransformer(transformerProps).transformValue('{{context:missing}}')).toThrow();
   });
 
-  test('Context Obj', () => {
+  test('Context Obj - Naked Reference', () => {
     const transformedValue = new MdaaConfigRefValueTransformer(transformerProps).transformValue(
       '{{context:test_context_obj}}',
     );
-    console.log(transformedValue);
+    // Naked reference should return the actual object
+    expect(transformedValue).toEqual(testContextObj);
   });
 
-  test('Context List', () => {
+  test('Context Obj - Embedded Reference Should Error', () => {
+    // Embedding an object in a string should throw an error
+    expect(() => {
+      new MdaaConfigRefValueTransformer(transformerProps).transformValue('prefix-{{context:test_context_obj}}');
+    }).toThrow(/Cannot embed array or object context value in string/);
+  });
+
+  test('Context List - Naked Reference', () => {
     const transformedValue = new MdaaConfigRefValueTransformer(transformerProps).transformValue(
       '{{context:test_context_list}}',
     );
-    console.log(transformedValue);
+    // Naked reference should return the actual array
+    expect(transformedValue).toEqual(testContextList);
+  });
+
+  test('Context List - Embedded Reference Should Error', () => {
+    // Embedding an array in a string should throw an error
+    expect(() => {
+      new MdaaConfigRefValueTransformer(transformerProps).transformValue('prefix-{{context:test_context_list}}');
+    }).toThrow(/Cannot embed array or object context value in string/);
   });
 
   test('Resolve ssm ref', () => {
@@ -320,6 +354,106 @@ describe('Test MdaaConfigRefValueTransformer', () => {
   test('Module Name', () => {
     const transformedValue = new MdaaConfigRefValueTransformer(transformerProps).transformValue('{{module_name}}');
     expect(transformedValue).toBe('testmodule');
+  });
+
+  // Additional test cases for better coverage
+
+  test('Naked SSM Reference', () => {
+    const transformedValue = new MdaaConfigRefValueTransformer(transformerProps).transformValue(
+      '{{resolve:ssm:/test/param/path}}',
+    );
+    expect(transformedValue).toMatch(/\${Token\[TOKEN.\d+]}/);
+  });
+
+  test('Naked Env Var', () => {
+    process.env['NAKED_TEST_VAR'] = 'naked_testval';
+    const transformedValue = new MdaaConfigRefValueTransformer(transformerProps).transformValue(
+      '{{env_var:NAKED_TEST_VAR}}',
+    );
+    expect(transformedValue).toBe('naked_testval');
+  });
+
+  test('Missing Env Var - Embedded', () => {
+    delete process.env['MISSING_VAR'];
+    const transformedValue = new MdaaConfigRefValueTransformer(transformerProps).transformValue(
+      'prefix-{{env_var:MISSING_VAR}}-suffix',
+    );
+    // Should leave the reference as-is when env var is undefined
+    expect(transformedValue).toBe('prefix-{{env_var:MISSING_VAR}}-suffix');
+  });
+
+  test('Missing Env Var - Naked Reference', () => {
+    delete process.env['MISSING_VAR_NAKED'];
+    const transformedValue = new MdaaConfigRefValueTransformer(transformerProps).transformValue(
+      '{{env_var:MISSING_VAR_NAKED}}',
+    );
+    // Should return the original string for naked reference with undefined env var
+    expect(transformedValue).toBe('{{env_var:MISSING_VAR_NAKED}}');
+  });
+
+  test('Nested Context Array in SSM Path Should Error', () => {
+    expect(() => {
+      new MdaaConfigRefValueTransformer(transformerProps).transformValue(
+        '{{resolve:ssm:/{{context:test_context_list}}/path}}',
+      );
+    }).toThrow(/Cannot embed array or object context value in string/);
+  });
+
+  test('Nested Context Object in String Should Error', () => {
+    expect(() => {
+      new MdaaConfigRefValueTransformer(transformerProps).transformValue(
+        'prefix-{{resolve:ssm:/{{context:test_context_obj}}/path}}',
+      );
+    }).toThrow(/Cannot embed array or object context value in string/);
+  });
+
+  test('Boolean Context Value', () => {
+    const contextWithBool = {
+      ...context,
+      bool_value: 'true', // Encoded as string
+    };
+    const appWithBool = new App({ context: contextWithBool });
+    const stackWithBool = new Stack(appWithBool, 'testStackBool');
+    const propsWithBool = { ...transformerProps, scope: stackWithBool };
+
+    const transformedValue = new MdaaConfigRefValueTransformer(propsWithBool).transformValue('{{context:bool_value}}');
+    expect(transformedValue).toBe('true');
+  });
+
+  test('Nested Object Context', () => {
+    const nestedObj = {
+      outer: {
+        inner: 'value',
+      },
+    };
+    const contextWithNested = {
+      ...context,
+      nested_obj: encodeContextValue(nestedObj),
+    };
+    const appWithNested = new App({ context: contextWithNested });
+    const stackWithNested = new Stack(appWithNested, 'testStackNested');
+    const propsWithNested = { ...transformerProps, scope: stackWithNested };
+
+    const transformedValue = new MdaaConfigRefValueTransformer(propsWithNested).transformValue(
+      '{{context:nested_obj}}',
+    );
+    expect(transformedValue).toEqual(nestedObj);
+  });
+
+  test('Array with Mixed Types Context', () => {
+    const mixedArray = ['string', 123, true, { key: 'value' }];
+    const contextWithMixed = {
+      ...context,
+      mixed_array: encodeContextValue(mixedArray),
+    };
+    const appWithMixed = new App({ context: contextWithMixed });
+    const stackWithMixed = new Stack(appWithMixed, 'testStackMixed');
+    const propsWithMixed = { ...transformerProps, scope: stackWithMixed };
+
+    const transformedValue = new MdaaConfigRefValueTransformer(propsWithMixed).transformValue(
+      '{{context:mixed_array}}',
+    );
+    expect(transformedValue).toEqual(mixedArray);
   });
 });
 

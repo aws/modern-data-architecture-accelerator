@@ -23,13 +23,9 @@ export function generateContextCdkParams(moduleEffectiveConfig: EffectiveConfig)
     const contextValue = contextEntry[1];
     let encodedContextValue: string;
     if (contextValue instanceof Array) {
-      let escaped = JSON.stringify(JSON.stringify(contextValue));
-      escaped = escaped.substring(1, escaped.length - 1);
-      encodedContextValue = `"list:${escaped}"`;
+      encodedContextValue = `"list:${JSON.stringify(contextValue)}"`;
     } else if (contextValue instanceof Object) {
-      let escaped = JSON.stringify(JSON.stringify(contextValue));
-      escaped = escaped.substring(1, escaped.length - 1);
-      encodedContextValue = `"obj:${escaped}"`;
+      encodedContextValue = `"obj:${JSON.stringify(contextValue)}"`;
     } else if (typeof contextValue === 'string') {
       encodedContextValue = contextValue;
     } else if (typeof contextValue === 'boolean') {

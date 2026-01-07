@@ -152,13 +152,32 @@ organization: sample-org
 
 # Additional context keys can be specified globally, per domain, per env, or per module.
 # Values specified lower in the hierarchy (Ie module) will override values specified higher (Ie global)
-# Context values can be referenced in MDAA CDK App configs using the "{{context:<key>}} syntax".
-# For example (from Audit CDK Aoo Config):
+# Context values can be referenced in MDAA CDK App configs using the "{{context:<key>}}" syntax".
+# Context values can be scalars (strings, numbers, booleans), lists (arrays), or objects.
+# For example (from Audit CDK App Config):
 # readRoles:
 #  - id: "{{context:data_admin_role_id}}"
+# 
+# List example:
+# appSubnets: "{{context:subnet_ids}}"
+# 
+# Object example:
+# vpcConfig: "{{context:vpc_configuration}}"
 context:
+  # Scalar values
   data_admin_role_id: AROA12312412421
   some_context_key: some_context_value
+  
+  # List values
+  subnet_ids:
+    - subnet-0ec554f55bbcede67
+    - subnet-0009c5a40b836101f
+  
+  # Object values
+  vpc_configuration:
+    vpcId: vpc-02376b8f79d1b4f1d
+    cidr: "10.0.0.0/16"
+    enableDnsHostnames: true
 
 # List of custom CDK Aspect implementations which will be applied to all resources produced by all MDAA modules.
 # Useful for applying custom global security checks or modifiers

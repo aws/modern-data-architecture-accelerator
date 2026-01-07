@@ -18,7 +18,7 @@ export type Workspace = {
   location: string;
 };
 
-type TransformResult = string | number;
+type TransformResult = string | number | unknown[] | ConfigurationElement;
 
 export interface IMdaaConfigValueTransformer {
   transformValue(value: string, contextPath?: string): TransformResult;
@@ -54,6 +54,16 @@ export class MdaaConfigTransformer implements IMdaaConfigTransformer {
       const transformedKey = this.keyTransformer
         ? this.keyTransformer.transformValue(key, contextPath + '/' + key)
         : key;
+
+      // Validate that key transformers return valid key types (string or number)
+      // Arrays/objects would be converted to useless strings like "[object Object]"
+      if (typeof transformedKey !== 'string' && typeof transformedKey !== 'number') {
+        throw new Error(
+          `Key transformer returned invalid type for key "${key}": ${typeof transformedKey}\n` +
+            `Keys must be strings or numbers. Got: ${JSON.stringify(transformedKey)}`,
+        );
+      }
+
       if (typeof value === 'string' || value instanceof String)
         transformedConfig[transformedKey] = this.valueTransformer.transformValue(
           value.toString(),
@@ -132,9 +142,20 @@ export interface MdaaConfigRefValueTransformerProps {
   readonly context?: ConfigurationElement;
 }
 export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransformer {
-  protected props: MdaaConfigRefValueTransformerProps;
+  protected readonly props: MdaaConfigRefValueTransformerProps;
+  private readonly refMap: { [refInner: string]: string | undefined };
+
   constructor(props: MdaaConfigRefValueTransformerProps) {
     this.props = props;
+    this.refMap = {
+      org: this.props.org,
+      env: this.props.env,
+      domain: this.props.domain,
+      module_name: this.props.module_name,
+      partition: this.props.scope ? Stack.of(this.props.scope).partition : undefined,
+      region: this.props.scope ? Stack.of(this.props.scope).region : undefined,
+      account: this.props.scope ? Stack.of(this.props.scope).account : undefined,
+    };
   }
   public transformValue(value: string): TransformResult {
     const refMatch = XRegExp.matchRecursive(value, '{{', '}}', 'g', {
@@ -146,41 +167,76 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
       return value;
     }
   }
-  protected parseRef(value: string, refMatch: string[]): string | number {
-    const refMap: { [refInner: string]: string | undefined } = {
-      org: this.props.org,
-      env: this.props.env,
-      domain: this.props.domain,
-      module_name: this.props.module_name,
-      partition: this.props.scope ? Stack.of(this.props.scope).partition : undefined,
-      region: this.props.scope ? Stack.of(this.props.scope).region : undefined,
-      account: this.props.scope ? Stack.of(this.props.scope).account : undefined,
-    };
-    // In all other cases, return a recursively substituted string
+  protected parseRef(value: string, refMatch: string[]): TransformResult {
+    // Special case: naked reference (just {{ref}} with nothing else)
+    // Return the actual resolved value without string conversion
+    if (refMatch.length === 1 && value === `{{${refMatch[0]}}}`) {
+      const resolvedValue = this.resolveReference(refMatch[0], true);
+      // Only replace if we got a resolved value (not undefined)
+      if (resolvedValue !== undefined) {
+        return resolvedValue;
+      } else {
+        return value;
+      }
+    }
+
+    // String substitution: replace all {{ref}} with their string representations
     let toReturn: string = value;
     refMatch.forEach(ref => {
-      let resolvedValue: string | undefined;
-      const refInner = this.transformValue(ref).toString();
-      if (refMap[refInner]) {
-        resolvedValue = refMap[refInner];
-      } else if (refInner.startsWith('context:')) {
-        resolvedValue = this.parseContext(refInner) as string;
-      } else if (refInner.startsWith('env_var:')) {
-        const envVar = refInner.replace(/^env_var:/, '');
-        resolvedValue = process.env[envVar];
-      } else if (refInner.startsWith('resolve:ssm:')) {
-        const ssmPath = refInner.replace(/^resolve:ssm:/, '');
-        if (!this.props.scope) {
-          throw new Error('Unable to resolve ssm param outside of a Construct');
-        }
-        resolvedValue = this.props.scope?.node.tryGetContext('@mdaaLookupSSMValues')
-          ? StringParameter.valueFromLookup(Stack.of(this.props.scope), ssmPath)
-          : StringParameter.valueForStringParameter(Stack.of(this.props.scope), ssmPath);
+      const resolvedValue = this.resolveReference(ref, false);
+      // Only replace if we got a resolved value (not undefined)
+      if (resolvedValue !== undefined) {
+        toReturn = toReturn.replace(`{{${ref}}}`, String(resolvedValue));
       }
-      toReturn = resolvedValue ? toReturn.replace(`{{${ref}}}`, resolvedValue) : toReturn;
     });
     return toReturn;
   }
+
+  /**
+   * Resolve a single reference (without the {{ }} brackets)
+   * @param ref The reference content (e.g., "org", "context:key", "env_var:VAR")
+   * @param allowContextComplexTypes If true, allows returning arrays/objects for naked refs. If false, throws error for arrays/objects.
+   * @returns The resolved value, or undefined if the reference cannot be resolved
+   */
+  private resolveReference(ref: string, allowContextComplexTypes: boolean): TransformResult | undefined {
+    const refInner = this.transformValue(ref).toString();
+
+    if (this.refMap[refInner]) {
+      return this.refMap[refInner] as string;
+    } else if (refInner.startsWith('context:')) {
+      const contextValue = this.parseContext(refInner);
+
+      // Validate that arrays and objects are not embedded in strings
+      if (
+        !allowContextComplexTypes &&
+        (Array.isArray(contextValue) || (typeof contextValue === 'object' && contextValue !== null))
+      ) {
+        const contextKey = refInner.replace(/^context:/, '');
+        throw new Error(
+          `Cannot embed array or object context value in string: {{context:${contextKey}}}\n` +
+            `Arrays and objects can only be used as naked references (e.g., "key: {{context:${contextKey}}}").\n` +
+            `If you need to embed values in a string, use scalar context values instead.`,
+        );
+      }
+
+      return contextValue as TransformResult;
+    } else if (refInner.startsWith('env_var:')) {
+      const envVar = refInner.replace(/^env_var:/, '');
+      return process.env[envVar];
+    } else if (refInner.startsWith('resolve:ssm:')) {
+      const ssmPath = refInner.replace(/^resolve:ssm:/, '');
+      if (!this.props.scope) {
+        throw new Error('Unable to resolve ssm param outside of a Construct');
+      }
+      return this.props.scope?.node.tryGetContext('@mdaaLookupSSMValues')
+        ? StringParameter.valueFromLookup(Stack.of(this.props.scope), ssmPath)
+        : StringParameter.valueForStringParameter(Stack.of(this.props.scope), ssmPath);
+    } else {
+      // Return undefined for unrecognized references (they will be left as-is)
+      return undefined;
+    }
+  }
+
   private parseContext(refInner: string): unknown {
     const refInnerContext = refInner.replace(/^context:/, '');
     const scopeContextValue: unknown = this.props.scope?.node.tryGetContext(refInnerContext);
@@ -190,10 +246,18 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
       throw new Error(`Failed to resolve context: ${refInnerContext}`);
     }
     if (typeof contextValue === 'string') {
-      if (contextValue.startsWith('obj:')) {
-        return JSON.parse(JSON.parse(contextValue.replace(/^obj:/, ''))) as ConfigurationElement;
-      } else if (contextValue.startsWith('list:')) {
-        return JSON.parse(JSON.parse(contextValue.replace(/^list:/, ''))) as string[];
+      // Obj and list values are wrapped with quotes during encoding in generateContextCdkParams
+      // When received from CDK CLI context, we need to strip these quotes before checking prefixes
+      let cleanedValue = contextValue;
+      if (cleanedValue.startsWith('"') && cleanedValue.endsWith('"')) {
+        cleanedValue = cleanedValue.substring(1, cleanedValue.length - 1);
+      }
+      if (cleanedValue.startsWith('obj:')) {
+        return JSON.parse(cleanedValue.replace(/^obj:/, '')) as ConfigurationElement;
+      } else if (cleanedValue.startsWith('list:')) {
+        return JSON.parse(cleanedValue.replace(/^list:/, '')) as string[];
+      } else {
+        return contextValue; // returns original string value otherwise
       }
     }
     return contextValue;

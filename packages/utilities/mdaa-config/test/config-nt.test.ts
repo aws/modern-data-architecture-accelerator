@@ -16,6 +16,13 @@ jest.mock('aws-cdk-lib', () => ({
     valueAsNumber: 123,
     valueAsList: ['item1', 'item2'],
   })),
+  Stack: {
+    of: jest.fn().mockReturnValue({
+      partition: 'aws',
+      region: 'us-east-1',
+      account: '123456789012',
+    }),
+  },
 }));
 describe('Test createParamUsingTypeLabels', () => {
   class TestConfigTransformer extends MdaaConfigParamRefValueTransformer {
@@ -123,5 +130,34 @@ describe('Test createParamUsingTypeLabels', () => {
     // Assert
     expect(CfnParameter).toHaveBeenCalledWith(testClass.scope, 'TestParam', { type: 'String' });
     expect(result).toBe('string-value');
+  });
+
+  test('uses paramProps type when no prefix provided', () => {
+    const testClass = new TestConfigTransformer();
+
+    // Arrange - paramProps has type, but paramBase has no prefix
+    const paramProps = { type: 'Number', default: 42 };
+
+    // Act
+    const result = testClass.testCreateParamUsingTypeLabels('test', 'TestParam', paramProps);
+
+    // Assert - Should use paramProps as-is (including the type)
+    expect(CfnParameter).toHaveBeenCalledWith(testClass.scope, 'TestParam', paramProps);
+    // But returns valueAsString because no prefix means default string behavior
+    expect(result).toBe('string-value');
+  });
+
+  test('prefix overrides paramProps type', () => {
+    const testClass = new TestConfigTransformer();
+
+    // Arrange - paramProps has type String, but prefix says number
+    const paramProps = { type: 'String', default: 'will-be-overridden' };
+
+    // Act
+    const result = testClass.testCreateParamUsingTypeLabels('number:test', 'TestParam', paramProps);
+
+    // Assert - Prefix wins, type is overridden to Number
+    expect(CfnParameter).toHaveBeenCalledWith(testClass.scope, 'TestParam', { ...paramProps, type: 'Number' });
+    expect(result).toBe(123);
   });
 });
