@@ -202,7 +202,7 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
     const refInner = this.transformValue(ref).toString();
 
     if (this.refMap[refInner]) {
-      return this.refMap[refInner] as string;
+      return this.refMap[refInner];
     } else if (refInner.startsWith('context:')) {
       const contextValue = this.parseContext(refInner);
 

@@ -83,10 +83,10 @@ function hasInconsistentVpceConfig(referenceStore: VectorStoreInfo, currentStore
  */
 function validateSubnetConsistency(stores: VectorStoreInfo[]): void {
   const firstStore = stores[0];
-  const firstSubnets = [...firstStore.subnetIds].sort().join(',');
+  const firstSubnets = [...firstStore.subnetIds].sort().join(','); // NOSONAR
 
   const hasMismatch = stores.some(store => {
-    const storeSubnets = [...store.subnetIds].sort().join(',');
+    const storeSubnets = [...store.subnetIds].sort().join(','); // NOSONAR
     return storeSubnets !== firstSubnets;
   });
 
