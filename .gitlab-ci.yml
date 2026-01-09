@@ -1,4 +1,5 @@
 stages:
+  - base_image
   - prebuild
   - build
   - test
@@ -8,6 +9,32 @@ stages:
   - pre_release
   - release_publish
   - post_release
+
+base_image:
+  stage: base_image
+  cache: { }  # This disables cache for this job
+  before_script: [ ]  # Disable global before_script
+  image:
+    name: ${MDAA_BASE_IMAGE}
+    entrypoint: [ "" ]
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    # This unreadable echo command is recommended in kanito docs: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"},\"$(echo -n $CI_DEPENDENCY_PROXY_SERVER | awk -F[:] '{print $1}')\":{\"auth\":\"$(printf "%s:%s" ${CI_DEPENDENCY_PROXY_USER} "${CI_DEPENDENCY_PROXY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/.pipeline/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:base-latest"
+      --destination "${CI_REGISTRY_IMAGE}:base-${CI_COMMIT_SHA:0:8}"
+      --cache=true --cache-repo="${CI_REGISTRY_IMAGE}/cache" --cleanup --cache-ttl 72h0m0s
+  tags:
+    - arch:amd64
+    - size:2xlarge
+  rules:
+    - when: always
+
+image: ${CI_REGISTRY_IMAGE}:base-latest
 
 include:
   # Gitlab built-in SAST
@@ -41,9 +68,6 @@ semgrep-sast:
 
 secret_detection:
   stage: prebuild
-
-# Build image has CDK, Node/NPM, Lerna, Python, SonarQube pre installed
-image: $MDAA_BUILD_IMAGE
 
 variables:
   VERSION_BUMP_LEVEL: minor
@@ -158,12 +182,6 @@ feature_merge_python_test:
       - "**/python-tests/htmlcov/"
     expire_in: 1 week
   script:
-    - echo "Installing uv for Python testing..."
-    - curl -LsSf https://astral.sh/uv/install.sh | sh
-    - export PATH="$HOME/.local/bin:$PATH"
-    - echo "Verifying uv installation..."
-    - which uv
-    - uv --version
     - echo "Running Python tests with coverage..."
     - npm run test:python:all
 
@@ -319,12 +337,6 @@ feature_python_test:
       - "**/python-tests/htmlcov/"
     expire_in: 1 week
   script:
-    - echo "Installing uv for Python testing..."
-    - curl -LsSf https://astral.sh/uv/install.sh | sh
-    - export PATH="$HOME/.local/bin:$PATH"
-    - echo "Verifying uv installation..."
-    - which uv
-    - uv --version
     - echo "Running Python tests with coverage..."
     - npm run test:python:all
 
