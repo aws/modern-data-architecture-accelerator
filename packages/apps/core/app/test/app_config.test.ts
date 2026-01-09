@@ -52,9 +52,9 @@ describe('ConfigParseTest', () => {
     domain: 'testdomain',
     env: 'testenv',
     module_name: 'testmodule',
-    test_context_obj: `obj:${JSON.stringify(JSON.stringify(testContextObj))}`,
+    test_context_obj: `obj:${JSON.stringify(testContextObj)}`,
     test_context_name: 'test_context_value',
-    test_context_list: `list:${JSON.stringify(JSON.stringify(testContextList))}`,
+    test_context_list: `list:${JSON.stringify(testContextList)}`,
     output_effective_config: 'true',
   };
 

@@ -61,10 +61,7 @@ describe('generateContextCdkParams', () => {
 
     const result = generateContextCdkParams(moduleConfig);
 
-    const expectedValue = `-c 'items="list:${JSON.stringify(JSON.stringify(array)).substring(
-      1,
-      JSON.stringify(JSON.stringify(array)).length - 1,
-    )}"'`;
+    const expectedValue = `-c 'items="list:${JSON.stringify(array)}"'`;
     expect(result).toContain(expectedValue);
     expect(result.length).toBe(1);
   });
@@ -79,10 +76,7 @@ describe('generateContextCdkParams', () => {
 
     const result = generateContextCdkParams(moduleConfig);
 
-    const expectedValue = `-c 'config="obj:${JSON.stringify(JSON.stringify(obj)).substring(
-      1,
-      JSON.stringify(JSON.stringify(obj)).length - 1,
-    )}"'`;
+    const expectedValue = `-c 'config="obj:${JSON.stringify(obj)}"'`;
     expect(result).toContain(expectedValue);
     expect(result.length).toBe(1);
   });
@@ -144,10 +138,7 @@ describe('generateContextCdkParams', () => {
 
     const result = generateContextCdkParams(moduleConfig);
 
-    const expectedValue = `-c 'complex="obj:${JSON.stringify(JSON.stringify(complexObj)).substring(
-      1,
-      JSON.stringify(JSON.stringify(complexObj)).length - 1,
-    )}"'`;
+    const expectedValue = `-c 'complex="obj:${JSON.stringify(complexObj)}"'`;
     expect(result).toContain(expectedValue);
   });
 });

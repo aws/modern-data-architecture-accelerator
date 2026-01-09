@@ -4,8 +4,6 @@
  */
 
 import * as cdk from 'aws-cdk-lib';
-import { MdaaDefaultResourceNaming } from '@aws-mdaa/naming';
-import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 
 /**
  * Memoizes a function without parameter. Returns a new function that
@@ -167,6 +165,11 @@ export class TestConfigurations {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static getL3ConstructProps(context: MdaaTestContext, stack?: any): any {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { MdaaDefaultResourceNaming } = require('@aws-mdaa/naming');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { MdaaRoleHelper } = require('@aws-mdaa/iam-role-helper');
+
     const mockNode = {
       tryGetContext: () => undefined,
     } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
