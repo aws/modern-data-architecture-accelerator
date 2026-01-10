@@ -1,0 +1,557 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "AgentRuntimeArtifactProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nAgent runtime artifact configuration defining container deployment for Bedrock AgentCore Runtime. Specifies the container configuration for deploying custom agent runtimes with Docker images in Amazon Bedrock AgentCore service.\n\nUse cases: Runtime artifact configuration; Container deployment; Agent runtime packaging; Deployment specification\n\nAWS: Bedrock AgentCore Runtime artifact configuration for container-based agent runtime deployment\n\nValidation: containerConfiguration is required for agent runtime deployment",
+            "properties": {
+                "containerConfiguration": {
+                    "$ref": "#/definitions/ContainerConfigurationProperty",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired container configuration for agent runtime Docker image deployment enabling custom runtime execution. Defines the Docker container image source and configuration for deploying custom agent runtimes in Bedrock AgentCore.\n\nUse cases: Container deployment; Docker image configuration; Runtime packaging; Custom agent execution\n\nAWS: Bedrock AgentCore Runtime container configuration for Docker-based agent runtime deployment\n\nValidation: Required property; must be valid ContainerConfigurationProperty with either containerUri or codePath"
+                }
+            },
+            "required": [
+                "containerConfiguration"
+            ],
+            "type": "object"
+        },
+        "AuthorizerConfigurationProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nAuthorizer configuration for Bedrock AgentCore Runtime access control enabling authentication and authorization. Defines authentication mechanisms for agent runtime access with support for custom JWT authorizers and identity validation.\n\nUse cases: Access control; Authentication; Authorization; Identity validation\n\nAWS: Bedrock AgentCore Runtime authorizer configuration for access control and authentication\n\nValidation: customJwtAuthorizer must be valid CustomJwtAuthorizerProperty if provided",
+            "properties": {
+                "customJwtAuthorizer": {
+                    "$ref": "#/definitions/CustomJwtAuthorizerProperty",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional custom JWT authorizer configuration for token-based authentication enabling identity provider integration. Defines JWT token validation with OIDC discovery for secure agent runtime access control.\n\nUse cases: JWT authentication; Token validation; OIDC integration; Custom authorization\n\nAWS: Custom JWT authorizer for Bedrock AgentCore Runtime token-based authentication\n\nValidation: Must be valid CustomJwtAuthorizerProperty if provided; enables JWT-based access control"
+                },
+                "jwtAuthorizer": {
+                    "$ref": "#/definitions/CustomJwtAuthorizerProperty",
+                    "description": "Q-ENHANCED-INTERFACE\nCustom JWT authorizer configuration for Bedrock AgentCore Runtime authentication enabling token-based access control. Defines JWT token validation with OIDC discovery for secure agent runtime access using custom identity providers.\n\nUse cases: JWT authentication; Token validation; OIDC integration; Access control\n\nAWS: Bedrock AgentCore Runtime JWT authorizer for token-based authentication and access control\n\nValidation: discoveryUrl is required and must match OIDC well-known configuration URL pattern"
+                }
+            },
+            "type": "object"
+        },
+        "CfnParameterProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedPattern": {
+                    "default": "- No constraints on patterns allowed for parameter.",
+                    "description": "A regular expression that represents the patterns to allow for String types.",
+                    "type": "string"
+                },
+                "allowedValues": {
+                    "default": "- No constraints on values allowed for parameter.",
+                    "description": "An array containing the list of values allowed for the parameter.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "constraintDescription": {
+                    "default": "- No description with customized error message when user specifies invalid values.",
+                    "description": "A string that explains a constraint when the constraint is violated.\nFor example, without a constraint description, a parameter that has an allowed\npattern of [A-Za-z0-9]+ displays the following error message when the user specifies\nan invalid value:",
+                    "type": "string"
+                },
+                "default": {
+                    "default": "- No default value for parameter.",
+                    "description": "A value of the appropriate type for the template to use if no value is specified\nwhen a stack is created. If you define constraints for the parameter, you must specify\na value that adheres to those constraints."
+                },
+                "description": {
+                    "default": "- No description for the parameter.",
+                    "description": "A string of up to 4000 characters that describes the parameter.",
+                    "type": "string"
+                },
+                "maxLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the largest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "maxValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the largest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "minLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the smallest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "minValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the smallest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "noEcho": {
+                    "default": "- Parameter values are not masked.",
+                    "description": "Whether to mask the parameter value when anyone makes a call that describes the stack.\nIf you set the value to ``true``, the parameter value is masked with asterisks (``*****``).",
+                    "type": "boolean"
+                },
+                "type": {
+                    "default": "String",
+                    "description": "The data type for the parameter (DataType).",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ContainerConfigurationProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nContainer configuration for Bedrock AgentCore Runtime Docker image deployment enabling custom agent runtime execution. Defines container image source and platform configuration for deploying custom agent runtimes with Docker containers in Amazon Bedrock AgentCore.\n\nUse cases: Custom agent runtime deployment; Docker container configuration; Platform-specific builds; Container image management\n\nAWS: Bedrock AgentCore Runtime container configuration for custom agent runtime Docker image deployment\n\nValidation: Must specify either containerUri or codePath; platform must be linux/arm64 or linux/amd64",
+            "properties": {
+                "codePath": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional local directory path containing Dockerfile and agent code for building container image enabling custom agent runtime development. Provides path to source code directory for building Docker images and deploying custom agent runtimes from local development.\n\nUse cases: Custom runtime development; Local image building; Source code deployment; Development workflow\n\nAWS: Local directory path for Docker image build and Bedrock AgentCore Runtime deployment\n\nValidation: Must be valid directory path containing Dockerfile if provided; mutually exclusive with containerUri",
+                    "type": "string"
+                },
+                "containerUri": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional pre-built container image URI from ECR for agent runtime deployment enabling use of existing container images. Provides direct reference to existing Docker images in ECR for agent runtime deployment without building from source.\n\nUse cases: Pre-built image deployment; ECR image reference; Existing container usage; Image reuse\n\nAWS: ECR container image URI for Bedrock AgentCore Runtime deployment\n\nValidation: Must be valid ECR image URI if provided; mutually exclusive with codePath",
+                    "type": "string"
+                },
+                "platform": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional container platform specification for multi-architecture support enabling ARM64 or AMD64 builds. Defines the target platform architecture for Docker image builds with AgentCore requiring ARM64 for optimal performance.\n\nUse cases: Platform-specific builds; ARM64 optimization; Multi-architecture support; Performance tuning\n\nAWS: Docker platform specification for Bedrock AgentCore Runtime container builds\n\nValidation: Must be linux/arm64 or linux/amd64 if provided; defaults to linux/arm64 for AgentCore",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "CustomJwtAuthorizerProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nCustom JWT authorizer configuration for Bedrock AgentCore Runtime authentication enabling token-based access control. Defines JWT token validation with OIDC discovery for secure agent runtime access using custom identity providers.\n\nUse cases: JWT authentication; Token validation; OIDC integration; Access control\n\nAWS: Bedrock AgentCore Runtime JWT authorizer for token-based authentication and access control\n\nValidation: discoveryUrl is required and must match OIDC well-known configuration URL pattern",
+            "properties": {
+                "allowedAudience": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of allowed audience values for JWT token validation enabling client application filtering. Defines the allowed audience claim values in JWT tokens for restricting access to authorized client applications.\n\nUse cases: Audience validation; Client filtering; Token validation; Access restriction\n\nAWS: JWT audience claim validation for Bedrock AgentCore Runtime access control\n\nValidation: Optional array of audience strings; validates against aud claim in JWT tokens",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "allowedClients": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of allowed client IDs for JWT token validation enabling client-specific access control. Defines the allowed client_id claim values in JWT tokens for restricting access to specific client applications.\n\nUse cases: Client ID validation; Application filtering; Token validation; Access control\n\nAWS: JWT client_id claim validation for Bedrock AgentCore Runtime access control\n\nValidation: Optional array of client ID strings; validates against client_id claim in JWT tokens",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "discoveryUrl": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired OIDC discovery URL for JWT token validation enabling identity provider integration. Defines the OpenID Connect discovery endpoint for validating JWT tokens and authenticating agent runtime access.\n\nUse cases: OIDC integration; Token validation; Identity provider connection; Authentication configuration\n\nAWS: OIDC discovery URL for Bedrock AgentCore Runtime JWT token validation\n\nValidation: Required; must match pattern ending with /.well-known/openid-configuration",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "discoveryUrl"
+            ],
+            "type": "object"
+        },
+        "LifecycleConfigurationProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nLifecycle configuration for Bedrock AgentCore Runtime session management enabling timeout and lifetime controls. Defines session timeout and maximum lifetime settings for agent runtime instances controlling resource usage and session management.\n\nUse cases: Session management; Resource control; Timeout configuration; Lifecycle management\n\nAWS: Bedrock AgentCore Runtime lifecycle configuration for session and resource management\n\nValidation: idleRuntimeSessionTimeout and maxLifetime must be between 60 and 28800 seconds if provided",
+            "properties": {
+                "idleRuntimeSessionTimeout": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional idle session timeout in seconds for automatic session termination enabling resource optimization. Defines the duration of inactivity before agent runtime sessions are automatically terminated to optimize resource usage.\n\nUse cases: Idle timeout; Resource optimization; Session cleanup; Cost control\n\nAWS: Bedrock AgentCore Runtime idle session timeout for automatic resource cleanup\n\nValidation: Must be between 60 and 28800 seconds if provided; controls idle session termination",
+                    "type": "number"
+                },
+                "maxLifetime": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional maximum lifetime in seconds for agent runtime sessions enabling forced session termination. Defines the maximum duration for agent runtime sessions before forced termination regardless of activity status.\n\nUse cases: Maximum lifetime; Forced termination; Resource limits; Session boundaries\n\nAWS: Bedrock AgentCore Runtime maximum lifetime for session duration limits\n\nValidation: Must be between 60 and 28800 seconds if provided; controls maximum session duration",
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "MdaaNagSuppressionByPath": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
+            "properties": {
+                "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "type": "string"
+                },
+                "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "reason"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "path",
+                "suppressions"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressionConfigs": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
+            "properties": {
+                "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "items": {
+                        "$ref": "#/definitions/MdaaNagSuppressionByPath"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "by_path"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
+            "properties": {
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "type": "string"
+                },
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "rules"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleAssertionConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
+            "properties": {
+                "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assert",
+                "description"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleCondititionConfig": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
+            "properties": {
+                "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "items": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                }
+            },
+            "required": [
+                "assertions",
+                "condition"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogParameterConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
+            "properties": {
+                "constraints": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                },
+                "props": {
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogProductConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
+            "properties": {
+                "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "type": "string"
+                },
+                "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "type": "string"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "type": "object"
+                },
+                "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "owner",
+                "portfolio_arn"
+            ],
+            "type": "object"
+        },
+        "NetworkConfigurationProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nVPC network configuration for Bedrock AgentCore Runtime deployment. MDAA enforces VPC deployment to maintain the highest security standards by ensuring agent runtimes are deployed in isolated network environments.\n\nUse cases: VPC deployment; Network isolation; Private subnet usage; Security configuration\n\nAWS: Bedrock AgentCore Runtime VPC network configuration for secure deployment\n\nValidation: securityGroups and subnets are required with 1-16 items each",
+            "properties": {
+                "securityGroups": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired security group IDs for agent runtime network access control enabling traffic filtering and security boundaries. Defines security groups that control inbound and outbound network traffic for agent runtime instances in VPC deployments.\n\nUse cases: Network access control; Traffic filtering; Security boundaries; Firewall rules\n\nAWS: VPC security group IDs for Bedrock AgentCore Runtime network access control\n\nValidation: Required array with 1-16 security group IDs; security groups must exist in the specified VPC",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "subnets": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired subnet IDs for agent runtime deployment enabling multi-AZ placement and network isolation. Defines subnets where agent runtime instances will be deployed for high availability and network segmentation.\n\nUse cases: Multi-AZ deployment; Network isolation; High availability; Subnet placement\n\nAWS: VPC subnet IDs for Bedrock AgentCore Runtime deployment and network placement\n\nValidation: Required array with 1-16 subnet IDs; subnets must exist in the specified VPC",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "securityGroups",
+                "subnets"
+            ],
+            "type": "object"
+        },
+        "PolicyDocumentProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nIAM policy document structure for inline policies. Defines the structure of an IAM policy document containing an array of policy statements.\n\nUse cases: Inline policy definition; Policy document structure; Permission documents\n\nAWS: IAM policy document structure for inline policies\n\nValidation: Must contain Statement array with at least one policy statement",
+            "properties": {
+                "Statement": {
+                    "items": {
+                        "$ref": "#/definitions/PolicyStatementProperty"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "Statement"
+            ],
+            "type": "object"
+        },
+        "PolicyProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nIAM policy configuration for Bedrock AgentCore Runtime role permissions enabling custom policy attachment. Defines IAM policies to attach to the agent runtime execution role for granting AWS service access permissions.\n\nUse cases: IAM permissions; Policy attachment; Service access; Permission management\n\nAWS: IAM policy configuration for Bedrock AgentCore Runtime execution role permissions\n\nValidation: Must specify either policyArn for managed policies or policyDocument for inline policies",
+            "properties": {
+                "policyArn": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional managed policy ARN for attaching AWS managed or customer managed policies enabling standardized permissions. Defines the ARN of an existing IAM policy to attach to the agent runtime execution role.\n\nUse cases: Managed policy attachment; Standardized permissions; Policy reuse; Permission templates\n\nAWS: IAM managed policy ARN for Bedrock AgentCore Runtime role attachment\n\nValidation: Must be valid IAM policy ARN if provided; mutually exclusive with policyDocument",
+                    "type": "string"
+                },
+                "policyDocument": {
+                    "$ref": "#/definitions/PolicyDocumentProperty",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional inline policy document for custom permissions enabling specific service access. Defines custom IAM policy statements to embed in the agent runtime execution role for granular permission control.\n\nUse cases: Custom permissions; Inline policies; Granular access; Specific service access\n\nAWS: IAM inline policy document for Bedrock AgentCore Runtime role permissions\n\nValidation: Must be valid IAM policy document if provided; mutually exclusive with policyArn"
+                }
+            },
+            "type": "object"
+        },
+        "PolicyStatementProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nIAM policy statement for inline policy documents defining permissions. Represents a single statement in an IAM policy document with effect, actions, resources, and optional conditions.\n\nUse cases: Permission definition; Policy statements; Access control; Resource permissions\n\nAWS: IAM policy statement structure for inline policy documents\n\nValidation: Effect must be Allow or Deny; Action and Resource can be single string or array",
+            "properties": {
+                "Action": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                },
+                "Condition": {
+                    "$ref": "#/definitions/Record<string,Record<string,string|string[]>>"
+                },
+                "Effect": {
+                    "enum": [
+                        "Allow",
+                        "Deny"
+                    ],
+                    "type": "string"
+                },
+                "Resource": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                },
+                "Sid": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Action",
+                "Effect",
+                "Resource"
+            ],
+            "type": "object"
+        },
+        "Record<string,Record<string,string|string[]>>": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "Record<string,unknown>": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "RequestHeaderConfigurationProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nRequest header configuration for Bedrock AgentCore Runtime header forwarding enabling custom header passthrough. Defines allowed HTTP headers that will be forwarded to agent runtime instances for custom request handling.\n\nUse cases: Header forwarding; Custom headers; Request context; Header passthrough\n\nAWS: Bedrock AgentCore Runtime request header configuration for HTTP header forwarding\n\nValidation: requestHeaderAllowlist must contain 1-20 header names if provided",
+            "properties": {
+                "allowedHeaders": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "requestHeaderAllowlist": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of HTTP header names to forward to agent runtime enabling custom request context. Defines the list of HTTP headers that will be passed through to agent runtime instances for custom request handling and context.\n\nUse cases: Header forwarding; Request context; Custom headers; Context passthrough\n\nAWS: HTTP header allowlist for Bedrock AgentCore Runtime request forwarding\n\nValidation: Must contain 1-20 header names if provided; defines headers forwarded to runtime",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "RuntimeEndpointProperty": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nRuntime endpoint configuration for Bedrock AgentCore Runtime API access enabling agent runtime invocation. Defines the endpoint configuration for accessing and invoking agent runtimes through the Bedrock AgentCore API.\n\nUse cases: Runtime invocation; API access; Endpoint configuration; Agent access\n\nAWS: Bedrock AgentCore Runtime endpoint for agent runtime API access and invocation\n\nValidation: name must match pattern for alphanumeric and underscores only",
+            "properties": {
+                "agentRuntimeVersion": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional agent runtime version for endpoint configuration enabling version-specific access. Defines the specific version of the agent runtime to use for the endpoint invocation.\n\nUse cases: Version control; Specific version access; Version management; Deployment control\n\nAWS: Bedrock AgentCore Runtime version for endpoint version-specific access\n\nValidation: Must be valid runtime version if provided; enables version-specific endpoint access",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional description for the runtime endpoint providing documentation and context. Enables clear understanding of endpoint purpose and usage for operational management.\n\nUse cases: Endpoint documentation; Context description; Operational clarity; Management information\n\nAWS: Bedrock AgentCore Runtime endpoint description for documentation and context\n\nValidation: Must be descriptive string if provided; enhances endpoint documentation",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional endpoint name for agent runtime API access enabling endpoint identification. Defines the name for the runtime endpoint used to invoke the agent runtime through the Bedrock AgentCore API.\n\nUse cases: Endpoint naming; API identification; Runtime access; Endpoint management\n\nAWS: Bedrock AgentCore Runtime endpoint name for API access identification\n\nValidation: Must match pattern ^[a-zA-Z][a-zA-Z0-9_]{0,47}$ if provided; alphanumeric and underscores only",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "agentRuntimeArtifact": {
+            "$ref": "#/definitions/AgentRuntimeArtifactProperty",
+            "description": "Q-ENHANCED-PROPERTY\nRequired agent runtime artifact configuration defining container deployment. Specifies the Docker container image source and configuration for deploying the custom agent runtime.\n\nUse cases: Container deployment; Runtime artifact; Docker configuration; Deployment specification\n\nAWS: Bedrock AgentCore Runtime artifact for container-based deployment\n\nValidation: Required property; must be valid AgentRuntimeArtifactProperty with container configuration"
+        },
+        "agentRuntimeName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired name for the Bedrock AgentCore Runtime providing unique identification within the service. Enables runtime organization and management for custom agent runtime deployment and execution with Docker containers.\n\nUse cases: Runtime identification; Agent organization; Runtime management; Configuration identification\n\nAWS: Bedrock AgentCore Runtime name for identification and organization\n\nValidation: Required string; must be unique runtime name for identification",
+            "type": "string"
+        },
+        "authorizerConfiguration": {
+            "$ref": "#/definitions/AuthorizerConfigurationProperty",
+            "description": "Q-ENHANCED-PROPERTY\nOptional authorizer configuration for access control enabling authentication and authorization. Defines authentication mechanisms for agent runtime access with support for custom JWT authorizers.\n\nUse cases: Access control; Authentication; Authorization; Identity validation\n\nAWS: Bedrock AgentCore Runtime authorizer for access control and authentication\n\nValidation: Must be valid AuthorizerConfigurationProperty if provided; enables JWT-based access control"
+        },
+        "description": {
+            "description": "Q-ENHANCED-PROPERTY\nOptional description for the agent runtime providing documentation and context. Enables clear understanding of runtime purpose and functionality for operational management.\n\nUse cases: Runtime documentation; Context description; Operational clarity; Management information\n\nAWS: Bedrock AgentCore Runtime description for documentation and context\n\nValidation: Must be descriptive string if provided; enhances runtime documentation",
+            "type": "string"
+        },
+        "environmentVariables": {
+            "additionalProperties": {
+                "type": "string"
+            },
+            "description": "Q-ENHANCED-PROPERTY\nOptional environment variables for agent runtime configuration enabling runtime customization. Defines key-value pairs of environment variables passed to the agent runtime container for configuration and behavior control.\n\nUse cases: Runtime configuration; Environment customization; Configuration management; Behavior control\n\nAWS: Environment variables for Bedrock AgentCore Runtime container configuration\n\nValidation: Must be object with string key-value pairs if provided; passed to runtime container",
+            "type": "object"
+        },
+        "lifecycleConfiguration": {
+            "$ref": "#/definitions/LifecycleConfigurationProperty",
+            "description": "Q-ENHANCED-PROPERTY\nOptional lifecycle configuration for session management enabling timeout and lifetime controls. Defines session timeout and maximum lifetime settings for agent runtime instances.\n\nUse cases: Session management; Resource control; Timeout configuration; Lifecycle management\n\nAWS: Bedrock AgentCore Runtime lifecycle configuration for session management\n\nValidation: Must be valid LifecycleConfigurationProperty if provided; timeout values between 60-28800 seconds"
+        },
+        "nag_suppressions": {
+            "$ref": "#/definitions/MdaaNagSuppressionConfigs",
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
+        },
+        "networkConfiguration": {
+            "$ref": "#/definitions/NetworkConfigurationProperty",
+            "description": "Q-ENHANCED-PROPERTY\nRequired network configuration for agent runtime deployment in VPC mode. MDAA enforces VPC deployment to maintain the highest security standards by ensuring agent runtimes are deployed in isolated network environments.\n\nUse cases: VPC deployment; Network isolation; Private subnet usage; Security configuration\n\nAWS: Bedrock AgentCore Runtime network configuration for secure VPC deployment\n\nValidation: Required property; must be valid NetworkConfigurationProperty with VPC mode"
+        },
+        "policies": {
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of IAM policies for runtime role permissions enabling custom service access. Defines additional IAM policies to attach to the agent runtime execution role for AWS service access.\n\nUse cases: IAM permissions; Policy attachment; Service access; Permission management\n\nAWS: IAM policies for Bedrock AgentCore Runtime execution role permissions\n\nValidation: Must be array of valid PolicyProperty if provided; attached to runtime execution role",
+            "items": {
+                "$ref": "#/definitions/PolicyProperty"
+            },
+            "type": "array"
+        },
+        "protocolConfiguration": {
+            "$ref": "#/definitions/Record<string,unknown>",
+            "description": "Q-ENHANCED-PROPERTY\nOptional protocol configuration for agent runtime communication enabling protocol-specific settings. Defines protocol-level configuration for agent runtime communication and behavior.\n\nUse cases: Protocol configuration; Communication settings; Protocol behavior; Runtime communication\n\nAWS: Bedrock AgentCore Runtime protocol configuration for communication settings\n\nValidation: Must be valid protocol configuration if provided; defines runtime communication behavior"
+        },
+        "requestHeaderConfiguration": {
+            "$ref": "#/definitions/RequestHeaderConfigurationProperty",
+            "description": "Q-ENHANCED-PROPERTY\nOptional request header configuration for header forwarding enabling custom header passthrough. Defines allowed HTTP headers that will be forwarded to agent runtime instances.\n\nUse cases: Header forwarding; Custom headers; Request context; Header passthrough\n\nAWS: Bedrock AgentCore Runtime request header configuration for HTTP header forwarding\n\nValidation: Must be valid RequestHeaderConfigurationProperty if provided; 1-20 headers allowed"
+        },
+        "roleArn": {
+            "description": "Q-ENHANCED-PROPERTY\nOptional existing IAM role ARN for agent runtime execution enabling role reuse. When provided, uses existing IAM role instead of creating new role for agent runtime execution.\n\nUse cases: Role reuse; Existing role usage; Permission management; Role reference\n\nAWS: IAM role ARN for Bedrock AgentCore Runtime execution permissions\n\nValidation: Must be valid IAM role ARN if provided; used instead of creating new role",
+            "type": "string"
+        },
+        "runtimeEndpoint": {
+            "$ref": "#/definitions/RuntimeEndpointProperty",
+            "description": "Q-ENHANCED-PROPERTY\nOptional runtime endpoint configuration for agent runtime API access enabling runtime invocation. Defines the endpoint configuration for accessing and invoking the agent runtime through the Bedrock AgentCore API.\n\nUse cases: Runtime invocation; API access; Endpoint configuration; Agent access\n\nAWS: Bedrock AgentCore Runtime endpoint for agent runtime API access and invocation\n\nValidation: Must be valid RuntimeEndpointProperty if provided; enables runtime API access"
+        },
+        "service_catalog_product_config": {
+            "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
+        }
+    },
+    "required": [
+        "agentRuntimeArtifact",
+        "agentRuntimeName",
+        "networkConfiguration"
+    ],
+    "type": "object"
+}
+

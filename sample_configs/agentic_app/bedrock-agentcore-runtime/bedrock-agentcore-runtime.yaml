@@ -1,0 +1,37 @@
+agentRuntimeName: "{{org}}-myAgentRuntimeDev"
+description: "Agent runtime for development environment"
+
+agentRuntimeArtifact:
+  containerConfiguration:
+    codePath: ./agent_core_code
+    platform: linux/arm64
+
+environmentVariables:
+  ENVIRONMENT: dev
+  LOG_LEVEL: INFO
+
+# MDAA requires VPC configuration (security requirement)
+networkConfiguration:
+  securityGroups:
+    - "{{context:security_group_id}}"
+  subnets:
+    - "{{context:subnet_id_1}}"
+    - "{{context:subnet_id_2}}"
+
+# Remove this section if you just want IAM auth
+authorizerConfiguration:
+  customJwtAuthorizer:
+    discoveryUrl: "https://cognito-idp.{{region}}.amazonaws.com/{{context:cognito_user_pool_id}}/.well-known/openid-configuration"
+    # AllowedAudience checks the 'aud' claim in JWT (Cognito standard - this is what Cognito uses for Client ID)
+    allowedAudience:
+      - "{{context:cognito_client_id}}"
+
+# Additional policies to complement the minimum required for the execution role permissions
+policies:
+  - policyArn: arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+
+# optional runtime endpoint in addition to the DEFAULT
+# this is the endpoint to add to your qualifier when using the AgentCore client
+runtimeEndpoint:
+  name: my_agent_runtime_endpoint_dev
+  description: "Runtime endpoint for development"
