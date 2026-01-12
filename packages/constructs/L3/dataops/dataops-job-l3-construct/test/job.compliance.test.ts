@@ -209,7 +209,10 @@ describe('MDAA Compliance Stack Tests', () => {
                               'Fn::Split': [
                                 ':',
                                 {
-                                  'Fn::GetAtt': ['deploymentlibstestJobCustomResource0FCE45A0', 'DestinationBucketArn'],
+                                  'Fn::GetAtt': [
+                                    'jobdeploymenttestJobadditionalscriptCustomResource2C7973A9',
+                                    'DestinationBucketArn',
+                                  ],
                                 },
                               ],
                             },
@@ -224,7 +227,7 @@ describe('MDAA Compliance Stack Tests', () => {
                   'Fn::Select': [
                     0,
                     {
-                      'Fn::GetAtt': ['deploymentlibstestJobCustomResource0FCE45A0', 'SourceObjectKeys'],
+                      'Fn::GetAtt': ['jobdeploymenttestJobadditionalscriptCustomResource2C7973A9', 'SourceObjectKeys'],
                     },
                   ],
                 },

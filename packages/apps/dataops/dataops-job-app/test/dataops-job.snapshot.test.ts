@@ -11,8 +11,8 @@ import * as path from 'path';
 describe('dataops-job Snapshot Tests', () => {
   beforeAll(() => {
     expect.addSnapshotSerializer({
-      test: (val: unknown) => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
-      print: (val: unknown) => {
+      test: val => typeof val === 'string' && val.includes('[CONFIG:') && val.includes('test-config.yaml]'),
+      print: val => {
         const stringVal = val as string;
         return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
       },

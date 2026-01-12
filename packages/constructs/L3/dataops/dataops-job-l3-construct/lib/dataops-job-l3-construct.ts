@@ -449,8 +449,8 @@ export class GlueJobL3Construct extends MdaaL3Construct {
         additionalFilesSources,
         projectBucket,
         deploymentRole,
-        deploymentPath,
         `job-deployment-${jobName}-additional-script`,
+        deploymentPath,
         false, // Glue expects zip of additional scripts, hence disabling the extraction
       );
 
