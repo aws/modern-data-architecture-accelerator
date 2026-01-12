@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaConstructProps, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
+import { MdaaConstructProps, MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct'; //NOSONAR
 import { Duration, Size } from 'aws-cdk-lib';
 import { IProfilingGroup } from 'aws-cdk-lib/aws-codeguruprofiler';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
@@ -46,6 +46,7 @@ export interface MdaaDockerImageFunctionProps extends MdaaLambdaFunctionOptions 
    */
   readonly code: DockerImageCode;
 }
+
 /**
  * Properties for creating a compliant Lambda function
  */
@@ -75,6 +76,7 @@ export interface MdaaLambdaFunctionProps extends MdaaLambdaFunctionOptions {
    */
   readonly handler: string;
 }
+
 export interface MdaaLambdaFunctionOptions extends MdaaConstructProps {
   /**
    * Q-ENHANCED-PROPERTY
@@ -274,12 +276,10 @@ export class MdaaLambdaFunction extends Function {
     new MdaaParamAndOutput(
       this,
       {
-        ...{
-          resourceType: 'lambda',
-          resourceId: props.functionName,
-          name: 'name',
-          value: this.functionName,
-        },
+        resourceType: 'lambda',
+        resourceId: props.functionName,
+        name: 'name',
+        value: this.functionName,
         ...props,
       },
       scope,
@@ -288,16 +288,73 @@ export class MdaaLambdaFunction extends Function {
     new MdaaParamAndOutput(
       this,
       {
-        ...{
-          resourceType: 'lambda',
-          resourceId: props.functionName,
-          name: 'arn',
-          value: this.functionArn,
-        },
+        resourceType: 'lambda',
+        resourceId: props.functionName,
+        name: 'arn',
+        value: this.functionArn,
         ...props,
       },
       scope,
     );
+
+    new MdaaParamAndOutput(
+      this,
+      {
+        resourceType: 'lambda',
+        resourceId: props.functionName,
+        name: 'log-group',
+        value: this.logGroup.logGroupName,
+        ...props,
+      },
+      scope,
+    );
+
+    // Apply CDK-NAG suppressions for LogRetention custom resource
+    // The LogRetention construct is created by CDK when logGroup is accessed (above)
+    // It's created at the stack level with a dynamic ID
+    this.applyLogRetentionSuppressions();
+  }
+
+  private applyLogRetentionSuppressions(): void {
+    // Find all LogRetention constructs at the stack level
+    // The LogRetention construct is created by CDK with a dynamic ID when logGroup is accessed
+    const stack = this.node.root;
+    const allConstructs = stack.node.findAll();
+    const logRetentionConstructs = allConstructs.filter(child => child.node.id.startsWith('LogRetention'));
+
+    const suppressions = [
+      {
+        id: 'AwsSolutions-IAM4',
+        appliesTo: ['Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'],
+        reason:
+          'LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.',
+      },
+      {
+        id: 'AwsSolutions-IAM5',
+        appliesTo: ['Resource::*'],
+        reason:
+          'LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.',
+      },
+      {
+        id: 'NIST.800.53.R5-IAMNoInlinePolicy',
+        reason:
+          'LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.',
+      },
+      {
+        id: 'HIPAA.Security-IAMNoInlinePolicy',
+        reason:
+          'LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.',
+      },
+      {
+        id: 'PCI.DSS.321-IAMNoInlinePolicy',
+        reason:
+          'LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.',
+      },
+    ];
+
+    for (const logRetentionConstruct of logRetentionConstructs) {
+      MdaaNagSuppressions.addCodeResourceSuppressions(logRetentionConstruct, suppressions, true);
+    }
   }
 }
 

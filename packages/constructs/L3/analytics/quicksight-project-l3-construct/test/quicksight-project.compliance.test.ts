@@ -101,8 +101,8 @@ describe('MDAA Compliance Stack Tests', () => {
   new QuickSightProjectL3Construct(testApp.testStack, 'test-stack', constructProps);
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
-  test('Validate if the 2 Lambda functions[CR and QSFolder] are created', () => {
-    template.resourceCountIs('AWS::Lambda::Function', 2);
+  test('Validate if the 3 Lambda functions[LogRetention, CR and QSFolder] are created', () => {
+    template.resourceCountIs('AWS::Lambda::Function', 3);
   });
   // Verify QS Permissions provided to qsFolders-cr-func Lambda Function
   test('QS Permissions to Lambda Function', () => {

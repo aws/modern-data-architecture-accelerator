@@ -38,6 +38,9 @@
       "path": "../../../L2/construct"
     },
     {
+      "path": "../../../L2/cloudwatch-constructs"
+    },
+    {
       "path": "../dataops-project-l3-construct"
     },
     {

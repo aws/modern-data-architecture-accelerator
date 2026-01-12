@@ -22,7 +22,7 @@ import { ConfigurationElement } from '@aws-mdaa/config';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
-import { updateProps } from '@aws-mdaa/cloudwatch-constructs/lib/utils';
+import { updateProps } from '@aws-mdaa/cloudwatch-constructs/lib/loggroup-utils';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { IRole } from 'aws-cdk-lib/aws-iam';
 

@@ -7,7 +7,7 @@ import { MdaaConstructProps, MdaaNagSuppressions, MdaaParamAndOutput } from '@aw
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
-import { updateProps } from './utils';
+import { updateProps } from './loggroup-utils';
 
 export interface MdaaLogGroupProps extends MdaaConstructProps {
   readonly encryptionKey: IKey;
@@ -71,12 +71,10 @@ export class MdaaLogGroup extends LogGroup implements IMdaaLogGroup {
     new MdaaParamAndOutput(
       this,
       {
-        ...{
-          resourceType: 'loggroup',
-          resourceId: props.logGroupName,
-          name: 'name',
-          value: this.logGroupPhysicalName(),
-        },
+        resourceType: 'loggroup',
+        resourceId: props.logGroupName,
+        name: 'name',
+        value: this.logGroupPhysicalName(),
         ...props,
       },
       scope,

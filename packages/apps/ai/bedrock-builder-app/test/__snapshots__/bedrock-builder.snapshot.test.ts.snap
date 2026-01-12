@@ -330,6 +330,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:testactiongroup:log-group",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:testactiongroup:name",
         },
         "Value": {
@@ -344,6 +355,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:testcustomrouter1:log-group",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -368,6 +390,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:testcustomrouter2:log-group",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:testcustomrouter2:name",
         },
         "Value": {
@@ -382,6 +415,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:testcustomtransformer:log-group",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -608,6 +652,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:testknowledgebase2testdsdefaultparsingsync:log-group",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -847,6 +902,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:testknowledgebasetestdsdefaultparsingsync:log-group",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:testknowledgebasetestdsdefaultparsingsync:name",
         },
         "Value": {
@@ -907,6 +973,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:rdsdatahandler:log-group",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:rdsdatahandler:name",
         },
         "Value": {
@@ -921,6 +998,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:lambda:createindextestknowledgebase2embedding7b949e77handler:log-group",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -953,6 +1041,413 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
     },
     "Resources": {
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "Handler": "index.handler",
+          "Role": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Runtime": {
+            "Fn::FindInMap": [
+              "LatestNodeRuntimeMap",
+              {
+                "Ref": "AWS::Region",
+              },
+              "value",
+            ],
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "bedrock-builder",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-bedrock-builder-app",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Timeout": 900,
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "ManagedPolicyArns": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+              ],
+            },
+          ],
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "bedrock-builder",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-bedrock-builder-app",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "logs:PutRetentionPolicy",
+                  "logs:DeleteRetentionPolicy",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
       "RoleResDataAdmin0": {
         "DeletionPolicy": "Delete",
         "Properties": {
@@ -2220,6 +2715,84 @@ Provide responses in markdown format with source citations
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
                 "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
@@ -2260,6 +2833,56 @@ Provide responses in markdown format with source citations
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/test-action-group/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
             ],
           },
         },
@@ -2447,6 +3070,84 @@ Provide responses in markdown format with source citations
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
                 "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
@@ -2487,6 +3188,56 @@ Provide responses in markdown format with source citations
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/test-custom-router1/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
             ],
           },
         },
@@ -2674,6 +3425,84 @@ Provide responses in markdown format with source citations
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
                 "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
@@ -2837,6 +3666,56 @@ Provide responses in markdown format with source citations
           },
         },
         "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/test-custom-router2/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
           "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/test-custom-router2/name",
           "Tags": {
             "mdaa_cdk_app": "bedrock-builder",
@@ -2944,6 +3823,84 @@ Provide responses in markdown format with source citations
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
                 "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
@@ -2984,6 +3941,56 @@ Provide responses in markdown format with source citations
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/test-custom-transformer/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
             ],
           },
         },
@@ -4651,6 +5658,84 @@ Provide responses in markdown format with source citations
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
                 "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
@@ -4691,6 +5776,56 @@ Provide responses in markdown format with source citations
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/test-knowledge-base2-test-ds-default-parsing-sync/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
             ],
           },
         },
@@ -7739,6 +8874,84 @@ Provide responses in markdown format with source citations
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaConcurrency",
                 "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
               },
@@ -7779,6 +8992,56 @@ Provide responses in markdown format with source citations
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/test-knowledge-base-test-ds-default-parsing-sync/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
             ],
           },
         },
@@ -8604,6 +9867,99 @@ Provide responses in markdown format with source citations
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaDLQ",
                 "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
@@ -8656,6 +10012,71 @@ Provide responses in markdown format with source citations
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/rds-data-handler/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
             ],
           },
         },
@@ -9377,6 +10798,99 @@ Provide responses in markdown format with source citations
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaDLQ",
                 "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
@@ -9429,6 +10943,71 @@ Provide responses in markdown format with source citations
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/lambda/create-index-test-knowledge-base2-embedding-7b949e77-handler/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
             ],
           },
         },
@@ -10390,6 +11969,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:testactiongroup:log-group",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "LogGroupName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:testactiongroup:name",
       },
       "Value": {
@@ -10404,6 +11994,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
         "Fn::GetAtt": [
           "REPLACED-CFN-LOGICAL-ID",
           "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:testcustomrouter1:log-group",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "LogGroupName",
         ],
       },
     },
@@ -10428,6 +12029,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:testcustomrouter2:log-group",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "LogGroupName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:testcustomrouter2:name",
       },
       "Value": {
@@ -10442,6 +12054,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
         "Fn::GetAtt": [
           "REPLACED-CFN-LOGICAL-ID",
           "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:testcustomtransformer:log-group",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "LogGroupName",
         ],
       },
     },
@@ -10668,6 +12291,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
         "Fn::GetAtt": [
           "REPLACED-CFN-LOGICAL-ID",
           "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:testknowledgebase2testdsdefaultparsingsync:log-group",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "LogGroupName",
         ],
       },
     },
@@ -10907,6 +12541,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:testknowledgebasetestdsdefaultparsingsync:log-group",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "LogGroupName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:testknowledgebasetestdsdefaultparsingsync:name",
       },
       "Value": {
@@ -10967,6 +12612,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:rdsdatahandler:log-group",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "LogGroupName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:rdsdatahandler:name",
       },
       "Value": {
@@ -10981,6 +12637,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
         "Fn::GetAtt": [
           "REPLACED-CFN-LOGICAL-ID",
           "Arn",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:lambda:createindextestknowledgebase2embedding7b949e77handler:log-group",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "LogGroupName",
         ],
       },
     },
@@ -11013,6 +12680,413 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
   },
   "Resources": {
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Runtime": {
+          "Fn::FindInMap": [
+            "LatestNodeRuntimeMap",
+            {
+              "Ref": "AWS::Region",
+            },
+            "value",
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "bedrock-builder",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-bedrock-builder-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-builder-l3-construct/lib/bedrock-builder-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutRetentionPolicy",
+                "logs:DeleteRetentionPolicy",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "RoleResDataAdmin0": {
       "DeletionPolicy": "Delete",
       "Properties": {
@@ -12280,6 +14354,84 @@ Provide responses in markdown format with source citations
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaConcurrency",
               "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
@@ -12320,6 +14472,56 @@ Provide responses in markdown format with source citations
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/test-action-group/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -12507,6 +14709,84 @@ Provide responses in markdown format with source citations
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaConcurrency",
               "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
@@ -12547,6 +14827,56 @@ Provide responses in markdown format with source citations
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/test-custom-router1/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -12734,6 +15064,84 @@ Provide responses in markdown format with source citations
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaConcurrency",
               "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
@@ -12897,6 +15305,56 @@ Provide responses in markdown format with source citations
         },
       },
       "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/test-custom-router2/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
         "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/test-custom-router2/name",
         "Tags": {
           "mdaa_cdk_app": "bedrock-builder",
@@ -13004,6 +15462,84 @@ Provide responses in markdown format with source citations
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaConcurrency",
               "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
@@ -13044,6 +15580,56 @@ Provide responses in markdown format with source citations
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/test-custom-transformer/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -14711,6 +17297,84 @@ Provide responses in markdown format with source citations
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaConcurrency",
               "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
@@ -14751,6 +17415,56 @@ Provide responses in markdown format with source citations
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/test-knowledge-base2-test-ds-default-parsing-sync/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -17799,6 +20513,84 @@ Provide responses in markdown format with source citations
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaConcurrency",
               "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
             },
@@ -17839,6 +20631,56 @@ Provide responses in markdown format with source citations
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] Concurrency Limits not required.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/dataops/dataops-lambda-l3-construct/lib/dataops-lambda-l3-construct.ts:LINE:COL] VPC Not Required",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/test-knowledge-base-test-ds-default-parsing-sync/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -18664,6 +21506,99 @@ Provide responses in markdown format with source citations
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaDLQ",
               "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
@@ -18716,6 +21651,71 @@ Provide responses in markdown format with source citations
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/rds-data-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -19437,6 +22437,99 @@ Provide responses in markdown format with source citations
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaDLQ",
               "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
@@ -19489,6 +22582,71 @@ Provide responses in markdown format with source citations
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/lambda/create-index-test-knowledge-base2-embedding-7b949e77-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },

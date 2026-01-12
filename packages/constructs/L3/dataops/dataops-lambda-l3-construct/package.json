@@ -23,6 +23,7 @@
   "types": "lib/index.d.ts",
   "devDependencies": {
     "@aws-mdaa/construct": "1.3.0",
+    "@aws-mdaa/cloudwatch-constructs": "1.3.0",
     "@aws-mdaa/ec2-constructs": "1.3.0",
     "@aws-mdaa/ec2-l3-construct": "1.3.0",
     "@aws-mdaa/eventbridge-helper": "1.3.0",
@@ -42,6 +43,7 @@
   },
   "peerDependencies": {
     "@aws-mdaa/construct": "1.3.0",
+    "@aws-mdaa/cloudwatch-constructs": "1.3.0",
     "@aws-mdaa/ec2-constructs": "1.3.0",
     "@aws-mdaa/ec2-l3-construct": "1.3.0",
     "@aws-mdaa/eventbridge-helper": "1.3.0",
@@ -51,6 +53,7 @@
   },
   "dependencies": {
     "@aws-mdaa/construct": "1.3.0",
+    "@aws-mdaa/cloudwatch-constructs": "1.3.0",
     "@aws-mdaa/dataops-project-l3-construct": "1.3.0",
     "@aws-mdaa/ec2-constructs": "1.3.0",
     "@aws-mdaa/ec2-l3-construct": "1.3.0",

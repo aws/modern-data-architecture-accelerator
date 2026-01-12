@@ -1,0 +1,175 @@
+projectName: test-dashboard-project
+dashboards:
+  # Dashboard with text widgets
+  - dashboardName: test-text-dashboard
+    widgets:
+      - type: text
+        markdown: |
+          # Test Dashboard
+          This is a test dashboard with text widgets
+        width: 24
+        height: 2
+      
+      - type: text
+        markdown: "## Section 1"
+        width: 12
+        height: 2
+      
+      - type: text
+        markdown: "## Section 2"
+        width: 12
+        height: 2
+
+  # Dashboard with metric widgets using direct references
+  - dashboardName: test-metric-dashboard
+    widgets:
+      - type: text
+        markdown: "# Metrics Dashboard"
+        width: 24
+        height: 2
+      
+      - type: metric
+        title: "Error Count"
+        width: 12
+        height: 6
+        metrics:
+          - namespace: CustomMetrics
+            metricName: ErrorCount
+            stat: Sum
+      
+      - type: metric
+        title: "Duration"
+        width: 12
+        height: 6
+        metrics:
+          - namespace: AWS/Lambda
+            metricName: Duration
+            stat: Average
+
+  # Dashboard with log insights widgets
+  - dashboardName: test-log-insights-dashboard
+    widgets:
+      - type: text
+        markdown: "# Log Insights Dashboard"
+        width: 24
+        height: 2
+      
+      - type: log_insights
+        title: "Recent Errors"
+        width: 24
+        height: 6
+        logGroupNames:
+          - "/aws/lambda/test-function"
+        queryString: |
+          fields @timestamp, @message
+          | filter @message like /ERROR/
+          | sort @timestamp desc
+          | limit 20
+
+  # Dashboard with mixed widget types
+  - dashboardName: test-mixed-dashboard
+    widgets:
+      - type: text
+        markdown: "# Mixed Widget Dashboard"
+        width: 24
+        height: 2
+      
+      - type: metric
+        title: "Errors"
+        width: 8
+        height: 6
+        metrics:
+          - namespace: AWS/Lambda
+            metricName: Errors
+            stat: Sum
+      
+      - type: metric
+        title: "Invocations"
+        width: 8
+        height: 6
+        metrics:
+          - namespace: AWS/Lambda
+            metricName: Invocations
+            stat: Sum
+      
+      - type: metric
+        title: "Duration"
+        width: 8
+        height: 6
+        metrics:
+          - namespace: AWS/Lambda
+            metricName: Duration
+            stat: Average
+      
+      - type: log_insights
+        title: "Recent Logs"
+        width: 24
+        height: 6
+        logGroupNames:
+          - "/aws/lambda/test-function"
+        queryString: |
+          fields @timestamp, @message
+          | sort @timestamp desc
+          | limit 50
+
+  # Dashboard with advanced features (multiple metrics, metric math, period)
+  - dashboardName: test-advanced-dashboard
+    widgets:
+      - type: text
+        markdown: |
+          # 📊 Advanced Dashboard Features
+          #### Testing multiple metrics per widget and metric math
+          ---
+        width: 24
+        height: 3
+      
+      # Multiple metrics in one widget
+      - type: metric
+        title: "Multiple Metrics - Error Counts"
+        width: 12
+        height: 6
+        period: 300
+        metrics:
+          - namespace: ETL/ServiceA
+            metricName: error-count
+            stat: Sum
+          - namespace: ETL/ServiceB
+            metricName: error-count
+            stat: Sum
+          - namespace: ETL/ServiceC
+            metricName: error-count
+            stat: Sum
+      
+      # Widget with custom period
+      - type: metric
+        title: "Duration (5 min period)"
+        width: 12
+        height: 6
+        period: 300
+        metrics:
+          - namespace: AWS/Lambda
+            metricName: Duration
+            stat: Average
+      
+      # Multiple metrics with different stats
+      - type: metric
+        title: "Lambda Metrics - Mixed Stats"
+        width: 24
+        height: 6
+        metrics:
+          - namespace: AWS/Lambda
+            metricName: Invocations
+            stat: Sum
+            label: "Total Invocations"
+          - namespace: AWS/Lambda
+            metricName: Errors
+            stat: Sum
+            label: "Total Errors"
+          - namespace: AWS/Lambda
+            metricName: Duration
+            stat: Average
+            label: "Avg Duration"
+          - namespace: AWS/Lambda
+            metricName: Duration
+            stat: Maximum
+            label: "Max Duration"

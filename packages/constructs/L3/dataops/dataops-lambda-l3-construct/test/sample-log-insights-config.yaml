@@ -1,0 +1,36 @@
+# Sample configuration demonstrating logInsightsQueries feature
+# This file can be used for manual end-to-end testing
+
+projectName: test-observability-project
+
+functions:
+  - functionName: test-lambda-with-queries
+    srcDir: ./test/fixtures/lambda-code
+    handler: index.handler
+    runtime: nodejs18.x
+    roleArn: arn:aws:iam::123456789012:role/test-lambda-role
+    description: Test Lambda function with CloudWatch Logs Insights queries
+    
+    # CloudWatch Logs Insights queries
+    logInsightsQueries:
+      # Query without explicit log groups (will use function's log group)
+      - queryName: test-lambda-errors
+        queryString: |
+          fields @timestamp, @message
+          | filter @message like /ERROR/
+          | sort @timestamp desc
+      
+      # Query with explicit log groups for cross-function analysis
+      - queryName: test-lambda-performance
+        queryString: |
+          fields @timestamp, @duration
+          | stats avg(@duration), max(@duration), min(@duration)
+        logGroupNames:
+          - /aws/lambda/test-lambda-with-queries
+          - /aws/lambda/another-function
+      
+      # Query without limit clause (will be auto-added)
+      - queryName: test-lambda-recent-logs
+        queryString: |
+          fields @timestamp, @message
+          | sort @timestamp desc

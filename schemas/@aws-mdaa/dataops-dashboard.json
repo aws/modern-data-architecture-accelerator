@@ -1,0 +1,429 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "CfnParameterProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedPattern": {
+                    "default": "- No constraints on patterns allowed for parameter.",
+                    "description": "A regular expression that represents the patterns to allow for String types.",
+                    "type": "string"
+                },
+                "allowedValues": {
+                    "default": "- No constraints on values allowed for parameter.",
+                    "description": "An array containing the list of values allowed for the parameter.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "constraintDescription": {
+                    "default": "- No description with customized error message when user specifies invalid values.",
+                    "description": "A string that explains a constraint when the constraint is violated.\nFor example, without a constraint description, a parameter that has an allowed\npattern of [A-Za-z0-9]+ displays the following error message when the user specifies\nan invalid value:",
+                    "type": "string"
+                },
+                "default": {
+                    "default": "- No default value for parameter.",
+                    "description": "A value of the appropriate type for the template to use if no value is specified\nwhen a stack is created. If you define constraints for the parameter, you must specify\na value that adheres to those constraints."
+                },
+                "description": {
+                    "default": "- No description for the parameter.",
+                    "description": "A string of up to 4000 characters that describes the parameter.",
+                    "type": "string"
+                },
+                "maxLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the largest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "maxValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the largest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "minLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the smallest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "minValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the smallest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "noEcho": {
+                    "default": "- Parameter values are not masked.",
+                    "description": "Whether to mask the parameter value when anyone makes a call that describes the stack.\nIf you set the value to ``true``, the parameter value is masked with asterisks (``*****``).",
+                    "type": "boolean"
+                },
+                "type": {
+                    "default": "String",
+                    "description": "The data type for the parameter (DataType).",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "DashboardMetricProps": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-PROPERTY\nProperties for a metric in a dashboard widget.\n\nUse Cases:\n- Display CloudWatch metrics on dashboards\n- Use metric math expressions for calculations (e.g., \"m1+m2\")\n- Use direct values or SSM references (resolved by MDAA config parser)\n\nAWS Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_MetricDataQuery.html\n\nValidation:\n- For regular metrics: namespace and metricName are required\n- For metric math: expression is required, namespace/metricName optional (used as placeholders)\n- Use {{org}}, {{domain}}, {{env}} placeholders - they will be resolved by config parser",
+            "properties": {
+                "dimensions": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": "- No dimensions",
+                    "description": "Dimensions for the metric.",
+                    "type": "object"
+                },
+                "expression": {
+                    "default": "- Not used for regular metrics",
+                    "description": "Metric math expression for calculations across metrics.\nExample: \"m1+m2+m3\" to sum multiple metrics.\nWhen using expressions, other metrics must have 'id' property set.",
+                    "type": "string"
+                },
+                "id": {
+                    "default": "- Auto-generated",
+                    "description": "ID for the metric (used in expressions)",
+                    "type": "string"
+                },
+                "label": {
+                    "default": "- Metric name or expression",
+                    "description": "Label for the metric",
+                    "type": "string"
+                },
+                "metricName": {
+                    "default": "- Required unless using expression",
+                    "description": "Metric name. Required for regular metrics, optional for metric math expressions.\nCan be a direct value or SSM reference with ssm: prefix.\nExamples:\n- Direct: \"Errors\"\n- SSM: \"ssm:/{{org}}/{{domain}}/module/metric/name\"",
+                    "type": "string"
+                },
+                "namespace": {
+                    "default": "- Required unless using expression",
+                    "description": "Metric namespace. Required for regular metrics, optional for metric math expressions.\nCan be a direct value or SSM reference with ssm: prefix.\nExamples:\n- Direct: \"AWS/Lambda\"\n- SSM: \"ssm:/{{org}}/{{domain}}/module/metric/namespace\"",
+                    "type": "string"
+                },
+                "period": {
+                    "default": 300,
+                    "description": "Period for the metric in seconds",
+                    "type": "number"
+                },
+                "stat": {
+                    "default": "'Average'",
+                    "description": "Statistic to apply to the metric",
+                    "type": "string"
+                },
+                "unit": {
+                    "default": "- No unit",
+                    "description": "Unit of the metric",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "DashboardProps": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-PROPERTY\nProperties for a dashboard configuration.\n\nUse Cases:\n- Create unified observability dashboards across multiple Lambda functions\n- Aggregate metrics from different modules using SSM references\n- Display log insights queries alongside metrics\n\nAWS Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutDashboard.html\n\nValidation:\n- dashboardName must be unique within the account/region\n- widgets array must not be empty",
+            "properties": {
+                "dashboardName": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired name of the CloudWatch dashboard. Must be unique within the account and region. Used to identify and access the dashboard in the CloudWatch console.\n\nUse cases: Dashboard identification; Console navigation; Resource management\n\nAWS: CloudWatch dashboard name for unique identification within account/region\n\nValidation: Must be valid dashboard name; required; unique within account/region",
+                    "type": "string"
+                },
+                "widgets": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired array of widget definitions for the dashboard. Each widget displays metrics, logs, or text content. Widgets are automatically laid out with wrapping at 24-unit width.\n\nUse cases: Metric visualization; Log query results; Dashboard organization with text headers\n\nAWS: CloudWatch dashboard widgets for displaying metrics, logs, and text content\n\nValidation: Must be non-empty array of valid DashboardWidgetProps objects; required",
+                    "items": {
+                        "$ref": "#/definitions/DashboardWidgetProps"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "dashboardName",
+                "widgets"
+            ],
+            "type": "object"
+        },
+        "DashboardWidgetProps": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-PROPERTY\nProperties for a dashboard widget.\n\nUse Cases:\n- Text widgets for dashboard headers and descriptions\n- Metric widgets for displaying time-series data\n- Log insights widgets for displaying query results\n\nAWS Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/CloudWatch-Dashboard-Body-Structure.html\n\nValidation:\n- type must be 'text', 'metric', or 'log_insights'\n- Text widgets require markdown property\n- Metric widgets require metrics array\n- Log insights widgets require logGroupNames and queryString",
+            "properties": {
+                "height": {
+                    "default": 6,
+                    "description": "Height of the widget",
+                    "type": "number"
+                },
+                "logGroupNames": {
+                    "default": "- No log groups (required for log insights widgets)",
+                    "description": "Log group names for log insights widgets.\nUse SSM references with {{org}}, {{domain}} placeholders which are resolved by config parser.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "markdown": {
+                    "default": "- No markdown (required for text widgets)",
+                    "description": "Markdown content for text widgets",
+                    "type": "string"
+                },
+                "metrics": {
+                    "default": "- No metrics (required for metric widgets)",
+                    "description": "Metrics to display (for metric widgets)",
+                    "items": {
+                        "$ref": "#/definitions/DashboardMetricProps"
+                    },
+                    "type": "array"
+                },
+                "period": {
+                    "default": 300,
+                    "description": "Period for metric widgets in seconds",
+                    "type": "number"
+                },
+                "queryString": {
+                    "default": "- No query string (required for log insights widgets)",
+                    "description": "Query string for log insights widgets",
+                    "type": "string"
+                },
+                "title": {
+                    "default": "- No title",
+                    "description": "The title of the widget",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "The type of widget",
+                    "enum": [
+                        "log_insights",
+                        "metric",
+                        "text"
+                    ],
+                    "type": "string"
+                },
+                "width": {
+                    "default": 6,
+                    "description": "Width of the widget (1-24)",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressionByPath": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
+            "properties": {
+                "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "type": "string"
+                },
+                "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "reason"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "path",
+                "suppressions"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressionConfigs": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
+            "properties": {
+                "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "items": {
+                        "$ref": "#/definitions/MdaaNagSuppressionByPath"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "by_path"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
+            "properties": {
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "type": "string"
+                },
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "rules"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleAssertionConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
+            "properties": {
+                "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assert",
+                "description"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleCondititionConfig": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
+            "properties": {
+                "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "items": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                }
+            },
+            "required": [
+                "assertions",
+                "condition"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogParameterConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
+            "properties": {
+                "constraints": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                },
+                "props": {
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogProductConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
+            "properties": {
+                "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "type": "string"
+                },
+                "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "type": "string"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "type": "object"
+                },
+                "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "owner",
+                "portfolio_arn"
+            ],
+            "type": "object"
+        }
+    },
+    "properties": {
+        "dashboards": {
+            "description": "Q-ENHANCED-PROPERTY\nOptional array of CloudWatch dashboard definitions for observability and monitoring. Each dashboard can display metrics, logs, and text widgets from multiple Lambda functions and modules using SSM references for cross-module integration.\n\nUse cases: Unified observability dashboards; Cross-module metric aggregation; Log insights visualization\n\nAWS: CloudWatch dashboard creation with SSM-based metric references and widget layout\n\nValidation: Must be array of valid DashboardProps objects if provided; dashboards inherit project context",
+            "items": {
+                "$ref": "#/definitions/DashboardProps"
+            },
+            "type": "array"
+        },
+        "deploymentRole": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.\n\nUse cases: Deployment operations; Resource management; IAM permissions; Secure deployment\n\nAWS: IAM role ARN for DataOps deployment operations and resource management\n\nValidation: Must be valid IAM role ARN; required for deployment operations and resource management",
+            "type": "string"
+        },
+        "kmsArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.\n\nUse cases: Data encryption; Security compliance; Key management; Data protection\n\nAWS: KMS key ARN for DataOps encryption and data protection compliance\n\nValidation: Must be valid KMS key ARN; required for encryption and data protection compliance",
+            "type": "string"
+        },
+        "nag_suppressions": {
+            "$ref": "#/definitions/MdaaNagSuppressionConfigs",
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
+        },
+        "projectBucket": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
+            "type": "string"
+        },
+        "projectName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired name of the DataOps project that will contain and manage the dashboards. Provides organizational context and enables resource sharing, permissions management, and operational coordination within the DataOps framework.\n\nUse cases: DataOps project organization; Resource sharing and permissions; Operational coordination and monitoring\n\nAWS: DataOps project reference for dashboard organization and resource management\n\nValidation: Must be valid DataOps project name; required; project must exist or be created in the same deployment",
+            "type": "string"
+        },
+        "projectTopicArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
+            "type": "string"
+        },
+        "securityConfigurationName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired Glue security configuration name for DataOps job security enabling encryption and access control for data processing operations. Provides the security configuration that will be used by Glue jobs for encryption at rest, in transit, and CloudWatch logs encryption.\n\nUse cases: Glue job security; Encryption configuration; Security compliance; Data protection\n\nAWS: Glue security configuration for DataOps job encryption and security compliance\n\nValidation: Must be valid security configuration name; required for Glue job security and encryption",
+            "type": "string"
+        },
+        "service_catalog_product_config": {
+            "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
+        }
+    },
+    "required": [
+        "projectName"
+    ],
+    "type": "object"
+}
+

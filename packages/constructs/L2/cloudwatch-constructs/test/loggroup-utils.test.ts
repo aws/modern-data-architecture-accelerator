@@ -1,8 +1,8 @@
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
-import { updateProps } from '../lib/utils';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { MdaaLogGroupProps } from '../lib';
+import { updateProps } from '../lib/loggroup-utils';
 
 describe('updateProps', () => {
   // Mock IKey for encryptionKey

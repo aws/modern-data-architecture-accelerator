@@ -258,7 +258,12 @@ function configureSnapshotSerializers(): void {
     test: (val: unknown): boolean => typeof val === 'string' && val.includes('[MDAA:') && /:\d+:\d+]/.test(val),
     print: (val: unknown): string => {
       const stringVal = typeof val === 'string' ? val : String(val);
-      return JSON.stringify(stringVal.replace(/(\[MDAA:[^:]+):\d+:\d+(])/g, '$1:LINE:COL$2'));
+      // Replace line:col numbers with placeholders AND normalize absolute paths to relative paths
+      return JSON.stringify(
+        stringVal
+          .replace(/\[MDAA:[^[\]]*\/(packages\/[^:]+):\d+:\d+]/g, '[MDAA:$1:LINE:COL]')
+          .replace(/(\[MDAA:[^:]+):\d+:\d+(])/g, '$1:LINE:COL$2'),
+      );
     },
   });
 }

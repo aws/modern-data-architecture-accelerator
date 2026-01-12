@@ -170,3 +170,132 @@ functions:
     # If true, lambda function will be built and deployed using Docker
     # In this case, the srcDir is expected to container a Dockerfile
     dockerBuild: true
+
+  # Example of a function with CloudWatch Logs Insights queries
+  - functionName: testobservabilityfunction
+    srcDir: ./src/lambda/test
+    handler: test.lambda_handler
+    runtime: python3.9
+    roleArn: ssm:/sample-org/instance1/generated-role/lambda/arn
+    description: Function with CloudWatch observability features
+    
+    # CloudWatch Logs Insights queries for analyzing function logs
+    logInsightsQueries:
+      # Query without explicit log groups (will use function's log group)
+      - queryName: testobservabilityfunction/errors
+        queryString: |
+          fields @timestamp, @message
+          | filter @message like /ERROR/
+          | sort @timestamp desc
+      
+      # Query with explicit log groups for cross-function analysis
+      - queryName: testobservabilityfunction/performance
+        queryString: |
+          fields @timestamp, @duration, @billedDuration, @memorySize, @maxMemoryUsed
+          | stats avg(@duration), max(@duration), min(@duration), avg(@maxMemoryUsed)
+        logGroupNames:
+          - /aws/lambda/testobservabilityfunction
+          - /aws/lambda/testfun
+      
+      # Query without limit clause (will be auto-added)
+      - queryName: testobservabilityfunction/recent-invocations
+        queryString: |
+          fields @timestamp, @requestId, @message
+          | sort @timestamp desc
+    
+    # CloudWatch metric filters for extracting custom metrics from logs
+    metricFilters:
+      # Filter with single transformation
+      - filterName: error-count
+        filterPattern: '{ $.level = "error" }'
+        metricTransformations:
+          - metricName: error-count
+            metricNamespace: TestObservability/Errors
+            metricValue: "1"
+            unit: Count
+      
+      # Filter with multiple transformations
+      - filterName: processing-metrics
+        filterPattern: '[timestamp, request_id, level, msg, duration_ms, memory_mb]'
+        metricTransformations:
+          - metricName: processing-duration-ms
+            metricNamespace: TestObservability/Performance
+            metricValue: "$duration_ms"
+            unit: Milliseconds
+          - metricName: memory-usage-mb
+            metricNamespace: TestObservability/Performance
+            metricValue: "$memory_mb"
+            unit: Megabytes
+      
+      # Filter with dimensions
+      - filterName: error-count-with-dimensions
+        filterPattern: '{ $.level = "error" }'
+        metricTransformations:
+          - metricName: error-count-by-type
+            metricNamespace: TestObservability/Errors
+            metricValue: "1"
+            unit: Count
+            dimensions:
+              Environment: test
+              Service: observability
+    
+    # CloudWatch alarms for monitoring metrics
+    alarms:
+      # Simple single metric alarm referencing custom metric
+      - alarmName: high-error-rate
+        metricName: error-count
+        namespace: TestObservability/Errors
+        statistic: Sum
+        period: 300
+        evaluationPeriods: 1
+        threshold: 5
+        comparisonOperator: GreaterThanOrEqualToThreshold
+        treatMissingData: notBreaching
+        alarmDescription: Alert when error count exceeds threshold
+        actionsEnabled: true
+        alarmActions:
+          - project:projectTopicArn/default
+      
+      # AWS Lambda metric alarm with {{functionName}} placeholder
+      - alarmName: lambda-errors
+        metricName: Errors
+        namespace: AWS/Lambda
+        statistic: Sum
+        period: 60
+        evaluationPeriods: 1
+        threshold: 1
+        comparisonOperator: GreaterThanOrEqualToThreshold
+        alarmDescription: Alert on Lambda function errors
+        dimensions:
+          FunctionName: "{{functionName}}"
+        alarmActions:
+          - "arn:aws:sns:us-east-1:123456789012:test-alerts"
+        okActions:
+          - "arn:aws:sns:us-east-1:123456789012:test-alerts"
+      
+      # Metric math alarm (advanced)
+      - alarmName: total-errors-across-metrics
+        evaluationPeriods: 1
+        threshold: 10
+        comparisonOperator: GreaterThanOrEqualToThreshold
+        treatMissingData: notBreaching
+        alarmDescription: Alert when total errors across all metrics exceed threshold
+        metrics:
+          - id: total
+            expression: "m1+m2"
+            label: "Total Errors"
+            returnData: true
+          - id: m1
+            metricName: error-count
+            namespace: TestObservability/Errors
+            statistic: Sum
+            period: 300
+          - id: m2
+            metricName: error-count-by-type
+            namespace: TestObservability/Errors
+            statistic: Sum
+            period: 300
+        alarmActions:
+          - "arn:aws:sns:us-east-1:123456789012:test-alerts"
+        insufficientDataActions:
+          - "arn:aws:sns:us-east-1:123456789012:test-alerts"

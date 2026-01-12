@@ -112,7 +112,9 @@ describe('MDAA Compliance Stack Tests', () => {
   // console.log( JSON.stringify( template, undefined, 2 ) )
 
   test('Validate function counts', () => {
-    template.resourceCountIs('AWS::Lambda::Function', 6);
+    // Note: Actual count is 7 due to CDK automatically adding a LogRetention Lambda function
+    // 6 test functions + 1 LogRetention function for log management
+    template.resourceCountIs('AWS::Lambda::Function', 7);
   });
 
   test('Validate layer counts', () => {

@@ -29,6 +29,106 @@
             ],
             "type": "object"
         },
+        "AlarmProps": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CloudWatch alarms enabling automated monitoring and alerting for Lambda function metrics. Defines alarm conditions, thresholds, and notification actions for both single metric and metric math alarms with support for custom and AWS metrics.\n\nUse cases: Error rate alerting; Performance monitoring; Custom metric alarms; Multi-metric conditions; Operational notifications\n\nAWS: CloudWatch alarm for Lambda function monitoring and automated alerting with SNS integration\n\nValidation: alarmName required; either metricName/namespace or metrics array required; threshold and evaluationPeriods required",
+            "properties": {
+                "actionsEnabled": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional flag enabling or disabling alarm actions during state changes. Controls whether SNS notifications and other actions are executed when the alarm changes state for testing and maintenance scenarios.\n\nUse cases: Action control; Testing mode; Maintenance windows; Notification management\n\nAWS: CloudWatch alarm actions enabled flag for notification and action control\n\nValidation: Boolean flag; defaults to true; controls execution of alarm, OK, and insufficient data actions",
+                    "type": "boolean"
+                },
+                "alarmActions": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of SNS topic ARNs for ALARM state notifications enabling automated alerting. Specifies SNS topics that receive notifications when the alarm transitions to ALARM state for operational response and incident management.\n\nUse cases: Error notifications; Performance alerts; Operational incidents; Automated response; PagerDuty integration\n\nAWS: SNS topic ARNs for CloudWatch alarm ALARM state notifications and automated alerting\n\nValidation: Must be valid SNS topic ARNs if provided; topics must exist; enables automated alarm notifications",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "alarmDescription": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional human-readable description for the alarm enabling clear alarm purpose documentation. Provides detailed explanation of the alarm condition, threshold rationale, and expected actions for operational clarity.\n\nUse cases: Alarm documentation; Operational guidance; Threshold rationale; Action instructions\n\nAWS: CloudWatch alarm description for alarm documentation and operational guidance\n\nValidation: Optional descriptive string; appears in CloudWatch console and notifications; improves alarm understanding",
+                    "type": "string"
+                },
+                "alarmName": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired unique name for the CloudWatch alarm enabling alarm identification and management. Provides a descriptive name for the alarm that appears in the CloudWatch console and is used for SSM parameter export.\n\nUse cases: Alarm identification; Console display; SSM parameter naming; Notification messages\n\nAWS: CloudWatch alarm name for alarm identification and management\n\nValidation: Must be unique within the function; should be descriptive of alarm condition; used for SSM parameter naming",
+                    "type": "string"
+                },
+                "comparisonOperator": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired comparison operator for alarm threshold evaluation enabling flexible breach conditions. Specifies how to compare the metric value to the threshold (e.g., GreaterThanOrEqualToThreshold, LessThanThreshold) for alarm state determination.\n\nUse cases: Greater than for error counts; Less than for availability; Equal to for exact matches; Threshold comparison\n\nAWS: CloudWatch alarm comparison operator for threshold evaluation and alarm state determination\n\nValidation: Must be valid comparison operator string; converted to CDK enum; determines alarm triggering logic",
+                    "type": "string"
+                },
+                "datapointsToAlarm": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional number of datapoints that must breach threshold within evaluation periods enabling flexible alarm sensitivity. Specifies how many of the evaluation periods must breach the threshold (M out of N) for more nuanced alarm triggering.\n\nUse cases: Flexible sensitivity; Intermittent breach detection; M-out-of-N evaluation; False positive reduction\n\nAWS: CloudWatch alarm datapoints to alarm for M-out-of-N evaluation and flexible sensitivity\n\nValidation: Must be positive integer if provided; must be <= evaluationPeriods; defaults to evaluationPeriods",
+                    "type": "number"
+                },
+                "dimensions": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric dimensions for single metric alarms enabling specific metric instance selection. Provides key-value pairs for filtering metrics to specific instances with support for {{functionName}} placeholder for dynamic function name substitution.\n\nUse cases: Function-specific alarms; Environment filtering; Dynamic function names; Instance selection\n\nAWS: CloudWatch metric dimensions for single metric alarm filtering and instance selection\n\nValidation: Must be valid dimension key-value pairs if provided; supports {{functionName}} placeholder; enables metric filtering",
+                    "type": "object"
+                },
+                "evaluationPeriods": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired number of evaluation periods for alarm threshold comparison enabling sustained breach detection. Specifies how many consecutive periods the metric must breach the threshold before triggering the alarm for reducing false positives.\n\nUse cases: Sustained breach detection; False positive reduction; Alarm sensitivity; Threshold persistence\n\nAWS: CloudWatch alarm evaluation periods for sustained breach detection and alarm triggering\n\nValidation: Must be positive integer; determines alarm sensitivity; higher values reduce false positives",
+                    "type": "number"
+                },
+                "insufficientDataActions": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of SNS topic ARNs for INSUFFICIENT_DATA state notifications enabling data availability monitoring. Specifies SNS topics that receive notifications when the alarm has insufficient data for evaluation.\n\nUse cases: Data availability monitoring; Metric collection issues; Pipeline health; Data gap detection\n\nAWS: SNS topic ARNs for CloudWatch alarm INSUFFICIENT_DATA state notifications and data monitoring\n\nValidation: Must be valid SNS topic ARNs if provided; topics must exist; enables data availability notifications",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "metricName": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric name for single metric alarms enabling direct metric monitoring. Specifies the metric to monitor for alarm evaluation, validated against defined metric filters for custom metrics or used directly for AWS metrics.\n\nUse cases: Error count monitoring; Duration tracking; AWS Lambda metrics; Custom metric alarms\n\nAWS: CloudWatch metric name for single metric alarm evaluation and monitoring\n\nValidation: Must be valid metric name if provided; validated against metric filters for custom metrics; mutually exclusive with metrics array",
+                    "type": "string"
+                },
+                "metrics": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of metric data queries for metric math alarms enabling complex multi-metric conditions. Defines multiple metrics and expressions for calculated alarm conditions combining metrics with mathematical operations.\n\nUse cases: Multi-metric alarms; Calculated thresholds; Aggregated monitoring; Complex alerting logic; Derived metrics\n\nAWS: CloudWatch metric data queries for metric math alarms and complex alarm conditions\n\nValidation: Must be array of MetricDataQueryProps if provided; mutually exclusive with metricName; enables metric math alarms",
+                    "items": {
+                        "$ref": "#/definitions/MetricDataQueryProps"
+                    },
+                    "type": "array"
+                },
+                "namespace": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric namespace for single metric alarms enabling metric source identification. Specifies the namespace containing the metric, with automatic validation bypass for AWS/* namespaces and validation for custom namespaces.\n\nUse cases: Custom metric namespaces; AWS service metrics; Namespace identification; Metric validation\n\nAWS: CloudWatch metric namespace for single metric alarm source identification\n\nValidation: Must be valid namespace if provided; AWS/* namespaces bypass validation; custom namespaces validated against metric filters",
+                    "type": "string"
+                },
+                "okActions": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of SNS topic ARNs for OK state notifications enabling recovery confirmation. Specifies SNS topics that receive notifications when the alarm transitions to OK state for confirming issue resolution.\n\nUse cases: Recovery notifications; Issue resolution; Status updates; Incident closure\n\nAWS: SNS topic ARNs for CloudWatch alarm OK state notifications and recovery confirmation\n\nValidation: Must be valid SNS topic ARNs if provided; topics must exist; enables recovery notifications",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "period": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional metric evaluation period in seconds for single metric alarms defining aggregation time window. Specifies how long to aggregate metric data points before comparing to threshold for alarm evaluation.\n\nUse cases: Short-term monitoring; Long-term trends; Aggregation windows; Alarm sensitivity tuning\n\nAWS: CloudWatch metric period for single metric alarm aggregation and evaluation windows\n\nValidation: Must be valid period in seconds if provided; typically 60, 300, or 3600; affects alarm sensitivity",
+                    "type": "number"
+                },
+                "statistic": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric statistic for single metric alarms enabling metric aggregation. Specifies how to aggregate metric data points (e.g., Sum, Average, Maximum) for alarm threshold comparison.\n\nUse cases: Sum for error counts; Average for durations; Maximum for peaks; Statistical analysis\n\nAWS: CloudWatch metric statistic for single metric alarm aggregation and evaluation\n\nValidation: Must be valid statistic if provided (Sum, Average, Maximum, Minimum, SampleCount); used with metricName",
+                    "type": "string"
+                },
+                "threshold": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired threshold value for alarm comparison enabling breach detection. Specifies the numeric value that the metric is compared against using the comparison operator to determine alarm state.\n\nUse cases: Error count thresholds; Duration limits; Rate limits; Performance boundaries\n\nAWS: CloudWatch alarm threshold for metric comparison and breach detection\n\nValidation: Must be numeric value; compared against metric using comparisonOperator; determines alarm triggering",
+                    "type": "number"
+                },
+                "treatMissingData": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional missing data treatment strategy for alarm evaluation enabling robust alarm behavior. Specifies how the alarm should behave when metric data is missing (e.g., notBreaching, breaching, ignore, missing) for handling data gaps.\n\nUse cases: Data gap handling; Alarm robustness; Missing data strategy; Evaluation continuity\n\nAWS: CloudWatch alarm missing data treatment for handling data gaps and evaluation continuity\n\nValidation: Must be valid treatment string if provided (notBreaching, breaching, ignore, missing); defaults to notBreaching",
+                    "type": "string"
+                },
+                "unit": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric unit for single metric alarms enabling proper metric interpretation. Specifies the unit of measurement for the metric (e.g., Count, Milliseconds, Megabytes) for correct threshold comparison.\n\nUse cases: Unit specification; Metric interpretation; Threshold comparison; Alarm configuration\n\nAWS: CloudWatch metric unit for single metric alarm interpretation and evaluation\n\nValidation: Must be valid CloudWatch metric unit if provided; used for metric interpretation and threshold comparison",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "alarmName",
+                "comparisonOperator",
+                "evaluationPeriods",
+                "threshold"
+            ],
+            "type": "object"
+        },
         "CfnParameterProps": {
             "additionalProperties": false,
             "properties": {
@@ -229,6 +329,13 @@
                     "description": "Q-ENHANCED-PROPERTY\nOptional additional resource permissions for Lambda function access control in data processing workflows. Provides fine-grained permissions beyond basic invoke for complex S3 data operations and cross-service integration scenarios.\n\nUse cases: S3 bucket access for data processing; Glue catalog permissions; DynamoDB table access; SNS notification permissions\n\nAWS: Lambda resource policy permissions for data processing access control and service integration\n\nValidation: Must be valid SID to AdditionalResourcePermission mapping; enables complex data processing permission scenarios\n  *",
                     "type": "object"
                 },
+                "alarms": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of CloudWatch alarms for Lambda function monitoring and alerting enabling automated incident response. Defines alarm conditions, thresholds, and SNS notifications for both custom metrics (from metricFilters) and AWS Lambda metrics with automatic metric validation and placeholder replacement.\n\nUse cases: Error rate alerting; Performance monitoring; Threshold breaches; Automated notifications; Incident management; Multi-metric conditions\n\nAWS: CloudWatch alarms for Lambda function monitoring and automated alerting with SNS integration\n\nValidation: Optional array of AlarmProps; custom metrics validated against metricFilters; AWS/* metrics bypass validation; supports {{functionName}} placeholder",
+                    "items": {
+                        "$ref": "#/definitions/AlarmProps"
+                    },
+                    "type": "array"
+                },
                 "description": {
                     "description": "Q-ENHANCED-PROPERTY\nOptional description of the Lambda function explaining its purpose and data processing operations for documentation and management clarity. Provides human-readable description of the function's purpose and the data operations it performs.\n\nUse cases: Function documentation; Operational clarity; Data processing explanation; Management understanding\n\nAWS: AWS Lambda function description for documentation and operational clarity\n\nValidation: Must be descriptive text if provided; recommended for function documentation and operational understanding",
                     "type": "string"
@@ -279,6 +386,13 @@
                     "description": "Q-ENHANCED-PROPERTY\nOptional map of existing layer version ARNs to be directly added to the function enabling external dependency integration. Provides direct layer ARN references for attaching existing layers to the function for external dependencies and shared code.\n\nUse cases: External dependencies; Existing layer integration; Shared code; Layer reuse\n\nAWS: AWS Lambda layer ARNs for external layer integration and dependency management\n\nValidation: Must be valid layer name to ARN mapping if provided; enables external layer integration when specified\n  *",
                     "type": "object"
                 },
+                "logInsightsQueries": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of CloudWatch Logs Insights saved queries for Lambda function log analysis enabling pre-built troubleshooting queries. Defines saved query definitions that can be executed against function logs for rapid error analysis, performance investigation, and operational insights with automatic log group derivation.\n\nUse cases: Error log analysis; Performance troubleshooting; Request tracing; Operational monitoring; Cross-function queries\n\nAWS: CloudWatch Logs Insights query definitions for Lambda function log analysis and troubleshooting\n\nValidation: Optional array of LogInsightsQueryProps; queries auto-derive log groups if not specified; exported to SSM for discoverability",
+                    "items": {
+                        "$ref": "#/definitions/LogInsightsQueryProps"
+                    },
+                    "type": "array"
+                },
                 "maxEventAgeSeconds": {
                     "description": "Q-ENHANCED-PROPERTY\nOptional maximum event age in seconds controlling event processing time limits for data processing workflows. Defines the maximum age of events that Lambda will process before discarding them for event freshness and processing relevance.\n\nUse cases: Event freshness; Processing time limits; Data relevance; Event lifecycle management\n\nAWS: AWS Lambda maximum event age for event processing time control\n\nValidation: Must be between 60 and 21600 seconds if provided; defaults to 21600 seconds (6 hours)",
                     "type": "number"
@@ -286,6 +400,13 @@
                 "memorySizeMB": {
                     "description": "Q-ENHANCED-PROPERTY\nOptional memory allocation in MB for function execution enabling performance optimization and resource management. Defines the amount of memory allocated to the function affecting CPU power allocation and execution performance for data processing operations.\n\nUse cases: Performance optimization; Memory allocation; CPU power; Resource management\n\nAWS: AWS Lambda memory size for function performance and resource allocation\n\nValidation: Must be between 128 and 10240 MB if provided; defaults to 128 MB; affects performance and cost",
                     "type": "number"
+                },
+                "metricFilters": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of CloudWatch metric filters for Lambda function custom metric extraction enabling log-to-metric transformation. Defines filter patterns and transformations for extracting custom metrics from function logs with automatic SSM export for cross-module discoverability and dashboard integration.\n\nUse cases: Error rate metrics; Performance tracking; Business metrics; Custom monitoring; Operational dashboards; Alerting\n\nAWS: CloudWatch Logs metric filters for Lambda function custom metric extraction and monitoring\n\nValidation: Optional array of MetricFilterProps; metrics exported to SSM; enables custom metric monitoring and alerting",
+                    "items": {
+                        "$ref": "#/definitions/MetricFilterProps"
+                    },
+                    "type": "array"
                 },
                 "reservedConcurrentExecutions": {
                     "description": "Q-ENHANCED-PROPERTY\nOptional reserved concurrent executions for function capacity management enabling performance control and cost optimization. Defines the maximum number of concurrent executions reserved for the function affecting performance isolation and resource allocation.\n\nUse cases: Performance control; Capacity management; Cost optimization; Resource isolation\n\nAWS: AWS Lambda reserved concurrent executions for function capacity and performance management\n\nValidation: Must be positive integer if provided; affects function concurrency and account limits",
@@ -347,6 +468,32 @@
             "required": [
                 "layerName",
                 "src"
+            ],
+            "type": "object"
+        },
+        "LogInsightsQueryProps": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CloudWatch Logs Insights saved queries enabling pre-built log analysis for Lambda function troubleshooting and monitoring. Defines saved query definitions that can be executed against Lambda function logs for rapid error analysis, performance investigation, and operational insights.\n\nUse cases: Error log analysis; Performance troubleshooting; Request tracing; Operational monitoring; Log pattern analysis\n\nAWS: CloudWatch Logs Insights query definitions for Lambda function log analysis and troubleshooting\n\nValidation: queryName must be unique; queryString must be valid Logs Insights syntax; logGroupNames optional (defaults to function log group)",
+            "properties": {
+                "logGroupNames": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional array of CloudWatch log group names for cross-function query analysis enabling multi-function log correlation. When specified, query executes across multiple log groups for comprehensive analysis; when omitted, automatically uses the Lambda function's log group.\n\nUse cases: Cross-function analysis; Multi-service correlation; Distributed tracing; Pipeline-wide monitoring\n\nAWS: CloudWatch log group names for Logs Insights query scope and cross-function analysis\n\nValidation: Must be valid log group names if provided; defaults to function log group when omitted; enables cross-function queries",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "queryName": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired unique name for the CloudWatch Logs Insights query enabling query identification and organization. Provides a descriptive name for the saved query that appears in the CloudWatch console and can be referenced programmatically for log analysis workflows.\n\nUse cases: Query identification; Console display; Programmatic reference; Query organization\n\nAWS: CloudWatch Logs Insights query name for saved query identification and management\n\nValidation: Must be unique within the function; should be descriptive of query purpose; used for SSM parameter naming",
+                    "type": "string"
+                },
+                "queryString": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired CloudWatch Logs Insights query string defining log analysis logic for Lambda function troubleshooting. Specifies the query syntax for filtering, parsing, and analyzing Lambda function logs with automatic whitespace cleaning and limit clause addition.\n\nUse cases: Error filtering; Performance analysis; Request tracing; Log pattern matching; Statistical aggregation\n\nAWS: CloudWatch Logs Insights query syntax for Lambda function log analysis and pattern extraction\n\nValidation: Must be valid Logs Insights query syntax; leading whitespace automatically stripped; limit clause added if missing",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "queryName",
+                "queryString"
             ],
             "type": "object"
         },
@@ -649,6 +796,125 @@
                 "name",
                 "owner",
                 "portfolio_arn"
+            ],
+            "type": "object"
+        },
+        "MetricDataQueryProps": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CloudWatch metric data queries enabling metric math expressions and multi-metric alarm conditions. Defines individual metrics or expressions used in metric math alarms for complex alerting logic combining multiple metrics.\n\nUse cases: Metric math expressions; Multi-metric alarms; Calculated metrics; Complex alerting logic; Aggregated monitoring\n\nAWS: CloudWatch metric data query for metric math alarms and complex metric expressions\n\nValidation: id required; either expression or metricName/namespace required; supports both metric math and metric stats",
+            "properties": {
+                "dimensions": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric dimensions for metric filtering enabling specific metric instance selection. Provides key-value pairs for filtering metrics to specific instances (e.g., FunctionName for Lambda metrics).\n\nUse cases: Function-specific metrics; Environment filtering; Service segmentation; Instance selection\n\nAWS: CloudWatch metric dimensions for metric filtering and instance selection\n\nValidation: Must be valid dimension key-value pairs if provided; enables metric filtering; supports placeholders",
+                    "type": "object"
+                },
+                "expression": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional metric math expression for calculated metrics enabling complex alerting logic combining multiple metrics. Defines mathematical operations on metrics (e.g., \"m1+m2\", \"m1/m2*100\") for derived metrics and complex alarm conditions.\n\nUse cases: Error rate calculations; Percentage metrics; Aggregated metrics; Derived values; Complex alerting\n\nAWS: CloudWatch metric math expression for calculated metrics and complex alarm conditions\n\nValidation: Must be valid metric math syntax if provided; references other metric IDs; mutually exclusive with metricName",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired unique identifier for the metric data query used in metric math expressions enabling metric referencing. Provides a short identifier (e.g., \"m1\", \"m2\", \"total\") that can be referenced in metric math expressions for combining and calculating metrics.\n\nUse cases: Expression references; Metric identification; Math operations; Query organization\n\nAWS: CloudWatch metric data query ID for metric math expression references and metric identification\n\nValidation: Must be unique within the alarm; used in metric math expressions; typically short alphanumeric identifier",
+                    "type": "string"
+                },
+                "label": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional human-readable label for the metric data query enabling clear metric identification in dashboards and alarms. Provides a descriptive label that appears in CloudWatch console and alarm descriptions for better metric understanding.\n\nUse cases: Dashboard labels; Alarm descriptions; Metric identification; User-friendly naming\n\nAWS: CloudWatch metric data query label for metric identification and display\n\nValidation: Optional descriptive string; used for display purposes; improves metric readability",
+                    "type": "string"
+                },
+                "metricName": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric name for metric stats queries enabling direct metric referencing in alarms. Specifies the metric to query from CloudWatch Metrics for alarm evaluation, mutually exclusive with expression.\n\nUse cases: Direct metric queries; Standard metric alarms; AWS service metrics; Custom metric alarms\n\nAWS: CloudWatch metric name for metric stats queries and direct metric referencing\n\nValidation: Must be valid metric name if provided; mutually exclusive with expression; requires namespace",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric namespace for metric stats queries enabling metric source identification. Specifies the namespace containing the metric for alarm evaluation, required when using metricName.\n\nUse cases: Namespace identification; Metric source specification; AWS service metrics; Custom metric namespaces\n\nAWS: CloudWatch metric namespace for metric stats queries and metric source identification\n\nValidation: Must be valid namespace if provided; required with metricName; identifies metric source",
+                    "type": "string"
+                },
+                "period": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional metric evaluation period in seconds defining the time window for metric aggregation. Specifies how long to aggregate metric data points before applying the statistic for alarm evaluation.\n\nUse cases: Short-term monitoring; Long-term trends; Aggregation windows; Alarm sensitivity\n\nAWS: CloudWatch metric period for metric data aggregation and evaluation windows\n\nValidation: Must be valid period in seconds if provided; typically 60, 300, or 3600; affects alarm sensitivity",
+                    "type": "number"
+                },
+                "returnData": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional flag indicating whether this metric data should be returned in query results enabling selective metric output. Controls whether the metric appears in alarm evaluation results, typically true for expressions and false for intermediate metrics.\n\nUse cases: Expression output control; Intermediate metric hiding; Result filtering; Alarm evaluation\n\nAWS: CloudWatch metric data query return data flag for selective metric output and alarm evaluation\n\nValidation: Defaults to true for expressions, false for metrics; controls metric visibility in results",
+                    "type": "boolean"
+                },
+                "statistic": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric statistic for metric aggregation enabling statistical analysis of metric data. Specifies how to aggregate metric data points (e.g., Sum, Average, Maximum) for alarm evaluation.\n\nUse cases: Sum for counts; Average for durations; Maximum for peaks; Minimum for lows; Statistical analysis\n\nAWS: CloudWatch metric statistic for metric data aggregation and statistical analysis\n\nValidation: Must be valid statistic if provided (Sum, Average, Maximum, Minimum, SampleCount); used with metricName",
+                    "type": "string"
+                },
+                "unit": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric unit for metric value interpretation enabling proper metric analysis. Specifies the unit of measurement for the metric (e.g., Count, Milliseconds, Megabytes) for correct interpretation.\n\nUse cases: Unit specification; Metric interpretation; Dashboard display; Alarm configuration\n\nAWS: CloudWatch metric unit for metric value interpretation and analysis\n\nValidation: Must be valid CloudWatch metric unit if provided; used for metric interpretation",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "type": "object"
+        },
+        "MetricFilterProps": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CloudWatch metric filters enabling extraction of custom metrics from Lambda function logs for monitoring and alerting. Defines filter patterns and transformations for converting log data into CloudWatch Metrics with support for JSON, space-delimited, and text patterns.\n\nUse cases: Error rate monitoring; Performance tracking; Business metric extraction; Custom alerting; Operational dashboards\n\nAWS: CloudWatch Logs metric filter for log-to-metric transformation and custom metric publishing\n\nValidation: filterName must be unique; filterPattern must be valid syntax; metricTransformations array required",
+            "properties": {
+                "filterName": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired unique name for the CloudWatch metric filter enabling filter identification and management. Provides a descriptive name for the metric filter that appears in the CloudWatch console and is used for SSM parameter export.\n\nUse cases: Filter identification; Console display; SSM parameter naming; Filter management\n\nAWS: CloudWatch Logs metric filter name for filter identification and management\n\nValidation: Must be unique within the function; should be descriptive of filter purpose; used for SSM parameter naming",
+                    "type": "string"
+                },
+                "filterPattern": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired CloudWatch Logs filter pattern for matching and extracting data from log events enabling flexible log parsing. Supports JSON pattern syntax for structured logs, space-delimited patterns for formatted logs, and simple text patterns for basic matching.\n\nUse cases: JSON log parsing; Space-delimited field extraction; Text pattern matching; Error detection; Performance data extraction\n\nAWS: CloudWatch Logs filter pattern for log event matching and data extraction\n\nValidation: Must be valid filter pattern syntax; supports JSON, space-delimited, and text patterns; enables flexible log parsing",
+                    "type": "string"
+                },
+                "metricTransformations": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired array of metric transformations defining how matched log data is converted to CloudWatch Metrics enabling multiple metrics per filter. Specifies one or more metric transformations that extract different values from the same log events for comprehensive monitoring.\n\nUse cases: Multiple metrics per filter; Error and duration tracking; Multi-dimensional monitoring; Comprehensive observability\n\nAWS: CloudWatch metric transformations for log-to-metric conversion and multi-metric publishing\n\nValidation: Must be non-empty array of MetricTransformationProps; each transformation creates a separate metric; enables multi-metric filters",
+                    "items": {
+                        "$ref": "#/definitions/MetricTransformationProps"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "filterName",
+                "filterPattern",
+                "metricTransformations"
+            ],
+            "type": "object"
+        },
+        "MetricTransformationProps": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CloudWatch metric transformations defining how log data is converted to metrics for monitoring and alerting. Specifies the transformation logic for extracting metric values from Lambda function logs and publishing them to CloudWatch Metrics with dimensions and units.\n\nUse cases: Error rate metrics; Performance metrics; Business metrics; Custom monitoring; Operational dashboards\n\nAWS: CloudWatch metric transformation for log-to-metric conversion and custom metric publishing\n\nValidation: metricName and metricNamespace required; metricValue must be valid extraction pattern; unit and dimensions optional",
+            "properties": {
+                "defaultValue": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional default metric value when filter pattern does not match log events enabling consistent metric publishing. Provides a fallback value for the metric when the filter pattern doesn't match any log events, ensuring continuous metric data.\n\nUse cases: Zero-value defaults; Missing data handling; Continuous metric streams; Gap filling\n\nAWS: CloudWatch metric default value for non-matching log events and continuous metric publishing\n\nValidation: Must be numeric if provided; used when filter pattern doesn't match; enables gap-free metrics",
+                    "type": "number"
+                },
+                "dimensions": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric dimensions for metric segmentation and filtering enabling multi-dimensional metric analysis. Provides key-value pairs for segmenting metrics by attributes like environment, service, or function name for detailed analysis and filtering.\n\nUse cases: Environment segmentation; Service filtering; Function-level metrics; Multi-dimensional analysis\n\nAWS: CloudWatch metric dimensions for metric segmentation and multi-dimensional analysis\n\nValidation: Must be valid dimension key-value pairs if provided; enables metric filtering and segmentation",
+                    "type": "object"
+                },
+                "metricName": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired CloudWatch metric name for the transformed metric enabling metric identification and monitoring. Defines the specific metric name that will be published to CloudWatch Metrics for tracking Lambda function behavior and performance.\n\nUse cases: Error count tracking; Duration monitoring; Custom business metrics; Performance indicators\n\nAWS: CloudWatch metric name for custom metric publishing and monitoring dashboards\n\nValidation: Must be valid metric name; used for SSM parameter export; appears in CloudWatch console",
+                    "type": "string"
+                },
+                "metricNamespace": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired CloudWatch metric namespace for metric organization and grouping enabling logical metric categorization. Defines the namespace under which the metric will be published for organizing related metrics and enabling namespace-level queries.\n\nUse cases: Metric organization; Namespace-level queries; Dashboard grouping; Cost allocation\n\nAWS: CloudWatch metric namespace for custom metric organization and categorization\n\nValidation: Must be valid namespace; used for SSM parameter export; enables metric grouping",
+                    "type": "string"
+                },
+                "metricValue": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired metric value extraction pattern defining how to extract numeric values from log events for metric publishing. Specifies the value to publish to CloudWatch Metrics, either as a constant (e.g., \"1\" for counts) or as a log field reference (e.g., \"$duration\" for extracted values).\n\nUse cases: Error counting; Duration extraction; Memory usage tracking; Custom value extraction\n\nAWS: CloudWatch metric value for log-to-metric transformation and numeric data extraction\n\nValidation: Must be valid value pattern; supports constants and field references; enables flexible metric extraction",
+                    "type": "string"
+                },
+                "unit": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional CloudWatch metric unit for metric value interpretation enabling proper metric visualization and analysis. Specifies the unit of measurement for the metric value (e.g., Count, Milliseconds, Megabytes) for correct display in dashboards and alarms.\n\nUse cases: Duration metrics; Memory metrics; Count metrics; Rate metrics; Size metrics\n\nAWS: CloudWatch metric unit for metric value interpretation and dashboard visualization\n\nValidation: Must be valid CloudWatch metric unit if provided; used for SSM parameter export; enables proper metric display",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "metricName",
+                "metricNamespace",
+                "metricValue"
             ],
             "type": "object"
         },

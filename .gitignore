@@ -57,3 +57,5 @@ build/
 dist/
 
 .kiro
+
+e2e

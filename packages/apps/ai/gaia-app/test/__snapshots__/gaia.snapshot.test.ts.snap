@@ -174,6 +174,17 @@ exports[`GAIA Snapshot Tests GAIA App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-gaia-app:lambda:databasesetupfunctionhandler:log-group",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-gaia-app:lambda:databasesetupfunctionhandler:name",
         },
         "Value": {
@@ -796,6 +807,413 @@ def sort_filter_rules(json_obj):
         "Type": "AWS::IAM::Policy",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Code": {
+            "S3Bucket": {
+              "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+            },
+            "S3Key": "REPLACED-GENERATED-NAME.zip",
+          },
+          "Handler": "index.handler",
+          "Role": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+          "Runtime": {
+            "Fn::FindInMap": [
+              "LatestNodeRuntimeMap",
+              {
+                "Ref": "AWS::Region",
+              },
+              "value",
+            ],
+          },
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "gaia",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-gaia-app",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+          "Timeout": 900,
+        },
+        "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": [
+              {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com",
+                },
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "ManagedPolicyArns": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+              ],
+            },
+          ],
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "gaia",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-gaia-app",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Role",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "PolicyDocument": {
+            "Statement": [
+              {
+                "Action": [
+                  "logs:PutRetentionPolicy",
+                  "logs:DeleteRetentionPolicy",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+            ],
+            "Version": "2012-10-17",
+          },
+          "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+          "Roles": [
+            {
+              "Ref": "REPLACED-CFN-LOGICAL-ID",
+            },
+          ],
+        },
+        "Type": "AWS::IAM::Policy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "Stack description parameter to update on version changes",
           "Name": "/test-org/test-domain/test-gaia-app/aws-solution",
@@ -1003,6 +1421,159 @@ def sort_filter_rules(json_obj):
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaDLQ",
                 "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
               },
@@ -1115,6 +1686,131 @@ def sort_filter_rules(json_obj):
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+        ],
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+              },
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-gaia-app/lambda/databasesetupfunction-handler/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "gaia",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-gaia-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
             ],
           },
         },
@@ -3387,6 +4083,88 @@ def sort_filter_rules(json_obj):
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "AwsSolutions-IAM5",
                 "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
@@ -4215,6 +4993,60 @@ def sort_filter_rules(json_obj):
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
               "Arn",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "Name": "/test-org/test-domain/test-gaia-app/lambda/rest-api-handler/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "gaia",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-gaia-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
             ],
           },
         },
@@ -6208,6 +7040,88 @@ def sort_filter_rules(json_obj):
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "AwsSolutions-IAM5",
                 "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
@@ -6530,6 +7444,88 @@ def sort_filter_rules(json_obj):
           },
         },
         "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Metadata": {
@@ -6944,6 +7940,88 @@ def sort_filter_rules(json_obj):
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "AwsSolutions-IAM5",
                 "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
@@ -7339,6 +8417,100 @@ def sort_filter_rules(json_obj):
           },
         },
         "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Metadata": {
@@ -8813,6 +9985,88 @@ def sort_filter_rules(json_obj):
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "AwsSolutions-IAM5",
                 "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
               },
@@ -9735,6 +10989,60 @@ def sort_filter_rules(json_obj):
           },
         },
         "Properties": {
+          "Name": "/test-org/test-domain/test-gaia-app/lambda/model-interface-request-handler/log-group",
+          "Tags": {
+            "mdaa_cdk_app": "gaia",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-gaia-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "LogGroupName",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
           "Name": "/test-org/test-domain/test-gaia-app/lambda/model-interface-request-handler/name",
           "Tags": {
             "mdaa_cdk_app": "gaia",
@@ -9921,6 +11229,104 @@ def sort_filter_rules(json_obj):
           },
         },
         "Type": "AWS::Lambda::Function",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Only run during deployment, concurrency does not fit the scenario.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Only run during deployment, concurrency does not fit the scenario.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Only run during deployment, concurrency does not fit the scenario.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource, error handling is managed by Cloudformation.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource, error handling is managed by Cloudformation.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource, error handling is managed by Cloudformation.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource only during deployment.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource only during deployment.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaInsideVPC",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource only during deployment.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Event handler lambda resources unknown at deployment, used for deployment only",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Metadata": {
@@ -14533,6 +15939,80 @@ def sort_filter_rules(json_obj):
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] Function is S3 Event handler. S3 service will provide concurrency and anti-hammering protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] Function is S3 Event handler. S3 service will provide concurrency and anti-hammering protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] Function is S3 Event handler. S3 service will provide concurrency and anti-hammering protections.",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] X-Ray actions only accept wildcard and s3 operations restricted to kms key and s3 buckets managed by stack",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "AwsSolutions-IAM5",
                 "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] X-Ray actions only accept wildcard and s3 operations restricted to kms key and s3 buckets managed by stack",
               },
@@ -15696,6 +17176,96 @@ def sort_filter_rules(json_obj):
           ],
         },
         "Type": "AWS::SQS::QueuePolicy",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Function will be throttled by upstream services.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Function will be throttled by upstream services.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Function will be throttled by upstream services.",
+              },
+              {
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Managed policies are restrictive, logs group resource unknown at deployment and only used during deployment",
+              },
+              {
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Policy restricted to stack managed processing bucket and embedding model invoke endpoint unknown at deployment",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Inline policy managed by MDAA framework.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Inline policy managed by MDAA framework.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Inline policy managed by MDAA framework.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Metadata": {
@@ -17110,6 +18680,88 @@ def sort_filter_rules(json_obj):
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
                 "id": "NIST.800.53.R5-LambdaDLQ",
                 "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
               },
@@ -18008,6 +19660,88 @@ def sort_filter_rules(json_obj):
           "Principal": "secretsmanager.amazonaws.com",
         },
         "Type": "AWS::Lambda::Permission",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Metadata": {
+          "cdk_nag": {
+            "rules_to_suppress": [
+              {
+                "applies_to": [
+                  "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                ],
+                "id": "AwsSolutions-IAM4",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+              },
+              {
+                "applies_to": [
+                  "Resource::*",
+                ],
+                "id": "AwsSolutions-IAM5",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+              },
+              {
+                "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "HIPAA.Security-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "PCI.DSS.321-IAMNoInlinePolicy",
+                "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and error handling will be handled by Secrets Manager.",
+              },
+              {
+                "id": "NIST.800.53.R5-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and will only execute once a month. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and error handling will be handled by Secrets Manager.",
+              },
+              {
+                "id": "HIPAA.Security-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and will only execute once a month. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaDLQ",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and error handling will be handled by Secrets Manager.",
+              },
+              {
+                "id": "PCI.DSS.321-LambdaConcurrency",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and will only execute once a month. Reserved concurrency not appropriate.",
+              },
+              {
+                "id": "AwsSolutions-L1",
+                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+              },
+            ],
+          },
+        },
+        "Properties": {
+          "LogGroupName": {
+            "Fn::Join": [
+              "",
+              [
+                "/aws/lambda/",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+          "ServiceToken": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "Arn",
+            ],
+          },
+        },
+        "Type": "Custom::LogRetention",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Metadata": {
@@ -19161,6 +20895,17 @@ exports[`GAIA Snapshot Tests GAIA Stack Snapshot Test 1`] = `
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-gaia-main:lambda:databasesetupfunctionhandler:log-group",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "LogGroupName",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-gaia-main:lambda:databasesetupfunctionhandler:name",
       },
       "Value": {
@@ -19783,6 +21528,413 @@ def sort_filter_rules(json_obj):
       "Type": "AWS::IAM::Policy",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "REPLACED-GENERATED-NAME.zip",
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+        "Runtime": {
+          "Fn::FindInMap": [
+            "LatestNodeRuntimeMap",
+            {
+              "Ref": "AWS::Region",
+            },
+            "value",
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "gaia",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-gaia-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "gaia",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-gaia-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutRetentionPolicy",
+                "logs:DeleteRetentionPolicy",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "REPLACED-CFN-LOGICAL-ID",
+        "Roles": [
+          {
+            "Ref": "REPLACED-CFN-LOGICAL-ID",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "Description": "Stack description parameter to update on version changes",
         "Name": "/test-org/test-domain/test-gaia-main/aws-solution",
@@ -19990,6 +22142,159 @@ def sort_filter_rules(json_obj):
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaDLQ",
               "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
             },
@@ -20102,6 +22407,131 @@ def sort_filter_rules(json_obj):
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+      ],
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and error handling will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/custom-constructs/lib/custom.ts:LINE:COL] Function is for custom resource and will only execute during stack deployement. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment and interacts only with S3.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment. Errors will be handled by CloudFormation.",
+            },
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Function is used only as custom resource during CDK deployment.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] Policy managed by CDK and only used during deployment.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-gaia-main/lambda/databasesetupfunction-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "gaia",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-gaia-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -22374,6 +24804,88 @@ def sort_filter_rules(json_obj):
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "AwsSolutions-IAM5",
               "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
@@ -23202,6 +25714,60 @@ def sort_filter_rules(json_obj):
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
             "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/rest-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Name": "/test-org/test-domain/test-gaia-main/lambda/rest-api-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "gaia",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-gaia-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
           ],
         },
       },
@@ -25195,6 +27761,88 @@ def sort_filter_rules(json_obj):
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "AwsSolutions-IAM5",
               "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
@@ -25517,6 +28165,88 @@ def sort_filter_rules(json_obj):
         },
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Metadata": {
@@ -25931,6 +28661,88 @@ def sort_filter_rules(json_obj):
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "AwsSolutions-IAM5",
               "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
@@ -26326,6 +29138,100 @@ def sort_filter_rules(json_obj):
         },
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Lambda in vpc is not enforced, outgoing messages just communicates to socket gateway.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/websocket-api.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Metadata": {
@@ -27800,6 +30706,88 @@ def sort_filter_rules(json_obj):
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "AwsSolutions-IAM5",
               "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/role.ts:LINE:COL] LogStream names dynamically generated by Lambda. Wildcard limited to log stream name.",
             },
@@ -28722,6 +31710,60 @@ def sort_filter_rules(json_obj):
         },
       },
       "Properties": {
+        "Name": "/test-org/test-domain/test-gaia-main/lambda/model-interface-request-handler/log-group",
+        "Tags": {
+          "mdaa_cdk_app": "gaia",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-gaia-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "LogGroupName",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/model-interfaces/langchain/index.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
         "Name": "/test-org/test-domain/test-gaia-main/lambda/model-interface-request-handler/name",
         "Tags": {
           "mdaa_cdk_app": "gaia",
@@ -28908,6 +31950,104 @@ def sort_filter_rules(json_obj):
         },
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Only run during deployment, concurrency does not fit the scenario.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Only run during deployment, concurrency does not fit the scenario.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Only run during deployment, concurrency does not fit the scenario.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource, error handling is managed by Cloudformation.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource, error handling is managed by Cloudformation.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource, error handling is managed by Cloudformation.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource only during deployment.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource only during deployment.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaInsideVPC",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Used in a custom resource only during deployment.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/aurora-pgvector/create-aurora-workspace.ts:LINE:COL] Event handler lambda resources unknown at deployment, used for deployment only",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Metadata": {
@@ -33520,6 +36660,80 @@ def sort_filter_rules(json_obj):
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] Function is S3 Event handler. S3 service will provide concurrency and anti-hammering protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] Function is S3 Event handler. S3 service will provide concurrency and anti-hammering protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] Function is S3 Event handler. S3 service will provide concurrency and anti-hammering protections.",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] X-Ray actions only accept wildcard and s3 operations restricted to kms key and s3 buckets managed by stack",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "AwsSolutions-IAM5",
               "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] X-Ray actions only accept wildcard and s3 operations restricted to kms key and s3 buckets managed by stack",
             },
@@ -34683,6 +37897,96 @@ def sort_filter_rules(json_obj):
         ],
       },
       "Type": "AWS::SQS::QueuePolicy",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Function will be throttled by upstream services.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Function will be throttled by upstream services.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Function will be throttled by upstream services.",
+            },
+            {
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Managed policies are restrictive, logs group resource unknown at deployment and only used during deployment",
+            },
+            {
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Policy restricted to stack managed processing bucket and embedding model invoke endpoint unknown at deployment",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Inline policy managed by MDAA framework.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Inline policy managed by MDAA framework.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/website-crawling-workflow.ts:LINE:COL] Inline policy managed by MDAA framework.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Metadata": {
@@ -36097,6 +39401,88 @@ def sort_filter_rules(json_obj):
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked via API Gateway with WAF protections.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
               "id": "NIST.800.53.R5-LambdaDLQ",
               "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/workspaces/delete-workspace.ts:LINE:COL] Function is API implementation and will be invoked synchronously.",
             },
@@ -36995,6 +40381,88 @@ def sort_filter_rules(json_obj):
         "Principal": "secretsmanager.amazonaws.com",
       },
       "Type": "AWS::Lambda::Permission",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Metadata": {
+        "cdk_nag": {
+          "rules_to_suppress": [
+            {
+              "applies_to": [
+                "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+              "id": "AwsSolutions-IAM4",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires AWSLambdaBasicExecutionRole for CloudWatch Logs management. This is a CDK-managed resource with minimal permissions.",
+            },
+            {
+              "applies_to": [
+                "Resource::*",
+              ],
+              "id": "AwsSolutions-IAM5",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource requires wildcard permissions for CloudWatch Logs API calls. Log stream names are dynamically generated and cannot be predetermined.",
+            },
+            {
+              "id": "NIST.800.53.R5-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "HIPAA.Security-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "PCI.DSS.321-IAMNoInlinePolicy",
+              "reason": "[MDAA:@aws-mdaa/lambda-constructs/lib/function.ts:LINE:COL] LogRetention custom resource uses inline policy as part of CDK implementation. This is a managed construct with minimal, scoped permissions for log retention management.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and error handling will be handled by Secrets Manager.",
+            },
+            {
+              "id": "NIST.800.53.R5-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and will only execute once a month. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and error handling will be handled by Secrets Manager.",
+            },
+            {
+              "id": "HIPAA.Security-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and will only execute once a month. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaDLQ",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and error handling will be handled by Secrets Manager.",
+            },
+            {
+              "id": "PCI.DSS.321-LambdaConcurrency",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/shared/index.ts:LINE:COL] Function is for Secrets Manager rotation and will only execute once a month. Reserved concurrency not appropriate.",
+            },
+            {
+              "id": "AwsSolutions-L1",
+              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "REPLACED-CFN-LOGICAL-ID",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Metadata": {
