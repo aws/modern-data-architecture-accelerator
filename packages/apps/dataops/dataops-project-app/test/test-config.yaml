@@ -45,6 +45,19 @@ s3OutputKmsKeyArn: ssm:/sample-org/instance1/datalake/kms/id
 # Glue connections.
 glueCatalogKmsKeyArn: ssm:/sample-org/shared/glue-catalog/kms/arn
 
+# Project-level Lake Formation configuration
+# Defines tag vocabulary that can be used across all databases in the project
+lakeFormation:
+  # Define Lake Formation tags with all possible values (tag vocabulary)
+  # These tags are created at the account level and can be used by any database
+  lfTags:
+    - tagKey: environment
+      tagValues: [dev, test, prod]
+    - tagKey: data_tier
+      tagValues: [bronze, silver, gold]
+    - tagKey: data_classification
+      tagValues: [public, internal, confidential]
+
 # (optional)  Definitions for custom classifiers. Referred to by name in the crawler configuration files.
 classifiers:
   # (optional)  Example of a CSV Classifier.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-classifier-csvclassifier.html
@@ -240,3 +253,43 @@ databases:
         example_condensed_read_grant:
           principalArns:
             principalA: arn:{{partition}}:iam::{{account}}:role/cross-account-role
+
+  # Tag-Based Access Control Database Config
+  test-database6:
+    description: Test Database with Tag-Based Access Control
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test6
+    lakeFormation:
+      createSuperGrantsForDataAdminRoles: true
+      createReadWriteGrantsForProjectExecutionRoles: true
+
+      # Assign specific tag values to this database
+      databaseTagValues:
+        - tagKey: environment
+          tagValues: [dev]
+        - tagKey: data_tier
+          tagValues: [bronze]
+        - tagKey: data_classification
+          tagValues: [public]
+
+      # Define tag-based grants using LF-Tag expressions
+      tagBasedGrants:
+        # Grant for development environment access
+        dev_access:
+          principalArns:
+            dev-role: arn:{{partition}}:iam::{{account}}:role/dev-data-user
+          permissions: [DESCRIBE, SELECT]
+          resourceType: TABLE
+          lfTagExpression:
+            environment: [dev]
+            data_tier: [bronze, silver]
+        
+        # Grant for production read access to public/internal data
+        prod_read_access:
+          principalArns:
+            prod-reader: arn:{{partition}}:iam::{{account}}:role/prod-data-reader
+          permissions: [DESCRIBE, SELECT]
+          resourceType: TABLE
+          lfTagExpression:
+            environment: [prod]
+            data_classification: [public, internal]

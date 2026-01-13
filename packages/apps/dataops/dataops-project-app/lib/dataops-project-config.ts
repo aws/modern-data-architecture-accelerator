@@ -5,12 +5,13 @@
 
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
 import {
+  DatazoneProps,
+  FailureNotificationsProps,
+  LakeFormationConfig,
   NamedClassifierProps,
   NamedConnectionProps,
   NamedDatabaseProps,
-  FailureNotificationsProps,
   NamedSecurityGroupConfigProps,
-  DatazoneProps,
 } from '@aws-mdaa/dataops-project-l3-construct';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
@@ -143,6 +144,18 @@ export interface DataOpsProjectConfigContents extends MdaaBaseConfigContents {
    * Validation: Must be valid DatazoneProps if provided; enables DataZone governance integration
    **/
   readonly datazone?: DatazoneProps;
+
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional project-level Lake Formation configuration for centralized tag-based access control management. Defines project-wide Lake Formation resources including tag vocabulary that is shared across all databases in the project.
+   *
+   * Use cases: Centralized tag management; Project-wide TBAC vocabulary; Shared governance configuration
+   *
+   * AWS: AWS Lake Formation project-level configuration for centralized tag-based access control
+   *
+   * Validation: Must be valid ProjectLakeFormationConfig if provided; lfTags define project-wide tag vocabulary
+   **/
+  readonly lakeFormation?: LakeFormationConfig;
 }
 
 export class DataOpsProjectConfigParser extends MdaaAppConfigParser<DataOpsProjectConfigContents> {
@@ -157,15 +170,14 @@ export class DataOpsProjectConfigParser extends MdaaAppConfigParser<DataOpsProje
   public readonly failureNotifications?: FailureNotificationsProps;
   public readonly securityGroupConfigs?: NamedSecurityGroupConfigProps;
   public readonly datazone?: DatazoneProps;
+  public readonly lakeFormation?: LakeFormationConfig;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
 
     this.dataAdminRoleRefs = this.configContents.dataAdminRoles;
-    this.dataEngineerRoleRefs = this.configContents.dataEngineerRoles ? this.configContents.dataEngineerRoles : [];
-    this.projectExecutionRoleRefs = this.configContents.projectExecutionRoles
-      ? this.configContents.projectExecutionRoles
-      : [];
+    this.dataEngineerRoleRefs = this.configContents.dataEngineerRoles ?? [];
+    this.projectExecutionRoleRefs = this.configContents.projectExecutionRoles ?? [];
     this.classifiers = this.configContents.classifiers;
     this.databases = this.configContents.databases;
     this.connections = this.configContents.connections;
@@ -174,5 +186,6 @@ export class DataOpsProjectConfigParser extends MdaaAppConfigParser<DataOpsProje
     this.failureNotifications = this.configContents.failureNotifications;
     this.securityGroupConfigs = this.configContents.securityGroupConfigs;
     this.datazone = this.configContents.datazone;
+    this.lakeFormation = this.configContents.lakeFormation;
   }
 }

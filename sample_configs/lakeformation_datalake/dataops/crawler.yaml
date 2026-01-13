@@ -14,3 +14,14 @@ crawlers:
       # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
       s3Targets:
         - path: s3://{{resolve:ssm:/{{org}}/shared/datalake/bucket/transformed/name}}/data/sample_data
+  crawlerlftagged:
+    executionRoleArn: ssm:/{{org}}/shared/generated-role/glue-etl/arn
+    # (required) Reference back to the database name in the 'databases:' section of the crawler.yaml
+    databaseName: project:databaseName/sample-tagged-database
+    # (required) Description of the crawler
+    description: Example for a Crawler for LFTag controlled Database
+    # (required) At least one target definition.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-targets.html
+    targets:
+      # (at least one).  S3 Target.  See: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-glue-crawler-s3target.html
+      s3Targets:
+        - path: s3://{{resolve:ssm:/{{org}}/shared/datalake/bucket/transformed/name}}/data/sample_tagged_data

@@ -24,6 +24,7 @@ import {
   PrincipalProps,
   ResourceLinkProps,
 } from '@aws-mdaa/lakeformation-access-control-l3-construct';
+import { LakeFormationTagsL3Construct, LFTagConfig } from '@aws-mdaa/lakeformation-tags-l3-construct';
 import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
@@ -58,6 +59,8 @@ import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { ConfigurationElement } from '@aws-mdaa/config';
 import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
+import { createLakeFormationTags, processLakeFormationTagsPermissions } from './lake-formation-tags-manager';
+import { NamedTagBasedGrants, LakeFormationConfig } from './lake-formation-props';
 
 /**
  * Q-ENHANCED-INTERFACE
@@ -242,6 +245,30 @@ export interface DatabaseLakeFormationProps {
    * Validation: Grant names must be unique identifiers; each grant must map to valid DatabaseGrantProps configuration
    **/
   readonly grants?: NamedDatabaseGrantProps;
+
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Specific tag values to associate with the database for Lake Formation tag-based access control. Defines which specific tag values from the project-level lfTags definitions should be assigned to this database resource, enabling database-level classification and access control.
+   *
+   * Use cases: Database classification; Resource tagging; Database-level access control; Tag value assignment
+   *
+   * AWS: AWS Lake Formation tag values for database resource classification
+   *
+   * Validation: Tag keys must exist in project-level lfTags; tag values must be valid values from project-level lfTags definitions
+   **/
+  readonly databaseTagValues?: LFTagConfig[];
+
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Tag-based grant collection for Lake Formation tag-based access control enabling attribute-based permissions. Defines permissions based on LF-Tag expressions, allowing flexible and scalable access control policies based on resource tags rather than individual resource grants.
+   *
+   * Use cases: Attribute-based access control; Scalable permissions; Tag-based policies; Dynamic access control
+   *
+   * AWS: AWS Lake Formation tag-based permissions for attribute-based access control
+   *
+   * Validation: Grant names must be unique identifiers; each grant must have valid LF-Tag expression and principal ARNs
+   **/
+  readonly tagBasedGrants?: NamedTagBasedGrants;
 }
 
 /**
@@ -786,6 +813,18 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
    * Validation: Must be valid DatazoneProps if provided; enables DataZone integration and data governance capabilities
    **/
   readonly datazone?: DatazoneProps;
+
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional project-level Lake Formation configuration for centralized tag-based access control management. Defines project-wide Lake Formation resources including tag vocabulary that is shared across all databases in the project.
+   *
+   * Use cases: Centralized tag management; Project-wide TBAC vocabulary; Shared governance configuration
+   *
+   * AWS: AWS Lake Formation project-level configuration for centralized tag-based access control
+   *
+   * Validation: Must be valid ProjectLakeFormationConfig if provided; lfTags define project-wide tag vocabulary
+   **/
+  readonly lakeFormation?: LakeFormationConfig;
 }
 
 /**
@@ -928,7 +967,7 @@ export interface FailureNotificationsProps {
    *
    * AWS: SNS email notifications for DataOps failure alerting and operational monitoring
    *
-   * Validation: Must be array of valid email addresses if provided; enables automated failure notifications when specified
+   * Validation: Must be an array of valid email addresses if provided; enables automated failure notifications when specified
    **/
   readonly email?: string[];
 }
@@ -942,10 +981,11 @@ interface DatazoneResources {
 export class DataOpsProjectL3Construct extends MdaaL3Construct {
   protected readonly props: DataOpsProjectL3ConstructProps;
 
-  private projectExecutionRoles: MdaaResolvableRole[];
-  private dataAdminRoles: MdaaResolvableRole[];
-  private dataEngineerRoles: MdaaResolvableRole[];
-  private dataAdminRoleIds: string[];
+  private readonly projectExecutionRoles: MdaaResolvableRole[];
+  private readonly dataAdminRoles: MdaaResolvableRole[];
+  private readonly dataEngineerRoles: MdaaResolvableRole[];
+  private readonly dataAdminRoleIds: string[];
+  private readonly projectLevelLFTagsConstruct?: LakeFormationTagsL3Construct;
 
   constructor(scope: Construct, id: string, props: DataOpsProjectL3ConstructProps) {
     super(scope, id, props);
@@ -1001,6 +1041,10 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const datazoneResources = this.createDatazoneResources(projectBucket, datazoneUserRole);
 
     this.createAthenaWorkgroup(datazoneUserRole, projectBucket, datazoneResources?.datazoneEnv);
+
+    // Create project-level Lake Formation tags BEFORE databases
+    // This ensures tags exist at account level before any database associations
+    this.projectLevelLFTagsConstruct = createLakeFormationTags(this, this.props);
 
     this.createProjectDatabases(this.props.databases || {}, projectBucket, datazoneResources);
     this.createProjectSecurityConfig(projectKmsKey, s3OutputKmsKey);
@@ -1722,6 +1766,22 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     //Use the LF Account Control construct to create all database grants and resource links
     const lf = new LakeFormationAccessControlL3Construct(this, `lf-grants-${databaseName}`, lakeFormationProps);
     lf.node.addDependency(database);
+
+    // Handle Lake Formation Tags
+    // Project-level tags are created once before all databases
+    // Database-level tag values associate specific tags from the project-level vocabulary to individual databases
+    processLakeFormationTagsPermissions(
+      this,
+      {
+        lakeFormationTagsConstruct: this.projectLevelLFTagsConstruct,
+        databaseName: databaseName,
+        dbResourceName: dbResourceName,
+        database: database,
+        otherProps: this.props,
+        lakeFormationAccessControl: lf,
+      },
+      databaseLakeFormationProps,
+    );
   }
 
   private determinePrincipalAccount(principalName: string, principalProps: PrincipalProps): string | undefined {

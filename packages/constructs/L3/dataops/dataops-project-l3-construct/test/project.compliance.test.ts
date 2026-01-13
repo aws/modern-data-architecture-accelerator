@@ -68,6 +68,18 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       },
     },
+    lakeFormation: {
+      lfTags: [
+        {
+          tagKey: 'Environment',
+          tagValues: ['dev', 'test', 'prod'],
+        },
+        {
+          tagKey: 'DataClassification',
+          tagValues: ['public', 'internal', 'confidential'],
+        },
+      ],
+    },
     securityGroupConfigs: {
       'test-group': {
         vpcId: 'test-vpc',
@@ -133,6 +145,26 @@ describe('MDAA Compliance Stack Tests', () => {
           createReadWriteGrantsForProjectExecutionRoles: true,
           createReadGrantsForDataEngineerRoles: true,
           grants: testGrants,
+        },
+      },
+      test_database_with_lf_tags: {
+        description: 'test_database_with_lf_tags',
+        locationBucketName: 'test-bucket-name',
+        locationPrefix: 'test-prefix-tags',
+        lakeFormation: {
+          createSuperGrantsForDataAdminRoles: true,
+          createReadWriteGrantsForProjectExecutionRoles: true,
+          createReadGrantsForDataEngineerRoles: true,
+          databaseTagValues: [
+            {
+              tagKey: 'Environment',
+              tagValues: ['dev'],
+            },
+            {
+              tagKey: 'DataClassification',
+              tagValues: ['internal'],
+            },
+          ],
         },
       },
     },
@@ -654,6 +686,54 @@ describe('MDAA Compliance Stack Tests', () => {
             Resource: 'arn:test-partition:kms:test-region:test-account:key/glue-catalog-key-id',
           }),
         ]),
+      },
+    });
+  });
+
+  test('LakeFormationTagCreation', () => {
+    template.hasResourceProperties('AWS::LakeFormation::Tag', {
+      CatalogId: 'test-account',
+      TagKey: 'Environment',
+      TagValues: ['dev', 'test', 'prod'],
+    });
+
+    template.hasResourceProperties('AWS::LakeFormation::Tag', {
+      CatalogId: 'test-account',
+      TagKey: 'DataClassification',
+      TagValues: ['public', 'internal', 'confidential'],
+    });
+  });
+
+  test('DatabaseWithLakeFormationTags', () => {
+    template.hasResourceProperties('AWS::Glue::Database', {
+      CatalogId: 'test-account',
+      DatabaseInput: {
+        Description: 'test_database_with_lf_tags',
+        LocationUri: 's3://test-bucket-name/test-prefix-tags',
+        Name: 'test-org-test-env-test-domain-test-module-test_database_with_lf_tags',
+      },
+    });
+  });
+
+  test('LakeFormationTagAssociation', () => {
+    template.hasResourceProperties('AWS::LakeFormation::TagAssociation', {
+      LFTags: [
+        {
+          CatalogId: 'test-account',
+          TagKey: 'Environment',
+          TagValues: ['dev'],
+        },
+        {
+          CatalogId: 'test-account',
+          TagKey: 'DataClassification',
+          TagValues: ['internal'],
+        },
+      ],
+      Resource: {
+        Database: {
+          CatalogId: 'test-account',
+          Name: 'test-org-test-env-test-domain-test-module-test_database_with_lf_tags',
+        },
       },
     });
   });

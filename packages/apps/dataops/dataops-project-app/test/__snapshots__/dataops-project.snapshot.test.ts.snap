@@ -68,6 +68,18 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-dataops-project-main:lakeformation-permissions:permissions-created",
+        },
+        "Value": "2",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-dataops-project-main:lakeformation-tags:tags-created",
+        },
+        "Value": "3",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-dataops-project-main:managed-policy:wgusage:arn",
         },
         "Value": {
@@ -2875,6 +2887,81 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DATA_LOCATION_ACCESS",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter",
+            },
+          },
+          "Resource": {
+            "DataLocation": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "ResourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":s3:::some-bucket-name/data/test6",
+                  ],
+                ],
+              },
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DATA_LOCATION_ACCESS",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResProjectExRoles1",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "DataLocation": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "ResourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":s3:::some-bucket-name/data/test6",
+                  ],
+                ],
+              },
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
           "REPLACED-CFN-LOGICAL-ID",
           "datazonesubdatabase",
         ],
@@ -4587,6 +4674,457 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         "Type": "AWS::LakeFormation::PrincipalPermissions",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "SELECT",
+            "DESCRIBE",
+            "INSERT",
+            "DELETE",
+            "ALTER",
+            "DROP",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResDataAdmin0",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "Table": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+              "TableWildcard": {},
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "SELECT",
+            "DESCRIBE",
+            "INSERT",
+            "DELETE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter",
+            },
+          },
+          "Resource": {
+            "Table": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+              "TableWildcard": {},
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "SELECT",
+            "DESCRIBE",
+            "INSERT",
+            "DELETE",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResProjectExRoles1",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "Table": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+              "TableWildcard": {},
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+            "CREATE_TABLE",
+            "ALTER",
+            "DROP",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResDataAdmin0",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "Database": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+            "CREATE_TABLE",
+            "ALTER",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter",
+            },
+          },
+          "Resource": {
+            "Database": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+            "CREATE_TABLE",
+            "ALTER",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::GetAtt": [
+                "RoleResProjectExRoles1",
+                "arn",
+              ],
+            },
+          },
+          "Resource": {
+            "Database": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "LFTags": [
+            {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "TagKey": "environment",
+              "TagValues": [
+                "dev",
+              ],
+            },
+            {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "TagKey": "data_tier",
+              "TagValues": [
+                "bronze",
+              ],
+            },
+            {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "TagKey": "data_classification",
+              "TagValues": [
+                "public",
+              ],
+            },
+          ],
+          "Resource": {
+            "Database": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::TagAssociation",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+            "SELECT",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":role/dev-data-user",
+                ],
+              ],
+            },
+          },
+          "Resource": {
+            "LFTagPolicy": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Expression": [
+                {
+                  "TagKey": "environment",
+                  "TagValues": [
+                    "dev",
+                  ],
+                },
+                {
+                  "TagKey": "data_tier",
+                  "TagValues": [
+                    "bronze",
+                    "silver",
+                  ],
+                },
+              ],
+              "ResourceType": "TABLE",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Permissions": [
+            "DESCRIBE",
+            "SELECT",
+          ],
+          "PermissionsWithGrantOption": [],
+          "Principal": {
+            "DataLakePrincipalIdentifier": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":iam::",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":role/prod-data-reader",
+                ],
+              ],
+            },
+          },
+          "Resource": {
+            "LFTagPolicy": {
+              "CatalogId": {
+                "Ref": "AWS::AccountId",
+              },
+              "Expression": [
+                {
+                  "TagKey": "environment",
+                  "TagValues": [
+                    "prod",
+                  ],
+                },
+                {
+                  "TagKey": "data_classification",
+                  "TagValues": [
+                    "public",
+                    "internal",
+                  ],
+                },
+              ],
+              "ResourceType": "TABLE",
+            },
+          },
+        },
+        "Type": "AWS::LakeFormation::PrincipalPermissions",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "DependsOn": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "REPLACED-CFN-LOGICAL-ID",
+          "testdatabase6database",
+        ],
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/lakeformation-permissions/permissions-created",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "2",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "CatalogId": {
+            "Ref": "AWS::AccountId",
+          },
+          "TagKey": "data_classification",
+          "TagValues": [
+            "public",
+            "internal",
+            "confidential",
+          ],
+        },
+        "Type": "AWS::LakeFormation::Tag",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "CatalogId": {
+            "Ref": "AWS::AccountId",
+          },
+          "TagKey": "data_tier",
+          "TagValues": [
+            "bronze",
+            "silver",
+            "gold",
+          ],
+        },
+        "Type": "AWS::LakeFormation::Tag",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "CatalogId": {
+            "Ref": "AWS::AccountId",
+          },
+          "TagKey": "environment",
+          "TagValues": [
+            "dev",
+            "test",
+            "prod",
+          ],
+        },
+        "Type": "AWS::LakeFormation::Tag",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/lakeformation-tags/tags-created",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "3",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "Amazon S3",
           "DomainIdentifier": {
@@ -5595,6 +6133,21 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
+          "Name": "/test-org/test-domain/test-dataops-project-main/databaseName/test-database6",
+          "Tags": {
+            "mdaa_cdk_app": "dataops-project",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-dataops-project-main",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
           "Name": "/test-org/test-domain/test-dataops-project-main/deploymentRole/default",
           "Tags": {
             "mdaa_cdk_app": "dataops-project",
@@ -5743,6 +6296,19 @@ exports[`dataops-project Snapshot Tests Dataops Project App App Snapshot Test 1`
         },
         "Type": "AWS::Glue::Database",
       },
+      "testdatabase6database": {
+        "Properties": {
+          "CatalogId": {
+            "Ref": "AWS::AccountId",
+          },
+          "DatabaseInput": {
+            "Description": "Test Database with Tag-Based Access Control",
+            "LocationUri": "s3://some-bucket-name/data/test6",
+            "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+          },
+        },
+        "Type": "AWS::Glue::Database",
+      },
     },
     "Rules": {
       "CheckBootstrapVersion": {
@@ -5875,6 +6441,18 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
           "GroupId",
         ],
       },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-main:lakeformation-permissions:permissions-created",
+      },
+      "Value": "2",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-dataops-project-main:lakeformation-tags:tags-created",
+      },
+      "Value": "3",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
@@ -8685,6 +9263,81 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DATA_LOCATION_ACCESS",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        },
+        "Resource": {
+          "DataLocation": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "ResourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":s3:::some-bucket-name/data/test6",
+                ],
+              ],
+            },
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DATA_LOCATION_ACCESS",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResProjectExRoles1",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "DataLocation": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "ResourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":s3:::some-bucket-name/data/test6",
+                ],
+              ],
+            },
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
         "REPLACED-CFN-LOGICAL-ID",
         "datazonesubdatabase",
       ],
@@ -10397,6 +11050,457 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
       "Type": "AWS::LakeFormation::PrincipalPermissions",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE",
+          "ALTER",
+          "DROP",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResDataAdmin0",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+            "TableWildcard": {},
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+            "TableWildcard": {},
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "SELECT",
+          "DESCRIBE",
+          "INSERT",
+          "DELETE",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResProjectExRoles1",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "Table": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "DatabaseName": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+            "TableWildcard": {},
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER",
+          "DROP",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResDataAdmin0",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Ref": "SsmParameterValuesampleorginstance1generatedrolegluerolearnC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "CREATE_TABLE",
+          "ALTER",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::GetAtt": [
+              "RoleResProjectExRoles1",
+              "arn",
+            ],
+          },
+        },
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "LFTags": [
+          {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "TagKey": "environment",
+            "TagValues": [
+              "dev",
+            ],
+          },
+          {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "TagKey": "data_tier",
+            "TagValues": [
+              "bronze",
+            ],
+          },
+          {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "TagKey": "data_classification",
+            "TagValues": [
+              "public",
+            ],
+          },
+        ],
+        "Resource": {
+          "Database": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::TagAssociation",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "SELECT",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":role/dev-data-user",
+              ],
+            ],
+          },
+        },
+        "Resource": {
+          "LFTagPolicy": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Expression": [
+              {
+                "TagKey": "environment",
+                "TagValues": [
+                  "dev",
+                ],
+              },
+              {
+                "TagKey": "data_tier",
+                "TagValues": [
+                  "bronze",
+                  "silver",
+                ],
+              },
+            ],
+            "ResourceType": "TABLE",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Permissions": [
+          "DESCRIBE",
+          "SELECT",
+        ],
+        "PermissionsWithGrantOption": [],
+        "Principal": {
+          "DataLakePrincipalIdentifier": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":role/prod-data-reader",
+              ],
+            ],
+          },
+        },
+        "Resource": {
+          "LFTagPolicy": {
+            "CatalogId": {
+              "Ref": "AWS::AccountId",
+            },
+            "Expression": [
+              {
+                "TagKey": "environment",
+                "TagValues": [
+                  "prod",
+                ],
+              },
+              {
+                "TagKey": "data_classification",
+                "TagValues": [
+                  "public",
+                  "internal",
+                ],
+              },
+            ],
+            "ResourceType": "TABLE",
+          },
+        },
+      },
+      "Type": "AWS::LakeFormation::PrincipalPermissions",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "DependsOn": [
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "REPLACED-CFN-LOGICAL-ID",
+        "testdatabase6database",
+      ],
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/lakeformation-permissions/permissions-created",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "2",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "CatalogId": {
+          "Ref": "AWS::AccountId",
+        },
+        "TagKey": "data_classification",
+        "TagValues": [
+          "public",
+          "internal",
+          "confidential",
+        ],
+      },
+      "Type": "AWS::LakeFormation::Tag",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "CatalogId": {
+          "Ref": "AWS::AccountId",
+        },
+        "TagKey": "data_tier",
+        "TagValues": [
+          "bronze",
+          "silver",
+          "gold",
+        ],
+      },
+      "Type": "AWS::LakeFormation::Tag",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "CatalogId": {
+          "Ref": "AWS::AccountId",
+        },
+        "TagKey": "environment",
+        "TagValues": [
+          "dev",
+          "test",
+          "prod",
+        ],
+      },
+      "Type": "AWS::LakeFormation::Tag",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/lakeformation-tags/tags-created",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "3",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "Description": "Amazon S3",
         "DomainIdentifier": {
@@ -11405,6 +12509,21 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
+        "Name": "/test-org/test-domain/test-dataops-project-main/databaseName/test-database6",
+        "Tags": {
+          "mdaa_cdk_app": "dataops-project",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-dataops-project-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
         "Name": "/test-org/test-domain/test-dataops-project-main/deploymentRole/default",
         "Tags": {
           "mdaa_cdk_app": "dataops-project",
@@ -11549,6 +12668,19 @@ exports[`dataops-project Snapshot Tests Dataops Project Stack Snapshot Test 1`] 
           "Description": "Test Database 5",
           "LocationUri": "s3://some-bucket-name/data/test5",
           "Name": "test_org_test_env_test_domain_test_dataops_project_main_test_database5",
+        },
+      },
+      "Type": "AWS::Glue::Database",
+    },
+    "testdatabase6database": {
+      "Properties": {
+        "CatalogId": {
+          "Ref": "AWS::AccountId",
+        },
+        "DatabaseInput": {
+          "Description": "Test Database with Tag-Based Access Control",
+          "LocationUri": "s3://some-bucket-name/data/test6",
+          "Name": "test-org-test-env-test-domain-test-dataops-project-main-test-database6",
         },
       },
       "Type": "AWS::Glue::Database",

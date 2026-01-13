@@ -5,3 +5,4 @@
 
 export * from './dataops-project-l3-construct';
 export * from './dataops-project-utils';
+export * from './lake-formation-props';

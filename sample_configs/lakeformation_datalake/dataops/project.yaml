@@ -11,6 +11,19 @@ projectExecutionRoles:
 s3OutputKmsKeyArn: ssm:/{{org}}/shared/datalake/kms/arn
 glueCatalogKmsKeyArn: ssm:/{{org}}/shared/glue-catalog/kms/arn
 
+# Project-level Lake Formation configuration
+# Defines tag vocabulary that can be used across all databases in the project
+lakeFormation:
+  # Define Lake Formation tags with all possible values (tag vocabulary)
+  # These tags are created at the account level and can be used by any database
+  lfTags:
+    - tagKey: environment
+      tagValues: [dev, test, prod]
+    - tagKey: data_tier
+      tagValues: [bronze, silver, gold]
+    - tagKey: data_classification
+      tagValues: [public, internal, confidential]
+
 # List of Databases to create within the project.
 databases:
   # This database will be used to illustrate access grants
@@ -36,3 +49,53 @@ databases:
         data-user-read:
           principalArns:
             data-user: ssm:/{{org}}/shared/generated-role/data-user/arn
+
+  # This database demonstrates Lake Formation tag-based access control (TBAC)
+  sample-tagged-database:
+    description: Sample Database with Tag-Based Access Control
+    locationBucketName: ssm:/{{org}}/shared/datalake/bucket/transformed/name
+    locationPrefix: data/sample_tagged_data
+
+    lakeFormation:
+      # Automatic grants for admin and execution roles
+      createSuperGrantsForDataAdminRoles: true
+      createReadWriteGrantsForProjectExecutionRoles: true
+
+      # Assign specific tag values to this database
+      # This classifies the database itself with these specific tag values
+      # Values must be from the project-level lakeFormation.lfTags definitions
+      databaseTagValues:
+        - tagKey: environment
+          tagValues: [dev]
+        - tagKey: data_tier
+          tagValues: [bronze]
+        - tagKey: data_classification
+          tagValues: [public]
+
+      # Define tag-based grants using LF-Tag expressions
+      # Permissions are granted based on tag values rather than specific resources
+      # Tag keys and values must be from the project-level lakeFormation.lfTags definitions
+      tagBasedGrants:
+        # Grant for development environment access
+        dev_access:
+          principalArns:
+            # Replace with actual IAM role ARN or use SSM parameter
+            dev-role: ssm:/{{org}}/shared/generated-role/data-user/arn
+          permissions: [DESCRIBE, SELECT]
+          resourceType: TABLE
+          lfTagExpression:
+            environment: [dev]
+            data_tier: [bronze, silver]
+        
+        # Grant for production read access to public/internal data
+        prod_read_access:
+          principalArns:
+            # Replace with actual IAM role ARN or use SSM parameter
+            prod-reader: ssm:/{{org}}/shared/generated-role/data-user/arn
+          permissions: [DESCRIBE, SELECT]
+          resourceType: TABLE
+          lfTagExpression:
+            environment: [prod]
+            data_classification: [public, internal]
+
+
