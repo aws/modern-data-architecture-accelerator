@@ -402,7 +402,7 @@
                     ]
                 },
                 "Condition": {
-                    "$ref": "#/definitions/Record<string,Record<string,string|string[]>>"
+                    "$ref": "#/definitions/Record%3Cstring%2CRecord%3Cstring%2Cstring%7Cstring%5B%5D%3E%3E"
                 },
                 "Effect": {
                     "enum": [
@@ -527,7 +527,7 @@
             "type": "array"
         },
         "protocolConfiguration": {
-            "$ref": "#/definitions/Record<string,unknown>",
+            "$ref": "#/definitions/Record%3Cstring%2Cunknown%3E",
             "description": "Q-ENHANCED-PROPERTY\nOptional protocol configuration for agent runtime communication enabling protocol-specific settings. Defines protocol-level configuration for agent runtime communication and behavior.\n\nUse cases: Protocol configuration; Communication settings; Protocol behavior; Runtime communication\n\nAWS: Bedrock AgentCore Runtime protocol configuration for communication settings\n\nValidation: Must be valid protocol configuration if provided; defines runtime communication behavior"
         },
         "requestHeaderConfiguration": {

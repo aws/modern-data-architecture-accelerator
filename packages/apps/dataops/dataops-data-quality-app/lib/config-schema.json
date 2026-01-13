@@ -1,0 +1,400 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "CfnParameterProps": {
+            "additionalProperties": false,
+            "properties": {
+                "allowedPattern": {
+                    "default": "- No constraints on patterns allowed for parameter.",
+                    "description": "A regular expression that represents the patterns to allow for String types.",
+                    "type": "string"
+                },
+                "allowedValues": {
+                    "default": "- No constraints on values allowed for parameter.",
+                    "description": "An array containing the list of values allowed for the parameter.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "constraintDescription": {
+                    "default": "- No description with customized error message when user specifies invalid values.",
+                    "description": "A string that explains a constraint when the constraint is violated.\nFor example, without a constraint description, a parameter that has an allowed\npattern of [A-Za-z0-9]+ displays the following error message when the user specifies\nan invalid value:",
+                    "type": "string"
+                },
+                "default": {
+                    "default": "- No default value for parameter.",
+                    "description": "A value of the appropriate type for the template to use if no value is specified\nwhen a stack is created. If you define constraints for the parameter, you must specify\na value that adheres to those constraints."
+                },
+                "description": {
+                    "default": "- No description for the parameter.",
+                    "description": "A string of up to 4000 characters that describes the parameter.",
+                    "type": "string"
+                },
+                "maxLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the largest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "maxValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the largest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "minLength": {
+                    "default": "- None.",
+                    "description": "An integer value that determines the smallest number of characters you want to allow for String types.",
+                    "type": "number"
+                },
+                "minValue": {
+                    "default": "- None.",
+                    "description": "A numeric value that determines the smallest numeric value you want to allow for Number types.",
+                    "type": "number"
+                },
+                "noEcho": {
+                    "default": "- Parameter values are not masked.",
+                    "description": "Whether to mask the parameter value when anyone makes a call that describes the stack.\nIf you set the value to ``true``, the parameter value is masked with asterisks (``*****``).",
+                    "type": "boolean"
+                },
+                "type": {
+                    "default": "String",
+                    "description": "The data type for the parameter (DataType).",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "DataQualityRule": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nData Quality Rule interface for structured rule objects defining validation logic. Represents a single data quality check that can be applied to Glue Catalog tables.\n\nUse cases: Rule definition; Data validation; Quality checks; Structured rule configuration\n\nAWS: AWS Glue Data Quality rule definition in structured format\n\nValidation: ruleType is required; other fields depend on specific rule type",
+            "properties": {
+                "column": {
+                    "description": "Q-ENHANCED-PROPERTY\nColumn name to validate for column-specific rules. Specifies which column in the table to apply the validation rule to.\n\nUse cases: Column targeting; Field validation; Column-level checks\n\nAWS: AWS Glue Catalog table column name\n\nValidation: Required for most rule types except RowCount and ColumnCount; must be valid column name in target table",
+                    "type": "string"
+                },
+                "comparisonOperator": {
+                    "description": "Q-ENHANCED-PROPERTY\nComparison operator for threshold and value-based rules. Defines how to compare the measured value against the threshold or expected value.\n\nUse cases: Threshold comparison; Value validation; Range checks\n\nAWS: Comparison operator for Glue Data Quality rules\n\nValidation: Must be one of: =, >, <, >=, <=, !=, <>, between, in; default varies by rule type",
+                    "type": "string"
+                },
+                "dataType": {
+                    "description": "Q-ENHANCED-PROPERTY\nExpected data type for ColumnDataType rule validation. Specifies the required data type for a column.\n\nUse cases: Schema validation; Type checking; Data type enforcement\n\nAWS: Expected column data type for Glue Data Quality validation\n\nValidation: Required for ColumnDataType rule; must be valid Glue data type (e.g., STRING, INT, DATE, DECIMAL, BIGINT, DOUBLE)",
+                    "type": "string"
+                },
+                "duration": {
+                    "description": "Q-ENHANCED-PROPERTY\nTime duration for DataFreshness rule specifying maximum data age. Defines how recent the data must be.\n\nUse cases: Data freshness validation; Timeliness checks; Recency requirements\n\nAWS: Duration threshold for Glue Data Quality DataFreshness rule\n\nValidation: Required for DataFreshness rule; format: '<number> <unit>' (e.g., '24 hours', '7 days'); default is '24 hours'",
+                    "type": "string"
+                },
+                "ruleType": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired rule type identifier specifying which validation to perform. Determines which other fields are required and how the rule is evaluated.\n\nUse cases: Rule identification; Validation type selection; Rule builder routing\n\nAWS: AWS Glue Data Quality rule type\n\nValidation: Must be one of: IsComplete, ColumnValues, IsUnique, IsPrimaryKey, ColumnExists, RowCount, ColumnCount, Completeness, Uniqueness, Mean, StandardDeviation, CustomSql, DataFreshness, ColumnDataType, ColumnLength",
+                    "type": "string"
+                },
+                "sql": {
+                    "description": "Q-ENHANCED-PROPERTY\nSQL query for CustomSql rule type returning a single numeric value. Enables custom validation logic using SQL expressions.\n\nUse cases: Custom validation logic; Complex checks; SQL-based rules\n\nAWS: Custom SQL query for Glue Data Quality CustomSql rule\n\nValidation: Required for CustomSql rule; must be SELECT statement returning single numeric value",
+                    "type": "string"
+                },
+                "threshold": {
+                    "description": "Q-ENHANCED-PROPERTY\nThreshold value for percentage-based rules like Completeness and Uniqueness. Represents the minimum acceptable percentage as a decimal between 0.0 and 1.0.\n\nUse cases: Completeness validation; Uniqueness checks; Percentage thresholds\n\nAWS: Threshold for Glue Data Quality percentage-based rules\n\nValidation: Must be between 0.0 and 1.0; default is 0.95; used for Completeness and Uniqueness rules",
+                    "type": "number"
+                },
+                "value": {
+                    "description": "Q-ENHANCED-PROPERTY\nNumeric value for comparison in count and statistical rules. Used as the expected or threshold value for rules like RowCount, Mean, and StandardDeviation.\n\nUse cases: Row count validation; Statistical thresholds; Numeric comparisons\n\nAWS: Numeric value for Glue Data Quality rule comparisons\n\nValidation: Must be numeric; required for RowCount, ColumnCount, Mean, StandardDeviation, ColumnLength rules",
+                    "type": "number"
+                },
+                "values": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of allowed values for ColumnValues rule with 'in' operator. Defines the set of acceptable values for a column.\n\nUse cases: Enum validation; Allowed value lists; Categorical data validation\n\nAWS: Allowed values list for Glue Data Quality ColumnValues rule\n\nValidation: Required for ColumnValues rule; can contain strings or numbers",
+                    "items": {
+                        "type": [
+                            "string",
+                            "number"
+                        ]
+                    },
+                    "type": "array"
+                },
+                "where": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional WHERE clause to filter rows before applying the rule. Allows conditional validation on a subset of data.\n\nUse cases: Conditional validation; Row filtering; Subset checks\n\nAWS: WHERE clause for Glue Data Quality rule filtering\n\nValidation: Must be valid SQL WHERE condition; use single quotes for string literals; example: \"status = 'active'\"",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "ruleType"
+            ],
+            "type": "object"
+        },
+        "DataQualityRulesetDefinition": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nData Quality ruleset definition with target table and validation rules. Defines a complete set of data quality checks for a specific Glue Catalog table.\n\nUse cases: Data quality monitoring; Validation automation; Quality assurance; Data governance\n\nAWS: AWS Glue Data Quality ruleset configuration\n\nValidation: targetTable and ruleset are required; description is optional",
+            "properties": {
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional description explaining the purpose and scope of the ruleset. Documents what data quality aspects are being validated.\n\nUse cases: Documentation; Ruleset purpose; Quality criteria explanation\n\nAWS: AWS Glue Data Quality ruleset description\n\nValidation: Optional string; recommended for documentation",
+                    "type": "string"
+                },
+                "ruleset": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/definitions/DataQualityRule"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Q-ENHANCED-PROPERTY\nRequired ruleset definition as either DQDL string or array of rule objects. Defines the data quality validation rules to apply.\n\nUse cases: Rule definition; Validation logic; Quality criteria\n\nAWS: AWS Glue Data Quality rules in DQDL format\n\nValidation: Must be valid DQDL string or array of DataQualityRule objects; required"
+                },
+                "targetTable": {
+                    "$ref": "#/definitions/DataQualityTargetTable",
+                    "description": "Q-ENHANCED-PROPERTY\nRequired target table configuration specifying which table to validate. Defines the Glue Catalog table that will be monitored.\n\nUse cases: Table targeting; Validation scope; Catalog reference\n\nAWS: AWS Glue Data Quality target table configuration\n\nValidation: Must be valid DataQualityTargetTable; required; table must exist"
+                }
+            },
+            "required": [
+                "ruleset",
+                "targetTable"
+            ],
+            "type": "object"
+        },
+        "DataQualityTargetTable": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nTarget table configuration for Glue Data Quality ruleset specifying the database and table to validate. Defines the Glue Catalog table that will be monitored and validated by the data quality rules.\n\nUse cases: Table identification; Data quality target specification; Catalog reference\n\nAWS: AWS Glue Data Quality ruleset target table configuration\n\nValidation: databaseName and tableName are required; catalogId is optional",
+            "properties": {
+                "catalogId": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional AWS account ID for cross-account Glue Catalog access. Specifies the account containing the Glue Catalog when accessing tables in a different AWS account.\n\nUse cases: Cross-account access; Multi-account architectures; Catalog federation\n\nAWS: AWS Glue Catalog ID for cross-account table access\n\nValidation: Must be valid AWS account ID if provided; optional for same-account access",
+                    "type": "string"
+                },
+                "databaseName": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired Glue database name containing the target table for data quality validation. Specifies the database in the Glue Catalog where the table to be validated resides.\n\nUse cases: Database identification; Catalog navigation; Table location\n\nAWS: AWS Glue Catalog database name for data quality target table\n\nValidation: Must be valid Glue database name; required; database must exist",
+                    "type": "string"
+                },
+                "tableName": {
+                    "description": "Q-ENHANCED-PROPERTY\nRequired Glue table name to be validated by data quality rules. Specifies the specific table within the database that will be monitored for data quality issues.\n\nUse cases: Table identification; Data quality target; Validation scope\n\nAWS: AWS Glue Catalog table name for data quality validation\n\nValidation: Must be valid Glue table name; required; table must exist before ruleset evaluation",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "databaseName",
+                "tableName"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressionByPath": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for suppressing specific CDK Nag security rules on individual CloudFormation resources identified by their resource path. Provides targeted rule suppression with mandatory justification for audit and compliance tracking.\n\nUse cases: Individual resource security exceptions; False positive rule suppressions; Documented compliance deviations\n\nAWS: Suppresses specific CDK Nag security rules for individual CloudFormation resources during deployment validation\n\nValidation: path must be valid CloudFormation resource path; suppressions array must contain valid rule IDs and justifications",
+            "properties": {
+                "path": {
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation resource path identifying the specific resource for which CDK Nag rules should be suppressed. Uses CDK construct tree path format to precisely target individual resources within the deployment stack.\n\nUse cases: Specific resource targeting; Individual resource exceptions; Precise suppression scope control\n\nAWS: CloudFormation resource path for targeted CDK Nag rule suppression during validation\n\nValidation: Must be valid CDK construct tree path format (e.g., /StackName/ConstructName/ResourceName)",
+                    "type": "string"
+                },
+                "suppressions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of specific CDK Nag rule suppressions with rule IDs and mandatory justifications for audit compliance. Each suppression must include the rule identifier and business justification for the security exception.\n\nUse cases: Multiple rule suppressions per resource; Documented security exceptions; Audit trail maintenance\n\nAWS: CDK Nag rule ID suppression with justification tracking for compliance auditing\n\nValidation: Each suppression must have valid CDK Nag rule ID and non-empty reason string\n  *",
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "reason"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "path",
+                "suppressions"
+            ],
+            "type": "object"
+        },
+        "MdaaNagSuppressionConfigs": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for CDK Nag rule suppressions organized by CloudFormation resource paths. Enables selective suppression of security compliance rules for specific resources while maintaining overall compliance posture and audit trail.\n\nUse cases: False positive suppression; Approved security exceptions; Legacy resource compliance exemptions\n\nAWS: Suppresses CDK Nag security rule violations for specific CloudFormation resources during deployment validation\n\nValidation: by_path array must contain valid suppression configurations with resource paths and justifications",
+            "properties": {
+                "by_path": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of CDK Nag suppressions organized by CloudFormation resource path, enabling targeted suppression of specific security rules for individual resources. Each suppression requires justification and maps to specific CloudFormation resource paths.\n\nUse cases: Resource-specific security exceptions; False positive rule suppressions; Approved compliance deviations\n\nAWS: CDK Nag rule suppression targeting specific CloudFormation resources during security validation\n\nValidation: Must be array of valid MdaaNagSuppressionByPath objects with valid resource paths and suppression details\n  *",
+                    "items": {
+                        "$ref": "#/definitions/MdaaNagSuppressionByPath"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "by_path"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraints that group multiple validation rules with descriptive information. Enables parameter validation and business rule enforcement for Service Catalog products.\n\nUse cases: Product parameter validation; Business rule grouping; Service Catalog compliance enforcement\n\nAWS: Configures AWS Service Catalog constraints with multiple validation rules for product provisioning\n\nValidation: description must be non-empty; rules must be object with valid constraint rule configurations",
+            "properties": {
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and scope of the Service Catalog constraint. Provides clear documentation about the validation rules and business requirements enforced by the constraint.\n\nUse cases: Constraint documentation; User guidance; Business rule explanation\n\nAWS: AWS Service Catalog constraint description for user understanding\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose and scope",
+                    "type": "string"
+                },
+                "rules": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nObject containing named constraint rules that define the validation logic for Service Catalog product parameters. Each rule can contain conditions and assertions for parameter validation.\n\nUse cases: Named validation rules; Organized constraint logic; Multiple validation scenarios\n\nAWS: AWS Service Catalog constraint rules for structured parameter validation\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogConstraintRuleConfig values\n  *",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "rules"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleAssertionConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rule assertions that define validation logic for Service Catalog product parameters. Enables parameter validation and business rule enforcement during Service Catalog product provisioning.\n\nUse cases: Parameter validation rules; Business logic enforcement; Service Catalog product compliance\n\nAWS: Configures AWS Service Catalog constraint rules for product parameter validation during provisioning\n\nValidation: assert must be valid constraint assertion expression; description must be non-empty explanatory text",
+            "properties": {
+                "assert": {
+                    "description": "Q-ENHANCED-PROPERTY\nConstraint assertion expression that defines the validation logic for Service Catalog product parameters. Uses CloudFormation intrinsic functions and conditions to validate parameter values during product provisioning.\n\nUse cases: Parameter range validation; Cross-parameter dependency checks; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertion for parameter validation\n\nValidation: Must be valid CloudFormation condition expression using intrinsic functions",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Q-ENHANCED-PROPERTY\nHuman-readable description explaining the purpose and requirements of the constraint assertion. Provides clear guidance to users about parameter validation requirements and business rules.\n\nUse cases: User guidance for parameter validation; Error message context; Business rule documentation\n\nAWS: AWS Service Catalog constraint rule description for user guidance\n\nValidation: Must be non-empty descriptive text explaining the constraint purpose",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "assert",
+                "description"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleCondititionConfig": {
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "MdaaServiceCatalogConstraintRuleConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog constraint rules that combine conditions and assertions for parameter validation. Enables complex validation logic with conditional assertions based on parameter values.\n\nUse cases: Complex parameter validation; Conditional business rules; Multi-parameter validation logic\n\nAWS: Configures AWS Service Catalog constraint rules with conditions and assertions for product parameter validation\n\nValidation: condition must be valid condition config; assertions must be array of valid assertion configs",
+            "properties": {
+                "assertions": {
+                    "description": "Q-ENHANCED-PROPERTY\nArray of constraint assertions that define the validation logic to be applied when the condition is met. Each assertion validates specific aspects of the Service Catalog product parameters.\n\nUse cases: Multiple validation checks; parameter validation; Business rule enforcement\n\nAWS: AWS Service Catalog constraint rule assertions for parameter validation\n\nValidation: Must be array of valid MdaaServiceCatalogConstraintRuleAssertionConfig objects",
+                    "items": {
+                        "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleAssertionConfig"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintRuleCondititionConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nCondition configuration that determines when the constraint rule assertions should be evaluated. Enables conditional validation logic based on parameter values and deployment context.\n\nUse cases: Conditional validation logic; Context-dependent rules; Parameter-dependent constraints\n\nAWS: AWS Service Catalog constraint rule condition for conditional validation\n\nValidation: Must be valid MdaaServiceCatalogConstraintRuleCondititionConfig object"
+                }
+            },
+            "required": [
+                "assertions",
+                "condition"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogParameterConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product parameters that combines CloudFormation parameter properties with optional constraint validation. Enables parameterized Service Catalog products with validation rules.\n\nUse cases: Service Catalog product parameterization; Parameter validation; User input constraints\n\nAWS: Configures AWS Service Catalog product parameters with CloudFormation properties and validation constraints\n\nValidation: props must be valid CfnParameterProps; constraints must be valid constraint configuration if provided",
+            "properties": {
+                "constraints": {
+                    "$ref": "#/definitions/MdaaServiceCatalogConstraintConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nOptional constraint configuration that defines additional validation rules for the Service Catalog product parameter. Enables business rule enforcement and complex parameter validation beyond basic CloudFormation constraints.\n\nUse cases: Advanced parameter validation; Business rule enforcement; Cross-parameter validation\n\nAWS: AWS Service Catalog parameter constraints for enhanced validation during provisioning\n\nValidation: Must be valid MdaaServiceCatalogConstraintConfig object if provided"
+                },
+                "props": {
+                    "$ref": "#/definitions/CfnParameterProps",
+                    "description": "Q-ENHANCED-PROPERTY\nCloudFormation parameter properties that define the parameter characteristics including type, default value, and allowed values. Provides the foundational parameter definition for Service Catalog products.\n\nUse cases: Parameter type definition; Default value specification; Allowed value constraints\n\nAWS: AWS CloudFormation parameter properties for Service Catalog product parameters\n\nValidation: Must be valid CfnParameterProps object with required CloudFormation parameter properties"
+                }
+            },
+            "required": [
+                "props"
+            ],
+            "type": "object"
+        },
+        "MdaaServiceCatalogProductConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nConfiguration interface for AWS Service Catalog product deployment that specifies portfolio association, ownership, and parameterization. Enables MDAA modules to be deployed as self-service Service Catalog products with controlled access and validation.\n\nUse cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized product offerings\n\nAWS: Configures AWS Service Catalog products for self-service deployment of MDAA modules with portfolio management\n\nValidation: portfolio_arn must be valid Service Catalog portfolio ARN; owner and name must be non-empty strings",
+            "properties": {
+                "launch_role_name": {
+                    "description": "Q-ENHANCED-PROPERTY\nOptional IAM role name that will be used to launch the Service Catalog product. Enables controlled permissions for product provisioning and resource creation with specific IAM role constraints.\n\nUse cases: Controlled provisioning permissions; IAM role-based access; Security constraint enforcement\n\nAWS: AWS Service Catalog launch role for controlled product provisioning permissions\n\nValidation: Must be valid IAM role name if provided",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Q-ENHANCED-PROPERTY\nDisplay name for the Service Catalog product that will be visible to end users in the Service Catalog console. Should be descriptive and user-friendly to facilitate product discovery and selection.\n\nUse cases: Product identification; User-friendly naming; Service Catalog console display\n\nAWS: AWS Service Catalog product name for user interface display\n\nValidation: Must be non-empty string suitable for Service Catalog product naming",
+                    "type": "string"
+                },
+                "owner": {
+                    "description": "Q-ENHANCED-PROPERTY\nOwner identifier for the Service Catalog product, typically representing the team or organization responsible for the product. Provides accountability and contact information for product management.\n\nUse cases: Product ownership identification; Contact information; Responsibility assignment\n\nAWS: AWS Service Catalog product owner for accountability and management\n\nValidation: Must be non-empty string identifying the product owner",
+                    "type": "string"
+                },
+                "parameters": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MdaaServiceCatalogParameterConfig"
+                    },
+                    "description": "Q-ENHANCED-PROPERTY\nOptional object containing named parameter configurations for the Service Catalog product. Enables parameterized product deployment with validation rules and user input constraints.\n\nUse cases: Product parameterization; User input collection; Deployment customization\n\nAWS: AWS Service Catalog product parameters for user-configurable deployment options\n\nValidation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided\n  *",
+                    "type": "object"
+                },
+                "portfolio_arn": {
+                    "description": "Q-ENHANCED-PROPERTY\nARN of the AWS Service Catalog portfolio where the product will be associated. Determines access control and organizational structure for the Service Catalog product deployment.\n\nUse cases: Portfolio organization; Access control; Product categorization\n\nAWS: AWS Service Catalog portfolio ARN for product association and access management\n\nValidation: Must be valid AWS Service Catalog portfolio ARN format",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "owner",
+                "portfolio_arn"
+            ],
+            "type": "object"
+        }
+    },
+    "properties": {
+        "deploymentRole": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired IAM role ARN for DataOps deployment operations enabling secure deployment and resource management. Provides the IAM role used for deploying and managing DataOps resources with appropriate permissions for infrastructure operations.\n\nUse cases: Deployment operations; Resource management; IAM permissions; Secure deployment\n\nAWS: IAM role ARN for DataOps deployment operations and resource management\n\nValidation: Must be valid IAM role ARN; required for deployment operations and resource management",
+            "type": "string"
+        },
+        "kmsArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired KMS key ARN for DataOps encryption enabling data protection and security compliance. Provides the customer-managed KMS key for encrypting DataOps resources, data, and operational artifacts ensuring data protection and compliance.\n\nUse cases: Data encryption; Security compliance; Key management; Data protection\n\nAWS: KMS key ARN for DataOps encryption and data protection compliance\n\nValidation: Must be valid KMS key ARN; required for encryption and data protection compliance",
+            "type": "string"
+        },
+        "nag_suppressions": {
+            "$ref": "#/definitions/MdaaNagSuppressionConfigs",
+            "description": "Q-ENHANCED-PROPERTY\nOptional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.\n\nUse cases: Compliance management; Security rule exceptions; Audit documentation; Controlled suppressions\n\nAWS: CDK Nag suppressions for compliance rule management and security exception documentation\n\nValidation: Must be valid MdaaNagSuppressionConfigs if provided; enables structured compliance rule management"
+        },
+        "projectBucket": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired S3 bucket name for DataOps project storage enabling centralized data storage and artifact management. Provides the shared S3 bucket for project data, scripts, temporary files, and processing artifacts across DataOps workflows.\n\nUse cases: Project storage; Data artifacts; Script storage; Centralized storage management\n\nAWS: S3 bucket for DataOps project storage and artifact management\n\nValidation: Must be valid S3 bucket name; required for project storage and artifact management",
+            "type": "string"
+        },
+        "projectName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired DataOps project name for data quality ruleset integration and resource coordination. Links data quality rulesets to the DataOps project infrastructure for naming and resource management.\n\nUse cases: Project integration; Resource coordination; Naming conventions\n\nAWS: DataOps project name for data quality ruleset organization\n\nValidation: Must be valid DataOps project name; required; project must exist with deployed resources",
+            "type": "string"
+        },
+        "projectTopicArn": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired SNS topic ARN for DataOps notifications enabling event-driven communication and workflow coordination. Provides the SNS topic for job notifications, error alerts, and workflow status updates across DataOps operations.\n\nUse cases: Job notifications; Error alerts; Workflow coordination; Event-driven communication\n\nAWS: SNS topic ARN for DataOps notifications and workflow coordination\n\nValidation: Must be valid SNS topic ARN; required for notifications and workflow coordination",
+            "type": "string"
+        },
+        "rulesets": {
+            "additionalProperties": {
+                "$ref": "#/definitions/DataQualityRulesetDefinition"
+            },
+            "description": "Q-ENHANCED-PROPERTY\nRequired map of data quality ruleset definitions for automated table validation. Defines all data quality rulesets to be created for monitoring Glue Catalog tables.\n\nUse cases: Data quality monitoring; Table validation; Quality assurance; Data governance\n\nAWS: AWS Glue Data Quality ruleset definitions for automated validation\n\nValidation: Must be object with string keys and valid DataQualityRulesetDefinition values; required",
+            "type": "object"
+        },
+        "securityConfigurationName": {
+            "description": "Q-ENHANCED-PROPERTY\nRequired Glue security configuration name for DataOps job security enabling encryption and access control for data processing operations. Provides the security configuration that will be used by Glue jobs for encryption at rest, in transit, and CloudWatch logs encryption.\n\nUse cases: Glue job security; Encryption configuration; Security compliance; Data protection\n\nAWS: Glue security configuration for DataOps job encryption and security compliance\n\nValidation: Must be valid security configuration name; required for Glue job security and encryption",
+            "type": "string"
+        },
+        "service_catalog_product_config": {
+            "$ref": "#/definitions/MdaaServiceCatalogProductConfig",
+            "description": "Q-ENHANCED-PROPERTY\nOptional Service Catalog product configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a Service Catalog product instead of direct deployment for governed access and compliance.\n\nUse cases: Governed deployment; Self-service provisioning; Service Catalog integration; Controlled access\n\nAWS: Service Catalog product configuration for governed infrastructure deployment and self-service provisioning\n\nValidation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode"
+        }
+    },
+    "required": [
+        "projectName",
+        "rulesets"
+    ],
+    "type": "object"
+}
+
