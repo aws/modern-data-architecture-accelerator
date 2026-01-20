@@ -28,6 +28,7 @@ import {
   aws_s3_notifications as s3n,
   CfnResource,
   Duration,
+  Stack,
 } from 'aws-cdk-lib';
 import { IVpc, SecurityGroup, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IRole, ManagedPolicy, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -780,6 +781,17 @@ export interface NamedVectorStoreProps {
   [storeName: string]: AuroraServerlessPgVectorProps | OpensearchServerlessProps;
 }
 /**
+ * Named knowledge base configuration for policy creation.
+ * Associates a knowledge base name with its configuration.
+ */
+export interface NamedKbConfig {
+  /** The name of the knowledge base */
+  readonly kbName: string;
+  /** The knowledge base configuration */
+  readonly kbConfig: BedrockKnowledgeBaseProps;
+}
+
+/**
  * Q-ENHANCED-INTERFACE
  * Comprehensive Bedrock knowledge base properties interface with complete RAG configuration including data sources, vector storage, and embedding management. Defines knowledge base configuration for document ingestion, vector processing, and intelligent retrieval with support for multiple data sources and advanced AI capabilities.
  *
@@ -896,6 +908,8 @@ export interface BedrockKnowledgeBaseL3ConstructProps extends MdaaL3ConstructPro
   readonly kmsKey: IKey;
   /** Optional map of VPC IDs to shared VPC endpoint details for OpenSearch Serverless collections */
   readonly sharedVpcEndpoints?: { [vpcId: string]: SharedVpcEndpointDetails };
+  /** When true, skip per-KB policy creation for consolidation by BedrockKnowledgeBaseGroup later */
+  readonly deferPolicyCreation?: boolean;
 }
 
 // ---------------------------------------------
@@ -905,11 +919,12 @@ export interface BedrockKnowledgeBaseL3ConstructProps extends MdaaL3ConstructPro
 export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
   public readonly knowledgeBase: bedrock.CfnKnowledgeBase;
   /** @jsii ignore */
-  public readonly vectorStore: [MdaaAuroraPgVector | MdaaOpensearchServerlessCollection, ManagedPolicy];
+  public readonly vectorStore: MdaaAuroraPgVector | MdaaOpensearchServerlessCollection;
+  /** The execution role used by this knowledge base */
+  public readonly kbRole: IRole;
 
   private vectorStoreSecurityGroup: MdaaSecurityGroup | undefined = undefined;
-  protected readonly props: BedrockKnowledgeBaseL3ConstructProps;
-  private readonly kbRole: IRole;
+  public readonly props: BedrockKnowledgeBaseL3ConstructProps;
   private cachedVectorFieldSize!: number;
   private cachedEmbeddingModelHash!: string;
 
@@ -986,7 +1001,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     vectorStoreName: string,
     vectorStoreConfig: AuroraServerlessPgVectorProps | OpensearchServerlessProps,
     kmsKey: IKey,
-  ): [MdaaAuroraPgVector | MdaaOpensearchServerlessCollection, ManagedPolicy] {
+  ): MdaaAuroraPgVector | MdaaOpensearchServerlessCollection {
     const vectorStoreType = vectorStoreConfig.vectorStoreType || 'AURORA_SERVERLESS';
 
     if (vectorStoreType === 'AURORA_SERVERLESS') {
@@ -1032,7 +1047,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     vectorStoreName: string,
     vectorStoreConfig: AuroraServerlessPgVectorProps,
     kmsKey: IKey,
-  ): [MdaaAuroraPgVector, ManagedPolicy] {
+  ): MdaaAuroraPgVector {
     const [vpc, vectorStoreSg] = this.createVpcAndSecurityGroup(vectorStoreName, vectorStoreConfig.vpcId);
 
     const subnets = vectorStoreConfig.subnetIds.map(id =>
@@ -1053,32 +1068,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       clusterIdentifier: vectorStoreName,
     };
 
-    const pgVectorStore = new MdaaAuroraPgVector(this, `pgvector-${vectorStoreName}`, pgVectorProps);
-    const managedPolicy = new MdaaManagedPolicy(this, `bedrock-knowledge-base-access-${vectorStoreName}`, {
-      naming: this.props.naming,
-      managedPolicyName: `kb-access-${vectorStoreName}`,
-      statements: [
-        new PolicyStatement({
-          sid: 'DBSecretAccess',
-          actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
-          resources: [pgVectorStore.rdsClusterSecret.secretArn],
-          effect: Effect.ALLOW,
-        }),
-        new PolicyStatement({
-          sid: 'DBQuery',
-          actions: ['rds-data:ExecuteStatement', 'rds-data:BatchExecuteStatement', 'rds:DescribeDBClusters'],
-          resources: [pgVectorStore.clusterArn],
-          effect: Effect.ALLOW,
-        }),
-        new PolicyStatement({
-          sid: 'KMSUsage',
-          actions: USER_ACTIONS,
-          resources: [kmsKey.keyArn],
-          effect: Effect.ALLOW,
-        }),
-      ],
-    });
-    return [pgVectorStore, managedPolicy];
+    return new MdaaAuroraPgVector(this, `pgvector-${vectorStoreName}`, pgVectorProps);
   }
 
   private createOpensearchServerlessVectorStore(
@@ -1087,7 +1077,7 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     readOnlyArns: string[],
     readWriteArns: string[],
     kmsKey: IKey,
-  ): [MdaaOpensearchServerlessCollection, ManagedPolicy] {
+  ): MdaaOpensearchServerlessCollection {
     // Get shared VPC endpoint details for this VPC
     const sharedVpcEndpoint = this.props.sharedVpcEndpoints?.[vectorStoreConfig.vpcId];
     if (!sharedVpcEndpoint) {
@@ -1130,93 +1120,92 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       readOnlyArns: readOnlyArns,
       naming: this.props.naming,
     };
-    const opensearchServerlessVectorStore: MdaaOpensearchServerlessCollection = new MdaaOpensearchServerlessCollection(
+
+    return new MdaaOpensearchServerlessCollection(
       this,
       `opensearch-serverless-${vectorStoreName}`,
       opensearchServerlessCollectionProps,
     );
-
-    const managedPolicy = new MdaaManagedPolicy(this, `bedrock-knowledge-base-access-${vectorStoreName}`, {
-      naming: this.props.naming,
-      managedPolicyName: `kb-access-${vectorStoreName}`,
-      statements: [
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['aoss:APIAccessAll'],
-          resources: [
-            `arn:aws:aoss:${this.region}:${this.account}:collection/${opensearchServerlessVectorStore.collection.attrId}`,
-          ],
-        }),
-      ],
-    });
-    return [opensearchServerlessVectorStore, managedPolicy];
   }
 
   private createKnowledgeBase(
     kbName: string,
     kbConfig: BedrockKnowledgeBaseProps,
     kmsKey: IKey,
-    vectorStore: [MdaaAuroraPgVector | MdaaOpensearchServerlessCollection, ManagedPolicy],
+    store: MdaaAuroraPgVector | MdaaOpensearchServerlessCollection,
   ): bedrock.CfnKnowledgeBase {
-    const [store, policy] = vectorStore;
+    const embeddingModelArn = resolveModelArn(kbConfig.embeddingModel, this.partition, this.region, this.account);
 
+    let knowledgeBase: bedrock.CfnKnowledgeBase | undefined;
     if (store instanceof MdaaOpensearchServerlessCollection) {
-      return this.createKnowledgeBaseWithOpenSearch(kbName, kbConfig, kmsKey, store, policy);
+      knowledgeBase = this.createKnowledgeBaseWithOpenSearch(kbName, kbConfig, embeddingModelArn, kmsKey, store);
     } else {
-      return this.createKnowledgeBaseWithAurora(kbName, kbConfig, kmsKey, store, policy);
+      knowledgeBase = this.createKnowledgeBaseWithAurora(kbName, kbConfig, embeddingModelArn, kmsKey, store);
     }
+
+    // Only attach policies to KB role and update dependencies if not deferring policy creation
+    // Otherwise managed policies will be consolidated from all kbs per the same execution role
+    if (!this.props.deferPolicyCreation) {
+      const foundationModelPolicy = this.createFoundationModelPolicyForKB(kbName, kbConfig, kmsKey);
+      const dataSyncPolicy = this.createDataSyncPolicyForKB(kbName, knowledgeBase);
+      const storePolicy = this.createVectorStorePolicyForKB(kbName, store, kmsKey);
+
+      // update execution role
+      this.kbRole.addManagedPolicy(storePolicy);
+      this.kbRole.addManagedPolicy(foundationModelPolicy);
+      this.kbRole.addManagedPolicy(dataSyncPolicy);
+
+      // update dependencies, dataSyncPolicy is not added, because it's created after knowledge base
+      this.setupKnowledgeBaseDependencies(knowledgeBase, [storePolicy, foundationModelPolicy]);
+    }
+
+    return knowledgeBase;
   }
 
   private createKnowledgeBaseWithAurora(
     kbName: string,
     kbConfig: BedrockKnowledgeBaseProps,
+    embeddingModelArn: string,
     kmsKey: IKey,
-    pgVectorStore: MdaaAuroraPgVector,
-    vectorStorePolicy: ManagedPolicy,
+    store: MdaaAuroraPgVector,
   ): bedrock.CfnKnowledgeBase {
     const dbConfig = this.prepareAuroraDbConfiguration(kbName);
-    const { createDb, createTable } = this.setupAuroraDatabase(kbName, pgVectorStore, dbConfig);
+    const { createDb, createTable } = this.setupAuroraDatabase(kbName, store, dbConfig);
 
-    this.attachPoliciesToRole(vectorStorePolicy, createTable.handlerFunction.role);
+    // Always create policy for handler's role if it exists, because all handlers are independent
+    const handlerRole = createTable.handlerFunction.role;
+    let storeAccessPolicy: ManagedPolicy | undefined;
+    if (handlerRole) {
+      storeAccessPolicy = this.createVectorStorePolicyForKB(`${kbName}-handler`, store, kmsKey);
+      handlerRole.addManagedPolicy(storeAccessPolicy);
+    }
 
-    const embeddingModelArn = resolveModelArn(kbConfig.embeddingModel, this.partition, this.region, this.account);
-    const foundationModelPolicy = this.createFoundationModelPolicy(kbName, kbConfig, embeddingModelArn, kmsKey);
-    this.kbRole.addManagedPolicy(foundationModelPolicy);
+    const knowledgeBase = this.createAuroraKnowledgeBaseResource(kbName, kbConfig, embeddingModelArn, store, dbConfig);
 
-    const knowledgeBase = this.createAuroraKnowledgeBaseResource(
-      kbName,
-      kbConfig,
-      embeddingModelArn,
-      pgVectorStore,
-      dbConfig,
-    );
-
-    this.setupKnowledgeBaseDependencies(knowledgeBase, [
+    // Finalize kb creation
+    const dependencies: (MdaaRdsDataResource | MdaaCustomResource | CfnResource | ManagedPolicy)[] = [
       createDb,
       createTable,
-      vectorStorePolicy,
-      foundationModelPolicy,
-    ]);
-    this.finalizeKnowledgeBaseSetup(kbName, kbConfig, knowledgeBase, kmsKey);
-
+    ];
+    if (storeAccessPolicy) {
+      dependencies.push(storeAccessPolicy);
+    }
+    this.setupKnowledgeBaseDependencies(knowledgeBase, dependencies);
+    this.createKnowledgeBaseLogging(kbName, knowledgeBase, kmsKey);
+    this.createDataSources(kbConfig, knowledgeBase, kbName, kmsKey);
+    this.createKnowledgeBaseOutput(knowledgeBase);
     return knowledgeBase;
   }
 
   private createKnowledgeBaseWithOpenSearch(
     kbName: string,
     kbConfig: BedrockKnowledgeBaseProps,
+    embeddingModelArn: string,
     kmsKey: IKey,
     opensearchStore: MdaaOpensearchServerlessCollection,
-    vectorStorePolicy: ManagedPolicy,
   ): bedrock.CfnKnowledgeBase {
     const indexConfig = this.prepareOpenSearchIndexConfiguration();
     const createVectorIndex = this.setupOpenSearchIndex(kbName, opensearchStore, indexConfig);
-
-    this.kbRole.addManagedPolicy(vectorStorePolicy);
-
-    const embeddingModelArn = resolveModelArn(kbConfig.embeddingModel, this.partition, this.region, this.account);
-    const foundationModelPolicy = this.createFoundationModelPolicy(kbName, kbConfig, embeddingModelArn, kmsKey);
-    this.kbRole.addManagedPolicy(foundationModelPolicy);
 
     const knowledgeBase = this.createOpenSearchKnowledgeBaseResource(
       kbName,
@@ -1226,9 +1215,11 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       indexConfig,
     );
 
-    this.setupKnowledgeBaseDependencies(knowledgeBase, [createVectorIndex, vectorStorePolicy, foundationModelPolicy]);
-    this.finalizeKnowledgeBaseSetup(kbName, kbConfig, knowledgeBase, kmsKey);
-
+    // Finalize kb creation
+    this.setupKnowledgeBaseDependencies(knowledgeBase, [createVectorIndex]);
+    this.createKnowledgeBaseLogging(kbName, knowledgeBase, kmsKey);
+    this.createDataSources(kbConfig, knowledgeBase, kbName, kmsKey);
+    this.createKnowledgeBaseOutput(knowledgeBase);
     return knowledgeBase;
   }
 
@@ -1264,56 +1255,96 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
   }
 
   /**
-   * Creates a foundation model policy for the knowledge base
+   * Creates a foundation model policy for the knowledge base.
+   * Delegates to the public static method with a single-element array.
    */
-  private createFoundationModelPolicy(
+  private createFoundationModelPolicyForKB(
     kbName: string,
     kbConfig: BedrockKnowledgeBaseProps,
-    embeddingModelArn: string,
     kmsKey: IKey,
   ): MdaaManagedPolicy {
-    // Collect foundation model ARNs used in parsing configurations
-    const parsingModelArns = new Set<string>();
-    Object.values(kbConfig.s3DataSources || {}).forEach(dsProps => {
-      if (dsProps.vectorIngestionConfiguration?.parsingConfiguration) {
-        const parsingConfig = dsProps.vectorIngestionConfiguration.parsingConfiguration;
-        if (
-          parsingConfig.parsingStrategy === 'BEDROCK_FOUNDATION_MODEL' &&
-          parsingConfig.bedrockFoundationModelConfiguration?.modelArn
-        ) {
-          parsingModelArns.add(
-            resolveModelArn(
-              parsingConfig.bedrockFoundationModelConfiguration.modelArn,
-              this.partition,
-              this.region,
-              this.account,
-            ),
-          );
+    return BedrockKnowledgeBaseL3Construct.createFoundationModelPolicy(
+      this,
+      this.props.naming,
+      kbName,
+      [{ kbName, kbConfig }],
+      kmsKey,
+    );
+  }
+
+  /**
+   * Creates a foundation model policy for knowledge base(s).
+   * Can be used for single KB (single-element arrays) or consolidated policies (multi-element arrays).
+   * Creates a separate statement for each KB config.
+   * @param scope - The construct scope
+   * @param naming - The naming configuration
+   * @param nameSuffix - Suffix for the policy name (e.g., KB name or role identifier)
+   * @param namedKbConfigs - Array of named knowledge base configurations
+   * @param kmsKey - KMS key for encryption
+   * @returns The created managed policy
+   */
+  public static createFoundationModelPolicy(
+    scope: Construct,
+    naming: MdaaL3ConstructProps['naming'],
+    nameSuffix: string,
+    namedKbConfigs: NamedKbConfig[],
+    kmsKey: IKey,
+  ): MdaaManagedPolicy {
+    const partition = Stack.of(scope).partition;
+    const region = Stack.of(scope).region;
+    const account = Stack.of(scope).account;
+
+    const modelStatements: PolicyStatement[] = [];
+
+    // Helper to sanitize SID - IAM SIDs only allow alphanumeric characters [0-9A-Za-z]*
+    const sanitizeSid = (name: string): string => name.replace(/[^a-zA-Z0-9]/g, '');
+
+    // Create a statement for each KB config
+    namedKbConfigs.forEach(({ kbName, kbConfig }, index) => {
+      const modelArns = new Set<string>();
+
+      // Add embedding model ARN
+      const embeddingModelArn = resolveModelArn(kbConfig.embeddingModel, partition, region, account);
+      modelArns.add(embeddingModelArn);
+
+      // Collect parsing model ARNs from S3 data sources
+      Object.values(kbConfig.s3DataSources || {}).forEach(dsProps => {
+        if (dsProps.vectorIngestionConfiguration?.parsingConfiguration) {
+          const parsingConfig = dsProps.vectorIngestionConfiguration.parsingConfiguration;
+          if (
+            parsingConfig.parsingStrategy === 'BEDROCK_FOUNDATION_MODEL' &&
+            parsingConfig.bedrockFoundationModelConfiguration?.modelArn
+          ) {
+            modelArns.add(
+              resolveModelArn(parsingConfig.bedrockFoundationModelConfiguration.modelArn, partition, region, account),
+            );
+          }
         }
+      });
+
+      const foundationModelResources = Array.from(modelArns);
+      const hasInferenceProfile = foundationModelResources.some(arn => arn.includes(':inference-profile/'));
+
+      const modelActions = ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'];
+      if (hasInferenceProfile) {
+        modelActions.push('bedrock:GetInferenceProfile');
       }
-    });
 
-    // Create foundation model policy
-    const foundationModelResources = [embeddingModelArn, ...Array.from(parsingModelArns)];
-    const modelActions = ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'];
-
-    // Add additional permissions for inference profiles
-    const hasInferenceProfile = foundationModelResources.some(arn => arn.includes(':inference-profile/'));
-    if (hasInferenceProfile) {
-      modelActions.push('bedrock:GetInferenceProfile');
-    }
-
-    return new MdaaManagedPolicy(this, `bedrock-kb-foundation-model-policy-${kbName}`, {
-      naming: this.props.naming,
-      managedPolicyName: `kb-foundation-model-${kbName}`,
-      roles: [this.kbRole],
-      statements: [
+      modelStatements.push(
         new PolicyStatement({
-          sid: 'InvokeFoundationModels',
+          sid: `InvokeFoundationModels${sanitizeSid(kbName)}${index}`,
           effect: Effect.ALLOW,
           resources: foundationModelResources,
           actions: modelActions,
         }),
+      );
+    });
+
+    return new MdaaManagedPolicy(scope, `bedrock-kb-foundation-model-policy-${nameSuffix}`, {
+      naming: naming,
+      managedPolicyName: `kb-foundation-model-${nameSuffix}`,
+      statements: [
+        ...modelStatements,
         new PolicyStatement({
           sid: 'BedrockKms',
           effect: Effect.ALLOW,
@@ -1321,6 +1352,92 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
           actions: [...USER_ACTIONS, 'kms:DescribeKey', 'kms:CreateGrant'],
         }),
       ],
+    });
+  }
+
+  /**
+   * Creates a vector store access policy for knowledge base(s).
+   * Handles both Aurora PostgreSQL and OpenSearch Serverless vector stores.
+   * Can be used for single store or consolidated policies for multiple stores.
+   * @param scope - The construct scope
+   * @param naming - The naming configuration
+   * @param nameSuffix - Suffix for the policy name (e.g., KB name or role identifier)
+   * @param stores - Array of vector stores (Aurora or OpenSearch)
+   * @param kmsKey - KMS key for encryption (required for Aurora stores)
+   * @returns The created managed policy
+   */
+  public static createVectorStorePolicy(
+    scope: Construct,
+    naming: MdaaL3ConstructProps['naming'],
+    nameSuffix: string,
+    stores: (MdaaAuroraPgVector | MdaaOpensearchServerlessCollection)[],
+    kmsKey: IKey,
+  ): MdaaManagedPolicy {
+    const auroraStores: { secretArn: string; clusterArn: string }[] = [];
+    const opensearchCollectionIds: string[] = [];
+
+    for (const store of stores) {
+      if (store instanceof MdaaOpensearchServerlessCollection) {
+        opensearchCollectionIds.push(store.collection.attrId);
+      } else {
+        auroraStores.push({
+          secretArn: store.rdsClusterSecret.secretArn,
+          clusterArn: store.clusterArn,
+        });
+      }
+    }
+
+    const statements: PolicyStatement[] = [];
+
+    // Add Aurora PostgreSQL permissions if needed
+    if (auroraStores.length > 0) {
+      const secretArns = auroraStores.map(s => s.secretArn);
+      const clusterArns = auroraStores.map(s => s.clusterArn);
+
+      statements.push(
+        new PolicyStatement({
+          sid: 'DBSecretAccess',
+          actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
+          resources: secretArns,
+          effect: Effect.ALLOW,
+        }),
+        new PolicyStatement({
+          sid: 'DBQuery',
+          actions: ['rds-data:ExecuteStatement', 'rds-data:BatchExecuteStatement', 'rds:DescribeDBClusters'],
+          resources: clusterArns,
+          effect: Effect.ALLOW,
+        }),
+        new PolicyStatement({
+          sid: 'KMSUsage',
+          actions: USER_ACTIONS,
+          resources: [kmsKey.keyArn],
+          effect: Effect.ALLOW,
+        }),
+      );
+    }
+
+    // Add OpenSearch Serverless permissions if needed
+    if (opensearchCollectionIds.length > 0) {
+      const region = Stack.of(scope).region;
+      const account = Stack.of(scope).account;
+      const collectionArns = opensearchCollectionIds.map(
+        collectionId => `arn:aws:aoss:${region}:${account}:collection/${collectionId}`,
+      );
+
+      statements.push(
+        new PolicyStatement({
+          sid: 'OpenSearchAccess',
+          effect: Effect.ALLOW,
+          actions: ['aoss:APIAccessAll'],
+          resources: collectionArns,
+        }),
+      );
+    }
+
+    return new MdaaManagedPolicy(scope, `bedrock-kb-vectorstore-policy-${nameSuffix}`, {
+      naming: naming,
+      managedPolicyName: `kb-vectorstore-${nameSuffix}`,
+      statements,
     });
   }
 
@@ -1674,32 +1791,67 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     });
   }
 
-  private createDataSyncPolicy(kbName: string, knowledgeBase: bedrock.CfnKnowledgeBase): void {
-    const kbManagedPolicy = new MdaaManagedPolicy(this, `bedrock-knowledge-base-datasync-policy-${kbName}`, {
-      naming: this.props.naming,
-      managedPolicyName: `kb-datasync-${kbName}`,
-      roles: [this.kbRole],
+  private createDataSyncPolicyForKB(kbName: string, knowledgeBase: bedrock.CfnKnowledgeBase): ManagedPolicy {
+    return BedrockKnowledgeBaseL3Construct.createDataSyncPolicy(this, this.props.naming, kbName, [
+      knowledgeBase.attrKnowledgeBaseId,
+    ]);
+  }
+
+  private createVectorStorePolicyForKB(
+    kbName: string,
+    store: MdaaAuroraPgVector | MdaaOpensearchServerlessCollection,
+    kmsKey: IKey,
+  ): ManagedPolicy {
+    return BedrockKnowledgeBaseL3Construct.createVectorStorePolicy(this, this.props.naming, kbName, [store], kmsKey);
+  }
+
+  /**
+   * Creates a data sync policy for knowledge base(s).
+   * Can be used for single KB (single-element arrays) or consolidated policies (multi-element arrays).
+   * @param scope - The construct scope
+   * @param naming - The naming configuration
+   * @param nameSuffix - Identifier for the policy name (e.g., KB name or role identifier)
+   * @param kbIds - Array of knowledge base IDs
+   * @returns The created managed policy
+   */
+  public static createDataSyncPolicy(
+    scope: Construct,
+    naming: MdaaL3ConstructProps['naming'],
+    nameSuffix: string,
+    kbIds: string[],
+  ): MdaaManagedPolicy {
+    const partition = Stack.of(scope).partition;
+    const region = Stack.of(scope).region;
+    const account = Stack.of(scope).account;
+
+    const kbResources = kbIds.map(kbId => `arn:${partition}:bedrock:${region}:${account}:knowledge-base/${kbId}/*`);
+
+    const policy = new MdaaManagedPolicy(scope, `bedrock-kb-datasync-policy-${nameSuffix}`, {
+      naming: naming,
+      managedPolicyName: `kb-datasync-${nameSuffix}`,
       statements: [
         new PolicyStatement({
           sid: 'DataSourceSync',
           effect: Effect.ALLOW,
-          resources: [
-            `arn:${this.partition}:bedrock:${this.region}:${this.account}:knowledge-base/${knowledgeBase.attrKnowledgeBaseId}/*`,
-          ],
+          resources: kbResources,
           actions: ['bedrock:StartIngestionJob', 'bedrock:GetIngestionJob', 'bedrock:ListIngestionJobs'],
         }),
       ],
     });
+
+    // Add NAG suppression for the wildcard in data source path (knowledge-base/{id}/*)
     MdaaNagSuppressions.addCodeResourceSuppressions(
-      kbManagedPolicy,
+      policy,
       [
         {
           id: 'AwsSolutions-IAM5',
-          reason: 'Permissions scoped to datasources restricted to specific Knowledgebase for sync activity',
+          reason: 'Permissions scoped to data sources within specific knowledge bases for this execution role',
         },
       ],
       true,
     );
+
+    return policy;
   }
 
   private prepareAuroraDbConfiguration(kbName: string) {
@@ -1770,11 +1922,6 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
 
     createTable.node.addDependency(createDb);
     return { createDb, createTable };
-  }
-
-  private attachPoliciesToRole(vectorStorePolicy: ManagedPolicy, handlerRole?: IRole): void {
-    this.kbRole.addManagedPolicy(vectorStorePolicy);
-    handlerRole?.addManagedPolicy(vectorStorePolicy);
   }
 
   private createAuroraKnowledgeBaseResource(
@@ -1869,8 +2016,6 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
         knowledgeBase.node.addDependency(dep);
       }
     });
-
-    this.createKnowledgeBaseOutput(knowledgeBase);
   }
 
   private createKnowledgeBaseOutput(knowledgeBase: bedrock.CfnKnowledgeBase): void {
@@ -1885,17 +2030,6 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       },
       this,
     );
-  }
-
-  private finalizeKnowledgeBaseSetup(
-    kbName: string,
-    kbConfig: BedrockKnowledgeBaseProps,
-    knowledgeBase: bedrock.CfnKnowledgeBase,
-    kmsKey: IKey,
-  ): void {
-    this.createKnowledgeBaseLogging(kbName, knowledgeBase, kmsKey);
-    this.createDataSources(kbConfig, knowledgeBase, kbName, kmsKey);
-    this.createDataSyncPolicy(kbName, knowledgeBase);
   }
 
   private setupOpenSearchIndex(

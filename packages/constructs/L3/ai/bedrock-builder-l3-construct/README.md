@@ -8,8 +8,13 @@ The Bedrock Builder CDK L3 construct is used to configure and deploy a secure Be
 ![bedrock-builder](docs/bedrock-builder.png)
 
 * **Bedrock Builder**: Deploys Amazon Bedrock Components(s) to streamline workflows and/or automate repetitive tasks using Foundational Models
-* **Bedrock Execution Policy**: Allows Bedrock Role to access Knowledge Base, Foundational Model and Bedrock Guardrails.
-* **Bedrock Execution Role**: Bedrock Execution Policy will be attached to the External Agent Role. This role should have Bedrock Service as a Trusted Principal. 
+* **Bedrock Execution Policies**: For Knowledge Bases, the construct creates consolidated IAM policies per execution role:
+  * **Vector Store Policy**: Permissions for Aurora PostgreSQL (rds-data, secretsmanager) or OpenSearch Serverless (aoss:APIAccessAll)
+  * **Foundation Model Policy**: Permissions to invoke embedding and parsing models (bedrock:InvokeModel)
+  * **Data Sync Policy**: Permissions for data source synchronization (bedrock:StartIngestionJob, GetIngestionJob, ListIngestionJobs)
+  
+  *Policies are consolidated per role - multiple KBs sharing the same role share the same 3 policies to avoid hitting the AWS limit of 10 managed policies per role.*
+* **Bedrock Execution Role**: Execution policies are attached to the KB execution role. This role should have Bedrock Service as a Trusted Principal. 
 * **Bedrock KMS Key**: Encrypt Bedrock resources with the KMS Key. One will be generated if a KMS key is not provided as part of Configuration
 * **Lambdas**: (Optional) Allows you to generate Lambda Layer, Lambda Function or both, which can be associate with Agent Action Group. (*Refer: [MDAA DataOps-LambdaFunctions](../../dataops/dataops-lambda-app/README.md)*)
   * **Lambda Layers** - Lambda layers which can be used in Lambda functions (inside or outside of this config).

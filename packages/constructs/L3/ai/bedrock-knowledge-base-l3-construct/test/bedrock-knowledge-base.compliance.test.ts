@@ -122,7 +122,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
             Action: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
             Effect: 'Allow',
             Resource: 'arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
-            Sid: 'InvokeFoundationModels',
+            Sid: 'InvokeFoundationModelstestkb0',
           },
           {},
         ],
@@ -560,7 +560,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
               'arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
               'arn:test-partition:bedrock:test-region::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0',
             ],
-            Sid: 'InvokeFoundationModels',
+            Sid: 'InvokeFoundationModelstestkbcustom0',
           },
           {},
         ],
@@ -630,7 +630,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
               'arn:test-partition:bedrock:test-region::foundation-model/amazon.titan-embed-text-v2:0',
               'arn:test-partition:bedrock:test-region:test-account:inference-profile/us.anthropic.claude-3-sonnet-20240229-v1:0',
             ],
-            Sid: 'InvokeFoundationModels',
+            Sid: 'InvokeFoundationModelstestkbcustom0',
           },
           {},
         ],
@@ -832,7 +832,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
             Action: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream', 'bedrock:GetInferenceProfile'],
             Effect: 'Allow',
             Resource: 'arn:aws:bedrock:us-east-1:123456789012:inference-profile/test-profile',
-            Sid: 'InvokeFoundationModels',
+            Sid: 'InvokeFoundationModelstestkbinference0',
           },
         ]),
       },
@@ -1110,5 +1110,123 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     expect(() => {
       new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-prefix-construct', constructProps);
     }).not.toThrow();
+  });
+
+  describe('deferPolicyCreation flag tests', () => {
+    test('Test default behavior (deferPolicyCreation=false) creates policies', () => {
+      const testApp = new MdaaTestApp();
+      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+      const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+      const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+        kbName: 'test-kb-default',
+        kbConfig: basicKnowledgeBase,
+        vectorStoreConfig,
+        kmsKey,
+        roleHelper,
+        naming: testApp.naming,
+        // deferPolicyCreation is not set (defaults to false)
+      };
+
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-default-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Verify foundation model policy is created (check policy name pattern)
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        ManagedPolicyName: Match.stringLikeRegexp('.*kb-foundation.*'),
+      });
+
+      // Verify data sync policy is created (check policy name pattern)
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        ManagedPolicyName: Match.stringLikeRegexp('.*kb-datasync.*'),
+      });
+
+      // Verify vector store policy is created (check policy name pattern)
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        ManagedPolicyName: Match.stringLikeRegexp('.*kb-vectorstor.*'),
+      });
+    });
+
+    test('Test deferPolicyCreation=false explicitly creates policies', () => {
+      const testApp = new MdaaTestApp();
+      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+      const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+      const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+        kbName: 'test-kb-explicit-false',
+        kbConfig: basicKnowledgeBase,
+        vectorStoreConfig,
+        kmsKey,
+        roleHelper,
+        naming: testApp.naming,
+        deferPolicyCreation: false,
+      };
+
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-explicit-false-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Verify foundation model policy is created (check policy name pattern)
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        ManagedPolicyName: Match.stringLikeRegexp('.*kb-foundation.*'),
+      });
+
+      // Verify data sync policy is created (check policy name pattern)
+      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
+        ManagedPolicyName: Match.stringLikeRegexp('.*kb-datasync.*'),
+      });
+    });
+
+    test('Test deferPolicyCreation=true skips KB role policy creation but creates handler policy', () => {
+      const testApp = new MdaaTestApp();
+      const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
+      const kmsKey = new Key(testApp.testStack, 'TestKey');
+
+      const constructProps: BedrockKnowledgeBaseL3ConstructProps = {
+        kbName: 'test-kb-deferred',
+        kbConfig: basicKnowledgeBase,
+        vectorStoreConfig,
+        kmsKey,
+        roleHelper,
+        naming: testApp.naming,
+        deferPolicyCreation: true,
+      };
+
+      new BedrockKnowledgeBaseL3Construct(testApp.testStack, 'test-kb-deferred-construct', constructProps);
+      const template = Template.fromStack(testApp.testStack);
+
+      // Get all managed policies
+      const policies = template.findResources('AWS::IAM::ManagedPolicy');
+      const policyNames = Object.keys(policies);
+
+      // Verify NO foundation model policy is created for KB role
+      const foundationModelPolicies = policyNames.filter(name => {
+        const policy = policies[name];
+        const policyName = policy.Properties?.ManagedPolicyName || '';
+        return policyName.includes('kb-foundation');
+      });
+      expect(foundationModelPolicies.length).toBe(0);
+
+      // Verify NO data sync policy is created for KB role
+      const dataSyncPolicies = policyNames.filter(name => {
+        const policy = policies[name];
+        const policyName = policy.Properties?.ManagedPolicyName || '';
+        return policyName.includes('kb-datasync');
+      });
+      expect(dataSyncPolicies.length).toBe(0);
+
+      // Count vector store policies - should only have 1 (for handler), not 2 (handler + KB role)
+      const vectorStorePolicies = policyNames.filter(name => {
+        const policy = policies[name];
+        const policyName = policy.Properties?.ManagedPolicyName || '';
+        return policyName.includes('kb-vectorstor');
+      });
+      // Only handler policy should exist, not KB role policy
+      expect(vectorStorePolicies.length).toBe(1);
+
+      // Verify Knowledge Base resource is still created
+      template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
+        Name: Match.stringLikeRegexp('.*test-kb-deferred.*'),
+      });
+    });
   });
 });

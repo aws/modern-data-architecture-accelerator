@@ -9,6 +9,9 @@ import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct';
+import { MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
+import { MdaaAuroraPgVector } from '@aws-mdaa/rds-constructs';
+import { MdaaOpensearchServerlessCollection } from '@aws-mdaa/opensearch-constructs';
 
 import { aws_bedrock as bedrock, aws_kms as kms, aws_opensearchserverless as aoss, Stack } from 'aws-cdk-lib';
 
@@ -22,6 +25,7 @@ import { BedrockAgentL3Construct, NamedAgentProps, BedrockAgentProps } from '@aw
 import {
   BedrockKnowledgeBaseL3Construct,
   BedrockKnowledgeBaseProps,
+  NamedKbConfig,
   NamedKnowledgeBaseProps,
   NamedVectorStoreProps,
   OpensearchServerlessProps,
@@ -159,6 +163,15 @@ export interface BedrockBuilderL3ConstructProps extends MdaaL3ConstructProps {
   readonly guardrails?: NamedGuardrailProps;
 }
 
+/**
+ * Resources collected from all knowledge bases in a group for consolidated policy creation.
+ */
+interface ConsolidatedResources {
+  vectorStores: (MdaaAuroraPgVector | MdaaOpensearchServerlessCollection)[];
+  namedKbConfigs: NamedKbConfig[];
+  kbIds: string[];
+}
+
 // ---------------------------------------------
 // Main Construct Class
 // ---------------------------------------------
@@ -184,13 +197,16 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     // Create shared VPC endpoints for OpenSearch Serverless vector stores
     const sharedVpcEndpoints = this.createSharedVpcEndpoints(props.vectorStores, props.knowledgeBases);
 
-    // Create knowledge bases (each will create its own vector store)
+    // Create all knowledge bases with deferred policy creation, grouped by role
     const knowledgeBases: { [kbName: string]: bedrock.CfnKnowledgeBase } = {};
+    const kbsByRole = new Map<string, BedrockKnowledgeBaseL3Construct[]>();
+
     Object.entries(props.knowledgeBases || {}).forEach(([kbName, kbConfig]) => {
       const vectorStoreConfig = props.vectorStores?.[kbConfig.vectorStore];
       if (!vectorStoreConfig) {
         throw new Error(`Knowledge base ${kbName} references unknown vector store: ${kbConfig.vectorStore}`);
       }
+
       // Resolve Lambda function references in knowledge base data sources
       const resolvedKbConfig = this.resolveKnowledgeBaseLambdaReferences(kbConfig);
 
@@ -201,8 +217,43 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
         vectorStoreConfig,
         kmsKey,
         sharedVpcEndpoints,
+        deferPolicyCreation: true, // Don't create per-KB policies
       });
+
       knowledgeBases[kbName] = kbConstruct.knowledgeBase;
+
+      // Group by role ARN for consolidated policy creation
+      const roleArn = kbConstruct.kbRole.roleArn;
+      if (!kbsByRole.has(roleArn)) {
+        kbsByRole.set(roleArn, []);
+      }
+      kbsByRole.get(roleArn)!.push(kbConstruct);
+    });
+
+    // Create consolidated policies per role group
+    kbsByRole.forEach(kbsInGroup => {
+      // Collect resources from all KBs in this group
+      const resources = this.collectResourcesFromKBConstructs(kbsInGroup);
+
+      // Create consolidated policies
+      const role = kbsInGroup[0].kbRole;
+      // Use role's construct node ID as stable identifier
+      const roleId = role.node.id;
+      const vectorStorePolicy = this.createConsolidatedVectorStorePolicy(roleId, resources, kmsKey);
+      const foundationModelPolicy = this.createConsolidatedFoundationModelPolicy(roleId, kmsKey, resources);
+      const dataSyncPolicy = this.createConsolidatedDataSyncPolicy(roleId, resources);
+
+      // Attach policies to role
+      role.addManagedPolicy(vectorStorePolicy);
+      role.addManagedPolicy(foundationModelPolicy);
+      role.addManagedPolicy(dataSyncPolicy);
+
+      // Add CloudFormation dependencies (KB → vectorStore and foundationModel policies)
+      // Note: dataSync policy depends on KB IDs, so we don't add reverse dependency
+      kbsInGroup.forEach(kb => {
+        kb.knowledgeBase.node.addDependency(vectorStorePolicy);
+        kb.knowledgeBase.node.addDependency(foundationModelPolicy);
+      });
     });
 
     // Create guardrails
@@ -585,6 +636,81 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
       ...kbConfig,
       s3DataSources: resolvedDataSources,
     };
+  }
+
+  // ---------------------------------------------
+  // Knowledge Base Grouping and Policy Consolidation Methods
+  // ---------------------------------------------
+
+  /**
+   * Collects resource information from KB constructs for consolidated policy creation.
+   * Gathers vector stores, named KB configs, and KB IDs.
+   */
+  private collectResourcesFromKBConstructs(kbs: BedrockKnowledgeBaseL3Construct[]): ConsolidatedResources {
+    const vectorStores: (MdaaAuroraPgVector | MdaaOpensearchServerlessCollection)[] = [];
+    const namedKbConfigs: NamedKbConfig[] = [];
+    const kbIds: string[] = [];
+
+    kbs.forEach(kb => {
+      // Collect vector store from KB's vectorStore property
+      vectorStores.push(kb.vectorStore);
+
+      // Collect named KB config for foundation model policy creation
+      namedKbConfigs.push({ kbName: kb.props.kbName, kbConfig: kb.props.kbConfig });
+
+      // Collect KB ID
+      kbIds.push(kb.knowledgeBase.attrKnowledgeBaseId);
+    });
+
+    return {
+      vectorStores,
+      namedKbConfigs,
+      kbIds,
+    };
+  }
+
+  /**
+   * Creates a consolidated vector store access policy for all KBs in the group.
+   * Handles both Aurora PostgreSQL and OpenSearch Serverless vector stores.
+   */
+  private createConsolidatedVectorStorePolicy(
+    roleId: string,
+    resources: ConsolidatedResources,
+    kmsKey: IKey,
+  ): MdaaManagedPolicy {
+    return BedrockKnowledgeBaseL3Construct.createVectorStorePolicy(
+      this,
+      this.props.naming,
+      roleId,
+      resources.vectorStores,
+      kmsKey,
+    );
+  }
+
+  /**
+   * Creates a consolidated foundation model policy for all KBs in the group.
+   * Includes bedrock:InvokeModel permissions for all embedding and parsing models.
+   */
+  private createConsolidatedFoundationModelPolicy(
+    roleId: string,
+    kmsKey: IKey,
+    resources: ConsolidatedResources,
+  ): MdaaManagedPolicy {
+    return BedrockKnowledgeBaseL3Construct.createFoundationModelPolicy(
+      this,
+      this.props.naming,
+      roleId,
+      resources.namedKbConfigs,
+      kmsKey,
+    );
+  }
+
+  /**
+   * Creates a consolidated data sync policy for all KBs in the group.
+   * Uses specific KB IDs (no wildcards at KB level) for ingestion permissions.
+   */
+  private createConsolidatedDataSyncPolicy(roleId: string, resources: ConsolidatedResources): MdaaManagedPolicy {
+    return BedrockKnowledgeBaseL3Construct.createDataSyncPolicy(this, this.props.naming, roleId, resources.kbIds);
   }
 
   private addInternalConstructSuppressions(): void {

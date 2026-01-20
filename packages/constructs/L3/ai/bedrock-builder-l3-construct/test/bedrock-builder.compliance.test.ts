@@ -56,6 +56,36 @@ jest.mock('@aws-mdaa/ai-helper', () => ({
   ),
 }));
 
+// Mock Lambda layer constructs to avoid Docker builds during tests
+// This significantly speeds up test execution by avoiding repeated Docker image builds
+/* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any */
+jest.mock('@aws-mdaa/lambda-constructs', () => {
+  const originalModule = jest.requireActual('@aws-mdaa/lambda-constructs');
+  const path = require('path');
+  const { LayerVersion, Code, Runtime } = require('aws-cdk-lib/aws-lambda');
+
+  // Use fixture directory instead of writing to temp at runtime
+  const mockLayerDir = path.join(__dirname, 'mock-lambda-layer');
+
+  class MockLayerVersion extends LayerVersion {
+    constructor(scope: any, id: string, props: { naming: { resourceName: (name: string) => string } }) {
+      super(scope, id, {
+        code: Code.fromAsset(mockLayerDir),
+        compatibleRuntimes: [Runtime.PYTHON_3_12, Runtime.PYTHON_3_13],
+        layerVersionName: props.naming.resourceName(`mock-layer-${id}`),
+      });
+    }
+  }
+
+  return {
+    ...originalModule,
+    MdaaBoto3LayerVersion: MockLayerVersion,
+    MdaaAwsAuthLayerVersion: MockLayerVersion,
+    MdaaOpensearchPyLayerVersion: MockLayerVersion,
+  };
+});
+/* eslint-enable @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any */
+
 describe('Bedrock Builder Compliance Stack Tests', () => {
   const layerProps: LayerProps = {
     layerName: 'test-layer',
@@ -630,15 +660,16 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     test('Test Knowledge Base Policy with Foundation Model Access', () => {
       const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
 
+      // Policy name pattern is kb-foundation-model-${roleId}, which may be truncated
       const kbPolicy = Object.values(managedPolicies).find(policy =>
         (policy as { Properties: { ManagedPolicyName?: string } }).Properties.ManagedPolicyName?.includes(
-          'kb-foundation',
+          'kb-foundatio',
         ),
       ) as { Properties: { PolicyDocument: { Statement: Array<{ Sid?: string; Effect: string; Action: string[] }> } } };
 
       expect(kbPolicy).toBeDefined();
       const statements = kbPolicy.Properties.PolicyDocument.Statement;
-      const foundationModelStatement = statements.find(stmt => stmt.Sid === 'InvokeFoundationModels');
+      const foundationModelStatement = statements.find(stmt => stmt.Sid?.startsWith('InvokeFoundationModels'));
 
       expect(foundationModelStatement).toBeDefined();
       expect(foundationModelStatement!.Effect).toBe('Allow');
@@ -2634,6 +2665,273 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       const collections = template.findResources('AWS::OpenSearchServerless::Collection');
       const collectionCount = Object.keys(collections).length;
       expect(collectionCount).toBe(1);
+    });
+  });
+
+  describe('Policy Consolidation for Multiple KBs with Same Execution Role', () => {
+    // All KBs use the same kbRoleRef defined at the top of the test file
+    const vectorStoreA: AuroraServerlessPgVectorProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'],
+    };
+
+    const vectorStoreB: AuroraServerlessPgVectorProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'],
+    };
+
+    const vectorStoreC: AuroraServerlessPgVectorProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'],
+    };
+
+    const kbA: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-a',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-a': {
+          bucketName: 'test-bucket-a',
+          enableSync: false,
+        },
+      },
+    };
+
+    const kbB: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-b',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-b': {
+          bucketName: 'test-bucket-b',
+          enableSync: false,
+        },
+      },
+    };
+
+    const kbC: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-c',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-c': {
+          bucketName: 'test-bucket-c',
+          enableSync: false,
+        },
+      },
+    };
+
+    test('Test Three KBs with Same Role Creates Only 3 Consolidated Policies', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
+        { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+
+      const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
+      const policyNames = Object.values(managedPolicies)
+        .map(policy => (policy as { Properties: { ManagedPolicyName?: string } }).Properties.ManagedPolicyName)
+        .filter(name => name?.includes('kb-'));
+
+      // Should have 3 consolidated policies (vectorstore, foundation-models, datasync) for the KB role
+      // Plus 3 additional vector store policies for Aurora handler roles (one per KB)
+      // Total = 6 policies matching kb-vectorsto, kb-foundatio, or kb-datasync
+      const consolidatedPolicies = policyNames.filter(
+        name => name?.includes('kb-vectorsto') || name?.includes('kb-foundatio') || name?.includes('kb-datasync'),
+      );
+      expect(consolidatedPolicies.length).toBe(6);
+    });
+
+    test('Test Consolidated Vector Store Policy Has Correct Permissions', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
+        { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+
+      const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
+      const vectorStorePolicy = Object.values(managedPolicies).find(policy => {
+        const policyName = (policy as { Properties: { ManagedPolicyName?: string } }).Properties.ManagedPolicyName;
+        return policyName?.includes('kb-vectorsto');
+      }) as { Properties: { PolicyDocument: { Statement: Array<{ Sid?: string; Action: string[] }> } } };
+
+      expect(vectorStorePolicy).toBeDefined();
+      const statements = vectorStorePolicy.Properties.PolicyDocument.Statement;
+
+      // Check for DB query access (Aurora)
+      const dbQueryStatement = statements.find(stmt => stmt.Sid === 'DBQuery');
+      expect(dbQueryStatement).toBeDefined();
+      expect(dbQueryStatement!.Action).toContain('rds-data:ExecuteStatement');
+    });
+
+    test('Test Consolidated Foundation Model Policy Has Correct Permissions', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
+        { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+
+      const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
+      // Policy name pattern is kb-foundation-model-${roleId}, which may be truncated
+      const fmPolicy = Object.values(managedPolicies).find(policy =>
+        (policy as { Properties: { ManagedPolicyName?: string } }).Properties.ManagedPolicyName?.includes(
+          'kb-foundatio',
+        ),
+      ) as { Properties: { PolicyDocument: { Statement: Array<{ Sid?: string; Action: string[] }> } } };
+
+      expect(fmPolicy).toBeDefined();
+      const statements = fmPolicy.Properties.PolicyDocument.Statement;
+
+      const invokeStatement = statements.find(stmt => stmt.Sid?.startsWith('InvokeFoundationModels'));
+      expect(invokeStatement).toBeDefined();
+      expect(invokeStatement!.Action).toContain('bedrock:InvokeModel');
+      expect(invokeStatement!.Action).toContain('bedrock:InvokeModelWithResponseStream');
+    });
+
+    test('Test Consolidated Data Sync Policy Has Correct Permissions', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
+        { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+
+      const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
+      const dataSyncPolicy = Object.values(managedPolicies).find(policy =>
+        (policy as { Properties: { ManagedPolicyName?: string } }).Properties.ManagedPolicyName?.includes(
+          'kb-datasync',
+        ),
+      ) as { Properties: { PolicyDocument: { Statement: Array<{ Sid?: string; Action: string[] }> } } };
+
+      expect(dataSyncPolicy).toBeDefined();
+      const statements = dataSyncPolicy.Properties.PolicyDocument.Statement;
+
+      // Check for DataSourceSync permissions
+      const syncStatement = statements.find(stmt => stmt.Sid === 'DataSourceSync');
+      expect(syncStatement).toBeDefined();
+      expect(syncStatement!.Action).toContain('bedrock:StartIngestionJob');
+      expect(syncStatement!.Action).toContain('bedrock:GetIngestionJob');
+      expect(syncStatement!.Action).toContain('bedrock:ListIngestionJobs');
+    });
+
+    test('Test All Three Knowledge Bases Are Created', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB, 'vector-c': vectorStoreC },
+        { 'kb-a': kbA, 'kb-b': kbB, 'kb-c': kbC },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+
+      const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
+      expect(Object.keys(knowledgeBases).length).toBe(3);
+    });
+  });
+
+  describe('Policy Consolidation with Multiple Roles', () => {
+    const secondKbRoleRef: MdaaRoleRef = {
+      arn: 'arn:test-partition:iam::test-account:role/kb-execution-role-2',
+      name: 'kb-execution-role-2',
+    };
+
+    const vectorStoreA: AuroraServerlessPgVectorProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'],
+    };
+
+    const vectorStoreB: AuroraServerlessPgVectorProps = {
+      vpcId: 'test-vpc-id',
+      subnetIds: ['subnet-1', 'subnet-2'],
+    };
+
+    // KB using first role
+    const kbRole1: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-a',
+      role: kbRoleRef,
+      s3DataSources: {
+        'data-source-a': {
+          bucketName: 'test-bucket-a',
+          enableSync: false,
+        },
+      },
+    };
+
+    // KB using second role
+    const kbRole2: BedrockKnowledgeBaseProps = {
+      embeddingModel: 'amazon.titan-embed-text-v2:0',
+      vectorStore: 'vector-b',
+      role: secondKbRoleRef,
+      s3DataSources: {
+        'data-source-b': {
+          bucketName: 'test-bucket-b',
+          enableSync: false,
+        },
+      },
+    };
+
+    test('Test Two KBs with Different Roles Creates 6 Policies (3 per role)', () => {
+      const testApp = new MdaaTestApp();
+      const template = generateTemplateFromTestInput(
+        testApp,
+        dataAdminRoleRef,
+        undefined,
+        { 'vector-a': vectorStoreA, 'vector-b': vectorStoreB },
+        { 'kb-role1': kbRole1, 'kb-role2': kbRole2 },
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+
+      const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
+      const allPolicyNames = Object.values(managedPolicies).map(
+        policy => (policy as { Properties: { ManagedPolicyName?: string } }).Properties.ManagedPolicyName,
+      );
+
+      // Filter for KB-related policies
+      const kbPolicyNames = allPolicyNames.filter(name => name?.includes('kb-'));
+
+      // Should have 6 consolidated policies (3 per role: vectorstore, foundation-model, datasync)
+      // Plus 2 additional vector store policies for Aurora handler roles (one per KB)
+      // Total = 8 policies
+      const consolidatedPolicies = kbPolicyNames.filter(
+        name => name?.includes('kb-vectorsto') || name?.includes('kb-foundatio') || name?.includes('kb-datasync'),
+      );
+
+      expect(consolidatedPolicies.length).toBe(8);
     });
   });
 });
