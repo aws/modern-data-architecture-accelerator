@@ -1093,38 +1093,7 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
       functionProps.roleArn,
     );
 
-    let functionVpcProps = {};
-    if (functionProps.vpcConfig) {
-      const securityGroup = functionProps.vpcConfig.securityGroupId
-        ? SecurityGroup.fromSecurityGroupId(
-            this,
-            `${functionProps.functionName}-sg`,
-            functionProps.vpcConfig.securityGroupId,
-          )
-        : this.createFunctionSecurityGroup(
-            `${functionProps.functionName}-sg`,
-            functionProps.vpcConfig?.vpcId,
-            functionProps.vpcConfig.securityGroupEgressRules,
-          );
-
-      const vpc = Vpc.fromVpcAttributes(this, `vpc-${functionProps.functionName}`, {
-        availabilityZones: ['dummy'],
-        vpcId: functionProps.vpcConfig.vpcId,
-      });
-
-      const subnets = functionProps.vpcConfig.subnetIds.map(id => {
-        return Subnet.fromSubnetId(this, `${functionProps.functionName}-subnet-${id}`, id);
-      });
-
-      functionVpcProps = {
-        securityGroups: [securityGroup],
-        vpc: vpc,
-        vpcSubnets: {
-          subnets: subnets,
-        },
-      };
-    }
-
+    const functionVpcProps = this.createVpcConfiguration(functionProps);
     const dlq = EventBridgeHelper.createDlq(
       this.props.overrideScope ? this : this.scope,
       this.props.naming,
@@ -1137,7 +1106,6 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
       ...functionVpcProps,
       functionName: functionProps.functionName,
       description: functionProps.description,
-
       role: role,
       environmentEncryption: this.projectKmsKey,
       naming: this.props.naming,
@@ -1155,12 +1123,69 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
 
     const lambdaFunction = this.createDockerOrLambdaFunction(lambdaOptions, functionProps, generatedLayersByName);
 
-    // Add resource based permission
+    this.addFunctionPermissions(functionProps, lambdaFunction);
+
+    //An inline policy to allow the Lambda role to write to DLQ is automatically added,
+    //but this triggers Nags. Instead, we use the Queue Resource policy,
+    //and remove the inline policy here.
+    role.node.tryRemoveChild('Policy');
+    this.addNagSuppressions(lambdaFunction);
+
+    if (functionProps.eventBridge) {
+      this.createFunctionEventBridgeRules(functionProps.eventBridge, functionProps.functionName, lambdaFunction);
+    }
+
+    this.createObservabilityResources(functionProps, lambdaFunction);
+
+    return lambdaFunction;
+  }
+
+  /**
+   * Create VPC configuration for Lambda function if specified
+   */
+  private createVpcConfiguration(functionProps: FunctionProps): object {
+    if (!functionProps.vpcConfig) {
+      return {};
+    }
+
+    const securityGroup = functionProps.vpcConfig.securityGroupId
+      ? SecurityGroup.fromSecurityGroupId(
+          this,
+          `${functionProps.functionName}-sg`,
+          functionProps.vpcConfig.securityGroupId,
+        )
+      : this.createFunctionSecurityGroup(
+          `${functionProps.functionName}-sg`,
+          functionProps.vpcConfig?.vpcId,
+          functionProps.vpcConfig.securityGroupEgressRules,
+        );
+
+    const vpc = Vpc.fromVpcAttributes(this, `vpc-${functionProps.functionName}`, {
+      availabilityZones: ['dummy'],
+      vpcId: functionProps.vpcConfig.vpcId,
+    });
+
+    const subnets = functionProps.vpcConfig.subnetIds.map(id => {
+      return Subnet.fromSubnetId(this, `${functionProps.functionName}-subnet-${id}`, id);
+    });
+
+    return {
+      securityGroups: [securityGroup],
+      vpc: vpc,
+      vpcSubnets: {
+        subnets: subnets,
+      },
+    };
+  }
+
+  /**
+   * Add resource-based permissions to Lambda function
+   */
+  private addFunctionPermissions(functionProps: FunctionProps, lambdaFunction: LambdaFunction): void {
     if (functionProps.grantInvoke) {
       lambdaFunction.grantInvoke(new ArnPrincipal(functionProps.grantInvoke));
     }
 
-    // Add additional resource based permissions
     if (functionProps.additionalResourcePermissions) {
       for (const [sid, permission] of Object.entries(functionProps.additionalResourcePermissions)) {
         const permissionProps = {
@@ -1172,12 +1197,12 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
         lambdaFunction.addPermission(sid, permissionProps);
       }
     }
+  }
 
-    //An inline policy to allow the Lambda role to write to DLQ is automatically added,
-    //but this triggers Nags. Instead, we use the Queue Resource policy,
-    //and remove the inline policy here.
-    role.node.tryRemoveChild('Policy');
-
+  /**
+   * Add CDK Nag suppressions for Lambda function
+   */
+  private addNagSuppressions(lambdaFunction: LambdaFunction): void {
     MdaaNagSuppressions.addCodeResourceSuppressions(
       lambdaFunction,
       [
@@ -1190,81 +1215,119 @@ export class LambdaFunctionL3Construct extends MdaaL3Construct {
       ],
       true,
     );
+  }
 
-    if (functionProps.eventBridge) {
-      this.createFunctionEventBridgeRules(functionProps.eventBridge, functionProps.functionName, lambdaFunction);
-    }
+  /**
+   * Create observability resources (metric filters, alarms, log insights queries)
+   */
+  private createObservabilityResources(functionProps: FunctionProps, lambdaFunction: LambdaFunction): void {
+    const createdMetrics = this.createMetricFilters(functionProps, lambdaFunction);
+    this.createAlarms(functionProps, lambdaFunction, createdMetrics);
+    this.createLogInsightsQueries(functionProps, lambdaFunction);
+  }
 
-    // Create metric filters and track created metrics
+  /**
+   * Create CloudWatch metric filters and track created metrics
+   */
+  private createMetricFilters(
+    functionProps: FunctionProps,
+    lambdaFunction: LambdaFunction,
+  ): Map<string, { namespace: string; metricName: string }> {
     const createdMetrics = new Map<string, { namespace: string; metricName: string }>();
-    if (functionProps.metricFilters) {
-      for (const [index, filterProps] of functionProps.metricFilters.entries()) {
-        // Create metric filter with function name for SSM exports
-        new MdaaMetricFilter(this, `metric-filter-${functionProps.functionName}-${index}`, {
-          filterName: filterProps.filterName,
-          logGroup: lambdaFunction.logGroup,
-          filterPattern: filterProps.filterPattern,
-          metricTransformations: filterProps.metricTransformations,
-          functionName: functionProps.functionName,
-          naming: this.props.naming,
-        });
 
-        // Track metrics for validation
-        for (const transform of filterProps.metricTransformations) {
-          const key = `${transform.metricNamespace}:${transform.metricName}`;
-          createdMetrics.set(key, {
-            namespace: transform.metricNamespace,
-            metricName: transform.metricName,
-          });
-        }
-      }
+    if (!functionProps.metricFilters) {
+      return createdMetrics;
     }
 
-    // Create alarms with validation
-    if (functionProps.alarms) {
-      for (const [index, alarmProps] of functionProps.alarms.entries()) {
-        // Validate custom metrics exist (skip validation for AWS metrics)
-        if (alarmProps.namespace && !alarmProps.namespace.startsWith('AWS/')) {
-          const metricKey = `${alarmProps.namespace}:${alarmProps.metricName}`;
-          if (!createdMetrics.has(metricKey)) {
-            const availableMetrics = Array.from(createdMetrics.keys()).join(', ');
-            throw new Error(
-              `Alarm "${alarmProps.alarmName}" references undefined metric "${alarmProps.metricName}" ` +
-                `in namespace "${alarmProps.namespace}". Available metrics: ${availableMetrics || 'none'}`,
-            );
-          }
-        }
+    for (const [index, filterProps] of functionProps.metricFilters.entries()) {
+      new MdaaMetricFilter(this, `metric-filter-${functionProps.functionName}-${index}`, {
+        filterName: filterProps.filterName,
+        logGroup: lambdaFunction.logGroup,
+        filterPattern: filterProps.filterPattern,
+        metricTransformations: filterProps.metricTransformations,
+        functionName: functionProps.functionName,
+        naming: this.props.naming,
+      });
 
-        // Replace placeholders in dimensions
-        const dimensions = this.replacePlaceholders(alarmProps.dimensions, lambdaFunction);
-
-        // Create alarm with function name for consistent SSM export pattern
-        new MdaaAlarm(this, `alarm-${functionProps.functionName}-${index}`, {
-          ...alarmProps,
-          dimensions,
-          functionName: functionProps.functionName,
-          naming: this.props.naming,
+      // Track metrics for validation
+      for (const transform of filterProps.metricTransformations) {
+        const key = `${transform.metricNamespace}:${transform.metricName}`;
+        createdMetrics.set(key, {
+          namespace: transform.metricNamespace,
+          metricName: transform.metricName,
         });
       }
     }
 
-    // Create log insights queries
-    if (functionProps.logInsightsQueries) {
-      for (const [index, queryProps] of functionProps.logInsightsQueries.entries()) {
-        // Auto-derive logGroupNames from Lambda function if not provided
-        const logGroupNames = queryProps.logGroupNames ?? [lambdaFunction.logGroup.logGroupName];
+    return createdMetrics;
+  }
 
-        new MdaaLogInsightsQuery(this, `query-${functionProps.functionName}-${index}`, {
-          queryName: queryProps.queryName,
-          queryString: queryProps.queryString,
-          logGroupNames,
-          functionName: functionProps.functionName,
-          naming: this.props.naming,
-        });
-      }
+  /**
+   * Create CloudWatch alarms with metric validation
+   */
+  private createAlarms(
+    functionProps: FunctionProps,
+    lambdaFunction: LambdaFunction,
+    createdMetrics: Map<string, { namespace: string; metricName: string }>,
+  ): void {
+    if (!functionProps.alarms) {
+      return;
     }
 
-    return lambdaFunction;
+    for (const [index, alarmProps] of functionProps.alarms.entries()) {
+      this.validateAlarmMetric(alarmProps, createdMetrics);
+
+      const dimensions = this.replacePlaceholders(alarmProps.dimensions, lambdaFunction);
+
+      new MdaaAlarm(this, `alarm-${functionProps.functionName}-${index}`, {
+        ...alarmProps,
+        dimensions,
+        functionName: functionProps.functionName,
+        naming: this.props.naming,
+      });
+    }
+  }
+
+  /**
+   * Validate that alarm references an existing metric (skip AWS metrics)
+   */
+  private validateAlarmMetric(
+    alarmProps: AlarmProps,
+    createdMetrics: Map<string, { namespace: string; metricName: string }>,
+  ): void {
+    if (!alarmProps.namespace || alarmProps.namespace.startsWith('AWS/')) {
+      return;
+    }
+
+    const metricKey = `${alarmProps.namespace}:${alarmProps.metricName}`;
+    if (!createdMetrics.has(metricKey)) {
+      const availableMetrics = Array.from(createdMetrics.keys()).join(', ');
+      throw new Error(
+        `Alarm "${alarmProps.alarmName}" references undefined metric "${alarmProps.metricName}" ` +
+          `in namespace "${alarmProps.namespace}". Available metrics: ${availableMetrics || 'none'}`,
+      );
+    }
+  }
+
+  /**
+   * Create CloudWatch Logs Insights queries
+   */
+  private createLogInsightsQueries(functionProps: FunctionProps, lambdaFunction: LambdaFunction): void {
+    if (!functionProps.logInsightsQueries) {
+      return;
+    }
+
+    for (const [index, queryProps] of functionProps.logInsightsQueries.entries()) {
+      const logGroupNames = queryProps.logGroupNames ?? [lambdaFunction.logGroup.logGroupName];
+
+      new MdaaLogInsightsQuery(this, `query-${functionProps.functionName}-${index}`, {
+        queryName: queryProps.queryName,
+        queryString: queryProps.queryString,
+        logGroupNames,
+        functionName: functionProps.functionName,
+        naming: this.props.naming,
+      });
+    }
   }
 
   /**

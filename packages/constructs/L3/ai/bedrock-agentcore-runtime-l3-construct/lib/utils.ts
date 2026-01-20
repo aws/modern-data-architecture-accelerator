@@ -91,7 +91,7 @@ export function buildAuthorizerConfiguration(
   const config: Record<string, unknown> = {};
 
   // Support both customJwtAuthorizer and jwtAuthorizer (backward compatibility)
-  const jwtConfig = authorizerConfig.customJwtAuthorizer || authorizerConfig.jwtAuthorizer;
+  const jwtConfig = authorizerConfig.customJwtAuthorizer || authorizerConfig.jwtAuthorizer; // NOSONAR
 
   if (jwtConfig) {
     if (!jwtConfig.discoveryUrl) {
@@ -135,7 +135,7 @@ export function buildRequestHeaderConfiguration(
   const config: Record<string, unknown> = {};
 
   // Support both requestHeaderAllowlist and allowedHeaders (backward compatibility)
-  const allowlist = headerConfig.requestHeaderAllowlist || headerConfig.allowedHeaders;
+  const allowlist = headerConfig.requestHeaderAllowlist || headerConfig.allowedHeaders; // NOSONAR
 
   if (allowlist) {
     if (allowlist.length < 1 || allowlist.length > 20) {
