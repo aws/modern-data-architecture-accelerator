@@ -702,3 +702,95 @@ describe('MdaaDeploy.execCmd', () => {
     });
   });
 });
+
+describe('addOptionalCdkContextStringParam', () => {
+  let mdaaDeploy: MdaaDeploy;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mdaaDeploy = new MdaaDeploy({ action: 'deploy', testing: 'true' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should add string param when value is provided', () => {
+    const cdkCmd: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).addOptionalCdkContextStringParam(cdkCmd, 'test_key', 'test_value');
+    expect(cdkCmd).toEqual([`-c 'test_key="test_value"'`]);
+  });
+
+  it('should not add param when value is undefined', () => {
+    const cdkCmd: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).addOptionalCdkContextStringParam(cdkCmd, 'test_key', undefined);
+    expect(cdkCmd).toEqual([]);
+  });
+
+  it('should not add param when value is empty string', () => {
+    const cdkCmd: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).addOptionalCdkContextStringParam(cdkCmd, 'test_key', '');
+    expect(cdkCmd).toEqual([]);
+  });
+});
+
+describe('addOptionalCdkContextObjParam', () => {
+  let mdaaDeploy: MdaaDeploy;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mdaaDeploy = new MdaaDeploy({ action: 'deploy', testing: 'true' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should add double-stringified JSON for object values', () => {
+    const cdkCmd: string[] = [];
+    const testObj = { key: 'value', nested: { a: 1 } };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).addOptionalCdkContextObjParam(cdkCmd, 'config', testObj);
+    const expected = JSON.stringify(JSON.stringify(testObj));
+    expect(cdkCmd).toEqual([`-c 'config'=${expected}`]);
+  });
+
+  it('should add double-stringified JSON for array values', () => {
+    const cdkCmd: string[] = [];
+    const testArray = [{ name: 'item1' }, { name: 'item2' }];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).addOptionalCdkContextObjParam(cdkCmd, 'items', testArray);
+    const expected = JSON.stringify(JSON.stringify(testArray));
+    expect(cdkCmd).toEqual([`-c 'items'=${expected}`]);
+  });
+
+  it('should not add param when value is undefined', () => {
+    const cdkCmd: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).addOptionalCdkContextObjParam(cdkCmd, 'config', undefined);
+    expect(cdkCmd).toEqual([]);
+  });
+
+  it('should not add param when object is empty', () => {
+    const cdkCmd: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).addOptionalCdkContextObjParam(cdkCmd, 'config', {});
+    expect(cdkCmd).toEqual([]);
+  });
+
+  it('should not add param when array is empty', () => {
+    const cdkCmd: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).addOptionalCdkContextObjParam(cdkCmd, 'items', []);
+    expect(cdkCmd).toEqual([]);
+  });
+});

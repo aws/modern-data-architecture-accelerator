@@ -821,7 +821,7 @@ export class MdaaDeploy {
   ) {
     if (context_value) {
       if (Object.keys(context_value).length > 0) {
-        const context_string_value = JSON.stringify(context_value);
+        const context_string_value = JSON.stringify(JSON.stringify(context_value));
         cdkCmd.push(`-c '${context_key}'=${context_string_value}`);
       }
     }
