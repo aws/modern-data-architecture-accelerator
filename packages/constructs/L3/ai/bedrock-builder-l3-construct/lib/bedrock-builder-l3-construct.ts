@@ -486,21 +486,24 @@ export class BedrockBuilderL3Construct extends MdaaL3Construct {
     const executionRoleArnsSet = new Set<string>();
 
     if (props.agents) {
-      Object.values(props.agents).forEach(agentConfig => {
+      for (const [agentName, agentConfig] of Object.entries(props.agents)) {
         if (agentConfig.role) {
-          const roleResolved = props.roleHelper.resolveRoleRefWithRefId(agentConfig.role, 'agent-execution-role');
+          const roleResolved = props.roleHelper.resolveRoleRefWithRefId(
+            agentConfig.role,
+            `agent-execution-role-${agentName}`,
+          );
           executionRoleArnsSet.add(roleResolved.arn());
         }
-      });
+      }
     }
 
     if (props.knowledgeBases) {
-      Object.values(props.knowledgeBases).forEach(kbConfig => {
+      for (const [kbName, kbConfig] of Object.entries(props.knowledgeBases)) {
         if (kbConfig.role) {
-          const roleResolved = props.roleHelper.resolveRoleRefWithRefId(kbConfig.role, 'kb-execution-role');
+          const roleResolved = props.roleHelper.resolveRoleRefWithRefId(kbConfig.role, `kb-execution-role-${kbName}`);
           executionRoleArnsSet.add(roleResolved.arn());
         }
-      });
+      }
     }
 
     if (executionRoleArnsSet.size > 0) {

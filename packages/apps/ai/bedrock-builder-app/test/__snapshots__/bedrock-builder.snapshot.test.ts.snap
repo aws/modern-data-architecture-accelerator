@@ -1390,7 +1390,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
         "Type": "AWS::CloudFormation::CustomResource",
         "UpdateReplacePolicy": "Delete",
       },
-      "RoleResagentexecutionrole": {
+      "RoleResagentexecutionroletestagent": {
         "DeletionPolicy": "Delete",
         "Properties": {
           "ServiceToken": {
@@ -1400,13 +1400,13 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
             "id": {
               "Ref": "SsmParameterValuetestorgtestdomaingeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter",
             },
-            "refId": "agent-execution-role",
+            "refId": "agent-execution-role-test-agent",
           },
         },
         "Type": "AWS::CloudFormation::CustomResource",
         "UpdateReplacePolicy": "Delete",
       },
-      "RoleReskbexecutionrole": {
+      "RoleReskbexecutionroletestknowledgebase": {
         "DeletionPolicy": "Delete",
         "Properties": {
           "ServiceToken": {
@@ -1416,7 +1416,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
             "id": {
               "Ref": "SsmParameterValuetestorgtestdomaingeneratedrolekbexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter",
             },
-            "refId": "kb-execution-role",
+            "refId": "kb-execution-role-test-knowledge-base",
           },
         },
         "Type": "AWS::CloudFormation::CustomResource",
@@ -1589,7 +1589,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
                             ":",
                             {
                               "Fn::GetAtt": [
-                                "RoleResagentexecutionrole",
+                                "RoleResagentexecutionroletestagent",
                                 "arn",
                               ],
                             },
@@ -1727,7 +1727,7 @@ paths:
           "AgentName": "test-org-test-env-test-domain-test-bedrock-builder-app-test-agent",
           "AgentResourceRoleArn": {
             "Fn::GetAtt": [
-              "RoleResagentexecutionrole",
+              "RoleResagentexecutionroletestagent",
               "arn",
             ],
           },
@@ -4169,7 +4169,7 @@ Provide responses in markdown format with source citations
                             ":",
                             {
                               "Fn::GetAtt": [
-                                "RoleReskbexecutionrole",
+                                "RoleReskbexecutionroletestknowledgebase",
                                 "arn",
                               ],
                             },
@@ -4372,7 +4372,7 @@ Provide responses in markdown format with source citations
                             ":",
                             {
                               "Fn::GetAtt": [
-                                "RoleReskbexecutionrole",
+                                "RoleReskbexecutionroletestknowledgebase",
                                 "arn",
                               ],
                             },
@@ -4776,7 +4776,7 @@ Provide responses in markdown format with source citations
                 "[{"Rules":[{"ResourceType":"collection","Resource":["collection/test-org-test-env-test--32547025"],"Permission":["aoss:CreateCollectionItems","aoss:DeleteCollectionItems","aoss:UpdateCollectionItems","aoss:DescribeCollectionItems"]},{"ResourceType":"index","Resource":["index/test-org-test-env-test--32547025/*"],"Permission":["aoss:CreateIndex","aoss:DeleteIndex","aoss:UpdateIndex","aoss:DescribeIndex","aoss:ReadDocument","aoss:WriteDocument"]}],"Principal":["",
                 {
                   "Fn::GetAtt": [
-                    "RoleReskbexecutionrole",
+                    "RoleReskbexecutionroletestknowledgebase",
                     "arn",
                   ],
                 },
@@ -4923,7 +4923,7 @@ Provide responses in markdown format with source citations
           "Name": "test-org-test-env-test-domain-test-bedrock-builder-app-test-knowledge-base2",
           "RoleArn": {
             "Fn::GetAtt": [
-              "RoleReskbexecutionrole",
+              "RoleReskbexecutionroletestknowledgebase",
               "arn",
             ],
           },
@@ -5034,7 +5034,7 @@ Provide responses in markdown format with source citations
                 "Principal": {
                   "AWS": {
                     "Fn::GetAtt": [
-                      "RoleReskbexecutionrole",
+                      "RoleReskbexecutionroletestknowledgebase",
                       "arn",
                     ],
                   },
@@ -5504,7 +5504,7 @@ Provide responses in markdown format with source citations
           },
           "Role": {
             "Fn::GetAtt": [
-              "RoleReskbexecutionrole",
+              "RoleReskbexecutionroletestknowledgebase",
               "arn",
             ],
           },
@@ -7773,7 +7773,7 @@ Provide responses in markdown format with source citations
           "Name": "test-org-test-env-test-domain-test-bedrock-builder-app-test-knowledge-base",
           "RoleArn": {
             "Fn::GetAtt": [
-              "RoleReskbexecutionrole",
+              "RoleReskbexecutionroletestknowledgebase",
               "arn",
             ],
           },
@@ -7907,7 +7907,7 @@ Provide responses in markdown format with source citations
                 "Principal": {
                   "AWS": {
                     "Fn::GetAtt": [
-                      "RoleReskbexecutionrole",
+                      "RoleReskbexecutionroletestknowledgebase",
                       "arn",
                     ],
                   },
@@ -8377,7 +8377,7 @@ Provide responses in markdown format with source citations
           },
           "Role": {
             "Fn::GetAtt": [
-              "RoleReskbexecutionrole",
+              "RoleReskbexecutionroletestknowledgebase",
               "arn",
             ],
           },
@@ -8873,7 +8873,7 @@ Provide responses in markdown format with source citations
                             ":",
                             {
                               "Fn::GetAtt": [
-                                "RoleReskbexecutionrole",
+                                "RoleReskbexecutionroletestknowledgebase",
                                 "arn",
                               ],
                             },
@@ -9258,13 +9258,13 @@ Provide responses in markdown format with source citations
                   "AWS": [
                     {
                       "Fn::GetAtt": [
-                        "RoleResagentexecutionrole",
+                        "RoleResagentexecutionroletestagent",
                         "arn",
                       ],
                     },
                     {
                       "Fn::GetAtt": [
-                        "RoleReskbexecutionrole",
+                        "RoleReskbexecutionroletestknowledgebase",
                         "arn",
                       ],
                     },
@@ -9309,13 +9309,13 @@ Provide responses in markdown format with source citations
                   "AWS": [
                     {
                       "Fn::GetAtt": [
-                        "RoleResagentexecutionrole",
+                        "RoleResagentexecutionroletestagent",
                         "arn",
                       ],
                     },
                     {
                       "Fn::GetAtt": [
-                        "RoleReskbexecutionrole",
+                        "RoleReskbexecutionroletestknowledgebase",
                         "arn",
                       ],
                     },
@@ -12753,7 +12753,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
     },
-    "RoleResagentexecutionrole": {
+    "RoleResagentexecutionroletestagent": {
       "DeletionPolicy": "Delete",
       "Properties": {
         "ServiceToken": {
@@ -12763,13 +12763,13 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
           "id": {
             "Ref": "SsmParameterValuetestorgtestdomaingeneratedroleagentexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter",
           },
-          "refId": "agent-execution-role",
+          "refId": "agent-execution-role-test-agent",
         },
       },
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
     },
-    "RoleReskbexecutionrole": {
+    "RoleReskbexecutionroletestknowledgebase": {
       "DeletionPolicy": "Delete",
       "Properties": {
         "ServiceToken": {
@@ -12779,7 +12779,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
           "id": {
             "Ref": "SsmParameterValuetestorgtestdomaingeneratedrolekbexecutionroleidC96584B6F00A464EAD1953AFF4B05118Parameter",
           },
-          "refId": "kb-execution-role",
+          "refId": "kb-execution-role-test-knowledge-base",
         },
       },
       "Type": "AWS::CloudFormation::CustomResource",
@@ -12952,7 +12952,7 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
                           ":",
                           {
                             "Fn::GetAtt": [
-                              "RoleResagentexecutionrole",
+                              "RoleResagentexecutionroletestagent",
                               "arn",
                             ],
                           },
@@ -13090,7 +13090,7 @@ paths:
         "AgentName": "test-org-test-env-test-domain-test-bedrock-builder-main-test-agent",
         "AgentResourceRoleArn": {
           "Fn::GetAtt": [
-            "RoleResagentexecutionrole",
+            "RoleResagentexecutionroletestagent",
             "arn",
           ],
         },
@@ -15532,7 +15532,7 @@ Provide responses in markdown format with source citations
                           ":",
                           {
                             "Fn::GetAtt": [
-                              "RoleReskbexecutionrole",
+                              "RoleReskbexecutionroletestknowledgebase",
                               "arn",
                             ],
                           },
@@ -15735,7 +15735,7 @@ Provide responses in markdown format with source citations
                           ":",
                           {
                             "Fn::GetAtt": [
-                              "RoleReskbexecutionrole",
+                              "RoleReskbexecutionroletestknowledgebase",
                               "arn",
                             ],
                           },
@@ -16139,7 +16139,7 @@ Provide responses in markdown format with source citations
               "[{"Rules":[{"ResourceType":"collection","Resource":["collection/test-org-test-env-test--3e0d9c45"],"Permission":["aoss:CreateCollectionItems","aoss:DeleteCollectionItems","aoss:UpdateCollectionItems","aoss:DescribeCollectionItems"]},{"ResourceType":"index","Resource":["index/test-org-test-env-test--3e0d9c45/*"],"Permission":["aoss:CreateIndex","aoss:DeleteIndex","aoss:UpdateIndex","aoss:DescribeIndex","aoss:ReadDocument","aoss:WriteDocument"]}],"Principal":["",
               {
                 "Fn::GetAtt": [
-                  "RoleReskbexecutionrole",
+                  "RoleReskbexecutionroletestknowledgebase",
                   "arn",
                 ],
               },
@@ -16286,7 +16286,7 @@ Provide responses in markdown format with source citations
         "Name": "test-org-test-env-test-domain-test-bedrock-builder-main-test-knowledge-base2",
         "RoleArn": {
           "Fn::GetAtt": [
-            "RoleReskbexecutionrole",
+            "RoleReskbexecutionroletestknowledgebase",
             "arn",
           ],
         },
@@ -16397,7 +16397,7 @@ Provide responses in markdown format with source citations
               "Principal": {
                 "AWS": {
                   "Fn::GetAtt": [
-                    "RoleReskbexecutionrole",
+                    "RoleReskbexecutionroletestknowledgebase",
                     "arn",
                   ],
                 },
@@ -16867,7 +16867,7 @@ Provide responses in markdown format with source citations
         },
         "Role": {
           "Fn::GetAtt": [
-            "RoleReskbexecutionrole",
+            "RoleReskbexecutionroletestknowledgebase",
             "arn",
           ],
         },
@@ -19136,7 +19136,7 @@ Provide responses in markdown format with source citations
         "Name": "test-org-test-env-test-domain-test-bedrock-builder-main-test-knowledge-base",
         "RoleArn": {
           "Fn::GetAtt": [
-            "RoleReskbexecutionrole",
+            "RoleReskbexecutionroletestknowledgebase",
             "arn",
           ],
         },
@@ -19270,7 +19270,7 @@ Provide responses in markdown format with source citations
               "Principal": {
                 "AWS": {
                   "Fn::GetAtt": [
-                    "RoleReskbexecutionrole",
+                    "RoleReskbexecutionroletestknowledgebase",
                     "arn",
                   ],
                 },
@@ -19740,7 +19740,7 @@ Provide responses in markdown format with source citations
         },
         "Role": {
           "Fn::GetAtt": [
-            "RoleReskbexecutionrole",
+            "RoleReskbexecutionroletestknowledgebase",
             "arn",
           ],
         },
@@ -20236,7 +20236,7 @@ Provide responses in markdown format with source citations
                           ":",
                           {
                             "Fn::GetAtt": [
-                              "RoleReskbexecutionrole",
+                              "RoleReskbexecutionroletestknowledgebase",
                               "arn",
                             ],
                           },
@@ -20621,13 +20621,13 @@ Provide responses in markdown format with source citations
                 "AWS": [
                   {
                     "Fn::GetAtt": [
-                      "RoleResagentexecutionrole",
+                      "RoleResagentexecutionroletestagent",
                       "arn",
                     ],
                   },
                   {
                     "Fn::GetAtt": [
-                      "RoleReskbexecutionrole",
+                      "RoleReskbexecutionroletestknowledgebase",
                       "arn",
                     ],
                   },
@@ -20672,13 +20672,13 @@ Provide responses in markdown format with source citations
                 "AWS": [
                   {
                     "Fn::GetAtt": [
-                      "RoleResagentexecutionrole",
+                      "RoleResagentexecutionroletestagent",
                       "arn",
                     ],
                   },
                   {
                     "Fn::GetAtt": [
-                      "RoleReskbexecutionrole",
+                      "RoleReskbexecutionroletestknowledgebase",
                       "arn",
                     ],
                   },
