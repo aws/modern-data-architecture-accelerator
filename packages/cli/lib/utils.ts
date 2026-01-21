@@ -17,22 +17,30 @@ export function findDuplicates(keyCounts: Record<string, Record<string, number>>
   );
 }
 
+function encodeContextValue(contextValue: unknown): string {
+  if (contextValue instanceof Array) {
+    return `"list:${JSON.stringify(contextValue)}"`;
+  }
+  if (contextValue instanceof Object) {
+    return `"obj:${JSON.stringify(contextValue)}"`;
+  }
+  if (typeof contextValue === 'string') {
+    return contextValue;
+  }
+  if (typeof contextValue === 'number') {
+    return contextValue.toString();
+  }
+  if (typeof contextValue === 'boolean') {
+    return contextValue ? 'true' : 'false';
+  }
+  throw new Error(`Don't know how to handle type ${typeof contextValue}: ${String(contextValue)}`);
+}
+
 export function generateContextCdkParams(moduleEffectiveConfig: EffectiveConfig): string[] {
   return Object.entries(moduleEffectiveConfig.effectiveContext).map(contextEntry => {
     const contextKey = contextEntry[0];
     const contextValue = contextEntry[1];
-    let encodedContextValue: string;
-    if (contextValue instanceof Array) {
-      encodedContextValue = `"list:${JSON.stringify(contextValue)}"`;
-    } else if (contextValue instanceof Object) {
-      encodedContextValue = `"obj:${JSON.stringify(contextValue)}"`;
-    } else if (typeof contextValue === 'string') {
-      encodedContextValue = contextValue;
-    } else if (typeof contextValue === 'boolean') {
-      encodedContextValue = contextValue ? 'true' : 'false';
-    } else {
-      throw Error(`Don't know how to handle type ${contextValue}`);
-    }
+    const encodedContextValue = encodeContextValue(contextValue);
     return `-c '${contextKey}=${encodedContextValue}'`;
   });
 }

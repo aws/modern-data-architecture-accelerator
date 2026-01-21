@@ -20,6 +20,7 @@ class TestAppConfigParser extends MdaaAppConfigParser<TestMdaaBaseConfigContents
   ) {
     super(stack, props, configSchema, configTransformers);
   }
+
   public getValidatedConfig() {
     return this.configContents;
   }
@@ -75,6 +76,7 @@ describe('ConfigParseTest', () => {
         return config;
       }
     }
+
     const testStackConfig = new TestAppConfigParser(testStack, configSchema, appConfigProps, [new TestTransformer()]);
     const resolvedConfig = testStackConfig.getValidatedConfig();
 
@@ -102,5 +104,35 @@ describe('ConfigParseTest', () => {
     } as Schema;
 
     expect(() => new TestAppConfigParser(testStack, configSchema, appConfigProps)).toThrow();
+  });
+
+  test('CoercesStringToNumberInConfig', () => {
+    const configSchema = {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        numberOfNodes: { type: 'number' },
+      },
+      required: ['numberOfNodes'],
+      additionalProperties: true,
+    } as Schema;
+
+    const configWithStringNumber = {
+      ...appConfigRaw,
+      numberOfNodes: '5', // String that should be coerced to number
+    };
+
+    const propsWithStringNumber = {
+      ...appConfigProps,
+      rawConfig: configWithStringNumber,
+    };
+
+    // Should not throw - coercion should fix the type mismatch
+    const parser = new TestAppConfigParser(testStack, configSchema, propsWithStringNumber);
+    const config = parser.getValidatedConfig();
+
+    // Verify the value was coerced to a number
+    expect(config['numberOfNodes']).toBe(5);
+    expect(typeof config['numberOfNodes']).toBe('number');
   });
 });

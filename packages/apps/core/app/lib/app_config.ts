@@ -20,6 +20,7 @@ import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import Ajv, { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 import * as yaml from 'yaml';
+import { coerceConfigTypes } from './utils';
 
 export interface MdaaBaseConfigContents {
   /**
@@ -108,6 +109,7 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
 
   public readonly serviceCatalogConfig?: MdaaServiceCatalogProductConfig;
   public readonly nagSuppressions?: MdaaNagSuppressionConfigs;
+
   /**
    * Initializes IAM Role Resolver and performs standard config transformations.
    * @param stack
@@ -163,8 +165,6 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
     const resolvedParamsConfigContents = new MdaaConfigTransformer(paramTransformer, paramTransformer).transformConfig(
       resolvedRefsConfigContents,
     );
-    // TYPE_WARNING: not clear why this should work
-    this.configContents = resolvedParamsConfigContents as unknown as T;
 
     // Confirm our provided config matches our Schema (verification of Data shape)
     const avj = new Ajv();
@@ -172,21 +172,36 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
     if (!suppressOutputConfigContents) {
       console.log(
         `Effective App Config:\n============\n${yaml.stringify(
-          this.configContents,
+          resolvedParamsConfigContents,
         )}\n============\nEnd Effective App Config`,
       );
     }
-    if (!configValidator(this.configContents)) {
-      throw new Error(`Config contains shape errors\n: ${JSON.stringify(configValidator.errors, null, 2)}`);
+    // Ideally before we reach here we already have the correct types
+    // but as of now, the cli can't if a value if a string or a number or a boolean if it comes from context
+    // so for now, we want to try to coerce the value to the type that the schema expects when schema check fails
+    // this is best effort and will prefer to fail than assume coercion was correct
+    if (!configValidator(resolvedParamsConfigContents) && configValidator.errors) {
+      // Try to coerce types if possible
+      coerceConfigTypes(resolvedParamsConfigContents, configValidator.errors);
+
+      // Re-validate after coercion attempt
+      if (!configValidator(resolvedParamsConfigContents)) {
+        throw new Error(`Config contains shape errors\n: ${JSON.stringify(configValidator.errors, null, 2)}`);
+      }
     }
+
+    // TYPE_WARNING: not clear why this should work
+    this.configContents = resolvedParamsConfigContents as unknown as T;
   }
 }
 
 class MdaaGeneratedRoleConfigValueTransformer implements IMdaaConfigValueTransformer {
   naming: IMdaaResourceNaming;
+
   constructor(naming: IMdaaResourceNaming) {
     this.naming = naming;
   }
+
   public transformValue(value: string): string {
     if (value.startsWith('generated-role-id:')) {
       return `ssm:${this.naming.ssmPath(

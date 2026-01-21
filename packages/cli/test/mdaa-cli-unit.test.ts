@@ -98,14 +98,31 @@ describe('generateContextCdkParams', () => {
     expect(result.length).toBe(4);
   });
 
-  it('should throw error for unsupported types', () => {
+  it('should handle number values', () => {
     const moduleConfig: EffectiveConfig = {
       effectiveContext: {
-        value: 123, // Number type is not handled
+        port: 8080,
+        timeout: 30,
+        ratio: 0.75,
       },
     } as unknown as EffectiveConfig;
 
-    expect(() => generateContextCdkParams(moduleConfig)).toThrow(/Don't know how to handle type/);
+    const result = generateContextCdkParams(moduleConfig);
+
+    expect(result).toContain(`-c 'port=8080'`);
+    expect(result).toContain(`-c 'timeout=30'`);
+    expect(result).toContain(`-c 'ratio=0.75'`);
+    expect(result.length).toBe(3);
+  });
+
+  it('should throw error for unsupported types', () => {
+    const moduleConfig: EffectiveConfig = {
+      effectiveContext: {
+        value: Symbol('test'), // Symbol type is not handled
+      },
+    } as unknown as EffectiveConfig;
+
+    expect(() => generateContextCdkParams(moduleConfig)).toThrow("Don't know how to handle type symbol: Symbol(test)");
   });
 
   it('should handle special characters in string values', () => {
