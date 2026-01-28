@@ -68,7 +68,7 @@
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "yaml": "1.10.2"
   },
   "gitHead": "8b49a2b371014baec046605ffdbfe38951099c31",

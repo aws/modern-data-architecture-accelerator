@@ -47,7 +47,7 @@
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96",
-    "lodash": "4.17.21"
+    "lodash": "4.17.23"
   },
   "bundledDependencies": [
     "lodash"
