@@ -347,13 +347,13 @@ export interface DataWarehouseL3ConstructProps extends MdaaL3ConstructProps {
   readonly enableAuditLoggingToS3: boolean;
   /**
    * Q-ENHANCED-PROPERTY
-   * Optional cluster port specification for Redshift network connectivity enabling custom port configuration and network security. Defines the TCP port for cluster connections with default value of 54390 for network connectivity and security configuration.
+   * Optional cluster port specification for Redshift network connectivity enabling custom port configuration and network security. Defines the TCP port for cluster connections with default value of 5440 for network connectivity and security configuration.
    *
    * Use cases: Network connectivity; Port configuration; Network security; Connection management
    *
    * AWS: Redshift cluster port for network connectivity and connection configuration
    *
-   * Validation: Must be valid port number if provided; defaults to 54390 for cluster connectivity
+   * Validation: Must be valid port number if provided; defaults to 5440 for cluster connectivity
    **/
   readonly clusterPort?: number;
   /**
@@ -515,7 +515,7 @@ export interface DataWarehouseL3ConstructProps extends MdaaL3ConstructProps {
 //This stack creates all of the resources required for a Data Warehouse
 export class DataWarehouseL3Construct extends MdaaL3Construct {
   protected readonly props: DataWarehouseL3ConstructProps;
-  public static readonly defaultClusterPort = 54390;
+  public static readonly defaultClusterPort = 5440;
 
   private dataAdminRoleIds: string[];
   private bucketUserRoleIds: string[];

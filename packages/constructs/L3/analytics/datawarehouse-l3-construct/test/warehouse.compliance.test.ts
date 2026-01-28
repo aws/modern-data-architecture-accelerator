@@ -72,7 +72,7 @@ describe('MDAA Compliance Stack Tests', () => {
       nodeType: 'RA3_LARGE',
       numberOfNodes: 4,
       enableAuditLoggingToS3: true,
-      clusterPort: 54390,
+      clusterPort: 5440,
       preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
 
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
@@ -164,7 +164,7 @@ describe('MDAA Compliance Stack Tests', () => {
           S3KeyPrefix: 'logging/',
         },
         NumberOfNodes: 4,
-        Port: 54390,
+        Port: 5440,
         PreferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
         PubliclyAccessible: false,
         VpcSecurityGroupIds: [
@@ -191,19 +191,19 @@ describe('MDAA Compliance Stack Tests', () => {
       template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
         CidrIp: '127.0.0.1/24',
         Description: 'Redshift Ingress for IPV4 CIDR 127.0.0.1/24',
-        FromPort: 54390,
+        FromPort: 5440,
         IpProtocol: 'tcp',
-        ToPort: 54390,
+        ToPort: 5440,
       });
     });
 
     test('SecurityGroup Ingress CIDR', () => {
       template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
         Description: 'Redshift Ingress for SG sg-be41a7c3',
-        FromPort: 54390,
+        FromPort: 5440,
         IpProtocol: 'tcp',
         SourceSecurityGroupId: 'sg-be41a7c3',
-        ToPort: 54390,
+        ToPort: 5440,
       });
     });
 
@@ -307,7 +307,7 @@ describe('MDAA Compliance Stack Tests', () => {
       nodeType: 'ra3.large',
       numberOfNodes: 4,
       enableAuditLoggingToS3: true,
-      clusterPort: 54390,
+      clusterPort: 5440,
       preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
 
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),
@@ -391,7 +391,7 @@ describe('MDAA Compliance Stack Tests', () => {
           S3KeyPrefix: 'logging/',
         },
         NumberOfNodes: 4,
-        Port: 54390,
+        Port: 5440,
         PreferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
         PubliclyAccessible: false,
         VpcSecurityGroupIds: [
@@ -415,7 +415,7 @@ describe('MDAA Compliance Stack Tests', () => {
       nodeType: 'fb2.teeny',
       numberOfNodes: 4,
       enableAuditLoggingToS3: true,
-      clusterPort: 54390,
+      clusterPort: 5440,
       preferredMaintenanceWindow: 'ddd:hh24:mi-ddd:hh24:mi',
 
       roleHelper: new MdaaRoleHelper(stack, testApp.naming),

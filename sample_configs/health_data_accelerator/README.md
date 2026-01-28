@@ -192,3 +192,32 @@ Once the HDA deployment is complete, follow the following steps to interact with
    - Start the task
 2. Wait until the file processor and the transformer step function are complete. They are run 3AM and 4AM, respective.
 3. If all run as expected, you should see your data in the curated bucket.
+
+***
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Invalid ReplicationInstance class error during DMS deployment**:
+   - Error: `Invalid ReplicationInstance class (Service: AWSDatabaseMigrationService; Status Code: 400; Error Code: InvalidParameterValueException)`
+   - Cause: The DMS instance class specified in `dataops/dms.yaml` is not available in your target region. Instance availability varies by region.
+   - Solution: Check available instance classes in your region:
+     ```bash
+     aws dms describe-orderable-replication-instances \
+       --region <your-region> \
+       --no-paginate \
+       --query "OrderableReplicationInstances[].ReplicationInstanceClass" \
+       --output text | tr '\t' '\n' | sort -u
+     ```
+   - Update the `instanceClass` in `dataops/dms.yaml` to an available type. `dms.c5.large` is widely available across regions.
+
+2. **DMS source endpoint connection failure**:
+   - Verify the source database allows connections from the DMS replication instance VPC/subnets
+   - Check that the Secrets Manager secret ARN and KMS key ARN in `mdaa.yaml` context are correct
+   - Ensure the DMS role has permissions to access the secret and decrypt with the KMS key
+
+3. **Step function execution failures**:
+   - Check CloudWatch logs for the specific Lambda or Glue job that failed
+   - Verify DynamoDB tables are populated with required configuration (see `dataops/scripts/`)
+   - Ensure IAM roles have necessary permissions for all resources

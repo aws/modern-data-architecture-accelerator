@@ -44,7 +44,7 @@ describe('MDAA Construct Compliance Tests', () => {
     clusterName: 'test-cluster',
     masterUsername: 'admin',
     encryptionKey: testKey,
-    port: 54390,
+    port: 5440,
     vpc: testVpc,
     preferredMaintenanceWindow: 'Sun:23:45-Mon:00:15',
     subnetGroup: testSubnetGroup,
@@ -89,7 +89,7 @@ describe('MDAA Construct Compliance Tests', () => {
 
   test('Port', () => {
     template.hasResourceProperties('AWS::Redshift::Cluster', {
-      Port: 54390,
+      Port: 5440,
     });
   });
 
@@ -160,7 +160,7 @@ describe('MDAA Construct Compliance Tests 2', () => {
     clusterName: 'test-cluster',
     masterUsername: 'admin',
     encryptionKey: testKey,
-    port: 54390,
+    port: 5440,
     vpc: testVpc,
     preferredMaintenanceWindow: 'Sun:23:45-Mon:00:15',
     subnetGroup: testSubnetGroup,
@@ -206,7 +206,7 @@ describe('MDAA Construct Compliance Tests 2', () => {
 
   test('Port', () => {
     template.hasResourceProperties('AWS::Redshift::Cluster', {
-      Port: 54390,
+      Port: 5440,
     });
   });
 

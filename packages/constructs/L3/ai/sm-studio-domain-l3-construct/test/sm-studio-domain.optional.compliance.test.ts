@@ -144,3 +144,88 @@ describe('Studio Domain Optional Props', () => {
     });
   });
 });
+
+describe('Studio Domain User Profile Name Validation', () => {
+  let testApp: MdaaTestApp;
+
+  beforeEach(() => {
+    testApp = new MdaaTestApp();
+  });
+
+  test('Should throw error for invalid user profile name pattern', () => {
+    const assetDeploymentRole = new Role(testApp.testStack, 'test-deployment-role', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+
+    const constructProps: SagemakerStudioDomainL3ConstructProps = {
+      domain: {
+        authMode: 'SSO',
+        vpcId: 'test-vpc-id',
+        subnetIds: ['test-sub-id'],
+        notebookSharingPrefix: 'testing',
+        dataAdminRoles: [{ id: 'admin-role-id' }],
+        userProfiles: {
+          // This will become '---invalid---' after replace(/\W/g, '-'), which doesn't match the pattern
+          '---invalid---': {
+            userRole: {
+              id: 'test-role-id',
+            },
+          },
+        },
+        domainBucket: {
+          domainBucketName: 'test-existing-bucket',
+          assetDeploymentRole: {
+            arn: assetDeploymentRole.roleArn,
+          },
+        },
+      },
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    };
+
+    expect(() => {
+      new SagemakerStudioDomainL3Construct(testApp.testStack, 'domain', constructProps);
+    }).toThrow(/Invalid SageMaker UserProfile name/);
+  });
+
+  test('Should accept valid user profile names', () => {
+    const assetDeploymentRole = new Role(testApp.testStack, 'test-deployment-role', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+
+    const constructProps: SagemakerStudioDomainL3ConstructProps = {
+      domain: {
+        authMode: 'SSO',
+        vpcId: 'test-vpc-id',
+        subnetIds: ['test-sub-id'],
+        notebookSharingPrefix: 'testing',
+        dataAdminRoles: [{ id: 'admin-role-id' }],
+        userProfiles: {
+          'valid-user-name': {
+            userRole: {
+              id: 'test-role-id',
+            },
+          },
+          AnotherValidUser123: {
+            userRole: {
+              id: 'test-role-id-2',
+            },
+          },
+        },
+        domainBucket: {
+          domainBucketName: 'test-existing-bucket',
+          assetDeploymentRole: {
+            arn: assetDeploymentRole.roleArn,
+          },
+        },
+      },
+      naming: testApp.naming,
+      roleHelper: new MdaaRoleHelper(testApp.testStack, testApp.naming),
+    };
+
+    // Should not throw
+    expect(() => {
+      new SagemakerStudioDomainL3Construct(testApp.testStack, 'domain', constructProps);
+    }).not.toThrow();
+  });
+});

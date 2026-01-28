@@ -14,8 +14,8 @@ dataAdminRoles:
 vpcId: "{{context:vpc_id}}"
 subnetIds: ["{{context:subnet_id}}"]
 
-# Port the cluster will listen on (defaults to 54390)
-clusterPort: 54390
+# Port the cluster will listen on (defaults to 5440)
+clusterPort: 5440
 
 #A preferred maintenance window day/time range. Should be specified as a range ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC).
 preferredMaintenanceWindow: Sun:23:45-Mon:00:15

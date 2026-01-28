@@ -428,7 +428,7 @@
             "type": "number"
         },
         "clusterPort": {
-            "description": "Q-ENHANCED-PROPERTY\nOptional cluster port number for client connections enabling custom port configuration and network security. Defines the TCP port on which the Redshift cluster accepts client connections, supporting custom networking requirements and security configurations.\n\nUse cases: Custom port configuration; Network security; Client connection management; Port standardization\n\nAWS: Amazon Redshift cluster port configuration for client connection management\n\nValidation: Must be valid port number if specified; defaults to 54390; must be accessible through security groups",
+            "description": "Q-ENHANCED-PROPERTY\nOptional cluster port number for client connections enabling custom port configuration and network security. Defines the TCP port on which the Redshift cluster accepts client connections, supporting custom networking requirements and security configurations.\n\nUse cases: Custom port configuration; Network security; Client connection management; Port standardization\n\nAWS: Amazon Redshift cluster port configuration for client connection management\n\nValidation: Must be valid port number if specified; defaults to 5440; must be accessible through security groups",
             "type": "number"
         },
         "createWarehouseBucket": {

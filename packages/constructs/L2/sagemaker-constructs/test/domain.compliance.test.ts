@@ -70,7 +70,7 @@ describe('MDAA Construct Compliance Tests', () => {
 
   test('DomainName', () => {
     template.hasResourceProperties('AWS::SageMaker::Domain', {
-      DomainName: testApp.naming.resourceName('test-domain'),
+      DomainName: testApp.naming.resourceName('test-domain', 63),
     });
   });
 

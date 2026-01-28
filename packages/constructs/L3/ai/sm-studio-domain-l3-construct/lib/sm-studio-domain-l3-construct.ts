@@ -795,9 +795,25 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
     studioDomainId: string,
     notebookSharingPrefix: string,
   ) {
+    // AWS SageMaker UserProfile name pattern: [a-zA-Z0-9](-*[a-zA-Z0-9]){0,62}
+    // Max length is 63 characters, must start and end with alphanumeric, no consecutive hyphens
+    const userProfileNamePattern = /^[a-zA-Z0-9](-*[a-zA-Z0-9]){0,62}$/;
+
     Object.entries(this.props.domain.userProfiles || {}).forEach(userProfileEntry => {
       const userid = userProfileEntry[0];
       const userProfileProps = userProfileEntry[1];
+
+      // Transform userid to userProfileName (same transformation as before)
+      const userProfileName = userid.replace(/\W/g, '-');
+
+      // Validate the transformed name against AWS SageMaker UserProfile naming requirements
+      if (!userProfileNamePattern.test(userProfileName)) {
+        throw new Error(
+          `Invalid SageMaker UserProfile name '${userProfileName}' (derived from '${userid}'). ` +
+            `UserProfile names must match pattern: [a-zA-Z0-9](-*[a-zA-Z0-9]){0,62}. ` +
+            `Requirements: 1-63 characters, start and end with alphanumeric, no consecutive hyphens.`,
+        );
+      }
 
       const profileTags: CfnTag[] = [];
 
@@ -816,7 +832,7 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
 
       new CfnUserProfile(this, `user-profile-${userid}`, {
         domainId: studioDomainId,
-        userProfileName: userid.replace(/\W/g, '-'),
+        userProfileName: userProfileName,
         singleSignOnUserValue: this.props.domain.authMode == 'SSO' ? userid : undefined,
         singleSignOnUserIdentifier: this.props.domain.authMode == 'SSO' ? 'UserName' : undefined,
         userSettings: {

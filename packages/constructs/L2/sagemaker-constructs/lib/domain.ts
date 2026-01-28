@@ -118,7 +118,7 @@ export class MdaaStudioDomain extends CfnDomain {
 
   private static setProps(props: MdaaStudioDomainProps): CfnDomainProps {
     const overrideProps = {
-      domainName: props.naming.resourceName(props.domainName),
+      domainName: props.naming.resourceName(props.domainName, 63),
       appNetworkAccessType: 'VpcOnly',
       //default user settings from props will be set by custom resource
       //because the CFN resource does not support all required parameters

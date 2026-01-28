@@ -214,6 +214,11 @@ generateRoles:
       - DataUserPolicy
       - DataScienceUserPolicy
 
+  data-scientist:
+    trustedPrincipal: this_account
+    generatedPolicies:
+      - DataScienceUserPolicy
+
   # A role which will be used to launch SageMaker resources
   # on behalf of data science team members.
   team-execution:

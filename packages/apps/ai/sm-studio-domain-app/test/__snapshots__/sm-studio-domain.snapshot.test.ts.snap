@@ -4404,7 +4404,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               },
             ],
           },
-          "DomainName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main",
+          "DomainName": "REPLACED-S3-BUCKET-NAME",
           "KmsKeyId": {
             "Ref": "REPLACED-CFN-LOGICAL-ID",
           },
@@ -9474,7 +9474,7 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             },
           ],
         },
-        "DomainName": "test-org-test-env-test-domain-test-sagemaker-studio-domain-main",
+        "DomainName": "REPLACED-S3-BUCKET-NAME",
         "KmsKeyId": {
           "Ref": "REPLACED-CFN-LOGICAL-ID",
         },

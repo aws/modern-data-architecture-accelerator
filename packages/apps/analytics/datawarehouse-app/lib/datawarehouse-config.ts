@@ -157,7 +157,7 @@ export interface DataWarehouseConfigContents extends MdaaBaseConfigContents {
    *
    * AWS: Amazon Redshift cluster port configuration for client connection management
    *
-   * Validation: Must be valid port number if specified; defaults to 54390; must be accessible through security groups
+   * Validation: Must be valid port number if specified; defaults to 5440; must be accessible through security groups
    **/
   readonly clusterPort?: number;
   /**
@@ -321,7 +321,7 @@ export class DataWarehouseConfigParser extends MdaaAppConfigParser<DataWarehouse
   public readonly parameterGroupParams: Record<string, string>;
   public readonly workloadManagement: ConfigurationElement[];
   public readonly additionalBucketKmsKeyArns?: string[];
-  public static readonly defaultClusterPort = 54390;
+  public static readonly defaultClusterPort = 5440;
   public readonly scheduledActions: ScheduledActionProps[];
   public readonly createWarehouseBucket?: boolean;
   public readonly automatedSnapshotRetentionDays?: number;

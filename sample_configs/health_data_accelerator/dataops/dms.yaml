@@ -14,7 +14,7 @@ dms:
     test-instance:
       # The instance class.
       # See https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.Types.html for options
-      instanceClass: dms.t3.micro
+      instanceClass: dms.c5.large
       # The VPC Id on which the replication instance will be deployed
       vpcId: "{{context:vpc_id}}"
       # The subnets to which the replication instance will be connected.

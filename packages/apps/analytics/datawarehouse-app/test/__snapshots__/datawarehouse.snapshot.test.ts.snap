@@ -1193,7 +1193,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
           },
           "NodeType": "ra3.4xlarge",
           "NumberOfNodes": 2,
-          "Port": 54390,
+          "Port": 5440,
           "PreferredMaintenanceWindow": "Sun:23:45-Mon:00:15",
           "PubliclyAccessible": false,
           "Tags": [
@@ -5599,7 +5599,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
         "Properties": {
           "CidrIp": "172.31.0.0/16",
           "Description": "Redshift Ingress for IPV4 CIDR 172.31.0.0/16",
-          "FromPort": 54390,
+          "FromPort": 5440,
           "GroupId": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -5607,7 +5607,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
             ],
           },
           "IpProtocol": "tcp",
-          "ToPort": 54390,
+          "ToPort": 5440,
         },
         "Type": "AWS::EC2::SecurityGroupIngress",
       },
@@ -5624,7 +5624,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
               ],
             ],
           },
-          "FromPort": 54390,
+          "FromPort": 5440,
           "GroupId": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -5635,7 +5635,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
           "SourceSecurityGroupId": {
             "Ref": "SsmParameterValuepathtossmC96584B6F00A464EAD1953AFF4B05118Parameter",
           },
-          "ToPort": 54390,
+          "ToPort": 5440,
         },
         "Type": "AWS::EC2::SecurityGroupIngress",
       },
@@ -7000,7 +7000,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
         },
         "NodeType": "ra3.4xlarge",
         "NumberOfNodes": 2,
-        "Port": 54390,
+        "Port": 5440,
         "PreferredMaintenanceWindow": "Sun:23:45-Mon:00:15",
         "PubliclyAccessible": false,
         "Tags": [
@@ -11406,7 +11406,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
       "Properties": {
         "CidrIp": "172.31.0.0/16",
         "Description": "Redshift Ingress for IPV4 CIDR 172.31.0.0/16",
-        "FromPort": 54390,
+        "FromPort": 5440,
         "GroupId": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -11414,7 +11414,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
           ],
         },
         "IpProtocol": "tcp",
-        "ToPort": 54390,
+        "ToPort": 5440,
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
@@ -11431,7 +11431,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
             ],
           ],
         },
-        "FromPort": 54390,
+        "FromPort": 5440,
         "GroupId": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -11442,7 +11442,7 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
         "SourceSecurityGroupId": {
           "Ref": "SsmParameterValuepathtossmC96584B6F00A464EAD1953AFF4B05118Parameter",
         },
-        "ToPort": 54390,
+        "ToPort": 5440,
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },

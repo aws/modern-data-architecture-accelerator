@@ -12,6 +12,10 @@ tag_configs:
 # Failure to do so may resulting in global naming conflicts.
 organization: <unique org name>
 
+context:
+  vpc_id: <your vpc id>
+  subnet_id: <your subnet id>
+  datascience_team_name: "sample-team"
 # One or more domains may be specified. Domain name will be incorporated by default naming implementation
 # to prefix all resource names.
 domains:
