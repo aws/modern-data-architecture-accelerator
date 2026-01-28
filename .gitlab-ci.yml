@@ -652,6 +652,9 @@ prerelease_publish_npm:
   variables:
     AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
+    - PRERELEASE_VERSION=$(jq -r .version < lerna.json)
+    - echo "Deleting existing version $PRERELEASE_VERSION from CodeArtifact for idempotency"
+    - ./scripts/delete_codeartifact_version.sh $PRERELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE || true
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT prerelease
 
 prerelease_publish_pip:
@@ -863,6 +866,7 @@ release_npm_readiness_check:
     - release
     - release_version_package
     - prerelease_analyze
+    - release_publish_npm_prerelease
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
@@ -1040,6 +1044,34 @@ release_generate_html_docs:
     - ./scripts/generate_docs.sh docs_prerelease gitlab
     - ./scripts/generate_docs.sh docs_release gitlab
 
+confirm_push_to_git:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: release_git_confirmation
+  when: manual
+  manual_confirmation: "Packages have been published. Do you want to push version changes to git repositories?"
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: post_release
+  dependencies: []
+  needs:
+    - release
+    - release_version_package
+    - release_publish_s3
+    - release_publish_pip
+    - release_publish_npm
+    - release_publish_npm_prerelease
+  allow_failure: false
+  script:
+    - echo "User confirmed - proceeding with git push"
+
 prerelease_push_git:
   tags:
     - arch:amd64
@@ -1074,12 +1106,8 @@ prerelease_push_git:
   dependencies:
     - release_version_package
   needs:
-    - release
+    - confirm_push_to_git
     - release_version_package
-    - release_publish_s3
-    - release_publish_pip
-    - release_publish_npm
-    - release_publish_npm_prerelease
   allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
@@ -1120,6 +1148,32 @@ release_push_git:
   dependencies:
     - release_version_package
   needs:
+    - confirm_push_to_git
+    - release_version_package
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+  script:
+    - ./scripts/push_git_release.sh
+
+rollback_release:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: rollback_release
+  when: manual
+  manual_confirmation: "This will DELETE all published packages for this version. Are you sure you want to rollback?"
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: post_release
+  dependencies: []
+  needs:
     - release
     - release_version_package
     - release_publish_s3
@@ -1127,7 +1181,71 @@ release_push_git:
     - release_publish_npm
     - release_publish_npm_prerelease
   allow_failure: false
+  script:
+    - echo "User initiated rollback - will delete published packages"
+
+rollback_delete_prerelease_packages:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: rollback_prerelease
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: post_release
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  dependencies:
+    - release_version_package
+  needs:
+    - rollback_release
+    - release_version_package
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - echo "Rolling back prerelease packages for version $RELEASE_VERSION"
+    - ./scripts/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $MDAA_CODEARTIFACT_PRERELEASE_REGION $MDAA_CODEARTIFACT_PRERELEASE_NAMESPACE
+
+rollback_delete_release_packages:
+  tags:
+    - arch:amd64
+    - size:medium
+  environment: rollback_release_packages
+  except:
+    variables:
+      - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
+    refs:
+      - tags
+  only:
+    refs:
+      - main
+  stage: post_release
+  cache:
+    key: release-$CI_COMMIT_SHA
+    paths:
+      - node_modules/
+      - packages/**/node_modules/
+    policy: pull
+  dependencies:
+    - release_version_package
+  needs:
+    - rollback_release
+    - release_version_package
+  allow_failure: false
   variables:
     AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
   script:
-    - ./scripts/push_git_release.sh
+    - RELEASE_VERSION=$(jq -r .version < lerna.json)
+    - echo "Rolling back release packages for version $RELEASE_VERSION"
+    - ./scripts/delete_codeartifact_version.sh $RELEASE_VERSION $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT $MDAA_CODEARTIFACT_RELEASE_REGION $MDAA_CODEARTIFACT_RELEASE_NAMESPACE
