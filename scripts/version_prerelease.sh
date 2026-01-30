@@ -24,3 +24,9 @@ sed -i  "s/@aws-mdaa\(.*\)\"\(.*\)$CURRENT_VERSION\"/@aws-mdaa\1\"\2$NEW_VERSION
 
 # Update version in .jsii files (in each package)
 find ./ -type f -name ".jsii" | grep -v node_modules | xargs -n1 -I{} sed -i "s/\"version\": \"${CURRENT_VERSION}\"/\"version\": \"${NEW_VERSION}\"/" {}
+
+# Update version in solution-manifest.yaml
+if [ -f "solution-manifest.yaml" ]; then
+  echo "Updating solution-manifest.yaml version from v$CURRENT_VERSION to v$NEW_VERSION"
+  sed -i "s/version: v${CURRENT_VERSION}/version: v${NEW_VERSION}/" solution-manifest.yaml
+fi

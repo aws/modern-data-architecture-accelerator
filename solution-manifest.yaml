@@ -1,7 +1,7 @@
 ---
 id: SO0320
 name: modern-data-architecture-accelerator
-version: v1.0.0
+version: v1.3.0
 cloudformation_templates:
   - template: MdaaInstallerStack.template
     main_template: true
