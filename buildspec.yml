@@ -37,6 +37,8 @@ artifacts:
     - schemas/**/*
     - scripts/**/*
     - .gitignore
+    - .cdxgen.json
+    - .cdxgenignore
     - sonar-project.properties
     - README.md
     - LICENSE.txt
