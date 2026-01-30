@@ -1,5 +1,24 @@
 # Change Log
 
+## [1.4.0] - 2026-01-30
+
+### New Features
+
+- Users can now add CloudWatch observability features to Lambda Functions
+- New Bedrock AgentCore Runtime app enables users to create secure agentic applications with minimal MDAA configuration
+- New Glue Data Quality app allows users to define and apply AWS Glue Rulesets to tables
+- Improved MDAA configuration context fields by allowing lists and objects in addition to strings and numbers
+- LakeFormation users can now apply Tag-Based Access Control
+- Updated lodash and urllib3 package versions to address security vulnerabilities
+
+### Bug Fixes
+
+- Fixed cross-account LakeFormation issues when regions are not the same across accounts
+- Fixed deployment failures of VPC Endpoints when bedrock builder knowledge base uses OpenSearch Serverless on different VPCs
+- Fixed `jsii` issues by ensuring all packages contain jsii in its npm package tarball
+- Fixed Glue job scenario where additional scripts aren't appearing in the correct configuration
+- Fixed bedrock builder knowledge base bug where the number of policies per role can unnecessarily exceed the AWS limit
+
 ## [1.3.0] - 2025-11-24
 
 ### General Changes
