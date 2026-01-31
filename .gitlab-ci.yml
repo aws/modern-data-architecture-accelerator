@@ -758,6 +758,7 @@ release_version_package:
       - packages
       - target
       - schemas
+      - solution-manifest.yaml
     exclude:
       - "**/node_modules/**"
   allow_failure: false
@@ -826,6 +827,7 @@ release_publish_npm_prerelease:
       - packages
       - schemas
       - target
+      - solution-manifest.yaml
     exclude:
       - "**/node_modules/**"
   dependencies:
@@ -906,6 +908,7 @@ release_publish_npm:
       - packages
       - schemas
       - target
+      - solution-manifest.yaml
     exclude:
       - "**/node_modules/**"
   dependencies:
@@ -950,6 +953,7 @@ release_publish_pip:
       - packages
       - schemas
       - target
+      - solution-manifest.yaml
     exclude:
       - "**/node_modules/**"
   dependencies:
@@ -993,6 +997,7 @@ release_publish_s3:
       - packages
       - schemas
       - target
+      - solution-manifest.yaml
     exclude:
       - "**/node_modules/**"
   dependencies:
@@ -1031,6 +1036,7 @@ release_generate_html_docs:
     untracked: false
     paths:
       - target/docs_site
+      - solution-manifest.yaml
     exclude:
       - "**/node_modules/**"
   dependencies:
@@ -1101,6 +1107,7 @@ prerelease_push_git:
       - packages
       - schemas
       - target
+      - solution-manifest.yaml
     exclude:
       - "**/node_modules/**"
   dependencies:
@@ -1143,6 +1150,7 @@ release_push_git:
       - packages
       - schemas
       - target
+      - solution-manifest.yaml
     exclude:
       - "**/node_modules/**"
   dependencies:
