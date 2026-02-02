@@ -73,7 +73,7 @@
     "cdk-nag": "2.37.55",
     "cdk8s": "2.69.42",
     "constructs": "10.0.96",
-    "fast-xml-parser": "4.4.1",
+    "fast-xml-parser": "5.3.4",
     "lodash": "4.17.23",
     "strnum": "1.0.5"
   },
