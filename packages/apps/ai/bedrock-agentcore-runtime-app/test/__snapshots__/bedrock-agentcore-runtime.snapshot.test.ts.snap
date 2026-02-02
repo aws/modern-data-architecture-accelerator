@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SnapshotTest 1`] = `
 {
-  "Description": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.3.0",
+  "Description": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.4.0",
   "Outputs": {
     "bedrockagentcoreruntimeRuntimeRolerolebedrockagentcoreruntimetestAgentRuntimearnoutDCD6E14D": {
       "Export": {
@@ -109,7 +109,7 @@ exports[`SnapshotTest 1`] = `
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.3.0",
+        "Value": "(SO0320-bedrock-agentcore-runtime) Modern Data Architecture Accelerator. Version 1.4.0",
       },
       "Type": "AWS::SSM::Parameter",
     },
@@ -183,7 +183,7 @@ exports[`SnapshotTest 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:947:25] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:951:34] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
             },
           ],
         },
@@ -403,11 +403,11 @@ exports[`SnapshotTest 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:960:25] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:964:34] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
             },
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:973:27] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:977:36] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
             },
           ],
         },
@@ -492,11 +492,11 @@ exports[`SnapshotTest 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:960:25] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:964:34] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
             },
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:973:27] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:977:36] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
             },
           ],
         },
@@ -526,11 +526,11 @@ exports[`SnapshotTest 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:960:25] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:964:34] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
             },
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:973:27] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:977:36] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
             },
           ],
         },
@@ -560,11 +560,11 @@ exports[`SnapshotTest 1`] = `
           "rules_to_suppress": [
             {
               "id": "AwsSolutions-IAM5",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:960:25] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:964:34] Wildcard resources required for ECR GetAuthorizationToken (global service), X-Ray, CloudWatch Metrics (scoped by namespace condition), and Bedrock foundation models",
             },
             {
               "id": "AwsSolutions-IAM4",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:973:27] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
+              "reason": "[MDAA:@aws-mdaa/ai/bedrock-agentcore-runtime-l3-construct/lib/bedrock-agentcore-runtime-l3-construct.ts:977:36] Using customer managed policies for Bedrock AgentCore Runtime as required for compliance",
             },
           ],
         },

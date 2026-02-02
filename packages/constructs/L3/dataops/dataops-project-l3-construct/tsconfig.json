@@ -77,10 +77,10 @@
       "path": "../../governance/lakeformation-settings-l3-construct"
     },
     {
-      "path": "../../governance/lakeformation-tags-l3-construct"
+      "path": "../../governance/lakeformation-tagbased-permissions-l3-construct"
     },
     {
-      "path": "../../governance/lakeformation-tagbased-permissions-l3-construct"
+      "path": "../../governance/lakeformation-tags-l3-construct"
     },
     {
       "path": "../../../L2/lambda-constructs"

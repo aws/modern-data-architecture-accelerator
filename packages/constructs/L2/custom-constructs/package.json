@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/custom-constructs",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "MDAA Custom Constructs",
   "license": "Apache-2.0",
   "author": {
@@ -22,9 +22,9 @@
     "test-coverage": "jest --passWithNoTests --coverage"
   },
   "devDependencies": {
-    "@aws-mdaa/construct": "1.3.0",
-    "@aws-mdaa/lambda-constructs": "1.3.0",
-    "@aws-mdaa/testing": "1.3.0",
+    "@aws-mdaa/construct": "1.4.0",
+    "@aws-mdaa/lambda-constructs": "1.4.0",
+    "@aws-mdaa/testing": "1.4.0",
     "@types/aws-lambda": "8.10.97",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
@@ -39,8 +39,8 @@
     "typescript-json-schema": "0.67.1"
   },
   "dependencies": {
-    "@aws-mdaa/construct": "1.3.0",
-    "@aws-mdaa/lambda-constructs": "1.3.0",
+    "@aws-mdaa/construct": "1.4.0",
+    "@aws-mdaa/lambda-constructs": "1.4.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96",
@@ -50,8 +50,8 @@
     "lodash"
   ],
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.3.0",
-    "@aws-mdaa/lambda-constructs": "1.3.0",
+    "@aws-mdaa/construct": "1.4.0",
+    "@aws-mdaa/lambda-constructs": "1.4.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96"

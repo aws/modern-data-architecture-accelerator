@@ -3,7 +3,7 @@
 exports[`dataops-data-quality Snapshot Tests Data Quality App App Snapshot Test 1`] = `
 {
   "test-org-test-env-test-domain-test-data-quality-main": {
-    "Description": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.3.0",
+    "Description": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.4.0",
     "Parameters": {
       "BootstrapVersion": {
         "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -56,7 +56,7 @@ exports[`dataops-data-quality Snapshot Tests Data Quality App App Snapshot Test 
             "mdaa_org": "test-org",
           },
           "Type": "String",
-          "Value": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.3.0",
+          "Value": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.4.0",
         },
         "Type": "AWS::SSM::Parameter",
       },
@@ -269,7 +269,7 @@ exports[`dataops-data-quality Snapshot Tests Data Quality App App Snapshot Test 
 
 exports[`dataops-data-quality Snapshot Tests Data Quality Stack Snapshot Test 1`] = `
 {
-  "Description": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.3.0",
+  "Description": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.4.0",
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -322,7 +322,7 @@ exports[`dataops-data-quality Snapshot Tests Data Quality Stack Snapshot Test 1`
           "mdaa_org": "test-org",
         },
         "Type": "String",
-        "Value": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.3.0",
+        "Value": "(SO0320-dataops-data-quality) Modern Data Architecture Accelerator. Version 1.4.0",
       },
       "Type": "AWS::SSM::Parameter",
     },

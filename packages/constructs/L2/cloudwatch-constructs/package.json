@@ -1,6 +1,6 @@
 {
   "name": "@aws-mdaa/cloudwatch-constructs",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "MDAA CloudWatch Constructs",
   "license": "Apache-2.0",
   "author": {
@@ -22,8 +22,8 @@
     "lint": "eslint --max-warnings 0 -c ../../../../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" "
   },
   "devDependencies": {
-    "@aws-mdaa/construct": "1.3.0",
-    "@aws-mdaa/testing": "1.3.0",
+    "@aws-mdaa/construct": "1.4.0",
+    "@aws-mdaa/testing": "1.4.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.9.0",
     "@types/prettier": "2.6.0",
@@ -37,13 +37,13 @@
     "typescript-json-schema": "0.67.1"
   },
   "dependencies": {
-    "@aws-mdaa/construct": "1.3.0",
+    "@aws-mdaa/construct": "1.4.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96"
   },
   "peerDependencies": {
-    "@aws-mdaa/construct": "1.3.0",
+    "@aws-mdaa/construct": "1.4.0",
     "aws-cdk-lib": "2.220.0",
     "cdk-nag": "2.37.55",
     "constructs": "10.0.96"
