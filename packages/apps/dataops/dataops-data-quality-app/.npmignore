@@ -1,4 +1,15 @@
+# Don't include original .ts files when doing `npm pack`
 *.ts
-!*.d.ts
-tsconfig.json
 *.tsbuildinfo
+tsconfig.json
+
+# dev-related files
+coverage
+test/
+
+# pack output
+*.tgz
+
+# Include javascript files and typescript declarations
+!*.js
+!*.d.ts
