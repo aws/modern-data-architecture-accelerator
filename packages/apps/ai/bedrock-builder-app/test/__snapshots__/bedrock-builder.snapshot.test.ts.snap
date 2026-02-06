@@ -533,6 +533,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testdsdefaultparsing:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
           "Name": "test-org:test-domain:test-bedrock-builder-app:loggroup:testknowledgebase2:name",
         },
         "Value": "/aws/vendedlogs/bedrock/knowledge-base/test-org-test-env-test-domain-test-bedrock-builder-app-test-knowledge-base2",
@@ -701,6 +712,94 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder App App Snapshot Test 1`
                 },
               ],
             },
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testdsbdaparsing:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testdscustomparsing:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testdsdefaultparsing:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testdsfoundationmodelparsing:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testsharepointdsbdaparsing:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testsharepointdscustomparsing:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testsharepointdsdefaultparsing:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Export": {
+          "Name": "test-org:test-domain:test-bedrock-builder-app:datasource:testsharepointdsfmparsing:id",
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
           ],
         },
       },
@@ -4525,6 +4624,26 @@ Provide responses in markdown format with source citations
         "UpdateReplacePolicy": "Delete",
       },
       "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/datasource/test-ds-default-parsing/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "DataSourceId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [
           "REPLACED-CFN-LOGICAL-ID",
         ],
@@ -6134,14 +6253,14 @@ Provide responses in markdown format with source citations
           "on_create_sql_statements": [
             "CREATE EXTENSION IF NOT EXISTS vector",
             "
-      CREATE TABLE IF NOT EXISTS embeddings_2dcaaa33_1024
-      (
-        id UUID PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS embeddings_2dcaaa33_1024
+        (
+            id UUID PRIMARY KEY,
         content TEXT NOT NULL,
         metadata JSON,
         custom_metadata JSONB,
         embedding VECTOR(1024)
-      );
+        );
     ",
             "CREATE INDEX IF NOT EXISTS idx_embedding_vector ON embeddings_2dcaaa33_1024 USING hnsw (embedding vector_cosine_ops) WITH (ef_construction=256);",
             "CREATE INDEX IF NOT EXISTS idx_content ON embeddings_2dcaaa33_1024 USING gin (to_tsvector('simple', content));",
@@ -6153,6 +6272,166 @@ Provide responses in markdown format with source citations
         },
         "Type": "Custom::RDS-Data",
         "UpdateReplacePolicy": "Delete",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/datasource/test-ds-bda-parsing/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "DataSourceId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/datasource/test-ds-custom-parsing/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "DataSourceId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/datasource/test-ds-default-parsing/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "DataSourceId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/datasource/test-ds-foundation-model-parsing/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "DataSourceId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/datasource/test-sharepoint-ds-bda-parsing/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "DataSourceId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/datasource/test-sharepoint-ds-custom-parsing/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "DataSourceId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/datasource/test-sharepoint-ds-default-parsing/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "DataSourceId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
+      },
+      "REPLACED-CFN-LOGICAL-ID": {
+        "Properties": {
+          "Name": "/test-org/test-domain/test-bedrock-builder-app/datasource/test-sharepoint-ds-fm-parsing/id",
+          "Tags": {
+            "mdaa_cdk_app": "bedrock-builder",
+            "mdaa_domain": "test-domain",
+            "mdaa_env": "test-env",
+            "mdaa_module_name": "test-bedrock-builder-app",
+            "mdaa_org": "test-org",
+          },
+          "Type": "String",
+          "Value": {
+            "Fn::GetAtt": [
+              "REPLACED-CFN-LOGICAL-ID",
+              "DataSourceId",
+            ],
+          },
+        },
+        "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "DependsOn": [
@@ -11896,6 +12175,17 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:datasource:testdsdefaultparsing:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "DataSourceId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
         "Name": "test-org:test-domain:test-bedrock-builder-main:loggroup:testknowledgebase2:name",
       },
       "Value": "/aws/vendedlogs/bedrock/knowledge-base/test-org-test-env-test-domain-test-bedrock-builder-main-test-knowledge-base2",
@@ -12064,6 +12354,94 @@ exports[`Bedrock Builder Snapshot Tests Bedrock Builder Stack Snapshot Test 1`] 
               },
             ],
           },
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:datasource:testdsbdaparsing:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "DataSourceId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:datasource:testdscustomparsing:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "DataSourceId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:datasource:testdsdefaultparsing:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "DataSourceId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:datasource:testdsfoundationmodelparsing:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "DataSourceId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:datasource:testsharepointdsbdaparsing:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "DataSourceId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:datasource:testsharepointdscustomparsing:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "DataSourceId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:datasource:testsharepointdsdefaultparsing:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "DataSourceId",
+        ],
+      },
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Export": {
+        "Name": "test-org:test-domain:test-bedrock-builder-main:datasource:testsharepointdsfmparsing:id",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "REPLACED-CFN-LOGICAL-ID",
+          "DataSourceId",
         ],
       },
     },
@@ -15888,6 +16266,26 @@ Provide responses in markdown format with source citations
       "UpdateReplacePolicy": "Delete",
     },
     "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/datasource/test-ds-default-parsing/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [
         "REPLACED-CFN-LOGICAL-ID",
       ],
@@ -17497,14 +17895,14 @@ Provide responses in markdown format with source citations
         "on_create_sql_statements": [
           "CREATE EXTENSION IF NOT EXISTS vector",
           "
-      CREATE TABLE IF NOT EXISTS embeddings_2dcaaa33_1024
-      (
-        id UUID PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS embeddings_2dcaaa33_1024
+        (
+            id UUID PRIMARY KEY,
         content TEXT NOT NULL,
         metadata JSON,
         custom_metadata JSONB,
         embedding VECTOR(1024)
-      );
+        );
     ",
           "CREATE INDEX IF NOT EXISTS idx_embedding_vector ON embeddings_2dcaaa33_1024 USING hnsw (embedding vector_cosine_ops) WITH (ef_construction=256);",
           "CREATE INDEX IF NOT EXISTS idx_content ON embeddings_2dcaaa33_1024 USING gin (to_tsvector('simple', content));",
@@ -17516,6 +17914,166 @@ Provide responses in markdown format with source citations
       },
       "Type": "Custom::RDS-Data",
       "UpdateReplacePolicy": "Delete",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/datasource/test-ds-bda-parsing/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/datasource/test-ds-custom-parsing/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/datasource/test-ds-default-parsing/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/datasource/test-ds-foundation-model-parsing/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/datasource/test-sharepoint-ds-bda-parsing/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/datasource/test-sharepoint-ds-custom-parsing/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/datasource/test-sharepoint-ds-default-parsing/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "REPLACED-CFN-LOGICAL-ID": {
+      "Properties": {
+        "Name": "/test-org/test-domain/test-bedrock-builder-main/datasource/test-sharepoint-ds-fm-parsing/id",
+        "Tags": {
+          "mdaa_cdk_app": "bedrock-builder",
+          "mdaa_domain": "test-domain",
+          "mdaa_env": "test-env",
+          "mdaa_module_name": "test-bedrock-builder-main",
+          "mdaa_org": "test-org",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "REPLACED-CFN-LOGICAL-ID",
+            "DataSourceId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "DependsOn": [

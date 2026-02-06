@@ -42,6 +42,7 @@ import { MdaaNagSuppressions, MdaaParamAndOutput } from '@aws-mdaa/construct';
 import { resolveModelArn } from '@aws-mdaa/ai-helper';
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { truncateResourceType } from './resource-type-utils';
+import { CfnDataSource } from 'aws-cdk-lib/aws-bedrock';
 
 // ---------------------------------------------
 // Knowledge Base Interfaces and Types
@@ -1461,10 +1462,10 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
     const columns = columnDefinitions.map(col => `${col.name} ${col.type}`);
 
     return `
-      CREATE TABLE IF NOT EXISTS ${tableName}
-      (
-        ${columns.join(',\n        ')}
-      );
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        (
+            ${columns.join(',\n        ')}
+        );
     `;
   }
 
@@ -1560,15 +1561,27 @@ export class BedrockKnowledgeBaseL3Construct extends MdaaL3Construct {
       }),
     };
 
+    // Create the data source
+    let createdDataSource: CfnDataSource;
     if (vectorIngestionConfig) {
       const vectorIngestionConfigProp = this.createVectorIngestionConfiguration(vectorIngestionConfig);
-      return new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, {
+      createdDataSource = new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, {
         ...baseDataSourceProps,
         vectorIngestionConfiguration: vectorIngestionConfigProp,
       });
+    } else {
+      createdDataSource = new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, baseDataSourceProps);
     }
 
-    return new bedrock.CfnDataSource(this, `${kbName}-DataSource-${dsName}`, baseDataSourceProps);
+    // Create the SSM param
+    new MdaaParamAndOutput(this, {
+      resourceType: 'dataSource',
+      resourceId: dsName,
+      name: 'id',
+      value: createdDataSource.attrDataSourceId,
+      ...this.props,
+    });
+    return createdDataSource;
   }
 
   private createS3DataSourceBatchSyncLambda(
