@@ -34,13 +34,16 @@ export interface IMdaaConfigTransformer {
 export class MdaaConfigTransformer implements IMdaaConfigTransformer {
   private readonly valueTransformer: IMdaaConfigValueTransformer;
   private readonly keyTransformer?: IMdaaConfigValueTransformer;
+
   constructor(valueTransformer: IMdaaConfigValueTransformer, keyTransformer?: IMdaaConfigValueTransformer) {
     this.valueTransformer = valueTransformer;
     this.keyTransformer = keyTransformer;
   }
+
   public transformConfig(config: ConfigurationElement): ConfigurationElement {
     return this.transformConfigObject('/', config);
   }
+
   /**
    * A recursive function which applies a transformation function to all config values.
    * @param contextPath
@@ -80,6 +83,7 @@ export class MdaaConfigTransformer implements IMdaaConfigTransformer {
     }
     return transformedConfig;
   }
+
   /**
    * A helper function for transformConfigObject for use with Arrays.
    * @param contextPath
@@ -100,11 +104,14 @@ export class MdaaConfigTransformer implements IMdaaConfigTransformer {
     return transformedConfig;
   }
 }
+
 export class ConfigConfigPathValueTransformer implements IMdaaConfigValueTransformer {
-  private baseDir: string;
+  private readonly baseDir: string;
+
   constructor(baseDir: string) {
     this.baseDir = baseDir;
   }
+
   public transformValue(value: string): string {
     if (value.startsWith('../')) {
       // Resolve to baseDir's parent path
@@ -119,6 +126,7 @@ export class ConfigConfigPathValueTransformer implements IMdaaConfigValueTransfo
     }
   }
 }
+
 export class MdaaConfigSSMValueTransformer implements IMdaaConfigValueTransformer {
   public transformValue(value: string, contextPath: string): string {
     const ignorePaths = ['policyDocument/Statement/Action'];
@@ -133,6 +141,13 @@ export class MdaaConfigSSMValueTransformer implements IMdaaConfigValueTransforme
     }
   }
 }
+
+export interface AwsEnvironment {
+  readonly partition?: string;
+  readonly region?: string;
+  readonly account?: string;
+}
+
 export interface MdaaConfigRefValueTransformerProps {
   readonly org: string;
   readonly domain: string;
@@ -140,23 +155,27 @@ export interface MdaaConfigRefValueTransformerProps {
   readonly module_name: string;
   readonly scope?: Construct;
   readonly context?: ConfigurationElement;
+  readonly awsEnvironment?: AwsEnvironment;
 }
+
 export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransformer {
   protected readonly props: MdaaConfigRefValueTransformerProps;
   private readonly refMap: { [refInner: string]: string | undefined };
 
   constructor(props: MdaaConfigRefValueTransformerProps) {
     this.props = props;
+    const scopeStack = this.props.scope ? Stack.of(this.props.scope) : undefined;
     this.refMap = {
       org: this.props.org,
       env: this.props.env,
       domain: this.props.domain,
       module_name: this.props.module_name,
-      partition: this.props.scope ? Stack.of(this.props.scope).partition : undefined,
-      region: this.props.scope ? Stack.of(this.props.scope).region : undefined,
-      account: this.props.scope ? Stack.of(this.props.scope).account : undefined,
+      partition: this.props.awsEnvironment?.partition ?? scopeStack?.partition,
+      region: this.props.awsEnvironment?.region ?? scopeStack?.region,
+      account: this.props.awsEnvironment?.account ?? scopeStack?.account,
     };
   }
+
   public transformValue(value: string): TransformResult {
     const refMatch = XRegExp.matchRecursive(value, '{{', '}}', 'g', {
       unbalanced: 'skip',
@@ -167,6 +186,7 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
       return value;
     }
   }
+
   protected parseRef(value: string, refMatch: string[]): TransformResult {
     // Special case: naked reference (just {{ref}} with nothing else)
     // Return the actual resolved value without string conversion
@@ -263,15 +283,19 @@ export class MdaaConfigRefValueTransformer implements IMdaaConfigValueTransforme
     return contextValue;
   }
 }
+
 export interface MdaaConfigParamRefValueTransformerProps extends MdaaConfigRefValueTransformerProps {
   readonly serviceCatalogConfig?: MdaaServiceCatalogProductConfig;
 }
+
 export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransformer {
   private readonly serviceCatalogConfig?: MdaaServiceCatalogProductConfig;
+
   constructor(props: MdaaConfigParamRefValueTransformerProps) {
     super(props);
     this.serviceCatalogConfig = props.serviceCatalogConfig;
   }
+
   protected override parseRef(value: string, refMatch: string[]): string | number {
     /**
      * Handle base case where we resolve and return a single naked parameter value,
@@ -293,6 +317,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
     });
     return toReturn;
   }
+
   /**
    * Resolve standalone parameters with no other content in the value.
    * "Standalone" means it is not embedded in a string value.
@@ -315,6 +340,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
     }
     return undefined;
   }
+
   /**
    * Create new or resolve existing parameter for a given parameter reference
    * @param refInner
@@ -349,6 +375,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
     // If no paramProps type was found, create a new parameter based on type labels if present
     return this.createParamUsingTypeLabels(paramBase, paramName, paramProps);
   }
+
   private createParamUsingProps(paramName: string, paramType: string, paramProps: CfnParameterProps) {
     if (!this.props.scope) {
       throw new Error('Unable to create params outside of a Construct');
@@ -365,6 +392,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
       );
     }
   }
+
   protected createParamUsingTypeLabels(
     paramBase: string,
     paramName: string,
@@ -386,6 +414,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
     // If no type is specified in paramProps, then assume that the parameter is a string
     return new CfnParameter(this.props.scope, paramName, paramProps).valueAsString;
   }
+
   /**
    * Whether the given parameter type is a list type
    * Follows conventions of CfnParameter internal functions
@@ -393,6 +422,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
   private isListType(type: string) {
     return type.indexOf('List<') >= 0 || type.indexOf('CommaDelimitedList') >= 0;
   }
+
   /**
    * Whether the given parameter type is a number type
    * Follows conventions of CfnParameter internal functions
@@ -400,6 +430,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
   private isNumberType(type: string) {
     return type === 'Number';
   }
+
   /**
    * Whether the given parameter type is a string type
    * Follows conventions of CfnParameter internal functions
@@ -407,6 +438,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
   private isStringType(type: string) {
     return !this.isListType(type) && !this.isNumberType(type);
   }
+
   private getParamProps(paramName: string): CfnParameterProps | undefined {
     if (this.serviceCatalogConfig?.parameters?.[paramName]?.props) {
       return this.serviceCatalogConfig.parameters[paramName].props;
@@ -414,6 +446,7 @@ export class MdaaConfigParamRefValueTransformer extends MdaaConfigRefValueTransf
     return undefined;
   }
 }
+
 /**
  * Q-ENHANCED-INTERFACE
  * Configuration interface for custom CDK aspects that apply cross-cutting concerns to all MDAA-deployed resources. Enables integration of custom security checks, compliance validations, and resource modifications across the entire MDAA infrastructure deployment.

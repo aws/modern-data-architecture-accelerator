@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.5.0] - 2026-02-28
+
+### New Features
+- Users can now provide variables placeholders in the predeploy and postdeploy hook commands
+
 ## [1.4.0] - 2026-01-30
 
 ### New Features

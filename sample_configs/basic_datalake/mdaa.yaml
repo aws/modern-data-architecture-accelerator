@@ -95,3 +95,10 @@ domains:
             module_path: "@aws-mdaa/dataops-crawler"
             module_configs:
               - ./dataops/crawler.yaml
+            postdeploy:
+              command: "./dataops/create_table.sh {{org}} {{region}}"
+              exit_if_fail: true
+          example-data-quality:
+            module_path: "@aws-mdaa/dataops-data-quality"
+            module_configs:
+              - ./dataops/data-quality.yaml

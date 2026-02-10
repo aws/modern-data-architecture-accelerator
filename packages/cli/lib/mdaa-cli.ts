@@ -7,6 +7,7 @@ import {
   ConfigurationElement,
   MdaaConfigParamRefValueTransformerProps,
   MdaaConfigRefValueTransformer,
+  MdaaConfigRefValueTransformerProps,
   MdaaCustomAspect,
   MdaaCustomNaming,
   TagElement,
@@ -706,33 +707,48 @@ export class MdaaDeploy {
     const modulePrefix = `${moduleDeploymentConfig.domainName}/${moduleDeploymentConfig.envName}/${moduleDeploymentConfig.moduleName}`;
 
     if (!hookConfig.command) {
-      console.warn(`Module ${modulePrefix}: ${hookType} hook defined but no command specified`);
-      return;
+      throw new Error(`Module ${modulePrefix}: ${hookType} hook defined but no command specified`);
     }
 
-    const hookCommand = hookConfig.command;
-    if (!hookCommand) {
-      return;
+    // Transform template variables in hook command (e.g., {{org}}, {{domain}}, {{env}}, {{module_name}}, {{region}})
+    const transformerProps: MdaaConfigRefValueTransformerProps = {
+      org: this.config.contents.organization,
+      domain: moduleDeploymentConfig.domainName,
+      env: moduleDeploymentConfig.envName,
+      module_name: moduleDeploymentConfig.moduleName,
+      awsEnvironment: {
+        region: moduleDeploymentConfig.deployRegion,
+        account: moduleDeploymentConfig.deployAccount,
+        partition: 'aws', // no current way to get other partition but currently MDAA doesn't have examples of using another partition
+      },
+    };
+    const transformer = new MdaaConfigRefValueTransformer(transformerProps);
+    const transformedHookCommand = transformer.transformValue(hookConfig.command);
+
+    // Ensure the transformed value is a string (hook commands must be strings)
+    if (typeof transformedHookCommand !== 'string') {
+      throw new TypeError(
+        `Module ${modulePrefix}: Hook command transformation resulted in non-string value (type: ${typeof transformedHookCommand}). Hook commands must be strings.`,
+      );
     }
 
-    console.log(`Module ${modulePrefix}: Executing ${hookType} hook`);
-    console.log(`Module ${modulePrefix}: Hook command: ${hookCommand}`);
+    console.log(`Module ${modulePrefix}: Executing ${hookType} hook command: ${transformedHookCommand}`);
 
     try {
-      this.execCmd(hookCommand);
+      this.execCmd(transformedHookCommand);
       console.log(`Module ${modulePrefix}: ${hookType} hook completed successfully`);
     } catch (error) {
-      console.error(`Module ${modulePrefix}: ${hookType} hook failed: ${error}`);
-
       if (hookConfig.exit_if_fail) {
-        console.error(
-          `Module ${modulePrefix}: Exiting deployment due to ${hookType} hook failure (exit_if_fail=${hookConfig.exit_if_fail})`,
-        );
-        throw error;
+        const message = `Module ${modulePrefix}: Exiting deployment due to ${hookType} hook failure (exit_if_fail=${hookConfig.exit_if_fail})`;
+        console.error(message);
+        // Create a new error with the custom message and preserve the original error
+        const hookError = new Error(message) as Error & { cause?: unknown };
+        // Attach the original error as a property for debugging
+        hookError.cause = error;
+        throw hookError;
       } else {
-        console.warn(
-          `Module ${modulePrefix}: Continuing deployment despite ${hookType} hook failure (exit_if_fail=${hookConfig.exit_if_fail})`,
-        );
+        const message = `Module ${modulePrefix}: Continuing deployment despite ${hookType} hook failure (exit_if_fail=${hookConfig.exit_if_fail})`;
+        console.warn(message);
       }
     }
   }

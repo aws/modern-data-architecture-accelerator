@@ -330,7 +330,7 @@ describe('MdaaDeploy.deployModule', () => {
       expect(mockSynthExecCmd).toHaveBeenCalledWith("cd '/test/path' && main-command");
     });
 
-    it('should warn when predeploy hook has no command', () => {
+    it('should throw error when predeploy hook has no command', () => {
       const predeployHook: HookConfig = {
         exit_if_fail: true,
       };
@@ -340,9 +340,7 @@ describe('MdaaDeploy.deployModule', () => {
         moduleCmds: ['main-command'],
       });
 
-      mdaaDeploy.deployModule(moduleConfig);
-
-      expect(mockExecCmd).toHaveBeenCalledTimes(1); // Only main command
+      expect(() => mdaaDeploy.deployModule(moduleConfig)).toThrow('predeploy hook defined but no command specified');
     });
 
     it('should exit deployment when predeploy hook fails and exit_if_fail is true', () => {
@@ -363,7 +361,7 @@ describe('MdaaDeploy.deployModule', () => {
         }
       });
 
-      expect(() => mdaaDeploy.deployModule(moduleConfig)).toThrow('Predeploy hook failed');
+      expect(() => mdaaDeploy.deployModule(moduleConfig)).toThrow('Exiting deployment due to predeploy hook failure');
       expect(mockExecCmd).toHaveBeenCalledTimes(1); // Only predeploy hook, main command not executed
     });
 
@@ -493,7 +491,7 @@ describe('MdaaDeploy.deployModule', () => {
       expect(mockDiffExecCmd).toHaveBeenCalledWith("cd '/test/path' && main-command");
     });
 
-    it('should warn when postdeploy hook has no command', () => {
+    it('should throw error when postdeploy hook has no command', () => {
       const postdeployHook: HookConfig = {
         exit_if_fail: true,
       };
@@ -503,9 +501,7 @@ describe('MdaaDeploy.deployModule', () => {
         moduleCmds: ['main-command'],
       });
 
-      mdaaDeploy.deployModule(moduleConfig);
-
-      expect(mockExecCmd).toHaveBeenCalledTimes(1); // Only main command
+      expect(() => mdaaDeploy.deployModule(moduleConfig)).toThrow('postdeploy hook defined but no command specified');
     });
   });
 
@@ -560,6 +556,39 @@ describe('MdaaDeploy.deployModule', () => {
 
       expect(() => mdaaDeploy.deployModule(moduleConfig)).toThrow('Command failed');
       expect(mockExecCmd).toHaveBeenCalledTimes(3); // All commands executed despite failures
+    });
+
+    it('should transform template variables in hook commands', () => {
+      const predeployHook: HookConfig = {
+        command:
+          './scripts/deploy-{{org}}-{{domain}}-{{env}}-{{module_name}}.sh --region {{region}} --account {{account}}',
+        exit_if_fail: true,
+      };
+
+      const postdeployHook: HookConfig = {
+        command: 'echo "Deployed to {{org}}/{{domain}}/{{env}}/{{module_name}} in {{region}} ({{account}})"',
+        exit_if_fail: false,
+      };
+
+      const moduleConfig = createMockModuleConfig({
+        predeploy: predeployHook,
+        postdeploy: postdeployHook,
+        moduleCmds: ['main-command'],
+      });
+
+      mdaaDeploy.deployModule(moduleConfig);
+
+      expect(mockExecCmd).toHaveBeenCalledTimes(3);
+      // Verify template variables are transformed
+      expect(mockExecCmd).toHaveBeenNthCalledWith(
+        1,
+        './scripts/deploy-test-org-test-domain-test-env-test-module.sh --region us-east-1 --account test-account',
+      );
+      expect(mockExecCmd).toHaveBeenNthCalledWith(2, "cd '/test/path' && main-command");
+      expect(mockExecCmd).toHaveBeenNthCalledWith(
+        3,
+        'echo "Deployed to test-org/test-domain/test-env/test-module in us-east-1 (test-account)"',
+      );
     });
   });
 });

@@ -703,6 +703,8 @@ The command to execute. This can be:
 - A direct command: `"aws s3 cp data.csv s3://my-bucket/"`
 - A complex command: `"npm run build && npm run test"`
 
+You can provide template variables as arguments to the script: `{{org}}`, `{{domain}}`, `{{env}}`, `{{module_name}}`, `{{region}}`, `{{account}}`, and `{{partition}}`
+
 #### `exit_if_fail` (optional, default: false)
 If `true`, the deployment will stop if the hook command fails (exits with non-zero code).
 If `false`, the deployment will continue even if the hook fails.

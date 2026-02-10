@@ -54,6 +54,8 @@ basic_datalake
 └───dataops
 │    └───project.yaml
 │    └───crawler.yaml
+│    └───create_table.sh
+│    └───data-quality.yaml
 |
 └───governance
 │    └───audit.yaml
@@ -110,7 +112,18 @@ This configuration will be used by the MDAA S3 Data Lake module to deploy KMS Ke
 
 ***
 
-### athena.yaml
+### datalake/lakeformation-settings.yaml
+
+This configuration will be used by the MDAA Lake Formation Settings module to configure Lake Formation behavior. When `iamAllowedPrincipalsDefault` is set to true, Lake Formation will automatically add IAM_ALLOWED_PRINCIPALS permissions to new databases and tables, effectively deferring access control to IAM policies rather than requiring explicit Lake Formation grants.
+
+```yaml
+# Contents available in datalake/lakeformation-settings.yaml
+--8<-- "target/docs/sample_configs/basic_datalake/datalake/lakeformation-settings.yaml"
+```
+
+***
+
+### datalake/athena.yaml
 
 This configuration will create a standalone Athena Workgroup which can be used to securely query the data lake via Glue resources. These Glue resources can be either manually created, created via MDAA DataOps Project module (Glue databases), or MDAA Crawler module (Glue tables).
 
@@ -139,6 +152,31 @@ This configuration will create Glue crawlers using the DataOps Crawler module.
 ```yaml
 # Contents available in dataops/crawler.yaml
 --8<-- "target/docs/sample_configs/basic_datalake/dataops/crawler.yaml"
+```
+
+***
+
+### dataops/create_table.sh
+
+This shell script is executed as a post-deployment hook after the crawler module is deployed. It automates the process of creating a sample table by:
+1. Generating sample CSV data (sales records)
+2. Retrieving the crawler configuration from SSM parameters
+3. Assuming the data-admin role
+4. Uploading the sample data to the S3 target location
+5. Running the Glue crawler to catalog the data
+6. Verifying the table was created successfully
+
+This script is referenced in `mdaa.yaml` as a postdeploy command for the example-crawler module. Users are encouraged to modify this script's implementation to suite their use case.
+
+***
+
+### dataops/data-quality.yaml
+
+This configuration will create AWS Glue Data Quality rulesets using the DataOps Data Quality module. The rulesets validate data completeness and row counts for tables created by the crawler. This ensures data quality standards are maintained in the data lake.
+
+```yaml
+# Contents available in dataops/data-quality.yaml
+--8<-- "target/docs/sample_configs/basic_datalake/dataops/data-quality.yaml"
 ```
 
 ### governance/audit.yaml
