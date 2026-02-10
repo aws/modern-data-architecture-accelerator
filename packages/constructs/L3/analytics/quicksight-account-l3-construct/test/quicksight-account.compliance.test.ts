@@ -98,7 +98,7 @@ describe('QS Account Mandatory Tests', () => {
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
 
-  test('Test QS Account With Sample Config', () => {
+  test('QS Account With Sample Config', () => {
     template.hasResourceProperties('AWS::CloudFormation::CustomResource', {
       accountDetail: Match.objectLike({
         edition: 'ENTERPRISE_AND_Q',
@@ -109,7 +109,7 @@ describe('QS Account Mandatory Tests', () => {
     });
   });
 
-  test('Test IP Restrictions', () => {
+  test('IP Restrictions', () => {
     template.hasResourceProperties('Custom::ip-restrictions', {
       accountId: 'test-account',
       ipRestrictionsMap: {
@@ -119,7 +119,7 @@ describe('QS Account Mandatory Tests', () => {
     });
   });
 
-  test('Test Security Group Ingress', () => {
+  test('Security Group Ingress', () => {
     template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
       IpProtocol: 'tcp',
       CidrIp: '10.0.0.0/32',
@@ -152,7 +152,7 @@ describe('QS Account Mandatory Tests', () => {
     });
   });
 
-  test('Test Security Group Egress', () => {
+  test('Security Group Egress', () => {
     template.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
       GroupId: {
         'Fn::GetAtt': ['teststackquicksightsgB57FA8A2', 'GroupId'],
@@ -201,7 +201,7 @@ describe('QS Account Name Validity Tests', () => {
     };
   }
 
-  test('Test QS Account With invalid name gets sanitized', () => {
+  test('QS Account With invalid name gets sanitized', () => {
     const testApp = new MdaaTestApp({
       org: 'D-test-not-allowed',
     });
@@ -218,7 +218,7 @@ describe('QS Account Name Validity Tests', () => {
       }),
     });
   });
-  test('Test QS Account With long name', () => {
+  test('QS Account With long name', () => {
     const testApp = new MdaaTestApp({
       org: 'test-very-very-very-long-org',
     });

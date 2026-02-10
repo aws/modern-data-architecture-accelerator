@@ -85,7 +85,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     supplementalBucketName: 'test-supplemental-bucket',
   };
 
-  test('Test Basic Knowledge Base Creation', () => {
+  test('Basic Knowledge Base Creation', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -130,7 +130,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Knowledge Base Creation with ARN', () => {
+  test('Knowledge Base Creation with ARN', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -161,7 +161,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Knowledge Base with Vector Ingestion Configuration', () => {
+  test('Knowledge Base with Vector Ingestion Configuration', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -223,7 +223,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Knowledge Base with Sync Lambda', () => {
+  test('Knowledge Base with Sync Lambda', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -257,7 +257,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Knowledge Base with Batch Sync Lambda', () => {
+  test('Knowledge Base with Batch Sync Lambda', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -304,7 +304,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test RDS Aurora Cluster Creation', () => {
+  test('RDS Aurora Cluster Creation', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -326,7 +326,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Error for Unknown Embedding Model', () => {
+  test('Error for Unknown Embedding Model', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -351,7 +351,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     }).toThrow('Unable to determine vector field size from Embedding Model ID : unknown.model');
   });
 
-  test('Test Data Source Without Vector Ingestion', () => {
+  test('Data Source Without Vector Ingestion', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -383,7 +383,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Hierarchical and Semantic Chunking', () => {
+  test('Hierarchical and Semantic Chunking', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -479,7 +479,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Custom Transformation and Parsing Prompt', () => {
+  test('Custom Transformation and Parsing Prompt', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -568,7 +568,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Custom Transformation and Parsing Prompt using Inference', () => {
+  test('Custom Transformation and Parsing Prompt using Inference', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -638,7 +638,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Knowledge Base with Multiple Transform Lambda ARNs', () => {
+  test('Knowledge Base with Multiple Transform Lambda ARNs', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -700,7 +700,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Knowledge Base Parameter and Output Creation', () => {
+  test('Knowledge Base Parameter and Output Creation', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -727,7 +727,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     expect(Object.keys(outputs).length).toBeGreaterThan(0);
   });
 
-  test('Test OpenSearch Serverless Vector Store', () => {
+  test('OpenSearch Serverless Vector Store', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -762,7 +762,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test SharePoint Data Source', () => {
+  test('SharePoint Data Source', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -802,7 +802,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Knowledge Base with Inference Profile Model', () => {
+  test('Knowledge Base with Inference Profile Model', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -839,7 +839,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Chunking Configuration Validation Errors', () => {
+  test('Chunking Configuration Validation Errors', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -872,7 +872,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     }).toThrow('fixedSizeChunkingConfiguration is required when chunkingStrategy is FIXED_SIZE');
   });
 
-  test('Test Invalid Vector Store Type Error', () => {
+  test('Invalid Vector Store Type Error', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -896,7 +896,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     }).toThrow('Invalid vector store type: INVALID_TYPE');
   });
 
-  test('Test Knowledge Base Logging Configuration', () => {
+  test('Knowledge Base Logging Configuration', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -925,7 +925,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     template.hasResourceProperties('AWS::Logs::Delivery', {});
   });
 
-  test('Test Multiple Embedding Models Vector Field Size', () => {
+  test('Multiple Embedding Models Vector Field Size', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -960,7 +960,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
     });
   });
 
-  test('Test Unknown Embedding Model Error', () => {
+  test('Unknown Embedding Model Error', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -1113,7 +1113,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
   });
 
   describe('deferPolicyCreation flag tests', () => {
-    test('Test default behavior (deferPolicyCreation=false) creates policies', () => {
+    test('default behavior (deferPolicyCreation=false) creates policies', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -1147,7 +1147,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
       });
     });
 
-    test('Test deferPolicyCreation=false explicitly creates policies', () => {
+    test('deferPolicyCreation=false explicitly creates policies', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -1176,7 +1176,7 @@ describe('Bedrock Knowledge Base L3 Construct Tests', () => {
       });
     });
 
-    test('Test deferPolicyCreation=true skips KB role policy creation but creates handler policy', () => {
+    test('deferPolicyCreation=true skips KB role policy creation but creates handler policy', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const kmsKey = new Key(testApp.testStack, 'TestKey');

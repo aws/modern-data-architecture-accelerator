@@ -38,7 +38,7 @@ describe('MDAA Compliance Stack Tests', () => {
     template.resourceCountIs('AWS::Transfer::User', 1);
   });
 
-  test('Test users properties', () => {
+  test('users properties', () => {
     template.hasResourceProperties('AWS::Transfer::User', {
       Role: {
         'Fn::GetAtt': ['teststackTransferUserSFTPRoleteststackDC08A045', 'Arn'],

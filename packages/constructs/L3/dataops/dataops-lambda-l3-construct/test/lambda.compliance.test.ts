@@ -527,7 +527,7 @@ describe('Bad function config', () => {
     runtime: 'test',
   };
 
-  test('Test No Runtime', () => {
+  test('No Runtime', () => {
     const testApp = new MdaaTestApp();
     const stack = testApp.testStack;
     const constructProps: LambdaFunctionL3ConstructProps = {
@@ -544,7 +544,7 @@ describe('Bad function config', () => {
       Template.fromStack(testApp.testStack);
     }).toThrow();
   });
-  test('Test No Handler', () => {
+  test('No Handler', () => {
     const testApp = new MdaaTestApp();
     const stack = testApp.testStack;
     const constructProps: LambdaFunctionL3ConstructProps = {
@@ -561,7 +561,7 @@ describe('Bad function config', () => {
       Template.fromStack(testApp.testStack);
     }).toThrow();
   });
-  test('Test Bad Layer', () => {
+  test('Bad Layer', () => {
     const testApp = new MdaaTestApp();
     const stack = testApp.testStack;
     const constructProps: LambdaFunctionL3ConstructProps = {

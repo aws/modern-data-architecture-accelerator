@@ -11,7 +11,8 @@ import { Key } from 'aws-cdk-lib/aws-kms';
 import { EventBridgeHelper, EventBridgeProps, EventBridgeRuleProps, S3EventBridgeRuleProps } from '../lib';
 import { ConfigurationElement } from '@aws-mdaa/config';
 
-export class TestTarget implements IRuleTarget {
+// Test helper class for EventBridge targets
+class TestTarget implements IRuleTarget {
   private role: IRole;
 
   constructor(role: IRole) {
@@ -30,7 +31,7 @@ describe('MDAA Compliance Stack Tests', () => {
   const testApp = new MdaaTestApp();
   const stack = testApp.testStack;
 
-  test('Test S3 Rule Props to Generic Rule Props', () => {
+  test('S3 Rule Props to Generic Rule Props', () => {
     const s3RuleProps: S3EventBridgeRuleProps = {
       buckets: ['test-bucket'],
       prefixes: ['test-prefix'],
@@ -138,7 +139,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
-  test('Test Target Rule', () => {
+  test('Target Rule', () => {
     template.hasResourceProperties('AWS::Events::Rule', {
       EventPattern: {
         source: ['test-source'],
@@ -177,7 +178,7 @@ describe('MDAA Compliance Stack Tests', () => {
       ],
     });
   });
-  test('Glue Monitor Rule', () => {
+  test('Glue Monitor Rule - Duplicate Check', () => {
     template.hasResourceProperties('AWS::Events::Rule', {
       Description: 'test-glue-monitor-rule',
       EventPattern: {

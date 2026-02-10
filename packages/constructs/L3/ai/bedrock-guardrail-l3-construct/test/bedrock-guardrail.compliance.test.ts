@@ -28,7 +28,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     },
   };
 
-  test('Test Basic Guardrail Creation', () => {
+  test('Basic Guardrail Creation', () => {
     const testApp = new MdaaTestApp();
     const kmsKey = new Key(testApp.testStack, 'TestKey');
 
@@ -69,7 +69,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     });
   });
 
-  test('Test Guardrail with Contextual Grounding', () => {
+  test('Guardrail with Contextual Grounding', () => {
     const testApp = new MdaaTestApp();
     const kmsKey = new Key(testApp.testStack, 'TestKey');
 
@@ -109,7 +109,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     });
   });
 
-  test('Test Guardrail with Custom Messages', () => {
+  test('Guardrail with Custom Messages', () => {
     const testApp = new MdaaTestApp();
     const kmsKey = new Key(testApp.testStack, 'TestKey');
 
@@ -137,7 +137,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     });
   });
 
-  test('Test Guardrail with All Content Filters', () => {
+  test('Guardrail with All Content Filters', () => {
     const testApp = new MdaaTestApp();
     const kmsKey = new Key(testApp.testStack, 'TestKey');
 
@@ -179,7 +179,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     });
   });
 
-  test('Test Guardrail with PII Entity Filters', () => {
+  test('Guardrail with PII Entity Filters', () => {
     const testApp = new MdaaTestApp();
     const kmsKey = new Key(testApp.testStack, 'TestKey');
 
@@ -219,7 +219,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     });
   });
 
-  test('Test Guardrail with Regex Pattern Filters', () => {
+  test('Guardrail with Regex Pattern Filters', () => {
     const testApp = new MdaaTestApp();
     const kmsKey = new Key(testApp.testStack, 'TestKey');
 
@@ -275,7 +275,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     });
   });
 
-  test('Test Guardrail with Combined PII and Regex Filters', () => {
+  test('Guardrail with Combined PII and Regex Filters', () => {
     const testApp = new MdaaTestApp();
     const kmsKey = new Key(testApp.testStack, 'TestKey');
 
@@ -329,7 +329,7 @@ describe('Bedrock Guardrail L3 Construct Tests', () => {
     });
   });
 
-  test('Test Guardrail providing Configuration', () => {
+  test('Guardrail providing Configuration', () => {
     const testApp = new MdaaTestApp();
     const kmsKey = new Key(testApp.testStack, 'TestKey');
 

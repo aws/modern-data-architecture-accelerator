@@ -69,7 +69,7 @@ describe('Aurora MySql: MDAA Construct Compliance Tests', () => {
     });
   });
 
-  test('Is EngineMode serverless', () => {
+  test('Engine is aurora-mysql', () => {
     template.hasResourceProperties('AWS::RDS::DBInstance', {
       Engine: 'aurora-mysql',
     });

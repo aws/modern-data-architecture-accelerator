@@ -101,7 +101,7 @@ describe('MDAA Compliance Stack Tests', () => {
   // console.log( JSON.stringify( template, undefined, 2 ) )
 
   describe('READ Policy Test', () => {
-    test('Test SageMakerSearch', () => {
+    test('SageMakerSearch', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -115,7 +115,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test SageMakerList', () => {
+    test('SageMakerList', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -129,7 +129,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test SageMakerDescribeGet', () => {
+    test('SageMakerDescribeGet', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -145,7 +145,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
   describe('SM Write Policy Test', () => {
-    test('Test CreateandManageJobs', () => {
+    test('CreateandManageJobs', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -168,7 +168,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CreateandManageModelMonitoring', () => {
+    test('CreateandManageModelMonitoring', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -186,7 +186,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CreateandManageModelCards', () => {
+    test('CreateandManageModelCards', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -200,7 +200,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CreateandManagePipelines', () => {
+    test('CreateandManagePipelines', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -224,7 +224,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CreateAndManageModels', () => {
+    test('CreateAndManageModels', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -238,7 +238,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CreateAndManageEndpoints', () => {
+    test('CreateAndManageEndpoints', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -264,7 +264,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CreateAndManageTrials', () => {
+    test('CreateAndManageTrials', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -287,7 +287,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CreateAndManageProjects', () => {
+    test('CreateAndManageProjects', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -301,7 +301,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test PutRecordFeatureGroups', () => {
+    test('PutRecordFeatureGroups', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -315,7 +315,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test AddDeleteTagsSageMaker', () => {
+    test('AddDeleteTagsSageMaker', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -329,7 +329,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test SM CreateOnlineFeatureGroups', () => {
+    test('SM CreateOnlineFeatureGroups', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -350,7 +350,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test SM CreateOfflineFeatureGroups', () => {
+    test('SM CreateOfflineFeatureGroups', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -384,7 +384,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test ManageFeatureGroups', () => {
+    test('ManageFeatureGroups', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -402,7 +402,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CreateAndManageExperiments', () => {
+    test('CreateAndManageExperiments', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -416,7 +416,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CreateEC2NetworkInterfaces', () => {
+    test('CreateEC2NetworkInterfaces', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -442,7 +442,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test SageMakerECRReadonly', () => {
+    test('SageMakerECRReadonly', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -461,7 +461,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CloudWatchSageMaker Read', () => {
+    test('CloudWatchSageMaker Read', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -480,7 +480,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CloudWatchSageMaker Write', () => {
+    test('CloudWatchSageMaker Write', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -497,7 +497,7 @@ describe('MDAA Compliance Stack Tests', () => {
   });
 
   describe('SM Guardrail Policy Test', () => {
-    test('Test forceVolumeKmsKey', () => {
+    test('forceVolumeKmsKey', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -524,7 +524,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test forceOutputKmsKey', () => {
+    test('forceOutputKmsKey', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -549,7 +549,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test forceIntercontainerEncryptionNonNull', () => {
+    test('forceIntercontainerEncryptionNonNull', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -572,7 +572,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test forceIntercontainerEncryptionTrue', () => {
+    test('forceIntercontainerEncryptionTrue', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -595,7 +595,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test CloudWatchSageMaker', () => {
+    test('CloudWatchSageMaker', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -620,7 +620,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test forceJobNotebookSecurityGroups', () => {
+    test('forceJobNotebookSecurityGroups', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -645,7 +645,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test forceNotebookNonPublicNonNull', () => {
+    test('forceNotebookNonPublicNonNull', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -664,7 +664,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test forceNotebookNonPublicDisabled', () => {
+    test('forceNotebookNonPublicDisabled', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         PolicyDocument: {
           Statement: Match.arrayWith([
@@ -683,12 +683,12 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test Policy Name', () => {
+    test('Policy Name', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         ManagedPolicyName: 'test-org-test-env-test-domain-test-module-sm-guardrail',
       });
     });
-    test('Test Role Assignment', () => {
+    test('Role Assignment', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         Roles: ['team-execution-role', 'test-role'],
       });

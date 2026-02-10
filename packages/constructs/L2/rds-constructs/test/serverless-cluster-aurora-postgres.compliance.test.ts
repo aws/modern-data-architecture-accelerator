@@ -68,7 +68,7 @@ describe('Aurora Postgres: MDAA Construct Compliance Tests', () => {
     });
   });
 
-  test('Is EngineMode serverless', () => {
+  test('Engine is aurora-postgresql', () => {
     template.hasResourceProperties('AWS::RDS::DBInstance', {
       Engine: 'aurora-postgresql',
     });

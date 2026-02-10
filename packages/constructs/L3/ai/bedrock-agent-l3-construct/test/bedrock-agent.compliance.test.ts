@@ -55,7 +55,7 @@ describe('Bedrock Agent L3 Construct Tests', () => {
     ],
   };
 
-  test('Test Basic Agent Creation', () => {
+  test('Basic Agent Creation', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -89,7 +89,7 @@ describe('Bedrock Agent L3 Construct Tests', () => {
     });
   });
 
-  test('Test Agent with Knowledge Base', () => {
+  test('Agent with Knowledge Base', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -131,7 +131,7 @@ describe('Bedrock Agent L3 Construct Tests', () => {
     });
   });
 
-  test('Test Agent with Guardrail', () => {
+  test('Agent with Guardrail', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -170,7 +170,7 @@ describe('Bedrock Agent L3 Construct Tests', () => {
     });
   });
 
-  test('Test Lambda Permission Creation', () => {
+  test('Lambda Permission Creation', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -192,7 +192,7 @@ describe('Bedrock Agent L3 Construct Tests', () => {
     });
   });
 
-  test('Test Agent with Inference Profile ID', () => {
+  test('Agent with Inference Profile ID', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -247,7 +247,7 @@ describe('Bedrock Agent L3 Construct Tests', () => {
     });
   });
 
-  test('Test Agent with Full Model ARN', () => {
+  test('Agent with Full Model ARN', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');
@@ -282,7 +282,7 @@ describe('Bedrock Agent L3 Construct Tests', () => {
     });
   });
 
-  test('Test Invalid Model ARN Throws Error', () => {
+  test('Invalid Model ARN Throws Error', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
     const kmsKey = new Key(testApp.testStack, 'TestKey');

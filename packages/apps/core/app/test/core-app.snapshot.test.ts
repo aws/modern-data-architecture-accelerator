@@ -19,7 +19,6 @@ class TestMdaaCdkApp extends MdaaCdkApp {
   protected subGenerateResources(
     stack: Stack,
     l3ConstructProps: MdaaL3ConstructProps,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _parserProps: MdaaAppConfigParserProps,
   ) {
     new StringParameter(stack, 'TestParameter', {

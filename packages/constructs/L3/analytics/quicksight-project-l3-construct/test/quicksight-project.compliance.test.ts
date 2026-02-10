@@ -137,7 +137,7 @@ describe('MDAA Compliance Stack Tests', () => {
     );
   });
   // READER: Verify Properties for QS Folders like folderpermissions, folderName, etc.
-  test('Test QS Folder Creation with READER Permissions', () => {
+  test('QS Folder Creation with READER Permissions', () => {
     template.hasResourceProperties('AWS::CloudFormation::CustomResource', {
       folderDetails: Match.objectLike({
         folderName: 'testReadFolder',
@@ -153,7 +153,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
   // AUTHOR: Verify Properties for QS Folders like folderpermissions, folderName, etc.
-  test('Test QS Folder Creation with AUTHOR Permissions', () => {
+  test('QS Folder Creation with AUTHOR Permissions', () => {
     template.hasResourceProperties('AWS::CloudFormation::CustomResource', {
       folderDetails: Match.objectLike({
         folderName: 'testAuthorFolder',
@@ -179,7 +179,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
   // Test Athena Data Sources
-  test('Test QS Athena DataSource', () => {
+  test('QS Athena DataSource', () => {
     template.hasResourceProperties('AWS::QuickSight::DataSource', {
       AlternateDataSourceParameters: [
         {
@@ -213,7 +213,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
   // Test Redshift Data Sources
-  test('Test QS Redshift DataSource', () => {
+  test('QS Redshift DataSource', () => {
     template.hasResourceProperties('AWS::QuickSight::DataSource', {
       AlternateDataSourceParameters: [
         {

@@ -204,7 +204,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
-  test('BucketReadWriteAccess', () => {
+  test('BucketReadAccess', () => {
     template.hasResourceProperties('AWS::S3::BucketPolicy', {
       PolicyDocument: {
         Statement: Match.arrayWith([

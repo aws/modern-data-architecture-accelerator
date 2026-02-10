@@ -38,7 +38,6 @@ describe('MdaaDeploy.sanityCheck', () => {
 
   beforeEach(() => {
     // Mock console.log to suppress output during tests
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     jest.spyOn(console, 'log').mockImplementation(() => {});
 
     // mod1 is an account level module

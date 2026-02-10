@@ -45,10 +45,6 @@ describe('Nifi Mandatory Compliance Stack Tests', () => {
   Template.fromStack(testApp.testStack);
 
   // console.log( JSON.stringify( template, undefined, 2 ) )
-
-  // test( 'Validate resource counts', () => {
-  //   template.resourceCountIs( "AWS::Glue::Job", 1 );
-  // } );
 });
 
 describe('Nifi Optional Compliance Stack Tests', () => {
@@ -169,10 +165,6 @@ describe('Nifi Optional Compliance Stack Tests', () => {
   Template.fromStack(testApp.testStack);
 
   // console.log( JSON.stringify( template, undefined, 2 ) )
-
-  // test( 'Validate resource counts', () => {
-  //   template.resourceCountIs( "AWS::Glue::Job", 1 );
-  // } );
 });
 
 describe('Registry Mandatory Compliance Stack Tests', () => {
@@ -204,10 +196,6 @@ describe('Registry Mandatory Compliance Stack Tests', () => {
   Template.fromStack(testApp.testStack);
 
   // console.log( JSON.stringify( template, undefined, 2 ) )
-
-  // test( 'Validate resource counts', () => {
-  //   template.resourceCountIs( "AWS::Glue::Job", 1 );
-  // } );
 });
 
 describe('Registry Optional Compliance Stack Tests', () => {
@@ -302,8 +290,4 @@ describe('Registry Optional Compliance Stack Tests', () => {
   Template.fromStack(testApp.testStack);
 
   // console.log( JSON.stringify( template, undefined, 2 ) )
-
-  // test( 'Validate resource counts', () => {
-  //   template.resourceCountIs( "AWS::Glue::Job", 1 );
-  // } );
 });

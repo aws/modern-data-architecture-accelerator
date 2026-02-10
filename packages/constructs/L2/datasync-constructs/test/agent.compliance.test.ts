@@ -32,12 +32,12 @@ describe('Agent Compliance Tests', () => {
   const template = Template.fromStack(testApp.testStack);
   //console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
 
-  test('ActivationKey', () => {
+  test('ActivationKey - First Agent', () => {
     template.hasResourceProperties('AWS::DataSync::Agent', {
       ActivationKey: 'ABCD-1234-EFGH-5678-IJKL', //gitleaks:allow
     });
   });
-  test('ActivationKey', () => {
+  test('ActivationKey - Second Agent', () => {
     template.hasResourceProperties('AWS::DataSync::Agent', {
       ActivationKey: 'AAAA-1234-EFGH-5678-IJKL', //gitleaks:allow
     });

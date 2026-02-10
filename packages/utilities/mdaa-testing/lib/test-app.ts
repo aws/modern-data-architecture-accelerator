@@ -16,13 +16,11 @@ export class MdaaTestApp extends App {
 
   private static createContext(testContext: { [key: string]: string }) {
     return {
-      ...{
-        '@aws-cdk/core:enablePartitionLiterals': true,
-        org: 'test-org',
-        env: 'test-env',
-        domain: 'test-domain',
-        moduleName: 'test-module',
-      },
+      '@aws-cdk/core:enablePartitionLiterals': true,
+      org: 'test-org',
+      env: 'test-env',
+      domain: 'test-domain',
+      moduleName: 'test-module',
       ...testContext,
     };
   }
@@ -38,9 +36,7 @@ export class MdaaTestApp extends App {
     Aspects.of(this).add(new PCIDSS321Checks({ verbose: true, logIgnores: false }));
 
     const namingProps = {
-      ...{
-        cdkNode: this.node,
-      },
+      cdkNode: this.node,
       ...MdaaTestApp.createContext(testContext),
     };
     this.naming = new MdaaDefaultResourceNaming(namingProps);
@@ -54,15 +50,19 @@ export class MdaaTestApp extends App {
   }
 
   public checkCdkNagCompliance(stack: Stack) {
+    // eslint-disable-next-line no-undef
     describe('MDAA CDK Nag Compliance Tests', () => {
+      // eslint-disable-next-line no-undef
       test(`No unsuppressed CDK Nags`, () => {
         const annotations = Annotations.fromStack(stack);
         const errors = annotations.findError('*', Match.stringLikeRegexp('AwsSolutions.*|HIPAA.*|NIST.*|PCI.*'));
         //Expect our Managed Policy to trigger 6 errors
         if (errors.length > 0) console.log(errors);
+        // eslint-disable-next-line no-undef
         expect(errors).toHaveLength(0);
       });
 
+      // eslint-disable-next-line no-undef
       test(`CDK Nag Active`, () => {
         // Add a resource which should trigger Nags. Ensures
         // CDK Nag is active.
@@ -81,6 +81,7 @@ export class MdaaTestApp extends App {
         const errors = annotations.findError('*', Match.stringLikeRegexp('AwsSolutions.*|HIPAA.*|NIST.*|PCI.*'));
         //Expect our Managed Policy to trigger 8 errors
         if (errors.length != 8) console.log(errors);
+        // eslint-disable-next-line no-undef
         expect(errors).toHaveLength(8);
       });
     });

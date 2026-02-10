@@ -82,7 +82,7 @@ describe('MDAA Compliance Stack Tests', () => {
       }),
     });
   });
-  test('Test stack reader IAM policy', () => {
+  test('stack reader IAM policy', () => {
     template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
       PolicyDocument: {
         Statement: Match.arrayWith([
@@ -153,7 +153,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
-  test('Test stack glue access IAM policy', () => {
+  test('stack glue access IAM policy', () => {
     template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
       PolicyDocument: {
         Statement: Match.arrayWith([
@@ -180,7 +180,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
-  test('Test stack author IAM policy', () => {
+  test('stack author IAM policy', () => {
     template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
       PolicyDocument: {
         Statement: Match.arrayWith([

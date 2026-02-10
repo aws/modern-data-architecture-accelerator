@@ -79,7 +79,7 @@ describe('MDAA Compliance Stack Tests', () => {
     template.resourceCountIs('AWS::Glue::Crawler', 1);
   });
 
-  test('Test crawler properties', () => {
+  test('crawler properties', () => {
     template.hasResourceProperties('AWS::Glue::Crawler', {
       Role: 'arn:test-partition:iam::test-account:role/test',
       Targets: {

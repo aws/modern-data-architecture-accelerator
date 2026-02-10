@@ -35,11 +35,11 @@ describe('MDAA Construct Compliance Tests', () => {
   const template = Template.fromStack(testApp.testStack);
 
   // console.log( JSON.stringify( template.toJSON(), undefined, 2 ) )
-  test('Validate resource counts', () => {
+  test('Validate function resource counts', () => {
     template.resourceCountIs('AWS::Lambda::Function', 3);
   });
 
-  test('Validate resource counts', () => {
+  test('Validate role resource counts', () => {
     template.resourceCountIs('AWS::IAM::Role', 3);
   });
 

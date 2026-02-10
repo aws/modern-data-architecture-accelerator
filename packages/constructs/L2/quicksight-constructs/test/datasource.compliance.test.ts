@@ -58,13 +58,6 @@ describe('MDAA Construct Compliance Tests', () => {
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
 
-  // test( 'Validate if SSL is Enabled for Data Source', () => {
-  //     template.hasResourceProperties( "AWS::QuickSight::DataSource", {
-  //         "SslProperties": {
-  //             "DisableSsl": false
-  //           }
-  //     });
-  // });
   test('Data Source Name', () => {
     template.hasResourceProperties('AWS::QuickSight::DataSource', {
       Name: testApp.naming.resourceName(testRedshiftContstructProps.name),

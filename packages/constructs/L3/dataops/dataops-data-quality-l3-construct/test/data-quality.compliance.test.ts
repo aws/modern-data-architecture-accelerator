@@ -54,7 +54,7 @@ describe('MDAA Compliance Stack Tests', () => {
     template.resourceCountIs('AWS::SSM::Parameter', 4); // 2 params per ruleset
   });
 
-  test('Test ruleset with structured rules', () => {
+  test('Structured rules', () => {
     template.hasResourceProperties('AWS::Glue::DataQualityRuleset', {
       Name: 'test-quality-rules',
       Description: 'Test data quality ruleset',
@@ -66,7 +66,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
-  test('Test ruleset with DQDL string', () => {
+  test('DQDL string', () => {
     template.hasResourceProperties('AWS::Glue::DataQualityRuleset', {
       Name: 'test-dqdl-rules',
       TargetTable: {
@@ -77,7 +77,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
-  test('Test SSM parameters created', () => {
+  test('SSM parameters created', () => {
     template.hasResourceProperties('AWS::SSM::Parameter', {
       Description: 'Glue Data Quality Ruleset name for test-quality-rules',
       Value: 'test-quality-rules',
@@ -89,7 +89,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
-  test('Test cross-account catalog support', () => {
+  test('Cross-account catalog support', () => {
     const testApp2 = new MdaaTestApp();
     const propsWithCatalogId: DataOpsDataQualityL3ConstructProps = {
       projectName: 'test-project',

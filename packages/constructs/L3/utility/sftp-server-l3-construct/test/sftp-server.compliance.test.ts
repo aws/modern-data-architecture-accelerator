@@ -38,7 +38,7 @@ describe('MDAA Compliance Stack Tests', () => {
     template.resourceCountIs('AWS::Transfer::Server', 1);
   });
 
-  test('Test server template properties', () => {
+  test('server template properties', () => {
     template.hasResourceProperties('AWS::Transfer::Server', {
       EndpointDetails: {
         SecurityGroupIds: [

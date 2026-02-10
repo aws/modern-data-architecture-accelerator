@@ -197,7 +197,7 @@ describe('MDAA Compliance Stack Tests', () => {
       });
     });
 
-    test('SecurityGroup Ingress CIDR', () => {
+    test('SecurityGroup Ingress SG', () => {
       template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
         Description: 'Redshift Ingress for SG sg-be41a7c3',
         FromPort: 5440,
@@ -213,7 +213,7 @@ describe('MDAA Compliance Stack Tests', () => {
       });
     });
 
-    test('Test secret manager resource policy', () => {
+    test('Secret manager resource policy', () => {
       template.hasResourceProperties('AWS::SecretsManager::ResourcePolicy', {
         ResourcePolicy: {
           Statement: Match.arrayWith([
@@ -236,7 +236,7 @@ describe('MDAA Compliance Stack Tests', () => {
       });
     });
 
-    test('Test KMS resource policy for roles', () => {
+    test('KMS resource policy for roles', () => {
       template.hasResourceProperties('AWS::KMS::Key', {
         KeyPolicy: {
           Statement: Match.arrayWith([
@@ -258,7 +258,7 @@ describe('MDAA Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test Cluster Event Notifications', () => {
+    test('Cluster Event Notifications', () => {
       template.hasResourceProperties('AWS::Redshift::EventSubscription', {
         SubscriptionName: {
           Ref: 'cluster611F8AFF',
@@ -273,7 +273,7 @@ describe('MDAA Compliance Stack Tests', () => {
         SourceType: 'cluster',
       });
     });
-    test('Test Scheduled Action Event Notifications', () => {
+    test('Scheduled Action Event Notifications', () => {
       template.hasResourceProperties('AWS::Redshift::EventSubscription', {
         SubscriptionName: {
           'Fn::Join': [

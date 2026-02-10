@@ -4,6 +4,7 @@ export function isIntegration(): boolean {
   return process.argv.includes('--integration');
 }
 
+// eslint-disable-next-line no-undef
 export const itif = (condition: boolean) => (condition ? it : it.skip);
 export const itintegration = itif(isIntegration());
 

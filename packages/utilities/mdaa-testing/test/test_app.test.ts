@@ -10,9 +10,6 @@ describe('Test App', () => {
   test('testStack', () => {
     expect(testApp.testStack).toBeDefined();
   });
-  describe('CDK Nag', () => {
-    expect(() => {
-      testApp.checkCdkNagCompliance(testApp.testStack);
-    }).not.toThrow();
-  });
+
+  testApp.checkCdkNagCompliance(testApp.testStack);
 });

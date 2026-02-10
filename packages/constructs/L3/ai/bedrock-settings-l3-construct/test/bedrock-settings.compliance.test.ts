@@ -9,7 +9,7 @@ import { Match, Template } from 'aws-cdk-lib/assertions';
 import { BedrockSettingsL3Construct, BedrockSettingsL3ConstructProps } from '../lib';
 
 describe('Bedrock Settings L3 Construct Compliance Tests', () => {
-  test('Test Basic Bedrock Settings Creation with S3 Logging', () => {
+  test('Basic Bedrock Settings Creation with S3 Logging', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -62,7 +62,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Bedrock Settings with CloudWatch Logging', () => {
+  test('Bedrock Settings with CloudWatch Logging', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -99,7 +99,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Bedrock Settings with Both S3 and CloudWatch Logging', () => {
+  test('Bedrock Settings with Both S3 and CloudWatch Logging', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -141,7 +141,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test KMS Key Policy Compliance', () => {
+  test('KMS Key Policy Compliance', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -202,7 +202,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test S3 Bucket Policy Compliance', () => {
+  test('S3 Bucket Policy Compliance', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -235,7 +235,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Lambda Function Security Configuration', () => {
+  test('Lambda Function Security Configuration', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -274,7 +274,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Error Handling - No Logging Destinations Enabled', () => {
+  test('Error Handling - No Logging Destinations Enabled', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -290,7 +290,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     }).toThrow('At least one of enableAuditLoggingToCloudwatch or enableAuditLoggingToS3 must be true.');
   });
 
-  test('Test CloudWatch Log Group Configuration', () => {
+  test('CloudWatch Log Group Configuration', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -313,7 +313,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     template.resourceCountIs('AWS::S3::Bucket', 1);
   });
 
-  test('Test S3-Only Configuration', () => {
+  test('S3-Only Configuration', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -346,7 +346,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Custom Resource Configuration Properties', () => {
+  test('Custom Resource Configuration Properties', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -378,7 +378,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test CDK Nag Suppressions Applied', () => {
+  test('CDK Nag Suppressions Applied', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -413,7 +413,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Resource Naming Convention', () => {
+  test('Resource Naming Convention', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -443,7 +443,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Security Configuration - Encryption at Rest', () => {
+  test('Security Configuration - Encryption at Rest', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -482,7 +482,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Service Principal Conditions', () => {
+  test('Service Principal Conditions', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -515,7 +515,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Resource Tagging and Naming Compliance', () => {
+  test('Resource Tagging and Naming Compliance', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 
@@ -548,7 +548,7 @@ describe('Bedrock Settings L3 Construct Compliance Tests', () => {
     });
   });
 
-  test('Test Audit Trail Configuration', () => {
+  test('Audit Trail Configuration', () => {
     const testApp = new MdaaTestApp();
     const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
 

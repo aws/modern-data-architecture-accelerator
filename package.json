@@ -17,7 +17,7 @@
     "delete:snapshots": "find . -path '*/__snapshots__/*.snap' -type f -delete"
   },
   "lint-staged": {
-    "*.{ts,tsx}": "eslint --max-warnings 0 --ignore-pattern \"*.d.ts\""
+    "*.{ts,tsx}": "eslint --max-warnings 0"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",

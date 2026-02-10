@@ -15,7 +15,7 @@
     "test:snapshot": "jest --testPathPattern=snapshot",
     "test:snapshot:update": "jest --config jest.config.js --updateSnapshot",
     "cdk": "cdk",
-    "lint": "eslint --max-warnings 0 -c ../.eslintrc.json '**/*.{ts,tsx}' --ignore-pattern 'dist/*' --ignore-pattern 'node_modules/*' --ignore-pattern \"*.d.ts\" "
+    "lint": "eslint --max-warnings 0 -c ../eslint.config.mjs"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",

@@ -382,7 +382,7 @@ describe('MDAA Dashboard Compliance Tests', () => {
     });
   });
 
-  test('ThrowsErrorWhenNoWidgetsProvided', () => {
+  test('ThrowsErrorWhenNoWidgetsProvided - Second Check', () => {
     const testApp = new MdaaTestApp();
 
     const testConstructProps: MdaaDashboardProps = {

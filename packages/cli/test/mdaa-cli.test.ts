@@ -76,7 +76,7 @@ test('LocalMode', () => {
     local_mode: 'true',
   };
   const mdaa = new MdaaDeploy(options, ['test-extra-cdk-param']);
-  mdaa.deploy();
+  expect(() => mdaa.deploy()).not.toThrow();
 });
 
 test('CdkCmdTest', () => {
@@ -130,7 +130,7 @@ test('CdkCmdTest', () => {
   };
 
   const mdaa = new MdaaDeploy(options, ['test-extra-cdk-param'], configContents);
-  mdaa.deploy();
+  expect(() => mdaa.deploy()).not.toThrow();
 });
 
 test('CdkCmdTest2', () => {
@@ -181,7 +181,7 @@ test('CdkCmdTest2', () => {
   };
 
   const mdaa = new MdaaDeploy(options, undefined, configContents);
-  mdaa.deploy();
+  expect(() => mdaa.deploy()).not.toThrow();
 });
 
 test('CdkCmdTest3', () => {
@@ -246,7 +246,7 @@ test('CdkCmdTest3', () => {
   };
 
   const mdaa = new MdaaDeploy(options, undefined, configContents);
-  mdaa.deploy();
+  expect(() => mdaa.deploy()).not.toThrow();
 });
 
 test('Pipelines Test', () => {
@@ -323,7 +323,7 @@ test('Pipelines Test', () => {
   };
 
   const mdaa = new MdaaDeploy(options, undefined, configContents);
-  mdaa.deploy();
+  expect(() => mdaa.deploy()).not.toThrow();
 });
 
 test('Config File Test', () => {
@@ -336,7 +336,7 @@ test('Config File Test', () => {
     config: './test/resources/mdaa.yaml',
   };
   const mdaa = new MdaaDeploy(options, ['test-extra-cdk-param']);
-  mdaa.deploy();
+  expect(() => mdaa.deploy()).not.toThrow();
 });
 
 test('EnvTemplateTest', () => {
@@ -393,7 +393,7 @@ test('EnvTemplateTest', () => {
   };
 
   const mdaa = new MdaaDeploy(options, ['test-extra-cdk-param'], configContents);
-  mdaa.deploy();
+  expect(() => mdaa.deploy()).not.toThrow();
 });
 
 describe('Terraform', () => {
@@ -444,7 +444,7 @@ describe('Terraform', () => {
       action: 'validate',
     };
     const mdaa = new MdaaDeploy(cmdOptions, undefined, configContents);
-    mdaa.deploy();
+    expect(() => mdaa.deploy()).not.toThrow();
   });
   test('TfTestPlan', () => {
     const cmdOptions = {
@@ -452,7 +452,7 @@ describe('Terraform', () => {
       action: 'plan',
     };
     const mdaa = new MdaaDeploy(cmdOptions, undefined, configContents);
-    mdaa.deploy();
+    expect(() => mdaa.deploy()).not.toThrow();
   });
   test('TfTestApply', () => {
     const cmdOptions = {
@@ -460,7 +460,7 @@ describe('Terraform', () => {
       action: 'apply',
     };
     const mdaa = new MdaaDeploy(cmdOptions, undefined, configContents);
-    mdaa.deploy();
+    expect(() => mdaa.deploy()).not.toThrow();
   });
 });
 
@@ -475,6 +475,6 @@ describe('sanity check', () => {
   };
   test('no account level modules', () => {
     const mdaa = new MdaaDeploy(options);
-    mdaa.sanityCheck();
+    expect(() => mdaa.sanityCheck()).not.toThrow();
   });
 });

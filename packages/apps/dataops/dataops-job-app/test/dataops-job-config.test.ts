@@ -91,21 +91,6 @@ describe('mergeDeep', () => {
     expect(mergeDeep(target, source)).toEqual({ a: 1 });
   });
 
-  // Non-object values
-  // Not clear if this is a valid expectation
-  xtest('should overwrite primitive values with object values', () => {
-    type TestType = {
-      a?:
-        | number
-        | {
-            b?: number;
-          };
-    };
-    const target: TestType = { a: 1 };
-    const source: TestType = { a: { b: 2 } };
-    expect(mergeDeep(target, source)).toEqual({ a: { b: 2 } });
-  });
-
   test('should overwrite object values with primitive values', () => {
     type TestType = {
       a?:

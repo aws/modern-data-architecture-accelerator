@@ -4,7 +4,6 @@
  */
 
 import { GenerateRolesCDKApp } from '../lib/roles';
-import { CloudAssembly } from 'aws-cdk-lib/cx-api';
 import { Template } from 'aws-cdk-lib/assertions';
 
 test('SynthTest', () => {
@@ -28,14 +27,9 @@ test('SynthTest', () => {
   });
 
   // test the synthesis
-  let res: CloudAssembly | undefined;
-  expect(() => {
-    res = app.synth({
-      force: true,
-      validateOnSynthesis: true,
-    });
-  }).not.toThrow();
-  if (res) {
-    expect(res.stacks.length).toEqual(1);
-  }
+  const res = app.synth({
+    force: true,
+    validateOnSynthesis: true,
+  });
+  expect(res.stacks.length).toEqual(1);
 });

@@ -203,7 +203,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       lambdaFunctions,
     );
     // console.log(JSON.stringify(template, undefined, 2));
-    test('Test Bedrock Agent Resource', () => {
+    test('Bedrock Agent Resource', () => {
       template.hasResourceProperties('AWS::Bedrock::Agent', {
         AgentName: 'test-org-test-env-test-domain-test-module-test-agent-1',
         AgentResourceRoleArn: 'arn:test-partition:iam::test-account:role/agent-execution-role',
@@ -215,7 +215,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Bedrock Knowledge Base Resource', () => {
+    test('Bedrock Knowledge Base Resource', () => {
       template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
         Name: 'test-org-test-env-test-domain-test-module-test-kb-1',
         KnowledgeBaseConfiguration: {
@@ -230,7 +230,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Bedrock Guardrail Resource', () => {
+    test('Bedrock Guardrail Resource', () => {
       template.hasResourceProperties('AWS::Bedrock::Guardrail', {
         Name: 'test-org-test-env-test-domain-test-modul--3f712ad5',
         Description: 'Test guardrail for content filtering',
@@ -256,14 +256,14 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test CMK Generation', () => {
+    test('CMK Generation', () => {
       template.hasResourceProperties('AWS::KMS::Key', {
         EnableKeyRotation: true,
         Enabled: true,
       });
     });
 
-    test('Test RDS Aurora Serverless Cluster', () => {
+    test('RDS Aurora Serverless Cluster', () => {
       template.hasResourceProperties('AWS::RDS::DBCluster', {
         Engine: 'aurora-postgresql',
       });
@@ -301,7 +301,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       kmsKeyArn,
     );
 
-    test('Test Using Existing KMS Key', () => {
+    test('Using Existing KMS Key', () => {
       template.hasResourceProperties('AWS::Bedrock::Guardrail', {
         KmsKeyArn: kmsKeyArn,
       });
@@ -321,7 +321,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       lambdaFunctions,
     );
 
-    test('Test Agent Created Without Knowledge Bases or Guardrails', () => {
+    test('Agent Created Without Knowledge Bases or Guardrails', () => {
       template.hasResourceProperties('AWS::Bedrock::Agent', {
         AgentName: 'test-org-test-env-test-domain-test-module-test-agent-3',
       });
@@ -334,7 +334,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(Object.keys(guardrailResources).length).toBe(0);
     });
 
-    test('Test KMS Key Policy for Bedrock Service', () => {
+    test('KMS Key Policy for Bedrock Service', () => {
       const kmsResources = template.findResources('AWS::KMS::Key');
       const kmsKey = Object.values(kmsResources)[0] as {
         Properties: {
@@ -353,7 +353,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   });
 
   describe('Bedrock Builder L3 Construct Error Handling', () => {
-    test('Test Invalid Vector Store Reference', () => {
+    test('Invalid Vector Store Reference', () => {
       const testApp = new MdaaTestApp();
       const invalidKnowledgeBase: BedrockKnowledgeBaseProps = {
         role: kbRoleRef,
@@ -384,7 +384,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       }).toThrow('Knowledge base invalid-kb references unknown vector store: non-existent-vector-store');
     });
 
-    test('Test Invalid Embedding Model', () => {
+    test('Invalid Embedding Model', () => {
       const testApp = new MdaaTestApp();
       const invalidKnowledgeBase: BedrockKnowledgeBaseProps = {
         role: kbRoleRef,
@@ -547,7 +547,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     // console.log(JSON.stringify(template, null, 2));
     // console.log(JSON.stringify(template.findResources('AWS::Bedrock::KnowledgeBase', {}), null, 2));
 
-    test('Test EnableSync Creates DataSource Lambda Function', () => {
+    test('EnableSync Creates DataSource Lambda Function', () => {
       template.hasResourceProperties('AWS::Lambda::Function', {
         Description: 'Auto-sync data source testDataAutomation for knowledge base test-kb-vector',
         Environment: {
@@ -568,7 +568,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         KmsKeyArn: { 'Fn::GetAtt': ['bedrockcmk710EFABC', 'Arn'] },
       });
     });
-    test('Test Data Source with BEDROCK_DATA_AUTOMATION Parsing Strategy', () => {
+    test('Data Source with BEDROCK_DATA_AUTOMATION Parsing Strategy', () => {
       template.hasResourceProperties('AWS::Bedrock::DataSource', {
         Name: 'testDataAutomation',
         VectorIngestionConfiguration: {
@@ -589,7 +589,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Data Source with BEDROCK_FOUNDATION_MODEL Parsing Strategy', () => {
+    test('Data Source with BEDROCK_FOUNDATION_MODEL Parsing Strategy', () => {
       template.hasResourceProperties('AWS::Bedrock::DataSource', {
         Name: 'testFoundationModel',
         VectorIngestionConfiguration: {
@@ -613,7 +613,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         },
       });
     });
-    test('Test Data Source with BEDROCK_FOUNDATION_MODEL Parsing Strategy with Model ID', () => {
+    test('Data Source with BEDROCK_FOUNDATION_MODEL Parsing Strategy with Model ID', () => {
       template.hasResourceProperties('AWS::Bedrock::DataSource', {
         Name: 'testFoundationModelWithModelId',
         VectorIngestionConfiguration: {
@@ -632,7 +632,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Data Source with Custom Transformation Configuration', () => {
+    test('Data Source with Custom Transformation Configuration', () => {
       template.hasResourceProperties('AWS::Bedrock::DataSource', {
         Name: 'testCustomTransformationConfiguration',
         VectorIngestionConfiguration: {
@@ -657,7 +657,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Knowledge Base Policy with Foundation Model Access', () => {
+    test('Knowledge Base Policy with Foundation Model Access', () => {
       const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
 
       // Policy name pattern is kb-foundation-model-${roleId}, which may be truncated
@@ -678,7 +678,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         'bedrock:InvokeModelWithResponseStream',
       ]);
     });
-    test('Test Knowledge Base with Supplemental Data Storage Configuration', () => {
+    test('Knowledge Base with Supplemental Data Storage Configuration', () => {
       template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
         KnowledgeBaseConfiguration: {
           Type: 'VECTOR',
@@ -699,7 +699,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Vector Store Security Group Configuration', () => {
+    test('Vector Store Security Group Configuration', () => {
       template.hasResourceProperties('AWS::EC2::SecurityGroup', {
         GroupDescription: 'testing/test-construct/bedrock-kb-test-kb-vector/test-vector-store-vector-store-sg',
         GroupName: 'test-org-test-env-test-domain-test-module-test-vector-store',
@@ -707,7 +707,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test RDS Cluster for Vector Store', () => {
+    test('RDS Cluster for Vector Store', () => {
       template.hasResourceProperties('AWS::RDS::DBCluster', {
         Engine: 'aurora-postgresql',
         ServerlessV2ScalingConfiguration: {
@@ -717,7 +717,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Data Source with SEMANTIC Chunking Strategy', () => {
+    test('Data Source with SEMANTIC Chunking Strategy', () => {
       template.hasResourceProperties('AWS::Bedrock::DataSource', {
         Name: 'testSemanticChunking',
         VectorIngestionConfiguration: {
@@ -733,14 +733,14 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Lambda Permissions for Agent Action Groups', () => {
+    test('Lambda Permissions for Agent Action Groups', () => {
       template.hasResourceProperties('AWS::Lambda::Permission', {
         Action: 'lambda:InvokeFunction',
         Principal: 'bedrock.amazonaws.com',
       });
     });
 
-    test('Test Knowledge Base Logging Configuration', () => {
+    test('Knowledge Base Logging Configuration', () => {
       template.hasResourceProperties('AWS::Logs::DeliverySource', {
         LogType: 'APPLICATION_LOGS',
       });
@@ -748,7 +748,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       template.hasResourceProperties('AWS::Logs::Delivery', {});
     });
 
-    test('Test Contextual Grounding Filters in Guardrail', () => {
+    test('Contextual Grounding Filters in Guardrail', () => {
       template.hasResourceProperties('AWS::Bedrock::Guardrail', {
         ContextualGroundingPolicyConfig: {
           FiltersConfig: [
@@ -767,7 +767,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   });
 
   describe('Bedrock Builder L3 Construct Secret ARN Fallback Test', () => {
-    test('Test Secret ARN Fallback Logic', () => {
+    test('Secret ARN Fallback Logic', () => {
       // Test the specific logic: vectorStore.rdsClusterSecret.secretArn || ''
       const mockVectorStoreWithSecretArn = {
         rdsClusterSecret: {
@@ -802,7 +802,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   });
 
   describe('Bedrock Builder L3 Construct S3 Data Sources Fallback Test', () => {
-    test('Test Knowledge Base without S3 Data Sources', () => {
+    test('Knowledge Base without S3 Data Sources', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const vectorStore: AuroraServerlessPgVectorProps = {
@@ -834,7 +834,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Knowledge Base with S3 Data Source without enableSync', () => {
+    test('Knowledge Base with S3 Data Source without enableSync', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const vectorStore: AuroraServerlessPgVectorProps = {
@@ -881,7 +881,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(syncLambda).toBeUndefined();
     });
 
-    test('Test Knowledge Base with SEMANTIC chunking strategy but no configuration', () => {
+    test('Knowledge Base with SEMANTIC chunking strategy but no configuration', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const vectorStore: AuroraServerlessPgVectorProps = {
@@ -921,7 +921,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       }).toThrow('semanticChunkingConfiguration is required when chunkingStrategy is SEMANTIC');
     });
 
-    test('Test Knowledge Base with NONE chunking strategy', () => {
+    test('Knowledge Base with NONE chunking strategy', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const vectorStore: AuroraServerlessPgVectorProps = {
@@ -968,7 +968,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Knowledge Base with S3 Data Source without prefix', () => {
+    test('Knowledge Base with S3 Data Source without prefix', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const vectorStore: AuroraServerlessPgVectorProps = {
@@ -1011,7 +1011,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Knowledge Base with enableSync but no prefix', () => {
+    test('Knowledge Base with enableSync but no prefix', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const vectorStore: AuroraServerlessPgVectorProps = {
@@ -1049,7 +1049,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Knowledge Base with generated function reference in custom transformation', () => {
+    test('Knowledge Base with generated function reference in custom transformation', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const vectorStore: AuroraServerlessPgVectorProps = {
@@ -1117,7 +1117,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       ).toBe('Arn');
     });
 
-    test('Test Knowledge Base with non-existent generated function reference', () => {
+    test('Knowledge Base with non-existent generated function reference', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const vectorStore: AuroraServerlessPgVectorProps = {
@@ -1159,7 +1159,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   });
 
   describe('Bedrock Builder L3 Construct Action Groups Test', () => {
-    test('Test Agent without action groups', () => {
+    test('Agent without action groups', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const agentWithoutActionGroups: BedrockAgentProps = {
@@ -1186,7 +1186,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Agent with action group without openApiSchemaPath', () => {
+    test('Agent with action group without openApiSchemaPath', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const agentWithDirectApiSchema: BedrockAgentProps = {
@@ -1236,7 +1236,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Agent with knowledge base association', () => {
+    test('Agent with knowledge base association', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const vectorStore: AuroraServerlessPgVectorProps = {
@@ -1289,7 +1289,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Agent with guardrail association', () => {
+    test('Agent with guardrail association', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const guardrail: BedrockGuardrailProps = {
@@ -1339,7 +1339,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(agent.Properties.GuardrailConfiguration.GuardrailVersion).toHaveProperty('Fn::GetAtt');
     });
 
-    test('Test Agent with alias creation', () => {
+    test('Agent with alias creation', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const agentWithAlias: BedrockAgentProps = {
@@ -1365,7 +1365,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Agent with invalid knowledge base reference', () => {
+    test('Agent with invalid knowledge base reference', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const agentWithInvalidKB: BedrockAgentProps = {
@@ -1393,7 +1393,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       }).toThrow('Agent references unknown knowledge base from config :config:non-existent-kb');
     });
 
-    test('Test Agent with guardrail missing version', () => {
+    test('Agent with guardrail missing version', () => {
       const testApp = new MdaaTestApp();
       const roleHelper = new MdaaRoleHelper(testApp.testStack, testApp.naming);
       const agentWithInvalidGuardrail: BedrockAgentProps = {
@@ -1461,7 +1461,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       undefined,
     );
 
-    test('Test enableMultiSync Creates Batch Sync Lambda Function', () => {
+    test('enableMultiSync Creates Batch Sync Lambda Function', () => {
       template.hasResourceProperties('AWS::Lambda::Function', {
         Description: 'Batch sync data source multiSyncDataSource for knowledge base test-kb-multi-sync',
         Handler: 'datasource_batch_sync.lambda_handler',
@@ -1471,14 +1471,14 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test enableMultiSync Creates SQS Queue for Batch Processing', () => {
+    test('enableMultiSync Creates SQS Queue for Batch Processing', () => {
       template.hasResourceProperties('AWS::SQS::Queue', {
         ReceiveMessageWaitTimeSeconds: 20,
         VisibilityTimeout: 900,
       });
     });
 
-    test('Test enableMultiSync Creates S3 Event Notification', () => {
+    test('enableMultiSync Creates S3 Event Notification', () => {
       template.hasResourceProperties('Custom::S3BucketNotifications', {
         BucketName: 'test-multi-docs-bucket',
         NotificationConfiguration: {
@@ -1501,7 +1501,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Data Source Configuration with enableMultiSync', () => {
+    test('Data Source Configuration with enableMultiSync', () => {
       template.hasResourceProperties('AWS::Bedrock::DataSource', {
         Name: 'multiSyncDataSource',
         DataSourceConfiguration: {
@@ -1525,7 +1525,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
   });
 
   describe('Error Handling Tests', () => {
-    test('Test Agent with Config Knowledge Base Reference Error', () => {
+    test('Agent with Config Knowledge Base Reference Error', () => {
       const testApp1 = new MdaaTestApp();
       const agentWithInvalidKB: BedrockAgentProps = {
         ...agent,
@@ -1550,7 +1550,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       }).toThrow('Agent references unknown knowledge base from config :config:non-existent-kb');
     });
 
-    test('Test Agent with Guardrail Missing Version Error', () => {
+    test('Agent with Guardrail Missing Version Error', () => {
       const testApp2 = new MdaaTestApp();
       const agentWithInvalidGuardrail: BedrockAgentProps = {
         ...agent,
@@ -1601,7 +1601,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       lambdaFunctions,
     );
 
-    test('Test Agent Policy Contains Guardrail Permission', () => {
+    test('Agent Policy Contains Guardrail Permission', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         ManagedPolicyName: 'test-org-test-env-test-domain-test-module-agent-test-agent-full',
         PolicyDocument: {
@@ -1620,7 +1620,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Agent Policy Contains Knowledge Base Permission', () => {
+    test('Agent Policy Contains Knowledge Base Permission', () => {
       template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
         ManagedPolicyName: 'test-org-test-env-test-domain-test-module-agent-test-agent-full',
         PolicyDocument: {
@@ -1639,7 +1639,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Lambda Permission for Agent Action Group', () => {
+    test('Lambda Permission for Agent Action Group', () => {
       template.hasResourceProperties('AWS::Lambda::Permission', {
         Action: 'lambda:InvokeFunction',
         Principal: 'bedrock.amazonaws.com',
@@ -1695,21 +1695,21 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       { 'kb-a': kbA, 'kb-b': kbB },
     );
 
-    test('Test Shared VPC Endpoint Created', () => {
+    test('Shared VPC Endpoint Created', () => {
       // Should create exactly one VPC endpoint for the shared VPC
       const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
       const vpcEndpointCount = Object.keys(vpcEndpoints).length;
       expect(vpcEndpointCount).toBe(1);
     });
 
-    test('Test Both Collections Created', () => {
+    test('Both Collections Created', () => {
       // Should create two OpenSearch Serverless collections
       const collections = template.findResources('AWS::OpenSearchServerless::Collection');
       const collectionCount = Object.keys(collections).length;
       expect(collectionCount).toBe(2);
     });
 
-    test('Test Both Knowledge Bases Created', () => {
+    test('Both Knowledge Bases Created', () => {
       // Should create two knowledge bases
       const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
       const kbCount = Object.keys(knowledgeBases).length;
@@ -1763,25 +1763,25 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       { 'kb-aurora': kbAurora, 'kb-opensearch': kbOpenSearch },
     );
 
-    test('Test Aurora RDS Cluster Created', () => {
+    test('Aurora RDS Cluster Created', () => {
       template.hasResourceProperties('AWS::RDS::DBCluster', {
         Engine: 'aurora-postgresql',
       });
     });
 
-    test('Test OpenSearch Serverless Collection Created', () => {
+    test('OpenSearch Serverless Collection Created', () => {
       const collections = template.findResources('AWS::OpenSearchServerless::Collection');
       const collectionCount = Object.keys(collections).length;
       expect(collectionCount).toBe(1);
     });
 
-    test('Test VPC Endpoint Created for OpenSearch', () => {
+    test('VPC Endpoint Created for OpenSearch', () => {
       const vpcEndpoints = template.findResources('AWS::OpenSearchServerless::VpcEndpoint');
       const vpcEndpointCount = Object.keys(vpcEndpoints).length;
       expect(vpcEndpointCount).toBe(1);
     });
 
-    test('Test Both Knowledge Bases Created with Different Storage Types', () => {
+    test('Both Knowledge Bases Created with Different Storage Types', () => {
       const knowledgeBases = template.findResources('AWS::Bedrock::KnowledgeBase');
       const kbCount = Object.keys(knowledgeBases).length;
       expect(kbCount).toBe(2);
@@ -1794,7 +1794,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(storageTypes).toContain('OPENSEARCH_SERVERLESS');
     });
 
-    test('Test Security Groups Created for Both Vector Stores', () => {
+    test('Security Groups Created for Both Vector Stores', () => {
       const securityGroups = template.findResources('AWS::EC2::SecurityGroup');
       const sgCount = Object.keys(securityGroups).length;
       // Should have security groups for both Aurora and OpenSearch
@@ -1841,7 +1841,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       },
     };
 
-    test('Test Error Thrown for Mismatched Subnets', () => {
+    test('Error Thrown for Mismatched Subnets', () => {
       const testApp = new MdaaTestApp();
       expect(() => {
         generateTemplateFromTestInput(
@@ -1877,7 +1877,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         },
       };
 
-      test('Test No New VPC Endpoint Created When Existing Provided', () => {
+      test('No New VPC Endpoint Created When Existing Provided', () => {
         const testApp = new MdaaTestApp();
         const template = generateTemplateFromTestInput(
           testApp,
@@ -1896,7 +1896,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         expect(vpcEndpointCount).toBe(0);
       });
 
-      test('Test Knowledge Base Created with Existing VPC Endpoint', () => {
+      test('Knowledge Base Created with Existing VPC Endpoint', () => {
         const testApp = new MdaaTestApp();
         const template = generateTemplateFromTestInput(
           testApp,
@@ -1915,7 +1915,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         expect(kbCount).toBe(1);
       });
 
-      test('Test OpenSearch Collection Created with Existing VPC Endpoint', () => {
+      test('OpenSearch Collection Created with Existing VPC Endpoint', () => {
         const testApp = new MdaaTestApp();
         const template = generateTemplateFromTestInput(
           testApp,
@@ -1936,7 +1936,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
     });
 
     describe('Error Handling for Inconsistent Existing VPC Endpoint Configuration', () => {
-      test('Test Error When Vector Stores Have Different Existing VPCE Config', () => {
+      test('Error When Vector Stores Have Different Existing VPCE Config', () => {
         const vectorStoreWithExisting = {
           vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
           vpcId: 'test-vpc-id',
@@ -1993,7 +1993,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         }).toThrow(/have inconsistent existing VPC endpoint configurations.*must either all use the same existing/);
       });
 
-      test('Test Error When Vector Stores Have Different Existing VPCE IDs', () => {
+      test('Error When Vector Stores Have Different Existing VPCE IDs', () => {
         const vectorStoreA = {
           vectorStoreType: 'OPENSEARCH_SERVERLESS' as const,
           vpcId: 'test-vpc-id',
@@ -2092,7 +2092,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         },
       };
 
-      test('Test No New VPC Endpoint Created', () => {
+      test('No New VPC Endpoint Created', () => {
         const testApp = new MdaaTestApp();
         const template = generateTemplateFromTestInput(
           testApp,
@@ -2111,7 +2111,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         expect(vpcEndpointCount).toBe(0);
       });
 
-      test('Test Both Collections Created', () => {
+      test('Both Collections Created', () => {
         const testApp = new MdaaTestApp();
         const template = generateTemplateFromTestInput(
           testApp,
@@ -2130,7 +2130,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
         expect(collectionCount).toBe(2);
       });
 
-      test('Test Both Knowledge Bases Created', () => {
+      test('Both Knowledge Bases Created', () => {
         const testApp = new MdaaTestApp();
         const template = generateTemplateFromTestInput(
           testApp,
@@ -2190,7 +2190,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       },
     };
 
-    test('Test Separate VPC Endpoints Created for Each VPC', () => {
+    test('Separate VPC Endpoints Created for Each VPC', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2209,7 +2209,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(vpcEndpointCount).toBe(2);
     });
 
-    test('Test Both Collections Created in Different VPCs', () => {
+    test('Both Collections Created in Different VPCs', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2228,7 +2228,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(collectionCount).toBe(2);
     });
 
-    test('Test Both Knowledge Bases Created', () => {
+    test('Both Knowledge Bases Created', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2247,7 +2247,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(kbCount).toBe(2);
     });
 
-    test('Test Separate Security Groups Created for Each VPC', () => {
+    test('Separate Security Groups Created for Each VPC', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2312,7 +2312,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       },
     };
 
-    test('Test Only One New VPC Endpoint Created (for VPC without existing)', () => {
+    test('Only One New VPC Endpoint Created (for VPC without existing)', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2331,7 +2331,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(vpcEndpointCount).toBe(1);
     });
 
-    test('Test Both Collections Created', () => {
+    test('Both Collections Created', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2350,7 +2350,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(collectionCount).toBe(2);
     });
 
-    test('Test Both Knowledge Bases Created', () => {
+    test('Both Knowledge Bases Created', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2390,7 +2390,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       },
     };
 
-    test('Test VPC Endpoint Created for Single OpenSearch Serverless KB', () => {
+    test('VPC Endpoint Created for Single OpenSearch Serverless KB', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2409,7 +2409,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(vpcEndpointCount).toBe(1);
     });
 
-    test('Test OpenSearch Collection Created', () => {
+    test('OpenSearch Collection Created', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2428,7 +2428,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(collectionCount).toBe(1);
     });
 
-    test('Test Knowledge Base Created with OpenSearch Storage', () => {
+    test('Knowledge Base Created with OpenSearch Storage', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2449,7 +2449,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       });
     });
 
-    test('Test Custom Resource for Index Creation Depends on VPC Endpoint', () => {
+    test('Custom Resource for Index Creation Depends on VPC Endpoint', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2544,7 +2544,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       },
     };
 
-    test('Test Two VPC Endpoints Created (One Per VPC)', () => {
+    test('Two VPC Endpoints Created (One Per VPC)', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2563,7 +2563,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(vpcEndpointCount).toBe(2);
     });
 
-    test('Test Three Collections Created', () => {
+    test('Three Collections Created', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2582,7 +2582,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(collectionCount).toBe(3);
     });
 
-    test('Test Three Knowledge Bases Created', () => {
+    test('Three Knowledge Bases Created', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2629,7 +2629,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       },
     };
 
-    test('Test Only One VPC Endpoint Created for Used Vector Store', () => {
+    test('Only One VPC Endpoint Created for Used Vector Store', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2648,7 +2648,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(vpcEndpointCount).toBe(1);
     });
 
-    test('Test Only One Collection Created for Used Vector Store', () => {
+    test('Only One Collection Created for Used Vector Store', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2721,7 +2721,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       },
     };
 
-    test('Test Three KBs with Same Role Creates Only 3 Consolidated Policies', () => {
+    test('Three KBs with Same Role Creates Only 3 Consolidated Policies', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2749,7 +2749,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(consolidatedPolicies.length).toBe(6);
     });
 
-    test('Test Consolidated Vector Store Policy Has Correct Permissions', () => {
+    test('Consolidated Vector Store Policy Has Correct Permissions', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2778,7 +2778,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(dbQueryStatement!.Action).toContain('rds-data:ExecuteStatement');
     });
 
-    test('Test Consolidated Foundation Model Policy Has Correct Permissions', () => {
+    test('Consolidated Foundation Model Policy Has Correct Permissions', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2809,7 +2809,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(invokeStatement!.Action).toContain('bedrock:InvokeModelWithResponseStream');
     });
 
-    test('Test Consolidated Data Sync Policy Has Correct Permissions', () => {
+    test('Consolidated Data Sync Policy Has Correct Permissions', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2841,7 +2841,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       expect(syncStatement!.Action).toContain('bedrock:ListIngestionJobs');
     });
 
-    test('Test All Three Knowledge Bases Are Created', () => {
+    test('All Three Knowledge Bases Are Created', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,
@@ -2902,7 +2902,7 @@ describe('Bedrock Builder Compliance Stack Tests', () => {
       },
     };
 
-    test('Test Two KBs with Different Roles Creates 6 Policies (3 per role)', () => {
+    test('Two KBs with Different Roles Creates 6 Policies (3 per role)', () => {
       const testApp = new MdaaTestApp();
       const template = generateTemplateFromTestInput(
         testApp,

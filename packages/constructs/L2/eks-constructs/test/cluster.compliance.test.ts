@@ -123,10 +123,13 @@ describe('MDAA Construct Compliance Tests', () => {
       ).not.toThrow();
     });
     test('KubeCmd', () => {
-      new KubernetesCmd(testApp.testStack, 'kube-cmd', {
-        cluster: eksCluster,
-        cmd: ['get', 'pods'],
-      });
+      expect(
+        () =>
+          new KubernetesCmd(testApp.testStack, 'kube-cmd', {
+            cluster: eksCluster,
+            cmd: ['get', 'pods'],
+          }),
+      ).not.toThrow();
     });
   });
 });

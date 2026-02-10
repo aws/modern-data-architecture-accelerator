@@ -331,7 +331,7 @@ describe('MDAA Compliance Stack Tests', () => {
       }),
     );
   });
-  test('Role Based on MDAA Usage Profile, Additional Policies and Suppressions ', () => {
+  test('Role Based on MDAA Usage Profile, Additional Policies and Suppressions', () => {
     template.hasResourceProperties(
       'AWS::IAM::Role',
       Match.objectLike({

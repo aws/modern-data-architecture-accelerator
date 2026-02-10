@@ -47,15 +47,9 @@ describe('convertComparisonOperator', () => {
   });
 
   test('error message includes all valid operators', () => {
-    try {
-      convertComparisonOperator('BadOperator');
-      fail('Should have thrown an error');
-    } catch (error) {
-      const errorMessage = (error as Error).message;
-      expect(errorMessage).toContain('GreaterThanOrEqualToThreshold');
-      expect(errorMessage).toContain('GreaterThanThreshold');
-      expect(errorMessage).toContain('LessThanThreshold');
-    }
+    expect(() => convertComparisonOperator('BadOperator')).toThrow(/GreaterThanOrEqualToThreshold/);
+    expect(() => convertComparisonOperator('BadOperator')).toThrow(/GreaterThanThreshold/);
+    expect(() => convertComparisonOperator('BadOperator')).toThrow(/LessThanThreshold/);
   });
 });
 
@@ -95,15 +89,9 @@ describe('convertTreatMissingData', () => {
   });
 
   test('error message includes all valid treatments', () => {
-    try {
-      convertTreatMissingData('BadTreatment');
-      fail('Should have thrown an error');
-    } catch (error) {
-      const errorMessage = (error as Error).message;
-      expect(errorMessage).toContain('notBreaching');
-      expect(errorMessage).toContain('breaching');
-      expect(errorMessage).toContain('ignore');
-      expect(errorMessage).toContain('missing');
-    }
+    expect(() => convertTreatMissingData('BadTreatment')).toThrow(/notBreaching/);
+    expect(() => convertTreatMissingData('BadTreatment')).toThrow(/breaching/);
+    expect(() => convertTreatMissingData('BadTreatment')).toThrow(/ignore/);
+    expect(() => convertTreatMissingData('BadTreatment')).toThrow(/missing/);
   });
 });

@@ -99,7 +99,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
-  test('Test athena workgroup properties', () => {
+  test('athena workgroup properties', () => {
     template.hasResourceProperties('AWS::Athena::WorkGroup', {
       Name: 'test-org-test-env-test-domain-test-module',
       WorkGroupConfiguration: {

@@ -29,7 +29,7 @@ const context = {
   env: 'testenv',
   module_name: 'testmodule',
 };
-// eslint-disable-next-line prettier/prettier
+
 // prettier-ignore
 const extraContext = {
   nag_suppressions: {

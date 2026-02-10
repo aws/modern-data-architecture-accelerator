@@ -176,7 +176,7 @@ describe('MDAA Compliance Stack Tests', () => {
     template.resourceCountIs('AWS::EC2::Instance', 2);
   });
 
-  test('Validate SG ', () => {
+  test('Validate SG', () => {
     template.hasResourceProperties('AWS::EC2::Instance', {
       SecurityGroupIds: [
         {
@@ -186,7 +186,7 @@ describe('MDAA Compliance Stack Tests', () => {
     });
   });
 
-  test('Validate KMS ', () => {
+  test('Validate KMS', () => {
     template.hasResourceProperties('AWS::EC2::Instance', {
       BlockDeviceMappings: [
         {
