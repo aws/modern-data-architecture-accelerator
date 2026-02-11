@@ -32,10 +32,34 @@
         "{projectRoot}/test/*.ts",
         "{projectRoot}/test/**/*.yaml"
       ],
+      "options": {
+        "retry": 2
+      },
+      "cache": true
+    },
+    "test:coverage": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "{projectRoot}/bin/*.ts",
+        "{projectRoot}/lib/*.ts",
+        "{projectRoot}/test/*.ts",
+        "{projectRoot}/test/**/*.yaml"
+      ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "retry": 2
       },
+      "cache": true
+    },
+    "test:snapshots": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "{projectRoot}/bin/*.ts",
+        "{projectRoot}/lib/*.ts",
+        "{projectRoot}/test/*.ts",
+        "{projectRoot}/test/**/*.yaml",
+        "{projectRoot}/test/**/*.snap"
+      ],
       "cache": true
     }
   }

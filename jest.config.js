@@ -5,12 +5,12 @@ module.exports = {
   roots: ['<rootDir>/test'],
   testMatch: ['**/*.test.ts'],
   transform: {
-    '^.+\\.tsx?$': 'ts-jest',
+    '^.+.tsx?$': 'ts-jest',
   },
   coverageThreshold: {
     global: {
-      branches: 25,
-      statements: 55,
+      branches: 80,
+      statements: 80,
     },
   },
 };

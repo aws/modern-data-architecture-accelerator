@@ -89,10 +89,23 @@ feature_validate_dependencies:
   script:
     - ./scripts/validate_dependencies.sh
 
-feature_merge_lint:
+feature_validate_packages:
   tags:
     - arch:amd64
     - size:medium
+  only:
+    - merge_requests
+  stage: prebuild
+  allow_failure: false
+  variables:
+    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+  script:
+    - ./scripts/validate_packages.sh
+
+feature_merge_lint:
+  tags:
+    - arch:amd64
+    - size:3xlarge
   only:
     - merge_requests
   stage: prebuild
@@ -213,7 +226,7 @@ feature_merge_snapshot_test:
     AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
   script:
     - npx lerna run build
-    - npm run test:snapshots -- --silent --reporters=default
+    - npx lerna run test:snapshots --stream -- --silent --reporters=default
 
 feature_merge_sonarqube:
   tags:
@@ -772,7 +785,7 @@ release_version_package:
     - ./scripts/npm_install.sh
     - ./scripts/version_release.sh
     - ./scripts/build_test.sh
-    - npm run test:snapshots:update
+    - npx lerna run test:snapshots:update --stream
     - ./scripts/package.sh
 
 release:

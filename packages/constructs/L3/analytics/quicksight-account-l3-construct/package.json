@@ -15,13 +15,15 @@
     "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references",
     "watch": "jsii -w  --project-references",
     "package": "jsii-pacmak --npmignore=false",
-    "test": "jest --passWithNoTests --coverage",
+    "test": "jest --passWithNoTests --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
     "test:python": "cd python-tests && uv run pytest",
     "test:python:coverage": "cd python-tests && uv run pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html",
     "test:python:unit": "cd python-tests && uv run pytest -m unit",
     "test:python:lambda": "cd python-tests && uv run pytest -m lambda",
     "lint": "eslint --max-warnings 0 -c ../../../../../eslint.config.mjs",
-    "test-coverage": "jest --passWithNoTests --coverage"
+    "test:coverage": "jest --passWithNoTests --coverage --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
+    "test:snapshots": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts'",
+    "test:snapshots:update": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts' --updateSnapshot"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

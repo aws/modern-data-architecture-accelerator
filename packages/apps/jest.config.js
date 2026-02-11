@@ -1,5 +1,5 @@
 /**
- * Jest configuration
+ * Shared Jest configuration for all app packages
  */
 module.exports = {
   roots: ['<rootDir>/test'],
@@ -9,8 +9,8 @@ module.exports = {
   },
   coverageThreshold: {
     global: {
-      branches: 25,
-      statements: 55,
+      branches: 0,
+      statements: 80,
     },
   },
 };

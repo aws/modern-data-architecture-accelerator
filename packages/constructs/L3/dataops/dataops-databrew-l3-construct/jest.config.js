@@ -1,10 +1,5 @@
-/**
- * Jest configuration
- */
+const baseConfig = require("../../../../../jest.config");
+
 module.exports = {
-  roots: ['<rootDir>/test'],
-  testMatch: ['**/*.test.ts'],
-  transform: {
-    '^.+.tsx?$': 'ts-jest',
-  },
+  ...baseConfig,
 };

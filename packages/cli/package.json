@@ -19,8 +19,11 @@
   "scripts": {
     "build": "tsc && typescript-json-schema --required --noExtraProps tsconfig.json MdaaConfigContents --include 'lib/*.ts' --include '../../node_modules/@types/**/*.ts' --include 'lib/config-schema.json' > lib/config-schema.json && cp lib/config-schema.json ../../schemas/${npm_package_name}.json",
     "watch": "tsc -w",
-    "test": "jest --passWithNoTests --coverage",
-    "lint": "eslint --max-warnings 0 -c ../../eslint.config.mjs"
+    "test": "jest --passWithNoTests --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
+    "lint": "eslint --max-warnings 0 -c ../../eslint.config.mjs",
+    "test:coverage": "jest --passWithNoTests --coverage --testPathIgnorePatterns='.*\\.snapshot\\.test\\.ts'",
+    "test:snapshots": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts'",
+    "test:snapshots:update": "jest --passWithNoTests --testPathPattern='.*\\.snapshot\\.test\\.ts' --updateSnapshot"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",
