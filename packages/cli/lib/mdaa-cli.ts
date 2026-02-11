@@ -35,6 +35,7 @@ import {
 import { getMdaaConfig } from './module-service';
 import { findDuplicates, generateContextCdkParams, isBoolean } from './utils';
 import { loadLocalPackages } from './package-helper';
+import { validateFilters } from './filter-validator';
 
 export interface DeployStageMap {
   [key: string]: ModuleDeploymentConfig[];
@@ -163,6 +164,12 @@ export class MdaaDeploy {
   }
 
   public sanityCheck() {
+    validateFilters({
+      domainFilter: this.domainFilter,
+      envFilter: this.envFilter,
+      moduleFilter: this.moduleFilter,
+      config: this.config.contents,
+    });
     const accountLevelModuleCountMap: Record<string, Record<string, number>> = {};
     const globalEffectiveConfig = this.createGlobalEffectiveConfig();
     Object.entries(this.config.contents.domains).forEach(([domainName, domain]) => {
@@ -184,9 +191,7 @@ export class MdaaDeploy {
           const moduleEffectiveConfig = this.computeModuleEffectiveConfig(moduleName, module, envEffectiveConfig);
 
           if (getMdaaConfig(moduleEffectiveConfig, 'ACCOUNT_LEVEL_MODULE', isBoolean)) {
-            if (accountLevelModuleCountMap[accountRegion] == null) {
-              accountLevelModuleCountMap[accountRegion] = {};
-            }
+            accountLevelModuleCountMap[accountRegion] ??= {};
             const moduleCountMap = accountLevelModuleCountMap[accountRegion];
             moduleCountMap[moduleName] = (moduleCountMap[moduleName] ?? 0) + 1;
           }

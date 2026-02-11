@@ -4,6 +4,7 @@
 
 ### New Features
 - Users can now provide variables placeholders in the predeploy and postdeploy hook commands
+- CLI now validates `-d`, `-e`, and `-m` filter values upfront and errors if they don't match any configured domains, environments, or modules
 
 ## [1.4.0] - 2026-01-30
 
