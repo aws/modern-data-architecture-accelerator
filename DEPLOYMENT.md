@@ -22,7 +22,7 @@ MDAA may be deployed using a number of patterns:
 
 Install a version of Node.js using a method appropriate to your system.
 
-**MDAA requires nodejs 22.x and npm/npx version 8.x or greater.**
+**MDAA requires nodejs 22.x and npm/npx version 10.x or greater.**
 
 ### Docker Installation
 

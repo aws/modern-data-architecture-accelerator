@@ -1,9 +1,9 @@
-FROM public.ecr.aws/docker/library/node:20
+FROM public.ecr.aws/docker/library/node:22
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CDK_VERSION="2.x"
-ENV NPM_VERSION="8.x"
-ENV LERNA_VERSION="8.x"
+ENV NPM_VERSION="10.x"
+ENV LERNA_VERSION="9.x"
 ENV NODE_OPTIONS=--max_old_space_size=4096
 
 # Update package lists and install security updates

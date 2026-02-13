@@ -10,8 +10,8 @@ The base image is built from `public.ecr.aws/docker/library/node:20` and include
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| Node.js | 20.x | JavaScript runtime (base image) |
-| npm | 8.x | Package manager |
+| Node.js | 22.x | JavaScript runtime (base image) |
+| npm | 10.x | Package manager |
 | AWS CDK | 2.x | Infrastructure as Code |
 | Lerna | 8.x | Monorepo management |
 | JSII / jsii-pacmak | latest | Multi-language CDK construct publishing |
