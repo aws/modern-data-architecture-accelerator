@@ -31,19 +31,31 @@ Getting started with MDAA requires the following steps:
 
 Alternatively, you can jump directly into a set of sample architectures and configurations. Note that these sample configurations can be used as a starting point for much more sophisticated architectures.
 
-- [Basic DataLake with Glue](sample_configs/basic_datalake/README.md) - A basic S3 Data Lake with Glue database and crawler
+#### Starter Kits
+
+Starter kits provide secure, prepackaged foundations for common use cases:
+
+- [Basic DataLake with Glue](starter_kits/basic_datalake/README.md) - A basic S3 Data Lake with Glue database and crawler
+- [AI Development Platform](starter_kits/basic_datascience_platform/README.md) - A standalone SageMaker AI Studio Data Science Platform
+- [GenAI Accelerator](starter_kits/genai_accelerator/README.md) - Enterprise-ready GenAI platform with Bedrock Builder
+- [Governed Lakehouse](starter_kits/governed_lakehouse/README.md) - DataZone-governed Lakehouse with fine-grained access control
+- [Health Data Accelerator](starter_kits/health_data_accelerator/README.md) - Healthcare datalake with DMS integration
+
+#### Sample Configurations
+
 - [Basic Terraform DataLake](sample_configs/basic_terraform_datalake/README.md) - A basic S3 Data Lake built with the MDAA Terraform module
-- [Fine-grained Access Control DataLake](sample_configs/lakeformation_datalake/README.md) - An S3 Data Lake with fine-grained access control using LakeFormation
-- [Data Warehouse](sample_configs/basic_datawarehouse/README.md) - A standalone Redshift Data Warehouse
-- [Lakehouse](sample_configs/lakehouse/README.md) - A full LakeHouse implementation, with Data Lake, Data Ops Layers (using NYC taxi data), and a Redshift data warehouse
-- [AI Development Platform](sample_configs/basic_datascience_platform/README.md) - A standalone SageMaker AI Studio Data Science Platform
-- [GenAI Platform](sample_configs/basic_gaia/README.md) - A standalone GAIA GenAI Platform
+- [Basic Terraform Data Science Platform](sample_configs/basic_terraform_datascience_platform/README.md) - A basic Data Science Platform built with the MDAA Terraform module
+- [GenAI Platform (GAIA)](sample_configs/basic_gaia/README.md) - A standalone GAIA GenAI Platform
+
+#### External Sample Configurations
+
+Additional sample configurations are available in a [dedicated repository](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator) for easier contribution and faster updates.
 
 ### Sample DataOps Blueprints
 
 Additionally, once your Modern Data Architecture is deployed, you can use these sample Data Operations blueprints, including MDAA configs and DataOps code, to start solving your data-driven problems.
 
-- [Basic Crawler](sample_blueprints/basic_dataops_crawler/README.md) - A basic crawler blueprint
+- [Basic Crawler](sample_blueprints/basic_crawler/README.md) - A basic crawler blueprint
 - [Event-Driven CSV to Parquet Lambda](sample_blueprints/lambda_csv_parquet/README.md) - A blueprint for transforming small-medium CSV files into Parquet as they are uploaded into a datalake.
 - [Schedule-Driven CSV to Parquet Glue](sample_blueprints/glue_csv_parquet/README.md) - A blueprint for transforming larger CSV files into Parquet on a scheduled basis using Glue ETL.
 

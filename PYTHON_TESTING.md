@@ -12,10 +12,10 @@ To see all packages with Python tests in this repository:
 
 ```bash
 # Find all python-tests directories
-find packages sample_configs -name "python-tests" -type d
+find packages starter_kits -name "python-tests" -type d
 
 # Count total test packages
-find packages sample_configs -name "python-tests" -type d | wc -l
+find packages starter_kits -name "python-tests" -type d | wc -l
 ```
 
 This will show you all available Python test suites that can be run.
@@ -140,10 +140,10 @@ Here's a typical workflow for working with Python tests:
 
 ```bash
 # 1. Discover all Python test packages
-find packages sample_configs -name "python-tests" -type d
+find packages starter_kits -name "python-tests" -type d
 
 # 2. Navigate to a specific package
-cd sample_configs/your-package/python-tests
+cd starter_kits/your-package/python-tests
 
 # 3. Run tests (uv handles setup automatically)
 uv run pytest
@@ -207,11 +207,11 @@ The CI/CD pipeline will automatically install `uv` if not present.
 
 ### Auto-Discovery Feature
 
-**No registration required!** The Python testing system automatically discovers any `python-tests/` directory under `packages/` or `sample_configs/`. Simply create the directory structure and run `npm run test:python:all` - your new tests will be found and executed automatically.
+**No registration required!** The Python testing system automatically discovers any `python-tests/` directory under `packages/` or `starter_kits/`. Simply create the directory structure and run `npm run test:python:all` - your new tests will be found and executed automatically.
 
 The discovery works by searching for directories named `python-tests`:
 ```bash
-find packages sample_configs -name "python-tests" -type d
+find packages starter_kits -name "python-tests" -type d
 ```
 
 ### Steps to Add Python Testing (Modern uv Approach)
@@ -221,7 +221,7 @@ To add Python testing to a new package:
 1. **Copy the structure** from an existing package:
    ```bash
    # Find an existing python-tests directory to copy from
-   find packages sample_configs -name "python-tests" -type d | head -1
+   find packages starter_kits -name "python-tests" -type d | head -1
    
    # Copy the structure
    cp -r path/to/existing/python-tests your-package/

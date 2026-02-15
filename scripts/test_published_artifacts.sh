@@ -7,7 +7,7 @@ set -euo pipefail
 # Constants
 readonly REGION="us-east-1"
 readonly NAMESPACE="@aws-mdaa"
-readonly SAMPLE_CONFIG_DIR="sample_configs/basic_datalake"
+readonly SAMPLE_CONFIG_DIR="starter_kits/basic_datalake"
 
 # Global variables
 SNAPSHOT_VERSION=""

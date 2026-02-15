@@ -25,13 +25,25 @@ MDAA is designed to deploy data environments across multiple domains and environ
 
 These sample MDAA configurations are provided as a starting point for common analytics platform architectures.
 
-- [Basic DataLake with Glue](sample_configs/basic_datalake/README.md) - A basic S3 Data Lake with Glue database and crawler
+### Starter Kits
+
+Starter kits provide secure, prepackaged foundations for common use cases:
+
+- [Basic DataLake with Glue](starter_kits/basic_datalake/README.md) - A basic S3 Data Lake with Glue database and crawler
+- [Data Science Platform](starter_kits/basic_datascience_platform/README.md) - A standalone SageMaker Studio Data Science Platform
+- [GenAI Accelerator](starter_kits/genai_accelerator/README.md) - Enterprise-ready GenAI platform with Bedrock Builder
+- [Governed Lakehouse](starter_kits/governed_lakehouse/README.md) - DataZone-governed Lakehouse with fine-grained access control
+- [Health Data Accelerator](starter_kits/health_data_accelerator/README.md) - Healthcare datalake with DMS integration
+
+### Sample Configurations
+
 - [Basic Terraform DataLake](sample_configs/basic_terraform_datalake/README.md) - A basic S3 Data Lake built with the MDAA Terraform module
-- [Fine-grained Access Control DataLake](sample_configs/lakeformation_datalake/README.md) - An S3 Data Lake with fine-grained access control using LakeFormation
-- [Data Warehouse](sample_configs/basic_datawarehouse/README.md) - A standalone Redshift Data Warehouse
-- [Lakehouse](sample_configs/lakehouse/README.md) - A full LakeHouse implementation, with Data Lake, Data Ops Layers (using NYC taxi data), and a Redshift data warehouse
-- [Data Science Platform](sample_configs/basic_datascience_platform/README.md) - A standalone SageMaker Studio Data Science Platform
-- [GenAI Platform](sample_configs/basic_gaia/README.md) - A standalone GAIA GenAI Platform
+- [Basic Terraform Data Science Platform](sample_configs/basic_terraform_datascience_platform/README.md) - A basic Data Science Platform built with the MDAA Terraform module
+- [GenAI Platform (GAIA)](sample_configs/basic_gaia/README.md) - A standalone GAIA GenAI Platform
+
+### External Sample Configurations
+
+Additional sample configurations are available in a [dedicated repository](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator) for easier contribution and faster updates.
 
 ## MDAA Config File/Folder Layouts
 

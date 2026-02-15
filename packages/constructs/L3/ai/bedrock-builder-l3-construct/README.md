@@ -16,7 +16,7 @@ The Bedrock Builder CDK L3 construct is used to configure and deploy a secure Be
   *Policies are consolidated per role - multiple KBs sharing the same role share the same 3 policies to avoid hitting the AWS limit of 10 managed policies per role.*
 * **Bedrock Execution Role**: Execution policies are attached to the KB execution role. This role should have Bedrock Service as a Trusted Principal. 
 * **Bedrock KMS Key**: Encrypt Bedrock resources with the KMS Key. One will be generated if a KMS key is not provided as part of Configuration
-* **Lambdas**: (Optional) Allows you to generate Lambda Layer, Lambda Function or both, which can be associate with Agent Action Group. (*Refer: [MDAA DataOps-LambdaFunctions](../../dataops/dataops-lambda-app/README.md)*)
+* **Lambdas**: (Optional) Allows you to generate Lambda Layer, Lambda Function or both, which can be associate with Agent Action Group. (*Refer: [MDAA DataOps-LambdaFunctions](../../dataops/dataops-lambda-l3-construct/README.md)*)
   * **Lambda Layers** - Lambda layers which can be used in Lambda functions (inside or outside of this config).
   * **Lambda Functions** - Lambda function(s) for Agent Action Group(s)
     * May be optionally VPC bound with configurable VPC, Subnet, and Security Group Paramters
@@ -68,4 +68,4 @@ vectorStores:
 - The existing VPC endpoint must be configured for OpenSearch Serverless service
 - The security group must allow appropriate network access for your use case
 
-For a complete configuration example, see [sample_configs/genai_accelerator/ai/bedrock-builder.yaml](../../../../sample_configs/genai_accelerator/ai/bedrock-builder.yaml).
+To get started, see [starter_kits/genai_accelerator/ai/bedrock-builder.yaml](../../../../../starter_kits/genai_accelerator/ai/bedrock-builder.yaml).

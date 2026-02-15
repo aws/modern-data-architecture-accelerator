@@ -289,12 +289,12 @@ export class MdaaInstallerStack extends cdk.Stack {
               'export CDK_NEW_BOOTSTRAP=1 && aws cloudformation describe-stacks --stack-name CDKToolkit || npx cdk bootstrap aws://${CDK_DEFAULT_ACCOUNT}/${CDK_DEFAULT_REGION}',
               'echo "org: ${ORG_NAME}"',
               'echo "Replacing org-name place holder"',
-              'echo using sample: sample_configs/${SAMPLE_NAME}/mdaa.yaml',
-              "sed -i 's/<unique[- ]org[- ]name>/'\"$ORG_NAME\"'/g' sample_configs/${SAMPLE_NAME}/mdaa.yaml",
-              'find sample_configs/${SAMPLE_NAME}/ -type f \\( -name "*.yaml" -o -name "*.yml" \\) -exec sed -i \'s/<your vpc id>/\'"$VPC_ID"\'/g\' {} \\;',
-              'find sample_configs/${SAMPLE_NAME}/ -type f \\( -name "*.yaml" -o -name "*.yml" \\) -exec sed -i \'s/<your subnet id>/\'"$SUBNET_ID"\'/g\' {} \\;',
-              'find sample_configs/${SAMPLE_NAME}/ -type f \\( -name "*.yaml" -o -name "*.yml" \\) -exec sed -i \'s/<data scientist user id>/\'"$ORG_NAME"\'-datascientist/g\' {} \\;',
-              './bin/mdaa -c sample_configs/${SAMPLE_NAME}/mdaa.yaml deploy',
+              'echo using sample: starter_kits/${SAMPLE_NAME}/mdaa.yaml',
+              "sed -i 's/<unique[- ]org[- ]name>/'\"$ORG_NAME\"'/g' starter_kits/${SAMPLE_NAME}/mdaa.yaml",
+              'find starter_kits/${SAMPLE_NAME}/ -type f \\( -name "*.yaml" -o -name "*.yml" \\) -exec sed -i \'s/<your vpc id>/\'"$VPC_ID"\'/g\' {} \\;',
+              'find starter_kits/${SAMPLE_NAME}/ -type f \\( -name "*.yaml" -o -name "*.yml" \\) -exec sed -i \'s/<your subnet id>/\'"$SUBNET_ID"\'/g\' {} \\;',
+              'find starter_kits/${SAMPLE_NAME}/ -type f \\( -name "*.yaml" -o -name "*.yml" \\) -exec sed -i \'s/<data scientist user id>/\'"$ORG_NAME"\'-datascientist/g\' {} \\;',
+              './bin/mdaa -c starter_kits/${SAMPLE_NAME}/mdaa.yaml deploy',
               'echo "Deployment completed successfully"',
             ],
           },
@@ -443,23 +443,23 @@ export class MdaaInstallerStack extends cdk.Stack {
     });
 
     // Apply conditions to all resources related to GitHub pipeline
-    githubPipeline.node.findAll().forEach(child => {
+    for (const child of githubPipeline.node.findAll()) {
       if (child instanceof cdk.CfnResource) {
         child.cfnOptions.condition = useGitHubCondition;
       }
-    });
+    }
 
-    githubPipelineRole.node.findAll().forEach(child => {
+    for (const child of githubPipelineRole.node.findAll()) {
       if (child instanceof iam.CfnPolicy) {
         child.cfnOptions.condition = useGitHubCondition;
       }
-    });
+    }
 
     // Apply conditions to all resources related to S3 pipeline
-    s3Pipeline.node.findAll().forEach(child => {
+    for (const child of s3Pipeline.node.findAll()) {
       if (child instanceof cdk.CfnResource) {
         child.cfnOptions.condition = useS3Condition;
       }
-    });
+    }
   }
 }

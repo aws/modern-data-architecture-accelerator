@@ -31,7 +31,7 @@ Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](.
 
 ## Configurations
 
-The sample configurations for this architecture are provided below. They are also available under sample_configs/datawarehouse whithin the MDAA repo.
+The sample configurations for this architecture are provided below. They are also available under sample_configs/basic_gaia within the MDAA repo.
 
 ### Config Directory Structure
 

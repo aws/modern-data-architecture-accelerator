@@ -2,7 +2,9 @@
 
 ## [1.5.0] - 2026-02-28
 
-### New Features
+### General Changes
+
+- sample configurations that are quickly help users to quickly get started are in [starter_kits](starter_kits) while the examples are now on [AWS Samples](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator)
 - Users can now provide variables placeholders in the predeploy and postdeploy hook commands
 - CLI now validates `-d`, `-e`, and `-m` filter values upfront and errors if they don't match any configured domains, environments, or modules
 

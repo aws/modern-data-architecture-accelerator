@@ -16,7 +16,7 @@ This architecture may be suitable when:
 The following instructions assume you have CDK bootstrapped your target account, and that the MDAA source repo is cloned locally.
 More predeployment info and procedures are available in [PREDEPLOYMENT](../../PREDEPLOYMENT.md).
 
-1. Deploy sample configurations into the specified directory structure (or obtain from the MDAA repo under `sample_configs/basic_datalake`).
+1. Deploy sample configurations into the specified directory structure (or obtain from the MDAA repo under `sample_configs/basic_terraform_datalake`).
 
 2. Edit the `mdaa.yaml` to specify an organization name. This must be a globally unique name, as it is used in the naming of all deployed resources, some of which are globally named (such as S3 buckets).
 
@@ -36,7 +36,7 @@ Additional MDAA deployment commands/procedures can be reviewed in [DEPLOYMENT](.
 
 ## Configurations
 
-The sample configurations for this architecture are provided below. They are also available under sample_configs/basic_datalake whithin the MDAA repo.
+The sample configurations for this architecture are provided below. They are also available under sample_configs/basic_terraform_datalake within the MDAA repo.
 
 ### Config Directory Structure
 
