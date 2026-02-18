@@ -1,143 +1,103 @@
-# MDAA Installer Pipeline
+# MDAA Installer
 
-This README describes the MDAA Installer pipeline and provides instructions for deployment using AWS CDK or CloudFormation.
+This README describes the MDAA Installer and provides instructions for deployment using AWS CDK or CloudFormation.
 
-## Pipeline Overview
+## Overview
 
-The MDAA Installer pipeline is a CI/CD pipeline built using AWS CDK. It supports two source options:
+The MDAA Installer creates a CodeBuild project that clones the MDAA repository from GitHub and deploys the selected sample configuration. After deploying the CloudFormation stack, you manually start the CodeBuild project to begin the MDAA deployment.
 
-1. GitHub repository. This is done through AWS CodeConnections.
-   1. Go to the CodeDeploy page
-   2. On the left navigation, go to Settings and select "Connections" to create a connection. You will need the ARN of the created connection. 
-2. S3 bucket
-    1. this must be in the same region as the deployment
-    2. The key must be pointing to a zip file
-    3. the zip file contains the project. The project contains `package-lock.json` at the very top level. See the "Additional Notes" below on how to generate the zip files using `git`.
+## Parameters
 
-The pipeline consists of two main stages:
-
-1. Source: Retrieves code from either GitHub or S3
-2. Build: Executes a build script to deploy the MDAA infrastructure
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| RepositoryBranchName | GitHub branch to clone (e.g., `release/v1.4.0`) | `release/v{version}` |
+| SampleName | Sample configuration to deploy | `basic_datalake` |
+| OrgName | Organization name for MDAA deployment (required) | - |
+| MdaaVersion | Version of MDAA modules to deploy (e.g., `latest`, `1.3.0`) | `latest` |
+| VpcId | VPC ID (required for `basic_datascience_platform`) | - |
+| SubnetId | Subnet ID (required for `basic_datascience_platform`) | - |
 
 ## Deployment Instructions
-For internal development, the following two methods are used. However, ultimately, the deliverable is the synthesized artifact: CloudFormation template. That is what users of this AWS Solution will be using to test out the deployment.
 
-### Setup with S3 Option
-S3 is mostly for testing only in the absence of a github repo. Before using S3, the bucket needs to be set up.
-#### Notes
-1. the bucket must be in the same region as the CloudFormation stack that will create the CodePipeline in that region.
-2. Because CDK automatically generates a default policy that uses the CodeConnect ARN, even if you're using S3 and not CodeConnect, you need to provide `*` in the CodeConnect ARN input to avoid a deployment error.
+### Option 1: CloudFormation Console (Recommended for Users)
 
-1. Create verion-enabled bucket:
-```bash
-aws s3api create-bucket \
---bucket your-bucket-name \
---region your-region \
---create-bucket-configuration LocationConstraint=your-region
-
-aws s3api put-bucket-versioning \
---bucket your-bucket-name \
---versioning-configuration Status=Enabled
-
-```
-2. Create a folder and place the zip file of mdaa repo in it. (Remember that the top level should already be the top level of the repo. The repo cannot be inside a folder!)
-3. Upload the zip file
-```bash
-aws s3 cp mdaa.zip s3://your-bucket-name/release/mdaa.zip
-```
-
-
-### Option 1: CDK Deploy
-
-To deploy using CDK directly:
-
-1. Ensure you have the AWS CDK CLI installed and configured
-2. Clone this repository
-3. Navigate to the `installer` folder of the project directory
-4. Install dependencies:
-   ```
+1. Synthesize the CloudFormation template:
+   ```bash
+   cd installer
    npm install
-   ```
-5. Deploy the stack:
-   ```
-   cdk deploy --parameters RepositorySource=github \
-              --parameters RepositoryOwner= \
-              --parameters RepositoryName= \
-              --parameters RepositoryBranchName=main
-   ```
-
-   For S3 source, use:
-   ```
-   cdk deploy --parameters RepositorySource=s3 \
-              --parameters RepositoryBucketName= \
-              --parameters RepositoryBucketObject=
-   ```
-
-### Option 2: Generate CloudFormation Template
-
-To generate a CloudFormation template for distribution:
-
-1. Follow steps 1-4 from the CDK Deploy option
-2. Synthesize the CloudFormation template:
-   ```
    cdk synth > installer.yaml
    ```
-3. Distribute the `installer.yaml` file to users who prefer CloudFormation
+2. Upload `installer.yaml` to CloudFormation console or deploy via CLI
+3. After stack creation, go to the CodeBuild console (link provided in stack outputs)
+4. Click "Start build" to begin the MDAA deployment
 
-Users can then deploy the stack using the AWS Management Console, AWS CLI, or AWS SDKs.
+### Option 2: CDK Deploy (For Development/Testing)
 
-## Developing the build script
-CodeBuild's buidspec runs a series of scripts. In the `emulator` folder you will find the following:
-- a Dockerfile that will emulate the current CodeBuild environment. It is basically a trimmed down version of CodeBuild Dockerfile with just the core and nodejs installed.
-- a CloudFormation template to deploy an EC2 instance that has nodejs version needed and also the CodeBuild image we are using.
-
-### Setup
-If you are using `S3` mode: Create a folder and place the zip file of mdaa repo in it. (Remember that the top level should already be the top level of the repo. The repo cannot be inside a folder!)
-
-If you are using `github`, you need to have a clean-checkout of the github repo of MDAA and switch to the branch you are testing.
-
-#### Environment
-
-There are a few ways to set up the environment: run a docker container or an EC2 instance.
-
-For the Docker option:
-
-#### Build your own image
 ```bash
-docker build -t codebuild-test-env .
+cd installer
+npm install
+export AWS_REGION=<region>
+
+# Bootstrap CDK (one-time setup per account/region)
+cdk bootstrap aws://$(aws sts get-caller-identity --query Account --output text --no-paginate)/$AWS_REGION
+
+cdk deploy \
+   --parameters OrgName=myorg \
+   --parameters SampleName=basic_datalake \
+   --require-approval never
 ```
 
-#### Use the codebuild image
-See how to get a list of images [here](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available-get.html)
+For `basic_datascience_platform`, also include VPC and Subnet:
 ```bash
-docker pull public.ecr.aws/codebuild/amazonlinux2-x86_64-standard:5.0
+export AWS_REGION=<region>
+cdk deploy \
+   --parameters OrgName=myorg \
+   --parameters SampleName=basic_datascience_platform \
+   --parameters VpcId=vpc-xxxxx \
+   --parameters SubnetId=subnet-xxxxx \
+   --require-approval never
 ```
 
-#### Run the container with your source code mounted
-The `-v` should be whichever folder contains the zip file.
+## CDK Context Options
+
+| Context | Description | Default |
+|---------|-------------|---------|
+| `sampleConfigFolder` | Folder containing sample configs | `starter_kits` |
+
+Example using older branch with `sample_configs` folder:
 ```bash
-docker run -it -v $(pwd):/workdir codebuild-test-env
+cdk synth -c sampleConfigFolder=sample_configs
 ```
 
-#### EC2
-You can deploy the supplied ec2-emulator.yaml file and you will have an EC2 instance accessible by SSM. There you have nodejs and also the same docker image pulled.
 
-### Run the script
-From either the EC2 instance or within a bash shell of the docker container:
-1. Run `export` for all the require environment variables as listed in the `build` section
-2. Run the lines of the `command` to confirm a bug or add changes to implement a new way to run buildspec
+## Stack Outputs
+
+After deployment, the stack provides:
+- **CodeBuildProjectUrl**: Direct link to the CodeBuild project console
+- **CodeBuildProjectName**: Name of the CodeBuild project
+
+## Developing the Build Script
+
+CodeBuild's buildspec runs a series of commands. In the `emulation` folder you will find:
+- A CloudFormation template to deploy an EC2 instance that emulates the CodeBuild environment
+
+### Environment Variables
+
+The CodeBuild project uses these environment variables:
+- `REPOSITORY_BRANCH_NAME`: GitHub branch to clone
+- `SAMPLE_NAME`: Sample configuration name
+- `SAMPLE_CONFIG_FOLDER`: Folder containing sample configs
+- `ORG_NAME`: Organization name
+- `MDAA_VERSION`: Version of MDAA modules to deploy
+- `VPC_ID`: VPC ID (for data science sample)
+- `SUBNET_ID`: Subnet ID (for data science sample)
 
 ## Uninstall
-### Manual way
-1. Delete all the stacks that start with the organization name
-2. Delete also the stack that the installer template created
-3. Delete all the S3 buckets with the organization name as prefix in the bucket name
+
+1. Delete all CloudFormation stacks that start with the organization name
+2. Delete the installer stack
+3. Delete all S3 buckets with the organization name as prefix
 
 ## Additional Notes
 
-- If working with a non-github repository, you'd use the S3 option. The simplest way to zip the whole repository is, from the top level of the local repository folder, run:
-   - To zip the `HEAD`: `git archive --format=zip -o mdaa.zip HEAD`
-   - To zip the current state of the local folder, including uncommitted changes: `git ls-files -c -o --exclude-standard | zip -@ ../mdaa.zip`
-
 For more information on AWS CDK, refer to the [AWS CDK Developer Guide](https://docs.aws.amazon.com/cdk/v2/guide/home.html).
-

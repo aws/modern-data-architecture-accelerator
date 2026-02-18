@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 echo "Checking Node.JS version"
 node_version=`node -v`
 if [[ $node_version < 'v22.0.0' ]]; then
