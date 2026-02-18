@@ -259,12 +259,10 @@ function configureSnapshotSerializers(): void {
     print: (val: unknown): string => {
       const stringVal = typeof val === 'string' ? val : String(val);
       // Replace line:col numbers with placeholders AND normalize absolute paths to relative paths
-      // Also normalize .js to .ts to handle source-map differences between build environments
       return JSON.stringify(
         stringVal
           .replace(/\[MDAA:[^[\]]*\/(packages\/[^:]+):\d+:\d+]/g, '[MDAA:$1:LINE:COL]')
-          .replace(/(\[MDAA:[^:]+):\d+:\d+(])/g, '$1:LINE:COL$2')
-          .replace(/\.js:LINE:COL]/g, '.ts:LINE:COL]'),
+          .replace(/(\[MDAA:[^:]+):\d+:\d+(])/g, '$1:LINE:COL$2'),
       );
     },
   });

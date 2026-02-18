@@ -7,8 +7,8 @@ cd "$PROJECT_ROOT"
 
 npx nx reset
 
-echo "Running build/test+coverage script from $(pwd)"
+# Note: this script should be run before the final build/test
+# Otherwise it might cause snapshot drift
+python3 "$SCRIPT_DIR/fix_license_headers.py"
+
 npx lerna run test:coverage --stream --no-ci -- --silent
-parent_path=$SCRIPT_DIR
-echo "Parent Path: $parent_path"
-python3 "$parent_path/fix_license_headers.py"
