@@ -1,7 +1,7 @@
 version: 0.2
 env:
   variables:
-    NODE_OPTIONS: "--max_old_space_size=8192"
+    NODE_OPTIONS: "--max_old_space_size=4096"
 phases:
   install:
     runtime-versions:

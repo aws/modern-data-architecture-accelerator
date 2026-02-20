@@ -7,3 +7,4 @@ cloudformation_templates:
     main_template: true
 build_environment:
   build_image: "aws/codebuild/standard:7.0"
+  compute_type: "BUILD_GENERAL1_XLARGE"
