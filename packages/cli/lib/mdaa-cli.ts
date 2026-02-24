@@ -5,16 +5,24 @@
 
 import {
   ConfigurationElement,
-  MdaaConfigParamRefValueTransformerProps,
   MdaaConfigRefValueTransformer,
   MdaaConfigRefValueTransformerProps,
+  MdaaConfigTransformer,
   MdaaCustomAspect,
   MdaaCustomNaming,
   TagElement,
 } from '@aws-mdaa/config';
-import { analyzeScriptFile, executeCommand, logExecutionError, logImmediate } from './command-utils';
 import * as fs from 'fs';
 import * as path from 'path';
+import { analyzeScriptFile, executeCommand, logExecutionError, logImmediate } from './command-utils';
+import {
+  DomainEffectiveConfig,
+  EffectiveConfig,
+  EnvEffectiveConfig,
+  ModuleDeploymentConfig,
+  ModuleEffectiveConfig,
+} from './config-types';
+import { DuplicateAccountLevelModulesException } from './exceptions';
 import {
   Deployment,
   HookConfig,
@@ -24,18 +32,10 @@ import {
   MdaaModuleConfig,
   TerraformConfig,
 } from './mdaa-cli-config-parser';
-import { DuplicateAccountLevelModulesException } from './exceptions';
-import {
-  DomainEffectiveConfig,
-  EffectiveConfig,
-  EnvEffectiveConfig,
-  ModuleDeploymentConfig,
-  ModuleEffectiveConfig,
-} from './config-types';
 import { getMdaaConfig } from './module-service';
-import { findDuplicates, generateContextCdkParams, isBoolean } from './utils';
 import { loadLocalPackages } from './package-helper';
 import { validateFilters } from './filter-validator';
+import { findDuplicates, generateContextCdkParams, isBoolean } from './utils';
 
 export interface DeployStageMap {
   [key: string]: ModuleDeploymentConfig[];
@@ -262,18 +262,9 @@ export class MdaaDeploy {
       ),
     ).forEach(envName => {
       const env = domain.environments[envName];
-      if (env.template && (!domainEffectiveConfig.envTemplates || !domainEffectiveConfig.envTemplates[env.template])) {
-        throw new Error(`Environment "${envName}" references invalid template name: ${env.template}.`);
-      }
-      const template =
-        env.template && domainEffectiveConfig.envTemplates ? domainEffectiveConfig.envTemplates[env.template] : {};
-      // nosemgrep
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const _ = require('lodash');
-      const envMergedConfig = _.mergeWith(env, template);
-      const envEffectiveConfig: EnvEffectiveConfig = this.computeEnvEffectiveConfig(
+      const [envMergedConfig, envEffectiveConfig] = this.determineEnvEffectiveConfig(
+        env,
         envName,
-        envMergedConfig,
         domainEffectiveConfig,
       );
       this.deployEnv(envMergedConfig, envEffectiveConfig);
@@ -425,12 +416,24 @@ export class MdaaDeploy {
   }
 
   private prepModule(moduleConfig: ModuleEffectiveConfig): ModuleDeploymentConfig {
-    if (!moduleConfig.moduleType || moduleConfig.moduleType == 'cdk') {
-      return this.prepCdkModule(moduleConfig);
-    } else if (moduleConfig.moduleType == 'tf') {
-      return this.prepTerraformModule(moduleConfig);
+    const refTransformerProps: MdaaConfigRefValueTransformerProps = {
+      org: this.config.contents.organization,
+      domain: moduleConfig.domainName,
+      env: moduleConfig.envName,
+      module_name: moduleConfig.moduleName,
+      context: moduleConfig.effectiveContext,
+    };
+
+    const configRefTransformedConfig = new MdaaConfigTransformer(
+      new MdaaConfigRefValueTransformer(refTransformerProps),
+    ).transformConfig(moduleConfig as unknown as ConfigurationElement) as unknown as ModuleEffectiveConfig;
+
+    if (!configRefTransformedConfig.moduleType || configRefTransformedConfig.moduleType == 'cdk') {
+      return this.prepCdkModule(configRefTransformedConfig);
+    } else if (configRefTransformedConfig.moduleType == 'tf') {
+      return this.prepTerraformModule(configRefTransformedConfig);
     } else {
-      throw new Error(`Unknown module type: ${moduleConfig.moduleType}`);
+      throw new Error(`Unknown module type: ${configRefTransformedConfig.moduleType}`);
     }
   }
 
@@ -538,7 +541,7 @@ export class MdaaDeploy {
         tfCmd.push('-var region="${AWS_DEFAULT_REGION}"');
       }
     }
-    const transformRefsProps: MdaaConfigParamRefValueTransformerProps = {
+    const transformRefsProps: MdaaConfigRefValueTransformerProps = {
       org: this.config.contents.organization,
       domain: moduleConfig.domainName,
       env: moduleConfig.envName,
@@ -1070,7 +1073,15 @@ export class MdaaDeploy {
     // nosemgrep
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const ld = require('lodash');
-    const envMergedConfig = ld.mergeWith(env, template);
+    const envMergedConfig: MdaaEnvironmentConfig = {
+      ...ld.mergeWith({}, template, env), //There are sideeffects here if we don't merge into an empty object
+      //Ensure template modules come first
+      modules: {
+        ...template.modules,
+        ...env.modules,
+      },
+    };
+
     return [envMergedConfig, this.computeEnvEffectiveConfig(envName, envMergedConfig, domainEffectiveConfig)];
   }
 }

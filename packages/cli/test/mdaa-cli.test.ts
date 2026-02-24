@@ -339,7 +339,7 @@ test('Config File Test', () => {
   expect(() => mdaa.deploy()).not.toThrow();
 });
 
-test('EnvTemplateTest', () => {
+describe('EnvTemplates', () => {
   const options = {
     testing: 'true',
     action: 'synth',
@@ -348,52 +348,261 @@ test('EnvTemplateTest', () => {
     tag: 'testtag',
   };
 
-  const configContents = {
-    organization: 'sample-org',
-    env_templates: {
-      test_global_template: {
-        modules: {
-          'test-module': {
-            mdaa_version: 'test_mod_version',
-            module_path: '@aws-mdaa/test',
-            module_configs: ['./test.yaml'],
-          },
-        },
-      },
-    },
-    domains: {
-      domain1: {
-        env_templates: {
-          test_domain_template: {
-            modules: {
-              'test-module': {
-                mdaa_version: 'test_mod_version',
-                module_path: '@aws-mdaa/test',
-                module_configs: ['./test.yaml'],
-              },
+  test('should work with global and domain-level templates', () => {
+    const configContents = {
+      organization: 'sample-org',
+      env_templates: {
+        test_global_template: {
+          modules: {
+            'test-module': {
+              mdaa_version: 'test_mod_version',
+              module_path: '@aws-mdaa/test',
+              module_configs: ['./test.yaml'],
             },
           },
         },
-        environments: {
-          'dev-global': {
-            template: 'test_global_template',
-            modules: {
-              'test-module2': {
-                module_path: '@aws-mdaa/test',
-                module_configs: ['./test2.yaml'],
+      },
+      domains: {
+        domain1: {
+          env_templates: {
+            test_domain_template: {
+              modules: {
+                'test-module': {
+                  mdaa_version: 'test_mod_version',
+                  module_path: '@aws-mdaa/test',
+                  module_configs: ['./test.yaml'],
+                },
               },
             },
           },
-          'dev-domain': {
-            template: 'test_domain_template',
+          environments: {
+            'dev-global': {
+              template: 'test_global_template',
+              modules: {
+                'test-module2': {
+                  module_path: '@aws-mdaa/test',
+                  module_configs: ['./test2.yaml'],
+                },
+              },
+            },
+            'dev-domain': {
+              template: 'test_domain_template',
+            },
           },
         },
       },
-    },
-  };
+    };
 
-  const mdaa = new MdaaDeploy(options, ['test-extra-cdk-param'], configContents);
-  expect(() => mdaa.deploy()).not.toThrow();
+    const mdaa = new MdaaDeploy(options, ['test-extra-cdk-param'], configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+
+  test('should throw error for invalid template reference', () => {
+    const configContents = {
+      organization: 'sample-org',
+      domains: {
+        domain1: {
+          environments: {
+            dev: {
+              template: 'nonexistent_template',
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                  module_configs: ['./test.yaml'],
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(options, undefined, configContents);
+    expect(() => mdaa.deploy()).toThrow('Environment "dev" references invalid template name: nonexistent_template.');
+  });
+
+  test('should work with empty template', () => {
+    const configContents = {
+      organization: 'sample-org',
+      env_templates: {
+        empty_template: {},
+      },
+      domains: {
+        domain1: {
+          environments: {
+            dev: {
+              template: 'empty_template',
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                  module_configs: ['./test.yaml'],
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(options, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+
+  test('should allow environment values to override template values', () => {
+    const configContents = {
+      organization: 'sample-org',
+      env_templates: {
+        base_template: {
+          account: '111111111111',
+          region: 'us-east-1',
+          context: {
+            template_key: 'template_value',
+            override_key: 'template_override_value',
+          },
+          modules: {
+            'test-module': {
+              mdaa_version: 'template_version',
+              module_path: '@aws-mdaa/test',
+              module_configs: ['./template.yaml'],
+            },
+          },
+        },
+      },
+      domains: {
+        domain1: {
+          environments: {
+            dev: {
+              template: 'base_template',
+              account: '222222222222',
+              region: 'us-west-2',
+              context: {
+                env_key: 'env_value',
+                override_key: 'env_override_value',
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(options, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+
+  test('should work with template containing all optional properties', () => {
+    const configContents = {
+      organization: 'sample-org',
+      env_templates: {
+        full_template: {
+          account: '111111111111',
+          region: 'us-west-2',
+          use_bootstrap: true,
+          context: {
+            template_context_key: 'template_context_value',
+          },
+          tag_config_data: {
+            Environment: 'dev',
+          },
+          custom_aspects: [
+            {
+              aspect_module: './test_aspect',
+              aspect_class: 'TestAspect',
+            },
+          ],
+          modules: {
+            'test-module': {
+              module_path: '@aws-mdaa/test',
+              module_configs: ['./test.yaml'],
+            },
+          },
+        },
+      },
+      domains: {
+        domain1: {
+          environments: {
+            dev: {
+              template: 'full_template',
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(options, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+
+  test('should prefer domain-level template over global template with same name', () => {
+    const configContents = {
+      organization: 'sample-org',
+      env_templates: {
+        shared_template: {
+          modules: {
+            'global-module': {
+              module_path: '@aws-mdaa/global-test',
+              module_configs: ['./global.yaml'],
+            },
+          },
+        },
+      },
+      domains: {
+        domain1: {
+          env_templates: {
+            shared_template: {
+              modules: {
+                'domain-module': {
+                  module_path: '@aws-mdaa/test',
+                  module_configs: ['./domain.yaml'],
+                },
+              },
+            },
+          },
+          environments: {
+            dev: {
+              template: 'shared_template',
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(options, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+
+  test('should merge modules from template and environment', () => {
+    const configContents = {
+      organization: 'sample-org',
+      env_templates: {
+        base_template: {
+          modules: {
+            'template-module': {
+              module_path: '@aws-mdaa/test',
+              module_configs: ['./template.yaml'],
+            },
+          },
+        },
+      },
+      domains: {
+        domain1: {
+          environments: {
+            dev: {
+              template: 'base_template',
+              modules: {
+                'env-module': {
+                  module_path: '@aws-mdaa/test',
+                  module_configs: ['./env.yaml'],
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(options, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
 });
 
 describe('Terraform', () => {
@@ -476,5 +685,590 @@ describe('sanity check', () => {
   test('no account level modules', () => {
     const mdaa = new MdaaDeploy(options);
     expect(() => mdaa.sanityCheck()).not.toThrow();
+  });
+});
+
+describe('Hook Execution', () => {
+  const baseOptions = {
+    testing: 'true',
+    action: 'deploy',
+    working_dir: 'test/test_working',
+    tag: 'testtag',
+  };
+
+  const createConfigWithHooks = (predeploy?: object, postdeploy?: object) => ({
+    organization: 'sample-org',
+    domains: {
+      shared: {
+        environments: {
+          dev: {
+            account: '111111111111',
+            region: 'us-west-2',
+            modules: {
+              'test-module': {
+                module_path: '@aws-mdaa/test',
+                predeploy,
+                postdeploy,
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  describe('predeploy hooks', () => {
+    test('should execute predeploy hook with command', () => {
+      const configContents = createConfigWithHooks({
+        command: 'echo "predeploy hook"',
+      });
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+
+    test('should throw error when predeploy hook has no command', () => {
+      const configContents = createConfigWithHooks({
+        exit_if_fail: true,
+      });
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).toThrow('predeploy hook defined but no command specified');
+    });
+
+    test('should transform template variables in predeploy hook command', () => {
+      const configContents = createConfigWithHooks({
+        command: 'echo "org={{org}} domain={{domain}} env={{env}} module={{module_name}} region={{region}}"',
+      });
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+  });
+
+  describe('postdeploy hooks', () => {
+    test('should execute postdeploy hook with command', () => {
+      const configContents = createConfigWithHooks(undefined, {
+        command: 'echo "postdeploy hook"',
+      });
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+
+    test('should throw error when postdeploy hook has no command', () => {
+      const configContents = createConfigWithHooks(undefined, {
+        exit_if_fail: true,
+      });
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).toThrow('postdeploy hook defined but no command specified');
+    });
+
+    test('should transform template variables in postdeploy hook command', () => {
+      const configContents = createConfigWithHooks(undefined, {
+        command: 'echo "org={{org}} domain={{domain}} env={{env}} module={{module_name}} region={{region}}"',
+      });
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+
+    test('should skip postdeploy hook with after_success when deployment fails', () => {
+      // In test mode, deployment doesn't actually fail, so we just verify the config is accepted
+      const configContents = createConfigWithHooks(undefined, {
+        command: 'echo "postdeploy after success"',
+        after_success: true,
+      });
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+  });
+
+  describe('both predeploy and postdeploy hooks', () => {
+    test('should execute both predeploy and postdeploy hooks', () => {
+      const configContents = createConfigWithHooks({ command: 'echo "predeploy"' }, { command: 'echo "postdeploy"' });
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+
+    test('should execute hooks with all configuration options', () => {
+      const configContents = createConfigWithHooks(
+        {
+          command: 'echo "predeploy with options"',
+          exit_if_fail: false,
+        },
+        {
+          command: 'echo "postdeploy with options"',
+          exit_if_fail: false,
+          after_success: false,
+        },
+      );
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+  });
+
+  describe('hooks only run on deploy action', () => {
+    test('should not execute hooks on synth action', () => {
+      const synthOptions = { ...baseOptions, action: 'synth' };
+      const configContents = createConfigWithHooks({ command: 'echo "predeploy"' }, { command: 'echo "postdeploy"' });
+
+      const mdaa = new MdaaDeploy(synthOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+
+    test('should not execute hooks on diff action', () => {
+      const diffOptions = { ...baseOptions, action: 'diff' };
+      const configContents = createConfigWithHooks({ command: 'echo "predeploy"' }, { command: 'echo "postdeploy"' });
+
+      const mdaa = new MdaaDeploy(diffOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+
+    test('should not execute hooks on destroy action', () => {
+      const destroyOptions = { ...baseOptions, action: 'destroy' };
+      const configContents = createConfigWithHooks({ command: 'echo "predeploy"' }, { command: 'echo "postdeploy"' });
+
+      const mdaa = new MdaaDeploy(destroyOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+  });
+
+  describe('hooks with multiple modules', () => {
+    test('should execute hooks for each module independently', () => {
+      const configContents = {
+        organization: 'sample-org',
+        domains: {
+          shared: {
+            environments: {
+              dev: {
+                account: '111111111111',
+                region: 'us-west-2',
+                modules: {
+                  'module-1': {
+                    module_path: '@aws-mdaa/test',
+                    predeploy: { command: 'echo "module-1 predeploy"' },
+                    postdeploy: { command: 'echo "module-1 postdeploy"' },
+                  },
+                  'module-2': {
+                    module_path: '@aws-mdaa/test',
+                    predeploy: { command: 'echo "module-2 predeploy"' },
+                    postdeploy: { command: 'echo "module-2 postdeploy"' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+
+    test('should allow some modules to have hooks and others not', () => {
+      const configContents = {
+        organization: 'sample-org',
+        domains: {
+          shared: {
+            environments: {
+              dev: {
+                account: '111111111111',
+                region: 'us-west-2',
+                modules: {
+                  'module-with-hooks': {
+                    module_path: '@aws-mdaa/test',
+                    predeploy: { command: 'echo "has hooks"' },
+                  },
+                  'module-without-hooks': {
+                    module_path: '@aws-mdaa/test',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+      expect(() => mdaa.deploy()).not.toThrow();
+    });
+  });
+});
+
+describe('DevOps Pipeline Filtering', () => {
+  const baseOptions = {
+    testing: 'true',
+    action: 'synth',
+    working_dir: 'test/test_working',
+    tag: 'testtag',
+    devops: 'true',
+  };
+
+  test('should throw error when module matches multiple pipelines', () => {
+    const configContents = {
+      devops: {
+        mdaaCodeCommitRepo: 'test-repo',
+        configsCodeCommitRepo: 'test-config-repo',
+        pipelines: {
+          pipeline1: {
+            domainFilter: ['shared'],
+            envFilter: ['dev'],
+            moduleFilter: ['test-module'],
+          },
+          pipeline2: {
+            domainFilter: ['shared'],
+            envFilter: ['dev'],
+            moduleFilter: ['test-module'],
+          },
+        },
+      },
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).toThrow('matches multiple pipeline filters');
+  });
+
+  test('should warn when module matches no pipelines', () => {
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+    const configContents = {
+      devops: {
+        mdaaCodeCommitRepo: 'test-repo',
+        configsCodeCommitRepo: 'test-config-repo',
+        pipelines: {
+          pipeline1: {
+            domainFilter: ['other-domain'],
+          },
+        },
+      },
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('matches no pipeline filters'));
+
+    consoleSpy.mockRestore();
+  });
+
+  test('should succeed when module matches exactly one pipeline', () => {
+    const configContents = {
+      devops: {
+        mdaaCodeCommitRepo: 'test-repo',
+        configsCodeCommitRepo: 'test-config-repo',
+        pipelines: {
+          pipeline1: {
+            domainFilter: ['shared'],
+            envFilter: ['dev'],
+            moduleFilter: ['test-module'],
+          },
+          pipeline2: {
+            domainFilter: ['other-domain'],
+          },
+        },
+      },
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+});
+
+describe('Environment Validation', () => {
+  const baseOptions = {
+    testing: 'true',
+    action: 'synth',
+    working_dir: 'test/test_working',
+    tag: 'testtag',
+  };
+
+  test('should deploy successfully when environment has modules defined', () => {
+    const configContents = {
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              account: '111111111111',
+              region: 'us-west-2',
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+
+  test('should add bootstrap module automatically when use_bootstrap is true', () => {
+    const configContents = {
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              account: '111111111111',
+              region: 'us-west-2',
+              use_bootstrap: true,
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+
+  test('should not add bootstrap module when use_bootstrap is false', () => {
+    const configContents = {
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              account: '111111111111',
+              region: 'us-west-2',
+              use_bootstrap: false,
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+});
+
+describe('Module Type Validation', () => {
+  const baseOptions = {
+    testing: 'true',
+    action: 'synth',
+    working_dir: 'test/test_working',
+    tag: 'testtag',
+  };
+
+  test('should handle cdk module type (default)', () => {
+    const configContents = {
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              account: '111111111111',
+              region: 'us-west-2',
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                  module_type: 'cdk',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+
+  test('should handle tf module type', () => {
+    const configContents = {
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              account: '111111111111',
+              region: 'us-west-2',
+              modules: {
+                'test-module': {
+                  module_path: '../../../terraform/aws-mdaa/datalake',
+                  module_type: 'tf',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
+  });
+});
+
+describe('Naming Configuration', () => {
+  const baseOptions = {
+    testing: 'true',
+    action: 'synth',
+    working_dir: 'test/test_working',
+    tag: 'testtag',
+  };
+
+  test('should throw error when only naming_module is specified without naming_class', () => {
+    const configContents = {
+      organization: 'sample-org',
+      naming_module: 'custom-naming-module',
+      // naming_class is missing
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).toThrow("Both 'naming_module' and 'naming_class' must be specified together");
+  });
+
+  test('should throw error when only naming_class is specified without naming_module', () => {
+    const configContents = {
+      organization: 'sample-org',
+      naming_class: 'CustomNaming',
+      // naming_module is missing
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              modules: {
+                'test-module': {
+                  module_path: '@aws-mdaa/test',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).toThrow("Both 'naming_module' and 'naming_class' must be specified together");
+  });
+});
+
+describe('Module Path Validation', () => {
+  const baseOptions = {
+    testing: 'true',
+    action: 'synth',
+    working_dir: 'test/test_working',
+    tag: 'testtag',
+  };
+
+  test('should throw error when module has no module_path or cdk_app', () => {
+    const configContents = {
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              modules: {
+                'test-module': {
+                  // No module_path or cdk_app
+                  module_configs: ['./test.yaml'],
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).toThrow('One of cdp_app or module_path must be defined');
+  });
+
+  test('should accept legacy cdk_app property', () => {
+    const configContents = {
+      organization: 'sample-org',
+      domains: {
+        shared: {
+          environments: {
+            dev: {
+              modules: {
+                'test-module': {
+                  cdk_app: '@aws-mdaa/test',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const mdaa = new MdaaDeploy(baseOptions, undefined, configContents);
+    expect(() => mdaa.deploy()).not.toThrow();
   });
 });

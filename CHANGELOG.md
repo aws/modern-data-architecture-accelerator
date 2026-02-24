@@ -4,10 +4,10 @@
 
 ### General Changes
 
-- sample configurations that are quickly help users to quickly get started are in [starter_kits](starter_kits) while the examples are now on [AWS Samples](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator)
+- sample configurations that help users to quickly get started are in [starter_kits](starter_kits) while the examples are now on [AWS Samples](https://github.com/aws-samples/sample-config-modern-data-architecture-accelerator)
 - Users can now provide variables placeholders in the predeploy and postdeploy hook commands
 - CLI now validates `-d`, `-e`, and `-m` filter values upfront and errors if they don't match any configured domains, environments, or modules
-- Simplified installer stack: removed CodePipeline/S3 source the need for CodeStar ARN from user, and replaced npm install with running `mdaa` from npmjs.org.
+- Simplified installer stack: removed CodePipeline/S3 source the need for CodeStar ARN from user, and replaced `npm install` with running `mdaa` from npmjs.org.
 
 ## [1.4.0] - 2026-01-30
 

@@ -27,12 +27,11 @@ export function validateFilters(options: FilterValidationOptions): void {
 
   // Validate env filter
   if (envFilter) {
-    const validEnvs = new Set<string>();
-    Object.entries(config.domains)
-      .filter(([name]) => !domainFilter || domainFilter.includes(name))
-      .forEach(([, domain]: [string, MdaaDomainConfig]) => {
-        Object.keys(domain.environments).forEach(env => validEnvs.add(env));
-      });
+    const validEnvs = new Set(
+      Object.entries(config.domains)
+        .filter(([name]) => !domainFilter || domainFilter.includes(name))
+        .flatMap(([, domain]: [string, MdaaDomainConfig]) => Object.keys(domain.environments)),
+    );
     const invalidEnvs = envFilter.filter(e => !validEnvs.has(e));
     if (invalidEnvs.length > 0) {
       errors.push(`Unknown env(s) in filter: ${invalidEnvs.join(', ')}. Valid: ${[...validEnvs].join(', ')}`);
@@ -41,16 +40,25 @@ export function validateFilters(options: FilterValidationOptions): void {
 
   // Validate module filter
   if (moduleFilter) {
-    const validModules = new Set<string>();
-    Object.entries(config.domains)
-      .filter(([name]) => !domainFilter || domainFilter.includes(name))
-      .forEach(([, domain]: [string, MdaaDomainConfig]) => {
-        Object.entries(domain.environments)
-          .filter(([name]) => !envFilter || envFilter.includes(name))
-          .forEach(([, env]: [string, MdaaEnvironmentConfig]) => {
-            Object.keys(env.modules ?? {}).forEach(mod => validModules.add(mod));
-          });
-      });
+    const validModules = new Set(
+      Object.entries(config.domains)
+        .filter(([name]) => !domainFilter || domainFilter.includes(name))
+        .flatMap(([, domain]: [string, MdaaDomainConfig]) =>
+          Object.entries(domain.environments)
+            .filter(([name]) => !envFilter || envFilter.includes(name))
+            .flatMap(([, env]: [string, MdaaEnvironmentConfig]) => {
+              // Modules directly defined on the environment
+              const envModules = Object.keys(env.modules ?? {});
+              // Modules from the referenced template (if any)
+              const templateModules = env.template
+                ? Object.keys(
+                    (domain.env_templates?.[env.template] ?? config.env_templates?.[env.template])?.modules ?? {},
+                  )
+                : [];
+              return [...envModules, ...templateModules];
+            }),
+        ),
+    );
     const invalidModules = moduleFilter.filter(m => !validModules.has(m));
     if (invalidModules.length > 0) {
       errors.push(`Unknown module(s) in filter: ${invalidModules.join(', ')}. Valid: ${[...validModules].join(', ')}`);

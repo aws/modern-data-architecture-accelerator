@@ -195,4 +195,163 @@ describe('validateFilters', () => {
       ).toThrow(/Unknown domain.*badDomain/);
     });
   });
+
+  describe('env_templates module validation', () => {
+    test('should recognize modules from global env_templates', () => {
+      const config: MdaaConfigContents = {
+        organization: 'test-org',
+        env_templates: {
+          common: {
+            modules: {
+              templateModule: { module_path: '@aws-mdaa/test' },
+            },
+          },
+        },
+        domains: {
+          domain1: {
+            environments: {
+              dev: {
+                account: '111111111111',
+                template: 'common',
+              },
+            },
+          },
+        },
+      };
+      expect(() =>
+        validateFilters({
+          moduleFilter: ['templateModule'],
+          config,
+        }),
+      ).not.toThrow();
+    });
+
+    test('should recognize modules from domain-level env_templates', () => {
+      const config: MdaaConfigContents = {
+        organization: 'test-org',
+        domains: {
+          domain1: {
+            env_templates: {
+              domainTemplate: {
+                modules: {
+                  domainTemplateModule: { module_path: '@aws-mdaa/test' },
+                },
+              },
+            },
+            environments: {
+              dev: {
+                account: '111111111111',
+                template: 'domainTemplate',
+              },
+            },
+          },
+        },
+      };
+      expect(() =>
+        validateFilters({
+          moduleFilter: ['domainTemplateModule'],
+          config,
+        }),
+      ).not.toThrow();
+    });
+
+    test('should prefer domain-level template over global template', () => {
+      const config: MdaaConfigContents = {
+        organization: 'test-org',
+        env_templates: {
+          shared: {
+            modules: {
+              globalModule: { module_path: '@aws-mdaa/test' },
+            },
+          },
+        },
+        domains: {
+          domain1: {
+            env_templates: {
+              shared: {
+                modules: {
+                  domainModule: { module_path: '@aws-mdaa/test' },
+                },
+              },
+            },
+            environments: {
+              dev: {
+                account: '111111111111',
+                template: 'shared',
+              },
+            },
+          },
+        },
+      };
+      // Domain-level template takes precedence, so domainModule should be valid
+      expect(() =>
+        validateFilters({
+          moduleFilter: ['domainModule'],
+          config,
+        }),
+      ).not.toThrow();
+    });
+
+    test('should combine modules from template and environment', () => {
+      const config: MdaaConfigContents = {
+        organization: 'test-org',
+        env_templates: {
+          common: {
+            modules: {
+              templateModule: { module_path: '@aws-mdaa/test' },
+            },
+          },
+        },
+        domains: {
+          domain1: {
+            environments: {
+              dev: {
+                account: '111111111111',
+                template: 'common',
+                modules: {
+                  envModule: { module_path: '@aws-mdaa/test' },
+                },
+              },
+            },
+          },
+        },
+      };
+      // Both template and env modules should be valid
+      expect(() =>
+        validateFilters({
+          moduleFilter: ['templateModule', 'envModule'],
+          config,
+        }),
+      ).not.toThrow();
+    });
+
+    test('should fail for module not in template or environment', () => {
+      const config: MdaaConfigContents = {
+        organization: 'test-org',
+        env_templates: {
+          common: {
+            modules: {
+              templateModule: { module_path: '@aws-mdaa/test' },
+            },
+          },
+        },
+        domains: {
+          domain1: {
+            environments: {
+              dev: {
+                account: '111111111111',
+                template: 'common',
+              },
+            },
+          },
+        },
+      };
+      expect(() =>
+        validateFilters({
+          moduleFilter: ['nonexistent'],
+          config,
+        }),
+      ).toThrow('Unknown module(s) in filter: nonexistent');
+    });
+  });
 });
