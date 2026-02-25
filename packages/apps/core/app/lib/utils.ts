@@ -4,7 +4,10 @@
  */
 
 import * as fs from 'fs';
+import * as path from 'path';
 import * as yaml from 'yaml';
+import { Schema } from 'yaml/types';
+import { CST } from 'yaml/parse-cst';
 import { Node } from 'constructs/lib/construct';
 import { ErrorObject } from 'ajv';
 import { ConfigurationElement } from '@aws-mdaa/config/lib/config';
@@ -24,7 +27,25 @@ export function cleanContextStringValue(value: string): string {
 }
 
 export function readYamlFile(fileName: string): unknown {
-  return yaml.parse(fs.readFileSync(fileName, 'utf8'));
+  return readYamlFileWithIncludes(fileName);
+}
+
+export function readYamlFileWithIncludes(fileName: string): unknown {
+  const baseDir = path.dirname(path.resolve(fileName));
+
+  const includeTag: Schema.CustomTag = {
+    identify: () => false,
+    tag: '!include',
+    resolve: (_doc, cstNode: CST.Node) => {
+      const scalar = cstNode as CST.PlainValue | CST.QuoteValue;
+      const strValue = scalar.strValue;
+      const filePath = typeof strValue === 'string' ? strValue : strValue?.str || '';
+      const includePath = path.resolve(baseDir, filePath);
+      return fs.readFileSync(includePath, 'utf8');
+    },
+  };
+
+  return yaml.parse(fs.readFileSync(fileName, 'utf8'), { customTags: [includeTag] });
 }
 
 export function getNodeValue<T>(node: Node, name: string, defaultValue: T): T {

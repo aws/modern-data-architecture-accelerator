@@ -150,6 +150,34 @@ export interface CustomEndpointConfig {
   readonly route53HostedZoneDomainName?: string;
 }
 
+/**
+ * Q-ENHANCED-INTERFACE
+ * SAML authentication configuration for OpenSearch domain SSO integration
+ *
+ * Use cases: Single Sign-On; Centralized user management; Corporate identity integration
+ *
+ * AWS: Amazon OpenSearch domain SAML authentication configuration
+ */
+export interface SamlAuthenticationConfig {
+  /**
+   * The unique entity ID of the SAML identity provider
+   */
+  readonly idpEntityId: string;
+
+  /**
+   * The SAML metadata XML content from the identity provider.
+   *
+   * REQUIRED: For security reasons, provide the metadata XML content directly.
+   *
+   * To fetch metadata from a URL, use a secure method outside of CDK synth:
+   * ```bash
+   * curl -s "https://your-idp.com/metadata" > saml-metadata.xml
+   * ```
+   * Then reference it in your configuration.
+   */
+  readonly idpMetadataXml: string;
+}
+
 export interface OpensearchDomainProps {
   /**
    * Q-ENHANCED-PROPERTY
@@ -299,6 +327,18 @@ export interface OpensearchDomainProps {
 
   /**
    * Q-ENHANCED-PROPERTY
+   * SAML authentication configuration for SSO integration enabling centralized identity management and corporate authentication. When specified, configures SAML-based authentication for OpenSearch Dashboard access through corporate identity providers like Okta, Azure AD, or AWS IAM Identity Center.
+   *
+   * Use cases: Single Sign-On; Centralized user management; Corporate identity integration; SAML 2.0 authentication; Multi-factor authentication
+   *
+   * AWS: Amazon OpenSearch domain SAML authentication for SSO integration and centralized identity management
+   *
+   * Validation: Must be valid SamlAuthenticationConfig if specified; requires idpEntityId and idpMetadataContent for SAML integration
+   **/
+  readonly samlAuthentication?: SamlAuthenticationConfig;
+
+  /**
+   * Q-ENHANCED-PROPERTY
    * Event notification configuration for OpenSearch domain monitoring enabling operational awareness and alerting. Configures email notifications for domain events, cluster status changes, and operational alerts for proactive monitoring and management.
    *
    * Use cases: Operational monitoring; Event alerting; Domain status tracking; Proactive management; Notification automation
@@ -427,6 +467,8 @@ export class OpensearchL3Construct extends MdaaL3Construct {
           )
         : undefined;
 
+    const samlOptions = this.resolveSamlOptions();
+
     const domainL2Props: MdaaOpensearchDomainProps = {
       masterUserRoleArn: this.dataAdminRole.arn(),
       version: EngineVersion.openSearch(this.props.domain.opensearchEngineVersion),
@@ -444,6 +486,7 @@ export class OpensearchL3Construct extends MdaaL3Construct {
         : undefined,
       automatedSnapshotStartHour: this.props.domain.automatedSnapshotStartHour,
       accessPolicies: this.props.domain.accessPolicies.map(x => new PolicyStatement(x)),
+      samlOptions: samlOptions,
       naming: this.props.naming,
       logGroup: this.logGroup,
     };
@@ -462,6 +505,18 @@ export class OpensearchL3Construct extends MdaaL3Construct {
         props.domain.eventNotifications,
       );
     }
+  }
+
+  private resolveSamlOptions(): { idpEntityId: string; idpMetadataContent: string } | undefined {
+    const samlConfig = this.props.domain.samlAuthentication;
+    if (!samlConfig) {
+      return undefined;
+    }
+
+    return {
+      idpEntityId: samlConfig.idpEntityId,
+      idpMetadataContent: samlConfig.idpMetadataXml,
+    };
   }
 
   private createEventNotifications(

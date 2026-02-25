@@ -143,4 +143,79 @@ domain:
     # List of email addresses to which events will be delivered
     email:
       - example@example.com
+
+  # Optional. SAML authentication configuration for SSO integration
+  samlAuthentication:
+    # Required. The unique entity ID of your SAML identity provider
+    idpEntityId: 'https://idp.example.com/entity-id'
+    
+    # Required. SAML metadata XML content from your identity provider
+    # IMPORTANT: For security reasons, you must provide the metadata XML content directly.
+    # Do NOT use URLs at deployment time.
+    #
+    # To fetch metadata from a URL, use this secure method BEFORE deployment:
+    #   curl --silent --fail --max-time 10 --proto '=https' \
+    #        "https://your-idp.com/metadata" > saml-metadata.xml
+    #
+    # Then reference the file in your configuration:
+    #   idpMetadataXml: |
+    #     <?xml version="1.0" encoding="UTF-8"?>
+    #     <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" ...>
+    #       ...
+    #     </md:EntityDescriptor>
+    #
+    # Or use file reference (see examples below)
+    idpMetadataXml: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://idp.example.com/entity">
+        <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+          <!-- Your IDP metadata content here -->
+        </md:IDPSSODescriptor>
+      </md:EntityDescriptor>
+```
+
+### SAML Authentication Examples
+
+#### Example 1: Inline XML in YAML
+```yaml
+domain:
+  samlAuthentication:
+    idpEntityId: 'https://idp.example.com/entity-id'
+    idpMetadataXml: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://idp.example.com/entity">
+        <!-- Full metadata XML here -->
+      </md:EntityDescriptor>
+```
+
+#### Example 2: Reference External File (Recommended)
+First, navigate to your analytics configuration directory and securely fetch the metadata:
+```bash
+# Navigate to your analytics config directory
+cd generated_config/analytics
+
+# Fetch SAML metadata securely
+curl --silent \
+     --fail \
+     --max-time 10 \
+     --proto '=https' \
+     "https://idp.example.com/api/saml2/service/YOUR-SERVICE-ID/metadata" \
+     > saml-metadata.xml
+```
+
+Then reference it in your `opensearch.yaml`:
+```yaml
+domain:
+  samlAuthentication:
+    idpEntityId: 'https://idp.example.com/logical-idp/YOUR-IDP-ID/'
+    idpMetadataXml: !include saml-metadata.xml
+```
+
+### Security Notes
+- ✅ Always use HTTPS URLs for metadata endpoints
+- ✅ Validate metadata XML before deployment
+- ✅ Store metadata files securely (not in version control if sensitive)
+- ✅ Rotate metadata when IDP certificates change
+- ❌ Never embed credentials in metadata URLs
+- ❌ Never use HTTP (unencrypted) endpoints
 ```

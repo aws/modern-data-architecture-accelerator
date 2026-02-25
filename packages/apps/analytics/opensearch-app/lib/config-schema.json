@@ -489,6 +489,10 @@
                     "description": "Q-ENHANCED-PROPERTY\nOpenSearch engine version for domain deployment enabling version-specific features and compatibility. Specifies the OpenSearch engine version in x.y format where x is major version and y is minor version, controlling available features and compatibility.\n\nUse cases: Version-specific features; Compatibility control; Feature availability; Engine capabilities; Version management\n\nAWS: Amazon OpenSearch domain engine version for feature availability and compatibility\n\nValidation: Must be valid OpenSearch version in x.y format; required; version must be supported by AWS OpenSearch service",
                     "type": "string"
                 },
+                "samlAuthentication": {
+                    "$ref": "#/definitions/SamlAuthenticationConfig",
+                    "description": "Q-ENHANCED-PROPERTY\nSAML authentication configuration for SSO integration enabling centralized identity management and corporate authentication. When specified, configures SAML-based authentication for OpenSearch Dashboard access through corporate identity providers like Okta, Azure AD, or AWS IAM Identity Center.\n\nUse cases: Single Sign-On; Centralized user management; Corporate identity integration; SAML 2.0 authentication; Multi-factor authentication\n\nAWS: Amazon OpenSearch domain SAML authentication for SSO integration and centralized identity management\n\nValidation: Must be valid SamlAuthenticationConfig if specified; requires idpEntityId and idpMetadataContent for SAML integration"
+                },
                 "securityGroupIngress": {
                     "$ref": "#/definitions/SecurityGroupIngressProps",
                     "description": "Q-ENHANCED-PROPERTY\nSecurity group ingress configuration for OpenSearch domain access control enabling network-based access restrictions. Defines the network access rules for the OpenSearch domain, supporting IP-based and security group-based access control patterns.\n\nUse cases: Network access control; Security group-based access; IP-based restrictions; Client connectivity control\n\nAWS: Amazon OpenSearch domain security group ingress rules for network access control\n\nValidation: Must be valid SecurityGroupIngressProps; required; defines network access patterns for domain security\n  *"
@@ -521,6 +525,25 @@
                 "securityGroupIngress",
                 "subnets",
                 "vpcId"
+            ],
+            "type": "object"
+        },
+        "SamlAuthenticationConfig": {
+            "additionalProperties": false,
+            "description": "Q-ENHANCED-INTERFACE\nSAML authentication configuration for OpenSearch domain SSO integration\n\nUse cases: Single Sign-On; Centralized user management; Corporate identity integration\n\nAWS: Amazon OpenSearch domain SAML authentication configuration",
+            "properties": {
+                "idpEntityId": {
+                    "description": "The unique entity ID of the SAML identity provider",
+                    "type": "string"
+                },
+                "idpMetadataXml": {
+                    "description": "The SAML metadata XML content from the identity provider.\n\nREQUIRED: For security reasons, provide the metadata XML content directly.\n\nTo fetch metadata from a URL, use a secure method outside of CDK synth:\n```bash\ncurl -s \"https://your-idp.com/metadata\" > saml-metadata.xml\n```\nThen reference it in your configuration.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "idpEntityId",
+                "idpMetadataXml"
             ],
             "type": "object"
         },

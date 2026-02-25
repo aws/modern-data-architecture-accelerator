@@ -44,7 +44,10 @@ describe('Utils', () => {
       const result = readYamlFile('test.yaml');
 
       expect(mockedFs.readFileSync).toHaveBeenCalledWith('test.yaml', 'utf8');
-      expect(mockedYaml.parse).toHaveBeenCalledWith(mockContent);
+      expect(mockedYaml.parse).toHaveBeenCalledWith(
+        mockContent,
+        expect.objectContaining({ customTags: expect.any(Array) }),
+      );
       expect(result).toBe(mockParsed);
     });
   });

@@ -14,6 +14,7 @@ import {
   EbsOptions,
   CustomEndpointOptions,
   DomainProps,
+  SAMLOptionsProperty,
 } from 'aws-cdk-lib/aws-opensearchservice';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
@@ -164,6 +165,18 @@ export interface MdaaOpensearchDomainProps extends MdaaConstructProps {
    **/
   readonly accessPolicies?: PolicyStatement[];
 
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional SAML authentication configuration for SSO integration enabling centralized identity management. When specified, configures SAML-based authentication for OpenSearch Dashboard access through corporate identity providers.
+   *
+   * Use cases: Single Sign-On; Centralized user management; Corporate identity integration; SAML 2.0 authentication
+   *
+   * AWS: Amazon OpenSearch domain SAML authentication for SSO integration and centralized identity management
+   *
+   * Validation: Must be valid SAMLOptionsProperty if specified; requires idpEntityId and idpMetadataContent
+   **/
+  readonly samlOptions?: SAMLOptionsProperty;
+
   readonly logGroup: MdaaLogGroup;
 }
 
@@ -176,6 +189,15 @@ export interface MdaaOpensearchDomainProps extends MdaaConstructProps {
  */
 export class MdaaOpensearchDomain extends Domain {
   private static setProps(props: MdaaOpensearchDomainProps): DomainProps {
+    const fineGrainedAccessControl = props.samlOptions
+      ? {
+          masterUserArn: props.masterUserRoleArn,
+          samlAuthenticationEnabled: true,
+          samlAuthenticationOptions: props.samlOptions,
+        }
+      : {
+          masterUserArn: props.masterUserRoleArn,
+        };
     const overrideProps = {
       domainName: props.naming.resourceName(props.opensearchDomainName, 28),
       useUnsignedBasicAuth: false,
@@ -197,9 +219,7 @@ export class MdaaOpensearchDomain extends Domain {
         enabled: true,
         kmsKey: props.encryptionKey,
       },
-      fineGrainedAccessControl: {
-        masterUserArn: props.masterUserRoleArn,
-      },
+      fineGrainedAccessControl: fineGrainedAccessControl,
     };
     const allProps = { ...props, ...overrideProps };
 
