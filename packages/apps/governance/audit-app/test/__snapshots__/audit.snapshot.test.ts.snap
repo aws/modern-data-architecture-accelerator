@@ -302,6 +302,18 @@ exports[`audit Snapshot Tests Audit App App Snapshot Test 1`] = `
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -326,24 +338,12 @@ exports[`audit Snapshot Tests Audit App App Snapshot Test 1`] = `
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
               },
               {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
                 "id": "HIPAA.Security-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
               },
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
               },
             ],
           },
@@ -407,6 +407,18 @@ exports[`audit Snapshot Tests Audit App App Snapshot Test 1`] = `
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -431,24 +443,12 @@ exports[`audit Snapshot Tests Audit App App Snapshot Test 1`] = `
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
               },
               {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
                 "id": "HIPAA.Security-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
               },
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
               },
             ],
           },
@@ -739,24 +739,12 @@ exports[`audit Snapshot Tests Audit App App Snapshot Test 1`] = `
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
               },
               {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
                 "id": "HIPAA.Security-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
               },
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
               },
             ],
           },
@@ -793,24 +781,12 @@ exports[`audit Snapshot Tests Audit App App Snapshot Test 1`] = `
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
               },
               {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
                 "id": "HIPAA.Security-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
               },
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
               },
             ],
           },
@@ -1352,6 +1328,18 @@ exports[`audit Snapshot Tests Audit Stack Snapshot Test 1`] = `
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -1376,24 +1364,12 @@ exports[`audit Snapshot Tests Audit Stack Snapshot Test 1`] = `
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
             },
             {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
               "id": "HIPAA.Security-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
             },
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
             },
           ],
         },
@@ -1457,6 +1433,18 @@ exports[`audit Snapshot Tests Audit Stack Snapshot Test 1`] = `
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -1481,24 +1469,12 @@ exports[`audit Snapshot Tests Audit Stack Snapshot Test 1`] = `
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
             },
             {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
               "id": "HIPAA.Security-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
             },
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
             },
           ],
         },
@@ -1789,24 +1765,12 @@ exports[`audit Snapshot Tests Audit Stack Snapshot Test 1`] = `
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
             },
             {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
               "id": "HIPAA.Security-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
             },
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
             },
           ],
         },
@@ -1843,24 +1807,12 @@ exports[`audit Snapshot Tests Audit Stack Snapshot Test 1`] = `
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
             },
             {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
               "id": "HIPAA.Security-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
             },
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] 1. Audit bucket is target for data lake cloudtrail audit logs. 2. Server access logs do not support KMS on targets.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/governance/audit-l3-construct/lib/audit-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
             },
           ],
         },

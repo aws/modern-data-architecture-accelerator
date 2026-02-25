@@ -3189,6 +3189,18 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -3203,18 +3215,6 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
             },
           ],
         },
@@ -3278,6 +3278,18 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -3292,18 +3304,6 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
             },
           ],
         },
@@ -4104,24 +4104,6 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
       "UpdateReplacePolicy": "Retain",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-data-science-team-minilake/bucket/projects/arn",
         "Tags": {
@@ -4142,24 +4124,6 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
       "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-data-science-team-minilake/bucket/projects/name",
         "Tags": {
@@ -13502,6 +13466,18 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -13516,18 +13492,6 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
               },
             ],
           },
@@ -13591,6 +13555,18 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -13605,18 +13581,6 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
               },
             ],
           },
@@ -14417,24 +14381,6 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
         "UpdateReplacePolicy": "Retain",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-data-science-team-app-minilake/bucket/projects/arn",
           "Tags": {
@@ -14455,24 +14401,6 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
         "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/datalake-l3-construct/lib/datalake-bucket-l3-construct.ts:LINE:COL] MDAA Data Lake does not use bucket replication.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-data-science-team-app-minilake/bucket/projects/name",
           "Tags": {

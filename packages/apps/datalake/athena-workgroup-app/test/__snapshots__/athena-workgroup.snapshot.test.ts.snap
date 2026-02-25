@@ -112,6 +112,18 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup App App Snapshot Test 
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -126,18 +138,6 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup App App Snapshot Test 
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
               },
             ],
           },
@@ -201,6 +201,18 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup App App Snapshot Test 
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -215,18 +227,6 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup App App Snapshot Test 
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
               },
             ],
           },
@@ -680,24 +680,6 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup App App Snapshot Test 
         "UpdateReplacePolicy": "Retain",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-athena-workgroup-main/bucket/arn",
           "Tags": {
@@ -718,24 +700,6 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup App App Snapshot Test 
         "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-athena-workgroup-main/bucket/name",
           "Tags": {
@@ -1505,6 +1469,18 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup Stack Snapshot Test 1`
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -1519,18 +1495,6 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup Stack Snapshot Test 1`
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
             },
           ],
         },
@@ -1594,6 +1558,18 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup Stack Snapshot Test 1`
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -1608,18 +1584,6 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup Stack Snapshot Test 1`
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
             },
           ],
         },
@@ -2073,24 +2037,6 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup Stack Snapshot Test 1`
       "UpdateReplacePolicy": "Retain",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-athena-workgroup-main/bucket/arn",
         "Tags": {
@@ -2111,24 +2057,6 @@ exports[`athena-workgroup Snapshot Tests Athena Workgroup Stack Snapshot Test 1`
       "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/datalake/athena-workgroup-l3-construct/lib/athena-workgroup-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-athena-workgroup-main/bucket/name",
         "Tags": {

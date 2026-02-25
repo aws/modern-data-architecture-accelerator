@@ -866,16 +866,6 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
     });
 
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      domainBucket,
-      [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
-        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
-      ],
-      true,
-    );
-
     //Allow data admins to manage the bucket
     const rootPolicy = new RestrictObjectPrefixToRoles({
       s3Bucket: domainBucket,

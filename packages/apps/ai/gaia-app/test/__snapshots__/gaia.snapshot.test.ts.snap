@@ -3508,6 +3508,18 @@ def sort_filter_rules(json_obj):
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -3603,6 +3615,18 @@ def sort_filter_rules(json_obj):
         "Metadata": {
           "cdk_nag": {
             "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
               {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
@@ -15128,6 +15152,18 @@ def sort_filter_rules(json_obj):
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -15220,6 +15256,18 @@ def sort_filter_rules(json_obj):
         "Metadata": {
           "cdk_nag": {
             "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
               {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
@@ -15366,6 +15414,18 @@ def sort_filter_rules(json_obj):
         "Metadata": {
           "cdk_nag": {
             "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
               {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
@@ -15541,6 +15601,18 @@ def sort_filter_rules(json_obj):
         "Metadata": {
           "cdk_nag": {
             "rules_to_suppress": [
+              {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
               {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
@@ -24229,6 +24301,18 @@ def sort_filter_rules(json_obj):
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -24324,6 +24408,18 @@ def sort_filter_rules(json_obj):
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
             {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
@@ -35849,6 +35945,18 @@ def sort_filter_rules(json_obj):
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -35941,6 +36049,18 @@ def sort_filter_rules(json_obj):
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
             {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
@@ -36087,6 +36207,18 @@ def sort_filter_rules(json_obj):
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
             {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
@@ -36262,6 +36394,18 @@ def sort_filter_rules(json_obj):
       "Metadata": {
         "cdk_nag": {
           "rules_to_suppress": [
+            {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
             {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",

@@ -107,6 +107,9 @@ export class MdaaBucket extends Bucket implements IMdaaBucket {
     MdaaNagSuppressions.addCodeResourceSuppressions(
       this,
       [
+        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
+        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
+        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
         {
           id: 'AwsSolutions-S1',
           reason: 'Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.',

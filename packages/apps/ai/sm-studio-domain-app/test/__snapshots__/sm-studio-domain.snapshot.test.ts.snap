@@ -400,6 +400,18 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -414,18 +426,6 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
               },
             ],
           },
@@ -501,6 +501,18 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
           "cdk_nag": {
             "rules_to_suppress": [
               {
+                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "HIPAA.Security-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
+                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+                "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+              },
+              {
                 "id": "AwsSolutions-S1",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
@@ -515,18 +527,6 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
               },
             ],
           },
@@ -919,24 +919,6 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
         "UpdateReplacePolicy": "Retain",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/bucket/arn",
           "Tags": {
@@ -960,24 +942,6 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain App App 
         "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/bucket/name",
           "Tags": {
@@ -5470,6 +5434,18 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -5484,18 +5460,6 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
             },
           ],
         },
@@ -5571,6 +5535,18 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
         "cdk_nag": {
           "rules_to_suppress": [
             {
+              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "HIPAA.Security-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
+              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
+              "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] MDAA does not use bucket replication.",
+            },
+            {
               "id": "AwsSolutions-S1",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
@@ -5585,18 +5561,6 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
             },
           ],
         },
@@ -5989,24 +5953,6 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
       "UpdateReplacePolicy": "Retain",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/bucket/arn",
         "Tags": {
@@ -6030,24 +5976,6 @@ exports[`SageMaker Studio Domain Snapshot Tests SageMaker Studio Domain Stack Sn
       "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/sm-studio-domain-l3-construct/lib/sm-studio-domain-l3-construct.ts:LINE:COL] MDAA does not use bucket replication.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-sagemaker-studio-domain-main/bucket/name",
         "Tags": {

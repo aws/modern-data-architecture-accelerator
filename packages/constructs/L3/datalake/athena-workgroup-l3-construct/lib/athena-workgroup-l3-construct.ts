@@ -13,7 +13,6 @@ import { MdaaBucket, IMdaaBucket } from '@aws-mdaa/s3-constructs';
 
 import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
 import { Effect, IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 export interface AthenaWorkgroupL3ConstructProps extends MdaaL3ConstructProps {
@@ -204,15 +203,6 @@ export class AthenaWorkgroupL3Construct extends MdaaL3Construct {
       encryptionKey: workgroupKmsKey,
       naming: this.props.naming,
     });
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      workgroupBucket,
-      [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
-        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not use bucket replication.' },
-      ],
-      true,
-    );
 
     //Allow data admins to manage the bucket
     const rootPolicy = new RestrictObjectPrefixToRoles({
