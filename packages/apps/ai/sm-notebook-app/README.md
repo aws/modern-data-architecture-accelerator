@@ -38,7 +38,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           sm-notebook: # Module Name can be customized
-            module_path: "@aws-caef/sm-notebook" # Must match module NPM package name
+            module_path: "@aws-mdaa/sm-notebook" # Must match module NPM package name
             module_configs:
               - ./sm-notebook.yaml # Filename/path can be customized
 ```

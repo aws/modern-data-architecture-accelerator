@@ -34,7 +34,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           dataops-lambda: # Module Name can be customized
-            module_path: "@aws-caef/dataops-lambda" # Must match module NPM package name
+            module_path: "@aws-mdaa/dataops-lambda" # Must match module NPM package name
             module_configs:
               - ./dataops-lambda.yaml # Filename/path can be customized
 ```

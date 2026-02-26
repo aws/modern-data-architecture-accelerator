@@ -51,6 +51,6 @@ domains:
         modules:
           # Bedrock Builder module for deploying Bedrock Agents and Knowledge Bases
           customer-support-agent:
-            module_path: "@aws-caef/bedrock-builder"
+            module_path: "@aws-mdaa/bedrock-builder"
             module_configs:
               - ./ai/bedrock-builder.yaml

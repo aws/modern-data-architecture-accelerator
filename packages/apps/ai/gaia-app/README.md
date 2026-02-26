@@ -57,7 +57,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           gaia: # Module Name can be customized
-            module_path: "@aws-caef/gaia" # Must match module NPM package name
+            module_path: "@aws-mdaa/gaia" # Must match module NPM package name
             module_configs:
               - ./gaia.yaml # Filename/path can be customized
 ```

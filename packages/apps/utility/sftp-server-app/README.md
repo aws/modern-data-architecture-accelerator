@@ -27,7 +27,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           sftp-server: # Module Name can be customized
-            module_path: "@aws-caef/sftp-server" # Must match module NPM package name
+            module_path: "@aws-mdaa/sftp-server" # Must match module NPM package name
             module_configs:
               - ./sftp-server.yaml # Filename/path can be customized
 ```

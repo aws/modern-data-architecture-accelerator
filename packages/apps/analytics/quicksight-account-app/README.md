@@ -31,7 +31,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           quicksight-account: # Module Name can be customized
-            module_path: "@aws-caef/quicksight-account" # Must match module NPM package name
+            module_path: "@aws-mdaa/quicksight-account" # Must match module NPM package name
             module_configs:
               - ./quicksight-account.yaml # Filename/path can be customized
 ```

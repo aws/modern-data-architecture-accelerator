@@ -42,7 +42,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           quicksight-project: # Module Name can be customized
-            module_path: "@aws-caef/quicksight-project" # Must match module NPM package name
+            module_path: "@aws-mdaa/quicksight-project" # Must match module NPM package name
             module_configs:
               - ./quicksight-project.yaml # Filename/path can be customized
 ```

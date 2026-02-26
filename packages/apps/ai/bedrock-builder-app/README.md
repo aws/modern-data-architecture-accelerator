@@ -40,7 +40,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           bedrock-builder: # Module Name can be customized
-            module_path: "@aws-caef/bedrock-builder" # Must match module NPM package name
+            module_path: "@aws-mdaa/bedrock-builder" # Must match module NPM package name
             module_configs:
               - ./bedrock-builder.yaml # Filename/path can be customized
 ```

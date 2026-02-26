@@ -41,7 +41,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           dataops-nifi: # Module Name can be customized
-            module_path: "@aws-caef/dataops-nifi" # Must match module NPM package name
+            module_path: "@aws-mdaa/dataops-nifi" # Must match module NPM package name
             module_configs:
               - ./dataops-nifi.yaml # Filename/path can be customized
 ```

@@ -61,7 +61,7 @@ domains:
               - ./glue_csv_parquet/jobs.yaml
           # This module will create an AWS Glue Workflow which will schedule the csv to parquet GLUE ETL Job
           workflow:
-             module_path: "@aws-caef/dataops-workflow"
+             module_path: "@aws-mdaa/dataops-workflow"
              tag_configs:
                - ./tags.yaml
              module_configs:

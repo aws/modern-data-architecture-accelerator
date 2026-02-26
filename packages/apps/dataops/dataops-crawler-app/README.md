@@ -23,7 +23,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           dataops-crawler: # Module Name can be customized
-            module_path: "@aws-caef/dataops-crawler" # Must match module NPM package name
+            module_path: "@aws-mdaa/dataops-crawler" # Must match module NPM package name
             module_configs:
               - ./dataops-crawler.yaml # Filename/path can be customized
 ```

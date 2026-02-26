@@ -32,7 +32,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           glue-catalog: # Module Name can be customized
-            module_path: "@aws-caef/glue-catalog" # Must match module NPM package name
+            module_path: "@aws-mdaa/glue-catalog" # Must match module NPM package name
             module_configs:
               - ./glue-catalog.yaml # Filename/path can be customized
 ```

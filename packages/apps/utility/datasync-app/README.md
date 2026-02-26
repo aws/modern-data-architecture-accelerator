@@ -77,7 +77,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           datasync: # Module Name can be customized
-            module_path: "@aws-caef/datasync" # Must match module NPM package name
+            module_path: "@aws-mdaa/datasync" # Must match module NPM package name
             module_configs:
               - ./datasync.yaml # Filename/path can be customized
 ```

@@ -145,7 +145,7 @@ domains:
             module_configs:
               - ./datalake/datalake.yaml
           genai_accelerator:
-            module_path: "@aws-caef/bedrock-builder"
+            module_path: "@aws-mdaa/bedrock-builder"
             module_configs:
               - ./ai/bedrock-builder.yaml
 ```

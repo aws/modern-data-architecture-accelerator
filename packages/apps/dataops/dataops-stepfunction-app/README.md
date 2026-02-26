@@ -26,7 +26,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           dataops-stepfunction: # Module Name can be customized
-            module_path: "@aws-caef/dataops-stepfunction" # Must match module NPM package name
+            module_path: "@aws-mdaa/dataops-stepfunction" # Must match module NPM package name
             module_configs:
               - ./dataops-stepfunction.yaml # Filename/path can be customized
 ```

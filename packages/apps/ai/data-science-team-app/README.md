@@ -42,7 +42,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           datascience-team: # Module Name can be customized
-            module_path: "@aws-caef/datascience-team" # Must match module NPM package name
+            module_path: "@aws-mdaa/datascience-team" # Must match module NPM package name
             module_configs:
               - ./datascience-team.yaml # Filename/path can be customized
 ```

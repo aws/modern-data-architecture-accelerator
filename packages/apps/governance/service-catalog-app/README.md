@@ -20,7 +20,7 @@ Add the following snippet to your mdaa.yaml under the `modules:` section of a do
 
 ```yaml
           service-catalog: # Module Name can be customized
-            module_path: "@aws-caef/service-catalog" # Must match module NPM package name
+            module_path: "@aws-mdaa/service-catalog" # Must match module NPM package name
             module_configs:
               - ./service-catalog.yaml # Filename/path can be customized
 ```
