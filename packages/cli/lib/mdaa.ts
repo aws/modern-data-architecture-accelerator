@@ -4,12 +4,11 @@
  */
 
 import { MdaaDeploy } from './mdaa-cli';
+// nosemgrep
+import * as pjson from '../package.json';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const commandLineArgs = require('command-line-args');
-
-// nosemgrep
-import * as pjson from '../package.json';
 
 const optionDefinitions = [
   {
@@ -142,6 +141,26 @@ const optionDefinitions = [
     alias: 'f',
     type: Boolean,
     description: 'Continue execution after failure',
+  },
+  {
+    name: 'cdk-out',
+    alias: 'k',
+    type: String,
+    description: 'Optional - Override the CDK output directory (default uses working-dir/cdk.out)',
+  },
+  {
+    name: 'baseline',
+    alias: 'B',
+    type: String,
+    description:
+      'Optional - For diff action, compare against baseline templates in this directory instead of deployed stacks',
+  },
+  {
+    name: 'diff-out',
+    alias: 'D',
+    type: String,
+    description:
+      'Optional - For diff action, write diff output for each module to files in this directory instead of console',
   },
   {
     name: 'help',

@@ -11,7 +11,8 @@
 - Users can now provide variables placeholders in the predeploy and postdeploy hook commands
 - CLI now validates `-d`, `-e`, and `-m` filter values upfront and errors if they don't match any configured domains, environments, or modules
 - CLI now supports !include tag to reference external files in YAML configurations
-- Simplified installer stack: removed CodePipeline/S3 source the need for CodeStar ARN from user, and replaced `npm install` with running `mdaa` from npmjs.org.
+- Simplified installer stack: removed user requirements for CodePipeline/S3 source and CodeStar ARN, and replaced `npm install` with running `mdaa` from npmjs.org.
+- Added baseline diff support: new `--cdk-out`, `--baseline`, and `--diff-out` CLI flags enable comparing CloudFormation templates against stored baselines without requiring AWS deployment
 
 ## [1.4.0] - 2026-01-30
 

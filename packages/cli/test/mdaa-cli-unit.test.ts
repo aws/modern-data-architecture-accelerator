@@ -840,3 +840,298 @@ describe('addOptionalCdkContextObjParam', () => {
     expect(cdkCmd).toEqual([]);
   });
 });
+
+describe('MdaaDeploy baseline diff options', () => {
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe('cdk-out option', () => {
+    it('should use custom cdk-out directory when provided', () => {
+      const options = {
+        action: 'synth',
+        testing: 'true',
+        'cdk-out': '/custom/cdk/out',
+      };
+      const mdaaDeploy = new MdaaDeploy(options, [], {
+        organization: 'test-org',
+        domains: {},
+      });
+
+      // Access private property to verify it was set
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((mdaaDeploy as any).cdkOutDir).toContain('/custom/cdk/out');
+    });
+
+    it('should use default working dir when cdk-out not provided', () => {
+      const options = {
+        action: 'synth',
+        testing: 'true',
+      };
+      const mdaaDeploy = new MdaaDeploy(options, [], {
+        organization: 'test-org',
+        domains: {},
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((mdaaDeploy as any).cdkOutDir).toBeUndefined();
+    });
+  });
+
+  describe('diff-out option', () => {
+    it('should set diffOutDir when provided', () => {
+      const options = {
+        action: 'diff',
+        testing: 'true',
+        'diff-out': '/custom/diff/out',
+      };
+      const mdaaDeploy = new MdaaDeploy(options, [], {
+        organization: 'test-org',
+        domains: {},
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((mdaaDeploy as any).diffOutDir).toContain('/custom/diff/out');
+    });
+  });
+});
+
+// Note: Testing resolveConfigFilePath validation requires complex fs mocking that conflicts with
+// other parts of the MdaaDeploy constructor. The validation logic is tested indirectly
+// through integration tests. The key behaviors are:
+// - If config path is a directory, throws "Config path '...' is a directory"
+// - If config path doesn't exist, throws "Cannot open config file at '...'"
+
+describe('MdaaDeploy.validateBaselineDir', () => {
+  let mockExistsSync: jest.SpyInstance;
+  let mockStatSync: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mockExistsSync = jest.spyOn(require('fs'), 'existsSync'); // eslint-disable-line @typescript-eslint/no-require-imports
+    mockStatSync = jest.spyOn(require('fs'), 'statSync'); // eslint-disable-line @typescript-eslint/no-require-imports
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should throw error when baseline directory does not exist', () => {
+    mockExistsSync.mockImplementation((path: string) => {
+      return !path.includes('nonexistent');
+    });
+    mockStatSync.mockReturnValue({ isDirectory: () => false });
+
+    expect(() => {
+      new MdaaDeploy({ action: 'diff', baseline: '/nonexistent/baseline' }, [], {
+        organization: 'test-org',
+        domains: {},
+      });
+    }).toThrow("Baseline directory '/nonexistent/baseline' does not exist");
+  });
+
+  it('should throw error when baseline path is not a directory', () => {
+    mockExistsSync.mockReturnValue(true);
+    mockStatSync.mockImplementation((path: string) => {
+      if (path.includes('baseline')) {
+        return { isDirectory: () => false };
+      }
+      return { isDirectory: () => false };
+    });
+
+    expect(() => {
+      new MdaaDeploy({ action: 'diff', baseline: '/path/to/file.txt' }, [], {
+        organization: 'test-org',
+        domains: {},
+      });
+    }).toThrow("Baseline path '/path/to/file.txt' is not a directory");
+  });
+});
+
+describe('MdaaDeploy.findTemplateFile', () => {
+  let mdaaDeploy: MdaaDeploy;
+  let mockExistsSync: jest.SpyInstance;
+  let mockStatSync: jest.SpyInstance;
+  let mockReaddirSync: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mockExistsSync = jest.spyOn(require('fs'), 'existsSync'); // eslint-disable-line @typescript-eslint/no-require-imports
+    mockStatSync = jest.spyOn(require('fs'), 'statSync'); // eslint-disable-line @typescript-eslint/no-require-imports
+    mockReaddirSync = jest.spyOn(require('fs'), 'readdirSync'); // eslint-disable-line @typescript-eslint/no-require-imports
+
+    mockExistsSync.mockReturnValue(true);
+    mockStatSync.mockReturnValue({ isDirectory: () => false });
+
+    mdaaDeploy = new MdaaDeploy({ action: 'diff', testing: 'true' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should find template file in directory', () => {
+    mockExistsSync.mockReturnValue(true);
+    mockReaddirSync.mockReturnValue(['manifest.json', 'tree.json', 'my-stack.template.json', 'cdk.out']);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = (mdaaDeploy as any).findTemplateFile('/path/to/baseline');
+
+    expect(result).toContain('my-stack.template.json');
+  });
+
+  it('should return undefined when no template file exists', () => {
+    mockExistsSync.mockReturnValue(true);
+    mockReaddirSync.mockReturnValue(['manifest.json', 'tree.json', 'cdk.out']);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = (mdaaDeploy as any).findTemplateFile('/path/to/baseline');
+
+    expect(result).toBeUndefined();
+  });
+
+  it('should return undefined when baseline path does not exist', () => {
+    mockExistsSync.mockReturnValue(false);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = (mdaaDeploy as any).findTemplateFile('/nonexistent/path');
+
+    expect(result).toBeUndefined();
+  });
+});
+
+describe('MdaaDeploy.execCmdWithDiffCapture', () => {
+  let mockSpawnSync: jest.SpyInstance;
+  let mockExistsSync: jest.SpyInstance;
+  let mockStatSync: jest.SpyInstance;
+  let mockWriteFileSync: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.spyOn(packageHelper, 'loadLocalPackages').mockReturnValue({});
+    mockSpawnSync = jest.spyOn(childProcess, 'spawnSync');
+    mockExistsSync = jest.spyOn(require('fs'), 'existsSync'); // eslint-disable-line @typescript-eslint/no-require-imports
+    mockStatSync = jest.spyOn(require('fs'), 'statSync'); // eslint-disable-line @typescript-eslint/no-require-imports
+    mockWriteFileSync = jest.spyOn(require('fs'), 'writeFileSync').mockImplementation(jest.fn()); // eslint-disable-line @typescript-eslint/no-require-imports
+
+    mockExistsSync.mockReturnValue(true);
+    mockStatSync.mockReturnValue({ isDirectory: () => false });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should capture diff output and write to file', () => {
+    mockSpawnSync.mockReturnValue({
+      stdout: 'Stack TestStack\n[+] AWS::S3::Bucket NewBucket',
+      stderr: '',
+      status: 1,
+    });
+
+    // Create instance without testing mode to actually execute
+    const mdaaDeploy = new MdaaDeploy({ action: 'diff', 'diff-out': '/diff/output' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+    jest.spyOn(mdaaDeploy, 'execCmd').mockImplementation(jest.fn());
+
+    const moduleConfig = {
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).execCmdWithDiffCapture('cdk diff', moduleConfig);
+
+    expect(mockWriteFileSync).toHaveBeenCalled();
+    const writeCall = mockWriteFileSync.mock.calls[0];
+    expect(writeCall[0]).toContain('diff.txt');
+    expect(writeCall[1]).toContain('Stack TestStack');
+  });
+
+  it('should detect changes when exit code is non-zero', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn());
+
+    mockSpawnSync.mockReturnValue({
+      stdout: 'Stack TestStack\n[+] AWS::S3::Bucket NewBucket',
+      stderr: '',
+      status: 1,
+    });
+
+    const mdaaDeploy = new MdaaDeploy({ action: 'diff', 'diff-out': '/diff/output' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+    jest.spyOn(mdaaDeploy, 'execCmd').mockImplementation(jest.fn());
+
+    const moduleConfig = {
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).execCmdWithDiffCapture('cdk diff', moduleConfig);
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Changes detected'));
+    consoleSpy.mockRestore();
+  });
+
+  it('should detect no changes when output contains "no differences"', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn());
+
+    mockSpawnSync.mockReturnValue({
+      stdout: 'Stack TestStack\nThere were no differences',
+      stderr: '',
+      status: 0,
+    });
+
+    const mdaaDeploy = new MdaaDeploy({ action: 'diff', 'diff-out': '/diff/output' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+    jest.spyOn(mdaaDeploy, 'execCmd').mockImplementation(jest.fn());
+
+    const moduleConfig = {
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).execCmdWithDiffCapture('cdk diff', moduleConfig);
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('No changes'));
+    consoleSpy.mockRestore();
+  });
+
+  it('should skip execution in test mode', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn());
+
+    const mdaaDeploy = new MdaaDeploy({ action: 'diff', testing: 'true', 'diff-out': '/diff/output' }, [], {
+      organization: 'test-org',
+      domains: {},
+    });
+
+    const moduleConfig = {
+      domainName: 'test-domain',
+      envName: 'test-env',
+      moduleName: 'test-module',
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mdaaDeploy as any).execCmdWithDiffCapture('cdk diff', moduleConfig);
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Testing Mode'));
+    expect(mockSpawnSync).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+});

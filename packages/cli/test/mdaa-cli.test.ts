@@ -1272,3 +1272,21 @@ describe('Module Path Validation', () => {
     expect(() => mdaa.deploy()).not.toThrow();
   });
 });
+
+test('should use execCmdWithDiffCapture when action is diff with diff-out', () => {
+  const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+  const options = {
+    testing: 'true',
+    action: 'diff',
+    'diff-out': '/tmp/diff-output',
+    working_dir: 'test/test_working',
+    config: './test/resources/mdaa.yaml',
+  };
+
+  const mdaa = new MdaaDeploy(options, ['test-extra-cdk-param']);
+  expect(() => mdaa.deploy()).not.toThrow();
+  expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Testing Mode (diff capture)'));
+
+  consoleSpy.mockRestore();
+});

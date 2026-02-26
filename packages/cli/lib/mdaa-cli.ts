@@ -12,9 +12,15 @@ import {
   MdaaCustomNaming,
   TagElement,
 } from '@aws-mdaa/config';
+import {
+  analyzeScriptFile,
+  executeCommand,
+  executeCommandWithCapture,
+  logExecutionError,
+  logImmediate,
+} from './command-utils';
 import * as fs from 'fs';
 import * as path from 'path';
-import { analyzeScriptFile, executeCommand, logExecutionError, logImmediate } from './command-utils';
 import {
   DomainEffectiveConfig,
   EffectiveConfig,
@@ -61,6 +67,9 @@ export class MdaaDeploy {
   private readonly localPackages: { [packageName: string]: string };
   private readonly cdkPushdown?: string[];
   private readonly cdkVerbose?: boolean;
+  private readonly cdkOutDir?: string;
+  private readonly baselineDir?: string;
+  private readonly diffOutDir?: string;
   private readonly testMode: boolean;
   private readonly noFail: boolean;
 
@@ -96,6 +105,9 @@ export class MdaaDeploy {
     this.devopsMode = this.booleanOption(options, 'devops');
     this.cdkPushdown = cdkPushdown;
     this.cdkVerbose = this.booleanOption(options, 'cdk_verbose');
+    this.cdkOutDir = options['cdk-out'] ? path.resolve(options['cdk-out']) : undefined;
+    this.baselineDir = options['baseline'] ? this.validateBaselineDir(options['baseline']) : undefined;
+    this.diffOutDir = options['diff-out'] ? path.resolve(options['diff-out']) : undefined;
 
     const configFileName = options['config'] ?? './mdaa.yaml';
     this.config = this.loadConfig(configFileName, configContents);
@@ -145,22 +157,53 @@ export class MdaaDeploy {
   private loadConfig(configFileName: string, configContents: ConfigurationElement | undefined): MdaaCliConfig {
     if (configContents) {
       return new MdaaCliConfig({ configContents: configContents });
-    } else {
-      if (!fs.existsSync(configFileName)) {
-        if (configFileName == './mdaa.yaml') {
-          if (fs.existsSync('./caef.yaml')) {
-            console.warn("Default config file found at 'caef.yaml'.");
-            return new MdaaCliConfig({ filename: './caef.yaml' });
-          } else {
-            throw new Error("Cannot open default config file at 'mdaa.yaml' or 'caef.yaml'");
-          }
-        } else {
-          throw new Error(`Cannot open config file at ${configFileName}`);
-        }
-      } else {
-        return new MdaaCliConfig({ filename: configFileName });
-      }
     }
+
+    // Resolve the config file path
+    const resolvedConfigFile = this.resolveConfigFilePath(configFileName);
+    return new MdaaCliConfig({ filename: resolvedConfigFile });
+  }
+
+  private resolveConfigFilePath(configFileName: string): string {
+    // Check if path exists
+    if (fs.existsSync(configFileName)) {
+      if (fs.statSync(configFileName).isDirectory()) {
+        throw new Error(
+          `Config path '${configFileName}' is a directory. Please provide a file path (e.g., ${configFileName}/mdaa.yaml)`,
+        );
+      }
+      return configFileName;
+    }
+
+    // For default config, try legacy caef.yaml fallback
+    if (configFileName === './mdaa.yaml' && fs.existsSync('./caef.yaml')) {
+      console.warn("Default config file found at 'caef.yaml'.");
+      return './caef.yaml';
+    }
+
+    // File not found
+    const defaultMsg = configFileName === './mdaa.yaml' ? " or 'caef.yaml'" : '';
+    throw new Error(`Cannot open config file at '${configFileName}'${defaultMsg}`);
+  }
+
+  private validateBaselineDir(baselinePath: string): string {
+    const resolved = path.resolve(baselinePath);
+    if (!fs.existsSync(resolved)) {
+      throw new Error(`Baseline directory '${baselinePath}' does not exist`);
+    }
+    if (!fs.statSync(resolved).isDirectory()) {
+      throw new Error(`Baseline path '${baselinePath}' is not a directory`);
+    }
+    return resolved;
+  }
+
+  private findTemplateFile(baselinePath: string): string | undefined {
+    if (!fs.existsSync(baselinePath)) {
+      return undefined;
+    }
+    const files = fs.readdirSync(baselinePath);
+    const templateFile = files.find(f => f.endsWith('.template.json'));
+    return templateFile ? path.join(baselinePath, templateFile) : undefined;
   }
 
   public sanityCheck() {
@@ -315,17 +358,13 @@ export class MdaaDeploy {
       })
       .map(entry => entry[0]);
     if (pipelines.length == 1) {
-      console.log(
-        `Module ${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName} will be deployed via pipeline ${pipelines[0]}`,
-      );
+      console.log(`Module ${this.modulePrefix(moduleEffectiveConfig)} will be deployed via pipeline ${pipelines[0]}`);
     } else if (pipelines.length > 1) {
       throw new Error(
-        `Module ${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName} matches multiple pipeline filters: ${pipelines}`,
+        `Module ${this.modulePrefix(moduleEffectiveConfig)} matches multiple pipeline filters: ${pipelines}`,
       );
     } else {
-      console.warn(
-        `WARNING: Module ${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName} matches no pipeline filters`,
-      );
+      console.warn(`WARNING: Module ${this.modulePrefix(moduleEffectiveConfig)} matches no pipeline filters`);
     }
   }
 
@@ -370,7 +409,7 @@ export class MdaaDeploy {
           this.moduleFilter?.includes(moduleEffectiveConfig.moduleName),
       )
       .forEach(moduleEffectiveConfig => {
-        const logPrefix = `${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName}`;
+        const logPrefix = this.modulePrefix(moduleEffectiveConfig);
 
         logImmediate(`Module ${logPrefix}: Prepping packages`);
         const moduleDeploymentConfig = this.prepModule(moduleEffectiveConfig);
@@ -438,9 +477,7 @@ export class MdaaDeploy {
   }
 
   private createModuleTfWorkingConfig(moduleConfig: ModuleEffectiveConfig): ModuleEffectiveConfig {
-    const moduleWorkingDir = path.resolve(
-      `${this.workingDir}/terraform/${moduleConfig.domainName}/${moduleConfig.envName}/${moduleConfig.moduleName}`,
-    );
+    const moduleWorkingDir = path.resolve(`${this.workingDir}/terraform/${this.modulePrefix(moduleConfig)}`);
     this.execCmd(`mkdir -p '${moduleWorkingDir}'`);
     this.execCmd(`cp -r ${path.resolve(moduleConfig.modulePath)}/* ${moduleWorkingDir}`);
 
@@ -462,9 +499,7 @@ export class MdaaDeploy {
 
     const modulePath = path.resolve(moduleConfig.modulePath);
 
-    console.log(
-      `Module ${moduleConfig.domainName}/${moduleConfig.envName}/${moduleConfig.moduleName}: Resolved path to: ${modulePath}`,
-    );
+    console.log(`Module ${this.modulePrefix(moduleConfig)}: Resolved path to: ${modulePath}`);
 
     const preppedModuleConfig: ModuleEffectiveConfig = {
       ...moduleConfig,
@@ -629,7 +664,7 @@ export class MdaaDeploy {
     const finalModuleCdkAppNpmPackage = moduleEffectiveConfig.modulePath.replace(/^@/, '').includes('@')
       ? moduleEffectiveConfig.modulePath
       : initialCdkAppNpmPackage;
-    const logPrefix = `${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName}`;
+    const logPrefix = this.modulePrefix(moduleEffectiveConfig);
     const [modulePath, localModule] = this.prepNpmPackage(
       logPrefix,
       finalModuleCdkAppNpmPackage.replace(/caef/, 'mdaa'),
@@ -664,23 +699,25 @@ export class MdaaDeploy {
       if ('DEPLOY_STAGE' in moduleMdaaDeployConfig) {
         const deployStage = moduleMdaaDeployConfig['DEPLOY_STAGE'];
         console.log(
-          `Module ${moduleDeployConfig.domainName}/${moduleDeployConfig.envName}/${moduleDeployConfig.moduleName}: Set deploy stage to ${deployStage} by mdaa.config.json`,
+          `Module ${this.modulePrefix(moduleDeployConfig)}: Set deploy stage to ${deployStage} by mdaa.config.json`,
         );
         return deployStage;
       }
     }
     console.log(
-      `Module ${moduleDeployConfig.domainName}/${moduleDeployConfig.envName}/${moduleDeployConfig.moduleName}: Set deploy stage to ${MdaaDeploy.DEFAULT_DEPLOY_STAGE} by default`,
+      `Module ${this.modulePrefix(moduleDeployConfig)}: Set deploy stage to ${MdaaDeploy.DEFAULT_DEPLOY_STAGE} by default`,
     );
     return MdaaDeploy.DEFAULT_DEPLOY_STAGE;
+  }
+
+  private modulePrefix(config: ModuleEffectiveConfig): string {
+    return `${config.domainName}/${config.envName}/${config.moduleName}`;
   }
 
   public deployModule(moduleDeploymentConfig: ModuleDeploymentConfig) {
     if (!this.devopsMode) {
       console.log(`\n-----------------------------------------------------------`);
-      console.log(
-        `Module ${moduleDeploymentConfig.domainName}/${moduleDeploymentConfig.envName}/${moduleDeploymentConfig.moduleName}: Running ${this.action}`,
-      );
+      console.log(`Module ${this.modulePrefix(moduleDeploymentConfig)}: Running ${this.action}`);
       console.log(`-----------------------------------------------------------`);
     }
 
@@ -692,10 +729,10 @@ export class MdaaDeploy {
     let deploymentSuccess = true;
     try {
       this.reverse(moduleDeploymentConfig.moduleCmds).forEach(moduleCmd => {
-        console.log(
-          `Module ${moduleDeploymentConfig.domainName}/${moduleDeploymentConfig.envName}/${moduleDeploymentConfig.moduleName}: Running cmd:\n${moduleCmd}`,
-        );
-        this.execCmd(`cd '${moduleDeploymentConfig.modulePath}' && ${moduleCmd}`);
+        console.log(`Module ${this.modulePrefix(moduleDeploymentConfig)}: Running cmd:\n${moduleCmd}`);
+
+        // For diff action with diffOutDir, capture output to file
+        this.execModuleCmd(moduleCmd, moduleDeploymentConfig);
       });
     } catch (error) {
       deploymentSuccess = false;
@@ -711,8 +748,40 @@ export class MdaaDeploy {
     }
   }
 
+  private execModuleCmd(moduleCmd: string, moduleDeploymentConfig: ModuleDeploymentConfig): void {
+    const cmd = `cd '${moduleDeploymentConfig.modulePath}' && ${moduleCmd}`;
+    if (this.action === 'diff' && this.diffOutDir) {
+      this.execCmdWithDiffCapture(cmd, moduleDeploymentConfig);
+    } else {
+      this.execCmd(cmd);
+    }
+  }
+
+  private execCmdWithDiffCapture(cmd: string, moduleDeploymentConfig: ModuleDeploymentConfig): void {
+    if (this.testMode) {
+      console.log(`Testing Mode (diff capture):\n ${cmd}`);
+      return;
+    }
+
+    const { stdout, exitCode } = executeCommandWithCapture(cmd);
+
+    // Write diff output to file
+    const diffOutPath = `${this.diffOutDir}/${this.config.contents.organization}/${this.modulePrefix(moduleDeploymentConfig)}`;
+    this.execCmd(`mkdir -p '${diffOutPath}'`);
+    fs.writeFileSync(`${diffOutPath}/diff.txt`, stdout);
+
+    // Print summary to console
+    const hasChanges = exitCode !== 0 || !stdout.includes('There were no differences');
+    const modulePrefix = this.modulePrefix(moduleDeploymentConfig);
+    if (hasChanges) {
+      console.log(`Module ${modulePrefix}: Changes detected - see ${diffOutPath}/diff.txt`);
+    } else {
+      console.log(`Module ${modulePrefix}: No changes`);
+    }
+  }
+
   private executeHook(moduleDeploymentConfig: ModuleDeploymentConfig, hookType: HookType, hookConfig: HookConfig) {
-    const modulePrefix = `${moduleDeploymentConfig.domainName}/${moduleDeploymentConfig.envName}/${moduleDeploymentConfig.moduleName}`;
+    const modulePrefix = this.modulePrefix(moduleDeploymentConfig);
 
     if (!hookConfig.command) {
       throw new Error(`Module ${modulePrefix}: ${hookType} hook defined but no command specified`);
@@ -774,9 +843,9 @@ export class MdaaDeploy {
       cdkCmd.push(`-a 'npx ${this.npmDebug ? '-d' : ''} ${moduleEffectiveConfig.modulePath}/'`);
     }
 
-    cdkCmd.push(
-      `-o '${this.workingDir}/cdk.out/${this.config.contents.organization}/${moduleEffectiveConfig.domainName}/${moduleEffectiveConfig.envName}/${moduleEffectiveConfig.moduleName}'`,
-    );
+    // Use cdkOutDir if provided, otherwise use default workingDir
+    const cdkOutBase = this.cdkOutDir ?? `${this.workingDir}/cdk.out`;
+    cdkCmd.push(`-o '${cdkOutBase}/${this.config.contents.organization}/${this.modulePrefix(moduleEffectiveConfig)}'`);
     cdkCmd.push(`-c 'org=${this.config.contents.organization}'`);
     cdkCmd.push(`-c 'env=${moduleEffectiveConfig.envName}'`);
     cdkCmd.push(`-c 'module_name=${moduleEffectiveConfig.moduleName}'`);
@@ -829,7 +898,22 @@ export class MdaaDeploy {
       cdkCmd.push(...this.cdkPushdown);
     }
 
+    this.addBaselineTemplateParam(cdkCmd, moduleEffectiveConfig);
+
     return cdkEnv.length > 0 ? `${cdkEnv.join(' && ')} && ${cdkCmd.join(' \\\n\t')}` : cdkCmd.join(' \\\n\t');
+  }
+
+  private addBaselineTemplateParam(cdkCmd: string[], moduleEffectiveConfig: ModuleEffectiveConfig): void {
+    if (this.action !== 'diff' || !this.baselineDir) {
+      return;
+    }
+    const baselineTemplatePath = `${this.baselineDir}/${this.config.contents.organization}/${this.modulePrefix(moduleEffectiveConfig)}`;
+    const templateFile = this.findTemplateFile(baselineTemplatePath);
+    if (templateFile) {
+      cdkCmd.push(`--template '${templateFile}'`);
+    } else {
+      console.warn(`Warning: No template file found in ${baselineTemplatePath}`);
+    }
   }
 
   private addOptionalCdkContextStringParam(cdkCmd: string[], context_key: string, context_value?: string) {

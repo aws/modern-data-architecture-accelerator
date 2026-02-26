@@ -39,6 +39,32 @@ export function executeCommand(cmd: string): void {
   });
 }
 
+export interface CapturedOutput {
+  stdout: string;
+  exitCode: number;
+}
+
+export function executeCommandWithCapture(cmd: string): CapturedOutput {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { spawnSync } = require('child_process');
+
+  // Use shell to execute the command
+  const result = spawnSync(cmd, {
+    shell: true,
+    encoding: 'utf-8',
+    env: process.env,
+    stdio: ['inherit', 'pipe', 'pipe'],
+  });
+
+  // Combine stdout and stderr
+  const output = (result.stdout || '') + (result.stderr || '');
+
+  return {
+    stdout: output,
+    exitCode: result.status ?? 0,
+  };
+}
+
 export function logExecutionError(execError: unknown): void {
   if (!isExecutionError(execError)) {
     return;
@@ -86,8 +112,8 @@ export function logScriptStats(scriptPath: string, stats: fs.Stats): void {
   console.error(`File exists: true`);
   console.error(`File size: ${stats.size} bytes`);
   console.error(`File permissions: ${stats.mode.toString(8)}`);
-  console.error(`Is executable: ${!!(stats.mode & parseInt('111', 8))}`);
-  console.error(`Is readable: ${!!(stats.mode & parseInt('444', 8))}`);
+  console.error(`Is executable: ${!!(stats.mode & Number.parseInt('111', 8))}`);
+  console.error(`Is readable: ${!!(stats.mode & Number.parseInt('444', 8))}`);
 }
 
 export function logScriptError(scriptPath: string, fsError: unknown): void {
