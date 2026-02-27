@@ -3,16 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaNagSuppressions } from '@aws-mdaa/construct';
+import { MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct';
 import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
-import { MdaaRole, MdaaManagedPolicy } from '@aws-mdaa/iam-constructs';
+import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaBoto3LayerVersion } from '@aws-mdaa/lambda-constructs';
 import { DefaultStackSynthesizer, Duration, Stack } from 'aws-cdk-lib';
 import { Effect, IRole, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
 export interface LakeFormationSettingsL3ConstructProps extends MdaaL3ConstructProps {
@@ -72,6 +71,8 @@ export interface LakeFormationSettingsL3ConstructProps extends MdaaL3ConstructPr
    * Validation: Boolean value if provided; enables DataZone admin role creation for integrated governance capabilities
    **/
   readonly createDataZoneAdminRole?: boolean;
+
+  readonly dataZoneAdminTrustAccounts?: string[];
 }
 
 /**
@@ -307,7 +308,23 @@ export class LakeFormationSettingsL3Construct extends MdaaL3Construct {
       },
     ]);
 
-    new StringParameter(manageAccessRole, 'ssm', {
+    this.props.dataZoneAdminTrustAccounts
+      ?.filter(account => account != this.account)
+      .forEach(account => {
+        manageAccessRole.assumeRolePolicy?.addStatements(
+          new PolicyStatement({
+            actions: ['sts:AssumeRole'],
+            principals: [new ServicePrincipal('datazone.amazonaws.com')],
+            conditions: {
+              StringEquals: {
+                'aws:SourceAccount': account,
+              },
+            },
+          }),
+        );
+      });
+
+    new MdaaStringParameter(manageAccessRole, 'ssm', {
       parameterName: LakeFormationSettingsL3Construct.DZ_MANAGE_ACCESS_ROLE_SSM_PATH,
       stringValue: manageAccessRole.roleArn,
     });

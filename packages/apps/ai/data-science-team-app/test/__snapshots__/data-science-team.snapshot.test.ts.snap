@@ -384,7 +384,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Export": {
-        "Name": "test-org:test-domain:test-data-science-team:security-group:testorgtestenvtestdomaintestdatascienceteam:id",
+        "Name": "test-org:test-domain:test-data-science-team:security-group:id",
       },
       "Value": {
         "Fn::GetAtt": [
@@ -4283,124 +4283,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
                         [
                           {
                             "Fn::GetAtt": [
-                              "RoleResTeamAthenaResultsAccessrw0",
-                              "id",
-                            ],
-                          },
-                          ":*",
-                        ],
-                      ],
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatascientistidC96584B6F00A464EAD1953AFF4B05118Parameter",
-                          },
-                          ":*",
-                        ],
-                      ],
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Fn::GetAtt": [
-                              "RoleResTeamAthenaResultsAccessrw2",
-                              "id",
-                            ],
-                          },
-                          ":*",
-                        ],
-                      ],
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Fn::GetAtt": [
-                              "RoleResTeamAthenaResultsAccessrw0",
-                              "id",
-                            ],
-                          },
-                          ":*",
-                        ],
-                      ],
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatascientistidC96584B6F00A464EAD1953AFF4B05118Parameter",
-                          },
-                          ":*",
-                        ],
-                      ],
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Fn::GetAtt": [
-                              "RoleResTeamAthenaResultsAccessrw2",
-                              "id",
-                            ],
-                          },
-                          ":*",
-                        ],
-                      ],
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Fn::GetAtt": [
                               "RoleResTeamLifecycleAssetsAccessrw0",
-                              "id",
-                            ],
-                          },
-                          ":*",
-                        ],
-                      ],
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Fn::GetAtt": [
-                              "RoleResTeamAthenaResultsAccessrw0",
-                              "id",
-                            ],
-                          },
-                          ":*",
-                        ],
-                      ],
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatascientistidC96584B6F00A464EAD1953AFF4B05118Parameter",
-                          },
-                          ":*",
-                        ],
-                      ],
-                    },
-                    {
-                      "Fn::Join": [
-                        "",
-                        [
-                          {
-                            "Fn::GetAtt": [
-                              "RoleResTeamAthenaResultsAccessrw2",
                               "id",
                             ],
                           },
@@ -7791,7 +7674,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "GroupDescription": "test-org-test-env-test-domain-test-data-science-team/team/security-group",
-        "GroupName": "test-org-test-env-test-domain-test-data-science-team-test-org-test-env-test-domain-test-data-science-team",
+        "GroupName": "test-org-test-env-test-domain-test-data-science-team",
         "SecurityGroupEgress": [
           {
             "CidrIp": "255.255.255.255/32",
@@ -7911,7 +7794,7 @@ exports[`data-science-team Snapshot Tests Data Science Team Stack Snapshot Test 
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
-        "Name": "/test-org/test-domain/test-data-science-team/security-group/test-org-test-env-test-domain-test-data-science-team/id",
+        "Name": "/test-org/test-domain/test-data-science-team/security-group/id",
         "Tags": {
           "mdaa_cdk_app": "datascience-team",
           "mdaa_domain": "test-domain",
@@ -10661,7 +10544,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Export": {
-          "Name": "test-org:test-domain:test-data-science-team-app:security-group:testorgtestenvtestdomaintestdatascienceteamapp:id",
+          "Name": "test-org:test-domain:test-data-science-team-app:security-group:id",
         },
         "Value": {
           "Fn::GetAtt": [
@@ -14560,124 +14443,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
                           [
                             {
                               "Fn::GetAtt": [
-                                "RoleResTeamAthenaResultsAccessrw0",
-                                "id",
-                              ],
-                            },
-                            ":*",
-                          ],
-                        ],
-                      },
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            {
-                              "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatascientistidC96584B6F00A464EAD1953AFF4B05118Parameter",
-                            },
-                            ":*",
-                          ],
-                        ],
-                      },
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            {
-                              "Fn::GetAtt": [
-                                "RoleResTeamAthenaResultsAccessrw2",
-                                "id",
-                              ],
-                            },
-                            ":*",
-                          ],
-                        ],
-                      },
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            {
-                              "Fn::GetAtt": [
-                                "RoleResTeamAthenaResultsAccessrw0",
-                                "id",
-                              ],
-                            },
-                            ":*",
-                          ],
-                        ],
-                      },
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            {
-                              "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatascientistidC96584B6F00A464EAD1953AFF4B05118Parameter",
-                            },
-                            ":*",
-                          ],
-                        ],
-                      },
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            {
-                              "Fn::GetAtt": [
-                                "RoleResTeamAthenaResultsAccessrw2",
-                                "id",
-                              ],
-                            },
-                            ":*",
-                          ],
-                        ],
-                      },
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            {
-                              "Fn::GetAtt": [
                                 "RoleResTeamLifecycleAssetsAccessrw0",
-                                "id",
-                              ],
-                            },
-                            ":*",
-                          ],
-                        ],
-                      },
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            {
-                              "Fn::GetAtt": [
-                                "RoleResTeamAthenaResultsAccessrw0",
-                                "id",
-                              ],
-                            },
-                            ":*",
-                          ],
-                        ],
-                      },
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            {
-                              "Ref": "SsmParameterValuetestorgtestdomaingeneratedroledatascientistidC96584B6F00A464EAD1953AFF4B05118Parameter",
-                            },
-                            ":*",
-                          ],
-                        ],
-                      },
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            {
-                              "Fn::GetAtt": [
-                                "RoleResTeamAthenaResultsAccessrw2",
                                 "id",
                               ],
                             },
@@ -18068,7 +17834,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "GroupDescription": "test-org-test-env-test-domain-test-data-science-team-app/team/security-group",
-          "GroupName": "test-org-test-env-test-domain-test-data-science-team-app-test-org-test-env-test-domain-test-data-science-team-app",
+          "GroupName": "test-org-test-env-test-domain-test-data-science-team-app",
           "SecurityGroupEgress": [
             {
               "CidrIp": "255.255.255.255/32",
@@ -18188,7 +17954,7 @@ exports[`data-science-team Snapshot Tests DataScience Team App App Snapshot Test
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "/test-org/test-domain/test-data-science-team-app/security-group/test-org-test-env-test-domain-test-data-science-team-app/id",
+          "Name": "/test-org/test-domain/test-data-science-team-app/security-group/id",
           "Tags": {
             "mdaa_cdk_app": "datascience-team",
             "mdaa_domain": "test-domain",

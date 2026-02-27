@@ -177,3 +177,112 @@ team:
           - sh $ASSETS_DIR/testing/test.sh
 
 ```
+
+---
+
+## Troubleshooting
+
+### Custom Blueprint Deployment Errors: Permission Issues
+
+**Error Patterns:**
+
+1. **Access denied to blueprint template:**
+   ```
+   EnvironmentError(Code=403, Message=Access denied to blueprint template for blueprintId: <blueprint-id>)
+   ```
+
+2. **CloudFormation stack creation failures:**
+   ```
+   Stack creation failed with User: arn:aws:sts::<account>:assumed-role/<provisioning-role>/AmazonDataZoneEnvironmentDeployer-<account> 
+   is not authorized to perform: <action> on resource: <resource>
+   ```
+
+**Root Cause:**
+
+When deploying custom SageMaker/DataZone blueprints (created via the `datascience-team` module), DataZone assumes the provisioning role to deploy the blueprint's CloudFormation template. The provisioning role must have all permissions required to:
+
+1. Read the blueprint CloudFormation template from S3
+2. Read SSM parameters referenced in the template
+3. Create and manage all AWS resources defined in the blueprint (SageMaker Studio Domain, S3 buckets, IAM roles, Athena workgroups, etc.)
+4. Pass IAM roles to AWS services
+5. Execute CloudFormation operations
+
+**Solution:**
+
+Ensure your provisioning role policy includes all necessary permissions. At minimum, the role needs:
+
+```yaml
+# S3 permissions for reading blueprint CloudFormation templates
+- Sid: S3BlueprintTemplateAccess
+  Effect: Allow
+  Action:
+    - s3:GetObject
+    - s3:GetObjectVersion
+  Resource:
+    - "arn:{{partition}}:s3:::*-sagemaker-sagemaker-d-*/blueprints/*"
+
+# SSM permissions for reading parameters during blueprint deployment
+- Sid: SSMParameterAccess
+  Effect: Allow
+  Action:
+    - ssm:GetParameter
+    - ssm:GetParameters
+    - ssm:GetParametersByPath
+  Resource:
+    - "arn:{{partition}}:ssm:{{region}}:{{account}}:parameter/{{org}}/*"
+
+# IAM permissions for passing roles to services during blueprint deployment
+- Sid: IAMPassRole
+  Effect: Allow
+  Action:
+    - iam:PassRole
+    - iam:GetRole
+  Resource:
+    - "arn:{{partition}}:iam::{{account}}:role/*"
+  Condition:
+    StringEquals:
+      "iam:PassedToService":
+        - sagemaker.amazonaws.com
+        - athena.amazonaws.com
+        - glue.amazonaws.com
+
+# CloudFormation permissions for blueprint stack deployment
+- Sid: CloudFormationAccess
+  Effect: Allow
+  Action:
+    - cloudformation:CreateStack
+    - cloudformation:UpdateStack
+    - cloudformation:DeleteStack
+    - cloudformation:DescribeStacks
+    - cloudformation:DescribeStackEvents
+    - cloudformation:DescribeStackResources
+    - cloudformation:GetTemplate
+    - cloudformation:ValidateTemplate
+  Resource:
+    - "arn:{{partition}}:cloudformation:{{region}}:{{account}}:stack/DataZone-Env-*/*"
+```
+
+**Additional service-specific permissions** may be required depending on what resources your blueprint creates. Review the CloudFormation error messages to identify missing permissions.
+
+**Deployment Steps:**
+
+1. Update your provisioning role policy with the required permissions
+2. Redeploy the roles module containing your provisioning role
+3. Verify the permissions are applied: 
+   ```bash
+   aws iam get-policy-version --policy-arn <policy-arn> --version-id <version-id> --region <region> --no-paginate
+   ```
+4. Redeploy the project-profile or project module that uses the custom blueprint
+
+**Why CloudTrail may not show these errors:**
+
+DataZone often validates permissions internally before making AWS API calls. Permission denials during these internal checks may not appear in CloudTrail logs, making diagnosis more challenging. Always check CloudFormation stack events for detailed error messages.
+
+**Related Configuration:**
+
+- The provisioning role is specified in your SageMaker domain configuration via `provisioningRoleArn`
+- Custom blueprints are created by the `datascience-team` module and referenced in project profiles
+- The domain bucket follows the naming pattern: `<prefix>-sagemaker-sagemaker-d-<suffix>`
+- Blueprint CloudFormation templates are stored at: `s3://<domain-bucket>/blueprints/<blueprint-name>.json`
+
+```

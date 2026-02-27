@@ -1502,6 +1502,7 @@ export class Ec2L3Construct extends MdaaL3Construct {
       : undefined;
 
     const configRefValueTranformerProps: MdaaConfigRefValueTransformerProps = {
+      naming: this.props.naming,
       org: this.node.tryGetContext('org'),
       domain: this.node.tryGetContext('domain'),
       env: this.node.tryGetContext('env'),

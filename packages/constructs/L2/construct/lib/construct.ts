@@ -6,7 +6,7 @@
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import { Construct } from 'constructs';
 import { CfnOutput, Token } from 'aws-cdk-lib';
-import { ParameterTier, StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { ParameterTier, StringParameter, StringParameterProps } from 'aws-cdk-lib/aws-ssm';
 
 export interface MdaaConstructProps {
   /**
@@ -105,7 +105,7 @@ export class MdaaParamAndOutput extends Construct {
 
     if (createParams) {
       console.log(`Creating SSM Param: ${this.paramName}`);
-      this.param = new StringParameter(this, `ssm`, {
+      this.param = new MdaaStringParameter(this, `ssm`, {
         parameterName: this.paramName,
         stringValue: props.value,
         simpleName: Token.isUnresolved(this.paramName),
@@ -119,5 +119,14 @@ export class MdaaParamAndOutput extends Construct {
         : `${props.resourceType}:${props.name}`;
       new CfnOutput(this, `out`, { value: props.value, exportName: props.naming.exportName(exportName) });
     }
+  }
+}
+
+/**
+ * A StringParameter which automatically handles tokens in the path
+ */
+export class MdaaStringParameter extends StringParameter {
+  constructor(scope: Construct, id: string, props: StringParameterProps) {
+    super(scope, id, { ...props, simpleName: Token.isUnresolved(props.parameterName) });
   }
 }

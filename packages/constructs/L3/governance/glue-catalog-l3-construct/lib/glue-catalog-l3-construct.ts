@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct';
 import { MdaaCatalogSettings } from '@aws-mdaa/glue-constructs';
-import { MdaaKmsKey, DECRYPT_ACTIONS, ENCRYPT_ACTIONS } from '@aws-mdaa/kms-constructs';
-import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
+import { DECRYPT_ACTIONS, ENCRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { CustomResource, Duration } from 'aws-cdk-lib';
 import { CfnDataCatalog } from 'aws-cdk-lib/aws-athena';
 import {
@@ -19,9 +20,9 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { CfnResourceShare, CfnResourceShareProps } from 'aws-cdk-lib/aws-ram';
+import { ParameterTier } from 'aws-cdk-lib/aws-ssm';
 import { Provider } from 'aws-cdk-lib/custom-resources';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 
 const GLUE_READ_ACTIONS: string[] = ['glue:Get*', 'glue:List*'];
@@ -175,7 +176,7 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
           policyHashParam: this.props.naming.ssmPath('policyHash'),
         },
       });
-      new StringParameter(this.scope, 'catalog-resource-policy-hash-ssm', {
+      new MdaaStringParameter(this.scope, 'catalog-resource-policy-hash-ssm', {
         parameterName: this.props.naming.ssmPath('policyHash'),
         stringValue: catalogResourcePolicy.getAttString('PolicyHash'),
       });
@@ -206,6 +207,21 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
       catalogKmsKeyConsumerAccounts,
     );
 
+    const catalogKmsKeyParam = new MdaaStringParameter(catalogKmsKey, 'account-key-ssm', {
+      parameterName: GlueCatalogL3Construct.ACCOUNT_KEY_SSM_PATH,
+      stringValue: catalogKmsKey.keyArn,
+      tier: ParameterTier.ADVANCED,
+    });
+
+    if (catalogKmsKeyConsumerAccounts.length > 0) {
+      // Create RAM share for catalog KMS Key SSM parameters
+      const keyParamRamShareProps: CfnResourceShareProps = {
+        name: this.props.naming.resourceName(`glue-catalog-kms-key-param`),
+        resourceArns: [catalogKmsKeyParam.parameterArn],
+        principals: catalogKmsKeyConsumerAccounts,
+      };
+      new CfnResourceShare(scope, `glue-catalog-kms-key-param`, keyParamRamShareProps);
+    }
     new MdaaCatalogSettings(this.scope, 'glue-catalog-settings', {
       naming: this.props.naming,
       catalogId: this.account,
@@ -342,10 +358,7 @@ export class GlueCatalogL3Construct extends MdaaL3Construct {
       });
       catalogKmsKey.addToResourcePolicy(writePrincipalPolicyStatement);
     }
-    new StringParameter(catalogKmsKey, 'account-key-ssm', {
-      parameterName: GlueCatalogL3Construct.ACCOUNT_KEY_SSM_PATH,
-      stringValue: catalogKmsKey.keyArn,
-    });
+
     return catalogKmsKey;
   }
 

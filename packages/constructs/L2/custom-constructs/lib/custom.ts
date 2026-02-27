@@ -6,7 +6,7 @@
 import { MdaaConstructProps, MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { CustomResource, CustomResourceProps, Duration, Stack } from 'aws-cdk-lib';
-import { Policy, PolicyDocument, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
+import { IManagedPolicy, IRole, Policy, PolicyDocument, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
 import { Code, ILayerVersion, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Provider } from 'aws-cdk-lib/custom-resources';
 
@@ -44,7 +44,8 @@ export interface MdaaCustomResourceProps extends MdaaConstructProps {
    * Validation: Must be valid handler string format; required; defines function entry point for resource operations
    **/
   readonly handler: string;
-  readonly handlerRolePolicyStatements: PolicyStatement[];
+  readonly handlerRolePolicyStatements?: PolicyStatement[];
+  readonly handlerRoleManagedPolicies?: IManagedPolicy[];
   readonly handlerPolicySuppressions?: NagPackSuppression[];
   readonly handlerFunctionSuppressions?: NagPackSuppression[];
   readonly handlerProps: ConfigurationElement;
@@ -87,6 +88,8 @@ export interface MdaaCustomResourceProps extends MdaaConstructProps {
    * Validation: Must be object with string keys and values if provided; provides handler runtime configuration
    *   **/
   readonly environment?: { [key: string]: string };
+
+  readonly handlerRole?: IRole;
 }
 
 export class MdaaCustomResource extends CustomResource {
@@ -98,30 +101,25 @@ export class MdaaCustomResource extends CustomResource {
 
     const handlerFunctionName = props.naming.resourceName(`${props.resourceType}-handler`, 64);
 
+    if (props.handlerRole && props.handlerRolePolicyStatements) {
+      throw new Error('Cannot specify both handlerRole and handlerRolePolicyStatements');
+    }
+
     const handlerRoleResourceId = `custom-${props.resourceType}-handler-role`;
-    const existingHandlerRole = stack.node.tryFindChild(handlerRoleResourceId) as Role;
-    const handlerRole = existingHandlerRole
-      ? existingHandlerRole
-      : new MdaaLambdaRole(stack, handlerRoleResourceId, {
-          roleName: `${props.resourceType}-handler`,
-          naming: props.naming,
-          logGroupNames: [handlerFunctionName],
-          createParams: false,
-          createOutputs: false,
-        });
+    const existingHandlerRole = props.handlerRole ?? (stack.node.tryFindChild(handlerRoleResourceId) as IRole);
+    const handlerRole =
+      existingHandlerRole ||
+      new MdaaLambdaRole(stack, handlerRoleResourceId, {
+        roleName: `${props.resourceType}-handler`,
+        naming: props.naming,
+        logGroupNames: [handlerFunctionName],
+        createParams: false,
+        createOutputs: false,
+      });
 
-    const handlerPolicyResourceId = `custom-${props.resourceType}-handler-policy`;
-    const existingPolicy = stack.node.tryFindChild(handlerPolicyResourceId) as Policy;
-    const handlerPolicy = existingPolicy
-      ? existingPolicy
-      : new Policy(stack, handlerPolicyResourceId, {
-          policyName: `${props.resourceType}-handler`,
-          document: new PolicyDocument({ statements: props.handlerRolePolicyStatements }),
-        });
+    const handlerPolicy = this.resolveHandlerPolicy(stack, props);
 
-    if (existingPolicy) {
-      handlerPolicy.addStatements(...props.handlerRolePolicyStatements);
-    } else {
+    if (handlerPolicy) {
       handlerRole.attachInlinePolicy(handlerPolicy);
       MdaaNagSuppressions.addCodeResourceSuppressions(
         handlerPolicy,
@@ -143,27 +141,29 @@ export class MdaaCustomResource extends CustomResource {
         true,
       );
     }
-
+    props.handlerRoleManagedPolicies?.forEach(policy => {
+      handlerRole.addManagedPolicy(policy);
+    });
     const handlerFunctionResourceId = `custom-${props.resourceType}-handler-function`;
     const existingHandlerFunction = stack.node.tryFindChild(handlerFunctionResourceId) as MdaaLambdaFunction;
-    this.handlerFunctionPlaceHolder = existingHandlerFunction
-      ? existingHandlerFunction
-      : new MdaaLambdaFunction(stack, handlerFunctionResourceId, {
-          naming: props.naming,
-          runtime: props.runtime,
-          code: props.code,
-          handler: props.handler,
-          role: handlerRole,
-          functionName: `${props.resourceType}-handler`,
-          layers: props.handlerLayers,
-          timeout: props.handlerTimeout ? props.handlerTimeout : Duration.seconds(60),
-          vpc: props.vpc,
-          vpcSubnets: props.subnet,
-          securityGroups: props.securityGroup ? [props.securityGroup] : undefined,
-          environment: props.environment,
-        });
+    this.handlerFunctionPlaceHolder =
+      existingHandlerFunction ||
+      new MdaaLambdaFunction(stack, handlerFunctionResourceId, {
+        naming: props.naming,
+        runtime: props.runtime,
+        code: props.code,
+        handler: props.handler,
+        role: handlerRole,
+        functionName: `${props.resourceType}-handler`,
+        layers: props.handlerLayers,
+        timeout: props.handlerTimeout ?? Duration.seconds(60),
+        vpc: props.vpc,
+        vpcSubnets: props.subnet,
+        securityGroups: props.securityGroup ? [props.securityGroup] : undefined,
+        environment: props.environment,
+      });
 
-    this.handlerFunctionPlaceHolder.node.addDependency(handlerPolicy);
+    if (handlerPolicy) this.handlerFunctionPlaceHolder.node.addDependency(handlerPolicy);
 
     MdaaNagSuppressions.addCodeResourceSuppressions(
       this.handlerFunctionPlaceHolder,
@@ -206,16 +206,16 @@ export class MdaaCustomResource extends CustomResource {
     const providerFunctionName = props.naming.resourceName(`${props.resourceType}-provider`, 64);
     const providerRoleResourceId = `custom-${props.resourceType}-provider-role`;
     const existingProviderRole = stack.node.tryFindChild(providerRoleResourceId) as Role;
-    const providerRole = existingProviderRole
-      ? existingProviderRole
-      : new MdaaLambdaRole(stack, providerRoleResourceId, {
-          description: 'CR Role',
-          roleName: `${props.resourceType}-provider`,
-          naming: props.naming,
-          logGroupNames: [providerFunctionName],
-          createParams: false,
-          createOutputs: false,
-        });
+    const providerRole =
+      existingProviderRole ||
+      new MdaaLambdaRole(stack, providerRoleResourceId, {
+        description: 'CR Role',
+        roleName: `${props.resourceType}-provider`,
+        naming: props.naming,
+        logGroupNames: [providerFunctionName],
+        createParams: false,
+        createOutputs: false,
+      });
 
     MdaaNagSuppressions.addCodeResourceSuppressions(
       providerRole,
@@ -237,13 +237,13 @@ export class MdaaCustomResource extends CustomResource {
     );
     const providerResourceId = `custom-${props.resourceType}-provider`;
     const existingProvider = stack.node.tryFindChild(providerResourceId) as Provider;
-    const provider = existingProvider
-      ? existingProvider
-      : new Provider(stack, providerResourceId, {
-          onEventHandler: this.handlerFunctionPlaceHolder,
-          frameworkOnEventRole: providerRole,
-          providerFunctionName: providerFunctionName,
-        });
+    const provider =
+      existingProvider ||
+      new Provider(stack, providerResourceId, {
+        onEventHandler: this.handlerFunctionPlaceHolder,
+        frameworkOnEventRole: providerRole,
+        providerFunctionName: providerFunctionName,
+      });
 
     MdaaNagSuppressions.addCodeResourceSuppressions(
       provider,
@@ -303,6 +303,22 @@ export class MdaaCustomResource extends CustomResource {
         : props.handlerProps,
     };
     return crProps;
+  }
+
+  private static resolveHandlerPolicy(stack: Stack, props: MdaaCustomResourceProps): Policy | undefined {
+    const handlerPolicyResourceId = `custom-${props.resourceType}-handler-policy`;
+    const existingPolicy = stack.node.tryFindChild(handlerPolicyResourceId) as Policy;
+    if (existingPolicy && props.handlerRolePolicyStatements) {
+      existingPolicy.addStatements(...props.handlerRolePolicyStatements);
+      return existingPolicy;
+    }
+    if (props.handlerRolePolicyStatements) {
+      return new Policy(stack, handlerPolicyResourceId, {
+        policyName: `${props.resourceType}-handler`,
+        document: new PolicyDocument({ statements: props.handlerRolePolicyStatements }),
+      });
+    }
+    return undefined;
   }
 
   constructor(scope: Construct, id: string, props: MdaaCustomResourceProps) {

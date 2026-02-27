@@ -79,6 +79,8 @@ export interface LakeFormationSettingsConfigContents extends MdaaBaseConfigConte
    * Validation: Boolean value; creates dedicated DataZone admin role when enabled; enables cross-service governance
    **/
   readonly createDataZoneAdminRole?: boolean;
+
+  readonly dataZoneAdminTrustAccounts?: string[];
 }
 
 export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeFormationSettingsConfigContents> {
@@ -87,6 +89,7 @@ export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeF
   public readonly iamAllowedPrincipalsDefault: boolean;
   public readonly iamIdentityCenter?: IdentityCenterConfig;
   public readonly createDataZoneAdminRole?: boolean;
+  readonly dataZoneAdminTrustAccounts?: string[];
   /** Cross account sharing version. If not specified, defaults to latest. */
   public readonly crossAccountVersion?: string;
 
@@ -99,5 +102,6 @@ export class LakeFormationSettingsConfigParser extends MdaaAppConfigParser<LakeF
     this.iamIdentityCenter = this.configContents.iamIdentityCenter;
     this.crossAccountVersion = this.configContents.crossAccountVersion;
     this.createDataZoneAdminRole = this.configContents.createDataZoneAdminRole;
+    this.dataZoneAdminTrustAccounts = this.configContents.dataZoneAdminTrustAccounts;
   }
 }

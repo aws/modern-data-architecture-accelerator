@@ -4612,18 +4612,6 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
             ],
           },
         },
@@ -4712,18 +4700,6 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
               },
             ],
           },
@@ -5121,24 +5097,6 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
         "UpdateReplacePolicy": "Retain",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-datawarehouse-main/bucket/warehouse/arn",
           "Tags": {
@@ -5159,24 +5117,6 @@ exports[`datawarehouse Snapshot Tests Data Warehouse App App Snapshot Test 1`] =
         "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-datawarehouse-main/bucket/warehouse/name",
           "Tags": {
@@ -10443,18 +10383,6 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
           ],
         },
       },
@@ -10543,18 +10471,6 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
             },
           ],
         },
@@ -10952,24 +10868,6 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
       "UpdateReplacePolicy": "Retain",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-datawarehouse-main/bucket/warehouse/arn",
         "Tags": {
@@ -10990,24 +10888,6 @@ exports[`datawarehouse Snapshot Tests Data Warehouse Stack Snapshot Test 1`] = `
       "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/analytics/datawarehouse-l3-construct/lib/datawarehouse-l3-construct.ts:LINE:COL] MDAA Warehouse bucket does not use bucket replication.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-datawarehouse-main/bucket/warehouse/name",
         "Tags": {

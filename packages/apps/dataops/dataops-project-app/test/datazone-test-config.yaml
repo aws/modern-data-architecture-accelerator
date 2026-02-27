@@ -1,0 +1,25 @@
+# Arns for IAM role which will be authoring code within the project
+dataEngineerRoles:
+  - name: data-engineer
+
+# Arns for IAM roles which will be provided to the projects's resources (IE bucket)
+dataAdminRoles:
+  - name: Admin
+
+projectExecutionRoles:
+  - name: glue-role
+
+# (Optional) - Generate a DataZone/Project for this DataOps Project
+datazone:
+  project:
+    # The SSM Parameter containing domain config details for a DataZone Domain created by the MDAA Datazone module
+    domainConfigSSMParam: /test-org/test-domain/test-datazone/domain/test-domain/config
+
+databases:
+  # DataZone Project Data Source
+  test-database-datazone:
+    description: Test DataZone Database
+    # Creates a datasource in the DataZone Project associated with this DataOps Project
+    createDatazoneDatasource: true
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test-sus

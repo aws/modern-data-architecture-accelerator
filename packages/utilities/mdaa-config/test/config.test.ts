@@ -19,6 +19,7 @@ import {
   ConfigurationElement,
 } from '../lib';
 import * as console from 'console';
+import { MdaaDefaultResourceNaming, MdaaResourceNamingConfig } from '@aws-mdaa/naming';
 
 class TestKeyTransformer implements IMdaaConfigValueTransformer {
   public transformValue(value: string, contextPath?: string | undefined): string {
@@ -141,8 +142,18 @@ describe('Test MdaaConfigRefValueTransformer', () => {
   };
   const testApp = new App({ context: context });
   const testStack = new Stack(testApp, 'testStack');
+  const namingProps: MdaaResourceNamingConfig = {
+    cdkNode: new App().node,
+    org: 'test-org',
+    env: 'test-env',
+    domain: 'test-domain',
+    moduleName: 'test-module',
+  };
+
+  const naming = new MdaaDefaultResourceNaming(namingProps);
 
   const transformerProps: MdaaConfigRefValueTransformerProps = {
+    naming: naming,
     org: 'testorg',
     domain: 'testdomain',
     env: 'testenv',
@@ -152,6 +163,7 @@ describe('Test MdaaConfigRefValueTransformer', () => {
 
   const serviceCatalogConfig: MdaaServiceCatalogProductConfig = {
     portfolio_arn: 'dummy-portfolio-arn',
+    portfolio_bucket_name: 'test-bucket',
     owner: 'owner',
     name: 'test product name',
     launch_role_name: 'dummy-launch-role',
@@ -264,17 +276,21 @@ describe('Test MdaaConfigRefValueTransformer', () => {
     const transformedValue = new MdaaConfigRefValueTransformer(transformerProps).transformValue('{{org}}');
     expect(transformedValue).toBe('testorg');
   });
+
+  const paramTransformerProps: MdaaConfigParamRefValueTransformerProps = {
+    ...transformerProps,
+    paramProps: Object.fromEntries(
+      Object.entries(serviceCatalogConfig.parameters || {}).map(([paramName, props]) => {
+        return [paramName, props.props];
+      }),
+    ),
+  };
   test('Param', () => {
-    const transformedValue = new MdaaConfigParamRefValueTransformer(transformerProps).transformValue(
+    const transformedValue = new MdaaConfigParamRefValueTransformer(paramTransformerProps).transformValue(
       '{{param:paramname}}',
     );
     expect(transformedValue).toMatch(/\${Token\[TOKEN.\d+]}/);
   });
-
-  const paramTransformerProps: MdaaConfigParamRefValueTransformerProps = {
-    ...transformerProps,
-    serviceCatalogConfig: serviceCatalogConfig,
-  };
 
   test('ParamNotInServiceCatalogConfig', () => {
     const transformedValue = new MdaaConfigParamRefValueTransformer(paramTransformerProps).transformValue(
@@ -302,37 +318,37 @@ describe('Test MdaaConfigRefValueTransformer', () => {
     expect(transformedValue).toMatch(/#{Token\[TOKEN.\d+]}/);
   });
   test('StringParamAnnotation', () => {
-    const transformedValue = new MdaaConfigParamRefValueTransformer(transformerProps).transformValue(
+    const transformedValue = new MdaaConfigParamRefValueTransformer(paramTransformerProps).transformValue(
       '{{param:string:string_param}}',
     );
     expect(transformedValue).toMatch(/\${Token\[TOKEN.\d+]}/);
   });
   test('NumberParamAnnotation', () => {
-    const transformedValue = new MdaaConfigParamRefValueTransformer(transformerProps).transformValue(
+    const transformedValue = new MdaaConfigParamRefValueTransformer(paramTransformerProps).transformValue(
       '{{param:number:number_param}}',
     );
     expect(typeof transformedValue).toBe('number');
   });
   test('ListParamAnnotation', () => {
-    const transformedValue = new MdaaConfigParamRefValueTransformer(transformerProps).transformValue(
+    const transformedValue = new MdaaConfigParamRefValueTransformer(paramTransformerProps).transformValue(
       '{{param:list:list_param}}',
     );
     expect(transformedValue).toMatch(/#{Token\[TOKEN.\d+]}/);
   });
   test('PrefixedNumberParam', () => {
-    const transformedValue = new MdaaConfigParamRefValueTransformer(transformerProps).transformValue(
+    const transformedValue = new MdaaConfigParamRefValueTransformer(paramTransformerProps).transformValue(
       'testing{{param:number:number_param}}',
     );
     expect(transformedValue).toMatch(/^testing-\d+(\.\d+)?(e\+\d+)?$/);
   });
   test('PrefixedListParam', () => {
-    const transformedValue = new MdaaConfigParamRefValueTransformer(transformerProps).transformValue(
+    const transformedValue = new MdaaConfigParamRefValueTransformer(paramTransformerProps).transformValue(
       'testing{{param:list:list_param}}',
     );
     expect(transformedValue).toMatch(/testing#{Token\[TOKEN.\d+]}/);
   });
   test('NestedResolutionWithinNumberParam', () => {
-    const transformedValue = new MdaaConfigParamRefValueTransformer(transformerProps).transformValue(
+    const transformedValue = new MdaaConfigParamRefValueTransformer(paramTransformerProps).transformValue(
       '{{param:number:{{org}}_param}}',
     );
     expect(typeof transformedValue).toBe('number');

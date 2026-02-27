@@ -26,5 +26,5 @@ export function validateResourceName(resourceName: string): string {
 }
 
 export function isException(name: string): boolean {
-  return name.indexOf('Token[TOKEN') > -1 || name.endsWith('vpc-');
+  return name.includes('Token[TOKEN') || name.endsWith('vpc-');
 }

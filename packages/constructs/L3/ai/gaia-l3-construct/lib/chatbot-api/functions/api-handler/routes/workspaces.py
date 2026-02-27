@@ -33,7 +33,6 @@ class SearchMetric(str, Enum):
 class SupportedWorkspaceLanguages(str, Enum):
     en = "english"
     fr = "french"
-    # TODO: add additional languages here
     es = "spanish"
 
 

@@ -300,11 +300,10 @@ export class S3DatalakeBucketL3Construct extends MdaaL3Construct {
         .flatMap(ap => [...ap.readRoleIds, ...ap.readWriteRoleIds, ...ap.readWriteSuperRoleIds]);
     });
 
-    this.kmsKey = this.createDataLakeKmsKey([
-      dataLakeFolderFunctionRole.roleId,
-      lakeFormationRole.roleId,
-      ...allRoleIds,
-    ]);
+    // Deduplicate role IDs to avoid duplicate entries in KMS key policy
+    const uniqueRoleIds = [...new Set([dataLakeFolderFunctionRole.roleId, lakeFormationRole.roleId, ...allRoleIds])];
+
+    this.kmsKey = this.createDataLakeKmsKey(uniqueRoleIds);
 
     // Iterate over all the buckets we need to create
     this.buckets = Object.fromEntries(

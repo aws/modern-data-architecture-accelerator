@@ -4,7 +4,7 @@
  */
 
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { MdaaStringParameter } from '@aws-mdaa/construct';
 import { Construct } from 'constructs';
 
 export class DataOpsProjectUtils {
@@ -47,7 +47,7 @@ export class DataOpsProjectUtils {
   ) {
     const ssmPath = naming.ssmPath(`${projectName}/${key}`, false, false);
     console.log(`Creating Project SSM Param: ${ssmPath}`);
-    new StringParameter(scope, `${projectName}/${key}`, {
+    new MdaaStringParameter(scope, `${projectName}/${key}`, {
       parameterName: ssmPath,
       stringValue: value,
     });

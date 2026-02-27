@@ -48,6 +48,13 @@ export function readYamlFileWithIncludes(fileName: string): unknown {
   return yaml.parse(fs.readFileSync(fileName, 'utf8'), { customTags: [includeTag] });
 }
 
+export function filterConfigurationElement<T extends ConfigurationElement, K extends keyof T>(
+  obj: T,
+  keys: K[],
+): Pick<T, K> {
+  return Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key as K))) as Pick<T, K>;
+}
+
 export function getNodeValue<T>(node: Node, name: string, defaultValue: T): T {
   const value = node.tryGetContext(name);
   return value ? JSON.parse(value) : defaultValue;

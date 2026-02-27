@@ -59,8 +59,6 @@ describe('Studio Domain Mandatory Props', () => {
   new SagemakerStudioDomainL3Construct(stack, 'domain', constructProps);
   const template = Template.fromStack(stack);
 
-  console.log(JSON.stringify(template.toJSON(), undefined, 2));
-
   testApp.checkCdkNagCompliance(stack);
 
   test('Validate if Domain is created', () => {

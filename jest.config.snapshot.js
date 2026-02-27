@@ -19,4 +19,12 @@ module.exports = {
   coverageDirectory: 'coverage-snapshots',
 
   testPathIgnorePatterns: ['/node_modules/', '/lib/', '/dist/', '\\.d\\.ts$'],
+
+  globals: {
+    'ts-jest': {
+      tsconfig: {
+        resolveJsonModule: true,
+      },
+    },
+  },
 };

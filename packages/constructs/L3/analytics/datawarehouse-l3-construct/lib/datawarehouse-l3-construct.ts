@@ -3,14 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaSecurityGroup, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
-import { IMdaaRole, MdaaRole } from '@aws-mdaa/iam-constructs';
-import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
-import { DECRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
-import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
-import { MdaaRedshiftCluster, MdaaRedshiftClusterParameterGroup } from '@aws-mdaa/redshift-constructs';
-import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
-import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import {
   Cluster,
   ClusterSubnetGroup,
@@ -19,6 +11,16 @@ import {
   User,
   UserProps,
 } from '@aws-cdk/aws-redshift-alpha';
+import { ConfigurationElement } from '@aws-mdaa/config';
+import { MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct';
+import { MdaaSecurityGroup, MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
+import { IMdaaRole, MdaaRole } from '@aws-mdaa/iam-constructs';
+import { MdaaResolvableRole, MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { DECRYPT_ACTIONS, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
+import { MdaaRedshiftCluster, MdaaRedshiftClusterParameterGroup } from '@aws-mdaa/redshift-constructs';
+import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
+import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { Duration, Fn, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Port, Protocol, Subnet, Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
@@ -35,10 +37,7 @@ import { BlockPublicAccess, Bucket, BucketEncryption, CfnBucket, IBucket } from 
 import { CfnSecret, ISecret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
-import { ConfigurationElement } from '@aws-mdaa/config';
 import { ensureNodeType, sanitizeScheduledActionName } from './utils';
 
 /**
@@ -809,12 +808,12 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       };
       const user = new User(this.scope, 'redshiftdbserviceuser-' + username, userProps);
 
-      new StringParameter(user, 'ssmsecret' + username, {
+      new MdaaStringParameter(user, 'ssmsecret' + username, {
         parameterName: this.props.naming.ssmPath(`datawarehouse/secret/${username}`, false),
         stringValue: user.secret.secretName,
       }); // This causes param collision with two warehouses in the same domain
 
-      new StringParameter(user, 'ssmsecretarn' + username, {
+      new MdaaStringParameter(user, 'ssmsecretarn' + username, {
         parameterName: this.props.naming.ssmPath(`datawarehouse/secretarn/${username}`, false),
         stringValue: user.secret.secretArn,
       }); // This causes param collision with two warehouses in the same domain
@@ -1033,24 +1032,7 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
       additionalKmsKeyArns: this.props.additionalBucketKmsKeyArns,
     });
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      warehouseBucket,
-      [
-        {
-          id: 'NIST.800.53.R5-S3BucketReplicationEnabled',
-          reason: 'MDAA Warehouse bucket does not use bucket replication.',
-        },
-        {
-          id: 'HIPAA.Security-S3BucketReplicationEnabled',
-          reason: 'MDAA Warehouse bucket does not use bucket replication.',
-        },
-        {
-          id: 'PCI.DSS.321-S3BucketReplicationEnabled',
-          reason: 'MDAA Warehouse bucket does not use bucket replication.',
-        },
-      ],
-      true,
-    );
+
     //Enable the bucket key feature which optimizes the bucket for use with KMS
     const cfnBucket = warehouseBucket.node.defaultChild as CfnBucket;
     cfnBucket.addOverride('Properties.BucketEncryption.ServerSideEncryptionConfiguration.0.BucketKeyEnabled', true);
@@ -1088,8 +1070,8 @@ export class DataWarehouseL3Construct extends MdaaL3Construct {
     const bucketName = uniqueBucketNamePrefix
       ? prefix + '-' + this.props.naming.resourceName('logging', 63)
       : this.props.naming.resourceName('logging', 63);
-
-    const loggingBucket = new Bucket(this.scope, bucketName, {
+    // Backwards compat for existing deployments, but construct ID should not use the name if the name contains tokens
+    const loggingBucket = new Bucket(this.scope, bucketName.includes('Token') ? 'logging-bucket' : bucketName, {
       bucketName: bucketName,
       encryption: BucketEncryption.S3_MANAGED,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,

@@ -2,6 +2,64 @@
 
 ## [1.5.0] - 2026-02-28
 
+### General Configuration Changes
+
+- SSM parameters can now be referenced using simplified scope prefixes:
+  - `ssm-org:<path>` resolves to `ssm:/{{org}}/<path>`
+  - `ssm-domain:<path>` resolves to `ssm:/{{org}}/{{domain}}/<path>`
+  - `ssm-env:<path>` resolves to `ssm:/{{org}}/{{domain}}/{{env}}/<path>`
+- SSM parameters created by SageMaker Unified Studio blueprints can be referenced using `blueprint:` prefix in configuration values
+
+### Governance Module Changes
+
+#### Glue Catalog Settings Module
+
+- Glue Catalog KMS key SSM parameters are now automatically shared to consumer accounts via AWS Resource Access Manager (RAM)
+  - Useful for sharing KMS Key details with DataZone/SageMaker domain associated accounts
+
+#### Lake Formation Settings Module
+
+- Trusted accounts can now be specified for cross-account DataZone/SageMaker Unified Studio integration
+  - Enables multi-account DataZone/SageMaker Unified Studio deployments with centralized Lake Formation management
+
+#### DataZone Domain Module
+
+- Glue Catalog KMS key ARN is now optional for associated account configuration
+  - RAM Shared SSM param will be used by default
+- Granular authorization policies can be defined for domain units
+
+#### SageMaker Unified Studio Domain and Blueprints Module
+
+- Glue Catalog KMS key ARN is now optional for associated accounts with automatic SSM parameter lookup
+  - RAM Shared SSM param will be used by default
+- Standard Tooling and LakeHouse (Glue Database) blueprints can be configured
+  - Tooling blueprint configuration including VPC and subnet settings must be provided for the domain account and any associated accounts
+  - Compliance-related paramaters overrides (VPC connectivity, KMS Encryption, role permissions) are automatically set within code
+- Additional managed blueprints can be enabled
+- Any MDAA Module can be configured to deploy as a custom SageMaker Unified Studio blueprint instead of directly deploying as a Stack
+- Custom SageMaker Unified Studio blueprints can also be created from local CloudFormation templates or URLs
+- Granular authorization policies can be defined for domain units
+
+#### SageMaker Unified Studio Project Profiles and Projects Module
+
+- New module enables creation of SageMaker Unified Studio projects and project profiles
+- Project profiles define target accounts, deployable environments, and parameter values/overrides
+  - Reusable environment templates can be defined for use by multiple project profiles
+- Projects can be created and assigned to domain units
+  - Project ownership and membership can be defined for users and groups
+  - Existing Glue databases can be imported as data sources into SageMaker Unified Studio projects
+  - Projects can be deployed either in the domain account, or in associated accounts using appropriate project profiles
+
+### DataOps Module Changes
+
+#### DataOps Project Module
+
+- Glue Catalog KMS key configuration now automatically uses standard SSM parameter when not explicitly specified
+- SageMaker Unified Studio projects can now be created integrated with DataOps projects
+  - External Glue databases (not created by DataOps Project) can be imported as data sources into SageMaker Unified Studio projects
+  - Glue Databases created by dataops project can be automatically created as SMUS/DataZone Data Sources
+  - Project admin, data engineer, and execution roles can be added as members to the SMUS/DataZone project
+
 ### New Features
 - Users can now use SAML-based authentication system to enable enterprise-grade identity federation to Opensearch domain
 

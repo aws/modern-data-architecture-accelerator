@@ -169,26 +169,26 @@ organization: sample-org
 # For example (from Audit CDK App Config):
 # readRoles:
 #  - id: "{{context:data_admin_role_id}}"
-# 
+#
 # List example:
 # appSubnets: "{{context:subnet_ids}}"
-# 
+#
 # Object example:
 # vpcConfig: "{{context:vpc_configuration}}"
 context:
   # Scalar values
   data_admin_role_id: AROA12312412421
   some_context_key: some_context_value
-  
+
   # List values
   subnet_ids:
     - subnet-0ec554f55bbcede67
     - subnet-0009c5a40b836101f
-  
+
   # Object values
   vpc_configuration:
     vpcId: vpc-02376b8f79d1b4f1d
-    cidr: "10.0.0.0/16"
+    cidr: '10.0.0.0/16'
     enableDnsHostnames: true
 
 # List of custom CDK Aspect implementations which will be applied to all resources produced by all MDAA modules.
@@ -582,6 +582,25 @@ region: "{{region}}"
 key_arn: arn:{{partition}}:kms:{{region}}:{{account}}:key/{{context:key_id}}
 ```
 
+### SSM Parameter References
+
+Most MDAA Config properties allow referencing SSM parameters instead of directly specifying config values. This is useful for configuring an MDAA module to use resources from another MDAA module, or external resources created outside of MDAA.
+
+```yaml
+# Full SSM path
+config_key: ssm:/path/to/ssm/param
+
+# Org SSM path - automatically prepends SSM path with standard MDAA org path.
+# This is shorthand for referencing SSM parameters created by MDAA within the same org.
+# This expands to ssm:/{{org}}/other_domain/other_module/some_path
+config_key: ssm-org:/other_domain/other_module/some_path
+
+# Domain SSM path - automatically prepends SSM path with standard MDAA org/domain path.
+# This is shorthand for referencing SSM parameters created by MDAA within the same org and domain.
+# This expands to ssm:/{{org}}/{{domain}}/other_module/some_path
+config_key: ssm-domain:/other_module/some_path
+```
+
 ### Configuration Sharing Across Domains, Envs, Modules
 
 MDAA modules may share identical config files across multiple domains, envs, and modules. Because MDAA automatically injects the domain/env/module names into resource naming, each resulting deployment will result in uniquely named resources but with otherwise identical behaviours.
@@ -698,11 +717,11 @@ domains:
               - ./datalake.yaml
             # Predeploy hook - runs before module deployment
             predeploy:
-              command: "./scripts/prepare-data.sh"
+              command: './scripts/prepare-data.sh'
               exit_if_fail: true
             # Postdeploy hook - runs after module deployment
             postdeploy:
-              command: "./scripts/validate-deployment.sh"
+              command: './scripts/validate-deployment.sh'
               exit_if_fail: false
               after_success: true
 ```
@@ -710,7 +729,9 @@ domains:
 ### Hook Properties
 
 #### `command` (required)
+
 The command to execute. This can be:
+
 - A shell script: `"./scripts/setup.sh"`
 - A direct command: `"aws s3 cp data.csv s3://my-bucket/"`
 - A complex command: `"npm run build && npm run test"`
@@ -718,11 +739,14 @@ The command to execute. This can be:
 You can provide template variables as arguments to the script: `{{org}}`, `{{domain}}`, `{{env}}`, `{{module_name}}`, `{{region}}`, `{{account}}`, and `{{partition}}`
 
 #### `exit_if_fail` (optional, default: false)
+
 If `true`, the deployment will stop if the hook command fails (exits with non-zero code).
 If `false`, the deployment will continue even if the hook fails.
 
 #### `after_success` (optional, default: false, postdeploy only)
+
 For postdeploy hooks only:
+
 - If `true`, the hook only runs if the module deployment was successful
 - If `false`, the hook runs regardless of deployment success/failure
 
@@ -738,32 +762,36 @@ Hooks execute with the following characteristics:
 ### Common Use Cases
 
 #### Data Preparation
+
 ```yaml
 predeploy:
-  command: "./scripts/upload-sample-data.sh"
+  command: './scripts/upload-sample-data.sh'
   exit_if_fail: true
 ```
 
 #### Deployment Validation
+
 ```yaml
 postdeploy:
-  command: "./scripts/run-integration-tests.sh"
+  command: './scripts/run-integration-tests.sh'
   exit_if_fail: false
   after_success: true
 ```
 
 #### Cleanup Tasks
+
 ```yaml
 postdeploy:
-  command: "./scripts/cleanup-temp-resources.sh"
+  command: './scripts/cleanup-temp-resources.sh'
   exit_if_fail: false
-  after_success: false  # Run cleanup even if deployment failed
+  after_success: false # Run cleanup even if deployment failed
 ```
 
 #### AWS CLI Operations
+
 ```yaml
 predeploy:
-  command: "aws s3 sync ./data/ s3://my-data-bucket/input/"
+  command: 'aws s3 sync ./data/ s3://my-data-bucket/input/'
   exit_if_fail: true
 ```
 

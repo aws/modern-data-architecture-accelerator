@@ -34,6 +34,7 @@
     "typescript-json-schema": "0.67.1"
   },
   "dependencies": {
+    "@aws-mdaa/construct": "1.4.0",
     "@aws-mdaa/naming": "1.4.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96",

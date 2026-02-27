@@ -54,6 +54,12 @@ createCdkLFAdmin: true
 # as an LZ admin
 createDataZoneAdminRole: true
 
+# Optional - If specified, the assume role trust policy for the datazone LF admin role will allow additional accounts
+# datazone to manage LF in this account from specified accounts. This is useful when this account is associated to
+# a Datazone/SageMaker in another account
+dataZoneAdminTrustAccounts:
+  - trusted-account-num
+
 # If specified, Lakeformation will be integrated with IAM identity center
 iamIdentityCenter:
   # The IAM Identity Center instance ID

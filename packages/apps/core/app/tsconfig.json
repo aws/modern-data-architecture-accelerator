@@ -32,6 +32,7 @@
   },
   "include": [
     "**/*.ts",
+    "lib/private/*.ts",
     "lib/config-schema.json"
   ],
   "exclude": [

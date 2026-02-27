@@ -13,4 +13,5 @@ module.exports = {
       statements: 20,
     },
   },
+  coveragePathIgnorePatterns: ['<rootDir>/imports'],
 };

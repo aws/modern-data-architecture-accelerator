@@ -1,0 +1,71 @@
+# All resources will be deployed to the default region specified in the environment or AWS configurations.
+# Can optional specify a specific AWS Region Name.
+region: default
+
+## Pre-Deployment Instructions
+
+# TODO: Set an appropriate, unique organization name
+# Failure to do so may result in global naming conflicts.
+organization: <unique org name>
+# TODO: Set appropriate context values
+context:
+  team1-group-sso-id: <team1 sso group name>
+  team2-group-sso-id: <team2 sso group name>
+  vpc_id: <vpc id>
+  private_subnet_id1: <subnet id 1>
+  private_subnet_id2: <subnet id 2>
+
+# This configuration deploys SageMaker Unified Studio (SMUS) domains using DataZone V2
+# SMUS provides ML platform capabilities with integrated data governance
+
+# One or more domains may be specified. Domain name will be incorporated by default naming implementation
+# to prefix all resource names.
+domains:
+  # The named of the domain. In this case, we are building a 'shared' domain.
+  shared:
+    # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
+    environments:
+      # The environment name will be incorporated into resource name by the default naming implementation.
+      dev:
+        # The target deployment account can be specified per environment.
+        # If 'default' or not specified, the account configured in the environment will be assumed.
+        account: default
+        # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
+        # specifies a deployment configuration file if required.
+        modules:
+          # This module will create SageMaker Unified Studio (SMUS) domains with DataZone V2
+          glue-catalog:
+            module_path: '@aws-mdaa/glue-catalog'
+
+          roles:
+            module_path: '@aws-mdaa/roles'
+            module_configs:
+              - ./shared/roles.yaml
+
+          lakeformation-settings:
+            module_path: '@aws-mdaa/lakeformation-settings'
+            module_configs:
+              - ./shared/lakeformation-settings.yaml
+
+  # The name of the domain. In this case, we are building a 'sagemaker' domain.
+  sagemaker:
+    # One or more environments may be specified, typically along the lines of 'dev', 'test', and/or 'prod'
+    environments:
+      # The environment name will be incorporated into resource name by the default naming implementation.
+      dev:
+        # The target deployment account can be specified per environment.
+        # If 'default' or not specified, the account configured in the environment will be assumed.
+        account: default
+        # The list of modules which will be deployed. A module points to a specific MDAA CDK App, and
+        # specifies a deployment configuration file if required.
+        modules:
+          domain:
+            module_path: '@aws-mdaa/sagemaker'
+            module_configs:
+              - ./sagemaker/domain.yaml
+
+          # Project Profile using the custom blueprint
+          projects:
+            module_path: '@aws-mdaa/sagemaker-project'
+            module_configs:
+              - ./sagemaker/projects.yaml

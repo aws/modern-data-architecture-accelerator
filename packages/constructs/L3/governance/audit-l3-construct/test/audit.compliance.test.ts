@@ -24,6 +24,5 @@ describe('MDAA Compliance Stack Tests', () => {
   new AuditL3Construct(stack, 'teststack', constructProps);
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
-
   console.log(JSON.stringify(template, undefined, 2));
 });

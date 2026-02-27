@@ -6,10 +6,10 @@
 import { MdaaAthenaWorkgroup } from '@aws-mdaa/athena-constructs';
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
-import { MdaaKmsKey, ENCRYPT_ACTIONS, IMdaaKmsKey } from '@aws-mdaa/kms-constructs';
+import { ENCRYPT_ACTIONS, IMdaaKmsKey, MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
-import { MdaaBucket, IMdaaBucket } from '@aws-mdaa/s3-constructs';
+import { IMdaaBucket, MdaaBucket } from '@aws-mdaa/s3-constructs';
 
 import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
 import { Effect, IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';

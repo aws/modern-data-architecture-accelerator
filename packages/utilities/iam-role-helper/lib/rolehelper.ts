@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaLambdaRole, MdaaLambdaFunction } from '@aws-mdaa/lambda-constructs';
+import { MdaaLambdaFunction, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import { Duration } from 'aws-cdk-lib';
-import { PolicyDocument, PolicyStatement, ManagedPolicy } from 'aws-cdk-lib/aws-iam';
+import { ManagedPolicy, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Provider } from 'aws-cdk-lib/custom-resources';
 import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
 import { MdaaResolvableRole } from './resolvablerole';
-import { MdaaRoleRef, MdaaResolvableRoleRef } from './roleref';
+import { MdaaResolvableRoleRef, MdaaRoleRef } from './roleref';
 
 /**
  * A Helper class which can be used to resolve MdaaRoleRefs using CustomResources.
@@ -26,9 +26,11 @@ export class MdaaRoleHelper {
   private readonly resolveIdCache: { [key: string]: MdaaResolvableRole } = {};
   private readonly resolveArnCache: { [key: string]: MdaaResolvableRole } = {};
   private readonly resolveNameCache: { [key: string]: MdaaResolvableRole } = {};
+
   /**
    * @param scope The scope in which role resolution CR Provider will be created.
    * @param naming The MDAA naming implementation which will be used to name resources
+   * @param providerServiceToken
    * from the perspective of the calling module.
    */
   constructor(scope: Construct, naming: IMdaaResourceNaming, providerServiceToken?: string) {
@@ -65,6 +67,7 @@ export class MdaaRoleHelper {
       return this.resolveRoleRef(roleRef);
     });
   }
+
   /**
    * @param roleRef The role references to be resolved
    * @param refId The id of the reference to be used in creating the custom resource
@@ -77,6 +80,7 @@ export class MdaaRoleHelper {
     };
     return this.resolveRoleRef(resolvableRoleRef);
   }
+
   /**
    * @param roleRef The role reference to be resolved
    * @returns Resolvable roles.
@@ -135,7 +139,7 @@ export class MdaaRoleHelper {
       statements: [
         new PolicyStatement({
           resources: ['*'],
-          actions: ['iam:ListRoles'],
+          actions: ['iam:ListRoles', 'iam:GetRole'],
         }),
       ],
     });
@@ -148,7 +152,13 @@ export class MdaaRoleHelper {
 
     MdaaNagSuppressions.addCodeResourceSuppressions(
       iamPolicy,
-      [{ id: 'AwsSolutions-IAM5', reason: 'iam:ListRoles does not take a resource.' }],
+      [
+        {
+          id: 'AwsSolutions-IAM5',
+          reason:
+            'iam:ListRoles and iam:GetRole require wildcard resource for role resolution during blueprint deployment.',
+        },
+      ],
       true,
     );
 

@@ -43,27 +43,7 @@ export class MdaaEC2SecretKeyPair extends Construct {
     super(scope, id);
     this.name = props.naming.resourceName(props.name, 255);
     const statement = new PolicyStatement({
-      /**
-       * Q-ENHANCED-PROPERTY
-       * Required IAM policy effect allowing EC2 key pair creation operations for secure key pair generation. Grants permission to create EC2 key pairs enabling secure instance access and SSH key management within the infrastructure.
-       *
-       * Use cases: EC2 key pair creation; SSH key management; Secure instance access; Infrastructure provisioning
-       *
-       * AWS: IAM policy effect for EC2 key pair creation permissions and secure access management
-       *
-       * Validation: Must be Effect.ALLOW; required for EC2 key pair creation operations
-       */
       effect: Effect.ALLOW,
-      /**
-       * Q-ENHANCED-PROPERTY
-       * Required array of IAM actions for EC2 key pair creation enabling secure key pair generation and management. Specifies the specific EC2 actions required for creating key pairs and managing SSH access to EC2 instances.
-       *
-       * Use cases: EC2 key pair creation; SSH key generation; Instance access management; Security key operations
-       *
-       * AWS: IAM policy actions for EC2 key pair creation and SSH key management operations
-       *
-       * Validation: Must include 'ec2:CreateKeyPair' action; required for key pair creation functionality
-       */
       actions: ['ec2:CreateKeyPair'],
       resources: [
         `arn:${Stack.of(scope).partition}:ec2:${Stack.of(scope).region}:${Stack.of(scope).account}:key-pair/${

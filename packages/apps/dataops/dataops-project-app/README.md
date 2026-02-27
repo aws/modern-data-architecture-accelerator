@@ -51,6 +51,8 @@ The Data Ops Project CDK application is used to deploy the resources required to
 
 **Glue Custom Classifiers** - Glue classifiers for reuse across project crawlers
 
+**DataZone/SageMaker Project and Data Sources** - Allows the DataOps project resources to be registered as DataZone/SageMaker project, data sources, and assets.
+
 ---
 
 ## Configuration
@@ -70,7 +72,7 @@ dataops-project: # Module Name can be customized
 
 [Config Schema Docs](SCHEMA.md)
 
-### Sample Project Config
+### Simple Project Config
 
 ```yaml
 # Arns for IAM role which will be authoring code within the project
@@ -117,7 +119,8 @@ s3OutputKmsKeyArn: ssm:/sample-org/instance1/datalake/kms/id
 
 # Optional - The Arn of the KMS key used to encrypt the Glue Catalog. Specific access to this key
 # will be granted to Glue executor roles for the purpose of decrypting
-# Glue connections.
+# Glue connections. If not specified, the standard SSM param created
+# by the Glue Catalog Settings module will be used.
 glueCatalogKmsKeyArn: ssm:/sample-org/shared/glue-catalog/kms/arn
 
 # Project-level Lake Formation configuration
@@ -204,15 +207,28 @@ connections:
       securityGroupIdList:
         - sg-890abc123asc
 
-# (Optional) - Generate a DataZone Project for this DataOps Project
-datazone:
+# (Optional) - Generate a SageMaker Project for this DataOps Project
+sagemaker:
+  # The SSM Parameter containing domain config details for a SageMaker Domain created by the MDAA SageMaker module
+  domainConfigSSMParam: /sample-org/shared/sagemaker/domain/test-domain/config
+  # Optional - if true, the project data admin role will be added as an owner of the SMUS project.
+  # This requires the domain to either be in AUTOMATIC user assignment, or for the data admin role
+  # to already be added to the domain as a user profile.
+  createDataAdminOwners: false
   project:
-    # The SSM Parameter containing domain config details for a DataZone Domain created by the MDAA Datazone module
-    domainConfigSSMParam: /sample-org/shared/datazone/domain/test-domain/config
-    # (Optional) The role which will be used to managed lake formation permissions for the project.
-    # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
-    lakeformationManageAccessRole:
-      arn: arn:{{partition}}:iam::{{account}}:role/test-lf-admin-role
+    profileName: test-profile
+    # Optional - Add data sources for Glue databases not created by this DataOps Project.
+    # Note - Data sources can be created for project databases using the createSagemakerDatasource database property.
+    dataSources:
+      # Data Source name
+      test-source:
+        # The name of a database not created by this DataOps Project
+        databaseName: non-project-database
+# (Optional) - Generate a DataZone/Project for this DataOps Project
+# datazone:
+#   project:
+#     # The SSM Parameter containing domain config details for a DataZone Domain created by the MDAA Datazone module
+#     domainConfigSSMParam: /sample-org/shared/datazone/domain/test-domain/config
 
 # (Optional) List of Databases to create. Referred to by name in the crawler configuration files.
 databases:
@@ -358,7 +374,7 @@ databases:
           lfTagExpression:
             environment: [dev]
             data_tier: [bronze, silver]
-        
+
         # Grant for production read access to public/internal data
         prod_read_access:
           principalArns:
@@ -368,4 +384,20 @@ databases:
           lfTagExpression:
             environment: [prod]
             data_classification: [public, internal]
+
+  # SageMaker Project Data Source
+  test-database-sus:
+    description: Test SageMaker Database
+    # Creates a datasource in the SageMaker Project associated with this DataOps Project
+    createSagemakerDatasource: true
+    locationBucketName: some-bucket-name
+    locationPrefix: data/test-sus
+
+  # DataZone Project Data Source
+  # test-database-datazone:
+  #   description: Test DataZone Database
+  #   # Creates a datasource in the DataZone Project associated with this DataOps Project
+  #   createDatazoneDatasource: true
+  #   locationBucketName: some-bucket-name
+  #   locationPrefix: data/test-sus
 ```

@@ -23,5 +23,16 @@ DataZone L3 CDK Construct is used to configure and deploy DataZone Domains.
 
 * **Data Warehouse Manage Access Role** - An IAM Role use by the Data Warehouse blueprint and it's specific to each domain.
 
+* **Authorization Policy Grants** - Fine-grained authorization policies applied to domain units that control user and role permissions. Supports policy types including CREATE_DOMAIN_UNIT, CREATE_GLOSSARY, CREATE_PROJECT, and others. Principals can be either IAM users (`user: username`) or IAM roles (`role: rolename`) depending on how they're defined in the domain configuration.
+
 ## DataZone Personas
 ![datazone-personas](docs/DataZone-Personas.png)
+
+The DataZone construct supports authorization policies with the following key policy types:
+- **CREATE_DOMAIN_UNIT** - Enables creation of new domain units within the hierarchy
+- **CREATE_GLOSSARY** - Allows creation of business glossaries for data governance
+- **CREATE_PROJECT** - Permits creation of data projects within domain units
+
+Authorization policies use principals that must match the domain user configuration:
+- Use `role: rolename` for IAM roles defined in the domain users section
+- Use `user: username` for IAM users or SSO users defined in the domain users section

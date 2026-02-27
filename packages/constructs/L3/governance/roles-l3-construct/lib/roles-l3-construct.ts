@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct';
 import { MdaaManagedPolicy, MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import {
@@ -22,12 +23,10 @@ import {
   SamlProvider,
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
+import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { parse } from 'yaml';
-import { readFileSync } from 'fs';
 
 /**
  * Define UsageProfile types
@@ -522,11 +521,11 @@ export class RolesL3Construct extends MdaaL3Construct {
         MdaaNagSuppressions.addConfigResourceSuppressions(role, generateRole.suppressions, true);
       }
 
-      new StringParameter(role, `${generateRole.name}-ssm-generated-role-arn`, {
+      new MdaaStringParameter(role, `${generateRole.name}-ssm-generated-role-arn`, {
         parameterName: this.props.naming.ssmPath(`generated-role/${generateRole.name}/arn`, false),
         stringValue: role.roleArn,
       });
-      new StringParameter(role, `${generateRole.name}-ssm-generated-role-id`, {
+      new MdaaStringParameter(role, `${generateRole.name}-ssm-generated-role-id`, {
         parameterName: this.props.naming.ssmPath(`generated-role/${generateRole.name}/id`, false),
         stringValue: role.roleId,
       });

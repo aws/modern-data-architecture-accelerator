@@ -22,7 +22,7 @@ addopts = [
 ]
 
 [tool.coverage.run]
-source = ["../src/lambda/lifecycle"]
+source = ["../src/lambda"]
 omit = [
     "*/tests/*",
     "*/test_*",

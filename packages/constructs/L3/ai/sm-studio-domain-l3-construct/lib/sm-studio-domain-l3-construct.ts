@@ -775,7 +775,6 @@ export class SagemakerStudioDomainL3Construct extends MdaaL3Construct {
       false;
 
     const securityGroupProps: MdaaSecurityGroupProps = {
-      securityGroupName: this.props.naming.resourceName(),
       vpc: vpc,
       allowAllOutbound: !customEgress,
       naming: this.props.naming,

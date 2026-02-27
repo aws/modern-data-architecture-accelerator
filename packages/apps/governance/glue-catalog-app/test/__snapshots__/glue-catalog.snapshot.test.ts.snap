@@ -1404,6 +1404,64 @@ exports[`glue-catalog Snapshot Tests Glue Catalog App App Snapshot Test 1`] = `
         },
         "Type": "AWS::Lambda::Function",
       },
+      "gluecatalogkmskeyparam": {
+        "Properties": {
+          "Name": "test-org-test-env-test-domain-test-glue-catalog-main-glue-catalog-kms-key-param",
+          "Principals": [
+            "1234567890",
+            "0987654321",
+            "5678901234",
+          ],
+          "ResourceArns": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":ssm:",
+                  {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":parameter",
+                  {
+                    "Ref": "REPLACED-CFN-LOGICAL-ID",
+                  },
+                ],
+              ],
+            },
+          ],
+          "Tags": [
+            {
+              "Key": "mdaa_cdk_app",
+              "Value": "glue-catalog",
+            },
+            {
+              "Key": "mdaa_domain",
+              "Value": "test-domain",
+            },
+            {
+              "Key": "mdaa_env",
+              "Value": "test-env",
+            },
+            {
+              "Key": "mdaa_module_name",
+              "Value": "test-glue-catalog-main",
+            },
+            {
+              "Key": "mdaa_org",
+              "Value": "test-org",
+            },
+          ],
+        },
+        "Type": "AWS::RAM::ResourceShare",
+      },
       "gluecatalogsettings": {
         "Properties": {
           "CatalogId": {
@@ -1716,6 +1774,7 @@ exports[`glue-catalog Snapshot Tests Glue Catalog App App Snapshot Test 1`] = `
             "mdaa_module_name": "test-glue-catalog-main",
             "mdaa_org": "test-org",
           },
+          "Tier": "Advanced",
           "Type": "String",
           "Value": {
             "Fn::GetAtt": [
@@ -3198,6 +3257,64 @@ exports[`glue-catalog Snapshot Tests Glue Catalog Stack Snapshot Test 1`] = `
       },
       "Type": "AWS::Lambda::Function",
     },
+    "gluecatalogkmskeyparam": {
+      "Properties": {
+        "Name": "test-org-test-env-test-domain-test-glue-catalog-main-glue-catalog-kms-key-param",
+        "Principals": [
+          "1234567890",
+          "0987654321",
+          "5678901234",
+        ],
+        "ResourceArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":ssm:",
+                {
+                  "Ref": "AWS::Region",
+                },
+                ":",
+                {
+                  "Ref": "AWS::AccountId",
+                },
+                ":parameter",
+                {
+                  "Ref": "REPLACED-CFN-LOGICAL-ID",
+                },
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "mdaa_cdk_app",
+            "Value": "glue-catalog",
+          },
+          {
+            "Key": "mdaa_domain",
+            "Value": "test-domain",
+          },
+          {
+            "Key": "mdaa_env",
+            "Value": "test-env",
+          },
+          {
+            "Key": "mdaa_module_name",
+            "Value": "test-glue-catalog-main",
+          },
+          {
+            "Key": "mdaa_org",
+            "Value": "test-org",
+          },
+        ],
+      },
+      "Type": "AWS::RAM::ResourceShare",
+    },
     "gluecatalogsettings": {
       "Properties": {
         "CatalogId": {
@@ -3510,6 +3627,7 @@ exports[`glue-catalog Snapshot Tests Glue Catalog Stack Snapshot Test 1`] = `
           "mdaa_module_name": "test-glue-catalog-main",
           "mdaa_org": "test-org",
         },
+        "Tier": "Advanced",
         "Type": "String",
         "Value": {
           "Fn::GetAtt": [

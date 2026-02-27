@@ -3,16 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CreatedDomainUnit } from './datazone-l3-construct';
+import { CreatedDomainUnit } from './private/common-domain-helper';
 
 export function flattenDomainUnitPaths(
   currentPath: string,
   domainUnits: { [name: string]: CreatedDomainUnit },
+  filter?: (domainUnit: CreatedDomainUnit) => boolean,
 ): { [path: string]: string } {
   return Object.fromEntries(
     Object.entries(domainUnits).flatMap(([domainUnitName, domainUnit]) => {
       const path = `${currentPath}/${domainUnitName}`;
-      return [[path, domainUnit.id], ...Object.entries(flattenDomainUnitPaths(path, domainUnit.domainUnits || {}))];
+      const includeCurrentNode = !filter || filter(domainUnit);
+      return [
+        ...(includeCurrentNode ? [[path, domainUnit.construct.domainUnitId]] : []),
+        ...Object.entries(flattenDomainUnitPaths(path, domainUnit.domainUnits || {}, filter)),
+      ];
     }),
   );
 }

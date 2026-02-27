@@ -12,13 +12,13 @@ stages:
 
 base_image:
   stage: base_image
-  cache: { }  # This disables cache for this job
-  before_script: [ ]  # Disable global before_script
+  cache: {} # This disables cache for this job
+  before_script: [] # Disable global before_script
   image:
     name: ${MDAA_BASE_IMAGE}
-    entrypoint: [ "" ]
+    entrypoint: ['']
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     # This unreadable echo command is recommended in kanito docs: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"},\"$(echo -n $CI_DEPENDENCY_PROXY_SERVER | awk -F[:] '{print $1}')\":{\"auth\":\"$(printf "%s:%s" ${CI_DEPENDENCY_PROXY_USER} "${CI_DEPENDENCY_PROXY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
@@ -43,8 +43,8 @@ include:
   - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
   # AWS Solutions SAST
   - project: $CI_PROJECT_NAMESPACE/mdaa-testing
-    ref: main
-    file: "/gitlab-ci/mdaa-testing.yaml"
+    ref: feature/add-sagemaker-domain
+    file: '/gitlab-ci/mdaa-testing.yaml'
 
 sast:
   stage: prebuild
@@ -61,8 +61,8 @@ sast:
 semgrep-sast:
   stage: prebuild
   variables:
-    SAST_EXCLUDED_PATHS: "spec, test, tests, tmp, scripts, **/lib/*.ts"
-  after_script: 
+    SAST_EXCLUDED_PATHS: 'spec, test, tests, tmp, scripts, **/lib/*.ts'
+  after_script:
     - echo "Analyzing GitLab SAST reports"
     - python3 ./scripts/analyze_sast_reports.py
 
@@ -98,7 +98,7 @@ feature_validate_packages:
   stage: prebuild
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/validate_packages.sh
 
@@ -128,14 +128,14 @@ feature_merge_main:
   stage: prebuild
   artifacts:
     paths:
-      - "*"
+      - '*'
     exclude:
       - .git
       - .git/**/*
     untracked: false
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/merge_main.sh
 
@@ -159,40 +159,40 @@ feature_merge_build_test:
   artifacts:
     untracked: false
     paths:
-      - "*"
+      - '*'
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/git_secrets.sh
     - ./scripts/npm_install.sh
     - ./scripts/build_test.sh
 
 feature_merge_python_test:
-  stage: build  # Same stage = parallel execution
+  stage: build # Same stage = parallel execution
   tags:
     - arch:amd64
     - size:large
   only:
     - merge_requests
   needs:
-    - feature_merge_main  # Same dependency as build_test
+    - feature_merge_main # Same dependency as build_test
   cache:
     key: feature-merge-python-$CI_COMMIT_SHA
     paths:
-      - "**/python-tests/.venv/"
-      - "**/python-tests/uv.lock"
+      - '**/python-tests/.venv/'
+      - '**/python-tests/uv.lock'
     policy: pull-push
   artifacts:
     reports:
       coverage_report:
         coverage_format: cobertura
-        path: "**/python-tests/coverage.xml"
+        path: '**/python-tests/coverage.xml'
     paths:
-      - "**/python-tests/coverage.xml"
-      - "**/python-tests/htmlcov/"
+      - '**/python-tests/coverage.xml'
+      - '**/python-tests/htmlcov/'
     expire_in: 1 week
   script:
     - echo "Running Python tests with coverage..."
@@ -218,12 +218,12 @@ feature_merge_snapshot_test:
   artifacts:
     untracked: false
     paths:
-      - "*"
+      - '*'
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - npx lerna run build
     - npx lerna run test:snapshots --stream -- --silent --reporters=default
@@ -255,7 +255,10 @@ feature_merge_smoke_test:
     - feature_merge_build_test
   needs:
     - feature_merge_build_test
-    
+  ## optionally state which mdaa-testing branch
+  variables:
+    CAEF_TESTING_BRANCH: feature/add-sagemaker-domain
+
 feature_version:
   tags:
     - arch:amd64
@@ -281,10 +284,10 @@ feature_version:
       - target
       - schemas
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/version_prerelease.sh
     - ./scripts/npm_install.sh
@@ -318,13 +321,13 @@ feature_build_test:
       - target
       - schemas
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   allow_failure: false
   script:
     - ./scripts/build_test.sh
 
 feature_python_test:
-  stage: build  # Same stage = parallel execution
+  stage: build # Same stage = parallel execution
   tags:
     - arch:amd64
     - size:large
@@ -333,21 +336,21 @@ feature_python_test:
       - main
       - tags
   needs:
-    - feature_version  # Same dependency as feature_build_test
+    - feature_version # Same dependency as feature_build_test
   cache:
     key: feature-python-$CI_COMMIT_SHA
     paths:
-      - "**/python-tests/.venv/"
-      - "**/python-tests/uv.lock"
+      - '**/python-tests/.venv/'
+      - '**/python-tests/uv.lock'
     policy: pull-push
   artifacts:
     reports:
       coverage_report:
         coverage_format: cobertura
-        path: "**/python-tests/coverage.xml"
+        path: '**/python-tests/coverage.xml'
     paths:
-      - "**/python-tests/coverage.xml"
-      - "**/python-tests/htmlcov/"
+      - '**/python-tests/coverage.xml'
+      - '**/python-tests/htmlcov/'
     expire_in: 1 week
   script:
     - echo "Running Python tests with coverage..."
@@ -375,7 +378,7 @@ feature_package:
       - target
       - packages/**/jsii-dist
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   dependencies:
     - feature_build_test
   needs:
@@ -405,7 +408,7 @@ feature_publish_npm:
     - feature_package
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT $CI_COMMIT_REF_SLUG
 
@@ -432,7 +435,7 @@ feature_test_published_npm:
     - feature_publish_npm
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - SNAPSHOT_VERSION=$(jq -r .version < lerna.json)
     - echo 'Testing published artifacts for version:' $SNAPSHOT_VERSION
@@ -459,7 +462,7 @@ feature_publish_pip:
     - feature_package
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
 
@@ -489,11 +492,11 @@ prerelease_version:
       - target
       - schemas
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   stage: prebuild
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/git_secrets.sh
     - ./scripts/version_prerelease.sh
@@ -525,7 +528,7 @@ prerelease_build_test:
       - schemas
       - target
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   stage: build
   dependencies:
     - prerelease_version
@@ -561,7 +564,7 @@ prerelease_analyze:
       - schemas
       - target
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   stage: analyze
   allow_failure: false
   script:
@@ -593,7 +596,7 @@ prerelease_package:
       - schemas
       - target
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   dependencies:
     - prerelease_build_test
   needs:
@@ -627,7 +630,7 @@ prerelease_generate_html_docs:
     paths:
       - target/docs_site
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   needs:
     - prerelease_version
     - prerelease_analyze
@@ -663,7 +666,7 @@ prerelease_publish_npm:
     - prerelease_package
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - PRERELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo "Deleting existing version $PRERELEASE_VERSION from CodeArtifact for idempotency"
@@ -695,7 +698,7 @@ prerelease_publish_pip:
     - prerelease_package
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_PRERELEASE_PIP_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT
 
@@ -729,7 +732,7 @@ prerelease_publish_s3:
       - schemas
       - target
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   needs:
     - prerelease_analyze
     - prerelease_package
@@ -737,7 +740,7 @@ prerelease_publish_s3:
     - prerelease_package
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/publish_s3.sh $MDAA_PRERELEASE_PACKAGE_BUCKET
 
@@ -773,13 +776,13 @@ release_version_package:
       - schemas
       - solution-manifest.yaml
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   allow_failure: false
   needs:
     - prerelease_analyze
   dependencies: []
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/git_secrets.sh
     - ./scripts/npm_install.sh
@@ -794,7 +797,7 @@ release:
     - size:medium
   environment: release
   when: manual
-  manual_confirmation: "Are you sure you want to create a $VERSION_BUMP_LEVEL $RELEASE_TYPE version?"
+  manual_confirmation: 'Are you sure you want to create a $VERSION_BUMP_LEVEL $RELEASE_TYPE version?'
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
@@ -842,7 +845,7 @@ release_publish_npm_prerelease:
       - target
       - solution-manifest.yaml
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   dependencies:
     - release_version_package
   needs:
@@ -851,7 +854,7 @@ release_publish_npm_prerelease:
     - prerelease_analyze
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_PRERELEASE_NPM_REPO $MDAA_CODEARTIFACT_PRERELEASE_DOMAIN $MDAA_CODEARTIFACT_PRERELEASE_ACCOUNT latest
 
@@ -884,7 +887,7 @@ release_npm_readiness_check:
     - release_publish_npm_prerelease
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo 'Testing NPM readiness for version:' $RELEASE_VERSION
@@ -923,17 +926,17 @@ release_publish_npm:
       - target
       - solution-manifest.yaml
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   dependencies:
     - release_version_package
   needs:
     - release
     - release_version_package
     - prerelease_analyze
-    - release_npm_readiness_check  # Wait for readiness check
+    - release_npm_readiness_check # Wait for readiness check
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
   script:
     - ./scripts/publish_npm.sh $MDAA_CODEARTIFACT_RELEASE_NPM_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT latest
 
@@ -968,7 +971,7 @@ release_publish_pip:
       - target
       - solution-manifest.yaml
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   dependencies:
     - release_version_package
   needs:
@@ -977,7 +980,7 @@ release_publish_pip:
     - prerelease_analyze
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
   script:
     - ./scripts/publish_pip.sh $MDAA_CODEARTIFACT_RELEASE_PIP_REPO $MDAA_CODEARTIFACT_RELEASE_DOMAIN $MDAA_CODEARTIFACT_RELEASE_ACCOUNT
 
@@ -1012,7 +1015,7 @@ release_publish_s3:
       - target
       - solution-manifest.yaml
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   dependencies:
     - release_version_package
   needs:
@@ -1021,7 +1024,7 @@ release_publish_s3:
     - prerelease_analyze
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
   script:
     - ./scripts/publish_s3.sh $MDAA_RELEASE_PACKAGE_BUCKET
 
@@ -1051,7 +1054,7 @@ release_generate_html_docs:
       - target/docs_site
       - solution-manifest.yaml
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   dependencies:
     - release_version_package
   needs:
@@ -1069,7 +1072,7 @@ confirm_push_to_git:
     - size:medium
   environment: release_git_confirmation
   when: manual
-  manual_confirmation: "Packages have been published. Do you want to push version changes to git repositories?"
+  manual_confirmation: 'Packages have been published. Do you want to push version changes to git repositories?'
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
@@ -1122,7 +1125,7 @@ prerelease_push_git:
       - target
       - solution-manifest.yaml
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   dependencies:
     - release_version_package
   needs:
@@ -1130,7 +1133,7 @@ prerelease_push_git:
     - release_version_package
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - ./scripts/push_git_prerelease.sh
 
@@ -1165,7 +1168,7 @@ release_push_git:
       - target
       - solution-manifest.yaml
     exclude:
-      - "**/node_modules/**"
+      - '**/node_modules/**'
   dependencies:
     - release_version_package
   needs:
@@ -1173,7 +1176,7 @@ release_push_git:
     - release_version_package
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
   script:
     - ./scripts/push_git_release.sh
 
@@ -1183,7 +1186,7 @@ rollback_release:
     - size:medium
   environment: rollback_release
   when: manual
-  manual_confirmation: "This will DELETE all published packages for this version. Are you sure you want to rollback?"
+  manual_confirmation: 'This will DELETE all published packages for this version. Are you sure you want to rollback?'
   except:
     variables:
       - $GITLAB_USER_NAME == "CI_GROUP_TOKEN"
@@ -1232,7 +1235,7 @@ rollback_delete_prerelease_packages:
     - release_version_package
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo "Rolling back prerelease packages for version $RELEASE_VERSION"
@@ -1265,7 +1268,7 @@ rollback_delete_release_packages:
     - release_version_package
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DELIVERY_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DELIVERY_ROLE_ARN}'
   script:
     - RELEASE_VERSION=$(jq -r .version < lerna.json)
     - echo "Rolling back release packages for version $RELEASE_VERSION"
@@ -1273,7 +1276,7 @@ rollback_delete_release_packages:
 
 cornerstone_build_distributions:
   when: manual
-  manual_confirmation: "This will build, package, and upload the Cornerstone distribution. Continue?"
+  manual_confirmation: 'This will build, package, and upload the Cornerstone distribution. Continue?'
   tags:
     - arch:amd64
     - size:xlarge
@@ -1295,21 +1298,21 @@ cornerstone_build_distributions:
       - packages/**/node_modules/
     policy: pull
   before_script:
-    - "apt-get update && apt-get install -y jq"
+    - 'apt-get update && apt-get install -y jq'
   script:
     - "export PUBLISHED_VERSION=v$(cat package.json | jq -r '.version')"
-    - "echo \"Building Cornerstone distributions for version: $PUBLISHED_VERSION\""
-    - "cd deployment"
-    - "source ./solution_config"
-    - "chmod +x ./build-s3-dist.sh && ./build-s3-dist.sh temp-bucket $PUBLISHED_VERSION"
-    - "chmod +x ./build-open-source-dist.sh && ./build-open-source-dist.sh $SOLUTION_TRADEMARKEDNAME"
+    - 'echo "Building Cornerstone distributions for version: $PUBLISHED_VERSION"'
+    - 'cd deployment'
+    - 'source ./solution_config'
+    - 'chmod +x ./build-s3-dist.sh && ./build-s3-dist.sh temp-bucket $PUBLISHED_VERSION'
+    - 'chmod +x ./build-open-source-dist.sh && ./build-open-source-dist.sh $SOLUTION_TRADEMARKEDNAME'
   artifacts:
     name: cornerstone-distributions
     when: on_success
     untracked: true
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
 
 cornerstone_package_artifact:
   tags:
@@ -1329,10 +1332,10 @@ cornerstone_package_artifact:
     - release_version_package
     - cornerstone_build_distributions
   before_script:
-    - "apt-get update && apt-get install -y zip jq"
+    - 'apt-get update && apt-get install -y zip jq'
   script:
     - "export PUBLISHED_VERSION=v$(cat package.json | jq -r '.version')"
-    - "echo \"Packaging Cornerstone artifact for version: $PUBLISHED_VERSION\""
+    - 'echo "Packaging Cornerstone artifact for version: $PUBLISHED_VERSION"'
     - echo "Creating cornerstone artifact archive..."
     - |
       zip -q -r artifact.zip \
@@ -1365,7 +1368,7 @@ cornerstone_package_artifact:
       - artifact.zip
   allow_failure: false
   variables:
-    AWS_CREDS_TARGET_ROLE: "${DEV_ROLE_ARN}"
+    AWS_CREDS_TARGET_ROLE: '${DEV_ROLE_ARN}'
 
 cornerstone_upload:
   tags:
@@ -1386,14 +1389,14 @@ cornerstone_upload:
     - cornerstone_package_artifact
   variables:
     AWS_DEFAULT_REGION: us-east-1
-    AWS_CREDS_TARGET_ROLE: "${CORNERSTONE_ROLE_ARN}"
-    CORNERSTONE_PACKAGE_BUCKET: "${CORNERSTONE_PACKAGE_BUCKET}"
+    AWS_CREDS_TARGET_ROLE: '${CORNERSTONE_ROLE_ARN}'
+    CORNERSTONE_PACKAGE_BUCKET: '${CORNERSTONE_PACKAGE_BUCKET}'
   before_script:
-    - "apt-get update && apt-get install -y jq"
+    - 'apt-get update && apt-get install -y jq'
   script:
     - "export PUBLISHED_VERSION=v$(cat package.json | jq -r '.version')"
-    - "echo \"Uploading Cornerstone artifact for version: $PUBLISHED_VERSION\""
-    - "export AUTHOR_EMAIL=$(echo \"$CI_COMMIT_AUTHOR\" | grep -oP '(?<=<).*(?=>)' || echo \"unknown\")"
+    - 'echo "Uploading Cornerstone artifact for version: $PUBLISHED_VERSION"'
+    - 'export AUTHOR_EMAIL=$(echo "$CI_COMMIT_AUTHOR" | grep -oP ''(?<=<).*(?=>)'' || echo "unknown")'
     - aws s3 cp artifact.zip s3://$CORNERSTONE_PACKAGE_BUCKET/SO0320/$PUBLISHED_VERSION/$CI_COMMIT_SHA/artifact.zip --metadata "package=ModernDataArchitectureAccelerator,commitId=$CI_COMMIT_SHA,solutionId=SO0320,solutionVersion=$PUBLISHED_VERSION,solutionName=modern-data-architecture-accelerator,commitauthor=$AUTHOR_EMAIL,publishpublicecrimage=false,commitmessage=$CI_COMMIT_MESSAGE,committimestamp=$CI_COMMIT_TIMESTAMP,enablequicksight=No,branch=$CI_COMMIT_MESSAGE"
-    - "echo \"Published solution archive to s3://$CORNERSTONE_PACKAGE_BUCKET/SO0320/$PUBLISHED_VERSION/$CI_COMMIT_SHA/artifact.zip\""
+    - 'echo "Published solution archive to s3://$CORNERSTONE_PACKAGE_BUCKET/SO0320/$PUBLISHED_VERSION/$CI_COMMIT_SHA/artifact.zip"'
   allow_failure: false

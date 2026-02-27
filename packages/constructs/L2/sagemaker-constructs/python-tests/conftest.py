@@ -13,9 +13,11 @@ os.environ['AWS_SECURITY_TOKEN'] = 'testing'
 os.environ['AWS_SESSION_TOKEN'] = 'testing'
 os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
 
-# Add the source directory to Python path
+# Add the source directories to Python path
 lifecycle_src_path = os.path.join(os.path.dirname(__file__), '..', 'src', 'lambda', 'lifecycle')
+update_domain_src_path = os.path.join(os.path.dirname(__file__), '..', 'src', 'lambda', 'update_domain')
 sys.path.insert(0, lifecycle_src_path)
+sys.path.insert(0, update_domain_src_path)
 
 @pytest.fixture
 def aws_credentials():

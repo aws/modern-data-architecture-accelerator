@@ -8,7 +8,7 @@ import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { MdaaCdkApp } from '../lib';
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { AppProps, Stack } from 'aws-cdk-lib';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { MdaaStringParameter } from '@aws-mdaa/construct';
 import { MdaaAppConfigParserProps } from '../lib';
 
 class TestMdaaCdkApp extends MdaaCdkApp {
@@ -21,7 +21,7 @@ class TestMdaaCdkApp extends MdaaCdkApp {
     l3ConstructProps: MdaaL3ConstructProps,
     _parserProps: MdaaAppConfigParserProps,
   ) {
-    new StringParameter(stack, 'TestParameter', {
+    new MdaaStringParameter(stack, 'TestParameter', {
       parameterName: l3ConstructProps.naming.ssmPath('test-parameter', true, false),
       stringValue: 'test-value',
       description: 'Test parameter for core app snapshot testing',

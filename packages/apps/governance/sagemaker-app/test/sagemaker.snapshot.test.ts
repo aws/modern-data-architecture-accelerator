@@ -7,7 +7,12 @@ import { describe } from '@jest/globals';
 import { snapShotTest, snapShotTestApp, Create } from '@aws-mdaa/testing';
 import { SagemakerCDKApp } from '../lib/sagemaker';
 import * as path from 'path';
-
+import { TestRegionFact } from '@aws-mdaa/testing';
+import { Fact } from 'aws-cdk-lib/region-info';
+beforeEach(() => {
+  process.env.CDK_DEFAULT_REGION = 'test-region';
+  Fact.register(new TestRegionFact(), true);
+});
 describe('sagemaker Snapshot Tests', () => {
   beforeAll(() => {
     expect.addSnapshotSerializer({

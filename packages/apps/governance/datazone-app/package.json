@@ -34,6 +34,7 @@
     "typescript-json-schema": "0.67.1"
   },
   "dependencies": {
+    "@aws-mdaa/testing": "1.4.0",
     "@aws-mdaa/app": "1.4.0",
     "@aws-mdaa/datazone-l3-construct": "1.4.0",
     "@aws-mdaa/iam-role-helper": "1.4.0",

@@ -6,7 +6,8 @@
 import {
   ConfigurationElement,
   IMdaaConfigTransformer,
-  IMdaaConfigValueTransformer,
+  MdaaConfigBlueprintRefValueTransformer,
+  MdaaConfigBlueprintRefValueTransformerProps,
   MdaaConfigParamRefValueTransformer,
   MdaaConfigParamRefValueTransformerProps,
   MdaaConfigRefValueTransformer,
@@ -16,11 +17,71 @@ import {
   MdaaNagSuppressionConfigs,
   MdaaServiceCatalogProductConfig,
 } from '@aws-mdaa/config';
+import { DomainConfig, MdaaSageMakerBluePrintParameterConfig } from '@aws-mdaa/datazone-constructs';
+
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import Ajv, { Schema } from 'ajv';
-import { Stack } from 'aws-cdk-lib';
+import { CfnParameterProps, Stack } from 'aws-cdk-lib';
 import * as yaml from 'yaml';
+
+import { MdaaOrgDomainEnvConfigValueTransformer } from './org-domain-env-transformer';
 import { coerceConfigTypes } from './utils';
+import { MdaaGeneratedRoleConfigValueTransformer } from './generated-role-transformer';
+
+/**
+ * Q-ENHANCED-INTERFACE
+ * Configuration interface for AWS SageMaker blueprint deployment that specifies domain association, and parameterization. Enables MDAA modules to be deployed as self-service SageMaker blueprints with controlled access and validation.
+ *
+ * Use cases: Self-service infrastructure deployment; Controlled resource provisioning; Parameterized blueprint offerings
+ *
+ * AWS: Configures AWS SageMaker blueprints for self-service deployment of MDAA modules with domain management
+ *
+ * Validation: domain_arn must be valid SageMaker domain ARN;
+ */
+export interface MdaaSageMakerBluePrintConfig {
+  readonly blueprintName?: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.
+   *
+   * Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup
+   *
+   * AWS: AWS Systems Manager parameter for DataZone domain configuration reference
+   *
+   * Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration
+   **/
+  readonly domainConfigSSMParam?: string;
+  readonly domainBucketName?: string;
+  readonly domainConfig?: DomainConfig;
+
+  readonly enabledRegions?: string[];
+  readonly provisioningRoleArn: string;
+
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Description for the SageMaker blueprint that will be visible to end users in the SageMaker console. Should be descriptive and user-friendly to facilitate blueprint discovery and selection.
+   *
+   * Use cases: Product identification; User-friendly naming; SageMaker console display
+   *
+   * AWS: AWS SageMaker blueprint name for user interface display
+   *
+   * Validation: Must be non-empty string suitable for SageMaker blueprint naming
+   **/
+  readonly description?: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional object containing named parameter configurations for the SageMaker blueprint. Enables parameterized blueprint deployment with validation rules and user input constraints.
+   *
+   * Use cases: Product parameterization; User input collection; Deployment customization
+   *
+   * AWS: AWS SageMaker blueprint parameters for user-configurable deployment options
+   *
+   * Validation: Must be object with string keys and valid MdaaServiceCatalogParameterConfig values if provided
+   *   **/
+  readonly parameters?: { [key: string]: MdaaSageMakerBluePrintParameterConfig };
+
+  readonly authorizedDomainUnits?: string[];
+}
 
 export interface MdaaBaseConfigContents {
   /**
@@ -34,6 +95,17 @@ export interface MdaaBaseConfigContents {
    * Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables Service Catalog deployment mode
    **/
   readonly service_catalog_product_config?: MdaaServiceCatalogProductConfig;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional SageMaker blueprint configuration for governed self-service deployment enabling controlled infrastructure provisioning and governance. When specified, deploys the module as a SageMaker blueprint instead of direct deployment for governed access and compliance.
+   *
+   * Use cases: Governed deployment; Self-service provisioning; SageMaker integration; Controlled access
+   *
+   * AWS: SageMaker blueprint configuration for governed infrastructure deployment and self-service provisioning
+   *
+   * Validation: Must be valid MdaaServiceCatalogProductConfig if provided; enables SageMaker deployment mode
+   **/
+  readonly sagemakerBlueprint?: MdaaSageMakerBluePrintConfig;
   /**
    * Q-ENHANCED-PROPERTY
    * Optional CDK Nag suppression configurations for compliance rule management enabling controlled security rule exceptions and compliance documentation. Provides structured approach to managing security rule suppressions with proper justification and documentation for compliance auditing.
@@ -108,6 +180,7 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
   private readonly stack: Stack;
 
   public readonly serviceCatalogConfig?: MdaaServiceCatalogProductConfig;
+  public readonly sagemakerBlueprintConfig?: MdaaSageMakerBluePrintConfig;
   public readonly nagSuppressions?: MdaaNagSuppressionConfigs;
 
   /**
@@ -136,18 +209,26 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
     const generatedRoleResolvedConfig = new MdaaConfigTransformer(
       new MdaaGeneratedRoleConfigValueTransformer(this.props.naming),
     ).transformConfig(transformedConfig);
-    const ssmToRefResolvedConfigContents = new MdaaConfigTransformer(
-      new MdaaConfigSSMValueTransformer(),
+
+    const orgDomainEnvResolvedConfig = new MdaaConfigTransformer(
+      new MdaaOrgDomainEnvConfigValueTransformer(this.props.naming),
     ).transformConfig(generatedRoleResolvedConfig);
 
-    const configRefValueTranformerProps: MdaaConfigRefValueTransformerProps = {
+    const ssmToRefResolvedConfigContents = new MdaaConfigTransformer(
+      new MdaaConfigSSMValueTransformer(),
+    ).transformConfig(orgDomainEnvResolvedConfig);
+
+    // Add new transformer with support for SSM param shorthand for org, domain, env
+    const configRefValueTransformerProps: MdaaConfigRefValueTransformerProps = {
+      naming: this.props.naming,
       org: this.stack.node.tryGetContext('org'),
       domain: this.stack.node.tryGetContext('domain'),
       env: this.stack.node.tryGetContext('env'),
       module_name: this.stack.node.tryGetContext('module_name'),
       scope: this.stack,
     };
-    const configRefValueTransformer = new MdaaConfigRefValueTransformer(configRefValueTranformerProps);
+    const configRefValueTransformer = new MdaaConfigRefValueTransformer(configRefValueTransformerProps);
+
     const resolvedRefsConfigContents = new MdaaConfigTransformer(
       configRefValueTransformer,
       configRefValueTransformer,
@@ -155,16 +236,41 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
 
     const baseConfigContents = resolvedRefsConfigContents as MdaaBaseConfigContents;
     this.serviceCatalogConfig = baseConfigContents.service_catalog_product_config;
+    this.sagemakerBlueprintConfig = baseConfigContents.sagemakerBlueprint;
     this.nagSuppressions = baseConfigContents.nag_suppressions;
 
+    const extractParamProps = <T>(
+      params: { [key: string]: T } | undefined,
+      getPropsFn: (p: T) => CfnParameterProps | undefined,
+    ): { [name: string]: CfnParameterProps } => {
+      return Object.fromEntries(Object.entries(params || {}).map(([name, p]) => [name, getPropsFn(p) || {}]));
+    };
+
+    const paramProps: { [name: string]: CfnParameterProps } = {
+      ...extractParamProps(this.sagemakerBlueprintConfig?.parameters, p => p.cfnParamProps),
+      ...extractParamProps(this.serviceCatalogConfig?.parameters, p => p.props),
+    };
+
     const paramTransformerProps: MdaaConfigParamRefValueTransformerProps = {
-      ...configRefValueTranformerProps,
-      serviceCatalogConfig: this.serviceCatalogConfig,
+      ...configRefValueTransformerProps,
+      paramProps: paramProps,
     };
     const paramTransformer = new MdaaConfigParamRefValueTransformer(paramTransformerProps);
     const resolvedParamsConfigContents = new MdaaConfigTransformer(paramTransformer, paramTransformer).transformConfig(
       resolvedRefsConfigContents,
     );
+
+    const blueprintTransformerProps: MdaaConfigBlueprintRefValueTransformerProps = {
+      naming: this.props.naming,
+      scope: this.stack,
+    };
+    const blueprintTransformer = new MdaaConfigBlueprintRefValueTransformer(blueprintTransformerProps);
+    const resolvedBlueprintRefConfigContents = new MdaaConfigTransformer(blueprintTransformer).transformConfig(
+      resolvedParamsConfigContents,
+    );
+
+    // TYPE_WARNING: not clear why this should work
+    this.configContents = resolvedBlueprintRefConfigContents as unknown as T;
 
     // Confirm our provided config matches our Schema (verification of Data shape)
     const avj = new Ajv();
@@ -192,29 +298,5 @@ export class MdaaAppConfigParser<T extends MdaaBaseConfigContents> {
 
     // TYPE_WARNING: not clear why this should work
     this.configContents = resolvedParamsConfigContents as unknown as T;
-  }
-}
-
-class MdaaGeneratedRoleConfigValueTransformer implements IMdaaConfigValueTransformer {
-  naming: IMdaaResourceNaming;
-
-  constructor(naming: IMdaaResourceNaming) {
-    this.naming = naming;
-  }
-
-  public transformValue(value: string): string {
-    if (value.startsWith('generated-role-id:')) {
-      return `ssm:${this.naming.ssmPath(
-        'generated-role/' + value.replace(/^generated-role-id:\s*/, '') + '/id',
-        false,
-      )}`;
-    } else if (value.startsWith('generated-role-arn:')) {
-      return `ssm:${this.naming.ssmPath(
-        'generated-role/' + value.replace(/^generated-role-arn:\s*/, '') + '/arn',
-        false,
-      )}`;
-    } else {
-      return value;
-    }
   }
 }

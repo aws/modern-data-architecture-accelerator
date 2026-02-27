@@ -45,6 +45,13 @@ describe('KubernetesCmd Unit Tests', () => {
         moduleName: 'test-module',
       },
       withModuleName: jest.fn().mockReturnThis(),
+      withDomain: jest.fn().mockReturnThis(),
+      withOrg: jest.fn().mockReturnThis(),
+      withEnv: jest.fn().mockReturnThis(),
+      withSuffix: jest.fn().mockReturnThis(),
+      ssmDomainPath: jest.fn().mockReturnValue('/test/path'),
+      ssmEnvPath: jest.fn().mockReturnValue('/test/path'),
+      ssmOrgPath: jest.fn().mockReturnValue('/test/path'),
       resourceName: jest
         .fn()
         .mockImplementation((suffix?: string) => (suffix ? `test-resource-${suffix}` : 'test-resource')),

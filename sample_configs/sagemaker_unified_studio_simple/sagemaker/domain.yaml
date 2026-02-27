@@ -1,0 +1,32 @@
+# SageMaker Unified Studio (SMUS) Domain Configuration
+# This configuration creates DataZone V2 domains for SageMaker Unified Studio
+
+# List of SMUS domains to create
+domains:
+  # Domain name (must be unique within the account)
+  domain1:
+    # Required - Description to give to the domain
+    description: 'Basic SageMaker Unified Studio domain'
+
+    # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
+    userAssignment: MANUAL
+
+    # Data admin role for the domain - reference role from roles module
+    # This role will be provided access to
+    dataAdminRole:
+      id: ssm:/{{org}}/shared/generated-role/data-admin/id
+
+    # Tooling blueprint configuration for SageMaker Unified Studio
+    tooling:
+      vpcId: '{{context:vpc_id}}'
+      subnetIds:
+        - '{{context:private_subnet_id1}}'
+        - '{{context:private_subnet_id2}}'
+
+    # SSO Groups to be added to the domain
+    groups:
+      team1:
+        ssoId: '{{context:team1-group-sso-id}}'
+
+      team2:
+        ssoId: '{{context:team2-group-sso-id}}'

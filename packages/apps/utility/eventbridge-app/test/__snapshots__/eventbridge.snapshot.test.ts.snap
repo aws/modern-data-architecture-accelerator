@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`eventbridge Snapshot Tests Eventbridge App App Snapshot Test 1`] = `
 {
@@ -55,7 +55,7 @@ exports[`eventbridge Snapshot Tests Eventbridge App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "test-org-test-env-test-domain-test-eve--6dfaaf3a",
+          "Name": "REPLACED-S3-BUCKET-NAME",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -83,7 +83,7 @@ exports[`eventbridge Snapshot Tests Eventbridge App App Snapshot Test 1`] = `
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "ArchiveName": "test-org-test-env-test-domain-test-eve--1d5f1145",
+          "ArchiveName": "REPLACED-S3-BUCKET-NAME",
           "Description": {
             "Fn::Join": [
               "",
@@ -260,7 +260,7 @@ exports[`eventbridge Snapshot Tests Eventbridge Stack Snapshot Test 1`] = `
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
-        "Name": "test-org-test-env-test-domain-test-eve--6dfaaf3a",
+        "Name": "REPLACED-S3-BUCKET-NAME",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -288,7 +288,7 @@ exports[`eventbridge Snapshot Tests Eventbridge Stack Snapshot Test 1`] = `
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
-        "ArchiveName": "test-org-test-env-test-domain-test-eve--1d5f1145",
+        "ArchiveName": "REPLACED-S3-BUCKET-NAME",
         "Description": {
           "Fn::Join": [
             "",

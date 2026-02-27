@@ -5,7 +5,7 @@
 
 import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import { StepFunctionL3Construct, StepFunctionL3ConstructProps } from '../lib';
 
 const validStepfunctionDefinition = {
@@ -106,9 +106,10 @@ describe('StepFunctionL3Construct Log Group Retention Tests', () => {
 
     new StepFunctionL3Construct(stack, 'test-retention-infinite', constructProps);
     const template = Template.fromStack(stack);
+    console.log(JSON.stringify(template, undefined, 2));
 
     template.hasResourceProperties('AWS::Logs::LogGroup', {
-      LogGroupName: '/aws/stepfunction/test-org-test-env-test-domain-test-module-test-state-machine',
+      RetentionInDays: Match.absent(),
     });
 
     const logGroups = template.findResources('AWS::Logs::LogGroup');

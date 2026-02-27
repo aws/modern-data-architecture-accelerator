@@ -1,0 +1,20 @@
+# SageMaker Unified Studio Project Profiles and Projects Configuration
+
+# Note: Tooling and DataLake environments are always deployed ON_CREATE automatically
+domainConfigSSMParam: /{{org}}/{{domain}}/domain/domain/domain1/config
+
+projectProfiles:
+  profile1:
+    # The tooling and basic Glue database environments are automatically enabled.
+    environments: {}
+
+projects:
+  team1:
+    profileName: profile1
+    groups:
+      team1: '{{context:team1-group-sso-id}}'
+
+  team2:
+    profileName: profile2
+    groups: 
+      team2: '{{context:team2-group-sso-id}}'

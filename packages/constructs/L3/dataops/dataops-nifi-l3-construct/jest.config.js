@@ -13,4 +13,5 @@ module.exports = {
       statements: 40,
     },
   },
+  coveragePathIgnorePatterns: ['<rootDir>/lib/cdk8s'],
 };

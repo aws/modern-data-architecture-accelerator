@@ -198,7 +198,7 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
     const workgroupL3ConstructProps: AthenaWorkgroupL3ConstructProps = {
       ...(this.props as MdaaL3ConstructProps),
       ...{
-        naming: this.props.naming.withModuleName(this.props.naming.props.moduleName + '-athena'),
+        naming: this.props.naming.withSuffix('athena'),
         dataAdminRoles: this.props.team.dataAdminRoles,
         athenaUserRoles: [
           ...[
@@ -295,11 +295,11 @@ export class DataScienceTeamL3Construct extends MdaaL3Construct {
       inventories: this.props.team.inventories,
       accessPolicies: miniLakeAccessPolicies,
     };
-
+    const newNaming = this.props.naming.withSuffix('minilake');
     const minilakeL3ConstructProps: DataLakeL3ConstructProps = {
       ...(this.props as MdaaL3ConstructProps),
       ...{
-        naming: this.props.naming.withModuleName(this.props.naming.props.moduleName + '-minilake'),
+        naming: newNaming,
         buckets: [minilakeBucketProps],
       },
     };

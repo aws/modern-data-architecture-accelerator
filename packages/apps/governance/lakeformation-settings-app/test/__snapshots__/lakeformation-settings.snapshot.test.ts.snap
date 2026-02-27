@@ -572,6 +572,18 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings App App Sn
                   "Service": "datazone.amazonaws.com",
                 },
               },
+              {
+                "Action": "sts:AssumeRole",
+                "Condition": {
+                  "StringEquals": {
+                    "aws:SourceAccount": "trusted-account-num",
+                  },
+                },
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "datazone.amazonaws.com",
+                },
+              },
             ],
             "Version": "2012-10-17",
           },
@@ -3235,6 +3247,18 @@ exports[`lakeformation-settings Snapshot Tests Lakeformation Settings Stack Snap
                   "aws:SourceAccount": {
                     "Ref": "AWS::AccountId",
                   },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "datazone.amazonaws.com",
+              },
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "trusted-account-num",
                 },
               },
               "Effect": "Allow",

@@ -11,7 +11,7 @@ import {
   Portfolio,
   PortfolioProps,
 } from 'aws-cdk-lib/aws-servicecatalog';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { MdaaStringParameter } from '@aws-mdaa/construct';
 import { Construct } from 'constructs';
 
 export interface PortfolioPropsWithAccess extends PortfolioProps {
@@ -76,7 +76,7 @@ export class ServiceCatalogL3Construct extends MdaaL3Construct {
 
   private createPortfolioSSMParam(paramId: string, ssmPath: string, paramValue: string) {
     console.log(`Creating Portfolio SSM Param: ${ssmPath}`);
-    new StringParameter(this.scope, paramId, {
+    new MdaaStringParameter(this.scope, paramId, {
       parameterName: this.props.naming.ssmPath(ssmPath, true, false),
       stringValue: paramValue,
     });

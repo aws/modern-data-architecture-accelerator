@@ -3536,18 +3536,6 @@ def sort_filter_rules(json_obj):
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
               {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
                 "id": "AwsSolutions-L1",
                 "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
               },
@@ -3642,18 +3630,6 @@ def sort_filter_rules(json_obj):
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -15180,18 +15156,6 @@ def sort_filter_rules(json_obj):
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
               {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
                 "id": "AwsSolutions-L1",
                 "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
               },
@@ -15283,18 +15247,6 @@ def sort_filter_rules(json_obj):
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -15441,18 +15393,6 @@ def sort_filter_rules(json_obj):
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -15628,18 +15568,6 @@ def sort_filter_rules(json_obj):
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
               },
               {
                 "id": "AwsSolutions-L1",
@@ -24329,18 +24257,6 @@ def sort_filter_rules(json_obj):
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
             {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
               "id": "AwsSolutions-L1",
               "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
             },
@@ -24435,18 +24351,6 @@ def sort_filter_rules(json_obj):
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/chatbot-api/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -35973,18 +35877,6 @@ def sort_filter_rules(json_obj):
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
             {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
               "id": "AwsSolutions-L1",
               "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
             },
@@ -36008,7 +35900,7 @@ def sort_filter_rules(json_obj):
             },
           ],
         },
-        "BucketName": "test-org-test-env-test-domain-test-gaia-main-test-org--46817329",
+        "BucketName": "REPLACED-S3-BUCKET-NAME",
         "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": true,
           "BlockPublicPolicy": true,
@@ -36076,18 +35968,6 @@ def sort_filter_rules(json_obj):
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
             },
             {
               "id": "AwsSolutions-L1",
@@ -36236,18 +36116,6 @@ def sort_filter_rules(json_obj):
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
             {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
               "id": "AwsSolutions-L1",
               "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/gaia-l3-construct.ts:LINE:COL] GAIA designed for Python 3.11.",
             },
@@ -36274,7 +36142,7 @@ def sort_filter_rules(json_obj):
             },
           ],
         },
-        "BucketName": "test-org-test-env-test-domain-test-gaia-main-test-org--5febe857",
+        "BucketName": "REPLACED-S3-BUCKET-NAME",
         "CorsConfiguration": {
           "CorsRules": [
             {
@@ -36421,18 +36289,6 @@ def sort_filter_rules(json_obj):
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/gaia-l3-construct/lib/rag-engines/data-import/index.ts:LINE:COL] MDAA does not enforce bucket replication.",
             },
             {
               "id": "AwsSolutions-L1",

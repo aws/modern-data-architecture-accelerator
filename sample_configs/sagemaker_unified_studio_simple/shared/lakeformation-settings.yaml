@@ -1,0 +1,13 @@
+# Lake Formation Admin Roles Configuration
+#
+# Roles are organized by purpose:
+
+lakeFormationAdminRoles:
+  # Data governance administrators
+  - id: ssm-domain:/generated-role/data-admin/id
+
+# Disable permission delegation to IAM
+iamAllowedPrincipalsDefault: false
+
+# Create a role for DZ to administer LF permissions
+createDataZoneAdminRole: true

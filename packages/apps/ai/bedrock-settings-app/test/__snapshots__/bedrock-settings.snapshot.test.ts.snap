@@ -579,18 +579,6 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
               },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
             ],
           },
         },
@@ -679,18 +667,6 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
               {
                 "id": "PCI.DSS.321-S3BucketLoggingEnabled",
                 "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-              },
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
               },
             ],
           },
@@ -848,24 +824,6 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
         "UpdateReplacePolicy": "Retain",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-bedrock-settings-app/bucket/logs-model-invocation/arn",
           "Tags": {
@@ -886,24 +844,6 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings App App Snapshot Test 
         "Type": "AWS::SSM::Parameter",
       },
       "REPLACED-CFN-LOGICAL-ID": {
-        "Metadata": {
-          "cdk_nag": {
-            "rules_to_suppress": [
-              {
-                "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-              {
-                "id": "HIPAA.Security-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-              {
-                "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-                "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-              },
-            ],
-          },
-        },
         "Properties": {
           "Name": "/test-org/test-domain/test-bedrock-settings-app/bucket/logs-model-invocation/name",
           "Tags": {
@@ -2745,18 +2685,6 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
             },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
           ],
         },
       },
@@ -2845,18 +2773,6 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
             {
               "id": "PCI.DSS.321-S3BucketLoggingEnabled",
               "reason": "[MDAA:@aws-mdaa/s3-constructs/lib/index.ts:LINE:COL] Server access logs do not support KMS on targets. MDAA uses CloudTrail data events instead.",
-            },
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
             },
           ],
         },
@@ -3014,24 +2930,6 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
       "UpdateReplacePolicy": "Retain",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-bedrock-settings-main/bucket/logs-model-invocation/arn",
         "Tags": {
@@ -3052,24 +2950,6 @@ exports[`Bedrock Settings Snapshot Tests Bedrock Settings Stack Snapshot Test 1`
       "Type": "AWS::SSM::Parameter",
     },
     "REPLACED-CFN-LOGICAL-ID": {
-      "Metadata": {
-        "cdk_nag": {
-          "rules_to_suppress": [
-            {
-              "id": "NIST.800.53.R5-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-            {
-              "id": "HIPAA.Security-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-            {
-              "id": "PCI.DSS.321-S3BucketReplicationEnabled",
-              "reason": "[MDAA:@aws-mdaa/ai/bedrock-settings-l3-construct/lib/bedrock-settings-l3-construct.ts:LINE:COL] Bucket does not contain data assets. Replication not required.",
-            },
-          ],
-        },
-      },
       "Properties": {
         "Name": "/test-org/test-domain/test-bedrock-settings-main/bucket/logs-model-invocation/name",
         "Tags": {

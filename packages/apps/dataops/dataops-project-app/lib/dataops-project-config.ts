@@ -5,13 +5,14 @@
 
 import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from '@aws-mdaa/app';
 import {
-  DatazoneProps,
   FailureNotificationsProps,
   LakeFormationConfig,
   NamedClassifierProps,
   NamedConnectionProps,
   NamedDatabaseProps,
   NamedSecurityGroupConfigProps,
+  DataOpsDatazoneProps,
+  DataOpsSageMakerProps,
 } from '@aws-mdaa/dataops-project-l3-construct';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
 import { Schema } from 'ajv';
@@ -143,7 +144,8 @@ export interface DataOpsProjectConfigContents extends MdaaBaseConfigContents {
    *
    * Validation: Must be valid DatazoneProps if provided; enables DataZone governance integration
    **/
-  readonly datazone?: DatazoneProps;
+  readonly datazone?: DataOpsDatazoneProps;
+  readonly sagemaker?: DataOpsSageMakerProps;
 
   /**
    * Q-ENHANCED-PROPERTY
@@ -169,7 +171,8 @@ export class DataOpsProjectConfigParser extends MdaaAppConfigParser<DataOpsProje
   public readonly glueCatalogKmsKeyArn?: string;
   public readonly failureNotifications?: FailureNotificationsProps;
   public readonly securityGroupConfigs?: NamedSecurityGroupConfigProps;
-  public readonly datazone?: DatazoneProps;
+  public readonly datazone?: DataOpsDatazoneProps;
+  public readonly sagemaker?: DataOpsSageMakerProps;
   public readonly lakeFormation?: LakeFormationConfig;
 
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
@@ -187,5 +190,12 @@ export class DataOpsProjectConfigParser extends MdaaAppConfigParser<DataOpsProje
     this.securityGroupConfigs = this.configContents.securityGroupConfigs;
     this.datazone = this.configContents.datazone;
     this.lakeFormation = this.configContents.lakeFormation;
+    if (this.configContents.datazone && this.configContents.sagemaker) {
+      throw new Error('Only one of datazone or sageMaker can be specified');
+    } else if (this.configContents.datazone) {
+      this.datazone = this.configContents.datazone;
+    } else if (this.configContents.sagemaker) {
+      this.sagemaker = this.configContents.sagemaker;
+    }
   }
 }

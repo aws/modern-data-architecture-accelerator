@@ -1,0 +1,92 @@
+generatePolicies:
+  data-admin:
+    policyDocument:
+      Statement:
+        - Sid: BasicS3Access
+          Effect: Allow
+          Action:
+            - s3:ListAllMyBuckets
+            - s3:GetAccountPublicAccessBlock
+            - s3:GetBucketPublicAccessBlock
+            - s3:GetBucketPolicyStatus
+            - s3:GetBucketAcl
+            - s3:ListAccessPoints
+            - s3:GetBucketLocation
+          Resource: "*"
+
+        # Allows basic listing of KMS keys (required for SMUS)
+        - Sid: BasicKMSAccess
+          Effect: Allow
+          Action:
+            - kms:ListAliases
+          Resource: "*"
+
+        # Basic SageMaker and DataZone permissions for SMUS domain administration
+        - Sid: SMUSAdminAccess
+          Effect: Allow
+          Action:
+            - sagemaker:ListDomains
+            - sagemaker:DescribeDomain
+            - datazone:ListDomains
+            - datazone:GetDomain
+            - datazone:ListEnvironmentBlueprints
+            - datazone:PutEnvironmentBlueprintConfiguration
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "These actions do not accept a resource or resource name not known at deployment time."
+
+  domain-admin:
+    policyDocument:
+      Statement:
+        # SageMaker Unified Studio domain management permissions
+        - Sid: SMUSDomainManagement
+          Effect: Allow
+          Action:
+            - sagemaker:CreateDomain
+            - sagemaker:UpdateDomain
+            - sagemaker:DeleteDomain
+            - sagemaker:DescribeDomain
+            - sagemaker:ListDomains
+            - datazone:CreateDomain
+            - datazone:UpdateDomain
+            - datazone:DeleteDomain
+            - datazone:GetDomain
+            - datazone:ListDomains
+          Resource: "*"
+
+        # Project and environment cleanup permissions
+        - Sid: SMUSProjectCleanup
+          Effect: Allow
+          Action:
+            - datazone:DeleteProject
+            - datazone:ListProjects
+            - datazone:GetProject
+            - datazone:DeleteEnvironment
+            - datazone:ListEnvironments
+            - datazone:GetEnvironment
+            - lakeformation:RevokePermissions
+            - lakeformation:ListPermissions
+          Resource: "*"
+
+        # Required permissions for domain operations
+        - Sid: SMUSDomainSupport
+          Effect: Allow
+          Action:
+            - iam:PassRole
+            - kms:ListAliases
+            - kms:DescribeKey
+          Resource: "*"
+
+    suppressions:
+      - id: "AwsSolutions-IAM5"
+        reason: "Domain management requires wildcard permissions for resource creation and management."
+
+# The list of roles which will be generated
+generateRoles:
+  data-admin:
+    trustedPrincipal: this_account
+    generatedPolicies:
+      - data-admin
+      - domain-admin

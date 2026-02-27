@@ -3,13 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { MdaaTestApp } from '@aws-mdaa/testing';
-import { Template } from 'aws-cdk-lib/assertions';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
-import { Match } from 'aws-cdk-lib/assertions';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
-import { MdaaBucket, MdaaBucketProps } from '../lib';
+import { MdaaTestApp } from '@aws-mdaa/testing';
 import { Arn } from 'aws-cdk-lib';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { MdaaBucket, MdaaBucketProps } from '../lib';
 
 describe('MDAA Construct Mandatory Prop Compliance Tests', () => {
   const testApp = new MdaaTestApp();
@@ -26,16 +24,7 @@ describe('MDAA Construct Mandatory Prop Compliance Tests', () => {
     encryptionKey: testKey,
   };
 
-  const testConstruct = new MdaaBucket(testApp.testStack, 'test-construct', testContstructProps);
-  MdaaNagSuppressions.addCodeResourceSuppressions(
-    testConstruct,
-    [
-      { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-      { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-      { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-    ],
-    true,
-  );
+  new MdaaBucket(testApp.testStack, 'test-construct', testContstructProps);
 
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);
@@ -180,16 +169,7 @@ describe('MDAA Construct Optional Prop Compliance Tests', () => {
     additionalKmsKeyArns: [additionalKmsKeyArn],
   };
 
-  const testConstruct = new MdaaBucket(testApp.testStack, 'test-construct', testContstructProps);
-  MdaaNagSuppressions.addCodeResourceSuppressions(
-    testConstruct,
-    [
-      { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-      { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-      { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA Data Lake does not use bucket replication.' },
-    ],
-    true,
-  );
+  new MdaaBucket(testApp.testStack, 'test-construct', testContstructProps);
 
   testApp.checkCdkNagCompliance(testApp.testStack);
   const template = Template.fromStack(testApp.testStack);

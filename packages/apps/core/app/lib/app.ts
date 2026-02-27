@@ -8,14 +8,14 @@ import {
   ConfigurationElement,
   MdaaConfigTransformer,
   MdaaCustomAspect,
+  MdaaServiceCatalogProductConfig,
   TagElement,
 } from '@aws-mdaa/config';
+import { MdaaNagSuppressions, MdaaStringParameter } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
-import { MdaaLambdaFunction, MdaaLambdaFunctionProps, MdaaLambdaRole } from '@aws-mdaa/lambda-constructs';
 import { IMdaaResourceNaming, MdaaDefaultResourceNaming } from '@aws-mdaa/naming';
-import { App, AppProps, Aspects, CfnMacro, Stack, Tags } from 'aws-cdk-lib';
-import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { App, AppProps, Aspects, Stack, Tags } from 'aws-cdk-lib';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import {
   CfnLaunchRoleConstraint,
   CfnLaunchRoleConstraintProps,
@@ -26,13 +26,24 @@ import {
 } from 'aws-cdk-lib/aws-servicecatalog';
 import { AwsSolutionsChecks, HIPAASecurityChecks, NIST80053R5Checks, PCIDSS321Checks } from 'cdk-nag';
 import * as path from 'path';
-import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents } from './app_config';
+import {
+  MdaaAppConfigParser,
+  MdaaAppConfigParserProps,
+  MdaaBaseConfigContents,
+  MdaaSageMakerBluePrintConfig,
+} from './app_config';
+import { MdaaBlueprintStack, MdaaProductStack } from './blueprint-product-stack';
 import * as configSchema from './config-schema.json';
-import { MdaaProductStack, MdaaProductStackProps, MdaaStack } from './stack';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
-import { cleanContextStringValue, getNodeValue, readYamlFile } from './utils';
+import { MdaaStack } from './stack';
+import { cleanContextStringValue, filterConfigurationElement, getNodeValue, readYamlFile } from './utils';
 // nosemgrep
+import {
+  DomainConfig,
+  MdaaSageMakerCustomBlueprintConstruct,
+  MdaaSageMakerCustomBlueprintConstructProps,
+} from '@aws-mdaa/datazone-constructs';
 import * as assert from 'assert';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import * as pjson from '../package.json';
 
 export interface MdaaAppProps extends AppProps {
@@ -93,7 +104,6 @@ export abstract class MdaaCdkApp extends App {
   private readonly useBootstrap: boolean;
   private readonly stack: MdaaStack;
   private readonly baseConfigParser: MdaaAppConfigParser<MdaaBaseConfigContents>;
-  private readonly additionalStacks?: Deployment[];
   private readonly additionalStacksMap: { [account: string]: { [region: string]: Stack } };
 
   /**
@@ -178,9 +188,10 @@ export abstract class MdaaCdkApp extends App {
     this.deployRegion = process.env.CI_SUPPLIED_TARGET_REGION || process.env.CDK_DEFAULT_REGION;
 
     this.stack = this.createEmptyStack(packageName);
-    this.additionalStacks = getNodeValue(this.node, 'additional_stacks', []);
+
+    const additionalStacks = getNodeValue(this.node, 'additional_stacks', []) as Deployment[];
     this.additionalStacksMap = Object.fromEntries(
-      this.additionalStacks?.map(deployment => {
+      additionalStacks?.map(deployment => {
         const account = deployment.account ?? this.stack.account;
         const region = deployment.region ?? this.stack.region;
         const addDependencyMainStack = deployment.addDependencyMainStack ?? true;
@@ -209,9 +220,17 @@ export abstract class MdaaCdkApp extends App {
         return [account, Object.fromEntries([[region, additionalAccountStack]])];
       }) || [],
     );
+    //Issue here with SSM refs being resolved both by the base config parser and the module config parser
+    //resulting in SSM param refs needlessly being created. Need to filter base config down
+    //to only elements which are actually base config.
+    const baseAppConfig = filterConfigurationElement(this.appConfigRaw, [
+      'service_catalog_product_config',
+      'sagemakerBlueprint',
+      'nag_suppressions',
+    ]);
     this.baseConfigParser = new MdaaAppConfigParser<MdaaBaseConfigContents>(
       this.stack,
-      this.getConfigParserProps(),
+      this.getConfigParserProps(baseAppConfig),
       configSchema,
       undefined,
       true,
@@ -317,38 +336,151 @@ export abstract class MdaaCdkApp extends App {
     Aspects.of(this).add(aspect);
   }
 
+  private generateServiceCatalogProductParentStackResources(
+    serviceCatalogConfig: MdaaServiceCatalogProductConfig,
+    parentStack: MdaaStack,
+    productStack: MdaaProductStack,
+  ): Stack {
+    const productProps: CloudFormationProductProps = {
+      productName: serviceCatalogConfig.name,
+      owner: serviceCatalogConfig.owner,
+      productVersions: [
+        {
+          productVersionName: 'v1',
+          cloudFormationTemplate: CloudFormationTemplate.fromProductStack(productStack),
+        },
+      ],
+    };
+    const product = new CloudFormationProduct(parentStack, 'Product', productProps);
+    const portfolio = Portfolio.fromPortfolioArn(parentStack, 'portfolio', serviceCatalogConfig.portfolio_arn);
+    if (serviceCatalogConfig.launch_role_name) {
+      const launchRoleConstraintProps: CfnLaunchRoleConstraintProps = {
+        portfolioId: portfolio.portfolioId,
+        productId: product.productId,
+        localRoleName: serviceCatalogConfig.launch_role_name,
+      };
+      new CfnLaunchRoleConstraint(parentStack, 'launch-role-constraint', launchRoleConstraintProps);
+    }
+    portfolio.addProduct(product);
+    return parentStack;
+  }
+
+  private generateSageMakerBlueprintStack(sagemakerBlueprintConfig: MdaaSageMakerBluePrintConfig) {
+    const domainConfig = sagemakerBlueprintConfig.domainConfigSSMParam
+      ? new DomainConfig(this.stack, 'domain-config-parser', {
+          ssmParamBase: sagemakerBlueprintConfig.domainConfigSSMParam,
+          naming: this.naming,
+        })
+      : sagemakerBlueprintConfig.domainConfig;
+
+    if (!domainConfig) {
+      throw new Error('One of domainConfig or domainConfigSSMParam must be specified');
+    }
+
+    const domainBucket = sagemakerBlueprintConfig.domainBucketName
+      ? Bucket.fromBucketName(this.stack, 'sm-domain-bucket-import', sagemakerBlueprintConfig.domainBucketName)
+      : Bucket.fromBucketArn(
+          this.stack,
+          'sm-domain-bucket-import',
+          StringParameter.valueFromLookup(
+            this.stack,
+            domainConfig.ssmParamBase + '/' + DomainConfig.SSM_PARAM_DOMAIN_BUCKET_ARN,
+            `arn:${this.stack.partition}:s3:::placeholder-bucket`,
+          ),
+        );
+
+    const blueprintName = sagemakerBlueprintConfig.blueprintName ?? this.moduleName;
+
+    const blueprintStack = new MdaaBlueprintStack(this.stack, `${this.stack.stackName}-blueprint`, {
+      naming: this.naming,
+      useBootstrap: this.useBootstrap,
+      assetBucket: domainBucket,
+      blueprintName: blueprintName,
+    });
+
+    this.subGenerateResources(
+      blueprintStack,
+      this.createL3ConstructProps(blueprintStack),
+      this.getConfigParserProps(this.appConfigRaw),
+    );
+    const tags = {
+      mdaa_dz_domain_id: blueprintStack.dzDomainIdParam.valueAsString,
+      mdaa_dz_project_name: blueprintStack.dzProjectNameParam.valueAsString,
+      mdaa_dz_project_id: blueprintStack.dzProjectIdParam.valueAsString,
+      mdaa_dz_environment_id: blueprintStack.dzEnvIdParam.valueAsString,
+    };
+    for (const [tag, value] of Object.entries(tags)) {
+      Tags.of(blueprintStack).add(tag, value);
+    }
+    const template = CloudFormationTemplate.fromProductStack(blueprintStack);
+
+    const authorizedDomainUnits = Object.fromEntries(
+      (sagemakerBlueprintConfig.authorizedDomainUnits ?? ['/root'])
+        .map(unit => (unit.startsWith('/') ? unit : `/${unit}`))
+        .map(unit => [unit, domainConfig.getDomainUnitId(unit)]),
+    );
+    const blueprintProps: MdaaSageMakerCustomBlueprintConstructProps = {
+      domainConfig: domainConfig,
+      provisioningRoleArn: sagemakerBlueprintConfig.provisioningRoleArn,
+      blueprintName: blueprintName,
+      templateUrl: template.bind(this.stack).httpUrl,
+      domainBucket: domainBucket,
+      enabledRegions: sagemakerBlueprintConfig.enabledRegions,
+      region: this.stack.region,
+      account: this.stack.account,
+      naming: this.naming,
+      authorizedDomainUnits: authorizedDomainUnits,
+    };
+    new MdaaSageMakerCustomBlueprintConstruct(this.stack, `${blueprintName}-custom-blueprint`, blueprintProps);
+  }
+
   public generateStack(): Stack {
     if (this.baseConfigParser.serviceCatalogConfig) {
-      const productStack = this.createEmptyProductStack(this.stack);
-      this.subGenerateResources(productStack, this.createL3ConstructProps(productStack), this.getConfigParserProps());
-      const productProps: CloudFormationProductProps = {
-        productName: this.baseConfigParser.serviceCatalogConfig.name,
-        owner: this.baseConfigParser.serviceCatalogConfig.owner,
-        productVersions: [
-          {
-            productVersionName: 'v1',
-            cloudFormationTemplate: CloudFormationTemplate.fromProductStack(productStack),
-          },
-        ],
-      };
-      const product = new CloudFormationProduct(this.stack, 'Product', productProps);
-      const portfolio = Portfolio.fromPortfolioArn(
-        this.stack,
-        'portfolio',
-        this.baseConfigParser.serviceCatalogConfig.portfolio_arn,
-      );
-      if (this.baseConfigParser.serviceCatalogConfig.launch_role_name) {
-        const launchRoleConstraintProps: CfnLaunchRoleConstraintProps = {
-          portfolioId: portfolio.portfolioId,
-          productId: product.productId,
-          localRoleName: this.baseConfigParser.serviceCatalogConfig.launch_role_name,
-        };
-        new CfnLaunchRoleConstraint(this.stack, 'launch-role-constraint', launchRoleConstraintProps);
-      }
-      portfolio.addProduct(product);
-    } else {
-      this.subGenerateResources(this.stack, this.createL3ConstructProps(this.stack), this.getConfigParserProps());
+      return this.generateServiceCatalogStack();
     }
+
+    if (this.baseConfigParser.sagemakerBlueprintConfig) {
+      return this.generateSageMakerStack();
+    }
+
+    return this.generateStandardStack();
+  }
+
+  private generateServiceCatalogStack(): Stack {
+    const portfolioBucketArn = `arn:${this.stack.partition}:s3:::${this.baseConfigParser.serviceCatalogConfig!.portfolio_bucket_name}`;
+    const portfolioBucket = Bucket.fromBucketArn(this.stack, 'sm-domain-bucket-import', portfolioBucketArn);
+
+    const productStack = new MdaaProductStack(this.stack, `${this.stack.stackName}-product`, {
+      naming: this.naming,
+      useBootstrap: this.useBootstrap,
+      assetBucket: portfolioBucket,
+    });
+
+    this.subGenerateResources(
+      productStack,
+      this.createL3ConstructProps(productStack),
+      this.getConfigParserProps(this.appConfigRaw),
+    );
+
+    return this.generateServiceCatalogProductParentStackResources(
+      this.baseConfigParser.serviceCatalogConfig!,
+      this.stack,
+      productStack,
+    );
+  }
+
+  private generateSageMakerStack(): Stack {
+    this.generateSageMakerBlueprintStack(this.baseConfigParser.sagemakerBlueprintConfig!);
+    this.addTagsAndSuppressions();
+    return this.stack;
+  }
+
+  private generateStandardStack(): Stack {
+    this.subGenerateResources(
+      this.stack,
+      this.createL3ConstructProps(this.stack),
+      this.getConfigParserProps(this.appConfigRaw),
+    );
     this.addTagsAndSuppressions();
     return this.stack;
   }
@@ -376,7 +508,7 @@ export abstract class MdaaCdkApp extends App {
       crossRegionReferences: this.node.tryGetContext('allow_cross_reference_stack')?.toLowerCase() === 'true',
     };
     const stack = new MdaaStack(this, stackName, stackProps);
-    new StringParameter(stack, 'StackDescriptionParameter', {
+    new MdaaStringParameter(stack, 'StackDescriptionParameter', {
       parameterName: this.naming.ssmPath('aws-solution'),
       stringValue: stackDescription,
       description: 'Stack description parameter to update on version changes',
@@ -385,104 +517,24 @@ export abstract class MdaaCdkApp extends App {
     return stack;
   }
 
-  private createEmptyProductStack(stack: MdaaStack): MdaaProductStack {
-    const productStackProps: MdaaProductStackProps = {
-      naming: this.naming,
-      useBootstrap: this.useBootstrap,
-      moduleName: this.moduleName,
-    };
-    const productStack = new MdaaProductStack(stack, `${stack.stackName}-product`, productStackProps);
-    const provisioningMacroFunctionRole = new MdaaLambdaRole(stack, 'provisioning-macro-function-role', {
-      description: 'Provisioning Macro Role',
-      roleName: 'prov-macro',
-      naming: this.naming,
-      logGroupNames: [this.naming.resourceName('provisioningMacro')],
-      createParams: false,
-      createOutputs: false,
-    });
-    const provisioningMacroFunctionProps: MdaaLambdaFunctionProps = {
-      runtime: Runtime.PYTHON_3_13,
-      code: Code.fromAsset(`${__dirname}/../src/python/provisioning_macro`),
-      handler: 'provisioning_macro.lambda_handler',
-      functionName: 'provisioningMacro',
-      role: provisioningMacroFunctionRole,
-      naming: this.naming,
-      environment: {
-        LOG_LEVEL: 'INFO',
-      },
-    };
-    const provisioningMacroFunction = new MdaaLambdaFunction(
-      stack,
-      'provisioning-macro-function',
-      provisioningMacroFunctionProps,
-    );
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      provisioningMacroFunction,
-      [
-        {
-          id: 'NIST.800.53.R5-LambdaDLQ',
-          reason: 'Function is for Cfn Macro and error handling will be handled by CloudFormation.',
-        },
-        {
-          id: 'NIST.800.53.R5-LambdaInsideVPC',
-          reason: 'Function is for Cfn Macro and will interact only with CloudFormation.',
-        },
-        {
-          id: 'NIST.800.53.R5-LambdaConcurrency',
-          reason:
-            'Function is for Cfn Macro and will only execute during stack deployement. Reserved concurrency not appropriate.',
-        },
-        {
-          id: 'HIPAA.Security-LambdaDLQ',
-          reason: 'Function is for Cfn Macro and error handling will be handled by CloudFormation.',
-        },
-        {
-          id: 'PCI.DSS.321-LambdaDLQ',
-          reason: 'Function is for Cfn Macro and error handling will be handled by CloudFormation.',
-        },
-        {
-          id: 'HIPAA.Security-LambdaInsideVPC',
-          reason: 'Function is for Cfn Macro and will interact only with CloudFormation.',
-        },
-        {
-          id: 'PCI.DSS.321-LambdaInsideVPC',
-          reason: 'Function is for Cfn Macro and will interact only with CloudFormation.',
-        },
-        {
-          id: 'HIPAA.Security-LambdaConcurrency',
-          reason:
-            'Function is for Cfn Macro and will only execute during stack deployement. Reserved concurrency not appropriate.',
-        },
-        {
-          id: 'PCI.DSS.321-LambdaConcurrency',
-          reason:
-            'Function is for Cfn Macro and will only execute during stack deployement. Reserved concurrency not appropriate.',
-        },
-      ],
-      true,
-    );
-    const provisioningMacro = new CfnMacro(stack, 'provisioning-macro', {
-      name: this.naming.resourceName('provisioning-macro'),
-      functionName: provisioningMacroFunction.functionArn,
-    });
-    productStack.templateOptions.transforms = [provisioningMacro.name];
-    return productStack;
-  }
-
   private addTagsAndSuppressions() {
     const allAccountStacks = [
       this.stack,
       ...Object.entries(this.additionalStacksMap).flatMap(x => Object.entries(x[1]).map(y => y[1])),
     ];
+
+    // Apply suppressions to all stacks (O(n) instead of O(n*m))
+    const suppressions = this.baseConfigParser.nagSuppressions?.by_path ?? [];
     allAccountStacks.forEach(stack => {
-      this.baseConfigParser.nagSuppressions?.by_path?.forEach(suppression => {
+      suppressions.forEach(suppression => {
         try {
           MdaaNagSuppressions.addConfigResourceSuppressionsByPath(stack, suppression.path, suppression.suppressions);
         } catch (error) {
           console.log(`Error adding suppression for path ${suppression.path} to stack ${stack}:`, error);
         }
       });
-      // Apply our tags
+
+      // Apply tags
       for (const tagKey in this.tags) {
         if (tagKey in this.tags) {
           Tags.of(stack).add(tagKey, this.tags[tagKey]);
@@ -493,7 +545,7 @@ export abstract class MdaaCdkApp extends App {
 
   private createL3ConstructProps(stack: MdaaStack): MdaaL3ConstructProps {
     return {
-      naming: this.naming,
+      naming: stack.props.naming,
       roleHelper: stack.roleHelper,
       crossAccountStacks: this.additionalStacksMap,
       tags: this.tags,
@@ -503,13 +555,13 @@ export abstract class MdaaCdkApp extends App {
   /**
    * @returns A standard set of MDAA Stack Props for use in Mdaa App Configs
    */
-  private getConfigParserProps(): MdaaAppConfigParserProps {
+  private getConfigParserProps(rawConfig: ConfigurationElement): MdaaAppConfigParserProps {
     return {
       org: this.org,
       domain: this.domain,
       environment: this.env,
       module_name: this.moduleName,
-      rawConfig: this.appConfigRaw,
+      rawConfig: rawConfig,
       naming: this.naming,
     };
   }

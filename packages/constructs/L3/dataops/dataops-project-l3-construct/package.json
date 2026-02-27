@@ -24,6 +24,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
+    "@aws-mdaa/sagemaker-project-l3-construct": "1.4.0",
     "@aws-mdaa/athena-workgroup-l3-construct": "1.4.0",
     "@aws-mdaa/construct": "1.4.0",
     "@aws-mdaa/datazone-constructs": "1.4.0",
@@ -57,6 +58,7 @@
   ],
   "peerDependencies": {
     "@aws-mdaa/athena-workgroup-l3-construct": "1.4.0",
+    "@aws-mdaa/sagemaker-project-l3-construct": "1.4.0",
     "@aws-mdaa/construct": "1.4.0",
     "@aws-mdaa/datazone-constructs": "1.4.0",
     "@aws-mdaa/ec2-constructs": "1.4.0",
@@ -66,8 +68,8 @@
     "@aws-mdaa/l3-construct": "1.4.0",
     "@aws-mdaa/lakeformation-access-control-l3-construct": "1.4.0",
     "@aws-mdaa/lakeformation-settings-l3-construct": "1.4.0",
-    "@aws-mdaa/lakeformation-tagbased-permissions-l3-construct": "1.4.0",
     "@aws-mdaa/lakeformation-tags-l3-construct": "1.4.0",
+    "@aws-mdaa/lakeformation-tagbased-permissions-l3-construct": "1.4.0",
     "@aws-mdaa/naming": "1.4.0",
     "aws-cdk-lib": "2.220.0",
     "constructs": "10.0.96"
@@ -75,6 +77,7 @@
   "dependencies": {
     "@aws-cdk/aws-glue-alpha": "2.220.0-alpha.0",
     "@aws-mdaa/athena-workgroup-l3-construct": "1.4.0",
+    "@aws-mdaa/sagemaker-project-l3-construct": "1.4.0",
     "@aws-mdaa/construct": "1.4.0",
     "@aws-mdaa/datazone-constructs": "1.4.0",
     "@aws-mdaa/datazone-l3-construct": "1.4.0",
@@ -88,8 +91,8 @@
     "@aws-mdaa/l3-construct": "1.4.0",
     "@aws-mdaa/lakeformation-access-control-l3-construct": "1.4.0",
     "@aws-mdaa/lakeformation-settings-l3-construct": "1.4.0",
-    "@aws-mdaa/lakeformation-tagbased-permissions-l3-construct": "1.4.0",
     "@aws-mdaa/lakeformation-tags-l3-construct": "1.4.0",
+    "@aws-mdaa/lakeformation-tagbased-permissions-l3-construct": "1.4.0",
     "@aws-mdaa/lambda-constructs": "1.4.0",
     "@aws-mdaa/naming": "1.4.0",
     "@aws-mdaa/s3-bucketpolicy-helper": "1.4.0",

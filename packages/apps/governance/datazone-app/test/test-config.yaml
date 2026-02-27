@@ -85,7 +85,9 @@ domains:
         # The AWS account number fo the associated account.
         # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
         account: '1234567890'
-        # The arn of the KMS key used to encrypt the glue catalog in this associated account
+        # Optional - The arn of the KMS key used to encrypt the glue catalog in this associated account
+        # If not specified, the KMS key arn will be looked up from a standard SSM param created by the
+        # Glue Catalog Settings module and RAM shared to associated accounts.
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
         createCdkUser: true
@@ -98,8 +100,6 @@ domains:
         # The AWS account number fo the associated account.
         # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
         account: '2234567890'
-        # The arn of the KMS key used to encrypt the glue catalog in this associated account
-        glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
         createCdkUser: true
         # (Optional) The role which will be used within the associated account to administer LF permissions.

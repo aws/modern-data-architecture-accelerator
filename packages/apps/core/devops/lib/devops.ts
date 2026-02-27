@@ -258,25 +258,6 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
       encryptionKey: kmsKey,
     });
 
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      devOpsBucket,
-      [
-        {
-          id: 'NIST.800.53.R5-S3BucketReplicationEnabled',
-          reason: 'Bucket does not contain data assets. Replication not required.',
-        },
-        {
-          id: 'HIPAA.Security-S3BucketReplicationEnabled',
-          reason: 'Bucket does not contain data assets. Replication not required.',
-        },
-        {
-          id: 'PCI.DSS.321-S3BucketReplicationEnabled',
-          reason: 'Bucket does not contain data assets. Replication not required.',
-        },
-      ],
-      true,
-    );
-
     const codeCommitEventRole = new MdaaRole(this, 'codecommit-event-role', {
       roleName: 'codecommit-event',
       naming: this.props.naming,
@@ -389,7 +370,7 @@ export class MdaaDevopsL3Construct extends MdaaL3Construct {
     Object.entries(this.props.pipelines ?? {}).forEach(entry => {
       const pipelineProps: MdaaPipelineProps = {
         pipelineType: PipelineType.V2,
-        naming: this.props.naming.withModuleName(`devops-${entry[0]}`),
+        naming: this.props.naming.withSuffix(entry[0]),
         pipelineName: this.props.naming.resourceName(entry[0]),
         ...entry[1],
         role: pipelineRole,

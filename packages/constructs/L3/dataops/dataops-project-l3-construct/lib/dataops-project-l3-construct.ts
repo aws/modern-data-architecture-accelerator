@@ -5,7 +5,15 @@
 
 import { SecurityConfiguration } from '@aws-cdk/aws-glue-alpha';
 import { AthenaWorkgroupL3Construct, AthenaWorkgroupL3ConstructProps } from '@aws-mdaa/athena-workgroup-l3-construct';
-import { DomainConfig, MdaaDatazoneProject, MdaaDatazoneProjectProps } from '@aws-mdaa/datazone-constructs';
+import { ConfigurationElement } from '@aws-mdaa/config';
+import { MdaaStringParameter } from '@aws-mdaa/construct';
+import {
+  DomainConfig,
+  MdaaDatazoneEnvironment,
+  MdaaDatazoneEnvironmentProps,
+  MdaaDatazoneProject,
+  MdaaDatazoneProjectProps,
+} from '@aws-mdaa/datazone-constructs';
 import { MdaaSecurityGroupRuleProps } from '@aws-mdaa/ec2-constructs';
 import { Ec2L3Construct, Ec2L3ConstructProps } from '@aws-mdaa/ec2-l3-construct';
 import { MdaaSecurityConfig } from '@aws-mdaa/glue-constructs';
@@ -25,20 +33,17 @@ import {
   ResourceLinkProps,
 } from '@aws-mdaa/lakeformation-access-control-l3-construct';
 import { LakeFormationTagsL3Construct, LFTagConfig } from '@aws-mdaa/lakeformation-tags-l3-construct';
+import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
 import { RestrictBucketToRoles, RestrictObjectPrefixToRoles } from '@aws-mdaa/s3-bucketpolicy-helper';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
+import {
+  SagemakerProjectL3Construct,
+  SagemakerProjectL3ConstructProps,
+  SageMakerProjectProps,
+} from '@aws-mdaa/sagemaker-project-l3-construct';
 import { MdaaSnsTopic, MdaaSnsTopicProps } from '@aws-mdaa/sns-constructs';
 import { Arn, ArnComponents, ArnFormat, Tags } from 'aws-cdk-lib';
-import {
-  CfnDataSource,
-  CfnDataSourceProps,
-  CfnEnvironment,
-  CfnEnvironmentActions,
-  CfnEnvironmentActionsProps,
-  CfnEnvironmentProps,
-  CfnSubscriptionTarget,
-  CfnSubscriptionTargetProps,
-} from 'aws-cdk-lib/aws-datazone';
+import { CfnDataSource, CfnDataSourceProps, CfnEnvironment } from 'aws-cdk-lib/aws-datazone';
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { CfnClassifier, CfnConnection, CfnDatabase } from 'aws-cdk-lib/aws-glue';
 import {
@@ -54,13 +59,10 @@ import { IKey } from 'aws-cdk-lib/aws-kms';
 import { CfnPrincipalPermissions, CfnResource } from 'aws-cdk-lib/aws-lakeformation';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { Construct } from 'constructs';
-import { ConfigurationElement } from '@aws-mdaa/config';
-import { LakeFormationSettingsL3Construct } from '@aws-mdaa/lakeformation-settings-l3-construct';
 import { createLakeFormationTags, processLakeFormationTagsPermissions } from './lake-formation-tags-manager';
 import { NamedTagBasedGrants, LakeFormationConfig } from './lake-formation-props';
+import { GlueCatalogL3Construct } from '@aws-mdaa/glue-catalog-l3-construct';
 
 /**
  * Q-ENHANCED-INTERFACE
@@ -376,6 +378,18 @@ export interface DatabaseProps {
    * Validation: Must be boolean; DataZone domain must exist; database must be compatible with DataZone data source requirements
    **/
   readonly createDatazoneDatasource?: boolean;
+
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Sagemaker data source creation for automated data discovery and cataloging integration enabling data governance. When enabled, automatically creates Sagemaker data sources for the database, supporting automated data discovery, cataloging, and governance workflows within Sagemaker domains.
+   *
+   * Use cases: Automated data discovery; Sagemaker integration; Data cataloging; Governance automation; Data source management
+   *
+   * AWS: AWS Sagemaker data source creation for automated database discovery and cataloging integration
+   *
+   * Validation: Must be boolean; Sagemaker domain must exist; database must be compatible with Sagemaker data source requirements
+   **/
+  readonly createSagemakerDatasource?: boolean;
 }
 
 export type ClassifierType = 'csv' | 'grok' | 'json' | 'xml';
@@ -766,6 +780,16 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
    * Validation: Must be valid KMS key ARN if provided; enables catalog metadata and credential encryption
    **/
   readonly glueCatalogKmsKeyArn?: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required array of IAM role references for DataOps project execution permissions enabling secure job and workflow execution. Provides execution roles that will be granted permissions to run Glue jobs, crawlers, and other DataOps workflows within the project with appropriate access to data and resources.
+   *
+   * Use cases: Job execution permissions; Workflow authorization; Glue job roles; DataOps execution security
+   *
+   * AWS: IAM role references for Glue job and workflow execution permissions and resource access
+   *
+   * Validation: Must be array of valid MdaaRoleRef; required for DataOps execution permissions; roles must exist
+   **/
   readonly projectExecutionRoleRefs: MdaaRoleRef[];
   /**
    * Q-ENHANCED-PROPERTY
@@ -778,7 +802,27 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
    * Validation: Must be valid NamedDatabaseProps if provided; enables data catalog organization and governance
    *   **/
   readonly databases?: NamedDatabaseProps;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional array of IAM role references for data engineering team access enabling development and data transformation activities. Provides data engineer roles that will be granted permissions to develop, test, and deploy data pipelines and transformations within the project.
+   *
+   * Use cases: Data engineering access; Pipeline development; Transformation development; Engineer permissions
+   *
+   * AWS: IAM role references for data engineering team access and development permissions
+   *
+   * Validation: Must be array of valid MdaaRoleRef if provided; enables data engineering team access
+   **/
   readonly dataEngineerRoleRefs: MdaaRoleRef[];
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required array of IAM role references for data administration and governance activities enabling data stewardship and access management. Provides data admin roles that will be granted permissions to manage data access, implement governance policies, and administer data assets within the project.
+   *
+   * Use cases: Data administration; Access management; Governance implementation; Data stewardship
+   *
+   * AWS: IAM role references for data administration and governance permissions
+   *
+   * Validation: Must be array of valid MdaaRoleRef; required for data administration capabilities; roles must exist
+   **/
   readonly dataAdminRoleRefs: MdaaRoleRef[];
   /**
    * Q-ENHANCED-PROPERTY
@@ -812,7 +856,18 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
    *
    * Validation: Must be valid DatazoneProps if provided; enables DataZone integration and data governance capabilities
    **/
-  readonly datazone?: DatazoneProps;
+  readonly datazone?: DataOpsDatazoneProps;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional SageMaker configuration for data governance and catalog integration enabling data governance and discovery capabilities. Provides SageMaker project integration for enhanced data governance, catalog management, and data discovery within the organization.
+   *
+   * Use cases: Data governance; Catalog integration; Data discovery; Governance capabilities
+   *
+   * AWS: SageMaker configuration for data governance and catalog integration
+   *
+   * Validation: Must be valid DatazoneProps if provided; enables SageMaker integration and data governance capabilities
+   **/
+  readonly sagemaker?: DataOpsSageMakerProps;
 
   /**
    * Q-ENHANCED-PROPERTY
@@ -837,32 +892,7 @@ export interface DataOpsProjectL3ConstructProps extends MdaaL3ConstructProps {
  *
  * Validation: Configuration must be valid for deployment; properties must conform to AWS service and MDAA requirements
  */
-export interface DatazoneProps {
-  readonly project?: DatazoneProjectProps;
-}
-
-/**
- * Q-ENHANCED-INTERFACE
- * DataZone project configuration interface for data governance and catalog management with domain integration capabilities. Defines DataZone project properties for DataOps projects including domain configuration, SSM parameter references, and Lake Formation role management for data governance and catalog integration.
- *
- * Use cases: Data governance; Catalog management; Domain integration; Lake Formation integration
- *
- * AWS: DataZone project configuration with domain integration and Lake Formation role management
- *
- * Validation: All properties are optional; domain configuration must be valid when provided
- */
-export interface DatazoneProjectProps {
-  /**
-   * Q-ENHANCED-PROPERTY
-   * Optional domain unit specification for DataZone project organization enabling hierarchical domain management and project categorization. Defines the domain unit within the DataZone domain for project organization and governance scope management.
-   *
-   * Use cases: Domain organization; Project categorization; Hierarchical management; Governance scope
-   *
-   * AWS: DataZone domain unit for project organization and governance management
-   *
-   * Validation: Must be valid domain unit string if provided; affects project organization and governance scope
-   **/
-  readonly domainUnit?: string;
+export interface DataOpsDatazoneProps {
   /**
    * Q-ENHANCED-PROPERTY
    * Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.
@@ -887,15 +917,166 @@ export interface DatazoneProjectProps {
   readonly domainConfig?: DomainConfig;
   /**
    * Q-ENHANCED-PROPERTY
-   * Optional Lake Formation manage access role reference for DataZone integration enabling Lake Formation permission management within DataZone projects. Provides IAM role for managing Lake Formation permissions and access control within DataZone governance workflows.
+   * Required DataZone project configuration for DataOps project integration enabling data governance and catalog management. Defines the DataZone project settings including domain configuration, environment setup, and user/group access permissions for organized data governance within the DataOps project.
    *
-   * Use cases: Lake Formation integration; Permission management; Access control; DataZone governance
+   * Use cases: DataZone integration; Data governance; Project configuration; Access management; Catalog integration
    *
-   * AWS: AWS IAM role for Lake Formation access management within DataZone projects
+   * AWS: Amazon DataZone project configuration for DataOps project data governance and catalog management
    *
-   * Validation: Must be valid MdaaRoleRef object if provided; enables Lake Formation integration when specified
+   * Validation: Must be valid DataZoneProjectProps configuration; required for DataZone integration
    **/
-  readonly lakeformationManageAccessRole?: MdaaRoleRef;
+  readonly project: DataZoneProjectProps;
+}
+
+export interface DataZoneProjectProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.
+   *
+   * Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup
+   *
+   * AWS: AWS Systems Manager parameter for DataZone domain configuration reference
+   *
+   * Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration
+   **/
+  readonly domainConfigSSMParam?: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.
+   *
+   * Use cases: Direct configuration; Inline setup; Domain configuration; Governance setup
+   *
+   * AWS: DataZone domain configuration for project setup and governance management
+   *
+   * Validation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified
+   *   **/
+  readonly domainConfig?: DomainConfig;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional DataZone environment configuration for project environment setup enabling VPC connectivity and Lake Formation integration. Defines environment-specific settings including Lake Formation manage access role for data governance and access control within the DataZone project environment.
+   *
+   * Use cases: Environment setup; VPC connectivity; Lake Formation integration; Access control; Data governance
+   *
+   * AWS: Amazon DataZone environment configuration for project environment setup and Lake Formation integration
+   *
+   * Validation: Must be valid DataZoneEnvironmentProps if provided; enables environment-specific configuration when specified
+   **/
+  readonly environment?: DataZoneEnvironmentProps;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional domain unit identifier for DataZone organizational hierarchy enabling multi-level data governance structure. Specifies the domain unit within the DataZone domain for organizing projects into logical groupings and hierarchical governance structures.
+   *
+   * Use cases: Organizational hierarchy; Domain unit grouping; Multi-level governance; Project organization
+   *
+   * AWS: Amazon DataZone domain unit identifier for organizational hierarchy and project grouping
+   *
+   * Validation: Must be valid domain unit identifier if provided; domain unit must exist in the DataZone domain
+   **/
+  readonly domainUnit?: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Owner user references for project ownership enabling user-based project administration and full administrative permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting user-based project governance and individual administration.
+   *
+   * Use cases: User-based project ownership; Project administration; Full administrative access; Owner permissions; Project governance
+   *
+   * AWS: Amazon DataZone project owner users with PROJECT_OWNER designation for full administrative access
+   *
+   * Validation: Must be array of valid MDAA user configuration names as defined in the module users section; references must exist in module configuration
+   **/
+  readonly ownerUsers?: { [id: string]: string };
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Owner group references for project ownership enabling group-based project administration and collective administrative permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_OWNER designation with full administrative access to the DataZone project, supporting group-based project governance and collective administration.
+   *
+   * Use cases: Group-based project ownership; Collective administration; Full administrative access; Owner permissions; Team governance
+   *
+   * AWS: Amazon DataZone project owner groups with PROJECT_OWNER designation for full administrative access
+   *
+   * Validation: Must be array of valid MDAA group configuration names as defined in the module groups section; references must exist in module configuration
+   **/
+  readonly ownerGroups?: { [id: string]: string };
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Contributor user references for project access enabling user-based project contribution and standard permissions. Specifies MDAA module user configuration names (not DataZone usernames or Identity Center identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting user-based project collaboration and individual contribution.
+   *
+   * Use cases: User-based project access; Project contribution; Contributor permissions; Collaboration; Standard access
+   *
+   * AWS: Amazon DataZone project contributor users with PROJECT_CONTRIBUTOR designation for contributor-level access
+   *
+   * Validation: Must be array of valid MDAA user configuration names as defined in the module users section; references must exist in module configuration
+   **/
+  readonly users?: { [id: string]: string };
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Contributor group references for project access enabling group-based project contribution and collective standard permissions. Specifies MDAA module group configuration names (not DataZone group names or Identity Center group identifiers) that have PROJECT_CONTRIBUTOR designation with contributor-level access to the DataZone project, supporting group-based project collaboration and collective contribution.
+   *
+   * Use cases: Group-based project access; Collective contribution; Contributor permissions; Team collaboration; Standard access
+   *
+   * AWS: Amazon DataZone project contributor groups with PROJECT_CONTRIBUTOR designation for contributor-level access
+   *
+   * Validation: Must be array of valid MDAA group configuration names as defined in the module groups section; references must exist in module configuration
+   **/
+  readonly groups?: { [id: string]: string };
+}
+export interface DataZoneEnvironmentProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required Lake Formation manage access role reference for DataZone environment data governance enabling automated access control and permission management. Specifies the IAM role that DataZone will use to manage Lake Formation permissions and access control for data assets within the environment, supporting automated data governance workflows.
+   *
+   * Use cases: Automated access control; Lake Formation integration; Permission management; Data governance automation; Environment access management
+   *
+   * AWS: IAM role reference for Amazon DataZone Lake Formation manage access role enabling automated data governance
+   *
+   * Validation: Must be valid MdaaRoleRef; role must have appropriate Lake Formation permissions; required for DataZone environment setup
+   **/
+  readonly lakeformationManageAccessRole: MdaaRoleRef;
+}
+
+export interface DataOpsSageMakerProps {
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional SSM parameter reference for domain configuration enabling dynamic domain configuration management. Specifies the SSM parameter containing domain configuration data for flexible domain setup and configuration management.
+   *
+   * Use cases: Dynamic configuration; SSM parameter reference; Configuration management; Flexible setup
+   *
+   * AWS: AWS Systems Manager parameter for DataZone domain configuration reference
+   *
+   * Validation: Must be valid SSM parameter name if provided; parameter must contain valid domain configuration
+   **/
+  readonly domainConfigSSMParam?: string;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional direct domain configuration for DataZone project setup enabling inline domain configuration management. Provides direct domain configuration object for DataZone project setup and governance configuration without external parameter references.
+   *
+   * Use cases: Direct configuration; Inline setup; Domain configuration; Governance setup
+   *
+   * AWS: DataZone domain configuration for project setup and governance management
+   *
+   * Validation: Must be valid DomainConfig object if provided; enables direct domain configuration when specified
+   *   **/
+  readonly domainConfig?: DomainConfig;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional automatic data admin owner assignment for SageMaker project enabling simplified administrative access management. When enabled, automatically assigns data admin roles as project owners with full administrative permissions, simplifying project setup and access control for administrative teams.
+   *
+   * Use cases: Automated admin access; Simplified setup; Administrative permissions; Owner assignment; Access management
+   *
+   * AWS: Automatic owner assignment for SageMaker project with data admin role integration
+   *
+   * Validation: Must be boolean; defaults to false; data admin roles must be defined in project configuration
+   **/
+  readonly createDataAdminOwners?: boolean;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Required SageMaker project configuration for DataOps project integration enabling ML workflow and data science capabilities. Defines the SageMaker project settings including domain configuration, user/group access permissions, and ML workflow integration for organized data science activities within the DataOps project.
+   *
+   * Use cases: SageMaker integration; ML workflows; Data science capabilities; Project configuration; Access management
+   *
+   * AWS: Amazon SageMaker project configuration for DataOps project ML workflow and data science integration
+   *
+   * Validation: Must be valid SageMakerProjectProps configuration; required for SageMaker integration
+   **/
+  readonly project: SageMakerProjectProps;
 }
 
 /**
@@ -974,8 +1155,10 @@ export interface FailureNotificationsProps {
 
 interface DatazoneResources {
   readonly datazoneProject: MdaaDatazoneProject;
-  readonly datazoneEnv: CfnEnvironment;
-  readonly lakeformationManageAccessRole: IRole;
+  readonly datazoneEnvId?: string;
+  readonly lakeformationManageAccessRole?: IRole;
+  readonly glueConnectionId?: string;
+  readonly envUserRoleArn?: string;
 }
 
 export class DataOpsProjectL3Construct extends MdaaL3Construct {
@@ -1038,9 +1221,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       lakeFormationLocationRole,
     );
 
-    const datazoneResources = this.createDatazoneResources(projectBucket, datazoneUserRole);
-
-    this.createAthenaWorkgroup(datazoneUserRole, projectBucket, datazoneResources?.datazoneEnv);
+    const datazoneResources = this.createDataZoneSageMakerResources(projectBucket, datazoneUserRole);
 
     // Create project-level Lake Formation tags BEFORE databases
     // This ensures tags exist at account level before any database associations
@@ -1063,7 +1244,11 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
     //If the Glue Catalog KMS key is specified, grant decrypt access to it
     //for project execution roles (direct access required to decrypt Glue connections)
-    if (this.props.glueCatalogKmsKeyArn) {
+    const glueCatalogKmsKeyArn = this.props.glueCatalogKmsKeyArn
+      ? this.props.glueCatalogKmsKeyArn
+      : MdaaStringParameter.valueForStringParameter(scope, GlueCatalogL3Construct.ACCOUNT_KEY_SSM_PATH);
+
+    if (glueCatalogKmsKeyArn) {
       let i = 0;
       const projectExecutionRoles = this.projectExecutionRoles.map(x => {
         return MdaaRole.fromRoleArn(this.scope, `resolve-role-${i++}`, x.arn());
@@ -1075,34 +1260,24 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       const keyAccessStatement = new PolicyStatement({
         effect: Effect.ALLOW,
         actions: DECRYPT_ACTIONS,
-        resources: [this.props.glueCatalogKmsKeyArn],
+        resources: [glueCatalogKmsKeyArn],
       });
       keyAccessPolicy.addStatements(keyAccessStatement);
     }
   }
-
-  private createAthenaWorkgroup(datazoneUserRole: Role, projectBucket: IBucket, datazoneEnv?: CfnEnvironment) {
-    const athenaWgProps: AthenaWorkgroupL3ConstructProps = {
-      dataAdminRoles: this.props.dataAdminRoleRefs,
-      athenaUserRoles: [
-        {
-          refId: 'dz-user-role',
-          arn: datazoneUserRole.roleArn,
-          id: datazoneUserRole.roleId,
-          name: datazoneUserRole.roleName,
-        },
-        ...this.props.dataEngineerRoleRefs,
-      ],
-      workgroupBucketName: projectBucket.bucketName,
-      workgroupKmsKeyArn: projectBucket.encryptionKey?.keyArn,
-      ...this.props,
-    };
-    const athenaWg = new AthenaWorkgroupL3Construct(this, 'datazone-env-athena-wg', athenaWgProps);
-    if (datazoneEnv) {
-      Tags.of(athenaWg.workgroup).add('AmazonDataZoneEnvironment', datazoneEnv.attrId);
-      Tags.of(athenaWg.workgroup).add('AmazonDataZoneProject', datazoneEnv.projectIdentifier);
-      Tags.of(athenaWg.workgroup).add('AmazonDataZoneDomain', datazoneEnv.domainIdentifier);
+  private createDataZoneSageMakerResources(
+    projectBucket: IBucket,
+    datazoneUserRole: Role,
+  ): DatazoneResources | undefined {
+    if (this.props.datazone && this.props.sagemaker) {
+      throw new Error('Only one of datazone or sagemaker properties should be defined');
     }
+    if (this.props.datazone) {
+      return this.createDatazoneResources(this.props.datazone, projectBucket, datazoneUserRole);
+    } else if (this.props.sagemaker) {
+      return this.createSageMakerResources(this.props.sagemaker);
+    }
+    return undefined;
   }
 
   private createLakeFormationRole() {
@@ -1114,196 +1289,48 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     });
   }
 
-  private createDatazoneResources(projectBucket: IBucket, datazoneUserRole: IRole): DatazoneResources | undefined {
-    if (this.props.datazone) {
-      if (this.props.datazone?.project) {
-        const datazoneProject = this.createDataZoneProject(this.props.datazone.project);
-
-        datazoneUserRole.addManagedPolicy(datazoneProject.domainKmsUsagePolicy);
-
-        const lakeformationManageAccessRole = this.props.datazone.project.lakeformationManageAccessRole
-          ? this.props.roleHelper
-              .resolveRoleRefWithRefId(
-                this.props.datazone.project.lakeformationManageAccessRole,
-                'lf-manage-access-role',
-              )
-              .role('lf-manage-access-role')
-          : Role.fromRoleArn(
-              this,
-              'lf-manage-access-role',
-              StringParameter.valueForStringParameter(
-                this,
-                LakeFormationSettingsL3Construct.DZ_MANAGE_ACCESS_ROLE_SSM_PATH,
-              ),
-            );
-
-        const datazoneEnv = this.createDataZoneEnvironment(
-          projectBucket,
-          datazoneProject,
-          lakeformationManageAccessRole,
-          datazoneUserRole,
-          datazoneProject.domainConfig.glueCatalogArns,
-        );
-
-        return {
-          datazoneProject,
-          lakeformationManageAccessRole,
-          datazoneEnv: datazoneEnv,
-        };
-      }
-      return undefined;
-    }
-    return undefined;
-  }
-
-  private createDataZoneProject(mdaaProjectProps: DatazoneProjectProps): MdaaDatazoneProject {
-    const constructProps: MdaaDatazoneProjectProps = {
+  private createSageMakerResources(sageMakerProps: DataOpsSageMakerProps): DatazoneResources | undefined {
+    const sagemakerL3ConstructProps: SagemakerProjectL3ConstructProps = {
+      domainConfigSSMParam: sageMakerProps.domainConfigSSMParam,
+      domainConfig: sageMakerProps.domainConfig,
+      projects: { dataops: sageMakerProps.project },
+      roleHelper: this.props.roleHelper,
       naming: this.props.naming,
-      domainUnit: mdaaProjectProps.domainUnit,
-      domainConfigSSMParam: mdaaProjectProps.domainConfigSSMParam,
-      domainConfig: mdaaProjectProps.domainConfig,
     };
-    return new MdaaDatazoneProject(this, 'datazone-project', constructProps);
+    const sagemakerL3Construct = new SagemakerProjectL3Construct(this, 'sagemaker', sagemakerL3ConstructProps);
+    if (!sagemakerL3Construct.projects?.['dataops']) {
+      throw new Error('SageMaker project not created');
+    }
+    const project = sagemakerL3Construct.projects['dataops'];
+    if (sageMakerProps.createDataAdminOwners) {
+      this.dataAdminRoles.forEach(role => project.addOwnerUser(role.refId(), role.arn()));
+    }
+
+    return {
+      datazoneProject: project,
+      glueConnectionId: project.glueConnectionId,
+      envUserRoleArn: project.envUserArn,
+    };
   }
 
-  private createDataZoneEnvironment(
+  private createDatazoneResources(
+    datazoneProps: DataOpsDatazoneProps,
     projectBucket: IBucket,
-    dzProject: MdaaDatazoneProject,
-    lakeformationManagedAccessRole: IRole,
-    datazoneUserRole: IRole,
-    glueCatalogArns: string[],
-  ): CfnEnvironment {
-    const subBucketLocation = projectBucket.s3UrlForObject('/data/datazone');
-    // Create the database
-    const subDatabaseName = this.props.naming.resourceName('datazone-sub');
-    const subDatabase = new CfnDatabase(this.scope, `datazone-sub-database`, {
-      catalogId: this.account,
-      databaseInput: {
-        name: subDatabaseName,
-        description: 'For consuming Datazone subscripts',
-        locationUri: subBucketLocation,
-      },
-    });
-
-    const subDatabaseLFProps: DatabaseLakeFormationProps = {
-      createSuperGrantsForDataAdminRoles: true,
-    };
-
-    const dataLakeEnvProps: CfnEnvironmentProps = {
-      domainIdentifier: dzProject.project.domainIdentifier,
-      environmentProfileIdentifier: '',
-      name: this.props.naming.resourceName(),
-      projectIdentifier: dzProject.project.attrId,
-    };
-
-    const datazoneEnv = new CfnEnvironment(this, 'datalake-env', dataLakeEnvProps);
-    datazoneEnv.addPropertyOverride('EnvironmentAccountIdentifier', this.account);
-    datazoneEnv.addPropertyOverride('EnvironmentAccountRegion', this.region);
-    datazoneEnv.addPropertyOverride('EnvironmentBlueprintId', dzProject.domainConfig.domainCustomEnvBlueprintId);
-    datazoneEnv.addPropertyOverride('EnvironmentRoleArn', datazoneUserRole.roleArn);
-
-    this.createDatabaseLakeFormationConstruct(
-      'datazone-sub',
-      subDatabaseName,
-      subDatabase,
-      subDatabaseLFProps,
-      true,
-      lakeformationManagedAccessRole,
-      subBucketLocation,
-    );
-
-    const athenaActionProps: CfnEnvironmentActionsProps = {
-      name: 'Query data',
-      description: 'Amazon Athena',
-      domainIdentifier: dzProject.project.domainIdentifier,
-      environmentIdentifier: datazoneEnv.attrId,
-      parameters: {
-        // uri: `https://${this.region}.console.aws.amazon.com/athena/home#/query-editor/domain/${datazoneEnv.attrDomainId}/domainRegion/${this.region}/environment/${datazoneEnv.attrId}`
-        uri: `https://us-east-1.console.aws.amazon.com/athena/home?region=${this.region}#/query-editor`,
-      },
-    };
-    new CfnEnvironmentActions(this, 'athena-env-action', athenaActionProps);
-
-    const glueEtlActionProps: CfnEnvironmentActionsProps = {
-      name: 'View Glue ETL jobs',
-      description: 'AWS Glue ETL',
-      domainIdentifier: dzProject.project.domainIdentifier,
-      environmentIdentifier: datazoneEnv.attrId,
-      parameters: {
-        uri: `https://${this.region}.console.aws.amazon.com/gluestudio/home?region=${this.region}#/jobs`,
-      },
-    };
-    new CfnEnvironmentActions(this, 'glue-etl-env-action', glueEtlActionProps);
-
-    const glueCatalogActionProps: CfnEnvironmentActionsProps = {
-      name: 'View Glue Catalogs',
-      description: 'AWS Glue Catalog',
-      domainIdentifier: dzProject.project.domainIdentifier,
-      environmentIdentifier: datazoneEnv.attrId,
-      parameters: {
-        uri: `https://${this.region}.console.aws.amazon.com/glue/home?region=${this.region}#/v2/data-catalog/tables`,
-      },
-    };
-    new CfnEnvironmentActions(this, 'glue-catalog-env-action', glueCatalogActionProps);
-
-    const s3BucketActionProps: CfnEnvironmentActionsProps = {
-      name: 'Project S3 Data',
-      description: 'Amazon S3',
-      domainIdentifier: dzProject.project.domainIdentifier,
-      environmentIdentifier: datazoneEnv.attrId,
-      parameters: {
-        uri: `https://${this.region}.console.aws.amazon.com/s3/buckets/${projectBucket}/data/`,
-      },
-    };
-    new CfnEnvironmentActions(this, 's3-env-action', s3BucketActionProps);
-
-    const consoleActionProps: CfnEnvironmentActionsProps = {
-      name: 'View AWS Console',
-      description: 'AWS Console',
-      domainIdentifier: dzProject.project.domainIdentifier,
-      environmentIdentifier: datazoneEnv.attrId,
-      parameters: {
-        uri: 'https://console.aws.amazon.com/',
-      },
-    };
-    new CfnEnvironmentActions(this, 'console-env-action', consoleActionProps);
-    const userManagedPolicy = this.createDatazoneUserManagedPolicy(projectBucket, glueCatalogArns);
-    userManagedPolicy.attachToRole(datazoneUserRole);
-
-    this.createDatazoneSubscriptionTarget(
-      datazoneEnv,
-      dzProject,
+    datazoneUserRole: Role,
+  ): DatazoneResources {
+    const project = this.createDataZoneProject(datazoneProps);
+    const env = this.createDataZoneEnvironment(
+      project,
       datazoneUserRole,
-      lakeformationManagedAccessRole,
-      subDatabaseName,
+      projectBucket,
+      datazoneProps.project.environment,
     );
 
-    return datazoneEnv;
-  }
-
-  private createDatazoneSubscriptionTarget(
-    env: CfnEnvironment,
-    mdaaProject: MdaaDatazoneProject,
-    envRole: IRole,
-    lakeformationManagedAccessRole: IRole,
-    subDatabaseName: string,
-  ) {
-    const subTargetProps: CfnSubscriptionTargetProps = {
-      applicableAssetTypes: ['GlueTableAssetType'],
-      authorizedPrincipals: [envRole.roleArn], //User role
-      domainIdentifier: mdaaProject.project.domainIdentifier,
-      environmentIdentifier: env.attrId,
-      manageAccessRole: lakeformationManagedAccessRole.roleArn, //manage role
-      name: this.props.naming.resourceName(),
-      subscriptionTargetConfig: [
-        {
-          content: `{"databaseName":"${subDatabaseName}"}`,
-          formName: 'GlueSubscriptionTargetConfigForm',
-        },
-      ],
-      type: 'GlueSubscriptionTargetType',
+    return {
+      datazoneProject: project,
+      datazoneEnvId: env.env.attrId,
+      lakeformationManageAccessRole: env.lakeformationManageAccessRole,
     };
-    new CfnSubscriptionTarget(this, 'datazone-sub-target', subTargetProps);
   }
 
   private createDatazoneUserRole(): Role {
@@ -1323,102 +1350,136 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
     return role;
   }
+  private createDataZoneProject(datazoneProps: DataOpsDatazoneProps): MdaaDatazoneProject {
+    // Check for domainConfigSSMParam at both top level and project level
+    const domainConfigSSMParam = datazoneProps.domainConfigSSMParam || datazoneProps.project.domainConfigSSMParam;
+    const domainConfigObj = datazoneProps.domainConfig || datazoneProps.project.domainConfig;
 
-  private createDatazoneUserManagedPolicy(projectBucket: IBucket, glueCatalogArns: string[]): ManagedPolicy {
-    //Allow to access the glue catalog resources
-    const userPolicy: ManagedPolicy = new ManagedPolicy(this, 'datazone-user-access-policy', {
-      managedPolicyName: this.props.naming.resourceName('datazone-user-access-policy'),
-    });
+    const domainConfig = domainConfigSSMParam
+      ? new DomainConfig(this, 'domain-config-parser', {
+          ssmParamBase: domainConfigSSMParam,
+          naming: this.props.naming,
+        })
+      : domainConfigObj;
 
-    const datazoneStatement: PolicyStatement = new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: [
-        'datazone:ListDomains',
-        'datazone:ListProjects',
-        'datazone:ListAccountEnvironments',
-        'datazone:ListEnvironments',
-        'datazone:GetEnvironment',
-        'datazone:*',
-      ],
-      resources: ['*'],
-    });
-    userPolicy.addStatements(datazoneStatement);
-
-    //Allow smooth interactions with project bucket via Console
-    const projectBucketConsoleStatement = new PolicyStatement({
-      sid: 'ProjectBucketGet',
-      effect: Effect.ALLOW,
-      resources: [projectBucket.bucketArn],
-      actions: [
-        's3:GetBucketLocation',
-        's3:GetBucketVersioning',
-        's3:GetBucketTagging',
-        's3:GetEncryptionConfiguration',
-        's3:GetIntelligentTieringConfiguration',
-        's3:GetBucketPolicy',
-      ],
-    });
-    userPolicy.addStatements(projectBucketConsoleStatement);
-
-    const accessAthenaStatement: PolicyStatement = new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['athena:ListWorkGroups'],
-      resources: ['*'],
-    });
-    userPolicy.addStatements(accessAthenaStatement);
-
-    const accessLFStatement: PolicyStatement = new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['lakeformation:GetDataAccess'],
-      resources: ['*'],
-    });
-    userPolicy.addStatements(accessLFStatement);
-
-    const accessGlueStatement: PolicyStatement = new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['glue:GetColumnStatisticsTaskRuns'],
-      resources: ['*'],
-    });
-    userPolicy.addStatements(accessGlueStatement);
-
-    const accessGlueResourceStatement: PolicyStatement = new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: [
-        'glue:GetDatabase',
-        'glue:GetDatabases',
-        'glue:GetTable',
-        'glue:GetTables',
-        'glue:GetPartition',
-        'glue:GetPartitions',
-        'glue:SearchTables',
-        'glue:GetTableVersion',
-        'glue:GetTableVersions',
-        'glue:GetColumnStatistics*',
-      ],
-      resources: glueCatalogArns,
-    });
-    userPolicy.addStatements(accessGlueResourceStatement);
-    MdaaNagSuppressions.addCodeResourceSuppressions(userPolicy, [
-      {
-        id: 'AwsSolutions-IAM5',
-        reason: 'Fine-grained permissions enforced via LakeFormation.',
-      },
-      {
-        id: 'NIST.800.53.R5-IAMPolicyNoStatementsWithFullAccess',
-        reason: 'Fine-grained permissions enforced via LakeFormation.',
-      },
-      {
-        id: 'HIPAA.Security-IAMPolicyNoStatementsWithFullAccess',
-        reason: 'Fine-grained permissions enforced via LakeFormation.',
-      },
-      {
-        id: 'PCI.DSS.321-IAMPolicyNoStatementsWithFullAccess',
-        reason: 'Fine-grained permissions enforced via LakeFormation.',
-      },
-    ]);
-    return userPolicy;
+    if (!domainConfig) {
+      throw new Error('One of domainConfig or domainConfigSSMParam must be specified');
+    }
+    const constructProps: MdaaDatazoneProjectProps = {
+      ...datazoneProps.project,
+      naming: this.props.naming,
+      domainConfig: domainConfig,
+    };
+    return new MdaaDatazoneProject(this, `datazone-project`, constructProps);
   }
 
+  private createDataZoneEnvironment(
+    project: MdaaDatazoneProject,
+    envUserRole: Role,
+    envBucket: IBucket,
+    envProps?: DataZoneEnvironmentProps,
+  ): MdaaDatazoneEnvironment {
+    const lakeformationManageAccessRole = envProps?.lakeformationManageAccessRole
+      ? this.props.roleHelper
+          .resolveRoleRefWithRefId(envProps.lakeformationManageAccessRole, 'lf-manage-access-role')
+          .role('lf-manage-access-role')
+      : Role.fromRoleArn(
+          this,
+          'lf-manage-access-role',
+          MdaaStringParameter.valueForStringParameter(
+            this,
+            LakeFormationSettingsL3Construct.DZ_MANAGE_ACCESS_ROLE_SSM_PATH,
+          ),
+        );
+
+    envUserRole.addManagedPolicy(project.domainKmsUsagePolicy);
+
+    const envBuildProps: MdaaDatazoneEnvironmentProps = {
+      project: project,
+      envUserRole: envUserRole,
+      lakeformationManageAccessRole: lakeformationManageAccessRole,
+      envBucket: envBucket,
+      account: this.account,
+      region: this.region,
+      naming: this.props.naming,
+    };
+    const env = new MdaaDatazoneEnvironment(this, `datazone-env`, envBuildProps, true);
+
+    const projectRoleGrantProps: { [key: string]: GrantProps } = {};
+
+    projectRoleGrantProps[`data-admins-datazone-sub`] = {
+      database: env.subDatabaseName,
+      databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_SUPER_PERMISSIONS,
+      principals: Object.fromEntries(
+        this.dataAdminRoles.map(x => {
+          return [
+            x.refId(),
+            {
+              role: {
+                arn: x.arn(),
+                id: x.id(),
+                name: x.name(),
+              },
+            },
+          ];
+        }),
+      ),
+      tablePermissions: LakeFormationAccessControlL3Construct.TABLE_SUPER_PERMISSIONS,
+    };
+
+    projectRoleGrantProps[`datazone-roles-datazone-sub`] = {
+      database: env.subDatabaseName,
+      databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
+      databaseGrantablePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
+      principals: {
+        datazone: {
+          role: {
+            refId: 'datazone',
+            arn: lakeformationManageAccessRole.roleArn,
+          },
+        },
+      },
+      tablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS,
+      tableGrantablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS,
+    };
+
+    const lakeFormationProps: LakeFormationAccessControlL3ConstructProps = {
+      grants: { ...projectRoleGrantProps },
+      externalDatabaseDependency: env.subDatabase,
+      ...(this.props as MdaaL3ConstructProps),
+    };
+
+    //Use the LF Account Control construct to create all database grants and resource links
+    const lf = new LakeFormationAccessControlL3Construct(this, `lf-grants-datazone-sub`, lakeFormationProps);
+    lf.node.addDependency(env.subDatabase);
+
+    this.createAthenaWorkgroup(envUserRole, envBucket, env.env);
+
+    return env;
+  }
+
+  private createAthenaWorkgroup(datazoneUserRole: Role, projectBucket: IBucket, env: CfnEnvironment) {
+    const athenaWgProps: AthenaWorkgroupL3ConstructProps = {
+      dataAdminRoles: this.props.dataAdminRoleRefs,
+      athenaUserRoles: [
+        {
+          refId: 'dz-user-role',
+          arn: datazoneUserRole.roleArn,
+          id: datazoneUserRole.roleId,
+          name: datazoneUserRole.roleName,
+        },
+        ...this.props.dataEngineerRoleRefs,
+      ],
+      workgroupBucketName: projectBucket.bucketName,
+      workgroupKmsKeyArn: projectBucket.encryptionKey?.keyArn,
+      ...this.props,
+    };
+    const athenaWg = new AthenaWorkgroupL3Construct(this, 'datazone-env-athena-wg', athenaWgProps);
+
+    Tags.of(athenaWg.workgroup).add('AmazonDataZoneEnvironment', env.attrId);
+    Tags.of(athenaWg.workgroup).add('AmazonDataZoneProject', env.projectIdentifier);
+    Tags.of(athenaWg.workgroup).add('AmazonDataZoneDomain', env.domainIdentifier);
+  }
   private createProjectSecurityGroup(
     sgName: string,
     vpcId: string,
@@ -1552,19 +1613,23 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
         },
       });
 
-      if (databaseProps.createDatazoneDatasource) {
+      if (databaseProps.createDatazoneDatasource || databaseProps.createSagemakerDatasource) {
         this.createDataZoneDatasource(databaseName, dbResourceName, database, datazoneResources);
       }
 
       // Use LF Access Control L3 Contruct to create LF grants and Resource Links for the database
-      if (databaseProps.lakeFormation || databaseProps.createDatazoneDatasource) {
+      if (
+        databaseProps.lakeFormation ||
+        databaseProps.createDatazoneDatasource ||
+        databaseProps.createSagemakerDatasource
+      ) {
         this.createDatabaseLakeFormationConstruct(
           databaseName,
           dbResourceName,
           database,
           databaseProps.lakeFormation || {},
-          databaseProps.createDatazoneDatasource || false,
-          datazoneResources?.lakeformationManageAccessRole,
+          databaseProps.createDatazoneDatasource || databaseProps.createSagemakerDatasource || false,
+          datazoneResources,
           databaseBucket?.arnForObjects(databaseProps.locationPrefix || ''),
         );
       }
@@ -1580,19 +1645,21 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     database: CfnDatabase,
     datazoneResources?: DatazoneResources,
   ) {
-    if (!datazoneResources || !datazoneResources?.datazoneEnv) {
-      throw new Error('DataZone Project must be defined if creating a DataZone Data Source');
+    if (!datazoneResources) {
+      throw new Error('DataZone/SageMaker Project must be defined if creating a DataZone Data Source');
     }
+
     const datasourceProps: CfnDataSourceProps = {
       domainIdentifier: datazoneResources.datazoneProject.project.attrDomainId,
-      environmentIdentifier: datazoneResources.datazoneEnv?.attrId,
+      environmentIdentifier: datazoneResources.datazoneEnvId, //Not required for SMUS projects
+      connectionIdentifier: datazoneResources.glueConnectionId, //Need to pass glue connection id for SMUS projects
       name: this.props.naming.resourceName(databaseName),
       projectIdentifier: datazoneResources.datazoneProject.project.attrId,
       type: 'glue',
       configuration: {
         glueRunConfiguration: {
           autoImportDataQualityResult: true,
-          dataAccessRole: datazoneResources.lakeformationManageAccessRole.roleArn,
+          dataAccessRole: datazoneResources.lakeformationManageAccessRole?.roleArn, //Used only for Datazone, not SUS
           relationalFilterConfigurations: [
             {
               databaseName: databaseResourceName,
@@ -1611,7 +1678,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     database: CfnDatabase,
     databaseLakeFormationProps: DatabaseLakeFormationProps,
     createDatazoneDatasource: boolean,
-    datazoneManageAccessRole?: IRole,
+    datazoneResources?: DatazoneResources,
     locationArn?: string,
   ) {
     // Provide Project Execution Roles (principal) data location permissions to create data catalog
@@ -1702,22 +1769,41 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       };
     }
 
-    if (createDatazoneDatasource && datazoneManageAccessRole) {
-      projectRoleGrantProps[`datazone-roles-${databaseName}`] = {
-        database: dbResourceName,
-        databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
-        databaseGrantablePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
-        principals: {
-          datazone: {
-            role: {
-              refId: 'datazone',
-              arn: datazoneManageAccessRole?.roleArn,
+    if (createDatazoneDatasource) {
+      if (datazoneResources?.lakeformationManageAccessRole) {
+        projectRoleGrantProps[`datazone-roles-${databaseName}`] = {
+          database: dbResourceName,
+          databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
+          databaseGrantablePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_WRITE_PERMISSIONS,
+          principals: {
+            datazone: {
+              role: {
+                refId: 'datazone',
+                arn: datazoneResources?.lakeformationManageAccessRole?.roleArn,
+              },
             },
           },
-        },
-        tablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS,
-        tableGrantablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS,
-      };
+          tablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS,
+          tableGrantablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_WRITE_PERMISSIONS,
+        };
+      }
+      if (datazoneResources?.envUserRoleArn) {
+        projectRoleGrantProps[`datazone-user-roles-${databaseName}`] = {
+          database: dbResourceName,
+          databasePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_PERMISSIONS,
+          databaseGrantablePermissions: LakeFormationAccessControlL3Construct.DATABASE_READ_PERMISSIONS,
+          principals: {
+            'datazone-user': {
+              role: {
+                refId: 'datazone-user',
+                arn: datazoneResources?.envUserRoleArn,
+              },
+            },
+          },
+          tablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_PERMISSIONS,
+          tableGrantablePermissions: LakeFormationAccessControlL3Construct.TABLE_READ_PERMISSIONS,
+        };
+      }
     }
 
     const lfGrantProps: NamedGrantProps =
@@ -1733,17 +1819,15 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
     const resourceLinkName = databaseLakeFormationProps.createCrossAccountResourceLinkName || dbResourceName;
     const resourceLinkProps: NamedResourceLinkProps = Object.fromEntries(
       databaseLakeFormationProps?.createCrossAccountResourceLinkAccounts?.map(account => {
-        const accountPrincipalEntries = Object.entries(lfGrantProps)
-          .map(lfGrantEntry => {
-            const lfGrantProps = lfGrantEntry[1];
-            return Object.entries(lfGrantProps.principals).filter(principalEntry => {
-              const principalName = principalEntry[0];
-              const principalProps = principalEntry[1];
-              const principalAccount = this.determinePrincipalAccount(principalName, principalProps);
-              return principalAccount == account;
-            });
-          })
-          .flat();
+        const accountPrincipalEntries = Object.entries(lfGrantProps).flatMap(lfGrantEntry => {
+          const lfGrantProps = lfGrantEntry[1];
+          return Object.entries(lfGrantProps.principals).filter(principalEntry => {
+            const principalName = principalEntry[0];
+            const principalProps = principalEntry[1];
+            const principalAccount = this.determinePrincipalAccount(principalName, principalProps);
+            return principalAccount == account;
+          });
+        });
         const namedAccountPrincipals: NamedPrincipalProps = Object.fromEntries(accountPrincipalEntries);
         const props: ResourceLinkProps = {
           targetDatabase: dbResourceName,
@@ -1825,7 +1909,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       databasePermissions: databasePermissions,
       tables: dbGrantProps.tables,
       tablePermissions: tablePermissions,
-      principals: { ...(dbGrantProps.principals || {}), ...principalArns },
+      principals: { ...dbGrantProps.principals, ...principalArns },
     };
   }
 
@@ -1927,24 +2011,6 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
       naming: this.props.naming,
     });
 
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      projectBucket,
-      [
-        {
-          id: 'NIST.800.53.R5-S3BucketReplicationEnabled',
-          reason: 'MDAA DataOps bucket does not use bucket replication.',
-        },
-        {
-          id: 'HIPAA.Security-S3BucketReplicationEnabled',
-          reason: 'MDAA DataOps bucket does not use bucket replication.',
-        },
-        {
-          id: 'PCI.DSS.321-S3BucketReplicationEnabled',
-          reason: 'MDAA DataOps bucket does not use bucket replication.',
-        },
-      ],
-      true,
-    );
     //Data Admins can read/write the entire bucket
     //Data Engineers can read the entire bucket
     const rootPolicy = new RestrictObjectPrefixToRoles({
@@ -2051,7 +2117,7 @@ export class DataOpsProjectL3Construct extends MdaaL3Construct {
 
   private createProjectSSMParam(paramId: string, ssmPath: string, paramValue: string) {
     console.log(`Creating Project SSM Param: ${ssmPath}`);
-    new StringParameter(this.scope, paramId, {
+    new MdaaStringParameter(this.scope, paramId, {
       parameterName: this.props.naming.ssmPath(ssmPath, true, false),
       stringValue: paramValue,
     });

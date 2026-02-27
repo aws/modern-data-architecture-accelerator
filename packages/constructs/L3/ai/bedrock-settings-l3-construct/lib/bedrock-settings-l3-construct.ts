@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Construct } from 'constructs';
-import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import {
   ArnPrincipal,
   Effect,
@@ -14,10 +11,12 @@ import {
   PolicyStatement,
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
+import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { Construct } from 'constructs';
 
-import { MdaaNagSuppressions } from '@aws-mdaa/construct';
-import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { MdaaLogGroup } from '@aws-mdaa/cloudwatch-constructs';
+import { MdaaCustomResource, MdaaCustomResourceProps } from '@aws-mdaa/custom-constructs';
 import { MdaaRole } from '@aws-mdaa/iam-constructs';
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
@@ -228,9 +227,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
     // Add bucket policy to allow Bedrock service access
     this.addBucketPolicy(loggingBucket);
 
-    // Add CDK Nag suppressions for compliance rules that don't apply to log buckets
-    this.addBucketSuppressions(loggingBucket);
-
     return loggingBucket;
   }
 
@@ -251,20 +247,6 @@ export class BedrockSettingsL3Construct extends MdaaL3Construct {
         },
       }),
     );
-  }
-
-  /**
-   * Adds CDK Nag suppressions for compliance rules that don't apply to log storage buckets
-   * @param bucket - The S3 bucket to add suppressions to
-   */
-  private addBucketSuppressions(bucket: MdaaBucket): void {
-    const replicationSuppressions = [
-      'NIST.800.53.R5-S3BucketReplicationEnabled',
-      'HIPAA.Security-S3BucketReplicationEnabled',
-      'PCI.DSS.321-S3BucketReplicationEnabled',
-    ].map(id => ({ id, reason: 'Bucket does not contain data assets. Replication not required.' }));
-
-    MdaaNagSuppressions.addCodeResourceSuppressions(bucket, replicationSuppressions, true);
   }
 
   /**

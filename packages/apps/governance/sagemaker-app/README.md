@@ -1,6 +1,6 @@
 # SageMaker
 
-The SageMaker CDK application is used to configure and deploy SageMaker Unified Studio (DataZone V2) Domains and associated resources. Note that under the hood, this module provides the same functionality as the DataZone module, with domain versions set to 'V2' and IAM Identity Center auth mode enforced.
+The SageMaker CDK application is used to configure and deploy SageMaker Unified Studio (DataZone V2) Domains and associated resources.
 
 ---
 
@@ -8,11 +8,23 @@ The SageMaker CDK application is used to configure and deploy SageMaker Unified 
 
 ![datazone](../../../constructs/L3/governance/datazone-l3-construct/docs/DataZone.png)
 
-- **SageMaker Domain** - A SageMaker Unified Studio (DataZone V2) Domain
+- **SageMaker Domain** - A SageMaker (DataZone V2) Domain
+
+- **SageMaker Domain Unit** - Domain Units in which projects can be created
+
+- **SageMaker User/Group Profiles** - User/Group profiles for IAM and SSO principals
 
 - **KMS CMK** - A KMS CMK specific to each domain created
 
-- **Domain Execution Role** - An IAM Role used by SageMaker. This role is specific to the domain.
+- **Domain Service Role** - An IAM Role used by SageMaker Domain. This role is specific to the domain.
+
+- **Domain Bucket** - Used for hosting domain-specific resources such as custom blueprint templates
+
+- **Associated Account Stacks** - Deployed directly to associated domain accounts to provide account specific resources
+
+- **Tooling Resources** - Provides account-specific resources used by the core Tooling blueprint
+
+- **Blueprint Configurations** - Standard configurations for Tooling blueprints, optional configurations for other managed blueprints.
 
 ## Configuration
 
@@ -50,8 +62,33 @@ domains:
     # Required - Description to give to the domain
     description: DataZone Domain Description
 
+    # Provisioning role ARN for DataZone environment provisioning
+    provisioningRoleArn: 'arn:aws:iam::123456789012:role/test-provisioning-role'
+
     # Optional - How Users are assigned to domain (default: MANUAL): MANUAL | AUTOMATIC
     userAssignment: MANUAL
+
+    # Required - configuration details for the managed tooling blueprint
+    tooling:
+      vpcId: test-vpc-id
+      subnetIds:
+        - test-subnet-id
+
+    # Optional - Additional managed blueprints with parameters
+    enabledManagedBlueprints:
+      LakehouseCatalog:
+        parameters:
+          stringParam: testValue
+        authorizedDomainUnits:
+          - /root
+      CustomAwsService:
+        parameters:
+          simpleString: test
+        authorizedDomainUnits:
+          - /root
+      NoParams:
+        authorizedDomainUnits:
+          - /root
 
     # Users to be added to the domain (IAM Roles or SSO Users)
     users:
@@ -99,6 +136,18 @@ domains:
           - associated-account-name2
         # Option domain unit description
         description: testing
+        # Authorization policies for this domain unit
+        authorizationPolicies:
+          create-domain-unit-policy:
+            policyType: 'CREATE_DOMAIN_UNIT'
+            principals:
+              - userName: sso-user-name
+            includeChildDomainUnits: true
+          create-project-policy:
+            policyType: 'CREATE_PROJECT'
+            principals:
+              - userName: iam-user-name
+              - groupName: test-sso-group1
         # Child domain units within this domain unit
         domainUnits:
           # The child domain unit name
@@ -116,25 +165,36 @@ domains:
         # The AWS account number fo the associated account.
         # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
         account: '1234567890'
-        # The arn of the KMS key used to encrypt the glue catalog in this associated account
+        # Optional - The arn of the KMS key used to encrypt the glue catalog in this associated account
+        # If not specified, the KMS key arn will be looked up from a standard SSM param created by the
+        # Glue Catalog Settings module and RAM shared to associated accounts.
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
         createCdkUser: true
         # (Optional) The role which will be used within the associated account to administer LF permissions.
         # This should be an LF Admin role within the account, likely created by the LF Settings module in the associated account.
         # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
-        lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role'
+        lakeformationManageAccessRoleArn:
+          'arn:test-partition:iam::test-account:role/test-role'
+          # Required - configuration details for the managed tooling blueprint
+        tooling:
+          vpcId: test-vpc-id
+          subnetIds:
+            - test-subnet-id
       # A friendly name for the associated account
       associated-account-name2:
         # The AWS account number fo the associated account.
         # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
         account: '2234567890'
-        # The arn of the KMS key used to encrypt the glue catalog in this associated account
-        glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
         createCdkUser: true
         # (Optional) The role which will be used within the associated account to administer LF permissions.
         # This should be an LF Admin role within the account, likely created by the LF Settings module in the associated account.
         # If not specified, then the role will be looked up using the standard LF settings SSM param name for datazone admin role.
         lakeformationManageAccessRoleArn: 'arn:test-partition:iam::test-account:role/test-role'
+        # Required - configuration details for the managed tooling blueprint
+        tooling:
+          vpcId: test-vpc-id
+          subnetIds:
+            - test-subnet-id
 ```

@@ -29,7 +29,7 @@ export abstract class MdaaL3Construct extends Construct {
     this.baseprops = baseprops;
   }
 
-  protected getCrossAccountStack(account?: string, region?: string): Stack | undefined {
+  public getCrossAccountStack(account?: string, region?: string): Stack | undefined {
     console.log(`Cross Account: ${account} : ${account ?? this.account} Region: ${region} : ${region ?? this.region}`);
     console.log(`Stacks: ${Object.keys(this.baseprops.crossAccountStacks || {})}`);
     if (!this.baseprops.crossAccountStacks) {

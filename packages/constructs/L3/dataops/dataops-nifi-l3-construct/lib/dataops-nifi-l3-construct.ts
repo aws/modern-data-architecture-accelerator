@@ -930,9 +930,7 @@ export class NifiL3Construct extends MdaaL3Construct {
       kmsKey: this.projectKmsKey,
       vpc: addNifiClusterProps.vpc,
       subnets: addNifiClusterProps.subnets,
-      naming: this.props.naming.withModuleName(
-        `${this.props.naming.props.moduleName}-${addNifiClusterProps.nifiClusterName}`,
-      ),
+      naming: this.props.naming.withSuffix(addNifiClusterProps.nifiClusterName),
       region: this.region,
       zkConnectString: addNifiClusterProps.zkK8sChart.zkConnectString,
       nifiHostedZone: addNifiClusterProps.hostedZone,

@@ -88,7 +88,7 @@ export class MdaaTestApp extends App {
   }
 }
 
-class TestRegionFact implements IFact {
+export class TestRegionFact implements IFact {
   public readonly region = 'test-region';
   public readonly name = FactName.PARTITION;
   public readonly value = 'test-partition';

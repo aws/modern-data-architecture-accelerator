@@ -8,7 +8,7 @@ import { MdaaRoleHelper } from '@aws-mdaa/iam-role-helper';
 import { MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { IMdaaResourceNaming } from '@aws-mdaa/naming';
 import { AppProps, Stack } from 'aws-cdk-lib';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { MdaaStringParameter } from '@aws-mdaa/construct';
 
 export class MdaaBootstrapCDKApp extends MdaaCdkApp {
   constructor(props?: AppProps) {
@@ -22,7 +22,7 @@ export class MdaaBootstrapCDKApp extends MdaaCdkApp {
   private createRoleHelperResources(stack: Stack, naming: IMdaaResourceNaming) {
     const roleHelper = new MdaaRoleHelper(stack, naming);
     const serviceToken = roleHelper.createProviderServiceToken();
-    new StringParameter(stack, `role-helper-service-token-param`, {
+    new MdaaStringParameter(stack, `role-helper-service-token-param`, {
       parameterName: naming.ssmPath(`role-helper-service-token`, true, false),
       stringValue: serviceToken,
     });

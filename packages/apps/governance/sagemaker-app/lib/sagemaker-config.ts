@@ -7,9 +7,17 @@ import { MdaaAppConfigParser, MdaaAppConfigParserProps, MdaaBaseConfigContents }
 import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 
-import { NamedDomainsProps, NamedBaseDomainsProps } from '@aws-mdaa/datazone-l3-construct';
 import * as configSchema from './config-schema.json';
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { NamedSageMakerDomainProps } from '@aws-mdaa/datazone-l3-construct';
+
+/**
+ * Generic blueprint properties for SageMaker blueprints
+ */
+export interface SageMakerBlueprintProps {
+  readonly parameters?: { [key: string]: string | string[] | number | boolean };
+  readonly authorizedDomainUnits: string[];
+}
 
 export interface SagemakerConfigContents extends MdaaBaseConfigContents {
   /**
@@ -22,7 +30,7 @@ export interface SagemakerConfigContents extends MdaaBaseConfigContents {
    *
    * Validation: Must be valid NamedBaseDomainsProps; required; defines all SageMaker domain configurations and capabilities
    *   **/
-  readonly domains: NamedBaseDomainsProps;
+  readonly domains: NamedSageMakerDomainProps;
   /**
    * Q-ENHANCED-PROPERTY
    * Optional KMS key ARN for Glue catalog encryption enabling secure data catalog operations with customer-controlled encryption. Provides encryption at rest for Glue catalog metadata used in ML workflows and data governance within SageMaker integration.
@@ -45,27 +53,29 @@ export interface SagemakerConfigContents extends MdaaBaseConfigContents {
    * Validation: Must be valid MdaaRoleRef if provided; enables integrated governance between SageMaker and Lake Formation
    **/
   readonly lakeformationManageAccessRole?: MdaaRoleRef;
+  /**
+   * Q-ENHANCED-PROPERTY
+   * Optional SageMaker domain execution role reference enabling custom execution role configuration for enhanced security compliance. When provided, uses existing role instead of creating default execution role with AWS managed policies for least privilege access.
+   *
+   * Use cases: Custom execution roles; Security compliance; Least privilege access; Role reuse
+   *
+   * AWS: AWS IAM role for SageMaker domain execution with custom permissions
+   *
+   * Validation: Must be valid MdaaRoleRef if provided; enables custom execution role configuration
+   **/
+  readonly sagemakerDomainExecutionRole?: MdaaRoleRef;
 }
 
 export class SagemakerConfigParser extends MdaaAppConfigParser<SagemakerConfigContents> {
-  public domains: NamedDomainsProps;
-  public glueCatalogKmsKeyArn?: string;
+  public readonly sageMakerDomains: NamedSageMakerDomainProps;
+  public readonly glueCatalogKmsKeyArn?: string;
+
   readonly lakeformationManageAccessRole?: MdaaRoleRef;
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
     this.glueCatalogKmsKeyArn = this.configContents.glueCatalogKmsKeyArn;
     this.lakeformationManageAccessRole = this.configContents.lakeformationManageAccessRole;
-    this.domains = Object.fromEntries(
-      Object.entries(this.configContents.domains).map(entry => {
-        return [
-          entry[0],
-          {
-            ...entry[1],
-            domainVersion: 'V2',
-            singleSignOnType: 'IAM_IDC',
-          },
-        ];
-      }),
-    );
+
+    this.sageMakerDomains = this.configContents.domains;
   }
 }

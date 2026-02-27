@@ -4654,7 +4654,7 @@ Provide responses in markdown format with source citations
               "Arn",
             ],
           },
-          "DeliverySourceName": "test-org-test-env-test-domain-test-bedrock-builder--4aa3e9ee",
+          "DeliverySourceName": "REPLACED-S3-BUCKET-NAME",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -4688,7 +4688,7 @@ Provide responses in markdown format with source citations
               "Arn",
             ],
           },
-          "Name": "test-org-test-env-test-domain-test-bedrock-builder--4aa3e9ee",
+          "Name": "REPLACED-S3-BUCKET-NAME",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -4786,7 +4786,7 @@ Provide responses in markdown format with source citations
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "LogType": "APPLICATION_LOGS",
-          "Name": "test-org-test-env-test-domain-test-bedrock-builder--4aa3e9ee",
+          "Name": "REPLACED-S3-BUCKET-NAME",
           "ResourceArn": {
             "Fn::GetAtt": [
               "REPLACED-CFN-LOGICAL-ID",
@@ -4857,7 +4857,7 @@ Provide responses in markdown format with source citations
           "REPLACED-CFN-LOGICAL-ID",
         ],
         "Properties": {
-          "Name": "test-org-test-env-test--32547025",
+          "Name": "REPLACED-S3-BUCKET-NAME",
           "Tags": [
             {
               "Key": "mdaa_cdk_app",
@@ -4887,7 +4887,7 @@ Provide responses in markdown format with source citations
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "Data access policy for OpenSearch Serverless collection",
-          "Name": "test-org-test-env-test--11466bf6",
+          "Name": "REPLACED-S3-BUCKET-NAME",
           "Policy": {
             "Fn::Join": [
               "",
@@ -4914,7 +4914,7 @@ Provide responses in markdown format with source citations
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "Encryption policy for OpenSearch Serverless collection",
-          "Name": "test-org-test-env-test--59f6454a",
+          "Name": "REPLACED-S3-BUCKET-NAME",
           "Policy": {
             "Fn::Join": [
               "",
@@ -4937,7 +4937,7 @@ Provide responses in markdown format with source citations
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
           "Description": "Network policy for OpenSearch Serverless collection",
-          "Name": "test-org-test-env-test--4e6091e3",
+          "Name": "REPLACED-S3-BUCKET-NAME",
           "Policy": {
             "Fn::Join": [
               "",
@@ -9224,7 +9224,7 @@ Provide responses in markdown format with source citations
       },
       "REPLACED-CFN-LOGICAL-ID": {
         "Properties": {
-          "Name": "test-org-test-env-test--5394fefd",
+          "Name": "REPLACED-S3-BUCKET-NAME",
           "SecurityGroupIds": [
             {
               "Fn::GetAtt": [
@@ -16296,7 +16296,7 @@ Provide responses in markdown format with source citations
             "Arn",
           ],
         },
-        "DeliverySourceName": "test-org-test-env-test-domain-test-bedrock-builder--6a935004",
+        "DeliverySourceName": "REPLACED-S3-BUCKET-NAME",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -16330,7 +16330,7 @@ Provide responses in markdown format with source citations
             "Arn",
           ],
         },
-        "Name": "test-org-test-env-test-domain-test-bedrock-builder--6a935004",
+        "Name": "REPLACED-S3-BUCKET-NAME",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -16428,7 +16428,7 @@ Provide responses in markdown format with source citations
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "LogType": "APPLICATION_LOGS",
-        "Name": "test-org-test-env-test-domain-test-bedrock-builder--6a935004",
+        "Name": "REPLACED-S3-BUCKET-NAME",
         "ResourceArn": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -16499,7 +16499,7 @@ Provide responses in markdown format with source citations
         "REPLACED-CFN-LOGICAL-ID",
       ],
       "Properties": {
-        "Name": "test-org-test-env-test--3e0d9c45",
+        "Name": "REPLACED-S3-BUCKET-NAME",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -16556,7 +16556,7 @@ Provide responses in markdown format with source citations
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "Description": "Encryption policy for OpenSearch Serverless collection",
-        "Name": "test-org-test-env-test--5af9cb34",
+        "Name": "REPLACED-S3-BUCKET-NAME",
         "Policy": {
           "Fn::Join": [
             "",
@@ -18086,7 +18086,7 @@ Provide responses in markdown format with source citations
             "Arn",
           ],
         },
-        "DeliverySourceName": "test-org-test-env-test-domain-test-bedrock-builder--5e46d10a",
+        "DeliverySourceName": "REPLACED-S3-BUCKET-NAME",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -18120,7 +18120,7 @@ Provide responses in markdown format with source citations
             "Arn",
           ],
         },
-        "Name": "test-org-test-env-test-domain-test-bedrock-builder--5e46d10a",
+        "Name": "REPLACED-S3-BUCKET-NAME",
         "Tags": [
           {
             "Key": "mdaa_cdk_app",
@@ -18218,7 +18218,7 @@ Provide responses in markdown format with source citations
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
         "LogType": "APPLICATION_LOGS",
-        "Name": "test-org-test-env-test-domain-test-bedrock-builder--5e46d10a",
+        "Name": "REPLACED-S3-BUCKET-NAME",
         "ResourceArn": {
           "Fn::GetAtt": [
             "REPLACED-CFN-LOGICAL-ID",
@@ -20866,7 +20866,7 @@ Provide responses in markdown format with source citations
     },
     "REPLACED-CFN-LOGICAL-ID": {
       "Properties": {
-        "Name": "test-org-test-env-test--36d6b62d",
+        "Name": "REPLACED-S3-BUCKET-NAME",
         "SecurityGroupIds": [
           {
             "Fn::GetAtt": [

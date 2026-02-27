@@ -17,6 +17,14 @@ describe('dataops-project Snapshot Tests', () => {
         return `"${stringVal.replace(/\[CONFIG:[^[\]]*test-config\.yaml\]/, '[CONFIG:test-config.yaml]')}"`;
       },
     });
+    expect.addSnapshotSerializer({
+      test: (val: unknown) => typeof val === 'object' && val !== null && 'refresh' in val,
+      print: (val: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { refresh, ...rest } = val as Record<string, unknown>;
+        return JSON.stringify(rest, null, 2);
+      },
+    });
   });
   snapShotTest(
     'Dataops Project Stack',
@@ -24,7 +32,6 @@ describe('dataops-project Snapshot Tests', () => {
       'DataopsProjectStackMain',
       (_, context) => {
         const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
-
         const moduleApp = new DataOpsProjectCDKApp({
           context: {
             ...context,
@@ -55,7 +62,6 @@ describe('dataops-project Snapshot Tests', () => {
     Create.appProvider(
       context => {
         const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
-
         const moduleApp = new DataOpsProjectCDKApp({
           context: {
             ...context,

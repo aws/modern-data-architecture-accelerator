@@ -10,9 +10,17 @@ The DataZone CDK application is used to configure and deploy DataZone Domains an
 
 - **DataZone Domain** - A DataZone Domain
 
+- **DataZone Domain Unit** - Domain Units in which projects can be created
+
+- **DataZone User/Group Profiles** - User/Group profiles for IAM and SSO principals
+
 - **KMS CMK** - A KMS CMK specific to each domain created
 
 - **Domain Execution Role** - An IAM Role used by DataZone. This role is specific to the domain.
+
+- **Domain Bucket** - Used for hosting domain-specific resources
+
+- **Associated Account Stacks** - Deployed directly to associated domain accounts to provide account specific resources
 
 ## Configuration
 
@@ -119,7 +127,9 @@ domains:
         # The AWS account number fo the associated account.
         # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
         account: '1234567890'
-        # The arn of the KMS key used to encrypt the glue catalog in this associated account
+        # Optional - The arn of the KMS key used to encrypt the glue catalog in this associated account
+        # If not specified, the KMS key arn will be looked up from a standard SSM param created by the
+        # Glue Catalog Settings module and RAM shared to associated accounts.
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
         createCdkUser: true
@@ -132,7 +142,9 @@ domains:
         # The AWS account number fo the associated account.
         # Note, this also needs to be configured as an "additional_account" on the MDAA module within mdaa.yaml
         account: '2234567890'
-        # The arn of the KMS key used to encrypt the glue catalog in this associated account
+        # Optional - The arn of the KMS key used to encrypt the glue catalog in this associated account
+        # If not specified, the KMS key arn will be looked up from a standard SSM param created by the
+        # Glue Catalog Settings module and RAM shared to associated accounts.
         glueCatalogKmsKeyArn: test-associated-glue-catalog-key-arn
         # Optional - If true, a domain user will be created to allow for CDK-based deployments within the associated account
         createCdkUser: true

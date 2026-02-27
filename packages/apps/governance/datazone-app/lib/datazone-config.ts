@@ -8,8 +8,9 @@ import { Schema } from 'ajv';
 import { Stack } from 'aws-cdk-lib';
 
 import * as configSchema from './config-schema.json';
-import { NamedDomainsProps } from '@aws-mdaa/datazone-l3-construct';
+
 import { MdaaRoleRef } from '@aws-mdaa/iam-role-helper';
+import { NamedDataZoneDomainProps } from '@aws-mdaa/datazone-l3-construct';
 
 export interface DataZoneConfigContents extends MdaaBaseConfigContents {
   /**
@@ -22,7 +23,7 @@ export interface DataZoneConfigContents extends MdaaBaseConfigContents {
    *
    * Validation: Must be valid NamedDomainsProps; required; defines all DataZone domain configurations and capabilities
    *   **/
-  readonly domains: NamedDomainsProps;
+  readonly domains: NamedDataZoneDomainProps;
   /**
    * Q-ENHANCED-PROPERTY
    * Optional KMS key ARN for Glue catalog encryption enabling secure data catalog operations with customer-controlled encryption. Provides encryption at rest for Glue catalog metadata and data governance information within DataZone integration.
@@ -49,12 +50,12 @@ export interface DataZoneConfigContents extends MdaaBaseConfigContents {
 
 export class DataZoneConfigParser extends MdaaAppConfigParser<DataZoneConfigContents> {
   public readonly glueCatalogKmsKeyArn?: string;
-  public readonly domains: NamedDomainsProps;
+  public readonly dataZoneDomains: NamedDataZoneDomainProps;
   readonly lakeformationManageAccessRole?: MdaaRoleRef;
   constructor(stack: Stack, props: MdaaAppConfigParserProps) {
     super(stack, props, configSchema as Schema);
     this.glueCatalogKmsKeyArn = this.configContents.glueCatalogKmsKeyArn;
     this.lakeformationManageAccessRole = this.configContents.lakeformationManageAccessRole;
-    this.domains = this.configContents.domains;
+    this.dataZoneDomains = this.configContents.domains;
   }
 }

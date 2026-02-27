@@ -84,15 +84,6 @@ export class DataImportWorkflows extends MdaaL3Construct {
       createOutputs: false,
       transferAcceleration: true,
     });
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      uploadBucket,
-      [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-      ],
-      true,
-    );
     uploadBucket.addCorsRule({
       allowedHeaders: ['*'],
       allowedMethods: [s3.HttpMethods.PUT, s3.HttpMethods.POST, s3.HttpMethods.GET, s3.HttpMethods.HEAD],
@@ -112,16 +103,6 @@ export class DataImportWorkflows extends MdaaL3Construct {
       createParams: false,
       createOutputs: false,
     });
-
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      processingBucket,
-      [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-      ],
-      true,
-    );
 
     const fileImportBatchJob = new FileImportBatchJob(this, 'FileImportBatchJob', {
       encryptionKey: props.encryptionKey,

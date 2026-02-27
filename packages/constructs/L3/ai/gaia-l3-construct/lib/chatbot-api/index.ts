@@ -14,7 +14,6 @@ import { WebSocketApi } from './websocket-api';
 import { MdaaBucket } from '@aws-mdaa/s3-constructs';
 import { MdaaL3Construct, MdaaL3ConstructProps } from '@aws-mdaa/l3-construct';
 import { MdaaDDBTable } from '@aws-mdaa/ddb-constructs';
-import { MdaaNagSuppressions } from '@aws-mdaa/construct'; //NOSONAR
 import { MdaaKmsKey } from '@aws-mdaa/kms-constructs';
 
 export interface ChatBotApiProps extends MdaaL3ConstructProps {
@@ -52,15 +51,6 @@ export class ChatBotApi extends MdaaL3Construct {
       createOutputs: false,
       transferAcceleration: true,
     });
-    MdaaNagSuppressions.addCodeResourceSuppressions(
-      chatFilesBucket,
-      [
-        { id: 'NIST.800.53.R5-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-        { id: 'HIPAA.Security-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-        { id: 'PCI.DSS.321-S3BucketReplicationEnabled', reason: 'MDAA does not enforce bucket replication.' },
-      ],
-      true,
-    );
 
     const restApi = new RestApi(this, 'RestApi', {
       ...props,
