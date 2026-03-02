@@ -43,7 +43,7 @@ include:
   - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
   # AWS Solutions SAST
   - project: $CI_PROJECT_NAMESPACE/mdaa-testing
-    ref: feature/add-sagemaker-domain
+    ref: main
     file: '/gitlab-ci/mdaa-testing.yaml'
 
 sast:
@@ -257,7 +257,7 @@ feature_merge_smoke_test:
     - feature_merge_build_test
   ## optionally state which mdaa-testing branch
   variables:
-    CAEF_TESTING_BRANCH: feature/add-sagemaker-domain
+    CAEF_TESTING_BRANCH: main
 
 feature_version:
   tags:
