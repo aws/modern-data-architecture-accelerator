@@ -14,13 +14,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "jsii": {
-    "outdir": "dist",
-    "targets": {
-      "python": {
-        "distName": "aws-mdaa.sagemaker-project-l3-construct",
-        "module": "aws_mdaa.sagemaker_project_l3_construct"
-      }
-    }
+    "outdir": "jsii-dist",
+    "versionFormat": "full",
+    "targets": {}
   },
   "scripts": {
     "build": "export JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION=1 && jsii --project-references",
